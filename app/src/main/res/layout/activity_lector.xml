@@ -1,0 +1,51 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="ar.rulosoft.mimanganu.ActivityLector">
+
+    <ar.rulosoft.mimanganu.componentes.UnescroledViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="@android:color/black"></ar.rulosoft.mimanganu.componentes.UnescroledViewPager>
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/action_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/black"
+        android:orientation="vertical"
+        android:visibility="invisible"></android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/seeker_layout"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/black"
+        android:gravity="center_vertical">
+
+        <SeekBar
+            android:id="@+id/seeker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/black" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/page"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/seeker_layout"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/borde"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="40sp"
+        android:visibility="invisible" />
+
+</RelativeLayout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="6dp">
+
+    <ar.rulosoft.mimanganu.componentes.ControlTapaSerie
+        android:id="@+id/tapa"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="6dp"
+        android:background="@drawable/borde"
+        android:padding="2dp">
+
+        <ImageView
+            android:id="@+id/notif"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/notif"
+            android:visibility="invisible" />
+    </ar.rulosoft.mimanganu.componentes.ControlTapaSerie>
+
+    <ImageView
+        android:id="@+id/server"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_alignLeft="@+id/tapa"
+        android:layout_alignTop="@+id/tapa"
+        android:layout_margin="2dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?attr/selectableItemBackground"></LinearLayout>
+
+</RelativeLayout>

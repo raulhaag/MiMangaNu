@@ -1,0 +1,36 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ar.rulosoft.mimanganu.ActivityCapitulos">
+
+    <item
+        android:id="@+id/action_orden"
+        android:icon="@drawable/ic_action_9a1"
+        android:orderInCategory="100"
+        android:title="@string/orden"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_sentido"
+        android:icon="@drawable/ic_action_clasico"
+        android:orderInCategory="100"
+        android:title="@string/sentido"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_buscarnuevos"
+        android:icon="@drawable/ic_action_sync"
+        android:orderInCategory="100"
+        android:title="@string/buscarnuevos"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_descargar_restantes"
+        android:title="@string/descargarestantes" />
+    <item
+        android:id="@+id/action_descargar_no_leidos"
+        android:title="@string/descarga_no_leidos" />
+    <item
+        android:id="@+id/action_marcar_todo_no_leido"
+        android:title="@string/macartodonoleido" />
+    <item
+        android:id="@+id/action_marcar_todo_leido"
+        android:title="@string/macartodoleido" />
+</menu>

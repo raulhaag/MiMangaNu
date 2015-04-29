@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/listitem_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:background="?attr/selectableItemBackground"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/capitulo_titulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/capitulo_paginas"
+        android:gravity="center_vertical"
+        android:padding="@dimen/paddin_textitem"
+        android:text="Cap 1222"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/capitulo_paginas"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_toLeftOf="@+id/boton"
+        android:lines="1"
+        android:text="100/100"
+        android:textSize="10sp" />
+
+    <TextView
+        android:id="@+id/capitulo_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/capitulo_paginas"
+        android:layout_alignTop="@+id/boton"
+        android:background="#FFDB3939"
+        android:text="nuevo"
+        android:textColor="#FFFFFFFF"
+        android:textSize="10sp"
+        android:textStyle="italic|bold" />
+
+    <ImageView
+        android:id="@+id/boton"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/capitulo_titulo"
+        android:layout_centerVertical="true"
+        android:background="?attr/selectableItemBackground"
+        android:padding="5dp"
+        android:paddingLeft="6dp"
+        android:paddingRight="6dp"
+        android:src="@drawable/ic_bajar" />
+
+</RelativeLayout>

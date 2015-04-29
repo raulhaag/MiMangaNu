@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?attr/selectableItemBackground">
+
+    <ImageView
+        android:id="@+id/server_bandera"
+        android:layout_width="30dp"
+        android:layout_height="20dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:padding="2dp"
+        android:src="@drawable/flag_eng" />
+
+    <ImageView
+        android:id="@+id/server_imagen"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="13dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="13dp"
+        android:src="@drawable/mangapanda" />
+
+    <TextView
+        android:id="@+id/server_nombre"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toLeftOf="@+id/server_bandera"
+        android:layout_toRightOf="@+id/server_imagen"
+        android:padding="@dimen/paddin_textitem"
+        android:text="server name"
+        android:textSize="@dimen/tamano_texto" />
+
+</RelativeLayout>

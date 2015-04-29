@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="ar.rulosoft.mimanganu">
+
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
+        <activity
+            android:name=".ActivityMisMangas"
+            android:label="@string/app_name">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ActivityServerListadeMangas"
+            android:label="@string/title_activity_server_listade_mangas"></activity>
+        <activity
+            android:name=".ActivityDetalles"
+            android:label="@string/title_activity_activity_detalles"></activity>
+        <activity
+            android:name=".ActivityCapitulos"
+            android:label="@string/title_activity_activity_capitulos"></activity>
+        <activity
+            android:name=".ActivityLector"
+            android:label="@string/title_activity_activity_lector"
+            android:largeHeap="true"
+            android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
+        <activity
+            android:name=".ActivityServerVisualNavegacion"
+            android:label="@string/title_activity_server_visual_navegacion"></activity>
+        <activity
+            android:name=".ActivityResultadoDeBusqueda"
+            android:label="@string/title_activity_activity_resultado_de_busqueda"></activity>
+        <activity
+            android:name=".ActivityLicencia"
+            android:label="@string/licencia"></activity>
+        <activity
+            android:name="ar.rulosoft.mimanganu.OpcionesActivity"
+            android:label="@string/configuraciones"></activity>
+
+        <service android:name=".services.ServicioColaDeDescarga"></service>
+    </application>
+
+</manifest>

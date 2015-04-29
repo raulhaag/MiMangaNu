@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="estados_descarga">
+        <item>@string/encola</item>
+        <item>@string/descargando</item>
+        <item>@string/descargado</item>
+        <item>@string/error</item>
+    </string-array>
+    <string-array name="ordenes_array">
+        <item>@string/orden_asc</item>
+        <item>@string/orden_dsc</item>
+    </string-array>
+    <string-array name="ordenes_valores">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+    <string-array name="sentido_lectura">
+        <item>@string/l2r</item>
+        <item>@string/r2l</item>
+        <item>@string/vertical</item>
+    </string-array>
+    <string-array name="sentido_lectura_val">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="ajustar_a">
+        <item>@string/no_scale</item>
+        <item>@string/mejor_ajuste</item>
+        <item>@string/ajuste_ancho</item>
+        <item>@string/ajuste_alto</item>
+    </string-array>
+    <string-array name="ajustar_valores">
+        <item>NONE</item>
+        <item>FIT_TO_SCREEN</item>
+        <item>FIT_TO_WIDTH</item>
+        <item>FIT_TO_HEIGHT</item>
+    </string-array>
+    <string-array name="max_texture_support_acceleration">
+        <item>0</item>
+        <item>1024</item>
+        <item>2048</item>
+        <item>4096</item>
+    </string-array>
+    <string-array name="download_threads">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string-array name="uno_a_nueve">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+        <item>7</item>
+        <item>8</item>
+        <item>9</item>
+    </string-array>
+
+</resources>
