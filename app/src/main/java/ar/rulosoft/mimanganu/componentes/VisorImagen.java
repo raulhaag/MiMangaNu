@@ -296,7 +296,7 @@ public class VisorImagen extends View implements OnDoubleTapListener {
     }
 
     public void calcularTopes() {
-		/*
+        /*
 		 * escalas y laterales
 		 */
         if (actual != null) {
