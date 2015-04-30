@@ -20,7 +20,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-import com.shamanland.fab.FloatingActionButton;
+
+import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,8 +66,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
-
-
         pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
 
     }

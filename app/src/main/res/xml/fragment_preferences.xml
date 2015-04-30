@@ -5,6 +5,11 @@
     android:key="first_preferencescreen">
 
     <PreferenceCategory android:title="@string/opciones_mm">
+        <it.gmariotti.android.example.colorpicker.dashclockpicker.ColorPreference
+            android:key="dash_colorkey"
+            android:title="Preference Title"
+            android:summary="Preference summary"
+            android:defaultValue="@android:color/white" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="mostrar_en_galeria"
