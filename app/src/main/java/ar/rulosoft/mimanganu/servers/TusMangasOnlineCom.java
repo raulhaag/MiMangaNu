@@ -63,7 +63,7 @@ public class TusMangasOnlineCom extends ServerBase {
     public TusMangasOnlineCom() {
         this.setBandera(R.drawable.flag_esp);
         this.setIcon(R.drawable.tumangaonline);
-        this.setServerName("TuMangasOnline");
+        this.setServerName("TusMangasOnline");
         setServerID(ServerBase.TUSMANGAS);
     }
 

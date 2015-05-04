@@ -3,25 +3,27 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
-import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.ImageLoader;
-import com.shamanland.fab.FloatingActionButton;
+import com.melnykov.fab.FloatingActionButton;
 
+import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
-import ar.rulosoft.mimanganu.componentes.DatosSerie;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityDetalles extends ActionBarActivity {
 
@@ -29,9 +31,8 @@ public class ActivityDetalles extends ActionBarActivity {
     public static final String PATH = "path_m";
 
     ImageLoader imageLoader;
-    DatosSerie datos;
+    ControlInfo datos;
     ProgressBar cargando;
-    TextView estado;
     ServerBase s;
     Manga m;
     FloatingActionButton button_add;
@@ -40,9 +41,10 @@ public class ActivityDetalles extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
-        datos = (DatosSerie) findViewById(R.id.datos);
+        datos = (ControlInfo) findViewById(R.id.datos);
         cargando = (ProgressBar) findViewById(R.id.cargando);
-        estado = (TextView) findViewById(R.id.status);
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(new OnClickListener() {
             @Override
@@ -58,6 +60,10 @@ public class ActivityDetalles extends ActionBarActivity {
                 set.start();
             }
         });
+        button_add.setColorNormal(colors[1]);
+        button_add.setColorPressed(colors[3]);
+        button_add.attachToScrollView(datos);
+        datos.setColor(colors[0]);
         String titulo = getIntent().getExtras().getString(TITULO);
         getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + titulo);
         String path = getIntent().getExtras().getString(PATH);
@@ -92,16 +98,15 @@ public class ActivityDetalles extends ActionBarActivity {
         @Override
         protected void onPostExecute(Void v) {
             cargando.setVisibility(ProgressBar.INVISIBLE);
-            datos.pTitle.setColor(Color.BLACK);
-            datos.pTxt.setColor(Color.BLACK);
             String infoExtra = "";
             if (m.isFinalizado()) {
                 infoExtra = infoExtra + getResources().getString(R.string.finalizado);
             } else {
                 infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
             }
-            estado.setText(infoExtra);
-            datos.inicializar(m.getTitulo(), m.getSinopsis(), 166, 250);
+            datos.setEstado(infoExtra);
+            datos.setSinopsis(m.getSinopsis());
+            datos.setServidor(s.getServerName());
             imageLoader.DisplayImage(m.getImages(), datos);
             if (error != null && error.length() > 2) {
                 Toast.makeText(ActivityDetalles.this, error, Toast.LENGTH_LONG).show();

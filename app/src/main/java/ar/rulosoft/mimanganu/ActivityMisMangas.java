@@ -3,8 +3,11 @@ package ar.rulosoft.mimanganu;
 import android.animation.ObjectAnimator;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -30,6 +33,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.MasMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityMisMangas extends ActionBarActivity implements OnClickListener {
 
@@ -40,6 +44,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     SectionsPagerAdapter mSectionsPagerAdapter;
 
     ViewPager mViewPager;
+    public int[] colors;
     FragmentMisMangas fragmentMisMangas;
     FragmentAddManga fragmentAddManga;
     SharedPreferences pm;
@@ -67,8 +72,8 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
         pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
-
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -132,6 +137,10 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
     @Override
     protected void onResume() {
+        colors = ThemeColors.getColors(pm, getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        button_add.setColorNormal(colors[1]);
+        button_add.setColorPressed(colors[3]);
         BuscarNuevo.onActivityResumed(ActivityMisMangas.this);
         super.onResume();
     }

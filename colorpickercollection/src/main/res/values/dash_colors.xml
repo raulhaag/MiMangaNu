@@ -2,20 +2,24 @@
 
 
     <string-array name="default_color_choice_values" translatable="false">
-        <item>#33b5e5</item>
-        <item>#aa66cc</item>
-        <item>#99cc00</item>
-        <item>#ffbb33</item>
-        <item>#ff4444</item>
-        <item>#0099cc</item>
-        <item>#9933cc</item>
-        <item>#669900</item>
-        <item>#ff8800</item>
-        <item>#cc0000</item>
-        <item>#ffffff</item>
-        <item>#eeeeee</item>
-        <item>#cccccc</item>
-        <item>#888888</item>
+        <item>#F44336</item>
+        <item>#E91E63</item>
+        <item>#9C27B0</item>
+        <item>#673AB7</item>
+        <item>#3F51B5</item>
+        <item>#2196F3</item>
+        <item>#03A9F4</item>
+        <item>#009688</item>
+        <item>#4CAF50</item>
+        <item>#8BC34A</item>
+        <item>#CDDC39</item>
+        <item>#FFC107</item>
+        <item>#FF9800</item>
+        <item>#FF5722</item>
+        <item>#795548</item>
+        <item>#9E9E9E</item>
+        <item>#607D8B</item>
+        <item>#000000</item>
     </string-array>
 
     <string-array name="homescreen_color_choice_values" translatable="false">
