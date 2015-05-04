@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.melnykov.fab.ObservableScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:visibility="gone"
+            android:background="@color/accent_material_light"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:id="@+id/titulo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/imagen"
+                android:scaleType="centerCrop"
+                android:layout_width="100dp"
+                android:layout_height="150dp"
+                android:layout_margin="4dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/autorTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/autor"
+                    android:textColor="@color/accent_material_light"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/s1"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/accent_material_light" />
+
+                <TextView
+                    android:id="@+id/autor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N/A" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="4dp" />
+
+                <TextView
+                    android:id="@+id/estadoTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/estado"
+                    android:textColor="@color/accent_material_light"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/s2"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/accent_material_light" />
+
+                <TextView
+                    android:id="@+id/estado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N/A" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="4dp" />
+
+                <TextView
+                    android:id="@+id/servidorTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/server"
+                    android:textColor="@color/accent_material_light"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/s3"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/accent_material_light" />
+
+                <TextView
+                    android:id="@+id/servidor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="N/A" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="4dp" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/s4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/accent_material_light"
+            android:padding="5dp"
+            android:text="Sinopsis"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@android:color/white"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_margin="4dp"
+            android:id="@+id/sinopsis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="N/A" />
+
+    </LinearLayout>
+</com.melnykov.fab.ObservableScrollView>

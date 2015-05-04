@@ -105,6 +105,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onResume() {
         cargarMangas();
+        ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         super.onResume();
     }
 

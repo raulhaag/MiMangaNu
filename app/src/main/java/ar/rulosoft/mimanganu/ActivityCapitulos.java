@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityCapitulos extends ActionBarActivity {
 
@@ -36,6 +38,7 @@ public class ActivityCapitulos extends ActionBarActivity {
     public Manga manga;
     public Direccion direccion;
     SectionsPagerAdapter mSectionsPagerAdapter;
+    int[] colors;
     PagerTabStrip pagerStrip;
     FragmentCapitulos fragmentCapitulos;
     FragmentDetalles fragmentDetalles;
@@ -72,12 +75,14 @@ public class ActivityCapitulos extends ActionBarActivity {
             onBackPressed();
             finish();
         }
+        colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         PagerTabStrip pagerTabStrip = (PagerTabStrip) findViewById(R.id.pager_strip);
         pagerTabStrip.setDrawFullUnderline(true);
-        pagerTabStrip.setTabIndicatorColor(Color.BLACK);
-
+        pagerTabStrip.setTabIndicatorColor(colors[0]);
+        pagerTabStrip.setBackgroundColor(colors[1]);
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         int orden = Integer.parseInt(pm.getString(ORDEN, "" + Orden.DSC.ordinal()));
         cOrden = Orden.values()[orden];
@@ -325,10 +330,7 @@ public class ActivityCapitulos extends ActionBarActivity {
 
         @Override
         public float getPageWidth(int position) {
-            float size = 1f;
-            if (position == 0)
-                size = 0.9f;
-            return size;
+            return 1f;
         }
 
         public CharSequence getPageTitle(int position) {

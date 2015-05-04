@@ -1,8 +1,10 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,6 +30,7 @@ import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnLastItem;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnMangaClick;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityServerVisualNavegacion extends ActionBarActivity implements OnLastItem, OnMangaClick {
 
@@ -52,7 +55,8 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         generos = (Spinner) findViewById(R.id.generos);
         orden = (Spinner) findViewById(R.id.ordenar_por);
         cargando = (ProgressBar) findViewById(R.id.cargando);
-
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (s.getCategorias() != null)
             generos.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getCategorias()));
         else

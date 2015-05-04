@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Manga {
     int id, serverId, nuevos, lastIndex, sentidoLectura = -1;
-    String titulo, sinopsis, images, path;
+    String titulo, sinopsis, images, path, autor;
     ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
 
     boolean finalizado;
@@ -62,6 +62,14 @@ public class Manga {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(String autor) {
+        this.autor = autor;
     }
 
     @Override

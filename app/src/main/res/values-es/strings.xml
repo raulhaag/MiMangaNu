@@ -91,4 +91,10 @@
     <string name="direcctorio_subtitle">Para descargas (Tienes que mover los archivos manualmente al nuevo directorio, reiniciar la aplicacion y a veces el dispositivo)</string>
     <string name="folder_changed">Directorio cambiado.</string>
     <string name="unwritable_folder">Directorio no escribible.</string>
+    <string name="color_primario">Color Principal</string>
+    <string name="color_secundario">Color Secundario</string>
+    <string name="autor">Autor</string>
+    <string name="server">Servidor</string>
+    <string name="estado">Estado</string>
+
 </resources>

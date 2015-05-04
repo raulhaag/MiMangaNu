@@ -12,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DescargaCapitulo.OnErrorListener;
 import ar.rulosoft.mimanganu.services.DescargaListener;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
@@ -94,6 +96,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // actionBar = getSupportActionBar();
         // actionBar.hide();
+
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
 
@@ -162,6 +165,10 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         actionToolbar.setVisibility(View.GONE);
         seeker_Layout.setVisibility(View.GONE);
 
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        actionToolbar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        seeker_Layout.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        seekBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (capitulo.getEstadoLectura() != Capitulo.LEIDO)
             capitulo.setEstadoLectura(Capitulo.LEYENDO);
         Database.updateCapitulo(ActivityLector.this, capitulo);
@@ -312,7 +319,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
 
         if (controlVisible) {
             controlVisible = false;
-            ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", .75f, 0f);
+            ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);
             anim.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -332,7 +339,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                 }
             });
             anim.start();
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(seeker_Layout, "alpha", .75f, 0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(seeker_Layout, "alpha", .90f, 0f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -354,7 +361,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             anim2.start();
         } else {
             controlVisible = true;
-            ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", 0f, .75f);
+            ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", 0f, .90f);
             anim.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -374,7 +381,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                 }
             });
             anim.start();
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(seeker_Layout, "alpha", 0f, .75f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(seeker_Layout, "alpha", 0f, .90f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {

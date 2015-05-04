@@ -1,6 +1,8 @@
 package ar.rulosoft.mimanganu;
 
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -9,6 +11,8 @@ import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityLicencia extends ActionBarActivity {
 
@@ -35,6 +39,8 @@ public class ActivityLicencia extends ActionBarActivity {
                 mostrarLicencia("MIT.txt");
             }
         });
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
     }
 
     public void mostrarLicencia(String asset) {

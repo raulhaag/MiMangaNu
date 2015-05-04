@@ -1,8 +1,10 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.SearchView;
@@ -21,6 +23,7 @@ import java.util.List;
 import ar.rulosoft.mimanganu.adapters.MangaAdapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityServerListadeMangas extends ActionBarActivity {
 
@@ -39,6 +42,8 @@ public class ActivityServerListadeMangas extends ActionBarActivity {
         getSupportActionBar().setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
         lista = (ListView) findViewById(R.id.lista_de_mangas);
         cargando = (ProgressBar) findViewById(R.id.cargando);
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
 
         new CargarMangas().execute();
 

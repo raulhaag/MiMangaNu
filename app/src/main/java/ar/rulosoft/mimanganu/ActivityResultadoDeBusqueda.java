@@ -1,8 +1,10 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +18,7 @@ import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityResultadoDeBusqueda extends ActionBarActivity {
     public static final String TERMINO = "termino_busqueda";
@@ -46,6 +49,8 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
             }
         });
         new RealizarBusqueda().execute();
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
     }
 
     public class RealizarBusqueda extends AsyncTask<Void, Void, ArrayList<Manga>> {
