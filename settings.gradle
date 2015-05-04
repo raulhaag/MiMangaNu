@@ -1,1 +1,1 @@
-include ':app', ':imageviewtouchlibrary'
+include ':imageviewtouchlibrary', ':app'
