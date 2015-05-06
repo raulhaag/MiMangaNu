@@ -14,6 +14,7 @@ public class Manga {
         this.serverId = serverId;
         this.titulo = titulo;
         this.path = path;
+        this.autor = "";
     }
 
     public int getId() {

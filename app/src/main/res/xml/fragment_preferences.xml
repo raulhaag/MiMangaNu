@@ -76,12 +76,12 @@
             android:key="primario"
             app:cal_numColumns="4"
             android:title="@string/color_primario"
-            android:defaultValue="#000000" />
+            android:defaultValue="0" />
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
             android:key="secundario"
             app:cal_numColumns="4"
             android:title="@string/color_secundario"
-            android:defaultValue="#9E9E9E" />
+            android:defaultValue="#10395294" />
     </PreferenceCategory>
 
 </PreferenceScreen>

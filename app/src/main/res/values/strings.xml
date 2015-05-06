@@ -42,8 +42,8 @@
     <string name="macartodoleido">Mark all as read</string>
     <string name="macartodonoleido">Mark all as unread</string>
     <string name="sentido">Direction</string>
-    <string name="finalizado">Status: Finished.</string>
-    <string name="en_progreso">Status: Ongoing.</string>
+    <string name="finalizado">Finished.</string>
+    <string name="en_progreso">Ongoing.</string>
     <string name="encola">(Queued)</string>
     <string name="descargando">(Downloading)</string>
     <string name="descargado">(Downloaded)</string>
@@ -110,5 +110,6 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="autor">Author</string>
     <string name="server">Server</string>
     <string name="estado">Status</string>
+    <string name="nodisponible">N/A</string>
 
 </resources>

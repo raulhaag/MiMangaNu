@@ -277,7 +277,7 @@ public class ActivityCapitulos extends ActionBarActivity {
             try {
                 onProgressUpdate(params[0].getTitulo());
                 params[0].clearCapitulos();
-                s.cargarCapitulos(params[0]);
+                s.cargarCapitulos(params[0],true);
                 int diff = s.buscarNuevosCapitulos(params[0], activity);
                 result += diff;
             } catch (Exception e) {

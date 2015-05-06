@@ -44,8 +44,8 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga manga) throws Exception {
-        if (manga.getCapitulos().size() == 0) {
+    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
+        if (manga.getCapitulos().size() == 0||reinicia) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath() + "/completa"));
@@ -61,7 +61,7 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public void cargarPortada(Manga manga) throws Exception {
+    public void cargarPortada(Manga manga, boolean reinicia) throws Exception {
         Pattern p;
         Matcher m;
         String data = new Navegador().get((manga.getPath()));

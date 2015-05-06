@@ -79,17 +79,18 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga m) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0)
-            cargarPortada(m);
+    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
+        if (m.getCapitulos() == null || m.getCapitulos().size() == 0 || reinicia)
+            cargarPortada(m, reinicia);
     }
 
     @Override
-    public void cargarPortada(Manga m) throws Exception {
+    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
         String source = (new Navegador()).get(m.getPath());
         m.setSinopsis(getFirstMacthDefault("<p itemprop=\"description\">(.+?)</p>", source, "Sin sinopsis"));
         m.setImages(getFirstMacthDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, ""));
         m.setFinalizado(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
+        m.setAutor(getFirstMacthDefault("5&amp;filter=.+?>(.+?)<", source, ""));
 
         ArrayList<Capitulo> caps = new ArrayList<Capitulo>();
         Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)<");
@@ -159,7 +160,7 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("[\\s]*<a href=\"([^\"]+)\"[^<]+<img src=\"([^\"]+)\".+?title=\"([^\"]+)\"");
+        Pattern p = Pattern.compile("[\\s]*<a href=\"([^\"]+)\"[^<]+<img src=\"(/./[^\"]+)\".+?title=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<Manga>();
         while (m.find()) {

@@ -57,13 +57,13 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga m) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0)
-            cargarPortada(m);
+    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
+        if (m.getCapitulos() == null || m.getCapitulos().size() == 0||reinicia)
+            cargarPortada(m, reinicia);
     }
 
     @Override
-    public void cargarPortada(Manga m) throws Exception {
+    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
         String source = new Navegador().get(IP, m.getPath(), HOST);
         // sinopsis
         m.setSinopsis(Html.fromHtml(getFirstMacthDefault("<span class=\"info\">Summary:</span>(.+?)</div>", source, "Without synopsis.")).toString());
@@ -72,6 +72,11 @@ public class KissManga extends ServerBase {
         if (imagen != null) {
             m.setImages("http://" + IP + imagen.replace("http://kissmanga.com", "") + "|" + HOST);
         }
+
+        //autor
+
+        m.setAutor(getFirstMacthDefault("href=\"/AuthorArtist/.+?>(.+?)<",source,""));
+
         // capitulos
         Pattern p = Pattern.compile("<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<");
         Matcher matcher = p.matcher(source);

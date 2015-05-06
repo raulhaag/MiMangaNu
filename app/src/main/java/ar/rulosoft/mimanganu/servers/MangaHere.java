@@ -47,8 +47,8 @@ public class MangaHere extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga manga) throws Exception {
-        if (manga.getCapitulos().size() == 0) {
+    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
+        if (manga.getCapitulos().size() == 0 || reinicia) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath()));
@@ -62,6 +62,9 @@ public class MangaHere extends ServerBase {
             //status
             manga.setFinalizado(data.contains("</label>Completed</li>"));
 
+            //autor
+            manga.setAutor(getFirstMacthDefault("Author.+?\">(.+?)<", data, ""));
+
             // capitulos
             p = Pattern.compile(PATTERN_CAPITULOS);
             m = p.matcher(data);
@@ -74,9 +77,9 @@ public class MangaHere extends ServerBase {
     }
 
     @Override
-    public void cargarPortada(Manga m) throws Exception {
-        if (m.getCapitulos().isEmpty())
-            cargarCapitulos(m);
+    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+        if (m.getCapitulos().isEmpty()||reinicia)
+            cargarCapitulos(m,reinicia);
     }
 
     @Override

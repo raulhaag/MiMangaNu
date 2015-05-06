@@ -54,8 +54,8 @@ public class EsMangaHere extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga manga) throws Exception {
-        if (manga.getCapitulos().size() == 0) {
+    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
+        if (manga.getCapitulos().size() == 0||reinicia) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath()));
@@ -67,8 +67,10 @@ public class EsMangaHere extends ServerBase {
             manga.setSinopsis(getFirstMacthDefault(PATRON_SINOPSIS, data, "Sin sinopsis."));
 
             // estado
-
             manga.setFinalizado(getFirstMacthDefault("<li><label>Estado:</label>(.+?)</li>", data, "En desarrollo").length() == 9);
+
+            //autor
+            manga.setAutor(getFirstMacthDefault("Autor.+?\">(.+?)<",data,""));
 
             // capitulos
             data = getFirstMacth(PATRON_SEG_CAP, data, "Error al obtener lista de cap�tulos");
@@ -83,9 +85,9 @@ public class EsMangaHere extends ServerBase {
     }
 
     @Override
-    public void cargarPortada(Manga m) throws Exception {
-        if (m.getCapitulos().isEmpty())
-            cargarCapitulos(m);
+    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+        if (m.getCapitulos().isEmpty()||reinicia)
+            cargarCapitulos(m,reinicia);
     }
 
     @Override

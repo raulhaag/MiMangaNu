@@ -3,6 +3,10 @@
 
 Lector Manga online 
 
+Cambios 1.25 added #26 added #67 iniciando sistema de tema.
+
+Cambios 1.24 paso a Android Studio
+
 Cambios 1.23 muchos cambios acercandose más a lollipop ;-), agregado cambio de directorio para descargas.
 
 Cambios 1.22 Minor fix.

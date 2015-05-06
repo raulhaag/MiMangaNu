@@ -26,8 +26,8 @@ public class StarkanaCom extends ServerBase {
 
     public StarkanaCom() {
         this.setBandera(R.drawable.flag_eng);
-        this.setIcon(R.drawable.starkana);
-        this.setServerName("Starkana (R.I.P.)");
+        this.setIcon(R.drawable.rip);
+        this.setServerName("Starkana");
         setServerID(ServerBase.STARKANACOM);
     }
 
@@ -54,13 +54,13 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga m) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0)
-            cargarPortada(m);
+    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
+        if (m.getCapitulos() == null || m.getCapitulos().size() == 0|| reinicia)
+            cargarPortada(m, reinicia);
     }
 
     @Override
-    public void cargarPortada(Manga m) throws Exception {
+    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
         String source = new Navegador().get(m.getPath());
         // portada
         String portada = getFirstMacthDefault("<img class=\"a_img\" src=\"(.+?)\"", source, "");

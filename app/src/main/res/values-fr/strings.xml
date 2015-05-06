@@ -42,8 +42,8 @@
     <string name="macartodoleido">Marquer tout comme lu</string>
     <string name="macartodonoleido">Marquer tout comme non lu</string>
     <string name="sentido">Direction</string>
-    <string name="finalizado">Statut: Terminé.</string>
-    <string name="en_progreso">Statut: En cours.</string>
+    <string name="finalizado">Terminé.</string>
+    <string name="en_progreso">En cours.</string>
     <string name="encola">(En attente)</string>
     <string name="descargando">(Téléchargement)</string>
     <string name="descargado">(Téléchargé)</string>
@@ -86,5 +86,6 @@
     <string name="quitar_seleccion">Ne rien sélectionner</string>
     <string name="quitar_descarga">Impossible de supprimer un téléchargement actif</string>
     <string name="marcarleido">Marquer comme lu</string>
+    <string name="estado">Statut</string>
 
 </resources>

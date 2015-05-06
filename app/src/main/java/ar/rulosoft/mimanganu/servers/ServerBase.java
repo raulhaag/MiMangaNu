@@ -13,7 +13,6 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 public abstract class ServerBase {
 
     public static final int MANGAPANDA = 1;
-    public static final int ESMANGAONLINE = 2;
     public static final int ESMANGAHERE = 3;
     public static final int MANGAHERE = 4;
     public static final int MANGAFOX = 5;
@@ -40,9 +39,6 @@ public abstract class ServerBase {
                 break;
             case ESMANGAHERE:
                 s = new EsMangaHere();
-                break;
-            case ESMANGAONLINE:
-                s = new EsMangaOnline();
                 break;
             case MANGAHERE:
                 s = new MangaHere();
@@ -89,9 +85,9 @@ public abstract class ServerBase {
     public abstract ArrayList<Manga> getBusqueda(String termino) throws Exception;
 
     // capitulos
-    public abstract void cargarCapitulos(Manga m) throws Exception;
+    public abstract void cargarCapitulos(Manga m, boolean recarga) throws Exception;
 
-    public abstract void cargarPortada(Manga m) throws Exception;
+    public abstract void cargarPortada(Manga m , boolean recarga) throws Exception;
 
     // manga
     public abstract String getPagina(Capitulo c, int pagina);
@@ -114,7 +110,7 @@ public abstract class ServerBase {
     public int buscarNuevosCapitulos(Manga manga, Context context) throws Exception {
         int returnValue = 0;
         Manga mangaDb = Database.getFullManga(context, manga.getId());
-        this.cargarCapitulos(manga);
+        this.cargarCapitulos(manga, false);
         int diff = manga.getCapitulos().size() - mangaDb.getCapitulos().size();
         if (diff > 0) {
             ArrayList<Capitulo> simpleList = new ArrayList<Capitulo>();

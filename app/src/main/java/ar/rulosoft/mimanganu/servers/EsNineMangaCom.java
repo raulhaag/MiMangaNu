@@ -71,13 +71,13 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga m) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0)
-            cargarPortada(m);
+    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
+        if (m.getCapitulos() == null || m.getCapitulos().size() == 0 || reinicia)
+            cargarPortada(m, reinicia);
     }
 
     @Override
-    public void cargarPortada(Manga m) throws Exception {
+    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
         String source = new Navegador().get(m.getPath() + "?waring=1");
         // portada
         String portada = getFirstMacthDefault("Manga\" src=\"(.+?)\"", source, "");
@@ -88,6 +88,9 @@ public class EsNineMangaCom extends ServerBase {
 
         //estado
         m.setFinalizado(getFirstMacthDefault("Estado(.+?)</a>", source, "").contains("Completado"));
+
+        //autor
+        m.setAutor(getFirstMacthDefault("Autor.+?\">(.+?)<", source, ""));
 
         // cap�tulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");

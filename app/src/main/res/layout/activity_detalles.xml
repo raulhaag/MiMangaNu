@@ -4,19 +4,17 @@
     android:layout_height="match_parent"
     tools:context="${packageName}.${activityClass}">
 
-    <ar.rulosoft.mimanganu.componentes.ControlInfo
-        android:id="@+id/datos"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/str"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/status" />
+        android:layout_height="match_parent">
 
-    <ProgressBar
-        android:id="@+id/cargando"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+        <ar.rulosoft.mimanganu.componentes.ControlInfo
+            android:id="@+id/datos"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/button_add"
@@ -28,5 +26,4 @@
         android:layout_marginRight="16dp"
         android:alpha="0"
         android:src="@drawable/ic_action_add" />
-
 </RelativeLayout>

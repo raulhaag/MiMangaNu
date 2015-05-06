@@ -141,6 +141,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         button_add.setColorNormal(colors[1]);
         button_add.setColorPressed(colors[3]);
+        button_add.setColorRipple(colors[0]);
         BuscarNuevo.onActivityResumed(ActivityMisMangas.this);
         super.onResume();
     }
@@ -222,7 +223,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
                 ServerBase s = ServerBase.getServer(manga.getServerId());
                 try {
                     onProgressUpdate(manga.getTitulo());
-                    s.cargarCapitulos(manga);
+                    s.cargarCapitulos(manga, false);
                     int diff = s.buscarNuevosCapitulos(manga, activity);
                     result += diff;
                 } catch (Exception e) {

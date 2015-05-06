@@ -42,8 +42,8 @@
     <string name="macartodoleido">Marcar todo como leído</string>
     <string name="macartodonoleido">Marcar todo como no leído</string>
     <string name="sentido">Sentido de lectura</string>
-    <string name="finalizado">Estado: Finalizado.</string>
-    <string name="en_progreso">Estado: En progreso.</string>
+    <string name="finalizado">Finalizado.</string>
+    <string name="en_progreso">En progreso.</string>
     <string name="encola">(En Cola)</string>
     <string name="descargando">(Descargando)</string>
     <string name="descargado">(Descargado)</string>
@@ -96,5 +96,6 @@
     <string name="autor">Autor</string>
     <string name="server">Servidor</string>
     <string name="estado">Estado</string>
+    <string name="nodisponible">N/D</string>
 
 </resources>

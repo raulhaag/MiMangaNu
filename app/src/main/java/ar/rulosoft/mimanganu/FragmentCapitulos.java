@@ -59,90 +59,87 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
             }
         });
 
-        if (android.os.Build.VERSION.SDK_INT < 11)
-            registerForContextMenu(lista);
-        else {
-            lista.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-            lista.setMultiChoiceModeListener(new MultiChoiceModeListener() {
+        lista.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        lista.setMultiChoiceModeListener(new MultiChoiceModeListener() {
 
-                @Override
-                public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-                    return false;
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                capitulosAdapter.clearSelection();
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = getActivity().getMenuInflater();
+                inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+                SparseBooleanArray selection = capitulosAdapter.getSelection();
+                Manga manga = ((ActivityCapitulos) getActivity()).manga;
+                ServerBase s = ServerBase.getServer(manga.getServerId());
+
+                switch (item.getItemId()) {
+                    case R.id.seleccionar_todo:
+                        capitulosAdapter.selectAll();
+                        return true;
+                    case R.id.seleccionar_nada:
+                        capitulosAdapter.clearSelection();
+                        return true;
+                    case R.id.borrar_imagenes:
+                        for (int i = 0; i < selection.size(); i++) {
+                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            c.borrarImagenesLiberarEspacio(getActivity(), manga, s);
+                        }
+                        break;
+                    case R.id.borrar:
+                        int[] selecionados = new int[selection.size()];
+                        for (int j = 0; j < selection.size(); j++) {
+                            selecionados[j] = selection.keyAt(j);
+                        }
+                        Arrays.sort(selecionados);
+                        for (int i = selection.size() - 1; i >= 0; i--) {
+                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            c.borrar(getActivity(), manga, s);
+                            capitulosAdapter.remove(c);
+
+                        }
+                        break;
+                    case R.id.reset:
+                        for (int i = 0; i < selection.size(); i++) {
+                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            c.reset(getActivity(), manga, s);
+                        }
+                        break;
+                    case R.id.marcar_leido:
+                        for (int i = selection.size() - 1; i >= 0; i--) {
+                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            c.marcarComoLeido(getActivity());
+                        }
+                        break;
                 }
+                capitulosAdapter.notifyDataSetChanged();
+                mode.finish();
+                return false;
+            }
 
-                @Override
-                public void onDestroyActionMode(ActionMode mode) {
-                    capitulosAdapter.clearSelection();
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) {
+                    capitulosAdapter.setNewSelection(position, true);
+                } else {
+                    capitulosAdapter.removeSelection(position);
                 }
+            }
+        });
 
-                @Override
-                public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-                    MenuInflater inflater = getActivity().getMenuInflater();
-                    inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
-                    return true;
-                }
-
-                @Override
-                public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-
-                    SparseBooleanArray selection = capitulosAdapter.getSelection();
-                    Manga manga = ((ActivityCapitulos) getActivity()).manga;
-                    ServerBase s = ServerBase.getServer(manga.getServerId());
-
-                    switch (item.getItemId()) {
-                        case R.id.seleccionar_todo:
-                            capitulosAdapter.selectAll();
-                            return true;
-                        case R.id.seleccionar_nada:
-                            capitulosAdapter.clearSelection();
-                            return true;
-                        case R.id.borrar_imagenes:
-                            for (int i = 0; i < selection.size(); i++) {
-                                Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
-                                c.borrarImagenesLiberarEspacio(getActivity(), manga, s);
-                            }
-                            break;
-                        case R.id.borrar:
-                            int[] selecionados = new int[selection.size()];
-                            for (int j = 0; j < selection.size(); j++) {
-                                selecionados[j] = selection.keyAt(j);
-                            }
-                            Arrays.sort(selecionados);
-                            for (int i = selection.size() - 1; i >= 0; i--) {
-                                Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
-                                c.borrar(getActivity(), manga, s);
-                                capitulosAdapter.remove(c);
-
-                            }
-                            break;
-                        case R.id.reset:
-                            for (int i = 0; i < selection.size(); i++) {
-                                Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
-                                c.reset(getActivity(), manga, s);
-                            }
-                            break;
-                        case R.id.marcar_leido:
-                            for (int i = selection.size() - 1; i >= 0; i--) {
-                                Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
-                                c.marcarComoLeido(getActivity());
-                            }
-                            break;
-                    }
-                    capitulosAdapter.notifyDataSetChanged();
-                    mode.finish();
-                    return false;
-                }
-
-                @Override
-                public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
-                    if (checked) {
-                        capitulosAdapter.setNewSelection(position, checked);
-                    } else {
-                        capitulosAdapter.removeSelection(position);
-                    }
-                }
-            });
-        }
 
         super.onActivityCreated(savedInstanceState);
     }
@@ -242,8 +239,8 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                 asyncdialog.dismiss();
                 Database.updateCapitulo(getActivity(), result);
                 ServicioColaDeDescarga.agregarDescarga(getActivity(), result, true);
-                int firs = lista.getFirstVisiblePosition();
-                Database.updateMangaLastIndex(getActivity(), ((ActivityCapitulos) getActivity()).manga.getId(), firs);
+                int first = lista.getFirstVisiblePosition();
+                Database.updateMangaLastIndex(getActivity(), ((ActivityCapitulos) getActivity()).manga.getId(), first);
                 Intent intent = new Intent(getActivity(), ActivityLector.class);
                 intent.putExtra(ActivityCapitulos.CAPITULO_ID, result.getId());
                 getActivity().startActivity(intent);

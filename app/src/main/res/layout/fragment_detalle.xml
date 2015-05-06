@@ -1,6 +1,7 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/str"
     android:layout_height="match_parent"
     tools:context="ar.rulosoft.mimanganu.ActivityCapitulos$PlaceholderFragment">
 
@@ -10,4 +11,4 @@
         android:layout_height="match_parent"
         android:layout_alignParentTop="true" />
 
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

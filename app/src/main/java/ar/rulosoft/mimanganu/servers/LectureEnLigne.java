@@ -37,18 +37,21 @@ public class LectureEnLigne extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga manga) throws Exception {
-        if (manga.getCapitulos() == null || manga.getCapitulos().size() == 0)
-            cargarPortada(manga);
+    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
+        if (manga.getCapitulos() == null || manga.getCapitulos().size() == 0||reinicia)
+            cargarPortada(manga, reinicia);
     }
 
     @Override
-    public void cargarPortada(Manga manga) throws Exception {
+    public void cargarPortada(Manga manga, boolean reinicia) throws Exception {
 
         String data = new Navegador().get((manga.getPath()));// :</p><p>(.+?)</p>
 
         manga.setSinopsis(getFirstMacthDefault("</p>[\\s]+<p>(.+?)</p>", data, "Sans synopsis"));
         manga.setImages("http://www.lecture-en-ligne.com/" + getFirstMacthDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
+
+        //autor
+        manga.setAutor(getFirstMacthDefault("Auteur :.+?d>(.+?)<",data,""));
 
         // capitulos
         ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
