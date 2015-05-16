@@ -11,6 +11,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -94,8 +95,6 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         else
             direccion = Direccion.values()[Integer.parseInt(pm.getString(ActivityCapitulos.DIRECCION, "" + Direccion.R2L.ordinal()))];
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        // actionBar = getSupportActionBar();
-        // actionBar.hide();
 
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
@@ -131,12 +130,10 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
 
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
             }
 
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
             }
         };
 
@@ -155,6 +152,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         seekBar.setMax(capitulo.getPaginas());
         actionToolbar = (Toolbar) findViewById(R.id.action_bar);
         actionToolbar.setTitle(capitulo.getTitulo());
+        actionToolbar.setTitleTextColor(Color.WHITE);
         s = ServerBase.getServer(manga.getServerId());
         if (ServicioColaDeDescarga.actual != null)
             ServicioColaDeDescarga.actual.setDescargaListener(this);
@@ -166,13 +164,27 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         seeker_Layout.setVisibility(View.GONE);
 
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
-        actionToolbar.setBackgroundDrawable(new ColorDrawable(colors[0]));
-        seeker_Layout.setBackgroundDrawable(new ColorDrawable(colors[0]));
-        seekBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            actionToolbar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            seeker_Layout.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            seekBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        } else {
+            actionToolbar.setBackground(new ColorDrawable(colors[0]));
+            seeker_Layout.setBackground(new ColorDrawable(colors[0]));
+            seekBar.setBackground(new ColorDrawable(colors[0]));
+        }
         if (capitulo.getEstadoLectura() != Capitulo.LEIDO)
             capitulo.setEstadoLectura(Capitulo.LEYENDO);
         Database.updateCapitulo(ActivityLector.this, capitulo);
         setSupportActionBar(actionToolbar);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!controlVisible)
+            super.onBackPressed();
+        else
+            onCenterTap();
     }
 
     public void actualizarIcono(DisplayType displayType) {

@@ -93,11 +93,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (id == R.id.action_buscarnuevos) {
-            if (!BuscarNuevo.running)
-                new BuscarNuevo().setActivity(ActivityMisMangas.this).execute();
-            return true;
-        } else if (id == R.id.licencia) {
+         if (id == R.id.licencia) {
             Intent intent = new Intent(this, ActivityLicencia.class);
             startActivity(intent);
         } else if (id == R.id.action_esconder_leidos) {
@@ -131,7 +127,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
     @Override
     protected void onPause() {
-        BuscarNuevo.onActivityPaused();
         super.onPause();
     }
 
@@ -142,7 +137,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         button_add.setColorNormal(colors[1]);
         button_add.setColorPressed(colors[3]);
         button_add.setColorRipple(colors[0]);
-        BuscarNuevo.onActivityResumed(ActivityMisMangas.this);
         super.onResume();
     }
 
@@ -158,98 +152,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
             anim.setDuration(200);
             anim.start();
             mViewPager.setCurrentItem(0);
-        }
-    }
-
-    public static class BuscarNuevo extends AsyncTask<Void, String, Integer> {
-
-        static boolean running = false;
-        static BuscarNuevo actual = null;
-        Activity activity;
-        ProgressDialog progreso;
-        String msg;
-
-        public static void onActivityPaused() {
-            if (running && actual.progreso != null)
-                actual.progreso.dismiss();
-        }
-
-        public static void onActivityResumed(Activity actvt) {
-            if (running && actual != null) {
-                actual.progreso = new ProgressDialog(actvt);
-                actual.progreso.setCancelable(false);
-                actual.progreso.setMessage(actual.msg);
-                actual.progreso.show();
-            }
-        }
-
-        public BuscarNuevo setActivity(Activity activity) {
-            this.activity = activity;
-            return this;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            running = true;
-            actual = this;
-            progreso = new ProgressDialog(activity);
-            progreso.setCancelable(false);
-            msg = activity.getResources().getString(R.string.buscandonuevo);
-            progreso.setTitle(msg);
-            progreso.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            final String s = values[0];
-            msg = s;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    progreso.setMessage(s);
-                }
-            });
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            ArrayList<Manga> mangas = Database.getMangasForUpdates(activity);
-            int result = 0;
-            Database.removerCapitulosHuerfanos(activity);
-            for (int i = 0; i < mangas.size(); i++) {
-                Manga manga = mangas.get(i);
-                ServerBase s = ServerBase.getServer(manga.getServerId());
-                try {
-                    onProgressUpdate(manga.getTitulo());
-                    s.cargarCapitulos(manga, false);
-                    int diff = s.buscarNuevosCapitulos(manga, activity);
-                    result += diff;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            try {
-                if (((ActivityMisMangas) activity).fragmentMisMangas != null && result > 0)
-                    ((ActivityMisMangas) activity).fragmentMisMangas.cargarMangas();
-            } catch (Exception e) {
-                // TODO
-                e.printStackTrace();
-            }
-            if (progreso != null && progreso.isShowing()) {
-                try {
-                    progreso.dismiss();
-                } catch (Exception e) {
-                }
-            }
-            running = false;
-            actual = null;
         }
     }
 
@@ -286,6 +188,10 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         public CharSequence getPageTitle(int position) {
             return tabs[position];
         }
+    }
+
+    public interface OnFinishTask{
+        void onFinish();
     }
 
 }

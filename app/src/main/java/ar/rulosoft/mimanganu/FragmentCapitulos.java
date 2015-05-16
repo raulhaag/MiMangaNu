@@ -1,12 +1,15 @@
 package ar.rulosoft.mimanganu;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.ContextMenu;
@@ -24,6 +27,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -47,7 +51,6 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
         return rView;
     }
 
-    @SuppressLint("NewApi")
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         lista.setOnItemClickListener(new OnItemClickListener() {
@@ -76,7 +79,16 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = getActivity().getMenuInflater();
                 inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
+                final ActionBar actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
+                try {
+                    final Field contextView = actionBar.getClass().getDeclaredField("mContextView");
+                    ((View) contextView.get(actionBar)).setBackgroundDrawable(new ColorDrawable(Color.parseColor("#FEFEFE")));
+                } catch (final Exception ignored) {
+                    // Nothing to do
+                }
+
                 return true;
+
             }
 
             @Override

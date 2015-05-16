@@ -1,5 +1,6 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/str"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"
@@ -14,4 +15,4 @@
         android:layout_alignParentTop="true"
         android:numColumns="3" />
 
-</RelativeLayout>
+</android.support.v4.widget.SwipeRefreshLayout>

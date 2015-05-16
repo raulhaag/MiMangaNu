@@ -1,9 +1,11 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -36,6 +38,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     RecyclerView grilla;
     MangasRecAdapter adapter;
     private Integer menuFor;
+    SwipeRefreshLayout str;
 
     public static void DeleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -48,6 +51,14 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rView = inflater.inflate(R.layout.fragment_mis_mangas, container, false);
         grilla = (RecyclerView) rView.findViewById(R.id.grilla_mis_mangas);
+        str = (SwipeRefreshLayout) rView.findViewById(R.id.str);
+        str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                BuscarNuevo bn = new BuscarNuevo();
+                bn.execute();
+            }
+        });
         return rView;
     }
 
@@ -60,7 +71,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         float density = getResources().getDisplayMetrics().density;
         float dpWidth = outMetrics.widthPixels / density;
         int columnas = (int) (dpWidth / 150);
-
         if (columnas < 2)
             columnas = 2;
         else if (columnas > 6)
@@ -106,6 +116,8 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public void onResume() {
         cargarMangas();
         ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
+        int[] colors = ((ActivityMisMangas) getActivity()).colors;
+        str.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
     }
 
@@ -136,4 +148,62 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         getActivity().startActivity(intent);
     }
 
+
+    public class BuscarNuevo extends AsyncTask<Void, String, Integer> {
+
+        String msg;
+        String titulo;
+
+        @Override
+        protected void onPreExecute() {
+            msg = getActivity().getResources().getString(R.string.buscandonuevo);
+            titulo = getActivity().getTitle().toString();
+            getActivity().setTitle(msg);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            final String s = values[0];
+            msg = s;
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getActivity().setTitle(s);
+                }
+            });
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
+            int result = 0;
+            Database.removerCapitulosHuerfanos(getActivity());
+            for (int i = 0; i < mangas.size(); i++) {
+                Manga manga = mangas.get(i);
+                ServerBase s = ServerBase.getServer(manga.getServerId());
+                try {
+                    onProgressUpdate(manga.getTitulo());
+                    s.cargarCapitulos(manga, false);
+                    int diff = s.buscarNuevosCapitulos(manga, getActivity());
+                    result += diff;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            getActivity().setTitle(titulo);
+            try {
+                cargarMangas();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            str.setRefreshing(false);
+        }
+    }
 }
