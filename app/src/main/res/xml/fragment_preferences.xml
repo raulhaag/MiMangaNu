@@ -12,15 +12,6 @@
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria"></CheckBoxPreference>
     </PreferenceCategory>
-    <PreferenceCategory android:title="@string/opciones_caps">
-        <ListPreference
-            android:dialogTitle="@string/orden_de_capitulos"
-            android:entries="@array/ordenes_array"
-            android:entryValues="@array/ordenes_valores"
-            android:key="ordendecapitulos"
-            android:summary="@string/orden_de_capitulos_subtitle"
-            android:title="@string/orden_de_capitulos" />
-    </PreferenceCategory>
     <PreferenceCategory android:title="@string/opciones_lec">
         <ListPreference
             android:dialogTitle="@string/sentido_lectura"

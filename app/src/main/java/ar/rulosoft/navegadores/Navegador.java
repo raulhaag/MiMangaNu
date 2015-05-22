@@ -37,7 +37,7 @@ public class Navegador {
         URL url = new URL(web);
         conn = (HttpURLConnection) url.openConnection();
         conn.setConnectTimeout(10000);
-        conn.setReadTimeout(10000);
+        conn.setReadTimeout(5000);
         addHeader("Accept-Encoding", "gzip,deflate");
         setHeaders();
         if (getLast_cookie() != null && getLast_cookie().length() > 2) {
@@ -45,7 +45,6 @@ public class Navegador {
         }
         // conn.connect();
         boolean redirect = false;
-
         // 3xx es redi
         int status = conn.getResponseCode();
         if (status != HttpURLConnection.HTTP_OK) {
@@ -64,7 +63,6 @@ public class Navegador {
             conn = (HttpURLConnection) new URL(newUrl).openConnection();
             conn.setRequestProperty("Cookie", getLast_cookie());
             setHeaders();
-
         }
 
         if (conn.getResponseCode() == 200) {
@@ -80,12 +78,13 @@ public class Navegador {
         } else {
             return "";
         }
+
     }
 
     public String get(String ip, String path, String host) throws Exception {
         URL url = new URL("http://" + ip + path);
         conn = (HttpURLConnection) url.openConnection();
-        conn.setConnectTimeout(5000);
+        conn.setConnectTimeout(10000);
         conn.setReadTimeout(5000);
         addHeader("Accept-Encoding", "gzip,deflate");
         addHeader("Host", host);

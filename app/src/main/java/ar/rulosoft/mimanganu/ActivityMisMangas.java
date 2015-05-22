@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -152,7 +153,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         List<Fragment> fragments;
-        private String tabs[] = new String[]{getResources().getString(R.string.mismangas), getResources().getString(R.string.masmangas)};
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -173,15 +173,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
             return fragments.size();
         }
 
-        @Override
-        public float getPageWidth(int position) {
-            return 1f;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return tabs[position];
-        }
     }
 
     public interface OnFinishTask {

@@ -32,6 +32,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.utils.FragmentBusquedaAsynkTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityManga extends ActionBarActivity {
@@ -44,13 +45,14 @@ public class ActivityManga extends ActionBarActivity {
         ASD, DSC
     }
 
-    SwipeRefreshLayout str;
+    public SwipeRefreshLayout str;
     public static final String DIRECCION = "direcciondelectura";
     public static final String ORDEN = "ordendecapitulos";
     public static final String CAPITULO_ID = "cap_id";
     public Manga manga;
     public Direccion direccion;
     int[] colors;
+    FragmentBusquedaAsynkTask buscarNuevos;
     ListView lista;
     SharedPreferences pm;
     MenuItem sentido;
@@ -75,15 +77,32 @@ public class ActivityManga extends ActionBarActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
+        if (savedInstanceState == null) {
+            buscarNuevos = new FragmentBusquedaAsynkTask();
+            getSupportFragmentManager().beginTransaction().add(buscarNuevos, "BUSCAR_NUEVOS").commit();
+        } else {
+            buscarNuevos = (FragmentBusquedaAsynkTask) getSupportFragmentManager().findFragmentByTag("BUSCAR_NUEVOS");
+            if (buscarNuevos.getStatus() == AsyncTask.Status.RUNNING) {
+                str.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        str.setRefreshing(true);
+                    }
+                });
+            }
+        }
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new BuscarNuevo().setActivity(ActivityManga.this).execute(manga);
+                buscarNuevos.iniciaTarea(manga, ActivityManga.this);
             }
         });
+        lista.setDivider(new ColorDrawable(colors[0]));
+        lista.setDividerHeight(1);
         datos = new ControlInfoNoScroll(ActivityManga.this);
         lista.addHeaderView(datos);
         datos.setColor(colors[0]);
+        CapituloAdapter.setSELECCIONADO(colors[1]);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -263,8 +282,6 @@ public class ActivityManga extends ActionBarActivity {
             Database.marcarTodoComoNoLeido(ActivityManga.this, this.id);
             manga = Database.getFullManga(getApplicationContext(), this.id);
             cargarCapitulos(manga.getCapitulos());
-        } else if (id == R.id.action_buscarnuevos) {
-            new BuscarNuevo().execute(manga);
         } else if (id == R.id.action_sentido) {
             // TODO check database
             int direccion = -1;
@@ -380,70 +397,4 @@ public class ActivityManga extends ActionBarActivity {
 
     }
 
-    public static class BuscarNuevo extends AsyncTask<Manga, String, Integer> {
-        static boolean running = false;
-        static BuscarNuevo actual = null;
-        ActivityManga activity;
-        int mangaId = 0;
-        String msg;
-        String orgMsg;
-
-        public BuscarNuevo setActivity(ActivityManga activity) {
-            this.activity = activity;
-            return this;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            running = true;
-            actual = this;
-            msg = activity.getResources().getString(R.string.buscandonuevo);
-            orgMsg = activity.getTitle().toString();
-            activity.setTitle(msg);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            final String s = values[0];
-            msg = s;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    activity.setTitle(s);
-                }
-            });
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected Integer doInBackground(Manga... params) {
-            int result = 0;
-            Database.removerCapitulosHuerfanos(activity);
-            ServerBase s = ServerBase.getServer(params[0].getServerId());
-            mangaId = params[0].getId();
-            try {
-                onProgressUpdate(params[0].getTitulo());
-                params[0].clearCapitulos();
-                s.cargarCapitulos(params[0], true);
-                int diff = s.buscarNuevosCapitulos(params[0].getId(), activity);
-                result += diff;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-                Manga manga = Database.getFullManga(activity, mangaId);
-                activity.cargarCapitulos(manga.getCapitulos());
-                activity.cargarDatos(manga);
-
-            activity.str.setRefreshing(false);
-            activity.setTitle(orgMsg);
-            running = false;
-            actual = null;
-        }
-    }
 }

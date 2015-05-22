@@ -227,7 +227,6 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
                         adap.addAll(result);
                     }
                 }
-                cargando.setVisibility(ProgressBar.INVISIBLE);
                 mStart = false;
                 if (neuvaTarea) {
                     adap = null;
@@ -238,6 +237,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
                     neuvaTarea = false;
                 }
             }
+            cargando.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 

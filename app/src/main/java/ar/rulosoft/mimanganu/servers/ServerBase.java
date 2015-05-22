@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.componentes.Capitulo;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.navegadores.Navegador;
 
 public abstract class ServerBase {
 
@@ -190,7 +191,7 @@ public abstract class ServerBase {
         }
 
         if (cambios)
-            Database.updateManga(context, mangaDb);
+            Database.updateMangaNotime(context, mangaDb);
 
         return returnValue;
     }
@@ -248,6 +249,12 @@ public abstract class ServerBase {
 
     public boolean tieneNavegacionVisual() {
         return true;
+    }
+
+    Navegador getNavegadorConHeader() {
+        Navegador nav = new Navegador();
+        nav.addHeader("User-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
+        return nav;
     }
 
 }

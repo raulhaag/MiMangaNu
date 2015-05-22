@@ -8,8 +8,8 @@ android {
         applicationId "ar.rulosoft.mimanganu"
         minSdkVersion 14
         targetSdkVersion 21
-        versionCode 25
-        versionName "1.25"
+        versionCode 26
+        versionName "1.26"
     }
     buildTypes {
         release {
@@ -17,7 +17,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions.encoding = 'windows-1251'
+    compileOptions.encoding = 'ISO-8859-1'
 }
 
 dependencies {

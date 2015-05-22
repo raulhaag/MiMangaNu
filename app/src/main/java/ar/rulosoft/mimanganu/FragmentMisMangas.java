@@ -35,10 +35,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public static final int MODO_ULTIMA_LECTURA_Y_NUEVOS = 0;
     public static final int MODO_SIN_LEER = 1;
 
+    public boolean buscar = false;
     RecyclerView grilla;
     MangasRecAdapter adapter;
     private Integer menuFor;
     SwipeRefreshLayout str;
+    BuscarNuevo buscarNuevo;
 
     public static void DeleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -55,8 +57,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                BuscarNuevo bn = new BuscarNuevo();
-                bn.execute();
+                if(buscarNuevo == null ||buscarNuevo.getStatus() == AsyncTask.Status.FINISHED){
+                buscarNuevo = new BuscarNuevo();
+                buscarNuevo.execute();
+                }
             }
         });
         return rView;
@@ -65,6 +69,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
@@ -76,6 +81,14 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         else if (columnas > 6)
             columnas = 6;
         grilla.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
+        if(buscarNuevo != null && buscarNuevo.getStatus() == AsyncTask.Status.RUNNING){
+            str.post(new Runnable() {
+                @Override
+                public void run() {
+                    str.setRefreshing(true);
+                }
+            });
+        }
     }
 
     @Override
@@ -148,14 +161,13 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         getActivity().startActivity(intent);
     }
 
-
     public class BuscarNuevo extends AsyncTask<Void, String, Integer> {
-
         String msg;
         String titulo;
 
         @Override
         protected void onPreExecute() {
+            buscar = true;
             msg = getActivity().getResources().getString(R.string.buscandonuevo);
             titulo = getActivity().getTitle().toString();
             getActivity().setTitle(msg);
@@ -197,13 +209,14 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
         @Override
         protected void onPostExecute(Integer result) {
-            getActivity().setTitle(titulo);
             try {
+                getActivity().setTitle(titulo);
                 cargarMangas();
             } catch (Exception e) {
                 e.printStackTrace();
             }
             str.setRefreshing(false);
+            buscar = false;
         }
     }
 }

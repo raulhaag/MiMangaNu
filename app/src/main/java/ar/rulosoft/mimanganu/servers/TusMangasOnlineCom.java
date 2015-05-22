@@ -15,9 +15,9 @@ import ar.rulosoft.navegadores.Navegador;
 public class TusMangasOnlineCom extends ServerBase {
 
     public static String[] generos = new String[]{"#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-            "U", "V", "W", "X", "Y", "Z", "Acci贸n", "Artes Marciales", "Aventura", "Ciencia Ficci贸n", "Comedia", "Deportes", "Drama", "Ecchi", "Fantas铆a",
-            "Harem", "Hist贸rico", "Horror", "Josei", "Magia", "Mecha", "Misterio", "Psicol贸gico", "Recuentos de la vida", "Romance", "Seinen", "Sh艒jo",
-            "Sh艒nen", "Shonen-ai", "Shoujo-ai", "Sobrenatural", "Suspense", "Tragedia", "Vida escolar", "Yuri"};
+            "U", "V", "W", "X", "Y", "Z", "Acci髇", "Artes Marciales", "Aventura", "Ciencia Ficci髇", "Comedia", "Deportes", "Drama", "Ecchi", "Fantas韆",
+            "Harem", "Hist髍ico", "Horror", "Josei", "Magia", "Mecha", "Misterio", "Psicol骻ico", "Recuentos de la vida", "Romance", "Seinen", "Shoujo",
+            "Shonen", "Shonen-ai", "Shoujo-ai", "Sobrenatural", "Suspense", "Tragedia", "Vida escolar", "Yuri"};
     public static String[] generosV = new String[]{"http://www.tumangaonline.com/listado-mangas/mangas?tipo=2&filter=1",
             "http://www.tumangaonline.com/listado-mangas/mangas?tipo=2&filter=A", "http://www.tumangaonline.com/listado-mangas/mangas?tipo=2&filter=B",
             "http://www.tumangaonline.com/listado-mangas/mangas?tipo=2&filter=C", "http://www.tumangaonline.com/listado-mangas/mangas?tipo=2&filter=D",
@@ -74,7 +74,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        String source = (new Navegador()).get("http://www.tumangaonline.com/listado-mangas/mangas?tipo=1&filter=" + URLEncoder.encode(termino, "UTF-8"));
+        String source = getNavegadorConHeader().get("http://www.tumangaonline.com/listado-mangas/mangas?tipo=1&filter=" + URLEncoder.encode(termino, "UTF-8"));
         return getMangasFromSource(source);
     }
 
@@ -86,7 +86,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public void cargarPortada(Manga m, boolean reinicia) throws Exception {
-        String source = (new Navegador()).get(m.getPath());
+        String source = getNavegadorConHeader().get(m.getPath());
         m.setSinopsis(Html.fromHtml(getFirstMacthDefault("(<p itemprop=\"description\".+?</p></div>)", source, "Sin sinopsis")).toString());
         m.setImages(getFirstMacthDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
         m.setFinalizado(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
@@ -115,7 +115,7 @@ public class TusMangasOnlineCom extends ServerBase {
             if (c.getExtra() == null || c.getExtra().length() < 2) {
                 getExtraWeb(c);
             }
-            String source = new Navegador().get(c.getExtra());
+            String source = getNavegadorConHeader().get(c.getExtra());
             Pattern p = Pattern.compile("<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
             String imgBase = "";
@@ -138,8 +138,8 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     private void getExtraWeb(Capitulo c) throws Exception {
-        String source = new Navegador().get(c.getPath());
-        String fs = getFirstMacth("(http://www.tumangaonline.com/visor/.+?)\"", source, "Error al iniciar Cap铆tulo");
+        String source = getNavegadorConHeader().get(c.getPath());
+        String fs = getFirstMacth("(http://www.tumangaonline.com/visor/.+?)\"", source, "Error al iniciar Cap韙ulo");
         c.setExtra(fs);
     }
 
@@ -148,14 +148,14 @@ public class TusMangasOnlineCom extends ServerBase {
         if (!(c.getExtra() != null && c.getExtra().length() > 1)) {
             getExtraWeb(c);
         }
-        String source = new Navegador().get(c.getExtra());
-        String paginas = getFirstMacth("<option value=\"(\\d+)\" >P[^\"]+</option>[\\s]+</select>", source, "Error al iniciar Cap铆tulo");
+        String source = getNavegadorConHeader().get(c.getExtra());
+        String paginas = getFirstMacth("<option value=\"(\\d+)\" >P[^\"]+</option>[\\s]+</select>", source, "Error al iniciar Cap韙ulo");
         c.setPaginas(Integer.parseInt(paginas));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        String source = (new Navegador()).get(generosV[categoria] + "&pag=" + pagina);
+        String source = getNavegadorConHeader().get(generosV[categoria] + "&pag=" + pagina);
         return getMangasFromSource(source);
     }
 

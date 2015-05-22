@@ -98,6 +98,24 @@ public class Database extends SQLiteOpenHelper {
         getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + manga.getId(), null);
     }
 
+    public static void updateMangaNotime(Context context, Manga manga) {
+        ContentValues cv = new ContentValues();
+        cv.put(COL_NOMBRE, manga.titulo);
+        cv.put(COL_PATH, manga.path);
+        cv.put(COL_IMAGE, manga.images);
+        cv.put(COL_SINOPSIS, manga.sinopsis);
+        cv.put(COL_SERVER_ID, manga.serverId);
+        cv.put(COL_AUTOR, manga.getAutor());
+
+        if (manga.finalizado)
+            cv.put(COL_BUSCAR, 1);
+        else
+            cv.put(COL_BUSCAR, 0);
+
+        getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + manga.getId(), null);
+    }
+
+
     public static void updateMangaLeido(Context c, int mid) {
         ContentValues cv = new ContentValues();
         cv.put(COL_LAST_REAS, System.currentTimeMillis());
