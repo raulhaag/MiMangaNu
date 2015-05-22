@@ -1,14 +1,9 @@
 package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
-import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -23,16 +18,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
-
 import com.melnykov.fab.FloatingActionButton;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.rulosoft.mimanganu.componentes.Database;
-import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.MasMangasPageTransformer;
-import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityMisMangas extends ActionBarActivity implements OnClickListener {
@@ -93,7 +84,10 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-         if (id == R.id.licencia) {
+        if (id == R.id.descargas) {
+            Intent intent = new Intent(this, ActivityDescargas.class);
+            startActivity(intent);
+        } else if (id == R.id.licencia) {
             Intent intent = new Intent(this, ActivityLicencia.class);
             startActivity(intent);
         } else if (id == R.id.action_esconder_leidos) {
@@ -190,7 +184,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         }
     }
 
-    public interface OnFinishTask{
+    public interface OnFinishTask {
         void onFinish();
     }
 

@@ -143,7 +143,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     @Override
     public void onMangaClick(Manga manga) {
-        Intent intent = new Intent(getActivity(), ActivityCapitulos.class);
+        Intent intent = new Intent(getActivity(), ActivityManga.class);
         intent.putExtra(ActivityMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
     }
@@ -186,7 +186,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 try {
                     onProgressUpdate(manga.getTitulo());
                     s.cargarCapitulos(manga, false);
-                    int diff = s.buscarNuevosCapitulos(manga, getActivity());
+                    int diff = s.buscarNuevosCapitulos(manga.getId(), getActivity());
                     result += diff;
                 } catch (Exception e) {
                     e.printStackTrace();

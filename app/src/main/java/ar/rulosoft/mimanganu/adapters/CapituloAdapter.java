@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBarActivity;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.ActivityCapitulos;
+import ar.rulosoft.mimanganu.ActivityManga;
 import ar.rulosoft.mimanganu.FragmentMisMangas;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Capitulo;
@@ -35,12 +37,12 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
     public static int SELECCIONADO = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
-    ActivityCapitulos activity;
+    ActivityManga activity;
     private LayoutInflater li;
 
     public CapituloAdapter(Activity context, List<Capitulo> items) {
         super(context, listItem, items);
-        activity = (ActivityCapitulos) context;
+        activity = (ActivityManga) context;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -115,7 +117,7 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
     }
 
     public void setNewSelection(int position, boolean value) {
-        selected.put(position, value);
+        selected.put(position - 1, value);
         notifyDataSetChanged();
     }
 
@@ -127,12 +129,22 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
     }
 
     public void removeSelection(int position) {
-        selected.delete(position);
+        selected.delete(position - 1);
         notifyDataSetChanged();
     }
 
     public void clearSelection() {
         selected.clear();
+        notifyDataSetChanged();
+    }
+
+
+    public void setSelectedOrUnselected(int position){
+        if(selected.indexOfKey(position - 1) >= 0){
+            selected.delete(position - 1);
+        }else{
+            selected.put(position - 1, true);
+        }
         notifyDataSetChanged();
     }
 
@@ -203,4 +215,7 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
         }
     }
 
+    public static void setSELECCIONADO(int SELECCIONADO) {
+        CapituloAdapter.SELECCIONADO = SELECCIONADO;
+    }
 }

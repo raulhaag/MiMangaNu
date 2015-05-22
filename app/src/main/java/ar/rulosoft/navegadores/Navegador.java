@@ -36,8 +36,8 @@ public class Navegador {
     public String get(String web) throws Exception {
         URL url = new URL(web);
         conn = (HttpURLConnection) url.openConnection();
-        conn.setConnectTimeout(5000);
-        conn.setReadTimeout(5000);
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(10000);
         addHeader("Accept-Encoding", "gzip,deflate");
         setHeaders();
         if (getLast_cookie() != null && getLast_cookie().length() > 2) {

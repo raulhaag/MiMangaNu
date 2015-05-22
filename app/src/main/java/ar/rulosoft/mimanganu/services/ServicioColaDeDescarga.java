@@ -131,13 +131,13 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     public static String generarRutaBase(ServerBase s, Manga m, Capitulo c, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" + cleanFileName(m.getTitulo()) + "/" + cleanFileName(c.getTitulo());
+        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" + cleanFileName(m.getTitulo()).trim() + "/" + cleanFileName(c.getTitulo()).trim();
     }
 
     public static String generarRutaBase(ServerBase s, Manga m, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" + cleanFileName(m.getTitulo());
+        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()).trim() + "/" + cleanFileName(m.getTitulo()).trim();
     }
 
     public static String cleanFileName(String badFileName) {

@@ -1,13 +1,10 @@
 package ar.rulosoft.mimanganu;
 
-import android.annotation.SuppressLint;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.preference.PreferenceManager;
+import android.support.v7.app.ActionBarActivity;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -15,30 +12,30 @@ import java.util.ArrayList;
 import ar.rulosoft.mimanganu.adapters.DescargaAdapter;
 import ar.rulosoft.mimanganu.services.DescargaCapitulo;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class FragmentDescarga extends Fragment {
+
+public class ActivityDescargas extends ActionBarActivity {
 
     ListView lista;
     MostrarDescargas md;
     DescargaAdapter adap;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rView = inflater.inflate(R.layout.fragment_descargas, container, false);
-        lista = (ListView) rView.findViewById(R.id.descargas);
-        return rView;
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_descargas);
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        lista = (ListView) findViewById(R.id.descargas);
     }
 
-    @SuppressLint("NewApi")
     @Override
     public void onResume() {
-        adap = new DescargaAdapter(getActivity(), new ArrayList<DescargaCapitulo>());
+        adap = new DescargaAdapter(ActivityDescargas.this, new ArrayList<DescargaCapitulo>());
         lista.setAdapter(adap);
         md = new MostrarDescargas();
-        if (Build.VERSION.SDK_INT >= 11)
-            md.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        else
-            md.execute();
+        md.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         super.onResume();
     }
 
@@ -47,6 +44,7 @@ public class FragmentDescarga extends Fragment {
         md.stop();
         super.onPause();
     }
+
 
     private class MostrarDescargas extends AsyncTask<Void, Void, Void> {
         boolean seguir = true;
@@ -67,7 +65,7 @@ public class FragmentDescarga extends Fragment {
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            getActivity().runOnUiThread(new Runnable() {
+            ActivityDescargas.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     adap.notifyDataSetChanged();

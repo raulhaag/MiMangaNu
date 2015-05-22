@@ -87,7 +87,7 @@ public abstract class ServerBase {
     // capitulos
     public abstract void cargarCapitulos(Manga m, boolean recarga) throws Exception;
 
-    public abstract void cargarPortada(Manga m , boolean recarga) throws Exception;
+    public abstract void cargarPortada(Manga m, boolean recarga) throws Exception;
 
     // manga
     public abstract String getPagina(Capitulo c, int pagina);
@@ -107,9 +107,12 @@ public abstract class ServerBase {
 
     // public abstract boolean supportStatus();
 
-    public int buscarNuevosCapitulos(Manga manga, Context context) throws Exception {
+    public int buscarNuevosCapitulos(int id, Context context) throws Exception {
         int returnValue = 0;
-        Manga mangaDb = Database.getFullManga(context, manga.getId());
+        Manga mangaDb = Database.getFullManga(context, id);
+        Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitulo(), mangaDb.getPath(), false);
+        manga.setId(mangaDb.getId());
+        this.cargarPortada(manga, true);
         this.cargarCapitulos(manga, false);
         int diff = manga.getCapitulos().size() - mangaDb.getCapitulos().size();
         if (diff > 0) {
@@ -169,6 +172,26 @@ public abstract class ServerBase {
 
             returnValue = simpleList.size();
         }
+
+        boolean cambios = false;
+        if (mangaDb.getAutor() != manga.getAutor() && manga.getAutor().length() > 2) {
+            mangaDb.setAutor(manga.getAutor());
+            cambios = true;
+        }
+
+        if (mangaDb.getImages() != manga.getImages() && manga.getImages().length() > 2) {
+            mangaDb.setImages(manga.getImages());
+            cambios = true;
+        }
+
+        if (mangaDb.getSinopsis() != manga.getSinopsis() && manga.getSinopsis().length() > 2) {
+            mangaDb.setSinopsis(manga.getSinopsis());
+            cambios = true;
+        }
+
+        if (cambios)
+            Database.updateManga(context, mangaDb);
+
         return returnValue;
     }
 

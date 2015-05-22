@@ -24,9 +24,9 @@ public class DescargaAdapter extends ArrayAdapter<DescargaCapitulo> {
     ArrayList<DescargaCapitulo> descargas = new ArrayList<DescargaCapitulo>();
     private LayoutInflater li;
 
-    public DescargaAdapter(Context context, ArrayList<DescargaCapitulo> objects, ActivityCapitulos activityCapitulos) {
+    public DescargaAdapter(Context context, ArrayList<DescargaCapitulo> objects) {
         super(context, listItem);
-        estados = activityCapitulos.getResources().getStringArray(R.array.estados_descarga);
+        estados = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 

@@ -111,5 +111,9 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="server">Server</string>
     <string name="estado">Status</string>
     <string name="nodisponible">N/A</string>
+    <string name="title_activity_downloads">Destacargas</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_activity_manga">ActivityManga</string>
 
 </resources>

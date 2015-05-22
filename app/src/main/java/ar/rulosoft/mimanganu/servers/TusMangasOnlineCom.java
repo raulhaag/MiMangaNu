@@ -87,8 +87,8 @@ public class TusMangasOnlineCom extends ServerBase {
     @Override
     public void cargarPortada(Manga m, boolean reinicia) throws Exception {
         String source = (new Navegador()).get(m.getPath());
-        m.setSinopsis(getFirstMacthDefault("<p itemprop=\"description\">(.+?)</p>", source, "Sin sinopsis"));
-        m.setImages(getFirstMacthDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, ""));
+        m.setSinopsis(Html.fromHtml(getFirstMacthDefault("(<p itemprop=\"description\".+?</p></div>)", source, "Sin sinopsis")).toString());
+        m.setImages(getFirstMacthDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
         m.setFinalizado(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
         m.setAutor(getFirstMacthDefault("5&amp;filter=.+?>(.+?)<", source, ""));
 
@@ -122,7 +122,7 @@ public class TusMangasOnlineCom extends ServerBase {
             String imgStrip = "";
             String imagenes = "";
             if (m.find()) {
-                imgBase = "http://www.tumangaonline.com/subidas/" + m.group(1) + "/" + m.group(2) + "/" + m.group(3) + "/";
+                imgBase = "http://img1.tumangaonline.com/subidas/" + m.group(1) + "/" + m.group(2) + "/" + m.group(3) + "/";
                 imgStrip = m.group(4);
             } else {
                 throw new Exception("Error obteniendo Imagenes");
@@ -160,14 +160,16 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("[\\s]*<a href=\"([^\"]+)\"[^<]+<img src=\"(/./[^\"]+)\".+?title=\"([^\"]+)\"");
+        Pattern p = Pattern.compile("[\\s]*<a href=\"([^\"]+)\"[^<]+<img src=\"([^\"]+)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<Manga>();
         while (m.find()) {
             Manga manga = new Manga(TUSMANGAS, m.group(3), m.group(1), false);
-            manga.setImages(m.group(2).replace("/.", "http://www.tumangaonline.com/"));
+            manga.setImages(m.group(2));
             mangas.add(manga);
         }
+        mangas.remove(0);
+        mangas.remove(0);
         return mangas;
     }
 

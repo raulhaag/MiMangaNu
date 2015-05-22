@@ -39,6 +39,7 @@ public class ActivityCapitulos extends ActionBarActivity {
     public Direccion direccion;
     SectionsPagerAdapter mSectionsPagerAdapter;
     int[] colors;
+
     PagerTabStrip pagerStrip;
     FragmentCapitulos fragmentCapitulos;
     FragmentDetalles fragmentDetalles;
@@ -278,7 +279,7 @@ public class ActivityCapitulos extends ActionBarActivity {
                 onProgressUpdate(params[0].getTitulo());
                 params[0].clearCapitulos();
                 s.cargarCapitulos(params[0],true);
-                int diff = s.buscarNuevosCapitulos(params[0], activity);
+                int diff = s.buscarNuevosCapitulos(params[0].getId(), activity);
                 result += diff;
             } catch (Exception e) {
                 e.printStackTrace();

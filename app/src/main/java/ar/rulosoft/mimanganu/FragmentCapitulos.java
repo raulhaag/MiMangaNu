@@ -179,34 +179,6 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
         }
     }
 
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        MenuInflater inflater = getActivity().getMenuInflater();
-
-        if (v.getId() == R.id.lista)
-            ;// TODO
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        menu.setHeaderTitle(lista.getAdapter().getItem(info.position).toString());
-        inflater.inflate(R.menu.listitem_capitulo_menu, menu);
-        super.onCreateContextMenu(menu, v, menuInfo);
-    }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-
-        if (item.getItemId() == R.id.borrar) {
-            Capitulo c = (Capitulo) lista.getAdapter().getItem(info.position);
-            c.borrar(getActivity());
-            capitulosAdapter.notifyDataSetChanged();
-        } else if (item.getItemId() == R.id.reset) {
-            Capitulo c = (Capitulo) lista.getAdapter().getItem(info.position);
-            c.reset(getActivity());
-            capitulosAdapter.notifyDataSetChanged();
-        }
-        return super.onContextItemSelected(item);
-    }
-
     private class GetPaginas extends AsyncTask<Capitulo, Void, Capitulo> {
         ProgressDialog asyncdialog = new ProgressDialog(getActivity());
         String error = "";
