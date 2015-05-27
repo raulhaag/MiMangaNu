@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:background="@color/accent_material_light"
             android:padding="5dp"
-            android:text="Sinopsis"
+            android:text="@string/sinopsis"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@android:color/white"
             android:textStyle="bold" />

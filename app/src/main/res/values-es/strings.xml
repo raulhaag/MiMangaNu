@@ -97,5 +97,6 @@
     <string name="server">Servidor</string>
     <string name="estado">Estado</string>
     <string name="nodisponible">N/D</string>
+    <string name="sinopsis">Sinopsis</string>
 
 </resources>

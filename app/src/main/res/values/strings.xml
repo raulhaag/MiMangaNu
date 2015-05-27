@@ -114,5 +114,6 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_activity_manga">ActivityManga</string>
+    <string name="sinopsis">Synopsis</string>
 
 </resources>
