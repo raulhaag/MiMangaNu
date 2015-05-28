@@ -29,19 +29,26 @@
 
     <ImageView
         android:id="@+id/notif"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/notif"
         android:visibility="invisible" />
 
     <ImageView
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/info_bg" />
+
+    <ImageView
         android:id="@+id/server"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="12sp"
+        android:layout_height="12sp"
         android:layout_alignLeft="@+id/tapa"
         android:layout_alignTop="@+id/tapa"
-        android:layout_margin="2dp" />
+        android:layout_margin="6sp" />
 
 </RelativeLayout>
