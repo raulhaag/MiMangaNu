@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/notif"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="50sp"
+            android:layout_height="50sp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:src="@drawable/notif"
