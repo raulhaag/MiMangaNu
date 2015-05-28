@@ -60,9 +60,10 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
 
         if (item != null) {
             holder.textViewNombre.setText(android.text.Html.fromHtml(item.getTitulo()));
-            holder.textViewEstado.setText("");
+            holder.textViewEstado.setVisibility(View.GONE);
             switch (item.getEstadoLectura()) {
                 case Capitulo.NUEVO:
+                    holder.textViewEstado.setVisibility(View.VISIBLE);
                     holder.textViewEstado.setText("Nuevo");
                     convertView.setBackgroundColor(TRANSPARENTE);
                     break;

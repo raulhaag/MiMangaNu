@@ -36,11 +36,12 @@
         android:layout_height="wrap_content"
         android:layout_alignRight="@+id/capitulo_paginas"
         android:layout_alignTop="@+id/boton"
-        android:background="#FFDB3939"
-        android:text="nuevo"
+        android:background="#e57373"
+        android:text="@string/State_New"
         android:textColor="#FFFFFFFF"
         android:textSize="10sp"
-        android:textStyle="italic|bold" />
+        android:textStyle="italic|bold"
+        android:padding="2sp"/>
 
     <ImageView
         android:id="@+id/boton"
