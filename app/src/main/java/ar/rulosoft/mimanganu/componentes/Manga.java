@@ -2,6 +2,8 @@ package ar.rulosoft.mimanganu.componentes;
 
 import java.util.ArrayList;
 
+import ar.rulosoft.mimanganu.utils.HtmlUnescape;
+
 public class Manga {
     int id, serverId, nuevos, lastIndex, sentidoLectura = -1;
     String titulo, sinopsis, images, path, autor;
@@ -46,7 +48,7 @@ public class Manga {
     }
 
     public void setSinopsis(String sinopsis) {
-        this.sinopsis = sinopsis;
+        this.sinopsis = HtmlUnescape.Unescape(sinopsis);
     }
 
     public String getImages() {
