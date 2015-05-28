@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.adapters;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
@@ -32,9 +33,10 @@ import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 public class CapituloAdapter extends ArrayAdapter<Capitulo> {
 
     public static int TRANSPARENTE = Color.parseColor("#00FFFFFF");
-    public static int GRIS = Color.argb(15, 0, 0, 0);
-    public static int GRIS_CLARO = Color.argb(30, 0, 0, 0);
+    public static int GRIS = Color.parseColor("#E0E0E0");
+    public static int GRIS_CLARO = Color.parseColor("#424242");
     public static int SELECCIONADO = Color.parseColor("#33B5E5");
+    private ColorStateList defaultColor;
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
     ActivityManga activity;
@@ -61,24 +63,40 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
         if (item != null) {
             holder.textViewNombre.setText(android.text.Html.fromHtml(item.getTitulo()));
             holder.textViewEstado.setVisibility(View.GONE);
+
+            if(defaultColor == null) {
+                defaultColor = holder.textViewNombre.getTextColors();
+            }
+
             switch (item.getEstadoLectura()) {
                 case Capitulo.NUEVO:
                     holder.textViewEstado.setVisibility(View.VISIBLE);
-                    holder.textViewEstado.setText("Nuevo");
-                    convertView.setBackgroundColor(TRANSPARENTE);
+                    holder.textViewNombre.setTextColor(defaultColor);
+                    holder.textViewPaginas.setTextColor(defaultColor);
                     break;
                 case Capitulo.LEIDO:
-                    convertView.setBackgroundColor(GRIS);
+                    holder.textViewNombre.setTextColor(GRIS);
+                    holder.textViewPaginas.setTextColor(GRIS);
                     break;
                 case Capitulo.LEYENDO:
-                    convertView.setBackgroundColor(GRIS_CLARO);
+                    holder.textViewNombre.setTextColor(GRIS_CLARO);
+                    holder.textViewPaginas.setTextColor(GRIS_CLARO);
                     break;
                 default:
-                    convertView.setBackgroundColor(TRANSPARENTE);
+                    holder.textViewNombre.setTextColor(defaultColor);
+                    holder.textViewPaginas.setTextColor(defaultColor);
+                    break;
             }
 
-            if (selected.get(posicion) == true)
+
+            if (selected.get(posicion)) {
                 convertView.setBackgroundColor(SELECCIONADO);
+                holder.textViewNombre.setTextColor(Color.WHITE);
+                holder.textViewPaginas.setTextColor(Color.WHITE);
+            }
+            else {
+                convertView.setBackgroundColor(TRANSPARENTE);
+            }
 
             holder.textViewPaginas.setText("       ");
             if (item.getPaginas() > 0) {
@@ -218,5 +236,9 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
 
     public static void setSELECCIONADO(int SELECCIONADO) {
         CapituloAdapter.SELECCIONADO = SELECCIONADO;
+    }
+
+    public static void setGrisClaro(int grisClaro) {
+        GRIS_CLARO = grisClaro;
     }
 }
