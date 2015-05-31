@@ -148,7 +148,7 @@ public class TusMangasOnlineCom extends ServerBase {
             getExtraWeb(c);
         }
         String source = getNavegadorConHeader().get(c.getExtra());
-        String paginas = getFirstMacth("<option value=\"(\\d+)\" >P[^\"]+</option>[\\s]+</select>", source, "Error al iniciar Capítulo");
+        String paginas = getFirstMacth("<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">", source, "Error al iniciar Capítulo");
         c.setPaginas(Integer.parseInt(paginas));
     }
 
