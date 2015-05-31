@@ -168,10 +168,10 @@ public class ActivityDetalles extends ActionBarActivity {
             } catch (Exception e) {
                 error = e.getMessage();
             }
-            total = params[0].getCapitulos().size();
+            total = params[0].getChapters().size();
             int mid = Database.addManga(getBaseContext(), params[0]);
             long initTime = System.currentTimeMillis();
-            for (int i = 0; i < params[0].getCapitulos().size(); i++) {
+            for (int i = 0; i < params[0].getChapters().size(); i++) {
                 if (System.currentTimeMillis() - initTime > 500) {
                     onProgressUpdate(i);
                     initTime = System.currentTimeMillis();

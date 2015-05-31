@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
@@ -54,7 +54,7 @@ public class MangaFox extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
-        if (manga.getCapitulos().size() == 0 || reinicia) {
+        if (manga.getChapters().size() == 0 || reinicia) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath()));
@@ -74,11 +74,11 @@ public class MangaFox extends ServerBase {
             m = p.matcher(data);
 
             while (m.find()) {
-                Capitulo mc = null;
+                Chapter mc = null;
                 if (m.group(4) != null)
-                    mc = new Capitulo(m.group(2).trim() + ": " + m.group(4), m.group(1));
+                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), m.group(1));
                 else
-                    mc = new Capitulo(m.group(2).trim(), m.group(1));
+                    mc = new Chapter(m.group(2).trim(), m.group(1));
                 manga.addCapituloFirst(mc);
             }
         }
@@ -86,12 +86,12 @@ public class MangaFox extends ServerBase {
 
     @Override
     public void cargarPortada(Manga m, boolean reinicia) throws Exception {
-        if (m.getCapitulos().isEmpty()|| reinicia)
+        if (m.getChapters().isEmpty() || reinicia)
             cargarCapitulos(m, reinicia);
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         if (pagina > c.getPaginas()) {
             pagina = 1;
         }
@@ -103,14 +103,14 @@ public class MangaFox extends ServerBase {
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         String data;
         data = new Navegador().get(this.getPagina(c, pagina));
         return getFirstMacth(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         String data;
         data = new Navegador().get(c.getPath());
         String paginas = getFirstMacth(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");

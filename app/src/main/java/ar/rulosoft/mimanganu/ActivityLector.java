@@ -43,7 +43,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.ActivityCapitulos.Direccion;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.UnescroledViewPager;
@@ -73,7 +73,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
     LinearLayout seeker_Layout;
     SeekBar seekBar;
     Toolbar actionToolbar;
-    Capitulo capitulo;
+    Chapter chapter;
     boolean controlVisible = false;
     UltimaPaginaFragment ultimaPaginaFragment;
     Manga manga;
@@ -88,8 +88,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         AJUSTE_PAGINA = DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
         MAX_TEXTURE = Integer.parseInt(pm.getString("max_texture", "2048"));
-        capitulo = Database.getCapitulo(this, getIntent().getExtras().getInt(ActivityCapitulos.CAPITULO_ID));
-        manga = Database.getFullManga(this, capitulo.getMangaID());
+        chapter = Database.getCapitulo(this, getIntent().getExtras().getInt(ActivityCapitulos.CAPITULO_ID));
+        manga = Database.getFullManga(this, chapter.getMangaID());
         if (manga.getSentidoLectura() != -1)
             direccion = Direccion.values()[manga.getSentidoLectura()];
         else
@@ -108,23 +108,23 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                 }
                 anterior = arg0;
                 if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
-                    if (arg0 < capitulo.getPaginas())
-                        capitulo.setPagLeidas(arg0 + 1);
+                    if (arg0 < chapter.getPaginas())
+                        chapter.setPagesReaded(arg0 + 1);
                     else {
-                        capitulo.setPagLeidas(arg0);
+                        chapter.setPagesReaded(arg0);
                     }
                 else
-                    capitulo.setPagLeidas(capitulo.getPaginas() - arg0 + 1);
+                    chapter.setPagesReaded(chapter.getPaginas() - arg0 + 1);
 
                 // if (actionBar.isShowing()) {
                 if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
                     seekBar.setProgress(arg0);
                 else
-                    seekBar.setProgress(capitulo.getPaginas() - arg0);
+                    seekBar.setProgress(chapter.getPaginas() - arg0);
                 // }
-                if (arg0 >= capitulo.getPaginas() - 1) {
-                    capitulo.setEstadoLectura(Capitulo.LEIDO);
-                    Database.updateCapitulo(ActivityLector.this, capitulo);
+                if (arg0 >= chapter.getPaginas() - 1) {
+                    chapter.setReadStatus(Chapter.READED);
+                    Database.updateCapitulo(ActivityLector.this, chapter);
                 }
             }
 
@@ -149,9 +149,9 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         seekBar = (SeekBar) findViewById(R.id.seeker);
         seeker_Layout = (LinearLayout) findViewById(R.id.seeker_layout);
         seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setMax(capitulo.getPaginas());
+        seekBar.setMax(chapter.getPaginas());
         actionToolbar = (Toolbar) findViewById(R.id.action_bar);
-        actionToolbar.setTitle(capitulo.getTitulo());
+        actionToolbar.setTitle(chapter.getTitle());
         actionToolbar.setTitleTextColor(Color.WHITE);
         s = ServerBase.getServer(manga.getServerId());
         if (ServicioColaDeDescarga.actual != null)
@@ -173,9 +173,9 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             seeker_Layout.setBackground(new ColorDrawable(colors[0]));
             seekBar.setBackground(new ColorDrawable(colors[0]));
         }
-        if (capitulo.getEstadoLectura() != Capitulo.LEIDO)
-            capitulo.setEstadoLectura(Capitulo.LEYENDO);
-        Database.updateCapitulo(ActivityLector.this, capitulo);
+        if (chapter.getReadStatus() != Chapter.READED)
+            chapter.setReadStatus(Chapter.READING);
+        Database.updateCapitulo(ActivityLector.this, chapter);
         setSupportActionBar(actionToolbar);
     }
 
@@ -215,18 +215,18 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         else
             mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        if (capitulo.getPagLeidas() > 1) {
+        if (chapter.getPagesReaded() > 1) {
             if (direccion == Direccion.R2L)
-                mViewPager.setCurrentItem(capitulo.getPagLeidas() - 1);
+                mViewPager.setCurrentItem(chapter.getPagesReaded() - 1);
             else if (direccion == Direccion.VERTICAL)
-                mViewPagerV.setCurrentItem(capitulo.getPagLeidas() - 1);
+                mViewPagerV.setCurrentItem(chapter.getPagesReaded() - 1);
             else
-                mViewPager.setCurrentItem(capitulo.getPaginas() - capitulo.getPagLeidas() + 1);
+                mViewPager.setCurrentItem(chapter.getPaginas() - chapter.getPagesReaded() + 1);
         } else {
             if (direccion == Direccion.L2R)
-                mViewPager.setCurrentItem(capitulo.getPaginas() + 1);
+                mViewPager.setCurrentItem(chapter.getPaginas() + 1);
         }
-        ServicioColaDeDescarga.attachListener(this, capitulo.getId());
+        ServicioColaDeDescarga.attachListener(this, chapter.getId());
         super.onResume();
     }
 
@@ -254,13 +254,13 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // super.onSaveInstanceState(outState);
-        Database.UpdateCapituloPagina(ActivityLector.this, capitulo.getId(), capitulo.getPagLeidas());
+        Database.UpdateCapituloPagina(ActivityLector.this, chapter.getId(), chapter.getPagesReaded());
     }
 
     @Override
     protected void onPause() {
-        Database.UpdateCapituloPagina(ActivityLector.this, capitulo.getId(), capitulo.getPagLeidas());
-        ServicioColaDeDescarga.detachListener(capitulo.getId());
+        Database.UpdateCapituloPagina(ActivityLector.this, chapter.getId(), chapter.getPagesReaded());
+        ServicioColaDeDescarga.detachListener(chapter.getId());
         super.onPause();
     }
 
@@ -310,7 +310,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
             seekerPage.setText("" + (getCurrentItem() + 1));
         else {
-            seekerPage.setText("" + (capitulo.getPaginas() - getCurrentItem()));
+            seekerPage.setText("" + (chapter.getPaginas() - getCurrentItem()));
         }
         seekerPage.setText("" + getCurrentItem());
         seekerPage.setVisibility(SeekBar.VISIBLE);
@@ -322,7 +322,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
             setCurrentItem(seekBar.getProgress());
         else {
-            setCurrentItem(capitulo.getPaginas() - seekBar.getProgress());
+            setCurrentItem(chapter.getPaginas() - seekBar.getProgress());
         }
     }
 
@@ -436,12 +436,12 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
     }
 
     @Override
-    public void onError(final Capitulo capitulo) {
+    public void onError(final Chapter chapter) {
         ActivityLector.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    new AlertDialog.Builder(ActivityLector.this).setTitle(capitulo.getTitulo() + " " + getString(R.string.error))
+                    new AlertDialog.Builder(ActivityLector.this).setTitle(chapter.getTitle() + " " + getString(R.string.error))
                             .setMessage(getString(R.string.demaciados_errores)).setIcon(R.drawable.ic_launcher)
                             .setNeutralButton(getString(android.R.string.ok), null).show();
                 } catch (Exception e) {
@@ -615,7 +615,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
     public static class UltimaPaginaFragment extends Fragment {
 
         Button b1, b2;
-        Capitulo c1 = null, c2 = null;
+        Chapter c1 = null, c2 = null;
         ActivityLector l;
 
         @Override
@@ -629,8 +629,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             l = (ActivityLector) getActivity();
-            int cid = l.capitulo.getId();
-            ArrayList<Capitulo> caps = l.manga.getCapitulos();
+            int cid = l.chapter.getId();
+            ArrayList<Chapter> caps = l.manga.getChapters();
             for (int i = 0; i < caps.size(); i++) {
                 if (caps.get(i).getId() == cid) {
                     if (i > 0) {
@@ -645,13 +645,13 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             if (c1 == null) {
                 b1.setVisibility(Button.INVISIBLE);
             } else {
-                b1.setText(c1.getTitulo() + ">");
+                b1.setText(c1.getTitle() + ">");
             }
 
             if (c2 == null) {
                 b2.setVisibility(Button.INVISIBLE);
             } else {
-                b2.setText(c2.getTitulo() + ">");
+                b2.setText(c2.getTitle() + ">");
             }
 
             b1.setOnClickListener(new OnClickListener() {
@@ -673,7 +673,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             super.onActivityCreated(savedInstanceState);
         }
 
-        public class GetPaginas extends AsyncTask<Capitulo, Void, Capitulo> {
+        public class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
             ProgressDialog asyncdialog = new ProgressDialog(getActivity());
             String error = "";
 
@@ -685,8 +685,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             }
 
             @Override
-            protected Capitulo doInBackground(Capitulo... arg0) {
-                Capitulo c = arg0[0];
+            protected Chapter doInBackground(Chapter... arg0) {
+                Chapter c = arg0[0];
                 ServerBase s = ServerBase.getServer(l.manga.getServerId());
                 try {
                     if (c.getPaginas() < 1)
@@ -707,7 +707,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             }
 
             @Override
-            protected void onPostExecute(Capitulo result) {
+            protected void onPostExecute(Chapter result) {
                 if (error.length() > 1) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 } else {
@@ -719,7 +719,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                     Intent intent = new Intent(getActivity(), ActivityLector.class);
                     intent.putExtra(ActivityCapitulos.CAPITULO_ID, result.getId());
                     getActivity().startActivity(intent);
-                    Database.updateCapitulo(l, l.capitulo);
+                    Database.updateCapitulo(l, l.chapter);
                     l.finish();
                 }
                 super.onPostExecute(result);
@@ -758,7 +758,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         public Fragment getItem(int position) {
             Fragment rsta = null;
             if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
-                if (position == capitulo.getPaginas())
+                if (position == chapter.getPaginas())
                     rsta = ultimaPaginaFragment;
                 else {
                     rsta = getFragmentIn(position);
@@ -767,7 +767,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                 if (position == 0)
                     rsta = ultimaPaginaFragment;
                 else {
-                    int pos = (capitulo.getPaginas() - position);
+                    int pos = (chapter.getPaginas() - position);
                     rsta = getFragmentIn(pos);
                 }
             }
@@ -783,7 +783,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                 }
             }
             if (f == null) {
-                String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, capitulo, getApplicationContext()) + "/" + (position + 1) + ".jpg";
+                String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, chapter, getApplicationContext()) + "/" + (position + 1) + ".jpg";
                 int idx = -1;
                 do {
                     idx = getNextPos();
@@ -803,7 +803,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
 
         @Override
         public int getCount() {
-            return capitulo.getPaginas() + 1;
+            return chapter.getPaginas() + 1;
         }
 
         public void actualizarDisplayTipe() {

@@ -92,7 +92,7 @@ public class FragmentBusquedaAsynkTask extends Fragment {
         protected void onPostExecute(Integer result) {
             Manga manga = Database.getFullManga(activity, mangaId);
             if (activity != null) {
-                activity.cargarCapitulos(manga.getCapitulos());
+                activity.cargarCapitulos(manga.getChapters());
                 activity.cargarDatos(manga);
                 activity.str.setRefreshing(false);
                 activity.setTitle(orgMsg);

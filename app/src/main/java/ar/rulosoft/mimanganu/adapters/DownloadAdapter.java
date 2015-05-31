@@ -12,37 +12,36 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.ActivityCapitulos;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.services.DescargaCapitulo;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 
-public class DescargaAdapter extends ArrayAdapter<DescargaCapitulo> {
+public class DownloadAdapter extends ArrayAdapter<DescargaCapitulo> {
 
-    public static String[] estados;
+    public static String[] states;
     private static int listItem = R.layout.listitem_descarga;
-    ArrayList<DescargaCapitulo> descargas = new ArrayList<DescargaCapitulo>();
+    ArrayList<DescargaCapitulo> downloads = new ArrayList<DescargaCapitulo>();
     private LayoutInflater li;
 
-    public DescargaAdapter(Context context, ArrayList<DescargaCapitulo> objects) {
+    public DownloadAdapter(Context context, ArrayList<DescargaCapitulo> objects) {
         super(context, listItem);
-        estados = context.getResources().getStringArray(R.array.estados_descarga);
+        states = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public DescargaCapitulo getItem(int position) {
-        return descargas.get(position);
+        return downloads.get(position);
     }
 
     @Override
     public int getCount() {
-        return descargas.size();
+        return downloads.size();
     }
 
     @Override
     public void add(DescargaCapitulo object) {
-        descargas.add(object);
+        downloads.add(object);
     }
 
     @Override
@@ -59,14 +58,14 @@ public class DescargaAdapter extends ArrayAdapter<DescargaCapitulo> {
         final DescargaCapitulo item = getItem(position);
 
         if (item != null) {
-            String textInfo = " " + estados[item.estado.ordinal()];
-            holder.textViewNombre.setText(android.text.Html.fromHtml(item.getCapitulo().getTitulo() + textInfo));
-            holder.cargandoProgressBar.setMax(item.getCapitulo().getPaginas());
-            holder.cargandoProgressBar.setProgress(item.getProgreso());
-            holder.botonImageView.setOnClickListener(new OnClickListener() {
+            String textInfo = " " + states[item.estado.ordinal()];
+            holder.textViewName.setText(android.text.Html.fromHtml(item.getChapter().getTitle() + textInfo));
+            holder.loadingProgressBar.setMax(item.getChapter().getPaginas());
+            holder.loadingProgressBar.setProgress(item.getProgreso());
+            holder.buttonImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (ServicioColaDeDescarga.quitarDescarga(item.capitulo.getId(), getContext())) {
+                    if (ServicioColaDeDescarga.quitarDescarga(item.chapter.getId(), getContext())) {
                         remove(item);
                         notifyDataSetChanged();
                     }
@@ -78,39 +77,39 @@ public class DescargaAdapter extends ArrayAdapter<DescargaCapitulo> {
 
     @Override
     public void remove(DescargaCapitulo object) {
-        descargas.remove(object);
+        downloads.remove(object);
     }
 
     public void updateAll(ArrayList<DescargaCapitulo> mDescargas) {
         if (mDescargas != null) {
             for (int i = 0; i < mDescargas.size(); i++) {
-                boolean esNuevo = true;
-                DescargaCapitulo aComparar = mDescargas.get(i);
+                boolean isNew = true;
+                DescargaCapitulo toCompare = mDescargas.get(i);
                 for (int j = 0; j < getCount(); j++) {
-                    if (getItem(j).getCapitulo().getId() == aComparar.getCapitulo().getId()) {
-                        esNuevo = false;
+                    if (getItem(j).getChapter().getId() == toCompare.getChapter().getId()) {
+                        isNew = false;
                         DescargaCapitulo item = getItem(j);
-                        item.setProgreso(aComparar.getProgreso());
-                        item.estado = aComparar.estado;
+                        item.setProgreso(toCompare.getProgreso());
+                        item.estado = toCompare.estado;
                         break;
                     }
                 }
-                if (esNuevo) {
-                    descargas.add(aComparar);
+                if (isNew) {
+                    downloads.add(toCompare);
                 }
             }
         }
     }
 
     public static class ViewHolder {
-        private TextView textViewNombre;
-        private ProgressBar cargandoProgressBar;
-        private ImageButton botonImageView;
+        private TextView textViewName;
+        private ProgressBar loadingProgressBar;
+        private ImageButton buttonImageView;
 
         public ViewHolder(View v) {
-            this.textViewNombre = (TextView) v.findViewById(R.id.nombre);
-            this.botonImageView = (ImageButton) v.findViewById(R.id.boton);
-            this.cargandoProgressBar = (ProgressBar) v.findViewById(R.id.progreso);
+            this.textViewName = (TextView) v.findViewById(R.id.nombre);
+            this.buttonImageView = (ImageButton) v.findViewById(R.id.boton);
+            this.loadingProgressBar = (ProgressBar) v.findViewById(R.id.progreso);
         }
     }
 

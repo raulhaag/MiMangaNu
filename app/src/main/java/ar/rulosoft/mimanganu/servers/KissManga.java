@@ -8,7 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
@@ -58,7 +58,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0||reinicia)
+        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
             cargarPortada(m, reinicia);
     }
 
@@ -80,20 +80,20 @@ public class KissManga extends ServerBase {
         // capitulos
         Pattern p = Pattern.compile("<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<");
         Matcher matcher = p.matcher(source);
-        ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
+        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
         while (matcher.find()) {
-            capitulos.add(0, new Capitulo(matcher.group(2), matcher.group(1)));
+            chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
         }
-        m.setCapitulos(capitulos);
+        m.setChapters(chapters);
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         return c.getPath();
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2) {
             String source = new Navegador().get(IP, c.getPath(), HOST);
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
@@ -109,7 +109,7 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         int pages = 0;
         if (c.getExtra() == null || c.getExtra().length() < 2) {
             String source = new Navegador().get(IP, c.getPath(), HOST);

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,35 +19,42 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.List;
 
-import ar.rulosoft.mimanganu.ActivityCapitulos;
 import ar.rulosoft.mimanganu.ActivityManga;
 import ar.rulosoft.mimanganu.FragmentMisMangas;
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 
-public class CapituloAdapter extends ArrayAdapter<Capitulo> {
+public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
-    public static int TRANSPARENTE = Color.parseColor("#00FFFFFF");
-    public static int GRIS = Color.parseColor("#E0E0E0");
-    public static int GRIS_CLARO = Color.parseColor("#424242");
-    public static int SELECCIONADO = Color.parseColor("#33B5E5");
-    private ColorStateList defaultColor;
+    public static int TRANSPARENT = Color.parseColor("#00FFFFFF");
+    public static int GRAY = Color.parseColor("#E0E0E0");
+    public static int LIGTH_GRAY = Color.parseColor("#424242");
+    public static int SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
     ActivityManga activity;
+    private ColorStateList defaultColor;
     private LayoutInflater li;
 
-    public CapituloAdapter(Activity context, List<Capitulo> items) {
+    public ChapterAdapter(Activity context, List<Chapter> items) {
         super(context, listItem, items);
         activity = (ActivityManga) context;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public View getView(final int posicion, View convertView, ViewGroup parent) {
+    public static void setSELECTED(int SELECTED) {
+        ChapterAdapter.SELECTED = SELECTED;
+    }
+
+    public static void setLigthGray(int ligthGray) {
+        LIGTH_GRAY = ligthGray;
+    }
+
+    public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = li.inflate(listItem, null);
@@ -58,51 +64,51 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Capitulo item = getItem(posicion);
+        Chapter item = getItem(position);
 
         if (item != null) {
-            holder.textViewNombre.setText(android.text.Html.fromHtml(item.getTitulo()));
-            holder.textViewEstado.setVisibility(View.GONE);
+            holder.textViewName.setText(android.text.Html.fromHtml(item.getTitle()));
+            holder.textViewStatus.setVisibility(View.GONE);
 
             if(defaultColor == null) {
-                defaultColor = holder.textViewNombre.getTextColors();
+                defaultColor = holder.textViewName.getTextColors();
             }
 
-            switch (item.getEstadoLectura()) {
-                case Capitulo.NUEVO:
-                    holder.textViewEstado.setVisibility(View.VISIBLE);
-                    holder.textViewNombre.setTextColor(defaultColor);
-                    holder.textViewPaginas.setTextColor(defaultColor);
+            switch (item.getReadStatus()) {
+                case Chapter.NEW:
+                    holder.textViewStatus.setVisibility(View.VISIBLE);
+                    holder.textViewName.setTextColor(defaultColor);
+                    holder.textViewPages.setTextColor(defaultColor);
                     break;
-                case Capitulo.LEIDO:
-                    holder.textViewNombre.setTextColor(GRIS);
-                    holder.textViewPaginas.setTextColor(GRIS);
+                case Chapter.READED:
+                    holder.textViewName.setTextColor(GRAY);
+                    holder.textViewPages.setTextColor(GRAY);
                     break;
-                case Capitulo.LEYENDO:
-                    holder.textViewNombre.setTextColor(GRIS_CLARO);
-                    holder.textViewPaginas.setTextColor(GRIS_CLARO);
+                case Chapter.READING:
+                    holder.textViewName.setTextColor(LIGTH_GRAY);
+                    holder.textViewPages.setTextColor(LIGTH_GRAY);
                     break;
                 default:
-                    holder.textViewNombre.setTextColor(defaultColor);
-                    holder.textViewPaginas.setTextColor(defaultColor);
+                    holder.textViewName.setTextColor(defaultColor);
+                    holder.textViewPages.setTextColor(defaultColor);
                     break;
             }
 
 
-            if (selected.get(posicion)) {
-                convertView.setBackgroundColor(SELECCIONADO);
-                holder.textViewNombre.setTextColor(Color.WHITE);
-                holder.textViewPaginas.setTextColor(Color.WHITE);
+            if (selected.get(position)) {
+                convertView.setBackgroundColor(SELECTED);
+                holder.textViewName.setTextColor(Color.WHITE);
+                holder.textViewPages.setTextColor(Color.WHITE);
             }
             else {
-                convertView.setBackgroundColor(TRANSPARENTE);
+                convertView.setBackgroundColor(TRANSPARENT);
             }
 
-            holder.textViewPaginas.setText("       ");
+            holder.textViewPages.setText("       ");
             if (item.getPaginas() > 0) {
-                holder.textViewPaginas.setText(item.getPagLeidas() + "/" + item.getPaginas());
+                holder.textViewPages.setText(item.getPagesReaded() + "/" + item.getPaginas());
             }
-            if (item.isDescargado()) {
+            if (item.isDownloaded()) {
                 holder.imageButton.setImageResource(R.drawable.ic_borrar);
             } else {
                 holder.imageButton.setImageResource(R.drawable.ic_bajar);
@@ -113,13 +119,13 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
 
                 @Override
                 public void onClick(final View v) {
-                    Capitulo c = (Capitulo) v.getTag();
-                    if (c.isDescargado()) {
+                    Chapter c = (Chapter) v.getTag();
+                    if (c.isDownloaded()) {
                         Manga m = activity.manga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
                         String ruta = ServicioColaDeDescarga.generarRutaBase(s, m, c, activity);
                         FragmentMisMangas.DeleteRecursive(new File(ruta));
-                        getItem(posicion).setDescargado(false);
+                        getItem(position).setDownloaded(false);
                         Database.UpdateCapituloDescargado(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
@@ -157,7 +163,6 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
         notifyDataSetChanged();
     }
 
-
     public void setSelectedOrUnselected(int position){
         if(selected.indexOfKey(position - 1) >= 0){
             selected.delete(position - 1);
@@ -172,20 +177,20 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
     }
 
     public static class ViewHolder {
-        private TextView textViewNombre;
-        private TextView textViewEstado;
-        private TextView textViewPaginas;
+        private TextView textViewName;
+        private TextView textViewStatus;
+        private TextView textViewPages;
         private ImageView imageButton;
 
         public ViewHolder(View v) {
-            this.textViewNombre = (TextView) v.findViewById(R.id.capitulo_titulo);
-            this.textViewEstado = (TextView) v.findViewById(R.id.capitulo_info);
-            this.textViewPaginas = (TextView) v.findViewById(R.id.capitulo_paginas);
+            this.textViewName = (TextView) v.findViewById(R.id.capitulo_titulo);
+            this.textViewStatus = (TextView) v.findViewById(R.id.capitulo_info);
+            this.textViewPages = (TextView) v.findViewById(R.id.capitulo_paginas);
             this.imageButton = (ImageView) v.findViewById(R.id.boton);
         }
     }
 
-    private class AgregarCola extends AsyncTask<Capitulo, Void, Capitulo> {
+    private class AgregarCola extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncdialog = new ProgressDialog(activity);
         String error = "";
 
@@ -197,8 +202,8 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
         }
 
         @Override
-        protected Capitulo doInBackground(Capitulo... arg0) {
-            Capitulo c = arg0[0];
+        protected Chapter doInBackground(Chapter... arg0) {
+            Chapter c = arg0[0];
             ServerBase s = ServerBase.getServer(activity.manga.getServerId());
             try {
                 if (c.getPaginas() < 1)
@@ -219,7 +224,7 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
         }
 
         @Override
-        protected void onPostExecute(Capitulo result) {
+        protected void onPostExecute(Chapter result) {
             if (error.length() > 1) {
                 Toast.makeText(activity, error, Toast.LENGTH_LONG).show();
             } else {
@@ -232,13 +237,5 @@ public class CapituloAdapter extends ArrayAdapter<Capitulo> {
             }
             super.onPostExecute(result);
         }
-    }
-
-    public static void setSELECCIONADO(int SELECCIONADO) {
-        CapituloAdapter.SELECCIONADO = SELECCIONADO;
-    }
-
-    public static void setGrisClaro(int grisClaro) {
-        GRIS_CLARO = grisClaro;
     }
 }

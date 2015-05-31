@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
@@ -91,11 +91,11 @@ public abstract class ServerBase {
     public abstract void cargarPortada(Manga m, boolean recarga) throws Exception;
 
     // manga
-    public abstract String getPagina(Capitulo c, int pagina);
+    public abstract String getPagina(Chapter c, int pagina);
 
-    public abstract String getImagen(Capitulo c, int pagina) throws Exception;
+    public abstract String getImagen(Chapter c, int pagina) throws Exception;
 
-    public abstract void iniciarCapitulo(Capitulo c) throws Exception;
+    public abstract void iniciarCapitulo(Chapter c) throws Exception;
 
     // server visual
     public abstract ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception;
@@ -115,17 +115,17 @@ public abstract class ServerBase {
         manga.setId(mangaDb.getId());
         this.cargarPortada(manga, true);
         this.cargarCapitulos(manga, false);
-        int diff = manga.getCapitulos().size() - mangaDb.getCapitulos().size();
+        int diff = manga.getChapters().size() - mangaDb.getChapters().size();
         if (diff > 0) {
-            ArrayList<Capitulo> simpleList = new ArrayList<Capitulo>();
-            if (manga.getCapitulos().size() < diff) {
-                simpleList.addAll(manga.getCapitulos().subList(0, diff));
-                simpleList.addAll(manga.getCapitulos().subList(manga.getCapitulos().size() - diff, manga.getCapitulos().size()));
-                ArrayList<Capitulo> simpleListC = new ArrayList<Capitulo>();
-                simpleListC.addAll(mangaDb.getCapitulos().subList(0, diff));
-                simpleListC.addAll(mangaDb.getCapitulos().subList(mangaDb.getCapitulos().size() - diff, mangaDb.getCapitulos().size()));
-                for (Capitulo c : simpleListC) {
-                    for (Capitulo csl : simpleList) {
+            ArrayList<Chapter> simpleList = new ArrayList<Chapter>();
+            if (manga.getChapters().size() < diff) {
+                simpleList.addAll(manga.getChapters().subList(0, diff));
+                simpleList.addAll(manga.getChapters().subList(manga.getChapters().size() - diff, manga.getChapters().size()));
+                ArrayList<Chapter> simpleListC = new ArrayList<Chapter>();
+                simpleListC.addAll(mangaDb.getChapters().subList(0, diff));
+                simpleListC.addAll(mangaDb.getChapters().subList(mangaDb.getChapters().size() - diff, mangaDb.getChapters().size()));
+                for (Chapter c : simpleListC) {
+                    for (Chapter csl : simpleList) {
                         if (c.getPath().equalsIgnoreCase(csl.getPath())) {
                             simpleList.remove(csl);
                             break;
@@ -134,8 +134,8 @@ public abstract class ServerBase {
                 }
             }
             if (simpleList.size() == 1) {
-                Capitulo c = simpleList.get(0);
-                for (Capitulo cap : manga.getCapitulos()) {
+                Chapter c = simpleList.get(0);
+                for (Chapter cap : manga.getChapters()) {
                     if (cap.getPath().equalsIgnoreCase(c.getPath())) {
                         simpleList.remove(0);
                         break;
@@ -144,12 +144,12 @@ public abstract class ServerBase {
             }
 
             if (!(simpleList.size() >= diff)) {
-                simpleList = new ArrayList<Capitulo>();
-                for (Capitulo c : manga.getCapitulos()) {
+                simpleList = new ArrayList<Chapter>();
+                for (Chapter c : manga.getChapters()) {
                     boolean masUno = true;
-                    for (Capitulo csl : mangaDb.getCapitulos()) {
+                    for (Chapter csl : mangaDb.getChapters()) {
                         if (c.getPath().equalsIgnoreCase(csl.getPath())) {
-                            mangaDb.getCapitulos().remove(csl);
+                            mangaDb.getChapters().remove(csl);
                             masUno = false;
                             break;
                         }
@@ -160,9 +160,9 @@ public abstract class ServerBase {
                 }
                 // simpleList = manga.getCapitulos();
             }
-            for (Capitulo c : simpleList) {
+            for (Chapter c : simpleList) {
                 c.setMangaID(mangaDb.getId());
-                c.setEstadoLectura(Capitulo.NUEVO);
+                c.setReadStatus(Chapter.NEW);
                 Database.addCapitulo(context, c, mangaDb.getId());
             }
 

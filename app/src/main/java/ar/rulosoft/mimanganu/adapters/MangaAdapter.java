@@ -21,7 +21,7 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public View getView(int posicion, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = li.inflate(listItem, parent, false);
@@ -31,19 +31,19 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        final Manga item = getItem(posicion);
+        final Manga item = getItem(position);
 
         if (item != null) {
-            holder.textViewNomvbre.setText(android.text.Html.fromHtml(item.getTitulo()));
+            holder.textViewName.setText(android.text.Html.fromHtml(item.getTitulo()));
         }
         return convertView;
     }
 
     public static class ViewHolder {
-        private TextView textViewNomvbre;
+        private TextView textViewName;
 
         public ViewHolder(View v) {
-            this.textViewNomvbre = (TextView) v.findViewById(R.id.manga_titulo);
+            this.textViewName = (TextView) v.findViewById(R.id.manga_titulo);
         }
     }
 }

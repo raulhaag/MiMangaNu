@@ -12,8 +12,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,7 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.MultiChoiceModeListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -32,8 +29,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import ar.rulosoft.mimanganu.ActivityCapitulos.SetCapitulos;
-import ar.rulosoft.mimanganu.adapters.CapituloAdapter;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.adapters.ChapterAdapter;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -42,7 +39,7 @@ import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 public class FragmentCapitulos extends Fragment implements SetCapitulos {
 
     ListView lista;
-    CapituloAdapter capitulosAdapter;
+    ChapterAdapter capitulosAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -57,7 +54,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Capitulo c = (Capitulo) lista.getAdapter().getItem(position);
+                Chapter c = (Chapter) lista.getAdapter().getItem(position);
                 new GetPaginas().execute(c);
             }
         });
@@ -107,7 +104,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                         return true;
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
-                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
                             c.borrarImagenesLiberarEspacio(getActivity(), manga, s);
                         }
                         break;
@@ -118,7 +115,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                         }
                         Arrays.sort(selecionados);
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
                             c.borrar(getActivity(), manga, s);
                             capitulosAdapter.remove(c);
 
@@ -126,13 +123,13 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                         break;
                     case R.id.reset:
                         for (int i = 0; i < selection.size(); i++) {
-                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
                             c.reset(getActivity(), manga, s);
                         }
                         break;
                     case R.id.marcar_leido:
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Capitulo c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
                             c.marcarComoLeido(getActivity());
                         }
                         break;
@@ -171,15 +168,15 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
     }
 
     @Override
-    public void onCalpitulosCargados(Activity c, ArrayList<Capitulo> capitulos) {
-        capitulosAdapter = new CapituloAdapter(c, capitulos);
+    public void onCalpitulosCargados(Activity c, ArrayList<Chapter> chapters) {
+        capitulosAdapter = new ChapterAdapter(c, chapters);
         if (lista != null) {
             lista.setAdapter(capitulosAdapter);
             lista.setSelection(((ActivityCapitulos) getActivity()).manga.getLastIndex());
         }
     }
 
-    private class GetPaginas extends AsyncTask<Capitulo, Void, Capitulo> {
+    private class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncdialog = new ProgressDialog(getActivity());
         String error = "";
 
@@ -194,8 +191,8 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
         }
 
         @Override
-        protected Capitulo doInBackground(Capitulo... arg0) {
-            Capitulo c = arg0[0];
+        protected Chapter doInBackground(Chapter... arg0) {
+            Chapter c = arg0[0];
             ServerBase s = ServerBase.getServer(((ActivityCapitulos) getActivity()).manga.getServerId());
             try {
                 if (c.getPaginas() < 1)
@@ -216,7 +213,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
         }
 
         @Override
-        protected void onPostExecute(Capitulo result) {
+        protected void onPostExecute(Chapter result) {
             if (error != null && error.length() > 1) {
                 Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             } else {

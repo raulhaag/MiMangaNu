@@ -36,9 +36,9 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     @Override
     public void onBindViewHolder(ServerViewHolder sHolder, int pos) {
         final ServerBase server = servers[pos];
-        sHolder.bandera.setImageResource(server.getBandera());
-        sHolder.icono.setImageResource(server.getIcon());
-        sHolder.titulo.setText(server.getServerName());
+        sHolder.flag.setImageResource(server.getBandera());
+        sHolder.icon.setImageResource(server.getIcon());
+        sHolder.title.setText(server.getServerName());
         sHolder.v.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -59,16 +59,16 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     }
 
     public class ServerViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo;
-        ImageView bandera;
-        ImageView icono;
+        TextView title;
+        ImageView flag;
+        ImageView icon;
         View v;
 
         public ServerViewHolder(View itemView) {
             super(itemView);
-            titulo = (TextView) itemView.findViewById(R.id.server_nombre);
-            bandera = (ImageView) itemView.findViewById(R.id.server_bandera);
-            icono = (ImageView) itemView.findViewById(R.id.server_imagen);
+            title = (TextView) itemView.findViewById(R.id.server_nombre);
+            flag = (ImageView) itemView.findViewById(R.id.server_bandera);
+            icon = (ImageView) itemView.findViewById(R.id.server_imagen);
             v = itemView;
         }
     }

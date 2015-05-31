@@ -8,21 +8,21 @@ import ar.rulosoft.mimanganu.FragmentMisMangas;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 
-public class Capitulo {
+public class Chapter {
 
-    public static final int NUEVO = -1;
-    public static final int SIN_LEER = 0;
-    public static final int LEIDO = 1;
-    public static final int LEYENDO = 2;
+    public static final int NEW = -1;
+    public static final int UNREAD = 0;
+    public static final int READED = 1;
+    public static final int READING = 2;
 
     int id, paginas, mangaID;
-    int pagLeidas, estadoLectura;
-    String titulo, path, extra;
-    boolean finalizado, descargado;
+    int pagesReaded, readStatus;
+    String title, path, extra;
+    boolean finished, downloaded;
 
-    public Capitulo(String titulo, String path) {
+    public Chapter(String title, String path) {
         super();
-        this.titulo = titulo;
+        this.title = title;
         this.path = path;
     }
 
@@ -50,12 +50,12 @@ public class Capitulo {
         this.paginas = pagina;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public String getPath() {
@@ -66,41 +66,41 @@ public class Capitulo {
         this.path = path;
     }
 
-    public boolean isFinalizado() {
-        return finalizado;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public void setFinalizado(boolean finalizado) {
-        this.finalizado = finalizado;
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     @Override
     public String toString() {
-        return titulo;
+        return title;
     }
 
-    public int getPagLeidas() {
-        return pagLeidas;
+    public int getPagesReaded() {
+        return pagesReaded;
     }
 
-    public void setPagLeidas(int pagLeidas) {
-        this.pagLeidas = pagLeidas;
+    public void setPagesReaded(int pagesReaded) {
+        this.pagesReaded = pagesReaded;
     }
 
-    public int getEstadoLectura() {
-        return estadoLectura;
+    public int getReadStatus() {
+        return readStatus;
     }
 
-    public void setEstadoLectura(int estadoLectura) {
-        this.estadoLectura = estadoLectura;
+    public void setReadStatus(int readStatus) {
+        this.readStatus = readStatus;
     }
 
-    public boolean isDescargado() {
-        return descargado;
+    public boolean isDownloaded() {
+        return downloaded;
     }
 
-    public void setDescargado(boolean descargado) {
-        this.descargado = descargado;
+    public void setDownloaded(boolean downloaded) {
+        this.downloaded = downloaded;
     }
 
     public String getExtra() {
@@ -137,20 +137,20 @@ public class Capitulo {
         String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, this, context);
         FragmentMisMangas.DeleteRecursive(new File(ruta));
         setPaginas(0);
-        setDescargado(false);
-        setPagLeidas(0);
+        setDownloaded(false);
+        setPagesReaded(0);
         Database.updateCapituloConDescarga(context, this);
     }
 
     public void borrarImagenesLiberarEspacio(Context context) {
         borrarImagenes(context);
-        setDescargado(false);
+        setDownloaded(false);
         Database.updateCapituloConDescarga(context, this);
     }
 
     public void borrarImagenesLiberarEspacio(Context context, Manga manga, ServerBase s) {
         borrarImagenes(context, manga, s);
-        setDescargado(false);
+        setDownloaded(false);
         Database.updateCapituloConDescarga(context, this);
     }
 
@@ -162,6 +162,6 @@ public class Capitulo {
 
     public void marcarComoLeido(Context c) {
         Database.marcarComoLeido(c, getId());
-        setEstadoLectura(Capitulo.LEIDO);
+        setReadStatus(Chapter.READED);
     }
 }

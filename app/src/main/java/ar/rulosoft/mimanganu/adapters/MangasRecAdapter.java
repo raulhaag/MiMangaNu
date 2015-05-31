@@ -56,11 +56,11 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
     }
 
     @Override
-    public void onBindViewHolder(MangasHolder holder, int pos) {
-        final Manga m = mangas.get(pos);
+    public void onBindViewHolder(MangasHolder holder, int position) {
+        final Manga m = mangas.get(position);
         holder.serie.setText(m.getTitulo());
         imageLoader.DisplayImage(m.getImages(), holder.serie);
-        holder.v.setTag(pos);
+        holder.v.setTag(position);
         holder.v.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -76,7 +76,7 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
         } else {
             holder.notif.setVisibility(ImageView.INVISIBLE);
         }
-        if (pos == getItemCount() - 1 && lastItemListener != null)
+        if (position == getItemCount() - 1 && lastItemListener != null)
             lastItemListener.onRequestedLastItem();
     }
 

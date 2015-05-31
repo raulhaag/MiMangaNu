@@ -16,7 +16,7 @@ import java.util.Arrays;
 
 import ar.rulosoft.mimanganu.ActivityLector;
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -39,22 +39,22 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     public int slots = SLOTS;
     DescargaListener descargaListener = null;
 
-    public static void agregarDescarga(Activity activity, Capitulo capitulo, boolean lectura) {
-        if (!capitulo.isDescargado()) {
-            if (descargaNueva(capitulo.getId())) {
-                DescargaCapitulo dc = new DescargaCapitulo(capitulo);
+    public static void agregarDescarga(Activity activity, Chapter chapter, boolean lectura) {
+        if (!chapter.isDownloaded()) {
+            if (descargaNueva(chapter.getId())) {
+                DescargaCapitulo dc = new DescargaCapitulo(chapter);
                 if (lectura)
                     descargas.add(0, dc);
                 else
                     descargas.add(dc);
             } else {
                 for (DescargaCapitulo dc : descargas) {
-                    if (dc.capitulo.getId() == capitulo.getId()) {
+                    if (dc.chapter.getId() == chapter.getId()) {
                         if (dc.estado == DescargaEstado.ERROR) {
-                            dc.capitulo.borrarImagenes(activity);
+                            dc.chapter.borrarImagenes(activity);
                             descargas.remove(dc);
                             dc = null;
-                            DescargaCapitulo ndc = new DescargaCapitulo(capitulo);
+                            DescargaCapitulo ndc = new DescargaCapitulo(chapter);
                             if (lectura) {
                                 descargas.add(0, ndc);
                             } else {
@@ -91,7 +91,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     public static boolean descargaNueva(int cid) {
         boolean result = true;
         for (DescargaCapitulo dc : descargas) {
-            if (dc.capitulo.getId() == cid) {
+            if (dc.chapter.getId() == cid) {
                 result = false;
                 break;
             }
@@ -102,7 +102,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     public static boolean quitarDescarga(int cid, Context c) {
         boolean result = true;
         for (DescargaCapitulo dc : descargas) {
-            if (dc.capitulo.getId() == cid) {
+            if (dc.chapter.getId() == cid) {
                 if (dc.estado.ordinal() != DescargaCapitulo.DescargaEstado.DESCARGANDO.ordinal()) {
                     descargas.remove(dc);
                 } else {
@@ -117,7 +117,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
 
     public static void attachListener(ActivityLector lector, int cid) {
         for (DescargaCapitulo dc : descargas) {
-            if (dc.capitulo.getId() == cid) {
+            if (dc.chapter.getId() == cid) {
                 dc.setErrorListener(lector);
                 break;
             }
@@ -128,10 +128,10 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
         attachListener(null, cid);
     }
 
-    public static String generarRutaBase(ServerBase s, Manga m, Capitulo c, Context context) {
+    public static String generarRutaBase(ServerBase s, Manga m, Chapter c, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" + cleanFileName(m.getTitulo()).trim() + "/" + cleanFileName(c.getTitulo()).trim();
+        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" + cleanFileName(m.getTitulo()).trim() + "/" + cleanFileName(c.getTitle()).trim();
     }
 
     public static String generarRutaBase(ServerBase s, Manga m, Context context) {
@@ -210,19 +210,19 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
                     }
                 }
                 if (dc != null) {
-                    if (manga == null || manga.getId() != dc.capitulo.getMangaID()) {
-                        manga = Database.getManga(actual.getApplicationContext(), dc.capitulo.getMangaID());
+                    if (manga == null || manga.getId() != dc.chapter.getMangaID()) {
+                        manga = Database.getManga(actual.getApplicationContext(), dc.chapter.getMangaID());
                         s = ServerBase.getServer(manga.getServerId());
                     }
-                    if (lcid != dc.capitulo.getId()) {
-                        lcid = dc.capitulo.getId();
-                        ruta = generarRutaBase(s, manga, dc.capitulo, getApplicationContext());
+                    if (lcid != dc.chapter.getId()) {
+                        lcid = dc.chapter.getId();
+                        ruta = generarRutaBase(s, manga, dc.chapter, getApplicationContext());
                         new File(ruta).mkdirs();
                     }
                     try {
-                        String origen = s.getImagen(dc.capitulo, sig);
+                        String origen = s.getImagen(dc.chapter, sig);
                         String destino = ruta + "/" + sig + ".jpg";
-                        DescargaIndividual des = new DescargaIndividual(origen, destino, sig - 1, dc.capitulo.getId());
+                        DescargaIndividual des = new DescargaIndividual(origen, destino, sig - 1, dc.chapter.getId());
                         des.setCambioListener(dc);
                         dc.setCambioListener(this);
                         new Thread(des).start();

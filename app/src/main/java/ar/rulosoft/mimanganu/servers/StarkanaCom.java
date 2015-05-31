@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
@@ -55,7 +55,7 @@ public class StarkanaCom extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0|| reinicia)
+        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
             cargarPortada(m, reinicia);
     }
 
@@ -73,27 +73,27 @@ public class StarkanaCom extends ServerBase {
         // capitulos
         Pattern p = Pattern.compile("<a class=\"download-link\" href=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
-        ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
+        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
         while (matcher.find()) {
-            capitulos.add(0, new Capitulo(matcher.group(2).replaceAll("<.+?>", ""), "http://starkana.com" + matcher.group(1)));
+            chapters.add(0, new Chapter(matcher.group(2).replaceAll("<.+?>", ""), "http://starkana.com" + matcher.group(1)));
         }
-        m.setCapitulos(capitulos);
+        m.setChapters(chapters);
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         return c.getPath() + "/" + pagina;
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         if (c.getExtra() == null)
             setExtra(c);
         String[] imagenes = c.getExtra().split("\\|");
         return imagenes[pagina];
     }
 
-    public void setExtra(Capitulo c) throws Exception {
+    public void setExtra(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath() + "?scroll");
         Pattern p = Pattern.compile("<img src=\"([^\"]+)\" alt=\"[^\"]*\" class=\"dyn\">");
         Matcher m = p.matcher(source);
@@ -105,7 +105,7 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
         c.setPaginas(Integer.parseInt(getFirstMacth("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
     }

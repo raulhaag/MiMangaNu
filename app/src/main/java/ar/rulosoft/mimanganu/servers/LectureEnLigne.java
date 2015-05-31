@@ -5,7 +5,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
@@ -38,7 +38,7 @@ public class LectureEnLigne extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
-        if (manga.getCapitulos() == null || manga.getCapitulos().size() == 0||reinicia)
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || reinicia)
             cargarPortada(manga, reinicia);
     }
 
@@ -54,28 +54,28 @@ public class LectureEnLigne extends ServerBase {
         manga.setAutor(getFirstMacthDefault("Auteur :.+?d>(.+?)<",data,""));
 
         // capitulos
-        ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
+        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
         Pattern p = Pattern.compile("<td class=\"td\">(.+?)</td>[^\\.]+\\.\\./\\.\\.(.+?)\"");
         Matcher ma = p.matcher(data);
         while (ma.find()) {
-            capitulos.add(0, new Capitulo(ma.group(1), "http://www.lecture-en-ligne.com/" + ma.group(2)));
+            chapters.add(0, new Chapter(ma.group(1), "http://www.lecture-en-ligne.com/" + ma.group(2)));
         }
-        manga.setCapitulos(capitulos);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         return c.getPath().replaceAll("\\d+\\.h", pagina + ".h");
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         String data = new Navegador().get(this.getPagina(c, pagina));
         return getFirstMacth("<img id='image' src='(.+?)'", data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         String data = new Navegador().get(c.getPath());
         String paginas = getFirstMacth("<select class=\"pages\">.+?(\\d+)</option>[\\s]*</select>", data, "Error: no se pudo obtener el numero de paginas");
         c.setPaginas(Integer.parseInt(paginas));

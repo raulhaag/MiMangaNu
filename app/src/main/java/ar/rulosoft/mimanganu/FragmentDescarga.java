@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.adapters.DescargaAdapter;
+import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
 import ar.rulosoft.mimanganu.services.DescargaCapitulo;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 
@@ -20,7 +20,7 @@ public class FragmentDescarga extends Fragment {
 
     ListView lista;
     MostrarDescargas md;
-    DescargaAdapter adap;
+    DownloadAdapter adap;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class FragmentDescarga extends Fragment {
     @SuppressLint("NewApi")
     @Override
     public void onResume() {
-        adap = new DescargaAdapter(getActivity(), new ArrayList<DescargaCapitulo>());
+        adap = new DownloadAdapter(getActivity(), new ArrayList<DescargaCapitulo>());
         lista.setAdapter(adap);
         md = new MostrarDescargas();
         if (Build.VERSION.SDK_INT >= 11)

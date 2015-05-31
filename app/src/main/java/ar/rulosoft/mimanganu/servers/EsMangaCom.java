@@ -6,7 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
@@ -53,7 +53,7 @@ public class EsMangaCom extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0 || reinicia)
+        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
             cargarPortada(m,reinicia);
     }
 
@@ -68,29 +68,29 @@ public class EsMangaCom extends ServerBase {
         //status
         m.setFinalizado(getFirstMacthDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
         // capitulos
-        ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
+        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
         Pattern p = Pattern.compile("<a href=\"(http://esmanga.com/[^\"]+/c\\d+)\">(.+?)</a><");
         Matcher ma = p.matcher(source);
         while (ma.find()) {
-            capitulos.add(0, new Capitulo(ma.group(2).trim(), ma.group(1)));
+            chapters.add(0, new Chapter(ma.group(2).trim(), ma.group(1)));
         }
-        m.setCapitulos(capitulos);
+        m.setChapters(chapters);
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         return c.getPath() + "/" + pagina;
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(this.getPagina(c, pagina));
         return getFirstMacth("src=\"([^\"]+\\d.(jpg|png|bmp))", source, "Error en plugin (obtener imager)");
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(c.getPath());
         String textNum = getFirstMacth("option value=\"(\\d+)[^=]+</option></select>", source, "Error en plugin (obtener p�ginas)");

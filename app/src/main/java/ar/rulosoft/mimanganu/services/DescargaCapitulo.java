@@ -1,25 +1,25 @@
 package ar.rulosoft.mimanganu.services;
 
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.services.DescargaIndividual.Estados;
 
 public class DescargaCapitulo implements CambioEstado {
     public static int MAX_ERRORS = 5;
     public DescargaEstado estado;
-    public Capitulo capitulo;
+    public Chapter chapter;
     OnErrorListener errorListener = null;
     CambioEstado cambioListener = null;
     Estados[] paginasStatus;
     int progreso = 0;
 
-    public DescargaCapitulo(Capitulo capitulo) {
-        this.capitulo = capitulo;
+    public DescargaCapitulo(Chapter chapter) {
+        this.chapter = chapter;
         reset();
     }
 
     public void reset() {
-        paginasStatus = new Estados[capitulo.getPaginas()];
+        paginasStatus = new Estados[chapter.getPaginas()];
         for (int i = 0; i < paginasStatus.length; i++) {
             paginasStatus[i] = Estados.EN_COLA;
         }
@@ -37,8 +37,8 @@ public class DescargaCapitulo implements CambioEstado {
                 cambiarEstado(DescargaEstado.DESCARGANDO);
             if (hayErrores()) {
                 j = -11;
-            } else if (progreso < capitulo.getPaginas()) {
-                for (int i = 0; i < capitulo.getPaginas(); i++) {
+            } else if (progreso < chapter.getPaginas()) {
+                for (int i = 0; i < chapter.getPaginas(); i++) {
                     if (paginasStatus[i] == Estados.EN_COLA || paginasStatus[i] == Estados.POSTERGADA) {
                         paginasStatus[i] = Estados.INICIADA;
                         j = i;
@@ -58,7 +58,7 @@ public class DescargaCapitulo implements CambioEstado {
                 if (errors > MAX_ERRORS) {
                     cambiarEstado(DescargaEstado.ERROR);
                     if (errorListener != null) {
-                        errorListener.onError(capitulo);
+                        errorListener.onError(chapter);
                     }
                     break;
                 }
@@ -88,12 +88,12 @@ public class DescargaCapitulo implements CambioEstado {
         this.progreso = progreso;
     }
 
-    public Capitulo getCapitulo() {
-        return capitulo;
+    public Chapter getChapter() {
+        return chapter;
     }
 
-    public void setCapitulo(Capitulo capitulo) {
-        this.capitulo = capitulo;
+    public void setChapter(Chapter chapter) {
+        this.chapter = chapter;
     }
 
     public void setCambioListener(CambioEstado cambioListener) {
@@ -108,8 +108,8 @@ public class DescargaCapitulo implements CambioEstado {
     }
 
     public void chackProgreso() {
-        if (progreso == capitulo.getPaginas()) {
-            Database.UpdateCapituloDescargado(ServicioColaDeDescarga.actual, capitulo.getId(), 1);
+        if (progreso == chapter.getPaginas()) {
+            Database.UpdateCapituloDescargado(ServicioColaDeDescarga.actual, chapter.getId(), 1);
             cambiarEstado(DescargaEstado.DESCARGADO);
         }
     }
@@ -126,7 +126,7 @@ public class DescargaCapitulo implements CambioEstado {
     public void setErrorListener(OnErrorListener errorListener) {
         this.errorListener = errorListener;
         if (this.estado == DescargaEstado.ERROR && errorListener != null) {
-            errorListener.onError(capitulo);
+            errorListener.onError(chapter);
         }
     }
 
@@ -135,6 +135,6 @@ public class DescargaCapitulo implements CambioEstado {
     }
 
     public interface OnErrorListener {
-        void onError(Capitulo capitulo);
+        void onError(Chapter chapter);
     }
 }

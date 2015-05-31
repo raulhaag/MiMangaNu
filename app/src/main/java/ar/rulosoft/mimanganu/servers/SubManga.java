@@ -7,7 +7,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
@@ -45,7 +45,7 @@ public class SubManga extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
-        if (manga.getCapitulos().size() == 0||reinicia) {
+        if (manga.getChapters().size() == 0 || reinicia) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath() + "/completa"));
@@ -54,7 +54,7 @@ public class SubManga extends ServerBase {
 
             while (m.find()) {
                 String web = "http://submanga.com/c/" + m.group(1).substring(m.group(1).lastIndexOf("/"));
-                Capitulo mc = new Capitulo(Html.fromHtml(m.group(2)).toString(), web);
+                Chapter mc = new Chapter(Html.fromHtml(m.group(2)).toString(), web);
                 manga.addCapituloFirst(mc);
             }
         }
@@ -78,12 +78,12 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         return c.getPath() + "/" + pagina;
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         //if (c.getExtra() == null || c.getExtra().length() < 2) {
         String data;
         data = new Navegador().get(this.getPagina(c, pagina));
@@ -94,7 +94,7 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         String pagina = "";
         int i = 1;
         String extra = "";

@@ -9,7 +9,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.adapters.DescargaAdapter;
+import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
 import ar.rulosoft.mimanganu.services.DescargaCapitulo;
 import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -19,7 +19,7 @@ public class ActivityDescargas extends ActionBarActivity {
 
     ListView lista;
     MostrarDescargas md;
-    DescargaAdapter adap;
+    DownloadAdapter adap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +32,7 @@ public class ActivityDescargas extends ActionBarActivity {
 
     @Override
     public void onResume() {
-        adap = new DescargaAdapter(ActivityDescargas.this, new ArrayList<DescargaCapitulo>());
+        adap = new DownloadAdapter(ActivityDescargas.this, new ArrayList<DescargaCapitulo>());
         lista.setAdapter(adap);
         md = new MostrarDescargas();
         md.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

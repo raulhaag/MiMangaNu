@@ -8,9 +8,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Capitulo;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class TusMangasOnlineCom extends ServerBase {
 
@@ -80,7 +79,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getCapitulos() == null || m.getCapitulos().size() == 0 || reinicia)
+        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
             cargarPortada(m, reinicia);
     }
 
@@ -92,25 +91,25 @@ public class TusMangasOnlineCom extends ServerBase {
         m.setFinalizado(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
         m.setAutor(getFirstMacthDefault("5&amp;filter=.+?>(.+?)<", source, ""));
 
-        ArrayList<Capitulo> caps = new ArrayList<Capitulo>();
+        ArrayList<Chapter> caps = new ArrayList<Chapter>();
         Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)<");
         Matcher ma = p.matcher(source);
         while (ma.find()) {
-            Capitulo c = new Capitulo(Html.fromHtml(ma.group(3)).toString(),
+            Chapter c = new Chapter(Html.fromHtml(ma.group(3)).toString(),
                     "http://www.tumangaonline.com/index.php?option=com_controlmanga&view=capitulos&format=raw&idManga=" + ma.group(1) + "&idCapitulo="
                             + ma.group(2));
             caps.add(0, c);
         }
-        m.setCapitulos(caps);
+        m.setChapters(caps);
     }
 
     @Override
-    public String getPagina(Capitulo c, int pagina) {
+    public String getPagina(Chapter c, int pagina) {
         return null;
     }
 
     @Override
-    public String getImagen(Capitulo c, int pagina) throws Exception {
+    public String getImagen(Chapter c, int pagina) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2 || !c.getExtra().contains("|")) {
             if (c.getExtra() == null || c.getExtra().length() < 2) {
                 getExtraWeb(c);
@@ -137,14 +136,14 @@ public class TusMangasOnlineCom extends ServerBase {
         return imagenes[pagina];
     }
 
-    private void getExtraWeb(Capitulo c) throws Exception {
+    private void getExtraWeb(Chapter c) throws Exception {
         String source = getNavegadorConHeader().get(c.getPath());
         String fs = getFirstMacth("(http://www.tumangaonline.com/visor/.+?)\"", source, "Error al iniciar Capítulo");
         c.setExtra(fs);
     }
 
     @Override
-    public void iniciarCapitulo(Capitulo c) throws Exception {
+    public void iniciarCapitulo(Chapter c) throws Exception {
         if (!(c.getExtra() != null && c.getExtra().length() > 1)) {
             getExtraWeb(c);
         }

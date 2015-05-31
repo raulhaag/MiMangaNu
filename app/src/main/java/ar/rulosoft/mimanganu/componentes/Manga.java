@@ -7,7 +7,7 @@ import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 public class Manga {
     int id, serverId, nuevos, lastIndex, sentidoLectura = -1;
     String titulo, sinopsis, images, path, autor;
-    ArrayList<Capitulo> capitulos = new ArrayList<Capitulo>();
+    ArrayList<Chapter> chapters = new ArrayList<Chapter>();
 
     boolean finalizado;
 
@@ -80,32 +80,32 @@ public class Manga {
         return this.titulo;
     }
 
-    public void addCapitulo(Capitulo c) {
-        capitulos.add(c);
+    public void addCapitulo(Chapter c) {
+        chapters.add(c);
     }
 
-    public void addCapituloFirst(Capitulo c) {
-        capitulos.add(0, c);
+    public void addCapituloFirst(Chapter c) {
+        chapters.add(0, c);
     }
 
-    public Capitulo getCapitulo(int index) {
-        if (capitulos.size() > index && index >= 0) {
-            return capitulos.get(index);
+    public Chapter getCapitulo(int index) {
+        if (chapters.size() > index && index >= 0) {
+            return chapters.get(index);
         } else {
             return null;
         }
     }
 
-    public ArrayList<Capitulo> getCapitulos() {
-        return capitulos;
+    public ArrayList<Chapter> getChapters() {
+        return chapters;
     }
 
-    public void setCapitulos(ArrayList<Capitulo> caps) {
-        capitulos = caps;
+    public void setChapters(ArrayList<Chapter> caps) {
+        chapters = caps;
     }
 
     public void clearCapitulos() {
-        capitulos.clear();
+        chapters.clear();
     }
 
 
