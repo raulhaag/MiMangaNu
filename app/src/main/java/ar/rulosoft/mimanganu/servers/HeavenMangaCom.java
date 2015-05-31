@@ -54,7 +54,7 @@ public class HeavenMangaCom extends ServerBase {
         source = getFirstMacth("<span>Lista Completa(.+)", source, "Error al obtener la lista");
         Pattern p = Pattern.compile("<li class=\"rpwe-clearfix\"><a href=\"(.+?)\" title=\"(.+?)\"");
         Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
             mangas.add(new Manga(HEAVENMANGACOM, m.group(2), m.group(1), true));
         }
@@ -89,7 +89,7 @@ public class HeavenMangaCom extends ServerBase {
         // capitulos
         Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"");
         Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
         }
@@ -151,7 +151,7 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     public ArrayList<Manga> getMangasFromSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<article class=\"rel\"><a href=\"(http://heavenmanga.com/.+?)\"><header>(.+?)<.+?src=\"(.+?)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {

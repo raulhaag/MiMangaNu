@@ -37,7 +37,7 @@ public class MangaFox extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         String data = new Navegador().get("http://mangafox.me/manga/");
         data = getFirstMacth(SEGMENTO, data, "no se ha obtenido el segmento");
         Pattern p = Pattern.compile(PATTERN_SERIE);
@@ -74,7 +74,7 @@ public class MangaFox extends ServerBase {
             m = p.matcher(data);
 
             while (m.find()) {
-                Chapter mc = null;
+                Chapter mc;
                 if (m.group(4) != null)
                     mc = new Chapter(m.group(2).trim() + ": " + m.group(4), m.group(1));
                 else
@@ -119,7 +119,7 @@ public class MangaFox extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://mangafox.me/" + generosV[categoria] + "/" + pagina + ".htm" + ordenM[ordentipo];
         String data = new Navegador().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
@@ -153,7 +153,7 @@ public class MangaFox extends ServerBase {
 
     @Override
     public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
         String data = nav
                 .get("http://mangafox.me/search.php?name_method=cw&name="

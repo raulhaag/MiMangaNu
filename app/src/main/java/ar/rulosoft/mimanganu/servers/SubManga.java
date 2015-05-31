@@ -23,14 +23,14 @@ public class SubManga extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         // <td><a href="(http://submanga.com/.+?)".+?</b>(.+?)<
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
         String source = nav.get("http://submanga.com/series/n");
         Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
             String name = m.group(2);
-            if (name.indexOf("¡") == -1 && name.indexOf("¿") == -1 && name.indexOf("ñ") == -1 && name.indexOf("Ñ") == -1) {
+            if (name.contains("¡") && name.contains("¿") && name.contains("ñ") && name.contains("Ñ")) {
                 mangas.add(new Manga(SUBMANGA, name, m.group(1), false));
             }
         }
@@ -95,7 +95,7 @@ public class SubManga extends ServerBase {
 
     @Override
     public void iniciarCapitulo(Chapter c) throws Exception {
-        String pagina = "";
+        String pagina;
         int i = 1;
         String extra = "";
         while ((pagina = getImagen(c, i)) != null) {

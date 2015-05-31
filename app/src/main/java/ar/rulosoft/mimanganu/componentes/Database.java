@@ -192,7 +192,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static ArrayList<Manga> getMangasFromCursor(Cursor cursor) {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_ID);
             int colServerId = cursor.getColumnIndex(COL_SERVER_ID);
@@ -256,7 +256,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static ArrayList<Chapter> getCapitulos(Context c, int MangaId, String condicion, boolean asc) {
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         String orden = " DESC";
         if (asc)
             orden = " ASC";

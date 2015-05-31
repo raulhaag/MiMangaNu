@@ -243,7 +243,7 @@ public class ActivityManga extends ActionBarActivity {
             cargarCapitulos(manga.getChapters());
         } else if (id == R.id.action_sentido) {
             // TODO check database
-            int direccion = -1;
+            int direccion;
             if (manga.getSentidoLectura() != -1) {
                 direccion = manga.getSentidoLectura();
             } else {
@@ -289,7 +289,7 @@ public class ActivityManga extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_capitulos, menu);
         sentido = menu.findItem(R.id.action_sentido);
-        int direccion = -1;
+        int direccion;
         if (manga.getSentidoLectura() != -1) {
             direccion = manga.getSentidoLectura();
         } else {

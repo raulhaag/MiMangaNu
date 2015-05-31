@@ -7,7 +7,7 @@ import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 public class Manga {
     int id, serverId, nuevos, lastIndex, sentidoLectura = -1;
     String titulo, sinopsis, images, path, autor;
-    ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+    ArrayList<Chapter> chapters = new ArrayList<>();
 
     boolean finalizado;
 

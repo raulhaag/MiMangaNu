@@ -45,7 +45,7 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         String data = new Navegador().get("http://www.mangapanda.com/alphabetical");
         Pattern p = Pattern.compile(PATTERN_SUB);
         Matcher m = p.matcher(data);
@@ -127,8 +127,8 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
-        String web = "";
+        ArrayList<Manga> mangas = new ArrayList<>();
+        String web;
         if (categoria == 0)
             web = "http://www.mangapanda.com/popular" + "/" + (pagina - 1) * 20;
         else
@@ -168,7 +168,7 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
         String data = nav.get("http://www.mangapanda.com/actions/search/?q=" + termino + "&limit=100");
         Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");

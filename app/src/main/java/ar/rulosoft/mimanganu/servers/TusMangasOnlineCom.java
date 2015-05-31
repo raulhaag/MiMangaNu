@@ -91,7 +91,7 @@ public class TusMangasOnlineCom extends ServerBase {
         m.setFinalizado(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
         m.setAutor(getFirstMacthDefault("5&amp;filter=.+?>(.+?)<", source, ""));
 
-        ArrayList<Chapter> caps = new ArrayList<Chapter>();
+        ArrayList<Chapter> caps = new ArrayList<>();
         Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)<");
         Matcher ma = p.matcher(source);
         while (ma.find()) {
@@ -117,8 +117,8 @@ public class TusMangasOnlineCom extends ServerBase {
             String source = getNavegadorConHeader().get(c.getExtra());
             Pattern p = Pattern.compile("<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
-            String imgBase = "";
-            String imgStrip = "";
+            String imgBase;
+            String imgStrip;
             String imagenes = "";
             if (m.find()) {
                 imgBase = "http://img1.tumangaonline.com/subidas/" + m.group(1) + "/" + m.group(2) + "/" + m.group(3) + "/";
@@ -161,7 +161,7 @@ public class TusMangasOnlineCom extends ServerBase {
     private ArrayList<Manga> getMangasFromSource(String source) {
         Pattern p = Pattern.compile("[\\s]*<a href=\"([^\"]+)\"[^<]+<img src=\"([^\"]+)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
             Manga manga = new Manga(TUSMANGAS, m.group(3), m.group(1), false);
             manga.setImages(m.group(2));

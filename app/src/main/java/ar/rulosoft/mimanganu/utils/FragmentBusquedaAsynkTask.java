@@ -12,7 +12,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 /**
- * Created by Raul on 22/05/2015.
+ * Created by Raul
  */
 public class FragmentBusquedaAsynkTask extends Fragment {
     BuscarNuevo buscarNuevo;

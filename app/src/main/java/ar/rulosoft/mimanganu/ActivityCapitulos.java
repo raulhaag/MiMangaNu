@@ -110,7 +110,7 @@ public class ActivityCapitulos extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.activity_capitulos, menu);
         sentido = menu.findItem(R.id.action_sentido);
         mOrden = menu.findItem(R.id.action_orden);
-        int direccion = -1;
+        int direccion;
         if (manga.getSentidoLectura() != -1) {
             direccion = manga.getSentidoLectura();
         } else {
@@ -164,7 +164,7 @@ public class ActivityCapitulos extends ActionBarActivity {
             new BuscarNuevo().setActivity(ActivityCapitulos.this).execute(manga);
         } else if (id == R.id.action_sentido) {
             // TODO check database
-            int direccion = -1;
+            int direccion;
             if (manga.getSentidoLectura() != -1) {
                 direccion = manga.getSentidoLectura();
             } else {
@@ -311,7 +311,7 @@ public class ActivityCapitulos extends ActionBarActivity {
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.fragments = new ArrayList<Fragment>();
+            this.fragments = new ArrayList<>();
         }
 
         public void add(Fragment f) {

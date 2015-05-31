@@ -117,11 +117,11 @@ public abstract class ServerBase {
         this.cargarCapitulos(manga, false);
         int diff = manga.getChapters().size() - mangaDb.getChapters().size();
         if (diff > 0) {
-            ArrayList<Chapter> simpleList = new ArrayList<Chapter>();
+            ArrayList<Chapter> simpleList = new ArrayList<>();
             if (manga.getChapters().size() < diff) {
                 simpleList.addAll(manga.getChapters().subList(0, diff));
                 simpleList.addAll(manga.getChapters().subList(manga.getChapters().size() - diff, manga.getChapters().size()));
-                ArrayList<Chapter> simpleListC = new ArrayList<Chapter>();
+                ArrayList<Chapter> simpleListC = new ArrayList<>();
                 simpleListC.addAll(mangaDb.getChapters().subList(0, diff));
                 simpleListC.addAll(mangaDb.getChapters().subList(mangaDb.getChapters().size() - diff, mangaDb.getChapters().size()));
                 for (Chapter c : simpleListC) {
@@ -144,7 +144,7 @@ public abstract class ServerBase {
             }
 
             if (!(simpleList.size() >= diff)) {
-                simpleList = new ArrayList<Chapter>();
+                simpleList = new ArrayList<>();
                 for (Chapter c : manga.getChapters()) {
                     boolean masUno = true;
                     for (Chapter csl : mangaDb.getChapters()) {
@@ -175,17 +175,17 @@ public abstract class ServerBase {
         }
 
         boolean cambios = false;
-        if (mangaDb.getAutor() != manga.getAutor() && manga.getAutor().length() > 2) {
+        if (!mangaDb.getAutor().equals(manga.getAutor()) && manga.getAutor().length() > 2) {
             mangaDb.setAutor(manga.getAutor());
             cambios = true;
         }
 
-        if (mangaDb.getImages() != manga.getImages() && manga.getImages().length() > 2) {
+        if (!mangaDb.getImages().equals(manga.getImages()) && manga.getImages().length() > 2) {
             mangaDb.setImages(manga.getImages());
             cambios = true;
         }
 
-        if (mangaDb.getSinopsis() != manga.getSinopsis() && manga.getSinopsis().length() > 2) {
+        if (!mangaDb.getSinopsis().equals(manga.getSinopsis()) && manga.getSinopsis().length() > 2) {
             mangaDb.setSinopsis(manga.getSinopsis());
             cambios = true;
         }

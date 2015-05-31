@@ -20,7 +20,7 @@ public class DownloadAdapter extends ArrayAdapter<DescargaCapitulo> {
 
     public static String[] states;
     private static int listItem = R.layout.listitem_descarga;
-    ArrayList<DescargaCapitulo> downloads = new ArrayList<DescargaCapitulo>();
+    ArrayList<DescargaCapitulo> downloads = new ArrayList<>();
     private LayoutInflater li;
 
     public DownloadAdapter(Context context, ArrayList<DescargaCapitulo> objects) {

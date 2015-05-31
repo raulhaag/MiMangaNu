@@ -66,7 +66,7 @@ public class ItNineMangaCom extends ServerBase {
     @Override
     public ArrayList<Manga> getBusqueda(String termino) throws Exception {
         String source = new Navegador().get("http://it.ninemanga.com/search/?wd=" + URLEncoder.encode(termino, "UTF-8"));
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
@@ -102,7 +102,7 @@ public class ItNineMangaCom extends ServerBase {
         // capítulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(3), "http://it.ninemanga.com" + matcher.group(1)));
         }
@@ -148,7 +148,7 @@ public class ItNineMangaCom extends ServerBase {
     }
 
     public ArrayList<Manga> getMangasFromSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {

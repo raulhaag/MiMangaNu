@@ -20,7 +20,7 @@ public class LectureEnLigne extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         String source = new Navegador().get("http://www.lecture-en-ligne.com/");
         Pattern p = Pattern.compile("<option value=\"([^\"]+)\">(.+?)</option>");
         Matcher m = p.matcher(source);
@@ -54,7 +54,7 @@ public class LectureEnLigne extends ServerBase {
         manga.setAutor(getFirstMacthDefault("Auteur :.+?d>(.+?)<",data,""));
 
         // capitulos
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         Pattern p = Pattern.compile("<td class=\"td\">(.+?)</td>[^\\.]+\\.\\./\\.\\.(.+?)\"");
         Matcher ma = p.matcher(data);
         while (ma.find()) {

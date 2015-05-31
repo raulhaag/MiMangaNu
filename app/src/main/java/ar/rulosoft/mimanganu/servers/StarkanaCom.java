@@ -36,7 +36,7 @@ public class StarkanaCom extends ServerBase {
         String source = new Navegador().get("http://starkana.com/manga/list");
         Pattern p = Pattern.compile("http://starkana.(jp|com)/img/icons/tick_(.+?).png\".+?href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
             if (m.group(2).length() == 4) {
                 mangas.add(new Manga(STARKANACOM, m.group(4), "http://starkana.com" + m.group(3), false));
@@ -73,7 +73,7 @@ public class StarkanaCom extends ServerBase {
         // capitulos
         Pattern p = Pattern.compile("<a class=\"download-link\" href=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(2).replaceAll("<.+?>", ""), "http://starkana.com" + matcher.group(1)));
         }
@@ -129,7 +129,7 @@ public class StarkanaCom extends ServerBase {
     }
 
     ArrayList<Manga> getMangasFromSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("title=\"([^\"]+)\" href=\"(/manga/.+?)\".+?src=\"(.+?)\".+?tick_(.+?)\\.");// "<img class=\"a_img\" src=\"(.+?)\".+?<img src=\"http://starkana.com/img/icons/tick_(.+?).png\".+?href=\"(.+?)\".+?>(.+?)</a>");
         Matcher m = p.matcher(source);
         while (m.find()) {

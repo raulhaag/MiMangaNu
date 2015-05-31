@@ -30,7 +30,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     public static int SLOTS = 2;
     public static ServicioColaDeDescarga actual = null;
     public static boolean intentPrending = false;
-    public static ArrayList<DescargaCapitulo> descargas = new ArrayList<DescargaCapitulo>();
+    public static ArrayList<DescargaCapitulo> descargas = new ArrayList<>();
 
     static {
         Arrays.sort(illegalChars);

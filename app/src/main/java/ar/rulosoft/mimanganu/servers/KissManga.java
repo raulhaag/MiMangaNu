@@ -46,7 +46,7 @@ public class KissManga extends ServerBase {
         Pattern p = Pattern.compile("href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"");
         Matcher m = p.matcher(source);
         if (m.find()) {
-            lista = new ArrayList<Manga>();
+            lista = new ArrayList<>();
             boolean status = getFirstMacthDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9;
             lista.add(new Manga(KISSMANGA, m.group(2), m.group(1), status));
         } else {
@@ -80,7 +80,7 @@ public class KissManga extends ServerBase {
         // capitulos
         Pattern p = Pattern.compile("<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<");
         Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
         }
@@ -136,7 +136,7 @@ public class KissManga extends ServerBase {
     }
 
     public ArrayList<Manga> getMangasSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {

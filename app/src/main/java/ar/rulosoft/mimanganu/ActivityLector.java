@@ -535,19 +535,11 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         }
 
         public boolean canScroll(int dx) {
-            if (visor != null) {
-                return visor.canScroll(dx);
-            } else {
-                return true;
-            }
+            return visor == null || visor.canScroll(dx);
         }
 
         public boolean canScrollV(int dx) {
-            if (visor != null) {
-                return visor.canScrollV(dx);
-            } else {
-                return true;
-            }
+            return visor == null || visor.canScrollV(dx);
         }
 
         public void setImagen() {
@@ -571,7 +563,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap = null;
+                Bitmap bitmap;
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inPreferredConfig = Config.RGB_565;
                 bitmap = BitmapFactory.decodeFile(ruta, opts);
@@ -735,7 +727,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        ArrayList<PlaceholderFragment> fragments = new ArrayList<PlaceholderFragment>(6);
+        ArrayList<PlaceholderFragment> fragments = new ArrayList<>(6);
         int[] pos = {-1, -1, -1, -1, -1, -1};
         int idx = 0;
         FragmentManager fm = null;
@@ -756,7 +748,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
 
         @Override
         public Fragment getItem(int position) {
-            Fragment rsta = null;
+            Fragment rsta;
             if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
                 if (position == chapter.getPaginas())
                     rsta = ultimaPaginaFragment;
@@ -784,7 +776,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             }
             if (f == null) {
                 String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, chapter, getApplicationContext()) + "/" + (position + 1) + ".jpg";
-                int idx = -1;
+                int idx;
                 do {
                     idx = getNextPos();
                     if (pos[idx] == -1)

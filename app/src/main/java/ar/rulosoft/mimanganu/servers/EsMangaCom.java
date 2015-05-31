@@ -31,7 +31,7 @@ public class EsMangaCom extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         String source = new Navegador().get("http://esmanga.com");
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern pre = Pattern.compile("<div class=\"blk-hd\"><span>Todas las series Manga</span></div>[\\s\\S]+");
         Matcher preMatcher = pre.matcher(source);
         if (preMatcher.find()) {
@@ -68,7 +68,7 @@ public class EsMangaCom extends ServerBase {
         //status
         m.setFinalizado(getFirstMacthDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
         // capitulos
-        ArrayList<Chapter> chapters = new ArrayList<Chapter>();
+        ArrayList<Chapter> chapters = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(http://esmanga.com/[^\"]+/c\\d+)\">(.+?)</a><");
         Matcher ma = p.matcher(source);
         while (ma.find()) {
@@ -107,7 +107,7 @@ public class EsMangaCom extends ServerBase {
         String source = new Navegador().get(web);
         Pattern p = Pattern.compile("src=\"([^\"]+)\".+?<a href=\"(http://esmanga.com/manga/.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
             Manga manga = new Manga(ESMANGA, m.group(3), m.group(2), false);
             manga.setImages(m.group(1));

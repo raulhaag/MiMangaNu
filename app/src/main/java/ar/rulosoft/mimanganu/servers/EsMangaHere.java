@@ -43,7 +43,7 @@ public class EsMangaHere extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         String data = new Navegador().get("http://es.mangahere.co/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
@@ -116,7 +116,7 @@ public class EsMangaHere extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://es.mangahere.co/" + categoriasV[categoria] + pagina + ".htm" + ordenM[ordentipo];
         String data = new Navegador().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
@@ -147,7 +147,7 @@ public class EsMangaHere extends ServerBase {
 
     @Override
     public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
         String data = nav.get("http://es.mangahere.co/site/search?name=" + termino);
         Pattern p = Pattern.compile("<dt>		<a href=\"(http://es.mangahere.co/manga/.+?)\".+?'>(.+?)<");
