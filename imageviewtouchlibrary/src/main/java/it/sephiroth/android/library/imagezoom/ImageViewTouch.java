@@ -264,21 +264,24 @@ public class ImageViewTouch extends ImageViewTouchBase {
         public boolean onSingleTapConfirmed(MotionEvent e) {
 
             if (null != mTapListener) {
-                if (e.getX() < getWidth() / 4) {
-                    mTapListener.onLeftTap();
-                } else if (e.getX() > getWidth() / 4 * 3) {
-                    mTapListener.onRightTap();
-                } else {
-                    mTapListener.onCenterTap();
+                try {
+                    if (e.getX() < getWidth() / 4) {
+                        mTapListener.onLeftTap();
+                    } else if (e.getX() > getWidth() / 4 * 3) {
+                        mTapListener.onRightTap();
+                    } else {
+                        mTapListener.onCenterTap();
+                    }
+                } catch (Exception ex) {
                 }
-            }
+                ;
+                }
 
             if (null != mSingleTapListener) {
                 mSingleTapListener.onSingleTapConfirmed();
             }
-
             return ImageViewTouch.this.onSingleTapConfirmed(e);
-        }
+            }
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
@@ -300,7 +303,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
             }
 
             return super.onDoubleTap(e);
-        }
+            }
 
         @Override
         public void onLongPress(MotionEvent e) {
@@ -309,11 +312,12 @@ public class ImageViewTouch extends ImageViewTouchBase {
                     setPressed(true);
                     performLongClick();
                 }
+                }
             }
-        }
 
         @Override
-        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX,
+                                float distanceY) {
 
             if (!mScrollEnabled) return false;
             if (e1 == null || e2 == null) return false;
@@ -342,7 +346,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         public boolean onDown(MotionEvent e) {
             return ImageViewTouch.this.onDown(e);
         }
-    }
+        }
 
     public class ScaleListener extends ScaleGestureDetector.SimpleOnScaleGestureListener {
 
@@ -368,7 +372,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
                 if (!mScaled) mScaled = true;
             }
             return true;
-        }
+            }
 
     }
-}
+    }

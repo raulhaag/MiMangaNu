@@ -1,7 +1,11 @@
 ﻿MiMangaNu
 =========
 
-Lector Manga online 
+Lector Manga online
+
+Cambios 1.27 mas cambios en la ui, agregada traduccion al aleman de TheSniperFan, actualizada la Francesa por Dostoi.
+
+Cambios 1.26 unos cuantos fixes y acercandoce mas a una version final de la ui.
 
 Cambios 1.25 added #26 added #67 iniciando sistema de tema.
 
@@ -68,6 +72,8 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Thanks to sephiroth74 for the library ImageViewTouch, thest1 for LazyList and castorflex for VerticalViewPager.
+
+Contribuciones de Dostois, TheSniperFan, falibros y grgeosteve.
 
 Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.
 

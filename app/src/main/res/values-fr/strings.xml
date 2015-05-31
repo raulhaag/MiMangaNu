@@ -88,7 +88,7 @@
     <string name="marcarleido">Marquer comme lu</string>
     <string name="estado">Statut</string>
     <string name="directorio_title">Choisir le dossier</string>
-        <string name="direcctorio_subtitle">Pour les téléchargements (Vous devez bouger le contenu dans le nouveau dossier manuellement, redémarrez l'application et des fois l'appareil)</string>
+    <string name="direcctorio_subtitle">Pour les téléchargements (Vous devez bouger le contenu dans le nouveau dossier manuellement, redémarrez l\'application et des fois l\'appareil)</string>
     <string name="folder_changed">Dossier changé.</string>
     <string name="unwritable_folder">Dossier inécrivable.</string>
     <string name="color_primario">Couleur Principale</string>
@@ -96,7 +96,6 @@
     <string name="autor">Auteur</string>
     <string name="server">Serveur</string>
     <string name="nodisponible">N/A</string>
-    <string name="title_activity_activity_manga">ActivityManga</string>
     <string name="sinopsis">Synopsis</string>
     <string name="State_New">Nouveau</string>
 
