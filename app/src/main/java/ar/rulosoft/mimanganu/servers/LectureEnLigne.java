@@ -51,7 +51,7 @@ public class LectureEnLigne extends ServerBase {
         manga.setImages("http://www.lecture-en-ligne.com/" + getFirstMacthDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
 
         //autor
-        manga.setAutor(getFirstMacthDefault("Auteur :.+?d>(.+?)<",data,""));
+        manga.setAuthor(getFirstMacthDefault("Auteur :.+?d>(.+?)<", data, ""));
 
         // capitulos
         ArrayList<Chapter> chapters = new ArrayList<>();

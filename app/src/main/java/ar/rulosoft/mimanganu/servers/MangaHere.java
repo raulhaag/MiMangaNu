@@ -63,7 +63,7 @@ public class MangaHere extends ServerBase {
             manga.setFinalizado(data.contains("</label>Completed</li>"));
 
             //autor
-            manga.setAutor(getFirstMacthDefault("Author.+?\">(.+?)<", data, ""));
+            manga.setAuthor(getFirstMacthDefault("Author.+?\">(.+?)<", data, ""));
 
             // capitulos
             p = Pattern.compile(PATTERN_CAPITULOS);

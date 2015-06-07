@@ -90,8 +90,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         MAX_TEXTURE = Integer.parseInt(pm.getString("max_texture", "2048"));
         chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityCapitulos.CAPITULO_ID));
         manga = Database.getFullManga(this, chapter.getMangaID());
-        if (manga.getSentidoLectura() != -1)
-            direccion = Direccion.values()[manga.getSentidoLectura()];
+        if (manga.getReadingDirection() != -1)
+            direccion = Direccion.values()[manga.getReadingDirection()];
         else
             direccion = Direccion.values()[Integer.parseInt(pm.getString(ActivityCapitulos.DIRECCION, "" + Direccion.R2L.ordinal()))];
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);

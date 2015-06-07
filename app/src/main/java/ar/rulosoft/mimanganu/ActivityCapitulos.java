@@ -111,8 +111,8 @@ public class ActivityCapitulos extends ActionBarActivity {
         sentido = menu.findItem(R.id.action_sentido);
         mOrden = menu.findItem(R.id.action_orden);
         int direccion;
-        if (manga.getSentidoLectura() != -1) {
-            direccion = manga.getSentidoLectura();
+        if (manga.getReadingDirection() != -1) {
+            direccion = manga.getReadingDirection();
         } else {
             direccion = Integer.parseInt(pm.getString(DIRECCION, "" + Direccion.R2L.ordinal()));
         }
@@ -165,8 +165,8 @@ public class ActivityCapitulos extends ActionBarActivity {
         } else if (id == R.id.action_sentido) {
             // TODO check database
             int direccion;
-            if (manga.getSentidoLectura() != -1) {
-                direccion = manga.getSentidoLectura();
+            if (manga.getReadingDirection() != -1) {
+                direccion = manga.getReadingDirection();
             } else {
                 direccion = Integer.parseInt(pm.getString(DIRECCION, "" + Direccion.R2L.ordinal()));
             }
@@ -180,7 +180,7 @@ public class ActivityCapitulos extends ActionBarActivity {
                 sentido.setIcon(R.drawable.ic_action_clasico);
                 this.direccion = Direccion.R2L;
             }
-            manga.setSentidoLectura(this.direccion.ordinal());
+            manga.setReadingDirection(this.direccion.ordinal());
             Database.updadeSentidoLectura(ActivityCapitulos.this, this.direccion.ordinal(), manga.getId());
 
         } else if (id == R.id.action_orden) {
@@ -275,8 +275,8 @@ public class ActivityCapitulos extends ActionBarActivity {
             ServerBase s = ServerBase.getServer(params[0].getServerId());
             mangaId = params[0].getId();
             try {
-                onProgressUpdate(params[0].getTitulo());
-                params[0].clearCapitulos();
+                onProgressUpdate(params[0].getTitle());
+                params[0].clearChapters();
                 s.cargarCapitulos(params[0],true);
                 int diff = s.buscarNuevosCapitulos(params[0].getId(), activity);
                 result += diff;

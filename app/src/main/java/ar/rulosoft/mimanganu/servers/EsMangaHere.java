@@ -70,7 +70,7 @@ public class EsMangaHere extends ServerBase {
             manga.setFinalizado(getFirstMacthDefault("<li><label>Estado:</label>(.+?)</li>", data, "En desarrollo").length() == 9);
 
             //autor
-            manga.setAutor(getFirstMacthDefault("Autor.+?\">(.+?)<",data,""));
+            manga.setAuthor(getFirstMacthDefault("Autor.+?\">(.+?)<", data, ""));
 
             // capitulos
             data = getFirstMacth(PATRON_SEG_CAP, data, "Error al obtener lista de cap�tulos");

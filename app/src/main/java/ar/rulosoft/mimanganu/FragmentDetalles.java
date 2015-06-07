@@ -57,11 +57,11 @@ public class FragmentDetalles extends Fragment {
                 infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
             }
             datos.setEstado(infoExtra);
-            datos.setSinopsis(m.getSinopsis());
+            datos.setSinopsis(m.getSynopsis());
             datos.setServidor(ServerBase.getServer(m.getServerId()).getServerName());
-            datos.setTitulo(m.getTitulo());
-            if(m.getAutor().length() > 1){
-                datos.setAutor(m.getAutor());
+            datos.setTitulo(m.getTitle());
+            if (m.getAuthor().length() > 1) {
+                datos.setAutor(m.getAuthor());
             }else{
                 datos.setAutor(getResources().getString(R.string.nodisponible));
             }
@@ -92,10 +92,10 @@ public class FragmentDetalles extends Fragment {
                 infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
             }
             datos.setEstado(infoExtra);
-            datos.setSinopsis(m.getSinopsis());
+            datos.setSinopsis(m.getSynopsis());
             datos.setServidor(ServerBase.getServer(m.getServerId()).getServerName());
-            if(m.getAutor().length() > 1){
-                datos.setAutor(m.getAutor());
+            if (m.getAuthor().length() > 1) {
+                datos.setAutor(m.getAuthor());
             }else{
                 datos.setAutor(getResources().getString(R.string.nodisponible));
             }

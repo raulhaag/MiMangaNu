@@ -34,7 +34,7 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         final Manga item = getItem(position);
 
         if (item != null) {
-            holder.textViewName.setText(android.text.Html.fromHtml(item.getTitulo()));
+            holder.textViewName.setText(android.text.Html.fromHtml(item.getTitle()));
         }
         return convertView;
     }

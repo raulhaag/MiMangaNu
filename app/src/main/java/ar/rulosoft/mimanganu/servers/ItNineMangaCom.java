@@ -97,7 +97,7 @@ public class ItNineMangaCom extends ServerBase {
 
         //autor
 
-        m.setAutor(getFirstMacthDefault("Author.+?\">(.+?)<", source, ""));
+        m.setAuthor(getFirstMacthDefault("Author.+?\">(.+?)<", source, ""));
 
         // capítulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");

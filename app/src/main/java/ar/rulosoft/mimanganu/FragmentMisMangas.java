@@ -38,9 +38,9 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public boolean buscar = false;
     RecyclerView grilla;
     MangasRecAdapter adapter;
-    private Integer menuFor;
     SwipeRefreshLayout str;
     BuscarNuevo buscarNuevo;
+    private Integer menuFor;
 
     public static void DeleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -196,7 +196,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 Manga manga = mangas.get(i);
                 ServerBase s = ServerBase.getServer(manga.getServerId());
                 try {
-                    onProgressUpdate(manga.getTitulo());
+                    onProgressUpdate(manga.getTitle());
                     s.cargarCapitulos(manga, false);
                     int diff = s.buscarNuevosCapitulos(manga.getId(), getActivity());
                     result += diff;

@@ -196,10 +196,10 @@ public class ActivityManga extends ActionBarActivity {
                 infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
             }
             datos.setEstado(infoExtra);
-            datos.setSinopsis(manga.getSinopsis());
+            datos.setSinopsis(manga.getSynopsis());
             datos.setServidor(ServerBase.getServer(manga.getServerId()).getServerName());
-            if (manga.getAutor().length() > 1) {
-                datos.setAutor(manga.getAutor());
+            if (manga.getAuthor().length() > 1) {
+                datos.setAutor(manga.getAuthor());
             } else {
                 datos.setAutor(getResources().getString(R.string.nodisponible));
             }
@@ -250,8 +250,8 @@ public class ActivityManga extends ActionBarActivity {
         } else if (id == R.id.action_sentido) {
             // TODO check database
             int direccion;
-            if (manga.getSentidoLectura() != -1) {
-                direccion = manga.getSentidoLectura();
+            if (manga.getReadingDirection() != -1) {
+                direccion = manga.getReadingDirection();
             } else {
                 direccion = Integer.parseInt(pm.getString(DIRECCION, "" + Direccion.R2L.ordinal()));
             }
@@ -265,7 +265,7 @@ public class ActivityManga extends ActionBarActivity {
                 sentido.setIcon(R.drawable.ic_action_clasico);
                 this.direccion = Direccion.R2L;
             }
-            manga.setSentidoLectura(this.direccion.ordinal());
+            manga.setReadingDirection(this.direccion.ordinal());
             Database.updadeSentidoLectura(ActivityManga.this, this.direccion.ordinal(), manga.getId());
 
         } else if (id == R.id.descargas) {
@@ -284,7 +284,7 @@ public class ActivityManga extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         manga = Database.getFullManga(getApplicationContext(), id);
-        setTitle(manga.getTitulo());
+        setTitle(manga.getTitle());
         cargarCapitulos(manga.getChapters());
         Database.updateMangaRead(this, manga.getId());
         Database.updateNewMangas(ActivityManga.this, manga, -100);
@@ -296,8 +296,8 @@ public class ActivityManga extends ActionBarActivity {
         getMenuInflater().inflate(R.menu.activity_capitulos, menu);
         sentido = menu.findItem(R.id.action_sentido);
         int direccion;
-        if (manga.getSentidoLectura() != -1) {
-            direccion = manga.getSentidoLectura();
+        if (manga.getReadingDirection() != -1) {
+            direccion = manga.getReadingDirection();
         } else {
             direccion = Integer.parseInt(pm.getString(DIRECCION, "" + Direccion.R2L.ordinal()));
         }

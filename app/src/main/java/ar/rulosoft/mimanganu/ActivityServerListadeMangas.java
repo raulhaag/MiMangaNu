@@ -54,7 +54,7 @@ public class ActivityServerListadeMangas extends ActionBarActivity {
                 Manga m = (Manga) lista.getAdapter().getItem(position);
                 Intent intent = new Intent(getApplication(), ActivityDetalles.class);
                 intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-                intent.putExtra(ActivityDetalles.TITULO, m.getTitulo());
+                intent.putExtra(ActivityDetalles.TITULO, m.getTitle());
                 intent.putExtra(ActivityDetalles.PATH, m.getPath());
                 startActivity(intent);
             }

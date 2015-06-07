@@ -75,7 +75,7 @@ public class KissManga extends ServerBase {
 
         //autor
 
-        m.setAutor(getFirstMacthDefault("href=\"/AuthorArtist/.+?>(.+?)<",source,""));
+        m.setAuthor(getFirstMacthDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
 
         // capitulos
         Pattern p = Pattern.compile("<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<");

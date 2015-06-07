@@ -65,12 +65,12 @@ public class Database extends SQLiteOpenHelper {
 
     public static int addManga(Context c, Manga m) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_NAME, m.titulo);
+        cv.put(COL_NAME, m.title);
         cv.put(COL_PATH, m.path);
         cv.put(COL_IMAGE, m.images);
-        cv.put(COL_SYNOPSIS, m.sinopsis);
+        cv.put(COL_SYNOPSIS, m.synopsis);
         cv.put(COL_SERVER_ID, m.serverId);
-        cv.put(COL_AUTHOR, m.getAutor());
+        cv.put(COL_AUTHOR, m.getAuthor());
         cv.put(COL_LAST_READ, System.currentTimeMillis());
 
         if (m.finalizado)
@@ -83,12 +83,12 @@ public class Database extends SQLiteOpenHelper {
 
     public static void updateManga(Context context, Manga manga) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_NAME, manga.titulo);
+        cv.put(COL_NAME, manga.title);
         cv.put(COL_PATH, manga.path);
         cv.put(COL_IMAGE, manga.images);
-        cv.put(COL_SYNOPSIS, manga.sinopsis);
+        cv.put(COL_SYNOPSIS, manga.synopsis);
         cv.put(COL_SERVER_ID, manga.serverId);
-        cv.put(COL_AUTHOR, manga.getAutor());
+        cv.put(COL_AUTHOR, manga.getAuthor());
         cv.put(COL_LAST_READ, System.currentTimeMillis());
 
         if (manga.finalizado)
@@ -101,12 +101,12 @@ public class Database extends SQLiteOpenHelper {
 
     public static void updateMangaNotime(Context context, Manga manga) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_NAME, manga.titulo);
+        cv.put(COL_NAME, manga.title);
         cv.put(COL_PATH, manga.path);
         cv.put(COL_IMAGE, manga.images);
-        cv.put(COL_SYNOPSIS, manga.sinopsis);
+        cv.put(COL_SYNOPSIS, manga.synopsis);
         cv.put(COL_SERVER_ID, manga.serverId);
-        cv.put(COL_AUTHOR, manga.getAutor());
+        cv.put(COL_AUTHOR, manga.getAuthor());
 
         if (manga.finalizado)
             cv.put(COL_SEARCH, 1);
@@ -218,8 +218,8 @@ public class Database extends SQLiteOpenHelper {
                 m.setNuevos(cursor.getInt(conNuevos));
                 m.setFinalizado(cursor.getInt(colBuscar) > 0);
                 m.setLastIndex(cursor.getInt(colLastIdx));
-                m.setSentidoLectura(cursor.getInt(colSentido));
-                m.setAutor(cursor.getString(colAutor));
+                m.setReadingDirection(cursor.getInt(colSentido));
+                m.setAuthor(cursor.getString(colAutor));
                 mangas.add(m);
             } while (cursor.moveToNext());
         }
@@ -377,8 +377,8 @@ public class Database extends SQLiteOpenHelper {
             m.setId(cursor.getInt(colId));
             m.setNuevos(cursor.getInt(conNuevos));
             m.setLastIndex(cursor.getInt(colLastIndex));
-            m.setSentidoLectura(cursor.getInt(colSentido));
-            m.setAutor(cursor.getString(conAutor));
+            m.setReadingDirection(cursor.getInt(colSentido));
+            m.setAuthor(cursor.getString(conAutor));
 
             manga = m;
         }

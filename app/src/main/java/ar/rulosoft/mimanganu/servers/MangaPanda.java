@@ -98,7 +98,7 @@ public class MangaPanda extends ServerBase {
         //status
         manga.setFinalizado(data.contains("</td><td>Completed</td>"));
         //autor
-        manga.setAutor(Html.fromHtml(getFirstMacthDefault("Author:</td><td>(.+?)<", data, "")).toString());
+        manga.setAuthor(Html.fromHtml(getFirstMacthDefault("Author:</td><td>(.+?)<", data, "")).toString());
     }
 
     @Override

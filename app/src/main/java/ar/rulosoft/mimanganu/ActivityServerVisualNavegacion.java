@@ -130,7 +130,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
 		 * grilla.getAdapter().getItem(position); Intent intent = new
 		 * Intent(getApplication(), ActivityDetalles.class);
 		 * intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-		 * intent.putExtra(ActivityDetalles.TITULO, m.getTitulo());
+		 * intent.putExtra(ActivityDetalles.TITULO, m.getTitle());
 		 * intent.putExtra(ActivityDetalles.PATH, m.getPath());
 		 * startActivity(intent); } });/
 		 */
@@ -148,7 +148,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
     public void onMangaClick(Manga manga) {
         Intent intent = new Intent(getApplication(), ActivityDetalles.class);
         intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-        intent.putExtra(ActivityDetalles.TITULO, manga.getTitulo());
+        intent.putExtra(ActivityDetalles.TITULO, manga.getTitle());
         intent.putExtra(ActivityDetalles.PATH, manga.getPath());
         startActivity(intent);
     }

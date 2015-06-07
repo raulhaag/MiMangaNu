@@ -67,7 +67,7 @@ public class MangaFox extends ServerBase {
             manga.setFinalizado(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
 
             //autor
-            manga.setAutor(getFirstMacthDefault("\"/search/author/.+?>(.+?)<", data, ""));
+            manga.setAuthor(getFirstMacthDefault("\"/search/author/.+?>(.+?)<", data, ""));
 
             // capitulos
             p = Pattern.compile(PATTERN_CAPITULOS);

@@ -117,10 +117,10 @@ public class ActivityDetalles extends ActionBarActivity {
                     infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                 }
                 datos.setEstado(infoExtra);
-                datos.setSinopsis(m.getSinopsis());
+                datos.setSinopsis(m.getSynopsis());
                 datos.setServidor(s.getServerName());
-                if (m.getAutor() != null && m.getAutor().length() > 1) {
-                    datos.setAutor(m.getAutor());
+                if (m.getAuthor() != null && m.getAuthor().length() > 1) {
+                    datos.setAutor(m.getAuthor());
                 } else {
                     datos.setAutor(getResources().getString(R.string.nodisponible));
                 }

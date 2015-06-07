@@ -99,5 +99,7 @@
     <string name="nodisponible">N/D</string>
     <string name="sinopsis">Sinopsis</string>
     <string name="State_New">Nuevo</string>
+    <string name="markSelectedUnread">Marcar seleccion como no leido</string>
+
 
 </resources>

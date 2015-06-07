@@ -58,7 +58,7 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
     @Override
     public void onBindViewHolder(MangasHolder holder, int position) {
         final Manga m = mangas.get(position);
-        holder.serie.setText(m.getTitulo());
+        holder.serie.setText(m.getTitle());
         imageLoader.DisplayImage(m.getImages(), holder.serie);
         holder.v.setTag(position);
         holder.v.setOnClickListener(new OnClickListener() {
@@ -71,7 +71,7 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
         });
         ServerBase server = ServerBase.getServer(m.getServerId());
         holder.server.setImageResource(server.getIcon());
-        if (m.getNuevos() > 0) {
+        if (m.getNews() > 0) {
             holder.notif.setVisibility(ImageView.VISIBLE);
         } else {
             holder.notif.setVisibility(ImageView.INVISIBLE);

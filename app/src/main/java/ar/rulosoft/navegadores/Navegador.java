@@ -33,10 +33,15 @@ public class Navegador {
     public Navegador() {
     }
 
+
     public String get(String web) throws Exception {
+        return this.get(web, 5000);
+    }
+
+    public String get(String web, int timeOut) throws Exception {
         URL url = new URL(web);
         conn = (HttpURLConnection) url.openConnection();
-        conn.setConnectTimeout(10000);
+        conn.setConnectTimeout(timeOut);
         conn.setReadTimeout(5000);
         addHeader("Accept-Encoding", "gzip,deflate");
         setHeaders();

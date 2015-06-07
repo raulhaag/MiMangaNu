@@ -5,19 +5,18 @@ import java.util.ArrayList;
 import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 
 public class Manga {
-    // TODO: Needs translation. Not sure if it doesn't break compatibility with old databases.
-    int id, serverId, nuevos, lastIndex, sentidoLectura = -1;
-    String titulo, sinopsis, images, path, autor;
+    int id, serverId, news, lastIndex, readingDirection = -1;
+    String title, synopsis, images, path, author;
     ArrayList<Chapter> chapters = new ArrayList<>();
 
     boolean finalizado;
 
-    public Manga(int serverId, String titulo, String path, boolean finalizado) {
+    public Manga(int serverId, String title, String path, boolean finished) {
         super();
         this.serverId = serverId;
-        this.titulo = titulo;
+        this.title = title;
         this.path = path;
-        this.autor = "";
+        this.author = "";
     }
 
     public int getId() {
@@ -36,20 +35,20 @@ public class Manga {
         this.serverId = serverId;
     }
 
-    public String getTitulo() {
-        return titulo;
+    public String getTitle() {
+        return title;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
-    public String getSinopsis() {
-        return sinopsis;
+    public String getSynopsis() {
+        return synopsis;
     }
 
-    public void setSinopsis(String sinopsis) {
-        this.sinopsis = HtmlUnescape.Unescape(sinopsis);
+    public void setSinopsis(String synopsis) {
+        this.synopsis = HtmlUnescape.Unescape(synopsis);
     }
 
     public String getImages() {
@@ -68,17 +67,17 @@ public class Manga {
         this.path = path;
     }
 
-    public String getAutor() {
-        return autor;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     @Override
     public String toString() {
-        return this.titulo;
+        return this.title;
     }
 
     public void addCapitulo(Chapter c) {
@@ -105,17 +104,17 @@ public class Manga {
         chapters = caps;
     }
 
-    public void clearCapitulos() {
+    public void clearChapters() {
         chapters.clear();
     }
 
 
-    public int getNuevos() {
-        return nuevos;
+    public int getNews() {
+        return news;
     }
 
-    public void setNuevos(int nuevos) {
-        this.nuevos = nuevos;
+    public void setNuevos(int news) {
+        this.news = news;
     }
 
     public int getLastIndex() {
@@ -134,12 +133,12 @@ public class Manga {
         this.finalizado = finalizado;
     }
 
-    public int getSentidoLectura() {
-        return sentidoLectura;
+    public int getReadingDirection() {
+        return readingDirection;
     }
 
-    public void setSentidoLectura(int sentidoLectura) {
-        this.sentidoLectura = sentidoLectura;
+    public void setReadingDirection(int readingDirection) {
+        this.readingDirection = readingDirection;
     }
 
 }

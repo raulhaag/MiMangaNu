@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.widget.Toast;
 
 import ar.rulosoft.mimanganu.ActivityManga;
 import ar.rulosoft.mimanganu.R;
@@ -57,6 +58,7 @@ public class FragmentBusquedaAsynkTask extends Fragment {
         int mangaId = 0;
         String msg;
         String orgMsg;
+        String errorMsg;
 
         public BuscarNuevo setActivity(final ActivityManga activity) {
             this.activity = activity;
@@ -83,7 +85,11 @@ public class FragmentBusquedaAsynkTask extends Fragment {
                 int diff = s.buscarNuevosCapitulos(params[0].getId(), activity);
                 result += diff;
             } catch (Exception e) {
-                e.printStackTrace();
+                if (e.getMessage() != null) {
+                    errorMsg = activity.getResources().getString(R.string.error) + ":" + e.getMessage();
+                } else {
+                    errorMsg = activity.getResources().getString(R.string.error);
+                }
             }
             return result;
         }
@@ -96,6 +102,11 @@ public class FragmentBusquedaAsynkTask extends Fragment {
                 activity.cargarDatos(manga);
                 activity.str.setRefreshing(false);
                 activity.setTitle(orgMsg);
+                if (result > 0) {
+                    Toast.makeText(activity, result + activity.getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
+                } else if (errorMsg.length() > 2) {
+                    Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT);
+                }
                 running = false;
                 actual = null;
             }

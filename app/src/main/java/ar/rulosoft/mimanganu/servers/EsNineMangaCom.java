@@ -90,7 +90,7 @@ public class EsNineMangaCom extends ServerBase {
         m.setFinalizado(getFirstMacthDefault("Estado(.+?)</a>", source, "").contains("Completado"));
 
         //autor
-        m.setAutor(getFirstMacthDefault("Autor.+?\">(.+?)<", source, ""));
+        m.setAuthor(getFirstMacthDefault("Autor.+?\">(.+?)<", source, ""));
 
         // cap�tulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
