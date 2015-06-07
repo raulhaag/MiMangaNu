@@ -31,7 +31,7 @@ import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.parseColor("#00FFFFFF");
-    public static int GRAY = Color.parseColor("#E0E0E0");
+    public static int GRAY = Color.parseColor("#BDBDBD");
     public static int LIGTH_GRAY = Color.parseColor("#424242");
     public static int SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
