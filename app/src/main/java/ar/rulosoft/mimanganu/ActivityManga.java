@@ -95,8 +95,8 @@ public class ActivityManga extends ActionBarActivity {
         datos = new ControlInfoNoScroll(ActivityManga.this);
         lista.addHeaderView(datos);
         datos.setColor(colors[0]);
-        ChapterAdapter.setSELECTED(colors[1]);
-        ChapterAdapter.setLigthGray(colors[0]);
+        ChapterAdapter.setColorSelected(colors[1]);
+        ChapterAdapter.setColorReading(colors[0]);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
