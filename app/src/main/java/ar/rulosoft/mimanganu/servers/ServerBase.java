@@ -158,17 +158,17 @@ public abstract class ServerBase {
                         simpleList.add(c);
                     }
                 }
-                // simpleList = manga.getCapitulos();
+                // simpleList = manga.getChapters();
             }
             for (Chapter c : simpleList) {
                 c.setMangaID(mangaDb.getId());
                 c.setReadStatus(Chapter.NEW);
-                Database.addCapitulo(context, c, mangaDb.getId());
+                Database.addChapter(context, c, mangaDb.getId());
             }
 
             if (simpleList.size() > 0) {
-                Database.updateMangaLeido(context, mangaDb.getId());
-                Database.updateMangaNuevos(context, mangaDb, diff);
+                Database.updateMangaRead(context, mangaDb.getId());
+                Database.updateNewMangas(context, mangaDb, diff);
             }
 
             returnValue = simpleList.size();

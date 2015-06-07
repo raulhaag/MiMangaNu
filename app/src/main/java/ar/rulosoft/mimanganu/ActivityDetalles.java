@@ -176,7 +176,7 @@ public class ActivityDetalles extends ActionBarActivity {
                     onProgressUpdate(i);
                     initTime = System.currentTimeMillis();
                 }
-                Database.addCapitulo(ActivityDetalles.this, params[0].getCapitulo(i), mid);
+                Database.addChapter(ActivityDetalles.this, params[0].getCapitulo(i), mid);
             }
             return null;
         }

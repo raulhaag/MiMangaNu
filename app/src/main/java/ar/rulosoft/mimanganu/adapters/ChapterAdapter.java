@@ -31,9 +31,9 @@ import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.parseColor("#00FFFFFF");
-    public static int GRAY = Color.parseColor("#E0E0E0");
-    public static int LIGTH_GRAY = Color.parseColor("#424242");
-    public static int SELECTED = Color.parseColor("#33B5E5");
+    public static int COLOR_READ = Color.parseColor("#BDBDBD");
+    public static int COLOR_READING = Color.parseColor("#424242");
+    public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
     ActivityManga activity;
@@ -46,12 +46,12 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public static void setSELECTED(int SELECTED) {
-        ChapterAdapter.SELECTED = SELECTED;
+    public static void setColorSelected(int colorSelected) {
+        ChapterAdapter.COLOR_SELECTED = colorSelected;
     }
 
-    public static void setLigthGray(int ligthGray) {
-        LIGTH_GRAY = ligthGray;
+    public static void setColorReading(int colorReading) {
+        COLOR_READING = colorReading;
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -80,13 +80,13 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     holder.textViewName.setTextColor(defaultColor);
                     holder.textViewPages.setTextColor(defaultColor);
                     break;
-                case Chapter.READED:
-                    holder.textViewName.setTextColor(GRAY);
-                    holder.textViewPages.setTextColor(GRAY);
+                case Chapter.READ:
+                    holder.textViewName.setTextColor(COLOR_READ);
+                    holder.textViewPages.setTextColor(COLOR_READ);
                     break;
                 case Chapter.READING:
-                    holder.textViewName.setTextColor(LIGTH_GRAY);
-                    holder.textViewPages.setTextColor(LIGTH_GRAY);
+                    holder.textViewName.setTextColor(COLOR_READING);
+                    holder.textViewPages.setTextColor(COLOR_READING);
                     break;
                 default:
                     holder.textViewName.setTextColor(defaultColor);
@@ -96,7 +96,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
 
             if (selected.get(position)) {
-                convertView.setBackgroundColor(SELECTED);
+                convertView.setBackgroundColor(COLOR_SELECTED);
                 holder.textViewName.setTextColor(Color.WHITE);
                 holder.textViewPages.setTextColor(Color.WHITE);
             }
@@ -106,7 +106,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
             holder.textViewPages.setText("       ");
             if (item.getPaginas() > 0) {
-                holder.textViewPages.setText(item.getPagesReaded() + "/" + item.getPaginas());
+                holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPaginas());
             }
             if (item.isDownloaded()) {
                 holder.imageButton.setImageResource(R.drawable.ic_borrar);
@@ -229,7 +229,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 Toast.makeText(activity, error, Toast.LENGTH_LONG).show();
             } else {
                 asyncdialog.dismiss();
-                Database.updateCapitulo(activity, result);
+                Database.updateChapter(activity, result);
                 // ColaDeDescarga.addCola(result);
                 // ColaDeDescarga.iniciarCola(activity);
                 ServicioColaDeDescarga.agregarDescarga(activity, result, false);

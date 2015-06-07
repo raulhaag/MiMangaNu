@@ -12,11 +12,12 @@ public class Chapter {
 
     public static final int NEW = -1;
     public static final int UNREAD = 0;
-    public static final int READED = 1;
+    public static final int READ = 1;
     public static final int READING = 2;
 
+    // TODO: Needs translation. Possibly breaks databse?
     int id, paginas, mangaID;
-    int pagesReaded, readStatus;
+    int pagesRead, readStatus;
     String title, path, extra;
     boolean finished, downloaded;
 
@@ -79,12 +80,12 @@ public class Chapter {
         return title;
     }
 
-    public int getPagesReaded() {
-        return pagesReaded;
+    public int getPagesRead() {
+        return pagesRead;
     }
 
-    public void setPagesReaded(int pagesReaded) {
-        this.pagesReaded = pagesReaded;
+    public void setPagesRead(int pagesRead) {
+        this.pagesRead = pagesRead;
     }
 
     public int getReadStatus() {
@@ -111,24 +112,24 @@ public class Chapter {
         this.extra = extra;
     }
 
-    public void borrar(Context context, Manga manga, ServerBase s) {
-        borrarImagenes(context, manga, s);
-        Database.borrarCapitulo(context, this);
+    public void delete(Context context, Manga manga, ServerBase s) {
+        deleteImages(context, manga, s);
+        Database.deleteChapter(context, this);
     }
 
-    public void borrar(Context context) {
+    public void delete(Context context) {
         Manga manga = Database.getManga(context, getMangaID());
         ServerBase s = ServerBase.getServer(manga.getServerId());
-        borrar(context, manga, s);
+        delete(context, manga, s);
     }
 
-    public void borrarImagenes(Context context) {
+    public void deleteImages(Context context) {
         Manga manga = Database.getManga(context, getMangaID());
         ServerBase s = ServerBase.getServer(manga.getServerId());
-        borrarImagenes(context, manga, s);
+        deleteImages(context, manga, s);
     }
 
-    private void borrarImagenes(Context context, Manga manga, ServerBase s) {
+    private void deleteImages(Context context, Manga manga, ServerBase s) {
         String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, this, context);
         FragmentMisMangas.DeleteRecursive(new File(ruta));
     }
@@ -138,18 +139,18 @@ public class Chapter {
         FragmentMisMangas.DeleteRecursive(new File(ruta));
         setPaginas(0);
         setDownloaded(false);
-        setPagesReaded(0);
+        setPagesRead(0);
         Database.updateCapituloConDescarga(context, this);
     }
 
-    public void borrarImagenesLiberarEspacio(Context context) {
-        borrarImagenes(context);
+    public void freeSpace(Context context) {
+        deleteImages(context);
         setDownloaded(false);
         Database.updateCapituloConDescarga(context, this);
     }
 
-    public void borrarImagenesLiberarEspacio(Context context, Manga manga, ServerBase s) {
-        borrarImagenes(context, manga, s);
+    public void freeSpace(Context context, Manga manga, ServerBase s) {
+        deleteImages(context, manga, s);
         setDownloaded(false);
         Database.updateCapituloConDescarga(context, this);
     }
@@ -160,8 +161,8 @@ public class Chapter {
         reset(context, manga, s);
     }
 
-    public void marcarComoLeido(Context c) {
-        Database.marcarComoLeido(c, getId());
-        setReadStatus(Chapter.READED);
+    public void markRead(Context c, boolean read) {
+        Database.markChapter(c, getId(), read);
+        setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
     }
 }

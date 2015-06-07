@@ -51,7 +51,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
                 for (DescargaCapitulo dc : descargas) {
                     if (dc.chapter.getId() == chapter.getId()) {
                         if (dc.estado == DescargaEstado.ERROR) {
-                            dc.chapter.borrarImagenes(activity);
+                            dc.chapter.deleteImages(activity);
                             descargas.remove(dc);
                             dc = null;
                             DescargaCapitulo ndc = new DescargaCapitulo(chapter);

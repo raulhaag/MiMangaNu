@@ -99,4 +99,5 @@
     <string name="unwritable_folder">Nicht beschreibbarer Ordner.</string>
     <string name="vercomolista">Als Liste anzeigen</string>
     <string name="vertical">Vertikal</string>
+    <string name="markSelectedUnread">Ausgewählte als ungelesen markieren</string>
 </resources>

@@ -13,8 +13,13 @@
         app:showAsAction="always"></item>
     <item
         android:id="@+id/marcar_leido"
-        android:icon="@drawable/ic_action_readed"
+        android:icon="@drawable/ic_action_read"
         android:title="@string/marcarleido"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/mark_unread"
+        android:icon="@drawable/ic_action_read"
+        android:title="@string/markSelectedUnread"
         app:showAsAction="always" />
     <item
         android:id="@+id/borrar_imagenes"

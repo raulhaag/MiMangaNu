@@ -88,7 +88,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         AJUSTE_PAGINA = DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
         MAX_TEXTURE = Integer.parseInt(pm.getString("max_texture", "2048"));
-        chapter = Database.getCapitulo(this, getIntent().getExtras().getInt(ActivityCapitulos.CAPITULO_ID));
+        chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityCapitulos.CAPITULO_ID));
         manga = Database.getFullManga(this, chapter.getMangaID());
         if (manga.getSentidoLectura() != -1)
             direccion = Direccion.values()[manga.getSentidoLectura()];
@@ -109,12 +109,12 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                 anterior = arg0;
                 if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
                     if (arg0 < chapter.getPaginas())
-                        chapter.setPagesReaded(arg0 + 1);
+                        chapter.setPagesRead(arg0 + 1);
                     else {
-                        chapter.setPagesReaded(arg0);
+                        chapter.setPagesRead(arg0);
                     }
                 else
-                    chapter.setPagesReaded(chapter.getPaginas() - arg0 + 1);
+                    chapter.setPagesRead(chapter.getPaginas() - arg0 + 1);
 
                 // if (actionBar.isShowing()) {
                 if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
@@ -123,8 +123,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                     seekBar.setProgress(chapter.getPaginas() - arg0);
                 // }
                 if (arg0 >= chapter.getPaginas() - 1) {
-                    chapter.setReadStatus(Chapter.READED);
-                    Database.updateCapitulo(ActivityLector.this, chapter);
+                    chapter.setReadStatus(Chapter.READ);
+                    Database.updateChapter(ActivityLector.this, chapter);
                 }
             }
 
@@ -173,9 +173,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             seeker_Layout.setBackground(new ColorDrawable(colors[0]));
             seekBar.setBackground(new ColorDrawable(colors[0]));
         }
-        if (chapter.getReadStatus() != Chapter.READED)
-            chapter.setReadStatus(Chapter.READING);
-        Database.updateCapitulo(ActivityLector.this, chapter);
+        chapter.setReadStatus(Chapter.READING);
+        Database.updateChapter(ActivityLector.this, chapter);
         setSupportActionBar(actionToolbar);
     }
 
@@ -215,13 +214,13 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         else
             mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        if (chapter.getPagesReaded() > 1) {
+        if (chapter.getPagesRead() > 1) {
             if (direccion == Direccion.R2L)
-                mViewPager.setCurrentItem(chapter.getPagesReaded() - 1);
+                mViewPager.setCurrentItem(chapter.getPagesRead() - 1);
             else if (direccion == Direccion.VERTICAL)
-                mViewPagerV.setCurrentItem(chapter.getPagesReaded() - 1);
+                mViewPagerV.setCurrentItem(chapter.getPagesRead() - 1);
             else
-                mViewPager.setCurrentItem(chapter.getPaginas() - chapter.getPagesReaded() + 1);
+                mViewPager.setCurrentItem(chapter.getPaginas() - chapter.getPagesRead() + 1);
         } else {
             if (direccion == Direccion.L2R)
                 mViewPager.setCurrentItem(chapter.getPaginas() + 1);
@@ -254,12 +253,12 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // super.onSaveInstanceState(outState);
-        Database.UpdateCapituloPagina(ActivityLector.this, chapter.getId(), chapter.getPagesReaded());
+        Database.UpdateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
     }
 
     @Override
     protected void onPause() {
-        Database.UpdateCapituloPagina(ActivityLector.this, chapter.getId(), chapter.getPagesReaded());
+        Database.UpdateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
         ServicioColaDeDescarga.detachListener(chapter.getId());
         super.onPause();
     }
@@ -704,14 +703,14 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 } else {
                     asyncdialog.dismiss();
-                    Database.updateCapitulo(getActivity(), result);
+                    Database.updateChapter(getActivity(), result);
                     ServicioColaDeDescarga.agregarDescarga(getActivity(), result, true);
                     // ColaDeDescarga.add(result);
                     // .iniciarCola(getActivity());
                     Intent intent = new Intent(getActivity(), ActivityLector.class);
                     intent.putExtra(ActivityCapitulos.CAPITULO_ID, result.getId());
                     getActivity().startActivity(intent);
-                    Database.updateCapitulo(l, l.chapter);
+                    Database.updateChapter(l, l.chapter);
                     l.finish();
                 }
                 super.onPostExecute(result);

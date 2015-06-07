@@ -95,8 +95,8 @@ public class ActivityManga extends ActionBarActivity {
         datos = new ControlInfoNoScroll(ActivityManga.this);
         lista.addHeaderView(datos);
         datos.setColor(colors[0]);
-        ChapterAdapter.setSELECTED(colors[1]);
-        ChapterAdapter.setLigthGray(colors[0]);
+        ChapterAdapter.setColorSelected(colors[1]);
+        ChapterAdapter.setColorReading(colors[0]);
         lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -140,7 +140,7 @@ public class ActivityManga extends ActionBarActivity {
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.borrarImagenesLiberarEspacio(ActivityManga.this, manga, s);
+                            c.freeSpace(ActivityManga.this, manga, s);
                         }
                         break;
                     case R.id.borrar:
@@ -151,7 +151,7 @@ public class ActivityManga extends ActionBarActivity {
                         Arrays.sort(selecionados);
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.borrar(ActivityManga.this, manga, s);
+                            c.delete(ActivityManga.this, manga, s);
                             capitulosAdapter.remove(c);
 
                         }
@@ -165,7 +165,13 @@ public class ActivityManga extends ActionBarActivity {
                     case R.id.marcar_leido:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.marcarComoLeido(ActivityManga.this);
+                            c.markRead(ActivityManga.this, true);
+                        }
+                        break;
+                    case R.id.mark_unread:
+                        for (int i = selection.size() - 1; i >= 0; i--) {
+                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            c.markRead(ActivityManga.this, false);
                         }
                         break;
                 }
@@ -226,7 +232,7 @@ public class ActivityManga extends ActionBarActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_descargar_restantes) {
-            ArrayList<Chapter> chapters = Database.getCapitulos(ActivityManga.this, this.id, Database.COL_CAP_DESCARGADO + " != 1",
+            ArrayList<Chapter> chapters = Database.getChapters(ActivityManga.this, this.id, Database.COL_CAP_DESCARGADO + " != 1",
                     true);
             Chapter[] arr = new Chapter[chapters.size()];
             arr = chapters.toArray(arr);
@@ -234,11 +240,11 @@ public class ActivityManga extends ActionBarActivity {
             // TODO mecanimos mostrar progreso
             return true;
         } else if (id == R.id.action_marcar_todo_leido) {
-            Database.marcarTodoComoLeido(ActivityManga.this, this.id);
+            Database.markAllChapters(ActivityManga.this, this.id, true);
             manga = Database.getFullManga(getApplicationContext(), this.id);
             cargarCapitulos(manga.getChapters());
         } else if (id == R.id.action_marcar_todo_no_leido) {
-            Database.marcarTodoComoNoLeido(ActivityManga.this, this.id);
+            Database.markAllChapters(ActivityManga.this, this.id, false);
             manga = Database.getFullManga(getApplicationContext(), this.id);
             cargarCapitulos(manga.getChapters());
         } else if (id == R.id.action_sentido) {
@@ -266,7 +272,7 @@ public class ActivityManga extends ActionBarActivity {
             Intent intent = new Intent(this, ActivityDescargas.class);
             startActivity(intent);
         } else if (id == R.id.action_descargar_no_leidos) {
-            ArrayList<Chapter> chapters = Database.getCapitulos(ActivityManga.this, ActivityManga.this.id, Database.COL_CAP_ESTADO + " < 1", true);
+            ArrayList<Chapter> chapters = Database.getChapters(ActivityManga.this, ActivityManga.this.id, Database.COL_CAP_STATE + " < 1", true);
             Chapter[] arr = new Chapter[chapters.size()];
             arr = chapters.toArray(arr);
             new DascargarDemas().execute(arr);
@@ -280,8 +286,8 @@ public class ActivityManga extends ActionBarActivity {
         manga = Database.getFullManga(getApplicationContext(), id);
         setTitle(manga.getTitulo());
         cargarCapitulos(manga.getChapters());
-        Database.updateMangaLeido(this, manga.getId());
-        Database.updateMangaNuevos(ActivityManga.this, manga, -100);
+        Database.updateMangaRead(this, manga.getId());
+        Database.updateNewMangas(ActivityManga.this, manga, -100);
         cargarDatos(manga);
     }
 
@@ -360,7 +366,7 @@ public class ActivityManga extends ActionBarActivity {
                 Toast.makeText(ActivityManga.this, error, Toast.LENGTH_LONG).show();
             } else {
                 asyncdialog.dismiss();
-                Database.updateCapitulo(ActivityManga.this, result);
+                Database.updateChapter(ActivityManga.this, result);
                 ServicioColaDeDescarga.agregarDescarga(ActivityManga.this, result, true);
                 int first = lista.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
@@ -388,7 +394,7 @@ public class ActivityManga extends ActionBarActivity {
             for (Chapter c : chapters) {
                 try {
                     server.iniciarCapitulo(c);
-                    Database.updateCapitulo(context, c);
+                    Database.updateChapter(context, c);
                     ServicioColaDeDescarga.agregarDescarga(ActivityManga.this, c, false);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
