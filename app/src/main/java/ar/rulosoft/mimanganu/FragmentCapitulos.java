@@ -105,7 +105,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.borrarImagenesLiberarEspacio(getActivity(), manga, s);
+                            c.freeSpace(getActivity(), manga, s);
                         }
                         break;
                     case R.id.borrar:
@@ -116,7 +116,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                         Arrays.sort(selecionados);
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.borrar(getActivity(), manga, s);
+                            c.delete(getActivity(), manga, s);
                             capitulosAdapter.remove(c);
 
                         }
@@ -130,7 +130,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                     case R.id.marcar_leido:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.marcarComoLeido(getActivity());
+                            c.markRead(getActivity());
                         }
                         break;
                 }
@@ -218,7 +218,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                 Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             } else {
                 asyncdialog.dismiss();
-                Database.updateCapitulo(getActivity(), result);
+                Database.updateChapter(getActivity(), result);
                 ServicioColaDeDescarga.agregarDescarga(getActivity(), result, true);
                 int first = lista.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(getActivity(), ((ActivityCapitulos) getActivity()).manga.getId(), first);

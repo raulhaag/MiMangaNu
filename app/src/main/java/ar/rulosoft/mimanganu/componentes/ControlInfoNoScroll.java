@@ -19,26 +19,27 @@ import ar.rulosoft.mimanganu.R;
  */
 public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     View s1, s2, s3, s4;
+    // TODO: Needs translation. Possibly breaks databse?
     TextView autor, estado, servidor, sinopsis, titulo;
     TextView autorTitle, estadoTitle, servidorTitle;
     ImageView imagen;
 
     public ControlInfoNoScroll(Context context) {
         super(context);
-        iniciar();
+        initialize();
     }
 
     public ControlInfoNoScroll(Context context, AttributeSet attrs) {
         super(context, attrs);
-        iniciar();
+        initialize();
     }
 
     public ControlInfoNoScroll(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        iniciar();
+        initialize();
     }
 
-    public void iniciar() {
+    public void initialize() {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.control_info, this, true);
         s1 = findViewById(R.id.s1);

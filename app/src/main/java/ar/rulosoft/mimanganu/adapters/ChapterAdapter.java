@@ -80,7 +80,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     holder.textViewName.setTextColor(defaultColor);
                     holder.textViewPages.setTextColor(defaultColor);
                     break;
-                case Chapter.READED:
+                case Chapter.READ:
                     holder.textViewName.setTextColor(GRAY);
                     holder.textViewPages.setTextColor(GRAY);
                     break;
@@ -106,7 +106,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
             holder.textViewPages.setText("       ");
             if (item.getPaginas() > 0) {
-                holder.textViewPages.setText(item.getPagesReaded() + "/" + item.getPaginas());
+                holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPaginas());
             }
             if (item.isDownloaded()) {
                 holder.imageButton.setImageResource(R.drawable.ic_borrar);
@@ -229,7 +229,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 Toast.makeText(activity, error, Toast.LENGTH_LONG).show();
             } else {
                 asyncdialog.dismiss();
-                Database.updateCapitulo(activity, result);
+                Database.updateChapter(activity, result);
                 // ColaDeDescarga.addCola(result);
                 // ColaDeDescarga.iniciarCola(activity);
                 ServicioColaDeDescarga.agregarDescarga(activity, result, false);

@@ -16,17 +16,18 @@ import ar.rulosoft.mimanganu.R;
  */
 public class ControlTapaSerie extends RelativeLayout implements Imaginable {
 
-    ImageView imagen;
-    TextView texto;
+    ImageView image;
+    TextView text;
 
+    // TODO: Needs translation. Not sure what this is supposed to mean ~.~
     public ControlTapaSerie(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Inicializar();
+        initialize();
     }
 
     public ControlTapaSerie(Context context) {
         super(context);
-        Inicializar();
+        initialize();
     }
 
     @Override
@@ -36,17 +37,17 @@ public class ControlTapaSerie extends RelativeLayout implements Imaginable {
 
     }
 
-    private void Inicializar() {
+    private void initialize() {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.control_tapa_serie, this, true);
-        imagen = (ImageView) findViewById(R.id.imagen_portada);
-        texto = (TextView) findViewById(R.id.texto);
+        image = (ImageView) findViewById(R.id.imagen_portada);
+        text = (TextView) findViewById(R.id.texto);
     }
 
     @Override
     public void setImageBitmap(Bitmap b) {
-        if (imagen != null) {
-            imagen.setImageBitmap(b);
+        if (image != null) {
+            image.setImageBitmap(b);
         } else {
             Log.w("CONTROLTAPASERIE", "imagen no inicializada");
         }
@@ -54,23 +55,23 @@ public class ControlTapaSerie extends RelativeLayout implements Imaginable {
 
     @Override
     public void setImageResource(int id) {
-        if (imagen != null) {
-            imagen.setImageResource(id);
+        if (image != null) {
+            image.setImageResource(id);
         } else {
             Log.w("CONTROLTAPASERIE", "imagen no inicializada");
         }
     }
 
     public void setText(String text) {
-        if (texto != null) {
-            texto.setText(text);
+        if (this.text != null) {
+            this.text.setText(text);
         } else {
             Log.w("CONTROLTAPASERIE", "texto no inicializado");
         }
     }
 
     public void setImageLeft(int dra) {
-        texto.setCompoundDrawablesWithIntrinsicBounds(dra, 0, 0, 0);
+        text.setCompoundDrawablesWithIntrinsicBounds(dra, 0, 0, 0);
     }
 
 }
