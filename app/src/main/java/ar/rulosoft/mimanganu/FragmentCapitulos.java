@@ -130,7 +130,7 @@ public class FragmentCapitulos extends Fragment implements SetCapitulos {
                     case R.id.marcar_leido:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.markRead(getActivity());
+                            c.markRead(getActivity(), true);
                         }
                         break;
                 }

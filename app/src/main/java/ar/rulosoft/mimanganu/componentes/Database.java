@@ -386,21 +386,15 @@ public class Database extends SQLiteOpenHelper {
         return manga;
     }
 
-    public static void markAllRead(Context c, int mangaId) {
+    public static void markChapter(Context c, int capId, boolean read) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_CAP_STATE, Chapter.READ);
-        getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID_MANGA + " = " + mangaId, null);
-    }
-
-    public static void markRead(Context c, int capId) {
-        ContentValues cv = new ContentValues();
-        cv.put(COL_CAP_STATE, Chapter.READ);
+        cv.put(COL_CAP_STATE, read ? Chapter.READ : Chapter.UNREAD);
         getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + capId, null);
     }
 
-    public static void markAllUnread(Context c, int mangaId) {
+    public static void markAllChapters(Context c, int mangaId, boolean read) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_CAP_STATE, Chapter.UNREAD);
+        cv.put(COL_CAP_STATE, read ? Chapter.READ : Chapter.UNREAD);
         getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID_MANGA + " = " + mangaId, null);
     }
 

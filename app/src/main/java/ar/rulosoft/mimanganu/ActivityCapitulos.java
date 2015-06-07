@@ -153,11 +153,11 @@ public class ActivityCapitulos extends ActionBarActivity {
             // TODO mecanimos mostrar progreso
             return true;
         } else if (id == R.id.action_marcar_todo_leido) {
-            Database.markAllRead(ActivityCapitulos.this, this.id);
+            Database.markAllChapters(ActivityCapitulos.this, this.id, true);
             manga = Database.getFullManga(getApplicationContext(), this.id, cOrden == Orden.ASD);
             listenerCapitulos.onCalpitulosCargados(this, manga.getChapters());
         } else if (id == R.id.action_marcar_todo_no_leido) {
-            Database.markAllUnread(ActivityCapitulos.this, this.id);
+            Database.markAllChapters(ActivityCapitulos.this, this.id, false );
             manga = Database.getFullManga(getApplicationContext(), this.id, cOrden == Orden.ASD);
             listenerCapitulos.onCalpitulosCargados(this, manga.getChapters());
         } else if (id == R.id.action_buscarnuevos) {

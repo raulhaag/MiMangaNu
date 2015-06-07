@@ -165,7 +165,13 @@ public class ActivityManga extends ActionBarActivity {
                     case R.id.marcar_leido:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
-                            c.markRead(ActivityManga.this);
+                            c.markRead(ActivityManga.this, true);
+                        }
+                        break;
+                    case R.id.mark_unread:
+                        for (int i = selection.size() - 1; i >= 0; i--) {
+                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            c.markRead(ActivityManga.this, false);
                         }
                         break;
                 }
@@ -234,11 +240,11 @@ public class ActivityManga extends ActionBarActivity {
             // TODO mecanimos mostrar progreso
             return true;
         } else if (id == R.id.action_marcar_todo_leido) {
-            Database.markAllRead(ActivityManga.this, this.id);
+            Database.markAllChapters(ActivityManga.this, this.id, true);
             manga = Database.getFullManga(getApplicationContext(), this.id);
             cargarCapitulos(manga.getChapters());
         } else if (id == R.id.action_marcar_todo_no_leido) {
-            Database.markAllUnread(ActivityManga.this, this.id);
+            Database.markAllChapters(ActivityManga.this, this.id, false);
             manga = Database.getFullManga(getApplicationContext(), this.id);
             cargarCapitulos(manga.getChapters());
         } else if (id == R.id.action_sentido) {

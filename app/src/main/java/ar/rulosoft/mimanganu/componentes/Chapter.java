@@ -161,8 +161,8 @@ public class Chapter {
         reset(context, manga, s);
     }
 
-    public void markRead(Context c) {
-        Database.markRead(c, getId());
-        setReadStatus(Chapter.READ);
+    public void markRead(Context c, boolean read) {
+        Database.markChapter(c, getId(), read);
+        setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
     }
 }
