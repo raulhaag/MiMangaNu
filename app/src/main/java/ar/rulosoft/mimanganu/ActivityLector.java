@@ -173,8 +173,7 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
             seeker_Layout.setBackground(new ColorDrawable(colors[0]));
             seekBar.setBackground(new ColorDrawable(colors[0]));
         }
-        if (chapter.getReadStatus() != Chapter.READ)
-            chapter.setReadStatus(Chapter.READING);
+        chapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityLector.this, chapter);
         setSupportActionBar(actionToolbar);
     }
