@@ -39,7 +39,6 @@ public class ActivityManga extends ActionBarActivity {
 
 
     public static final String DIRECCION = "direcciondelectura";
-    public static final String ORDEN = "ordendecapitulos";
     public static final String CAPITULO_ID = "cap_id";
     public SwipeRefreshLayout str;
     public Manga manga;
@@ -371,7 +370,7 @@ public class ActivityManga extends ActionBarActivity {
                 int first = lista.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
                 Intent intent = new Intent(ActivityManga.this, ActivityLector.class);
-                intent.putExtra(ActivityCapitulos.CAPITULO_ID, result.getId());
+                intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
                 ActivityManga.this.startActivity(intent);
             }
             super.onPostExecute(result);

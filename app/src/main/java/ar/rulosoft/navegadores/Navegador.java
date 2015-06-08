@@ -317,7 +317,7 @@ public class Navegador {
                 status = true;
             conn.disconnect();
         } catch (UnknownHostException e) {
-            return status;
+            return false;
         }
         return status;
     }

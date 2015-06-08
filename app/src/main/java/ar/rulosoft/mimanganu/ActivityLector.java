@@ -42,7 +42,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.ActivityCapitulos.Direccion;
+import ar.rulosoft.mimanganu.ActivityManga.Direccion;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -88,12 +88,12 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         AJUSTE_PAGINA = DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
         MAX_TEXTURE = Integer.parseInt(pm.getString("max_texture", "2048"));
-        chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityCapitulos.CAPITULO_ID));
+        chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         manga = Database.getFullManga(this, chapter.getMangaID());
         if (manga.getReadingDirection() != -1)
             direccion = Direccion.values()[manga.getReadingDirection()];
         else
-            direccion = Direccion.values()[Integer.parseInt(pm.getString(ActivityCapitulos.DIRECCION, "" + Direccion.R2L.ordinal()))];
+            direccion = Direccion.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direccion.R2L.ordinal()))];
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
@@ -705,10 +705,8 @@ public class ActivityLector extends ActionBarActivity implements DescargaListene
                     asyncdialog.dismiss();
                     Database.updateChapter(getActivity(), result);
                     ServicioColaDeDescarga.agregarDescarga(getActivity(), result, true);
-                    // ColaDeDescarga.add(result);
-                    // .iniciarCola(getActivity());
                     Intent intent = new Intent(getActivity(), ActivityLector.class);
-                    intent.putExtra(ActivityCapitulos.CAPITULO_ID, result.getId());
+                    intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
                     getActivity().startActivity(intent);
                     Database.updateChapter(l, l.chapter);
                     l.finish();

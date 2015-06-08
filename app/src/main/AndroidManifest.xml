@@ -11,8 +11,8 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:configChanges="orientation"
             android:name=".ActivityMisMangas"
+            android:configChanges="orientation"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,9 +26,6 @@
         <activity
             android:name=".ActivityDetalles"
             android:label="@string/title_activity_activity_detalles" />
-        <activity
-            android:name=".ActivityCapitulos"
-            android:label="@string/title_activity_activity_capitulos" />
         <activity
             android:name=".ActivityLector"
             android:label="@string/title_activity_activity_lector"
