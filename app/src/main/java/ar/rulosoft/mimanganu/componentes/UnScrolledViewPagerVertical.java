@@ -8,9 +8,9 @@ import ar.rulosoft.mimanganu.ActivityLector.PlaceholderFragment;
 import ar.rulosoft.mimanganu.ActivityLector.SectionsPagerAdapter;
 import fr.castorflex.android.verticalviewpager.VerticalViewPager;
 
-public class UnescroledViewPagerVertical extends VerticalViewPager {
+public class UnScrolledViewPagerVertical extends VerticalViewPager {
 
-    public UnescroledViewPagerVertical(Context context, AttributeSet attrs) {
+    public UnScrolledViewPagerVertical(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 

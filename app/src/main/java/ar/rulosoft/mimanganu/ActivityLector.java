@@ -46,8 +46,8 @@ import ar.rulosoft.mimanganu.ActivityManga.Direccion;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.componentes.UnescroledViewPager;
-import ar.rulosoft.mimanganu.componentes.UnescroledViewPagerVertical;
+import ar.rulosoft.mimanganu.componentes.UnScrolledViewPager;
+import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload.OnErrorListener;
 import ar.rulosoft.mimanganu.services.DownloadListener;
@@ -68,8 +68,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     public Direccion direccion = Direccion.VERTICAL;
     public InitialPosition iniPosition = InitialPosition.LEFT_UP;
     SectionsPagerAdapter mSectionsPagerAdapter;
-    UnescroledViewPager mViewPager;
-    UnescroledViewPagerVertical mViewPagerV;
+    UnScrolledViewPager mViewPager;
+    UnScrolledViewPagerVertical mViewPagerV;
     LinearLayout seeker_Layout;
     SeekBar seekBar;
     Toolbar actionToolbar;
@@ -139,11 +139,11 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
         if (direccion == Direccion.VERTICAL) {
             setContentView(R.layout.activity_lector_v);
-            mViewPagerV = (UnescroledViewPagerVertical) findViewById(R.id.pager);
+            mViewPagerV = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
             mViewPagerV.setOnPageChangeListener(pageChangeListener);
         } else {
             setContentView(R.layout.activity_lector);
-            mViewPager = (UnescroledViewPager) findViewById(R.id.pager);
+            mViewPager = (UnScrolledViewPager) findViewById(R.id.pager);
             mViewPager.setOnPageChangeListener(pageChangeListener);
         }
         seekBar = (SeekBar) findViewById(R.id.seeker);

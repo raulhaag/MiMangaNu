@@ -8,9 +8,9 @@ import android.view.View;
 import ar.rulosoft.mimanganu.ActivityLector.PlaceholderFragment;
 import ar.rulosoft.mimanganu.ActivityLector.SectionsPagerAdapter;
 
-public class UnescroledViewPager extends ViewPager {
+public class UnScrolledViewPager extends ViewPager {
 
-    public UnescroledViewPager(Context context, AttributeSet attrs) {
+    public UnScrolledViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
