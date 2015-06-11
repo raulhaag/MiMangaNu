@@ -29,7 +29,7 @@ public class MangaFox extends ServerBase {
     public static String[] ordenM = {"", "?az", "?rating", "?latest"};
 
     public MangaFox() {
-        this.setBandera(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_eng);
         this.setIcon(R.drawable.mangafox_icon);
         this.setServerName("MangaFox");
         setServerID(ServerBase.MANGAFOX);

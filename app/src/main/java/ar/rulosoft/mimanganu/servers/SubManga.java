@@ -17,7 +17,7 @@ public class SubManga extends ServerBase {
         setServerID(SUBMANGA);
         setIcon(R.drawable.submanga_icon);
         this.setServerName("SubManga");
-        setBandera(R.drawable.flag_esp);
+        setFlag(R.drawable.flag_esp);
     }
 
     @Override

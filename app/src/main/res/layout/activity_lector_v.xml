@@ -4,13 +4,13 @@
     android:layout_height="match_parent"
     tools:context="ar.rulosoft.mimanganu.ActivityLector">
 
-    <ar.rulosoft.mimanganu.componentes.UnescroledViewPagerVertical
+    <ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
         android:background="@android:color/black"
-        android:overScrollMode="never"></ar.rulosoft.mimanganu.componentes.UnescroledViewPagerVertical>
+        android:overScrollMode="never"></ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical>
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/action_bar"

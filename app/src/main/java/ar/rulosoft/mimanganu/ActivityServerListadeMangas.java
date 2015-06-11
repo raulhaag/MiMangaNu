@@ -52,10 +52,10 @@ public class ActivityServerListadeMangas extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Manga m = (Manga) lista.getAdapter().getItem(position);
-                Intent intent = new Intent(getApplication(), ActivityDetalles.class);
+                Intent intent = new Intent(getApplication(), ActivityDetails.class);
                 intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-                intent.putExtra(ActivityDetalles.TITULO, m.getTitle());
-                intent.putExtra(ActivityDetalles.PATH, m.getPath());
+                intent.putExtra(ActivityDetails.TITLE, m.getTitle());
+                intent.putExtra(ActivityDetails.PATH, m.getPath());
                 startActivity(intent);
             }
         });

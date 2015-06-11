@@ -45,7 +45,7 @@ public class EsNineMangaCom extends ServerBase {
             "http://es.ninemanga.com/category/Webcomic_.html", "http://es.ninemanga.com/category/Yuri_.html"};
 
     public EsNineMangaCom() {
-        this.setBandera(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_esp);
         this.setIcon(R.drawable.esninemanga);
         this.setServerName("EsNineManga");
         setServerID(ServerBase.ESNINEMANGA);

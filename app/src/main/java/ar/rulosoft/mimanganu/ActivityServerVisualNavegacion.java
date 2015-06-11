@@ -122,19 +122,6 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
             }
         });
 
-		/*
-         * grilla.setOnItemClickListener(new OnItemClickListener() {
-		 * 
-		 * @Override public void onItemClick(AdapterView<?> parent, View view,
-		 * int position, long id) { Manga m = (Manga)
-		 * grilla.getAdapter().getItem(position); Intent intent = new
-		 * Intent(getApplication(), ActivityDetalles.class);
-		 * intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-		 * intent.putExtra(ActivityDetalles.TITULO, m.getTitle());
-		 * intent.putExtra(ActivityDetalles.PATH, m.getPath());
-		 * startActivity(intent); } });/
-		 */
-
         new CargarUltima().execute(pagina);
     }
 
@@ -146,10 +133,10 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
 
     @Override
     public void onMangaClick(Manga manga) {
-        Intent intent = new Intent(getApplication(), ActivityDetalles.class);
+        Intent intent = new Intent(getApplication(), ActivityDetails.class);
         intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-        intent.putExtra(ActivityDetalles.TITULO, manga.getTitle());
-        intent.putExtra(ActivityDetalles.PATH, manga.getPath());
+        intent.putExtra(ActivityDetails.TITLE, manga.getTitle());
+        intent.putExtra(ActivityDetails.PATH, manga.getPath());
         startActivity(intent);
     }
 

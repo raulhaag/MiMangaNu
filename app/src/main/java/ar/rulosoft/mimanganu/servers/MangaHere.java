@@ -28,7 +28,7 @@ public class MangaHere extends ServerBase {
     public static String[] ordenM = {"?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"};
 
     public MangaHere() {
-        this.setBandera(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_eng);
         this.setIcon(R.drawable.mangahere_icon);
         this.setServerName("MangaHere");
         setServerID(ServerBase.MANGAHERE);

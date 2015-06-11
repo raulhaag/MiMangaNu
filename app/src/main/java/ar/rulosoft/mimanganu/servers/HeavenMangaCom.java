@@ -42,7 +42,7 @@ public class HeavenMangaCom extends ServerBase {
             "/letra/v.html", "/letra/w.html", "/letra/x.html", "/letra/y.html", "/letra/z.html"};
 
     public HeavenMangaCom() {
-        this.setBandera(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_esp);
         this.setIcon(R.drawable.heavenmanga);
         this.setServerName("HeavenManga");
         setServerID(ServerBase.HEAVENMANGACOM);

@@ -29,7 +29,7 @@ public abstract class ServerBase {
     public boolean hayMas = true;
     private String serverName;
     private int icon;
-    private int bandera;
+    private int flag;
     private int serverID;
 
     public static ServerBase getServer(int id) {
@@ -108,7 +108,7 @@ public abstract class ServerBase {
 
     // public abstract boolean supportStatus();
 
-    public int buscarNuevosCapitulos(int id, Context context) throws Exception {
+    public int searchForNewChapters(int id, Context context) throws Exception {
         int returnValue = 0;
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
@@ -204,12 +204,12 @@ public abstract class ServerBase {
         this.icon = icon;
     }
 
-    public int getBandera() {
-        return bandera;
+    public int getFlag() {
+        return flag;
     }
 
-    public void setBandera(int bandera) {
-        this.bandera = bandera;
+    public void setFlag(int flag) {
+        this.flag = flag;
     }
 
     public int getServerID() {

@@ -36,7 +36,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     @Override
     public void onBindViewHolder(ServerViewHolder sHolder, int pos) {
         final ServerBase server = servers[pos];
-        sHolder.flag.setImageResource(server.getBandera());
+        sHolder.flag.setImageResource(server.getFlag());
         sHolder.icon.setImageResource(server.getIcon());
         sHolder.title.setText(server.getServerName());
         sHolder.v.setOnClickListener(new OnClickListener() {

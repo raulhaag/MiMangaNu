@@ -198,7 +198,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 try {
                     onProgressUpdate(manga.getTitle());
                     s.loadChapters(manga, false);
-                    int diff = s.buscarNuevosCapitulos(manga.getId(), getActivity());
+                    int diff = s.searchForNewChapters(manga.getId(), getActivity());
                     result += diff;
                 } catch (Exception e) {
                     e.printStackTrace();

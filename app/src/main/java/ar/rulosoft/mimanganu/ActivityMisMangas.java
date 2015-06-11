@@ -83,7 +83,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
         int id = item.getItemId();
         if (id == R.id.descargas) {
-            Intent intent = new Intent(this, ActivityDescargas.class);
+            Intent intent = new Intent(this, ActivityDownloads.class);
             startActivity(intent);
         } else if (id == R.id.licencia) {
             Intent intent = new Intent(this, ActivityLicencia.class);

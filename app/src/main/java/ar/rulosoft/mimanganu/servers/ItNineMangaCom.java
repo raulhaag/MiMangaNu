@@ -51,7 +51,7 @@ public class ItNineMangaCom extends ServerBase {
             "http://it.ninemanga.com/category/Vita+Quotidiana_.html", "http://it.ninemanga.com/category/Yuri_.html"};
 
     public ItNineMangaCom() {
-        this.setBandera(R.drawable.flag_it);
+        this.setFlag(R.drawable.flag_it);
         this.setIcon(R.drawable.esninemanga);
         this.setServerName("ItNineManga");
         setServerID(ServerBase.ITNINEMANGA);

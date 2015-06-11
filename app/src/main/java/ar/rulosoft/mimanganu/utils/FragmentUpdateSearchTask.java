@@ -15,8 +15,8 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 /**
  * Created by Raul
  */
-public class FragmentBusquedaAsynkTask extends Fragment {
-    BuscarNuevo buscarNuevo;
+public class FragmentUpdateSearchTask extends Fragment {
+    SearchForNewsChapters searchForNewsChapters;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -25,42 +25,42 @@ public class FragmentBusquedaAsynkTask extends Fragment {
     }
 
     public AsyncTask.Status getStatus() {
-        return (buscarNuevo != null ? buscarNuevo.getStatus() : AsyncTask.Status.FINISHED);
+        return (searchForNewsChapters != null ? searchForNewsChapters.getStatus() : AsyncTask.Status.FINISHED);
     }
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        if (buscarNuevo != null)
-            buscarNuevo.setActivity((ActivityManga) activity);
+        if (searchForNewsChapters != null)
+            searchForNewsChapters.setActivity((ActivityManga) activity);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (buscarNuevo != null) {
-            buscarNuevo.setActivity(null);
+        if (searchForNewsChapters != null) {
+            searchForNewsChapters.setActivity(null);
         }
     }
 
     public void iniciaTarea(Manga manga, ActivityManga activity) {
-        if (buscarNuevo == null || buscarNuevo.getStatus() == AsyncTask.Status.FINISHED) {
-            buscarNuevo = new BuscarNuevo().setActivity(activity);
-            buscarNuevo.execute(manga);
+        if (searchForNewsChapters == null || searchForNewsChapters.getStatus() == AsyncTask.Status.FINISHED) {
+            searchForNewsChapters = new SearchForNewsChapters().setActivity(activity);
+            searchForNewsChapters.execute(manga);
         }
     }
 
 
-    public static class BuscarNuevo extends AsyncTask<Manga, Void, Integer> {
+    public static class SearchForNewsChapters extends AsyncTask<Manga, Void, Integer> {
         static boolean running = false;
-        static BuscarNuevo actual = null;
+        static SearchForNewsChapters actual = null;
         ActivityManga activity;
         int mangaId = 0;
         String msg;
         String orgMsg;
         String errorMsg;
 
-        public BuscarNuevo setActivity(final ActivityManga activity) {
+        public SearchForNewsChapters setActivity(final ActivityManga activity) {
             this.activity = activity;
             return this;
         }
@@ -82,7 +82,7 @@ public class FragmentBusquedaAsynkTask extends Fragment {
             ServerBase s = ServerBase.getServer(params[0].getServerId());
             mangaId = params[0].getId();
             try {
-                int diff = s.buscarNuevosCapitulos(params[0].getId(), activity);
+                int diff = s.searchForNewChapters(params[0].getId(), activity);
                 result += diff;
             } catch (Exception e) {
                 if (e.getMessage() != null) {

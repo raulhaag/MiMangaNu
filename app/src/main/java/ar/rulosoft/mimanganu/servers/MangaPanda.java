@@ -37,7 +37,7 @@ public class MangaPanda extends ServerBase {
     private static final String[] orden = {"Popular"};
 
     public MangaPanda() {
-        this.setBandera(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_eng);
         this.setIcon(R.drawable.mangapanda);
         this.setServerName("MangaPanda");
         setServerID(ServerBase.MANGAPANDA);

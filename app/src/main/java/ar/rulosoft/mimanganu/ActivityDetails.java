@@ -24,13 +24,13 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityDetalles extends ActionBarActivity {
+public class ActivityDetails extends ActionBarActivity {
 
-    public static final String TITULO = "titulo_m";
+    public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
 
     ImageLoader imageLoader;
-    ControlInfo datos;
+    ControlInfo data;
     SwipeRefreshLayout str;
 
     ServerBase s;
@@ -41,7 +41,7 @@ public class ActivityDetalles extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
-        datos = (ControlInfo) findViewById(R.id.datos);
+        data = (ControlInfo) findViewById(R.id.datos);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
@@ -50,7 +50,7 @@ public class ActivityDetalles extends ActionBarActivity {
         button_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AgregaManga().execute(m);
+                new AddManga().execute(m);
                 AnimatorSet set = new AnimatorSet();
                 ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 1.0f, 0.0f);
                 anim1.setDuration(0);
@@ -64,19 +64,19 @@ public class ActivityDetalles extends ActionBarActivity {
         button_add.setColorNormal(colors[1]);
         button_add.setColorPressed(colors[3]);
         button_add.setColorRipple(colors[0]);
-        button_add.attachToScrollView(datos);
-        datos.setColor(colors[0]);
-        String titulo = getIntent().getExtras().getString(TITULO);
-        getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + titulo);
+        button_add.attachToScrollView(data);
+        data.setColor(colors[0]);
+        String title = getIntent().getExtras().getString(TITLE);
+        getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + title);
         String path = getIntent().getExtras().getString(PATH);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
-        m = new Manga(id, titulo, path, false);
+        m = new Manga(id, title, path, false);
         s = ServerBase.getServer(id);
         imageLoader = new ImageLoader(this.getApplicationContext());
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new CargarDetalles().execute();
+                new LoadDetails().execute();
             }
         });
         str.post(new Runnable() {
@@ -85,10 +85,10 @@ public class ActivityDetalles extends ActionBarActivity {
                 str.setRefreshing(true);
             }
         });
-        new CargarDetalles().execute();
+        new LoadDetails().execute();
     }
 
-    private class CargarDetalles extends AsyncTask<Void, Void, Void> {
+    private class LoadDetails extends AsyncTask<Void, Void, Void> {
 
         String error = ".";
 
@@ -116,17 +116,17 @@ public class ActivityDetalles extends ActionBarActivity {
                 } else {
                     infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                 }
-                datos.setStatus(infoExtra);
-                datos.setSynopsis(m.getSynopsis());
-                datos.setServer(s.getServerName());
+                data.setStatus(infoExtra);
+                data.setSynopsis(m.getSynopsis());
+                data.setServer(s.getServerName());
                 if (m.getAuthor() != null && m.getAuthor().length() > 1) {
-                    datos.setAuthor(m.getAuthor());
+                    data.setAuthor(m.getAuthor());
                 } else {
-                    datos.setAuthor(getResources().getString(R.string.nodisponible));
+                    data.setAuthor(getResources().getString(R.string.nodisponible));
                 }
-                imageLoader.DisplayImage(m.getImages(), datos);
+                imageLoader.DisplayImage(m.getImages(), data);
                 if (error != null && error.length() > 2) {
-                    Toast.makeText(ActivityDetalles.this, error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
                 } else {
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 0.0f, 1.0f);
@@ -142,22 +142,22 @@ public class ActivityDetalles extends ActionBarActivity {
                     set.start();
                 }
             } else {
-                Toast.makeText(ActivityDetalles.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
             }
             str.setRefreshing(false);
         }
 
     }
 
-    public class AgregaManga extends AsyncTask<Manga, Integer, Void> {
-        ProgressDialog agregando = new ProgressDialog(ActivityDetalles.this);
+    public class AddManga extends AsyncTask<Manga, Integer, Void> {
+        ProgressDialog adding = new ProgressDialog(ActivityDetails.this);
         String error = ".";
         int total = 0;
 
         @Override
         protected void onPreExecute() {
-            agregando.setMessage(getResources().getString(R.string.agregando));
-            agregando.show();
+            adding.setMessage(getResources().getString(R.string.agregando));
+            adding.show();
             super.onPreExecute();
         }
 
@@ -176,7 +176,7 @@ public class ActivityDetalles extends ActionBarActivity {
                     onProgressUpdate(i);
                     initTime = System.currentTimeMillis();
                 }
-                Database.addChapter(ActivityDetalles.this, params[0].getChapter(i), mid);
+                Database.addChapter(ActivityDetails.this, params[0].getChapter(i), mid);
             }
             return null;
         }
@@ -187,8 +187,8 @@ public class ActivityDetalles extends ActionBarActivity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (agregando != null) {
-                        agregando.setMessage(getResources().getString(R.string.agregando) + " " + values[0] + "/" + total);
+                    if (adding != null) {
+                        adding.setMessage(getResources().getString(R.string.agregando) + " " + values[0] + "/" + total);
                     }
                 }
             });
@@ -197,10 +197,10 @@ public class ActivityDetalles extends ActionBarActivity {
 
         @Override
         protected void onPostExecute(Void result) {
-            agregando.dismiss();
-            Toast.makeText(ActivityDetalles.this, getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+            adding.dismiss();
+            Toast.makeText(ActivityDetails.this, getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
             if (error != null && error.length() > 2) {
-                Toast.makeText(ActivityDetalles.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
             }
             try {
                 onBackPressed();

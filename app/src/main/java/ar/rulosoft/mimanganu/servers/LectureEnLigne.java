@@ -15,7 +15,7 @@ public class LectureEnLigne extends ServerBase {
         setServerID(LECTUREENLIGNE);
         setIcon(R.drawable.lectureenligne);
         this.setServerName("LectureEnLigne");
-        setBandera(R.drawable.flag_fr);
+        setFlag(R.drawable.flag_fr);
     }
 
     @Override

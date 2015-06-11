@@ -22,7 +22,7 @@ public class EsMangaCom extends ServerBase {
             "/genero/vida-cotidiana", "/genero/yuri"};
 
     public EsMangaCom() {
-        this.setBandera(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_esp);
         this.setIcon(R.drawable.esmanga);
         this.setServerName("EsManga");
         setServerID(ServerBase.ESMANGA);

@@ -26,7 +26,7 @@ public class KissManga extends ServerBase {
     static String[] ordenes = new String[]{"", "/MostPopular", "/LatestUpdate", "/Newest"};
 
     public KissManga() {
-        this.setBandera(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_eng);
         this.setIcon(R.drawable.kissmanga);
         this.setServerName("KissManga");
         setServerID(ServerBase.KISSMANGA);

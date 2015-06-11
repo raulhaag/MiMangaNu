@@ -24,7 +24,7 @@
             android:name=".ActivityServerListadeMangas"
             android:label="@string/title_activity_server_listade_mangas" />
         <activity
-            android:name=".ActivityDetalles"
+            android:name=".ActivityDetails"
             android:label="@string/title_activity_activity_detalles" />
         <activity
             android:name=".ActivityLector"
@@ -47,7 +47,7 @@
         <service android:name=".services.DownloadPoolService" />
 
         <activity
-            android:name=".ActivityDescargas"
+            android:name=".ActivityDownloads"
             android:label="@string/descargas" >
         </activity>
         <activity

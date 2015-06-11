@@ -32,7 +32,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
-import ar.rulosoft.mimanganu.utils.FragmentBusquedaAsynkTask;
+import ar.rulosoft.mimanganu.utils.FragmentUpdateSearchTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityManga extends ActionBarActivity {
@@ -44,7 +44,7 @@ public class ActivityManga extends ActionBarActivity {
     public Manga manga;
     public Direccion direccion;
     int[] colors;
-    FragmentBusquedaAsynkTask buscarNuevos;
+    FragmentUpdateSearchTask buscarNuevos;
     ListView lista;
     SharedPreferences pm;
     MenuItem sentido;
@@ -70,10 +70,10 @@ public class ActivityManga extends ActionBarActivity {
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
         if (savedInstanceState == null) {
-            buscarNuevos = new FragmentBusquedaAsynkTask();
+            buscarNuevos = new FragmentUpdateSearchTask();
             getSupportFragmentManager().beginTransaction().add(buscarNuevos, "BUSCAR_NUEVOS").commit();
         } else {
-            buscarNuevos = (FragmentBusquedaAsynkTask) getSupportFragmentManager().findFragmentByTag("BUSCAR_NUEVOS");
+            buscarNuevos = (FragmentUpdateSearchTask) getSupportFragmentManager().findFragmentByTag("BUSCAR_NUEVOS");
             if (buscarNuevos.getStatus() == AsyncTask.Status.RUNNING) {
                 str.post(new Runnable() {
                     @Override
@@ -268,7 +268,7 @@ public class ActivityManga extends ActionBarActivity {
             Database.updadeReadOrder(ActivityManga.this, this.direccion.ordinal(), manga.getId());
 
         } else if (id == R.id.descargas) {
-            Intent intent = new Intent(this, ActivityDescargas.class);
+            Intent intent = new Intent(this, ActivityDownloads.class);
             startActivity(intent);
         } else if (id == R.id.action_descargar_no_leidos) {
             ArrayList<Chapter> chapters = Database.getChapters(ActivityManga.this, ActivityManga.this.id, Database.COL_CAP_STATE + " < 1", true);

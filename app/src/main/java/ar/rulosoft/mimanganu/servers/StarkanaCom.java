@@ -25,7 +25,7 @@ public class StarkanaCom extends ServerBase {
             "/manga/U", "/manga/V", "/manga/W", "/manga/X", "/manga/Y", "/manga/Z"};
 
     public StarkanaCom() {
-        this.setBandera(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_eng);
         this.setIcon(R.drawable.rip);
         this.setServerName("Starkana");
         setServerID(ServerBase.STARKANACOM);

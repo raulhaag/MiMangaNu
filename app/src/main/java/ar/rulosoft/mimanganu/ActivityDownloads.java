@@ -15,10 +15,10 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 
-public class ActivityDescargas extends ActionBarActivity {
+public class ActivityDownloads extends ActionBarActivity {
 
-    ListView lista;
-    MostrarDescargas md;
+    ListView list;
+    ShowDownloads sh;
     DownloadAdapter adap;
 
     @Override
@@ -27,31 +27,31 @@ public class ActivityDescargas extends ActionBarActivity {
         setContentView(R.layout.activity_descargas);
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
-        lista = (ListView) findViewById(R.id.descargas);
+        list = (ListView) findViewById(R.id.descargas);
     }
 
     @Override
     public void onResume() {
-        adap = new DownloadAdapter(ActivityDescargas.this, new ArrayList<ChapterDownload>());
-        lista.setAdapter(adap);
-        md = new MostrarDescargas();
-        md.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        adap = new DownloadAdapter(ActivityDownloads.this, new ArrayList<ChapterDownload>());
+        list.setAdapter(adap);
+        sh = new ShowDownloads();
+        sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        md.stop();
+        sh.stop();
         super.onPause();
     }
 
 
-    private class MostrarDescargas extends AsyncTask<Void, Void, Void> {
-        boolean seguir = true;
+    private class ShowDownloads extends AsyncTask<Void, Void, Void> {
+        boolean _continue = true;
 
         @Override
         protected Void doInBackground(Void... params) {
-            while (seguir) {
+            while (_continue) {
                 try {
                     adap.updateAll(DownloadPoolService.descargas);
                     publishProgress();
@@ -65,7 +65,7 @@ public class ActivityDescargas extends ActionBarActivity {
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            ActivityDescargas.this.runOnUiThread(new Runnable() {
+            ActivityDownloads.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     adap.notifyDataSetChanged();
@@ -75,7 +75,7 @@ public class ActivityDescargas extends ActionBarActivity {
         }
 
         public void stop() {
-            seguir = false;
+            _continue = false;
         }
 
     }

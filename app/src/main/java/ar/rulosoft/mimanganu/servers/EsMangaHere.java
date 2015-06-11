@@ -35,7 +35,7 @@ public class EsMangaHere extends ServerBase {
     public static String[] ordenM = {"?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"};
 
     public EsMangaHere() {
-        this.setBandera(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_esp);
         this.setIcon(R.drawable.mangahere_icon);
         this.setServerName("EsMangaHere");
         setServerID(ServerBase.ESMANGAHERE);

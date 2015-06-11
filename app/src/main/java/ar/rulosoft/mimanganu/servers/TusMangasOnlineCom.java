@@ -62,7 +62,7 @@ public class TusMangasOnlineCom extends ServerBase {
             "http://www.tumangaonline.com/listado-mangas/mangas?tipo=3&filter=Yuri"};
 
     public TusMangasOnlineCom() {
-        this.setBandera(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_esp);
         this.setIcon(R.drawable.tumangaonline);
         this.setServerName("TusMangasOnline");
         setServerID(ServerBase.TUSMANGAS);
