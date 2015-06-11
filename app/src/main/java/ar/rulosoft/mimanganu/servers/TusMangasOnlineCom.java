@@ -74,23 +74,23 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        String source = getNavegadorConHeader().get("http://www.tumangaonline.com/listado-mangas/mangas?tipo=1&filter=" + URLEncoder.encode(termino, "UTF-8"), TIMEOUT);
+    public ArrayList<Manga> search(String term) throws Exception {
+        String source = getBrowserWhitHeaders().get("http://www.tumangaonline.com/listado-mangas/mangas?tipo=1&filter=" + URLEncoder.encode(term, "UTF-8"), TIMEOUT);
         return getMangasFromSource(source);
     }
 
     @Override
-    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
-            cargarPortada(m, reinicia);
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
-        String source = getNavegadorConHeader().get(m.getPath(), TIMEOUT);
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
+        String source = getBrowserWhitHeaders().get(m.getPath(), TIMEOUT);
         m.setSinopsis(Html.fromHtml(getFirstMacthDefault("(<p itemprop=\"description\".+?</p></div>)", source, "Sin sinopsis")).toString());
         m.setImages(getFirstMacthDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
-        m.setFinalizado(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
+        m.setFinished(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
         m.setAuthor(getFirstMacthDefault("5&amp;filter=.+?>(.+?)<", source, ""));
 
         ArrayList<Chapter> caps = new ArrayList<>();
@@ -106,17 +106,17 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
+    public String getPagesNumber(Chapter c, int page) {
         return null;
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2 || !c.getExtra().contains("|")) {
             if (c.getExtra() == null || c.getExtra().length() < 2) {
                 getExtraWeb(c);
             }
-            String source = getNavegadorConHeader().get(c.getExtra(), TIMEOUT);
+            String source = getBrowserWhitHeaders().get(c.getExtra(), TIMEOUT);
             Pattern p = Pattern.compile("<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
             String imgBase;
@@ -135,28 +135,28 @@ public class TusMangasOnlineCom extends ServerBase {
             c.setExtra(imagenes);
         }
         String[] imagenes = c.getExtra().split("\\|");
-        return imagenes[pagina];
+        return imagenes[page];
     }
 
     private void getExtraWeb(Chapter c) throws Exception {
-        String source = getNavegadorConHeader().get(c.getPath(), TIMEOUT);
+        String source = getBrowserWhitHeaders().get(c.getPath(), TIMEOUT);
         String fs = getFirstMacth("(http://www.tumangaonline.com/visor/.+?)\"", source, "Error al iniciar Cap�tulo");
         c.setExtra(fs);
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         if (!(c.getExtra() != null && c.getExtra().length() > 1)) {
             getExtraWeb(c);
         }
-        String source = getNavegadorConHeader().get(c.getExtra());
+        String source = getBrowserWhitHeaders().get(c.getExtra());
         String paginas = getFirstMacth("<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">", source, "Error al iniciar Cap�tulo");
-        c.setPaginas(Integer.parseInt(paginas));
+        c.setPages(Integer.parseInt(paginas));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        String source = getNavegadorConHeader().get(generosV[categoria] + "&pag=" + pagina, TIMEOUT);
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+        String source = getBrowserWhitHeaders().get(generosV[categorie] + "&pag=" + pageNumber, TIMEOUT);
         return getMangasFromSource(source);
     }
 
@@ -175,17 +175,17 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return new String[]{"Alfabetico"};
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return false;
     }
 

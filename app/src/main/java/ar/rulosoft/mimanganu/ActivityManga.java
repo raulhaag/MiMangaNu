@@ -31,7 +31,7 @@ import ar.rulosoft.mimanganu.componentes.ControlInfoNoScroll;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.FragmentBusquedaAsynkTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
@@ -189,18 +189,18 @@ public class ActivityManga extends ActionBarActivity {
     public void cargarDatos(Manga manga) {
         if (datos != null && manga != null) {
             String infoExtra = "";
-            if (manga.isFinalizado()) {
+            if (manga.isFinished()) {
                 infoExtra = infoExtra + getResources().getString(R.string.finalizado);
             } else {
                 infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
             }
-            datos.setEstado(infoExtra);
-            datos.setSinopsis(manga.getSynopsis());
-            datos.setServidor(ServerBase.getServer(manga.getServerId()).getServerName());
+            datos.setStatus(infoExtra);
+            datos.setSynopsis(manga.getSynopsis());
+            datos.setServer(ServerBase.getServer(manga.getServerId()).getServerName());
             if (manga.getAuthor().length() > 1) {
-                datos.setAutor(manga.getAuthor());
+                datos.setAuthor(manga.getAuthor());
             } else {
-                datos.setAutor(getResources().getString(R.string.nodisponible));
+                datos.setAuthor(getResources().getString(R.string.nodisponible));
             }
             imageLoader.DisplayImage(manga.getImages(), datos);
         }
@@ -231,7 +231,7 @@ public class ActivityManga extends ActionBarActivity {
 
         int id = item.getItemId();
         if (id == R.id.action_descargar_restantes) {
-            ArrayList<Chapter> chapters = Database.getChapters(ActivityManga.this, this.id, Database.COL_CAP_DESCARGADO + " != 1",
+            ArrayList<Chapter> chapters = Database.getChapters(ActivityManga.this, this.id, Database.COL_CAP_DOWNLOADED + " != 1",
                     true);
             Chapter[] arr = new Chapter[chapters.size()];
             arr = chapters.toArray(arr);
@@ -265,7 +265,7 @@ public class ActivityManga extends ActionBarActivity {
                 this.direccion = Direccion.R2L;
             }
             manga.setReadingDirection(this.direccion.ordinal());
-            Database.updadeSentidoLectura(ActivityManga.this, this.direccion.ordinal(), manga.getId());
+            Database.updadeReadOrder(ActivityManga.this, this.direccion.ordinal(), manga.getId());
 
         } else if (id == R.id.descargas) {
             Intent intent = new Intent(this, ActivityDescargas.class);
@@ -318,10 +318,6 @@ public class ActivityManga extends ActionBarActivity {
         L2R, R2L, VERTICAL
     }
 
-    public enum Orden {
-        ASD, DSC
-    }
-
 
     private class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncdialog = new ProgressDialog(ActivityManga.this);
@@ -342,8 +338,8 @@ public class ActivityManga extends ActionBarActivity {
             Chapter c = arg0[0];
             ServerBase s = ServerBase.getServer(manga.getServerId());
             try {
-                if (c.getPaginas() < 1)
-                    s.iniciarCapitulo(c);
+                if (c.getPages() < 1)
+                    s.chapterInit(c);
             } catch (Exception e) {
                 error = e.getMessage();
                 e.printStackTrace();
@@ -366,7 +362,7 @@ public class ActivityManga extends ActionBarActivity {
             } else {
                 asyncdialog.dismiss();
                 Database.updateChapter(ActivityManga.this, result);
-                ServicioColaDeDescarga.agregarDescarga(ActivityManga.this, result, true);
+                DownloadPoolService.agregarDescarga(ActivityManga.this, result, true);
                 int first = lista.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
                 Intent intent = new Intent(ActivityManga.this, ActivityLector.class);
@@ -392,9 +388,9 @@ public class ActivityManga extends ActionBarActivity {
         protected Void doInBackground(Chapter... chapters) {
             for (Chapter c : chapters) {
                 try {
-                    server.iniciarCapitulo(c);
+                    server.chapterInit(c);
                     Database.updateChapter(context, c);
-                    ServicioColaDeDescarga.agregarDescarga(ActivityManga.this, c, false);
+                    DownloadPoolService.agregarDescarga(ActivityManga.this, c, false);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

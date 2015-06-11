@@ -78,7 +78,7 @@ public class FragmentBusquedaAsynkTask extends Fragment {
         @Override
         protected Integer doInBackground(Manga... params) {
             int result = 0;
-            Database.removerCapitulosHuerfanos(activity);
+            Database.removeOrphanedChapters(activity);
             ServerBase s = ServerBase.getServer(params[0].getServerId());
             mangaId = params[0].getId();
             try {

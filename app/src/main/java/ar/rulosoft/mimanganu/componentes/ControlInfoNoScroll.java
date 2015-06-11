@@ -20,9 +20,9 @@ import ar.rulosoft.mimanganu.R;
 public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     View s1, s2, s3, s4;
     // TODO: Needs translation. Possibly breaks databse?
-    TextView autor, estado, servidor, sinopsis, titulo;
-    TextView autorTitle, estadoTitle, servidorTitle;
-    ImageView imagen;
+    TextView author, status, server, synopsis, title;
+    TextView authorTitle, statusTitle, serverTitle;
+    ImageView image;
 
     public ControlInfoNoScroll(Context context) {
         super(context);
@@ -46,15 +46,15 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
         s2 = findViewById(R.id.s2);
         s3 = findViewById(R.id.s3);
         s4 = findViewById(R.id.s4);
-        autorTitle = (TextView) findViewById(R.id.autorTitle);
-        estadoTitle = (TextView) findViewById(R.id.estadoTitle);
-        servidorTitle = (TextView) findViewById(R.id.servidorTitle);
-        estado = (TextView) findViewById(R.id.estado);
-        servidor = (TextView) findViewById(R.id.servidor);
-        sinopsis = (TextView) findViewById(R.id.sinopsis);
-        titulo = (TextView) findViewById(R.id.titulo);
-        autor = (TextView) findViewById(R.id.autor);
-        imagen = (ImageView) findViewById(R.id.imagen);
+        authorTitle = (TextView) findViewById(R.id.autorTitle);
+        statusTitle = (TextView) findViewById(R.id.estadoTitle);
+        serverTitle = (TextView) findViewById(R.id.servidorTitle);
+        status = (TextView) findViewById(R.id.estado);
+        server = (TextView) findViewById(R.id.servidor);
+        synopsis = (TextView) findViewById(R.id.sinopsis);
+        title = (TextView) findViewById(R.id.titulo);
+        author = (TextView) findViewById(R.id.autor);
+        image = (ImageView) findViewById(R.id.imagen);
     }
 
     public void setColor(int color) {
@@ -64,50 +64,50 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
             s2.setBackground(colorDrawable);
             s3.setBackground(colorDrawable);
             s4.setBackground(colorDrawable);
-            titulo.setBackground(colorDrawable);
+            title.setBackground(colorDrawable);
         } else {
             s1.setBackgroundDrawable(colorDrawable);
             s2.setBackgroundDrawable(colorDrawable);
             s3.setBackgroundDrawable(colorDrawable);
             s4.setBackgroundDrawable(colorDrawable);
-            titulo.setBackgroundDrawable(colorDrawable);
+            title.setBackgroundDrawable(colorDrawable);
         }
-        autorTitle.setTextColor(color);
-        estadoTitle.setTextColor(color);
-        servidorTitle.setTextColor(color);
+        authorTitle.setTextColor(color);
+        statusTitle.setTextColor(color);
+        serverTitle.setTextColor(color);
     }
 
-    public void setAutor(String autor) {
-        this.autor.setText(autor);
+    public void setAuthor(String author) {
+        this.author.setText(author);
     }
 
-    public void setEstado(String estado) {
-        this.estado.setText(estado);
+    public void setStatus(String status) {
+        this.status.setText(status);
     }
 
-    public void setServidor(String servidor) {
-        this.servidor.setText(servidor);
+    public void setServer(String server) {
+        this.server.setText(server);
     }
 
-    public void setSinopsis(String sinopsis) {
-        this.sinopsis.setText(sinopsis);
+    public void setSynopsis(String synopsis) {
+        this.synopsis.setText(synopsis);
     }
 
     @Override
     public void setImageBitmap(Bitmap b) {
-        imagen.setImageBitmap(b);
+        image.setImageBitmap(b);
     }
 
     @Override
     public void setImageResource(int id) {
-        imagen.setImageResource(id);
+        image.setImageResource(id);
     }
 
-    public void setTitulo(String titulo) {
-        if (titulo.length() > 2)
-            this.titulo.setVisibility(View.VISIBLE);
+    public void setTitle(String title) {
+        if (title.length() > 2)
+            this.title.setVisibility(View.VISIBLE);
         else
-            this.titulo.setVisibility(View.GONE);
-        this.titulo.setText(titulo);
+            this.title.setVisibility(View.GONE);
+        this.title.setText(title);
     }
 }

@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ar.rulosoft.mimanganu.componentes.ControlTapaSerie
+        <ar.rulosoft.mimanganu.componentes.Cover
             android:id="@+id/tapa"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

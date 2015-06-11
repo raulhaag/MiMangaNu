@@ -83,28 +83,28 @@ public abstract class ServerBase {
     // server
     public abstract ArrayList<Manga> getMangas() throws Exception;
 
-    public abstract ArrayList<Manga> getBusqueda(String termino) throws Exception;
+    public abstract ArrayList<Manga> search(String term) throws Exception;
 
     // capitulos
-    public abstract void cargarCapitulos(Manga m, boolean recarga) throws Exception;
+    public abstract void loadChapters(Manga m, boolean forceReload) throws Exception;
 
-    public abstract void cargarPortada(Manga m, boolean recarga) throws Exception;
+    public abstract void loadMangaInformation(Manga m, boolean forceReload) throws Exception;
 
     // manga
-    public abstract String getPagina(Chapter c, int pagina);
+    public abstract String getPagesNumber(Chapter c, int page);
 
-    public abstract String getImagen(Chapter c, int pagina) throws Exception;
+    public abstract String getImageFrom(Chapter c, int page) throws Exception;
 
-    public abstract void iniciarCapitulo(Chapter c) throws Exception;
+    public abstract void chapterInit(Chapter c) throws Exception;
 
     // server visual
-    public abstract ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception;
+    public abstract ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception;
 
-    public abstract String[] getCategorias();
+    public abstract String[] getCategories();
 
-    public abstract String[] getOrdenes();
+    public abstract String[] getOrders();
 
-    public abstract boolean tieneListado();
+    public abstract boolean hasList();
 
     // public abstract boolean supportStatus();
 
@@ -113,8 +113,8 @@ public abstract class ServerBase {
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
-        this.cargarPortada(manga, true);
-        this.cargarCapitulos(manga, false);
+        this.loadMangaInformation(manga, true);
+        this.loadChapters(manga, false);
         int diff = manga.getChapters().size() - mangaDb.getChapters().size();
         if (diff > 0) {
             ArrayList<Chapter> simpleList = new ArrayList<>();
@@ -247,11 +247,11 @@ public abstract class ServerBase {
         }
     }
 
-    public boolean tieneNavegacionVisual() {
+    public boolean hasVisualNavegation() {
         return true;
     }
 
-    Navegador getNavegadorConHeader() {
+    Navegador getBrowserWhitHeaders() {
         Navegador nav = new Navegador();
         nav.addHeader("User-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
         return nav;

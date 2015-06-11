@@ -44,7 +44,7 @@
             android:name=".OpcionesActivity"
             android:label="@string/configuraciones" />
 
-        <service android:name=".services.ServicioColaDeDescarga" />
+        <service android:name=".services.DownloadPoolService" />
 
         <activity
             android:name=".ActivityDescargas"

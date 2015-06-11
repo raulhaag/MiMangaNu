@@ -3,7 +3,7 @@ package ar.rulosoft.mimanganu.componentes;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
-public class MasMangasPageTransformer implements ViewPager.PageTransformer {
+public class MoreMangasPageTransformer implements ViewPager.PageTransformer {
     public void transformPage(View view, float position) {
         int pageWidth = view.getWidth();
         if (position < -1) { // [-Infinity,-1)

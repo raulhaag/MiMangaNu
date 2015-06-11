@@ -13,8 +13,8 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
-import ar.rulosoft.mimanganu.services.DescargaCapitulo;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.ChapterDownload;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentDescarga extends Fragment {
 
@@ -32,7 +32,7 @@ public class FragmentDescarga extends Fragment {
     @SuppressLint("NewApi")
     @Override
     public void onResume() {
-        adap = new DownloadAdapter(getActivity(), new ArrayList<DescargaCapitulo>());
+        adap = new DownloadAdapter(getActivity(), new ArrayList<ChapterDownload>());
         lista.setAdapter(adap);
         md = new MostrarDescargas();
         if (Build.VERSION.SDK_INT >= 11)
@@ -55,7 +55,7 @@ public class FragmentDescarga extends Fragment {
         protected Void doInBackground(Void... params) {
             while (seguir) {
                 try {
-                    adap.updateAll(ServicioColaDeDescarga.descargas);
+                    adap.updateAll(DownloadPoolService.descargas);
                     publishProgress();
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

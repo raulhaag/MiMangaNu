@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -24,7 +23,7 @@ import com.melnykov.fab.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.rulosoft.mimanganu.componentes.MasMangasPageTransformer;
+import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityMisMangas extends ActionBarActivity implements OnClickListener {
@@ -32,11 +31,9 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     public static final String MOSTRAR_EN_GALERIA = "mostrarengaleria";
-
-    SectionsPagerAdapter mSectionsPagerAdapter;
-
-    ViewPager mViewPager;
     public int[] colors;
+    SectionsPagerAdapter mSectionsPagerAdapter;
+    ViewPager mViewPager;
     FragmentMisMangas fragmentMisMangas;
     FragmentAddManga fragmentAddManga;
     SharedPreferences pm;
@@ -59,7 +56,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setPageTransformer(false, new MasMangasPageTransformer());
+        mViewPager.setPageTransformer(false, new MoreMangasPageTransformer());
 
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
@@ -150,6 +147,10 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         }
     }
 
+    public interface OnFinishTask {
+        void onFinish();
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         List<Fragment> fragments;
@@ -173,10 +174,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
             return fragments.size();
         }
 
-    }
-
-    public interface OnFinishTask {
-        void onFinish();
     }
 
 }

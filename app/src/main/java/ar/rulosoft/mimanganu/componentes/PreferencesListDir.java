@@ -13,8 +13,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,9 +25,6 @@ import ar.rulosoft.mimanganu.R;
 public class PreferencesListDir extends DialogPreference {
 
     Context context = getContext();
-    Button aceptar, cancelar, nuevo;
-    EditText nuevoText;
-    boolean seleccionado = false;
     String actual;
     ListView dirs;
 
@@ -113,19 +108,19 @@ public class PreferencesListDir extends DialogPreference {
     }
 
     public ArrayList<String> dirList(String directorio) {
-        ArrayList<String> lista = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<String>();
         if (directorio.length() != 1) {
-            lista.add("..");
+            list.add("..");
         }
         File dir = new File(directorio);
         if (dir.listFiles() != null) {
             for (File child : dir.listFiles()) {
                 if (child.isDirectory()) {
-                    lista.add(child.getName());
+                    list.add(child.getName());
                 }
             }
         }
-        return lista;
+        return list;
     }
 
 }

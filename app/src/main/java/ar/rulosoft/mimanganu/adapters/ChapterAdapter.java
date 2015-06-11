@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -26,7 +27,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
@@ -39,6 +40,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     ActivityManga activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
+    private StateListDrawable stateListDrawable;
 
     public ChapterAdapter(Activity context, List<Chapter> items) {
         super(context, listItem, items);
@@ -70,7 +72,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             holder.textViewName.setText(android.text.Html.fromHtml(item.getTitle()));
             holder.textViewStatus.setVisibility(View.GONE);
 
-            if(defaultColor == null) {
+            if (defaultColor == null) {
                 defaultColor = holder.textViewName.getTextColors();
             }
 
@@ -99,14 +101,13 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 convertView.setBackgroundColor(COLOR_SELECTED);
                 holder.textViewName.setTextColor(Color.WHITE);
                 holder.textViewPages.setTextColor(Color.WHITE);
-            }
-            else {
+            } else {
                 convertView.setBackgroundColor(TRANSPARENT);
             }
 
             holder.textViewPages.setText("       ");
-            if (item.getPaginas() > 0) {
-                holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPaginas());
+            if (item.getPages() > 0) {
+                holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPages());
             }
             if (item.isDownloaded()) {
                 holder.imageButton.setImageResource(R.drawable.ic_borrar);
@@ -123,10 +124,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     if (c.isDownloaded()) {
                         Manga m = activity.manga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
-                        String ruta = ServicioColaDeDescarga.generarRutaBase(s, m, c, activity);
+                        String ruta = DownloadPoolService.generarRutaBase(s, m, c, activity);
                         FragmentMisMangas.DeleteRecursive(new File(ruta));
                         getItem(position).setDownloaded(false);
-                        Database.UpdateCapituloDescargado(activity, c.getId(), 0);
+                        Database.UpdateChapterDownloaded(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
                         // ((ImageView)
@@ -163,10 +164,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         notifyDataSetChanged();
     }
 
-    public void setSelectedOrUnselected(int position){
-        if(selected.indexOfKey(position - 1) >= 0){
+    public void setSelectedOrUnselected(int position) {
+        if (selected.indexOfKey(position - 1) >= 0) {
             selected.delete(position - 1);
-        }else{
+        } else {
             selected.put(position - 1, true);
         }
         notifyDataSetChanged();
@@ -188,6 +189,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             this.textViewPages = (TextView) v.findViewById(R.id.capitulo_paginas);
             this.imageButton = (ImageView) v.findViewById(R.id.boton);
         }
+
     }
 
     private class AgregarCola extends AsyncTask<Chapter, Void, Chapter> {
@@ -206,8 +208,8 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             Chapter c = arg0[0];
             ServerBase s = ServerBase.getServer(activity.manga.getServerId());
             try {
-                if (c.getPaginas() < 1)
-                    s.iniciarCapitulo(c);
+                if (c.getPages() < 1)
+                    s.chapterInit(c);
             } catch (Exception e) {
                 error = e.getMessage();
                 e.printStackTrace();
@@ -230,9 +232,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             } else {
                 asyncdialog.dismiss();
                 Database.updateChapter(activity, result);
-                // ColaDeDescarga.addCola(result);
-                // ColaDeDescarga.iniciarCola(activity);
-                ServicioColaDeDescarga.agregarDescarga(activity, result, false);
+                DownloadPoolService.agregarDescarga(activity, result, false);
                 Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
             }
             super.onPostExecute(result);

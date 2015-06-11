@@ -58,8 +58,8 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        String source = new Navegador().get("http://es.ninemanga.com/search/?wd=" + URLEncoder.encode(termino, "UTF-8"));
+    public ArrayList<Manga> search(String term) throws Exception {
+        String source = new Navegador().get("http://es.ninemanga.com/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher m = p.matcher(source);
@@ -71,13 +71,13 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
-            cargarPortada(m, reinicia);
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath() + "?waring=1");
         // portada
         String portada = getFirstMacthDefault("Manga\" src=\"(.+?)\"", source, "");
@@ -87,7 +87,7 @@ public class EsNineMangaCom extends ServerBase {
         m.setSinopsis(sinopsis);
 
         //estado
-        m.setFinalizado(getFirstMacthDefault("Estado(.+?)</a>", source, "").contains("Completado"));
+        m.setFinished(getFirstMacthDefault("Estado(.+?)</a>", source, "").contains("Completado"));
 
         //autor
         m.setAuthor(getFirstMacthDefault("Autor.+?\">(.+?)<", source, ""));
@@ -104,20 +104,20 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
-        return c.getPath().replace(".html", "-" + pagina + ".html");
+    public String getPagesNumber(Chapter c, int page) {
+        return c.getPath().replace(".html", "-" + page + ".html");
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null)
             setExtra(c);
         String[] imagenes = c.getExtra().split("\\|");
-        return imagenes[pagina];
+        return imagenes[page];
     }
 
     public void setExtra(Chapter c) throws Exception {
-        String source = new Navegador().get(c.getPath().replace(".html", "-" + c.getPaginas() + "-1.html"));
+        String source = new Navegador().get(c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
         String imagenes = "";
@@ -128,15 +128,15 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
         String nop = getFirstMacth("\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el n�mero de p�ginas");
-        c.setPaginas(Integer.parseInt(nop));
+        c.setPages(Integer.parseInt(nop));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        String source = new Navegador().get(generosV[categoria].replace("_", "_" + pagina));
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+        String source = new Navegador().get(generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
@@ -153,17 +153,17 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return new String[]{"Popularidad"};
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return false;
     }
 

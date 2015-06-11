@@ -1,5 +1,5 @@
 package ar.rulosoft.mimanganu.services;
 
-public interface DescargaListener {
+public interface DownloadListener {
     void onImagenDescargada(int cid, int pagina);
 }

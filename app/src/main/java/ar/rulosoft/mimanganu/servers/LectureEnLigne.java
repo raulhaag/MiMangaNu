@@ -31,19 +31,19 @@ public class LectureEnLigne extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
+    public ArrayList<Manga> search(String term) throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
-        if (manga.getChapters() == null || manga.getChapters().size() == 0 || reinicia)
-            cargarPortada(manga, reinicia);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga manga, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
 
         String data = new Navegador().get((manga.getPath()));// :</p><p>(.+?)</p>
 
@@ -64,45 +64,45 @@ public class LectureEnLigne extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
-        return c.getPath().replaceAll("\\d+\\.h", pagina + ".h");
+    public String getPagesNumber(Chapter c, int page) {
+        return c.getPath().replaceAll("\\d+\\.h", page + ".h");
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
-        String data = new Navegador().get(this.getPagina(c, pagina));
+    public String getImageFrom(Chapter c, int page) throws Exception {
+        String data = new Navegador().get(this.getPagesNumber(c, page));
         return getFirstMacth("<img id='image' src='(.+?)'", data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         String data = new Navegador().get(c.getPath());
         String paginas = getFirstMacth("<select class=\"pages\">.+?(\\d+)</option>[\\s]*</select>", data, "Error: no se pudo obtener el numero de paginas");
-        c.setPaginas(Integer.parseInt(paginas));
+        c.setPages(Integer.parseInt(paginas));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         return null;
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return null;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return null;
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return true;
     }
 
     @Override
-    public boolean tieneNavegacionVisual() {
+    public boolean hasVisualNavegation() {
         return false;
     }
 

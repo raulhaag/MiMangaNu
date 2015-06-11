@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -53,7 +52,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
     @Override
     public void onServerClick(ServerBase server) {
         Intent intent;
-        if (server.tieneNavegacionVisual())
+        if (server.hasVisualNavegation())
             intent = new Intent(getActivity(), ActivityServerVisualNavegacion.class);// ActivityServerListadeMangas
         else
             intent = new Intent(getActivity(), ActivityServerListadeMangas.class);

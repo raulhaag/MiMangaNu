@@ -66,7 +66,7 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
             ArrayList<Manga> mangas = new ArrayList<Manga>();
             ServerBase s = ServerBase.getServer(serverId);
             try {
-                mangas = s.getBusqueda(termino);
+                mangas = s.search(termino);
             } catch (Exception e) {
                 error = e.getMessage();
             }

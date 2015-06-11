@@ -27,7 +27,7 @@ import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnMangaClick;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
@@ -97,7 +97,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         inflater.inflate(R.menu.gridview_mismangas, menu);
         MenuItem m = menu.findItem(R.id.noupdate);
         menuFor = (Integer) v.getTag();
-        if (adapter.getItem(menuFor).isFinalizado()) {
+        if (adapter.getItem(menuFor).isFinished()) {
             m.setTitle(getActivity().getResources().getString(R.string.buscarupdates));
         } else {
             m.setTitle(getActivity().getResources().getString(R.string.nobuscarupdate));
@@ -109,17 +109,17 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         Manga m = adapter.getItem(menuFor);
         if (item.getItemId() == R.id.borrar) {
             ServerBase s = ServerBase.getServer(m.getServerId());
-            String ruta = ServicioColaDeDescarga.generarRutaBase(s, m, getActivity());
+            String ruta = DownloadPoolService.generarRutaBase(s, m, getActivity());
             DeleteRecursive(new File(ruta));
             Database.deleteManga(getActivity(), m.getId());
             adapter.remove(m);
         } else if (item.getItemId() == R.id.noupdate) {
-            if (m.isFinalizado()) {
-                m.setFinalizado(false);
-                Database.setUpgrable(getActivity(), m.getId(), false);
+            if (m.isFinished()) {
+                m.setFinished(false);
+                Database.setUpgradable(getActivity(), m.getId(), false);
             } else {
-                m.setFinalizado(true);
-                Database.setUpgrable(getActivity(), m.getId(), true);
+                m.setFinished(true);
+                Database.setUpgradable(getActivity(), m.getId(), true);
             }
         }
         return super.onContextItemSelected(item);
@@ -142,7 +142,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 mangas = Database.getMangas(getActivity());
                 break;
             case MODO_SIN_LEER:
-                mangas = Database.getMangasCondotion(getActivity(),
+                mangas = Database.getMangasCondition(getActivity(),
                         "id in (select manga_id from capitulos where estado != 1 group by manga_id order by count(*) desc)");
                 break;
             default:
@@ -191,13 +191,13 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         protected Integer doInBackground(Void... params) {
             ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
             int result = 0;
-            Database.removerCapitulosHuerfanos(getActivity());
+            Database.removeOrphanedChapters(getActivity());
             for (int i = 0; i < mangas.size(); i++) {
                 Manga manga = mangas.get(i);
                 ServerBase s = ServerBase.getServer(manga.getServerId());
                 try {
                     onProgressUpdate(manga.getTitle());
-                    s.cargarCapitulos(manga, false);
+                    s.loadChapters(manga, false);
                     int diff = s.buscarNuevosCapitulos(manga.getId(), getActivity());
                     result += diff;
                 } catch (Exception e) {

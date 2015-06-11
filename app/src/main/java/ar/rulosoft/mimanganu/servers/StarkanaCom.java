@@ -48,19 +48,19 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        String source = new Navegador().get("http://starkana.com/manga/search?k=" + URLEncoder.encode(termino, "UTF-8"));
+    public ArrayList<Manga> search(String term) throws Exception {
+        String source = new Navegador().get("http://starkana.com/manga/search?k=" + URLEncoder.encode(term, "UTF-8"));
         return getMangasFromSource(source);
     }
 
     @Override
-    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
-            cargarPortada(m, reinicia);
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath());
         // portada
         String portada = getFirstMacthDefault("<img class=\"a_img\" src=\"(.+?)\"", source, "");
@@ -69,7 +69,7 @@ public class StarkanaCom extends ServerBase {
         String sinopsis = getFirstMacthDefault("<b>Summary:.+?<div>(.+?)<", source, "Without synopsis");
         m.setSinopsis(sinopsis);
         //status
-        m.setFinalizado(source.contains("<b>Completed</b></span>"));
+        m.setFinished(source.contains("<b>Completed</b></span>"));
         // capitulos
         Pattern p = Pattern.compile("<a class=\"download-link\" href=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
@@ -81,16 +81,16 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
-        return c.getPath() + "/" + pagina;
+    public String getPagesNumber(Chapter c, int page) {
+        return c.getPath() + "/" + page;
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null)
             setExtra(c);
         String[] imagenes = c.getExtra().split("\\|");
-        return imagenes[pagina];
+        return imagenes[page];
     }
 
     public void setExtra(Chapter c) throws Exception {
@@ -105,20 +105,20 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        c.setPaginas(Integer.parseInt(getFirstMacth("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
+        c.setPages(Integer.parseInt(getFirstMacth("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        int paginaLoc = pagina - 1;
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+        int paginaLoc = pageNumber - 1;
         ArrayList<Manga> mangas = null;
         String web = "";
-        if (categoria == 0 && paginaLoc < paginas.length) {
+        if (categorie == 0 && paginaLoc < paginas.length) {
             web = paginas[paginaLoc];
         } else if (paginaLoc < 1) {
-            web = "/manga/search?" + generosV[categoria];
+            web = "/manga/search?" + generosV[categorie];
         }
         if (web.length() > 2) {
 
@@ -147,17 +147,17 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return new String[]{"a-z"};
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return true;
     }
 

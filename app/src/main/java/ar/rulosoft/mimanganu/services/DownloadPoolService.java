@@ -20,41 +20,41 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.DescargaCapitulo.DescargaEstado;
-import ar.rulosoft.mimanganu.services.DescargaIndividual.Estados;
+import ar.rulosoft.mimanganu.services.ChapterDownload.DownloadStatus;
+import ar.rulosoft.mimanganu.services.SingleDownload.Status;
 
-public class ServicioColaDeDescarga extends Service implements CambioEstado {
+public class DownloadPoolService extends Service implements StateChange {
 
     final static int[] illegalChars = {34, 60, 62, 124, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
             28, 29, 30, 31, 58, 42, 63, 92, 47};
     public static int SLOTS = 2;
-    public static ServicioColaDeDescarga actual = null;
+    public static DownloadPoolService actual = null;
     public static boolean intentPrending = false;
-    public static ArrayList<DescargaCapitulo> descargas = new ArrayList<>();
+    public static ArrayList<ChapterDownload> descargas = new ArrayList<>();
 
     static {
         Arrays.sort(illegalChars);
     }
 
     public int slots = SLOTS;
-    DescargaListener descargaListener = null;
+    DownloadListener downloadListener = null;
 
     public static void agregarDescarga(Activity activity, Chapter chapter, boolean lectura) {
         if (!chapter.isDownloaded()) {
             if (descargaNueva(chapter.getId())) {
-                DescargaCapitulo dc = new DescargaCapitulo(chapter);
+                ChapterDownload dc = new ChapterDownload(chapter);
                 if (lectura)
                     descargas.add(0, dc);
                 else
                     descargas.add(dc);
             } else {
-                for (DescargaCapitulo dc : descargas) {
+                for (ChapterDownload dc : descargas) {
                     if (dc.chapter.getId() == chapter.getId()) {
-                        if (dc.estado == DescargaEstado.ERROR) {
+                        if (dc.status == DownloadStatus.ERROR) {
                             dc.chapter.deleteImages(activity);
                             descargas.remove(dc);
                             dc = null;
-                            DescargaCapitulo ndc = new DescargaCapitulo(chapter);
+                            ChapterDownload ndc = new ChapterDownload(chapter);
                             if (lectura) {
                                 descargas.add(0, ndc);
                             } else {
@@ -73,7 +73,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
             initValues(activity);
             if (!intentPrending && actual == null) {
                 intentPrending = true;
-                activity.startService(new Intent(activity, ServicioColaDeDescarga.class));
+                activity.startService(new Intent(activity, DownloadPoolService.class));
             }
         }
     }
@@ -83,14 +83,14 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
         int descargas = Integer.parseInt(pm.getString("download_threads", "2"));
         int tolerancia = Integer.parseInt(pm.getString("error_tolerancia", "5"));
         int reintentos = Integer.parseInt(pm.getString("reintentos", "4"));
-        DescargaCapitulo.MAX_ERRORS = tolerancia;
-        DescargaIndividual.REINTENTOS = reintentos;
-        ServicioColaDeDescarga.SLOTS = descargas;
+        ChapterDownload.MAX_ERRORS = tolerancia;
+        SingleDownload.RETRY = reintentos;
+        DownloadPoolService.SLOTS = descargas;
     }
 
     public static boolean descargaNueva(int cid) {
         boolean result = true;
-        for (DescargaCapitulo dc : descargas) {
+        for (ChapterDownload dc : descargas) {
             if (dc.chapter.getId() == cid) {
                 result = false;
                 break;
@@ -101,9 +101,9 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
 
     public static boolean quitarDescarga(int cid, Context c) {
         boolean result = true;
-        for (DescargaCapitulo dc : descargas) {
+        for (ChapterDownload dc : descargas) {
             if (dc.chapter.getId() == cid) {
-                if (dc.estado.ordinal() != DescargaCapitulo.DescargaEstado.DESCARGANDO.ordinal()) {
+                if (dc.status.ordinal() != DownloadStatus.DOWNLOADIND.ordinal()) {
                     descargas.remove(dc);
                 } else {
                     Toast.makeText(c, R.string.quitar_descarga, Toast.LENGTH_LONG).show();
@@ -116,7 +116,7 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     }
 
     public static void attachListener(ActivityLector lector, int cid) {
-        for (DescargaCapitulo dc : descargas) {
+        for (ChapterDownload dc : descargas) {
             if (dc.chapter.getId() == cid) {
                 dc.setErrorListener(lector);
                 break;
@@ -177,17 +177,17 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
     }
 
     @Override
-    public void onCambio(DescargaIndividual descargaIndividual) {
-        if (descargaIndividual.estado.ordinal() > Estados.POSTERGADA.ordinal()) {
+    public void onChange(SingleDownload singleDownload) {
+        if (singleDownload.status.ordinal() > Status.POSTPONED.ordinal()) {
             slots++;
         }
-        if (descargaListener != null) {
-            descargaListener.onImagenDescargada(descargaIndividual.cid, descargaIndividual.index);
+        if (downloadListener != null) {
+            downloadListener.onImagenDescargada(singleDownload.cid, singleDownload.index);
         }
     }
 
-    public void setDescargaListener(DescargaListener descargaListener) {
-        this.descargaListener = descargaListener;
+    public void setDownloadListener(DownloadListener downloadListener) {
+        this.downloadListener = downloadListener;
     }
 
     public void iniciarCola() {
@@ -198,11 +198,11 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
         while (!descargas.isEmpty()) {
             if (slots > 0) {
                 slots--;
-                DescargaCapitulo dc = null;
+                ChapterDownload dc = null;
                 int sig = 1;
-                for (DescargaCapitulo d : descargas) {
-                    if (d.estado != DescargaEstado.ERROR) {
-                        sig = d.getSiguiente();
+                for (ChapterDownload d : descargas) {
+                    if (d.status != DownloadStatus.ERROR) {
+                        sig = d.getNext();
                         if (sig > -1) {
                             dc = d;
                             break;
@@ -220,11 +220,11 @@ public class ServicioColaDeDescarga extends Service implements CambioEstado {
                         new File(ruta).mkdirs();
                     }
                     try {
-                        String origen = s.getImagen(dc.chapter, sig);
+                        String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = ruta + "/" + sig + ".jpg";
-                        DescargaIndividual des = new DescargaIndividual(origen, destino, sig - 1, dc.chapter.getId());
-                        des.setCambioListener(dc);
-                        dc.setCambioListener(this);
+                        SingleDownload des = new SingleDownload(origen, destino, sig - 1, dc.chapter.getId());
+                        des.setChangeListener(dc);
+                        dc.setChagesListener(this);
                         new Thread(des).start();
                     } catch (Exception e) {
                         dc.setErrorIdx(sig - 1);

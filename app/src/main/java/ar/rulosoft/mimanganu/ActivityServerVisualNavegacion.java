@@ -57,13 +57,13 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         cargando = (ProgressBar) findViewById(R.id.cargando);
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
-        if (s.getCategorias() != null)
-            generos.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getCategorias()));
+        if (s.getCategories() != null)
+            generos.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getCategories()));
         else
             generos.setVisibility(Spinner.INVISIBLE);
 
-        if (s.getOrdenes() != null)
-            orden.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getOrdenes()));
+        if (s.getOrders() != null)
+            orden.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getOrders()));
         else
             orden.setVisibility(Spinner.INVISIBLE);
 
@@ -158,7 +158,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         getMenuInflater().inflate(R.menu.manga_server_visual, menu);
         buscar = menu.findItem(R.id.action_search);
         MenuItem vcl = menu.findItem(R.id.ver_como_lista);
-        if (!s.tieneListado())
+        if (!s.hasList())
             vcl.setVisible(false);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(buscar);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {

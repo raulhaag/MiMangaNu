@@ -46,19 +46,19 @@ public class EsMangaCom extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        String web = "http://esmanga.com/search/results?q=" + URLEncoder.encode(termino, "UTF-8");
+    public ArrayList<Manga> search(String term) throws Exception {
+        String web = "http://esmanga.com/search/results?q=" + URLEncoder.encode(term, "UTF-8");
         return getMangasWeb(web);
     }
 
     @Override
-    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
-            cargarPortada(m,reinicia);
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(m.getPath());
         //sinopsis
@@ -66,7 +66,7 @@ public class EsMangaCom extends ServerBase {
         //imagen
         m.setImages(getFirstMacthDefault("(http://esmanga.com/img/mangas/.+?)\"", source, ""));
         //status
-        m.setFinalizado(getFirstMacthDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
+        m.setFinished(getFirstMacthDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
         // capitulos
         ArrayList<Chapter> chapters = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(http://esmanga.com/[^\"]+/c\\d+)\">(.+?)</a><");
@@ -78,28 +78,28 @@ public class EsMangaCom extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
-        return c.getPath() + "/" + pagina;
+    public String getPagesNumber(Chapter c, int page) {
+        return c.getPath() + "/" + page;
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         Navegador nav = new Navegador();
-        String source = nav.get(this.getPagina(c, pagina));
+        String source = nav.get(this.getPagesNumber(c, page));
         return getFirstMacth("src=\"([^\"]+\\d.(jpg|png|bmp))", source, "Error en plugin (obtener imager)");
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(c.getPath());
         String textNum = getFirstMacth("option value=\"(\\d+)[^=]+</option></select>", source, "Error en plugin (obtener p�ginas)");
-        c.setPaginas(Integer.parseInt(textNum));
+        c.setPages(Integer.parseInt(textNum));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        String web = "http://esmanga.com" + generosV[categoria] + "?page=" + pagina;
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+        String web = "http://esmanga.com" + generosV[categorie] + "?page=" + pageNumber;
         return getMangasWeb(web);
     }
 
@@ -117,17 +117,17 @@ public class EsMangaCom extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return new String[]{"Lecturas"};//, "Ranking"
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return true;
     }
 

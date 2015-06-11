@@ -6,7 +6,7 @@ import java.io.File;
 
 import ar.rulosoft.mimanganu.FragmentMisMangas;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class Chapter {
 
@@ -15,8 +15,7 @@ public class Chapter {
     public static final int READ = 1;
     public static final int READING = 2;
 
-    // TODO: Needs translation. Possibly breaks databse?
-    int id, paginas, mangaID;
+    int id, pages, mangaID;
     int pagesRead, readStatus;
     String title, path, extra;
     boolean finished, downloaded;
@@ -43,12 +42,12 @@ public class Chapter {
         this.id = id;
     }
 
-    public int getPaginas() {
-        return paginas;
+    public int getPages() {
+        return pages;
     }
 
-    public void setPaginas(int pagina) {
-        this.paginas = pagina;
+    public void setPages(int pages) {
+        this.pages = pages;
     }
 
     public String getTitle() {
@@ -130,29 +129,29 @@ public class Chapter {
     }
 
     private void deleteImages(Context context, Manga manga, ServerBase s) {
-        String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, this, context);
+        String ruta = DownloadPoolService.generarRutaBase(s, manga, this, context);
         FragmentMisMangas.DeleteRecursive(new File(ruta));
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
-        String ruta = ServicioColaDeDescarga.generarRutaBase(s, manga, this, context);
+        String ruta = DownloadPoolService.generarRutaBase(s, manga, this, context);
         FragmentMisMangas.DeleteRecursive(new File(ruta));
-        setPaginas(0);
+        setPages(0);
         setDownloaded(false);
         setPagesRead(0);
-        Database.updateCapituloConDescarga(context, this);
+        Database.updateChapterPlusDownload(context, this);
     }
 
     public void freeSpace(Context context) {
         deleteImages(context);
         setDownloaded(false);
-        Database.updateCapituloConDescarga(context, this);
+        Database.updateChapterPlusDownload(context, this);
     }
 
     public void freeSpace(Context context, Manga manga, ServerBase s) {
         deleteImages(context, manga, s);
         setDownloaded(false);
-        Database.updateCapituloConDescarga(context, this);
+        Database.updateChapterPlusDownload(context, this);
     }
 
     public void reset(Context context) {
@@ -164,5 +163,9 @@ public class Chapter {
     public void markRead(Context c, boolean read) {
         Database.markChapter(c, getId(), read);
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
+    }
+
+    public void addChapterFirst(Manga manga) {
+        manga.chapters.add(0, this);
     }
 }

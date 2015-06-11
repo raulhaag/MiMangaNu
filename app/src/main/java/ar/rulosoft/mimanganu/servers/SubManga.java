@@ -38,14 +38,14 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
+    public ArrayList<Manga> search(String term) throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
-        if (manga.getChapters().size() == 0 || reinicia) {
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath() + "/completa"));
@@ -55,13 +55,13 @@ public class SubManga extends ServerBase {
             while (m.find()) {
                 String web = "http://submanga.com/c/" + m.group(1).substring(m.group(1).lastIndexOf("/"));
                 Chapter mc = new Chapter(Html.fromHtml(m.group(2)).toString(), web);
-                manga.addCapituloFirst(mc);
+                mc.addChapterFirst(manga);
             }
         }
     }
 
     @Override
-    public void cargarPortada(Manga manga, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         Pattern p;
         Matcher m;
         String data = new Navegador().get((manga.getPath()));
@@ -78,15 +78,15 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
-        return c.getPath() + "/" + pagina;
+    public String getPagesNumber(Chapter c, int page) {
+        return c.getPath() + "/" + page;
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         //if (c.getExtra() == null || c.getExtra().length() < 2) {
         String data;
-        data = new Navegador().get(this.getPagina(c, pagina));
+        data = new Navegador().get(this.getPagesNumber(c, page));
         return getFirstMacthDefault("<img src=\"(http://.+?)\"", data, null);
         //} else {
         //	return (c.getExtra().split("|")[pagina]);
@@ -94,44 +94,44 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         String pagina;
         int i = 1;
         String extra = "";
-        while ((pagina = getImagen(c, i)) != null) {
+        while ((pagina = getImageFrom(c, i)) != null) {
             extra = extra + "|" + pagina;
             i++;
         }
         c.setExtra(extra);
         i--;
-        c.setPaginas(i);
+        c.setPages(i);
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return true;
     }
 
     @Override
-    public boolean tieneNavegacionVisual() {
+    public boolean hasVisualNavegation() {
         return false;
     }
 

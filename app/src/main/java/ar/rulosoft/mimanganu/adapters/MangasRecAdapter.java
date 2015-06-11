@@ -15,7 +15,7 @@ import com.fedorvlasov.lazylist.ImageLoader;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.ControlTapaSerie;
+import ar.rulosoft.mimanganu.componentes.Cover;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
@@ -108,14 +108,14 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
     }
 
     public class MangasHolder extends RecyclerView.ViewHolder {
-        ControlTapaSerie serie;
+        Cover serie;
         View v;
         ImageView server;
         ImageView notif;
 
         public MangasHolder(View itemView) {
             super(itemView);
-            serie = (ControlTapaSerie) itemView.findViewById(R.id.tapa);
+            serie = (Cover) itemView.findViewById(R.id.tapa);
             notif = (ImageView) itemView.findViewById(R.id.notif);
             server = (ImageView) itemView.findViewById(R.id.server);
             v = itemView;

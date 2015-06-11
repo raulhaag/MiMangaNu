@@ -12,18 +12,18 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class DescargaIndividual implements Runnable {
-    public static int REINTENTOS = 3;
-    String origen, destino;
-    CambioEstado cambioListener = null;
+public class SingleDownload implements Runnable {
+    public static int RETRY = 3;
+    String fromURL, toFile;
+    StateChange changeListener = null;
     int index, cid;
-    Estados estado = Estados.EN_COLA;
-    int reintentos = REINTENTOS;
+    Status status = Status.QUEUED;
+    int retry = RETRY;
 
-    public DescargaIndividual(String origen, String destino, int index, int cid) {
+    public SingleDownload(String fromURL, String toFile, int index, int cid) {
         super();
-        this.origen = origen;
-        this.destino = destino;
+        this.fromURL = fromURL;
+        this.toFile = toFile;
         this.index = index;
         this.cid = cid;
     }
@@ -34,10 +34,10 @@ public class DescargaIndividual implements Runnable {
 
     @Override
     public void run() {
-        changeStatus(Estados.INICIADA);
-        while (estado != Estados.DESCARGA_OK && reintentos > 0) {
-            File o = new File(destino);
-            File ot = new File(destino + ".temp");
+        changeStatus(Status.INIT);
+        while (status != Status.DOWNLOAD_OK && retry > 0) {
+            File o = new File(toFile);
+            File ot = new File(toFile + ".temp");
             if (ot.exists()) {
                 ot.delete();
             }
@@ -46,18 +46,18 @@ public class DescargaIndividual implements Runnable {
                 OutputStream output;
                 int contentLenght;
                 try {
-                    URL url = new URL(origen);
+                    URL url = new URL(fromURL);
                     HttpURLConnection con = (HttpURLConnection) url.openConnection();
                     con.setConnectTimeout(3000);
                     con.setReadTimeout(3000);
                     int code = con.getResponseCode();
                     if (code != 200) {
                         if (code == 404) {
-                            changeStatus(Estados.ERROR_404);
+                            changeStatus(Status.ERROR_404);
                         } else {
-                            changeStatus(Estados.ERROR_CONECCION);
+                            changeStatus(Status.ERROR_CONNECTION);
                         }
-                        reintentos = 0;
+                        retry = 0;
                         ot.delete();
                         writeErrorImage(ot);
                         ot.renameTo(o);
@@ -67,40 +67,40 @@ public class DescargaIndividual implements Runnable {
                     input = con.getInputStream();
                     output = new FileOutputStream(ot);
                 } catch (MalformedURLException e) {
-                    changeStatus(Estados.ERROR_URL_INVALIDA);
-                    reintentos = 0;
+                    changeStatus(Status.ERROR_INVALID_URL);
+                    retry = 0;
                     break;
                 } catch (FileNotFoundException e) {
-                    changeStatus(Estados.ERROR_ESCRIBIR_ARCHIVO);
-                    reintentos = 0;
+                    changeStatus(Status.ERROR_WRITING_FILE);
+                    retry = 0;
                     break;
                 } catch (IOException e) {
-                    changeStatus(Estados.ERROR_ABRIR_ARCHIVO);
-                    reintentos = 0;
+                    changeStatus(Status.ERROR_OPENING_FILE);
+                    retry = 0;
                     break;
                 }
                 try {
-                    changeStatus(Estados.DESCARGANDO);
+                    changeStatus(Status.DOWNLOADING);
                     byte[] buffer = new byte[4096];
                     int bytesRead = 0;
                     while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
                         output.write(buffer, 0, bytesRead);
                     }
                 } catch (Exception e) {
-                    reintentos--;
-                    if (reintentos > 0) {
-                        changeStatus(Estados.REINTENTANDO);
+                    retry--;
+                    if (retry > 0) {
+                        changeStatus(Status.RETRY);
                     } else {
-                        changeStatus(Estados.ERROR_TIMEOUT);
+                        changeStatus(Status.ERROR_TIMEOUT);
                     }
                 } finally {
                     boolean flagedOk = false;
-                    if (estado != Estados.REINTENTANDO) {
+                    if (status != Status.RETRY) {
                         if (contentLenght > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLenght + " tamaño =" + o.length() + " en =" + o.getPath());
+                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLenght + " size =" + o.length() + " on =" + o.getPath());
                             ot.delete();
-                            reintentos--;
-                            changeStatus(Estados.REINTENTANDO);
+                            retry--;
+                            changeStatus(Status.RETRY);
                         } else {
                             flagedOk = true;
                         }
@@ -117,22 +117,22 @@ public class DescargaIndividual implements Runnable {
                                 writeErrorImage(ot);
                                 ot.renameTo(o);
                             }
-                            Log.i("MIMANGA DOWNLOAD", "descarga ok =" + o.getPath());
-                            changeStatus(Estados.DESCARGA_OK);
+                            Log.i("MIMANGA DOWNLOAD", "download ok =" + o.getPath());
+                            changeStatus(Status.DOWNLOAD_OK);
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
             } else {
-                changeStatus(Estados.DESCARGA_OK);
+                changeStatus(Status.DOWNLOAD_OK);
             }
         }
     }
 
     void writeErrorImage(File ot) throws IOException {
-        if (ServicioColaDeDescarga.actual != null) {
-            InputStream ims = ServicioColaDeDescarga.actual.getAssets().open("error_image.jpg");
+        if (DownloadPoolService.actual != null) {
+            InputStream ims = DownloadPoolService.actual.getAssets().open("error_image.jpg");
             FileOutputStream output = new FileOutputStream(ot);
             byte[] buffer = new byte[4096];
             int bytesRead = 0;
@@ -145,18 +145,18 @@ public class DescargaIndividual implements Runnable {
         }
     }
 
-    void changeStatus(Estados estado) {
-        this.estado = estado;
-        if (cambioListener != null && estado.ordinal() > Estados.POSTERGADA.ordinal()) {
-            cambioListener.onCambio(this);
+    void changeStatus(Status status) {
+        this.status = status;
+        if (changeListener != null && status.ordinal() > Status.POSTPONED.ordinal()) {
+            changeListener.onChange(this);
         }
     }
 
-    public void setCambioListener(CambioEstado cambioListener) {
-        this.cambioListener = cambioListener;
+    public void setChangeListener(StateChange changeListener) {
+        this.changeListener = changeListener;
     }
 
-    enum Estados {
-        EN_COLA, INICIADA, DESCARGANDO, REINTENTANDO, POSTERGADA, DESCARGA_OK, ERROR_CONECCION, ERROR_404, ERROR_TIMEOUT, ERROR_SUBIDA, ERROR_URL_INVALIDA, ERROR_ESCRIBIR_ARCHIVO, ERROR_ABRIR_ARCHIVO
+    enum Status {
+        QUEUED, INIT, DOWNLOADING, RETRY, POSTPONED, DOWNLOAD_OK, ERROR_CONNECTION, ERROR_404, ERROR_TIMEOUT, ERROR_ON_UPLOAD, ERROR_INVALID_URL, ERROR_WRITING_FILE, ERROR_OPENING_FILE
     }
 }

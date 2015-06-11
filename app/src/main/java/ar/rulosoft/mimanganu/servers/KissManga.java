@@ -38,9 +38,9 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
+    public ArrayList<Manga> search(String term) throws Exception {
         Navegador nav = new Navegador();
-        nav.addPost("keyword", URLEncoder.encode(termino, "UTF-8"));
+        nav.addPost("keyword", URLEncoder.encode(term, "UTF-8"));
         String source = nav.post(IP, "/Search/Manga", HOST);
         ArrayList<Manga> lista = null;
         Pattern p = Pattern.compile("href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"");
@@ -57,13 +57,13 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
-            cargarPortada(m, reinicia);
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(IP, m.getPath(), HOST);
         // sinopsis
         m.setSinopsis(Html.fromHtml(getFirstMacthDefault("<span class=\"info\">Summary:</span>(.+?)</div>", source, "Without synopsis.")).toString());
@@ -88,12 +88,12 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
+    public String getPagesNumber(Chapter c, int page) {
         return c.getPath();
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2) {
             String source = new Navegador().get(IP, c.getPath(), HOST);
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
@@ -105,11 +105,11 @@ public class KissManga extends ServerBase {
             c.setExtra(imagenes);
         }
         String[] imagenes = c.getExtra().split("\\|");
-        return imagenes[pagina];
+        return imagenes[page];
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         int pages = 0;
         if (c.getExtra() == null || c.getExtra().length() < 2) {
             String source = new Navegador().get(IP, c.getPath(), HOST);
@@ -122,14 +122,14 @@ public class KissManga extends ServerBase {
             }
             c.setExtra(imagenes);
         }
-        c.setPaginas(pages);
+        c.setPages(pages);
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        String web = generosV[categoria] + ordenes[ordentipo];
-        if (pagina > 1) {
-            web = web + "?page=" + pagina;
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+        String web = generosV[categorie] + ordenes[order];
+        if (pageNumber > 1) {
+            web = web + "?page=" + pageNumber;
         }
         String source = new Navegador().get(IP, web, HOST);
         return getMangasSource(source);
@@ -148,17 +148,17 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return new String[]{"a-z", "Popularity", "Lastest Update", "New Manga"};
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return false;
     }
 

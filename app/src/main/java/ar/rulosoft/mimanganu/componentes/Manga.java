@@ -9,7 +9,7 @@ public class Manga {
     String title, synopsis, images, path, author;
     ArrayList<Chapter> chapters = new ArrayList<>();
 
-    boolean finalizado;
+    boolean finished;
 
     public Manga(int serverId, String title, String path, boolean finished) {
         super();
@@ -80,15 +80,11 @@ public class Manga {
         return this.title;
     }
 
-    public void addCapitulo(Chapter c) {
+    public void addChapter(Chapter c) {
         chapters.add(c);
     }
 
-    public void addCapituloFirst(Chapter c) {
-        chapters.add(0, c);
-    }
-
-    public Chapter getCapitulo(int index) {
+    public Chapter getChapter(int index) {
         if (chapters.size() > index && index >= 0) {
             return chapters.get(index);
         } else {
@@ -113,7 +109,7 @@ public class Manga {
         return news;
     }
 
-    public void setNuevos(int news) {
+    public void setNews(int news) {
         this.news = news;
     }
 
@@ -125,12 +121,12 @@ public class Manga {
         this.lastIndex = lastIndex;
     }
 
-    public boolean isFinalizado() {
-        return finalizado;
+    public boolean isFinished() {
+        return finished;
     }
 
-    public void setFinalizado(boolean finalizado) {
-        this.finalizado = finalizado;
+    public void setFinished(boolean finished) {
+        this.finished = finished;
     }
 
     public int getReadingDirection() {

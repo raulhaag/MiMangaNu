@@ -100,7 +100,7 @@ public class ActivityDetalles extends ActionBarActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                s.cargarPortada(m, true);
+                s.loadMangaInformation(m, true);
             } catch (Exception e) {
                 error = e.getMessage();
             }
@@ -111,18 +111,18 @@ public class ActivityDetalles extends ActionBarActivity {
         protected void onPostExecute(Void v) {
             String infoExtra = "";
             if (error.length() < 2) {
-                if (m.isFinalizado()) {
+                if (m.isFinished()) {
                     infoExtra = infoExtra + getResources().getString(R.string.finalizado);
                 } else {
                     infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                 }
-                datos.setEstado(infoExtra);
-                datos.setSinopsis(m.getSynopsis());
-                datos.setServidor(s.getServerName());
+                datos.setStatus(infoExtra);
+                datos.setSynopsis(m.getSynopsis());
+                datos.setServer(s.getServerName());
                 if (m.getAuthor() != null && m.getAuthor().length() > 1) {
-                    datos.setAutor(m.getAuthor());
+                    datos.setAuthor(m.getAuthor());
                 } else {
-                    datos.setAutor(getResources().getString(R.string.nodisponible));
+                    datos.setAuthor(getResources().getString(R.string.nodisponible));
                 }
                 imageLoader.DisplayImage(m.getImages(), datos);
                 if (error != null && error.length() > 2) {
@@ -164,7 +164,7 @@ public class ActivityDetalles extends ActionBarActivity {
         @Override
         protected Void doInBackground(Manga... params) {
             try {
-                s.cargarCapitulos(m, false);
+                s.loadChapters(m, false);
             } catch (Exception e) {
                 error = e.getMessage();
             }
@@ -176,7 +176,7 @@ public class ActivityDetalles extends ActionBarActivity {
                     onProgressUpdate(i);
                     initTime = System.currentTimeMillis();
                 }
-                Database.addChapter(ActivityDetalles.this, params[0].getCapitulo(i), mid);
+                Database.addChapter(ActivityDetalles.this, params[0].getChapter(i), mid);
             }
             return null;
         }

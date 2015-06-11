@@ -45,7 +45,7 @@ public class MangaFox extends ServerBase {
         while (m.find()) {
             Manga manga = new Manga(ServerBase.MANGAFOX, m.group(3), m.group(1), false);
             if (m.group(2).length() > 4) {
-                manga.setFinalizado(true);
+                manga.setFinished(true);
             }
             mangas.add(manga);
         }
@@ -53,8 +53,8 @@ public class MangaFox extends ServerBase {
     }
 
     @Override
-    public void cargarCapitulos(Manga manga, boolean reinicia) throws Exception {
-        if (manga.getChapters().size() == 0 || reinicia) {
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath()));
@@ -64,7 +64,7 @@ public class MangaFox extends ServerBase {
             // sinopsis
             manga.setSinopsis(getFirstMacthDefault(PATRON_SINOPSIS, data, "Without synopsis."));
 
-            manga.setFinalizado(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
+            manga.setFinished(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
 
             //autor
             manga.setAuthor(getFirstMacthDefault("\"/search/author/.+?>(.+?)<", data, ""));
@@ -79,48 +79,48 @@ public class MangaFox extends ServerBase {
                     mc = new Chapter(m.group(2).trim() + ": " + m.group(4), m.group(1));
                 else
                     mc = new Chapter(m.group(2).trim(), m.group(1));
-                manga.addCapituloFirst(mc);
+                mc.addChapterFirst(manga);
             }
         }
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters().isEmpty() || reinicia)
-            cargarCapitulos(m, reinicia);
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters().isEmpty() || forceReload)
+            loadChapters(m, forceReload);
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
-        if (pagina > c.getPaginas()) {
-            pagina = 1;
+    public String getPagesNumber(Chapter c, int page) {
+        if (page > c.getPages()) {
+            page = 1;
         }
         if (c.getPath().endsWith("html") && c.getPath().indexOf("/") > 0) {
             c.setPath(c.getPath().substring(0, c.getPath().lastIndexOf("/") + 1));
         }
-        return c.getPath() + pagina + ".html";
+        return c.getPath() + page + ".html";
 
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
+    public String getImageFrom(Chapter c, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagina(c, pagina));
+        data = new Navegador().get(this.getPagesNumber(c, page));
         return getFirstMacth(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         String data;
         data = new Navegador().get(c.getPath());
         String paginas = getFirstMacth(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        c.setPaginas(Integer.parseInt(paginas));
+        c.setPages(Integer.parseInt(paginas));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String web = "http://mangafox.me/" + generosV[categoria] + "/" + pagina + ".htm" + ordenM[ordentipo];
+        String web = "http://mangafox.me/" + generosV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
         String data = new Navegador().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher m = p.matcher(data);
@@ -128,7 +128,7 @@ public class MangaFox extends ServerBase {
             Manga manga = new Manga(getServerID(), m.group(4), m.group(1), false);
             manga.setImages(m.group(2));
             if (m.group(3).length() > 6) {
-                manga.setFinalizado(true);
+                manga.setFinished(true);
             }
             mangas.add(manga);
         }
@@ -137,27 +137,27 @@ public class MangaFox extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return orden;
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return true;
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
+    public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
         String data = nav
                 .get("http://mangafox.me/search.php?name_method=cw&name="
-                        + termino
+                        + term
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");
         Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?\">(.+?)<");
         Matcher m = p.matcher(data);

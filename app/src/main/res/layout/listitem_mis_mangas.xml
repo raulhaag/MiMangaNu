@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:paddingBottom="6dp">
 
-    <ar.rulosoft.mimanganu.componentes.ControlTapaSerie
+    <ar.rulosoft.mimanganu.componentes.Cover
         android:id="@+id/tapa"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,7 +20,7 @@
             android:layout_alignParentTop="true"
             android:src="@drawable/notif"
             android:visibility="invisible" />
-    </ar.rulosoft.mimanganu.componentes.ControlTapaSerie>
+    </ar.rulosoft.mimanganu.componentes.Cover>
 
     <ImageView
         android:id="@+id/server"

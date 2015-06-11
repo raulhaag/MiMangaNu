@@ -62,19 +62,19 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getBusqueda(String termino) throws Exception {
-        String source = new Navegador().get("http://heavenmanga.com/buscar/" + URLEncoder.encode(termino, "UTF-8") + ".html");
+    public ArrayList<Manga> search(String term) throws Exception {
+        String source = new Navegador().get("http://heavenmanga.com/buscar/" + URLEncoder.encode(term, "UTF-8") + ".html");
         return getMangasFromSource(source);
     }
 
     @Override
-    public void cargarCapitulos(Manga m, boolean reinicia) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || reinicia)
-            cargarPortada(m, reinicia);
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void cargarPortada(Manga m, boolean reinicia) throws Exception {
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath());
         // portada
         String portada = getFirstMacthDefault("style=\"position:absolute;\"><img src=\"(.+?)\"", source, "");
@@ -102,29 +102,29 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     @Override
-    public String getPagina(Chapter c, int pagina) {
+    public String getPagesNumber(Chapter c, int page) {
         if (c.getExtra() == null)
             try {
                 setExtra(c);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        return c.getExtra().substring(0, c.getExtra().lastIndexOf("/") + 1) + pagina;
+        return c.getExtra().substring(0, c.getExtra().lastIndexOf("/") + 1) + page;
     }
 
     @Override
-    public String getImagen(Chapter c, int pagina) throws Exception {
-        String source = new Navegador().get(getPagina(c, pagina));
+    public String getImageFrom(Chapter c, int page) throws Exception {
+        String source = new Navegador().get(getPagesNumber(c, page));
         return getFirstMacth("src=\"([^\"]+)\" border=\"1\" id=\"p\">", source, "Error al obtener imagen");
     }
 
     @Override
-    public void iniciarCapitulo(Chapter c) throws Exception {
+    public void chapterInit(Chapter c) throws Exception {
         if (c.getExtra() == null)
             setExtra(c);
         String source = new Navegador().get(c.getExtra());
         String nop = getFirstMacth("(\\d+)</option></select>", source, "Error al cargar paginas");
-        c.setPaginas(Integer.parseInt(nop));
+        c.setPages(Integer.parseInt(nop));
     }
 
     private void setExtra(Chapter c) throws Exception {
@@ -134,14 +134,14 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categoria, int ordentipo, int pagina) throws Exception {
-        int paginaLoc = pagina - 1;
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+        int paginaLoc = pageNumber - 1;
         ArrayList<Manga> mangas = null;
         String web = "";
-        if (categoria == 0 && paginaLoc < paginas.length) {
+        if (categorie == 0 && paginaLoc < paginas.length) {
             web = paginas[paginaLoc];
         } else if (paginaLoc < 1) {
-            web = generosV[categoria];
+            web = generosV[categorie];
         }
         if (web.length() > 2) {
             String source = new Navegador().get("http://heavenmanga.com" + web);
@@ -163,17 +163,17 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     @Override
-    public String[] getCategorias() {
+    public String[] getCategories() {
         return generos;
     }
 
     @Override
-    public String[] getOrdenes() {
+    public String[] getOrders() {
         return new String[]{"a-z"};
     }
 
     @Override
-    public boolean tieneListado() {
+    public boolean hasList() {
         return true;
     }
 

@@ -13,24 +13,24 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.services.DescargaCapitulo;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.ChapterDownload;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
-public class DownloadAdapter extends ArrayAdapter<DescargaCapitulo> {
+public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
 
     public static String[] states;
     private static int listItem = R.layout.listitem_descarga;
-    ArrayList<DescargaCapitulo> downloads = new ArrayList<>();
+    ArrayList<ChapterDownload> downloads = new ArrayList<>();
     private LayoutInflater li;
 
-    public DownloadAdapter(Context context, ArrayList<DescargaCapitulo> objects) {
+    public DownloadAdapter(Context context, ArrayList<ChapterDownload> objects) {
         super(context, listItem);
         states = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
-    public DescargaCapitulo getItem(int position) {
+    public ChapterDownload getItem(int position) {
         return downloads.get(position);
     }
 
@@ -40,7 +40,7 @@ public class DownloadAdapter extends ArrayAdapter<DescargaCapitulo> {
     }
 
     @Override
-    public void add(DescargaCapitulo object) {
+    public void add(ChapterDownload object) {
         downloads.add(object);
     }
 
@@ -55,17 +55,17 @@ public class DownloadAdapter extends ArrayAdapter<DescargaCapitulo> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        final DescargaCapitulo item = getItem(position);
+        final ChapterDownload item = getItem(position);
 
         if (item != null) {
-            String textInfo = " " + states[item.estado.ordinal()];
+            String textInfo = " " + states[item.status.ordinal()];
             holder.textViewName.setText(android.text.Html.fromHtml(item.getChapter().getTitle() + textInfo));
-            holder.loadingProgressBar.setMax(item.getChapter().getPaginas());
-            holder.loadingProgressBar.setProgress(item.getProgreso());
+            holder.loadingProgressBar.setMax(item.getChapter().getPages());
+            holder.loadingProgressBar.setProgress(item.getProgess());
             holder.buttonImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (ServicioColaDeDescarga.quitarDescarga(item.chapter.getId(), getContext())) {
+                    if (DownloadPoolService.quitarDescarga(item.chapter.getId(), getContext())) {
                         remove(item);
                         notifyDataSetChanged();
                     }
@@ -76,21 +76,21 @@ public class DownloadAdapter extends ArrayAdapter<DescargaCapitulo> {
     }
 
     @Override
-    public void remove(DescargaCapitulo object) {
+    public void remove(ChapterDownload object) {
         downloads.remove(object);
     }
 
-    public void updateAll(ArrayList<DescargaCapitulo> mDescargas) {
+    public void updateAll(ArrayList<ChapterDownload> mDescargas) {
         if (mDescargas != null) {
             for (int i = 0; i < mDescargas.size(); i++) {
                 boolean isNew = true;
-                DescargaCapitulo toCompare = mDescargas.get(i);
+                ChapterDownload toCompare = mDescargas.get(i);
                 for (int j = 0; j < getCount(); j++) {
                     if (getItem(j).getChapter().getId() == toCompare.getChapter().getId()) {
                         isNew = false;
-                        DescargaCapitulo item = getItem(j);
-                        item.setProgreso(toCompare.getProgreso());
-                        item.estado = toCompare.estado;
+                        ChapterDownload item = getItem(j);
+                        item.setProgess(toCompare.getProgess());
+                        item.status = toCompare.status;
                         break;
                     }
                 }

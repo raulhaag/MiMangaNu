@@ -11,9 +11,9 @@ import android.preference.PreferenceActivity;
 import java.io.File;
 import java.io.IOException;
 
-import ar.rulosoft.mimanganu.services.DescargaCapitulo;
-import ar.rulosoft.mimanganu.services.DescargaIndividual;
-import ar.rulosoft.mimanganu.services.ServicioColaDeDescarga;
+import ar.rulosoft.mimanganu.services.ChapterDownload;
+import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.services.SingleDownload;
 
 public class OpcionesActivity extends PreferenceActivity {
     @SuppressWarnings("deprecation")
@@ -53,10 +53,10 @@ public class OpcionesActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 int threads = Integer.parseInt((String) newValue);
-                int antes = ServicioColaDeDescarga.SLOTS;
-                ServicioColaDeDescarga.SLOTS = threads;
-                if (ServicioColaDeDescarga.actual != null) {
-                    ServicioColaDeDescarga.actual.slots += (threads - antes);
+                int antes = DownloadPoolService.SLOTS;
+                DownloadPoolService.SLOTS = threads;
+                if (DownloadPoolService.actual != null) {
+                    DownloadPoolService.actual.slots += (threads - antes);
                 }
                 return true;
             }
@@ -68,7 +68,7 @@ public class OpcionesActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 int tol = Integer.parseInt((String) newValue);
-                DescargaCapitulo.MAX_ERRORS = tol;
+                ChapterDownload.MAX_ERRORS = tol;
                 return true;
             }
         });
@@ -79,7 +79,7 @@ public class OpcionesActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 int rt = Integer.parseInt((String) newValue);
-                DescargaIndividual.REINTENTOS = rt;
+                SingleDownload.RETRY = rt;
                 return true;
             }
         });
