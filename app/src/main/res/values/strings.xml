@@ -116,5 +116,7 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="sinopsis">Synopsis</string>
     <string name="State_New">New</string>
     <string name="new_manga_found"> new manga(s) found.</string>
+    <string name="keep_on">Keep screen on</string>
+    <string name="rotation">Rotation</string>
 
 </resources>

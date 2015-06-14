@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -60,8 +61,9 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition
 
 public class ActivityLector extends ActionBarActivity implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
+    public static final String KEEP_SCREEN_ON = "keep_on";
+    public static final String ORIENTATION = "orientation";
     public static final String AJUSTE_KEY = "ajustar_a";
-
     public static int MAX_TEXTURE = 2048;
 
     public static DisplayType AJUSTE_PAGINA = DisplayType.FIT_TO_WIDTH;
@@ -79,8 +81,13 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     Manga manga;
     ServerBase s;
     TextView seekerPage;
-    MenuItem displayMenu;
+    MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
     SharedPreferences pm;
+    //0 = normal  | 1 = screen on
+    int keepOn;
+    //0 = free | 1 = landscape | 2 = portrait
+    int orientation;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +95,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         AJUSTE_PAGINA = DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
         MAX_TEXTURE = Integer.parseInt(pm.getString("max_texture", "2048"));
+        keepOn = pm.getInt(KEEP_SCREEN_ON, 0);
+        orientation = pm.getInt(ORIENTATION, 0);
         chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         manga = Database.getFullManga(this, chapter.getMangaID());
         if (manga.getReadingDirection() != -1)
@@ -95,7 +104,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         else
             direccion = Direccion.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direccion.R2L.ordinal()))];
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
 
@@ -267,6 +275,19 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_lector, menu);
         displayMenu = menu.findItem(R.id.action_ajustar);
+        keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
+        screenRotationMenuItem = menu.findItem(R.id.action_orientation);
+        if (keepOn > 0) {
+            keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        if (orientation == 1) {
+            ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
+        } else if (orientation == 2) {
+            ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
+        }
         actualizarIcono(AJUSTE_PAGINA);
         return true;
     }
@@ -278,9 +299,41 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             AJUSTE_PAGINA = AJUSTE_PAGINA.getNext();
             SharedPreferences.Editor editor = pm.edit();
             editor.putString(AJUSTE_KEY, AJUSTE_PAGINA.toString()).commit();
+            editor.commit();
             mSectionsPagerAdapter.actualizarDisplayTipe();
             actualizarIcono(AJUSTE_PAGINA);
             return true;
+        } else if (id == R.id.action_keep_screen_on) {
+            if (keepOn == 0) {
+                keepOn = 1;
+                keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
+                getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            } else {
+                keepOn = 0;
+                keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            }
+            SharedPreferences.Editor editor = pm.edit();
+            editor.putInt(KEEP_SCREEN_ON, keepOn);
+            editor.commit();
+            return true;
+        } else if (id == R.id.action_orientation) {
+            if (orientation == 0) {
+                orientation = 1;
+                ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
+            } else if (orientation == 1) {
+                orientation = 2;
+                ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
+            } else if (orientation == 2) {
+                orientation = 0;
+                ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
+            }
+            SharedPreferences.Editor editor = pm.edit();
+            editor.putInt(ORIENTATION, orientation);
+            editor.commit();
         }
         return super.onOptionsItemSelected(item);
     }

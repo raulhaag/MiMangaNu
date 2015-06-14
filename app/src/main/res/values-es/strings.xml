@@ -101,5 +101,7 @@
     <string name="State_New">Nuevo</string>
     <string name="markSelectedUnread">Marcar seleccion como no leido</string>
     <string name="new_manga_found"> nuevo(s) manga(s) encontrado(s).</string>
+    <string name="keep_on">Mantener pantalla encendida</string>
+    <string name="rotation">Rotación</string>
 
 </resources>
