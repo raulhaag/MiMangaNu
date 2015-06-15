@@ -19,7 +19,6 @@ import ar.rulosoft.mimanganu.R;
  */
 public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     View s1, s2, s3, s4;
-    // TODO: Needs translation. Possibly breaks databse?
     TextView author, status, server, synopsis, title;
     TextView authorTitle, statusTitle, serverTitle;
     ImageView image;

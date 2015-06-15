@@ -77,7 +77,7 @@ public class HeavenMangaCom extends ServerBase {
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath());
         // portada
-        String portada = getFirstMacthDefault("style=\"position:absolute;\"><img src=\"(.+?)\"", source, "");
+        String portada = getFirstMacthDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, "");
         m.setImages(portada);
 
         // sinopsis
