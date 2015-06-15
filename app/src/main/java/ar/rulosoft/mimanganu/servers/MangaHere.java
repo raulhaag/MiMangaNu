@@ -21,7 +21,7 @@ public class MangaHere extends ServerBase {
     private static final String PATTERN_SERIE = "<li><a class=\"manga_info\" rel=\"([^\"]*)\" href=\"([^\"]*)\"><span>[^<]*</span>([^<]*)</a></li>";
     private static final String PATRON_PORTADA = "<img src=\"(.+?cover.+?)\"";
     private static final String PATRON_SINOPSIS = "<p id=\"show\" style=\"display:none;\">(.+?)&nbsp;<a";
-    private static final String PATTERN_CAPITULOS = "<li>[^<]*<span class=\"left\">[^<]*<a class=\"color_0077\" href=\"([^\"]*)\" >([^<]*)</a>";
+    private static final String PATTERN_CAPITULOS = "<li>[^<]*<span class=\"left\">[^<]*<a class=\"color_0077\" href=\"([^\"]*)\"[^>]*>([^<]*)</a>";
     private static final String PATRON_LAST = ">(\\d+)</option>[^<]+?</select>";
     private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
     public static String[] orden = {"Views", "A - Z", "Rating", "Last Update"};
