@@ -103,5 +103,7 @@
     <string name="new_manga_found"> nuevo(s) manga(s) encontrado(s).</string>
     <string name="keep_on">Mantener pantalla encendida</string>
     <string name="rotation">Rotación</string>
+    <string name="action_settings">Ajustes</string>
+    <string name="title_activity_preference">Preferencias</string>
 
 </resources>

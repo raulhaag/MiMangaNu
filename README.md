@@ -3,6 +3,8 @@
 
 Lector Manga online
 
+Cambios 1.28 Added lock rotation on reader and keep awake and minor fix;
+
 Cambios 1.27 mas cambios en la ui, agregada traduccion al aleman de TheSniperFan, actualizada la Francesa por Dostoi.
 
 Cambios 1.26 unos cuantos fixes y acercandoce mas a una version final de la ui.
