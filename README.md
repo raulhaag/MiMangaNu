@@ -3,6 +3,8 @@
 
 Lector Manga online
 
+Cambios 1.29 Fix MangaHere y HeavenManga
+
 Cambios 1.28 Added lock rotation on reader and keep awake and minor fix;
 
 Cambios 1.27 mas cambios en la ui, agregada traduccion al aleman de TheSniperFan, actualizada la Francesa por Dostoi.

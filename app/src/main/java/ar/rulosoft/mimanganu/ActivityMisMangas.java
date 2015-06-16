@@ -157,7 +157,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
         public SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
-            this.fragments = new ArrayList<Fragment>();
+            this.fragments = new ArrayList<>();
         }
 
         public void add(Fragment f) {
