@@ -100,7 +100,7 @@ public class ActivityManga extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Chapter c = (Chapter) lista.getAdapter().getItem(position);
-                new GetPaginas().execute(c);
+                new GetPaginas().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
             }
         });
         lista.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);

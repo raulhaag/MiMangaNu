@@ -11,6 +11,7 @@ import android.preference.PreferenceActivity;
 import java.io.File;
 import java.io.IOException;
 
+import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
@@ -80,6 +81,20 @@ public class OpcionesActivity extends PreferenceActivity {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 int rt = Integer.parseInt((String) newValue);
                 SingleDownload.RETRY = rt;
+                return true;
+            }
+        });
+
+        ListPreference listPreferenceCU = (ListPreference) getPreferenceManager().findPreference("update_interval");
+        listPreferenceCU.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                long time = Long.parseLong((String) newValue);
+                if (time > 0) {
+                    AlarmReceiver.setAlarms(getApplicationContext(), System.currentTimeMillis() + time, time);
+                } else {
+                    AlarmReceiver.stopAlarms(getApplicationContext());
+                }
                 return true;
             }
         });

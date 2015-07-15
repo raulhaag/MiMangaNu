@@ -100,10 +100,26 @@
     <string name="sinopsis">Sinopsis</string>
     <string name="State_New">Nuevo</string>
     <string name="markSelectedUnread">Marcar seleccion como no leido</string>
-    <string name="new_manga_found"> nuevo(s) manga(s) encontrado(s).</string>
+    <string name="new_manga_found">Nuevo manga encontrado.</string>
     <string name="keep_on">Mantener pantalla encendida</string>
     <string name="rotation">Rotación</string>
     <string name="action_settings">Ajustes</string>
     <string name="title_activity_preference">Preferencias</string>
+    <string name="_12hours">12 Horas</string>
+    <string name="_1day">1 Día</string>
+    <string name="_2day">2 Días</string>
+    <string name="_6hours">6 Horas</string>
+    <string name="_7day">7 Dias</string>
+    <string name="lock_on_landscape">Pantalla bloqueada en modo paisaje</string>
+    <string name="lock_on_portrait">Pantalla bloqueada en modo portaretrato</string>
+    <string name="new_mangas_found">Nuevos mangas encontrados.</string>
+    <string name="rotation_no_locked">Rotacion de pantalla libre</string>
+    <string name="no_update">No buscar actualizaciones</string>
+    <string name="stay_awake_off">Mantener depierta la pantalla activado</string>
+    <string name="stay_awake_on">Mantener depierta la pantalla desactivado</string>
+    <string name="title_activity_activity_manga"></string>
+    <string name="update_settings_title">Búsqueda automatica de nuevos mangas</string>
+    <string name="update_subtitle">Sin Búsqueda automatica por defecto</string>
+    <string name="update_title">Intervalo de búsqueda</string>
 
 </resources>

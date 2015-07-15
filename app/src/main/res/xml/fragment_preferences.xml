@@ -12,6 +12,15 @@
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria"></CheckBoxPreference>
     </PreferenceCategory>
+    <PreferenceCategory android:title="@string/update_settings_title">
+        <ListPreference
+            android:dialogTitle="@string/update_title"
+            android:entries="@array/periodo"
+            android:entryValues="@array/periodo_val"
+            android:key="update_interval"
+            android:summary="@string/update_subtitle"
+            android:title="@string/update_title" />
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/opciones_lec">
         <ListPreference
             android:dialogTitle="@string/sentido_lectura"
@@ -64,15 +73,15 @@
     </PreferenceCategory>
     <PreferenceCategory android:title="UI Settings">
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
+            android:defaultValue="0"
             android:key="primario"
-            app:cal_numColumns="4"
             android:title="@string/color_primario"
-            android:defaultValue="0" />
+            app:cal_numColumns="4" />
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
+            android:defaultValue="#10395294"
             android:key="secundario"
-            app:cal_numColumns="4"
             android:title="@string/color_secundario"
-            android:defaultValue="#10395294" />
+            app:cal_numColumns="4" />
     </PreferenceCategory>
 
 </PreferenceScreen>

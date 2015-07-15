@@ -124,14 +124,15 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 else
                     chapter.setPagesRead(chapter.getPages() - arg0 + 1);
 
-                // if (actionBar.isShowing()) {
                 if (direccion == Direccion.R2L || direccion == Direccion.VERTICAL)
                     seekBar.setProgress(arg0);
                 else
                     seekBar.setProgress(chapter.getPages() - arg0);
-                // }
                 if (arg0 >= chapter.getPages() - 1) {
                     chapter.setReadStatus(Chapter.READ);
+                    Database.updateChapter(ActivityLector.this, chapter);
+                } else if (chapter.getReadStatus() == Chapter.READ) {
+                    chapter.setReadStatus(Chapter.READING);
                     Database.updateChapter(ActivityLector.this, chapter);
                 }
             }
@@ -194,24 +195,33 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             onCenterTap();
     }
 
-    public void actualizarIcono(DisplayType displayType) {
-        if (displayMenu != null)
+    public void actualizarIcono(DisplayType displayType, boolean showMsg) {
+        if (displayMenu != null) {
+            String msg = "";
             switch (displayType) {
                 case NONE:
                     displayMenu.setIcon(R.drawable.ic_action_original);
+                    msg = getString(R.string.no_scale);
                     break;
                 case FIT_TO_HEIGHT:
                     displayMenu.setIcon(R.drawable.ic_action_ajustar_alto);
+                    msg = getString(R.string.ajuste_alto);
                     break;
                 case FIT_TO_WIDTH:
                     displayMenu.setIcon(R.drawable.ic_action_ajustar_ancho);
+                    msg = getString(R.string.ajuste_ancho);
                     break;
                 case FIT_TO_SCREEN:
                     displayMenu.setIcon(R.drawable.ic_action_ajustar_diagonal);
+                    msg = getString(R.string.mejor_ajuste);
                     break;
                 default:
                     break;
             }
+            if (showMsg)
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+
+        }
     }
 
     @Override
@@ -288,7 +298,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
         }
-        actualizarIcono(AJUSTE_PAGINA);
+        actualizarIcono(AJUSTE_PAGINA, false);
         return true;
     }
 
@@ -301,17 +311,19 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             editor.putString(AJUSTE_KEY, AJUSTE_PAGINA.toString()).commit();
             editor.commit();
             mSectionsPagerAdapter.actualizarDisplayTipe();
-            actualizarIcono(AJUSTE_PAGINA);
+            actualizarIcono(AJUSTE_PAGINA, true);
             return true;
         } else if (id == R.id.action_keep_screen_on) {
             if (keepOn == 0) {
                 keepOn = 1;
                 keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off), Toast.LENGTH_SHORT).show();
             } else {
                 keepOn = 0;
                 keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on), Toast.LENGTH_SHORT).show();
             }
             SharedPreferences.Editor editor = pm.edit();
             editor.putInt(KEEP_SCREEN_ON, keepOn);
@@ -322,14 +334,17 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 orientation = 1;
                 ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                 screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
+                Toast.makeText(getApplicationContext(), getString(R.string.lock_on_landscape), Toast.LENGTH_SHORT).show();
             } else if (orientation == 1) {
                 orientation = 2;
                 ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                 screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
+                Toast.makeText(getApplicationContext(), getString(R.string.lock_on_portrait), Toast.LENGTH_SHORT).show();
             } else if (orientation == 2) {
                 orientation = 0;
                 ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                 screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
+                Toast.makeText(getApplicationContext(), getString(R.string.rotation_no_locked), Toast.LENGTH_SHORT).show();
             }
             SharedPreferences.Editor editor = pm.edit();
             editor.putInt(ORIENTATION, orientation);
@@ -596,7 +611,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
         public void setImagen() {
             if (!imageLoaded && visor != null)
-                new SetImagen().execute();
+                new SetImagen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
         public void setImagen(String ruta) {

@@ -4,6 +4,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -54,6 +56,18 @@
             android:name=".ActivityManga"
             android:label="@string/title_activity_activity_manga" >
         </activity>
+
+        <receiver android:name=".services.AlarmReceiver">
+            <action android:name="ar.rulosoft.CHECK_UPDATES" />
+        </receiver>
+
+        <receiver android:name=".services.BootAndUpdateReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
     </application>
 
 </manifest>

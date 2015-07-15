@@ -115,8 +115,23 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="title_activity_activity_manga">ActivityManga</string>
     <string name="sinopsis">Synopsis</string>
     <string name="State_New">New</string>
-    <string name="new_manga_found"> new manga(s) found.</string>
+    <string name="new_manga_found">New manga found.</string>
+    <string name="new_mangas_found">New mangas found</string>
     <string name="keep_on">Keep screen on</string>
     <string name="rotation">Rotation</string>
+    <string name="no_update">Don´t check for updates</string>
+    <string name="_6hours">6 Hours</string>
+    <string name="_12hours">12 Hours</string>
+    <string name="_1day">1 day</string>
+    <string name="_2day">2 days</string>
+    <string name="_7day">7 days</string>
+    <string name="update_settings_title">Update Preferences</string>
+    <string name="update_subtitle">Not auto update as default.</string>
+    <string name="update_title">Update interval</string>
+    <string name="stay_awake_on">Stay awake on</string>
+    <string name="stay_awake_off">Stay awake off</string>
+    <string name="lock_on_portrait">Screen locked on portrait mode</string>
+    <string name="lock_on_landscape">Screen locked on landscape mode</string>
+    <string name="rotation_no_locked">Screen rotation free</string>
 
 </resources>
