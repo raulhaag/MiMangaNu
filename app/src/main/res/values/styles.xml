@@ -24,6 +24,7 @@
             res/values-vXX/styles.xml, while customizations related to
             backward-compatibility can go here.
         -->
+        <item name="android:textColorSecondary">@color/abc_secondary_text_material_light</item>
         <item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>
     </style>
 

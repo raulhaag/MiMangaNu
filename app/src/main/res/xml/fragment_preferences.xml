@@ -20,6 +20,11 @@
             android:key="update_interval"
             android:summary="@string/update_subtitle"
             android:title="@string/update_title" />
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="update_sound"
+            android:summary="@string/notification_sound_subtitle"
+            android:title="@string/notification_sound_title" />
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/opciones_lec">
         <ListPreference

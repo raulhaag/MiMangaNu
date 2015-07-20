@@ -1,6 +1,8 @@
 package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -61,6 +63,27 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
         pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
+
+        boolean mostra_dialogo = pm.getBoolean("show_updates", true);
+        if (mostra_dialogo) {//TODO ! o no segun la version 1.30 sin !
+            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+            dlgAlert.setMessage(getString(R.string.update_message));
+            dlgAlert.setTitle(R.string.app_name);
+            dlgAlert.setCancelable(true);
+            dlgAlert.setPositiveButton(android.R.string.ok,
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            pm.edit().putBoolean("show_updates", !mostra_dialogo).commit();
+                        }
+                    });
+            dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dlgAlert.create().show();
+        }
     }
 
 

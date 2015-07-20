@@ -117,9 +117,14 @@
     <string name="no_update">No buscar actualizaciones</string>
     <string name="stay_awake_off">Mantener depierta la pantalla activado</string>
     <string name="stay_awake_on">Mantener depierta la pantalla desactivado</string>
-    <string name="title_activity_activity_manga"></string>
     <string name="update_settings_title">Búsqueda automatica de nuevos mangas</string>
     <string name="update_subtitle">Sin Búsqueda automatica por defecto</string>
     <string name="update_title">Intervalo de búsqueda</string>
+    <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
+    <string name="notification_sound_title">Notificación sonora</string>
+    <string name="see_later">Ver Despues</string>
+    <string name="update_news">Novedades</string>
+    <string name="update_message">Cambios 1.30 \n\t* Agregado este mensaje :-P \n\t* Agregado auto apdates (ver config) \n\t* Fix TuMangaOnline \n\t* Otros fix menores </string>
+    <string name="download_image_again">Volver a bajar imagen</string>
 
 </resources>

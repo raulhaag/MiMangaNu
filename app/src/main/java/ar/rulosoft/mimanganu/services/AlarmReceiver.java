@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 
 import java.util.ArrayList;
@@ -47,9 +48,10 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         SearchUpdates su = new SearchUpdates();
         su.setContext(context);
-        su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
         pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).commit();
+        su.setSound(pm.getBoolean("update_sound", false));
+        su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
 
@@ -60,6 +62,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationManager mNotificationManager;
         NotificationCompat.Builder builder;
         int NOTIF_ID = 12598521;
+        boolean sound = false;
 
         public void setContext(Context context) {
             this.context = context;
@@ -109,8 +112,12 @@ public class AlarmReceiver extends BroadcastReceiver {
                     builder.setContentTitle(found + " " + context.getString(R.string.new_mangas_found));
                     bigTextStyle.setBigContentTitle(found + " " + context.getString(R.string.new_mangas_found));
                 }
-                builder.setContentText("...");
+                builder.setContentText(res.substring(0, res.indexOf("\n")));
                 builder.setStyle(bigTextStyle);
+                builder.setAutoCancel(true);
+                if (sound) {
+                    builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+                }
                 Intent notificationIntent = new Intent(context, ActivityMisMangas.class);
                 PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
@@ -122,5 +129,10 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
             super.onPostExecute(aVoid);
         }
+
+        public void setSound(boolean sound) {
+            this.sound = sound;
+        }
     }
+
 }

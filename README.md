@@ -3,6 +3,8 @@
 
 Lector Manga online
 
+Cambios 1.30 \n\t* Agregado mensaje de cambios \n\t* Agregado auto apdates (ver config) \n\t* Fix TuMangaOnline \n\t* Otros fix menores
+
 Cambios 1.29 Fix MangaHere y HeavenManga
 
 Cambios 1.28 Added lock rotation on reader and keep awake and minor fix;
