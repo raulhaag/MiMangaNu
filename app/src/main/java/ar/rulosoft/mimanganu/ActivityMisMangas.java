@@ -64,8 +64,8 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         button_add.setOnClickListener(this);
         pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
 
-        boolean mostra_dialogo = pm.getBoolean("show_updates", true);
-        if (mostra_dialogo) {//TODO ! o no segun la version 1.30 sin !
+        final boolean show_dialog = pm.getBoolean("show_updates", true);
+        if (show_dialog) {//TODO ! o no segun la version 1.30 sin !
             AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
             dlgAlert.setMessage(getString(R.string.update_message));
             dlgAlert.setTitle(R.string.app_name);
@@ -73,7 +73,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
             dlgAlert.setPositiveButton(android.R.string.ok,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            pm.edit().putBoolean("show_updates", !mostra_dialogo).commit();
+                            pm.edit().putBoolean("show_updates", !show_dialog).commit();
                         }
                     });
             dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
