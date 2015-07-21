@@ -46,7 +46,7 @@ public class FragmentUpdateSearchTask extends Fragment {
     public void iniciaTarea(Manga manga, ActivityManga activity) {
         if (searchForNewsChapters == null || searchForNewsChapters.getStatus() == AsyncTask.Status.FINISHED) {
             searchForNewsChapters = new SearchForNewsChapters().setActivity(activity);
-            searchForNewsChapters.execute(manga);
+            searchForNewsChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
         }
     }
 
