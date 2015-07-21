@@ -3,7 +3,11 @@
 
 Lector Manga online
 
-Cambios 1.30 \n\t* Agregado mensaje de cambios \n\t* Agregado auto apdates (ver config) \n\t* Fix TuMangaOnline \n\t* Otros fix menores
+Cambios 1.30 
+* Agregado mensaje de cambios 
+* Agregado auto apdates (ver config) 
+* Fix TuMangaOnline 
+* Otros fix menores
 
 Cambios 1.29 Fix MangaHere y HeavenManga
 
