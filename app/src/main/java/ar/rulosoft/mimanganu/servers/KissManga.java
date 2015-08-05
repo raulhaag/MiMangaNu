@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
-    public static String IP = "185.57.82.157";
+    public static String IP = "93.174.95.110";
     public static String HOST = "kissmanga.com";
     static String[] generos = new String[]{"All", "Action", "Adult", "Adventure", "Comedy", "Comic", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem",
             "Historical", "Horror", "Lolicon", "Manga", "Manhua", "Manhwa", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "Sci-fi", "Seinen",

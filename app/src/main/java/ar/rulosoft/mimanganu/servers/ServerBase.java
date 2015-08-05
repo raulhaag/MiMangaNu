@@ -26,6 +26,7 @@ public abstract class ServerBase {
     public static final int KISSMANGA = 12;
     public static final int ITNINEMANGA = 13;
     public static final int TUSMANGAS = 14;
+    public static final int MANGAREADERNET = 15;
     public boolean hayMas = true;
     private String serverName;
     private int icon;
@@ -74,10 +75,17 @@ public abstract class ServerBase {
             case TUSMANGAS:
                 s = new TusMangasOnlineCom();
                 break;
+            case MANGAREADERNET:
+                s = new MangareaderNet();
+                break;
             default:
                 break;
         }
         return s;
+    }
+
+    public static boolean isNullOrVoid(String s) {
+        return (s == null || s.length() == 0);
     }
 
     // server
@@ -104,9 +112,9 @@ public abstract class ServerBase {
 
     public abstract String[] getOrders();
 
-    public abstract boolean hasList();
-
     // public abstract boolean supportStatus();
+
+    public abstract boolean hasList();
 
     public int searchForNewChapters(int id, Context context) throws Exception {
         int returnValue = 0;
@@ -256,5 +264,4 @@ public abstract class ServerBase {
         nav.addHeader("User-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
         return nav;
     }
-
 }

@@ -101,7 +101,7 @@
     <string name="State_New">Nouveau</string>
     <string name="new_manga_found">Nouveau manga trouvé.</string>
     <string name="new_mangas_found">Nouveau mangas trouvés</string>
-    <string name="keep_on">Garder l'écran allumé</string>
+    <string name="keep_on">Garder l\'écran allumé</string>
     <string name="rotation">Rotation</string>
     <string name="no_update">Ne pas chercher de mise à jour</string>
     <string name="_6hours">6 Heures</string>
@@ -116,5 +116,5 @@
     <string name="stay_awake_off">Laisser allumé off</string>
     <string name="lock_on_portrait">Écran vérouillé en mode portrait</string>
     <string name="lock_on_landscape">Écran vérouillé en mode paysage</string>
-    <string name="rotation_no_locked">Rotation de l'écran libre</string>
+    <string name="rotation_no_locked">Rotation de l\'écran libre</string>
 </resources>
