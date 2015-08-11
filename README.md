@@ -8,7 +8,14 @@ Cambios 1.31
 * Agregado mangareader solo lista
 * Otros fix menores
 
-Cambios 1.30 
+Cambios 1.31
+* Agregado Mangareader
+* Fixin Starkana
+* Errores de traducion
+* Otros fix menores
+* Gracias a Johndeep por su contribucion
+
+ Cambios 1.30
 * Agregado mensaje de cambios 
 * Agregado auto apdates (ver config) 
 * Fix TuMangaOnline 

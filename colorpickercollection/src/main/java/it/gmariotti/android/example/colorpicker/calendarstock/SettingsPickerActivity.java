@@ -16,8 +16,6 @@
 
 package it.gmariotti.android.example.colorpicker.calendarstock;
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.dashclockpicker.SettingsDashFragment;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;

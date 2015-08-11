@@ -19,11 +19,6 @@
 
 package it.gmariotti.android.example.colorpicker.dashclockpicker;
 
-import it.gmariotti.android.example.colorpicker.R;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,6 +41,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.gmariotti.android.example.colorpicker.R;
 
 /**
  * A preference that allows the user to choose an application or shortcut.
@@ -219,7 +219,7 @@ public class ColorPreference extends Preference {
         }
 
         private class ColorGridAdapter extends BaseAdapter {
-            private List<Integer> mChoices = new ArrayList<Integer>();
+            private List<Integer> mChoices = new ArrayList<>();
             private int mSelectedColor;
 
             private ColorGridAdapter() {

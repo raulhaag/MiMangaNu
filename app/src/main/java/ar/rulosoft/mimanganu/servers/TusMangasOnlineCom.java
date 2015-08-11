@@ -75,7 +75,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getBrowserWhitHeaders().get("http://www.tumangaonline.com/listado-mangas?tipo=1&filter=" + URLEncoder.encode(term, "UTF-8"), TIMEOUT);
+        String source = getNavWithHeader().get("http://www.tumangaonline.com/listado-mangas?tipo=1&filter=" + URLEncoder.encode(term, "UTF-8"), TIMEOUT);
         return getMangasFromSource(source);
     }
 
@@ -87,7 +87,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getBrowserWhitHeaders().get(m.getPath(), TIMEOUT);
+        String source = getNavWithHeader().get(m.getPath(), TIMEOUT);
         m.setSinopsis(Html.fromHtml(getFirstMacthDefault("(<p itemprop=\"description\".+?</p></div>)", source, "Sin sinopsis")).toString());
         m.setImages(getFirstMacthDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
         m.setFinished(!(getFirstMacthDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
@@ -116,7 +116,7 @@ public class TusMangasOnlineCom extends ServerBase {
             if (c.getExtra() == null || c.getExtra().length() < 2) {
                 getExtraWeb(c);
             }
-            String source = getBrowserWhitHeaders().get(c.getExtra(), TIMEOUT);
+            String source = getNavWithHeader().get(c.getExtra(), TIMEOUT);
             Pattern p = Pattern.compile("<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
             String imgBase;
@@ -139,7 +139,7 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     private void getExtraWeb(Chapter c) throws Exception {
-        String source = getBrowserWhitHeaders().get(c.getPath(), TIMEOUT);
+        String source = getNavWithHeader().get(c.getPath(), TIMEOUT);
         String fs = getFirstMacth("(http://www.tumangaonline.com/visor/.+?)\"", source, "Error al iniciar Capítulo");
         c.setExtra(fs);
     }
@@ -149,14 +149,14 @@ public class TusMangasOnlineCom extends ServerBase {
         if (!(c.getExtra() != null && c.getExtra().length() > 1)) {
             getExtraWeb(c);
         }
-        String source = getBrowserWhitHeaders().get(c.getExtra());
+        String source = getNavWithHeader().get(c.getExtra());
         String paginas = getFirstMacth("<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">", source, "Error al iniciar Capítulo");
         c.setPages(Integer.parseInt(paginas));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getBrowserWhitHeaders().get(generosV[categorie] + "&pag=" + pageNumber, TIMEOUT);
+        String source = getNavWithHeader().get(generosV[categorie] + "&pag=" + pageNumber, TIMEOUT);
         return getMangasFromSource(source);
     }
 

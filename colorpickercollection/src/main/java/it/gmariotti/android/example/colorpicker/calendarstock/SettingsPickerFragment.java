@@ -16,11 +16,10 @@
 
 package it.gmariotti.android.example.colorpicker.calendarstock;
 
-import it.gmariotti.android.example.colorpicker.R;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
-import android.support.v4.app.NavUtils;
-import android.view.MenuItem;
+
+import it.gmariotti.android.example.colorpicker.R;
 
 public class SettingsPickerFragment extends PreferenceFragment {
 

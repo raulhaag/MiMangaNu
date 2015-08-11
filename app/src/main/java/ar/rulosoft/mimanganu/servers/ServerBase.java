@@ -26,7 +26,7 @@ public abstract class ServerBase {
     public static final int KISSMANGA = 12;
     public static final int ITNINEMANGA = 13;
     public static final int TUSMANGAS = 14;
-    public static final int MANGAREADERNET = 15;
+    public static final int MANGAREADER = 15;
     public boolean hayMas = true;
     private String serverName;
     private int icon;
@@ -57,8 +57,8 @@ public abstract class ServerBase {
             case HEAVENMANGACOM:
                 s = new HeavenMangaCom();
                 break;
-            case STARKANACOM:
-                s = new StarkanaCom();
+            case MANGAREADER:
+                s = new MangaReader();
                 break;
             case ESNINEMANGA:
                 s = new EsNineMangaCom();
@@ -75,8 +75,8 @@ public abstract class ServerBase {
             case TUSMANGAS:
                 s = new TusMangasOnlineCom();
                 break;
-            case MANGAREADERNET:
-                s = new MangareaderNet();
+            case STARKANACOM:
+                s = new StarkanaCom();
                 break;
             default:
                 break;
@@ -84,16 +84,12 @@ public abstract class ServerBase {
         return s;
     }
 
-    public static boolean isNullOrVoid(String s) {
-        return (s == null || s.length() == 0);
-    }
-
     // server
     public abstract ArrayList<Manga> getMangas() throws Exception;
 
     public abstract ArrayList<Manga> search(String term) throws Exception;
 
-    // capitulos
+    // chapter
     public abstract void loadChapters(Manga m, boolean forceReload) throws Exception;
 
     public abstract void loadMangaInformation(Manga m, boolean forceReload) throws Exception;
@@ -112,9 +108,9 @@ public abstract class ServerBase {
 
     public abstract String[] getOrders();
 
-    // public abstract boolean supportStatus();
-
     public abstract boolean hasList();
+
+    // public abstract boolean supportStatus();
 
     public int searchForNewChapters(int id, Context context) throws Exception {
         int returnValue = 0;
@@ -259,9 +255,12 @@ public abstract class ServerBase {
         return true;
     }
 
-    Navegador getBrowserWhitHeaders() {
+    Navegador getNavWithHeader() {
         Navegador nav = new Navegador();
-        nav.addHeader("User-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
+        nav.addHeader(
+                "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)"
+        );
         return nav;
     }
+
 }

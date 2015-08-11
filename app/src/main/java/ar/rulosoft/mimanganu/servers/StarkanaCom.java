@@ -107,7 +107,7 @@ public class StarkanaCom extends ServerBase {
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        c.setPages(Integer.parseInt(getFirstMacth("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
+        c.setPages(Integer.parseInt(getFirstMacth("of <strong>(\\d+)</strong>", source, "Error al buscar nÃºmero de pÃ¡ginas")));
     }
 
     @Override

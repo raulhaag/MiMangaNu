@@ -10,7 +10,7 @@
             android:defaultValue="false"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
-            android:title="@string/escondergaleria"></CheckBoxPreference>
+            android:title="@string/escondergaleria"/>
     </PreferenceCategory>
     <PreferenceCategory android:title="@string/update_settings_title">
         <ListPreference

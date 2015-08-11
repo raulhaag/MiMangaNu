@@ -16,16 +16,15 @@
 package it.gmariotti.android.example.colorpicker.internal;
 
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.Utils;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.Utils;
 
 /**
  * MenuAdapter
@@ -123,11 +122,11 @@ public class NsMenuAdapter extends ArrayAdapter<NsMenuItemModel> {
 	        			viewHolderHeader= new ViewHolderHeader(text1);
 	        			view.setTag(viewHolderHeader);
 	        		}
-	            	
-	            	if(item != null && viewHolderHeader != null){
-	            		if (viewHolderHeader.textHolder != null)
-	        				viewHolderHeader.textHolder.setText(item.title);
-	            	}
+
+					if (item != null && viewHolderHeader != null) {
+						if (viewHolderHeader.textHolder != null)
+							viewHolderHeader.textHolder.setText(item.title);
+					}
 	            	
 	            	break;
 	            	

@@ -10,8 +10,8 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
 public class MangaHere extends ServerBase {
-
-    public static final String[] generos = {"All", "Action", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender", "Harem",
+    public static final String[] generos = {
+            "All", "Action", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender", "Harem",
             "Historical", "Horror", "Josei", "Martial Arts", "Mature", "Mecha", "Mystery", "One Shot", "Psychological", "Romance", "School Life", "Sci-fi",
             "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life", "Sports", "Supernatural", "Tragedy", "Yuri"};
     public static final String[] generosV = {"directory", "action", "adventure", "comedy", "doujinshi", "Drama", "ecchi", "fantasy", "gender_bender", "harem",
@@ -28,8 +28,8 @@ public class MangaHere extends ServerBase {
     public static String[] ordenM = {"?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"};
 
     public MangaHere() {
-        this.setFlag(R.drawable.flag_eng);
-        this.setIcon(R.drawable.mangahere_icon);
+        this.setFlag( R.drawable.flag_eng );
+        this.setIcon( R.drawable.mangahere_icon );
         this.setServerName("MangaHere");
         setServerID(ServerBase.MANGAHERE);
     }
