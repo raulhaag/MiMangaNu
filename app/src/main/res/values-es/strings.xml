@@ -126,5 +126,6 @@
     <string name="update_news">Novedades</string>
     <string name="update_message">Cambios 1.30 \n\t* Agregado este mensaje :-P \n\t* Agregado auto apdates (ver config) \n\t* Fix TuMangaOnline \n\t* Otros fix menores </string>
     <string name="download_image_again">Volver a bajar imagen</string>
+    <string name="hello_world">Hola mundo</string>
 
 </resources>

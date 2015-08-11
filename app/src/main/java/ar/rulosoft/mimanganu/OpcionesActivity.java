@@ -22,17 +22,21 @@ public class OpcionesActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.fragment_preferences);
-        CheckBoxPreference cBoxPreference = (CheckBoxPreference) getPreferenceManager().findPreference("mostrar_en_galeria");
+        CheckBoxPreference cBoxPreference = (CheckBoxPreference)
+                getPreferenceManager().findPreference( "mostrar_en_galeria" );
 
 		/*
          * Esconder de galeria
 		 */
 
-        cBoxPreference.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        cBoxPreference.setOnPreferenceChangeListener(
+                new OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
+            public boolean onPreferenceChange(
+                    Preference preference, Object newValue) {
                 boolean valor = (Boolean) newValue;
-                File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/MiMangaNu/", ".nomedia");
+                File f = new File( Environment.getExternalStorageDirectory()
+                        .getAbsolutePath() + "/MiMangaNu/", ".nomedia" );
                 if (!valor) {
                     if (f.exists())
                         f.delete();
@@ -48,11 +52,14 @@ public class OpcionesActivity extends PreferenceActivity {
             }
         });
 
-        ListPreference listPreferenceDT = (ListPreference) getPreferenceManager().findPreference("download_threads");
-        listPreferenceDT.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        ListPreference listPreferenceDT = (ListPreference)
+                getPreferenceManager().findPreference( "download_threads" );
+        listPreferenceDT.setOnPreferenceChangeListener(
+                new OnPreferenceChangeListener() {
 
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
+            public boolean onPreferenceChange(
+                    Preference preference, Object newValue) {
                 int threads = Integer.parseInt((String) newValue);
                 int antes = DownloadPoolService.SLOTS;
                 DownloadPoolService.SLOTS = threads;
@@ -63,35 +70,44 @@ public class OpcionesActivity extends PreferenceActivity {
             }
         });
 
-        ListPreference listPreferenceET = (ListPreference) getPreferenceManager().findPreference("error_tolerancia");
-        listPreferenceET.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        ListPreference listPreferenceET = (ListPreference)
+                getPreferenceManager().findPreference( "error_tolerancia" );
+        listPreferenceET.setOnPreferenceChangeListener(
+                new OnPreferenceChangeListener() {
 
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int tol = Integer.parseInt((String) newValue);
-                ChapterDownload.MAX_ERRORS = tol;
+            public boolean onPreferenceChange(
+                    Preference preference, Object newValue) {
+                ChapterDownload.MAX_ERRORS = Integer.parseInt((String) newValue);
                 return true;
             }
         });
 
-        ListPreference listPreferenceRT = (ListPreference) getPreferenceManager().findPreference("reintentos");
-        listPreferenceRT.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        ListPreference listPreferenceRT = (ListPreference)
+                getPreferenceManager().findPreference( "reintentos" );
+        listPreferenceRT.setOnPreferenceChangeListener(
+                new OnPreferenceChangeListener() {
 
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int rt = Integer.parseInt((String) newValue);
-                SingleDownload.RETRY = rt;
+            public boolean onPreferenceChange(
+                    Preference preference, Object newValue) {
+                SingleDownload.RETRY = Integer.parseInt((String) newValue);
                 return true;
             }
         });
 
-        ListPreference listPreferenceCU = (ListPreference) getPreferenceManager().findPreference("update_interval");
-        listPreferenceCU.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        ListPreference listPreferenceCU = (ListPreference)
+                getPreferenceManager().findPreference( "update_interval" );
+        listPreferenceCU.setOnPreferenceChangeListener(
+                new OnPreferenceChangeListener() {
             @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
+            public boolean onPreferenceChange(
+                    Preference preference, Object newValue) {
                 long time = Long.parseLong((String) newValue);
                 if (time > 0) {
-                    AlarmReceiver.setAlarms(getApplicationContext(), System.currentTimeMillis() + time, time);
+                    AlarmReceiver.setAlarms(
+                            getApplicationContext(), System
+                                    .currentTimeMillis() + time, time);
                 } else {
                     AlarmReceiver.stopAlarms(getApplicationContext());
                 }

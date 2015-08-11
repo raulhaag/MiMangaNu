@@ -13,21 +13,36 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
     public static String HOST = "http://kissmanga.com";
-    static String[] genre = new String[]{"All", "Action", "Adult", "Adventure", "Comedy", "Comic", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem",
-            "Historical", "Horror", "Lolicon", "Manga", "Manhua", "Manhwa", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "Sci-fi", "Seinen",
-            "Shotacon", "Shoujo", "Shounen", "Smut", "Sports", "Supernatural", "Webtoon", "Yuri"};
-    static String[] genreV = new String[]{"/MangaList", "/Genre/Action", "/Genre/Adult", "/Genre/Adventure", "/Genre/Comedy", "/Genre/Comic",
-            "/Genre/Doujinshi", "/Genre/Drama", "/Genre/Ecchi", "/Genre/Fantasy", "/Genre/Harem", "/Genre/Historical", "/Genre/Horror", "/Genre/Lolicon",
-            "/Genre/Manga", "/Genre/Manhua", "/Genre/Manhwa", "/Genre/Mature", "/Genre/Mecha", "/Genre/Mystery", "/Genre/Psychological", "/Genre/Romance",
-            "/Genre/Sci-fi", "/Genre/Seinen", "/Genre/Shotacon", "/Genre/Shoujo", "/Genre/Shounen", "/Genre/Smut", "/Genre/Sports", "/Genre/Supernatural",
-            "/Genre/Webtoon", "/Genre/Yuri"};
-    static String[] order = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
+    static String[] genre = new String[]{
+            "All", "Action", "Adult", "Adventure", "Comedy", "Comic",
+            "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem",
+            "Historical", "Horror", "Lolicon", "Manga", "Manhua", "Manhwa",
+            "Mature", "Mecha", "Mystery", "Psychological", "Romance", "Sci-fi",
+            "Seinen", "Shotacon", "Shoujo", "Shounen", "Smut", "Sports",
+            "Supernatural", "Webtoon", "Yuri"
+    };
+    static String[] genreV = new String[]{
+            "/MangaList", "/Genre/Action", "/Genre/Adult", "/Genre/Adventure",
+            "/Genre/Comedy", "/Genre/Comic",
+            "/Genre/Doujinshi", "/Genre/Drama", "/Genre/Ecchi",
+            "/Genre/Fantasy", "/Genre/Harem", "/Genre/Historical",
+            "/Genre/Horror", "/Genre/Lolicon",
+            "/Genre/Manga", "/Genre/Manhua", "/Genre/Manhwa", "/Genre/Mature",
+            "/Genre/Mecha", "/Genre/Mystery", "/Genre/Psychological",
+            "/Genre/Romance", "/Genre/Sci-fi", "/Genre/Seinen",
+            "/Genre/Shotacon", "/Genre/Shoujo", "/Genre/Shounen",
+            "/Genre/Smut", "/Genre/Sports", "/Genre/Supernatural",
+            "/Genre/Webtoon", "/Genre/Yuri"
+    };
+    static String[] order = new String[]{
+            "/MostPopular", "/LatestUpdate", "/Newest", ""
+    };
 
     public KissManga() {
-        this.setFlag(R.drawable.flag_eng);
-        this.setIcon(R.drawable.kissmanga);
-        this.setServerName("KissManga");
-        setServerID(ServerBase.KISSMANGA);
+        this.setFlag( R.drawable.flag_eng );
+        this.setIcon( R.drawable.kissmanga );
+        this.setServerName( "KissManga" );
+        setServerID( ServerBase.KISSMANGA );
     }
 
     @Override
@@ -38,57 +53,65 @@ public class KissManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
 
-        Navegador nav = new Navegador();
+        Navegador nav = getNavWithHeader();
 
+        // make use of AdvanceSearch, mor data is then needed
         nav.addPost( "authorArtist", "" );
         nav.addPost( "mangaName", term );
         nav.addPost( "status", "" );
         nav.addPost( "genres", "" );
 
-        nav.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         String source = nav.post( HOST + "/AdvanceSearch" );
 
-        ArrayList<Manga> lista;
-        Pattern p = Pattern.compile("href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"");
+        ArrayList<Manga> searchList;
+        Pattern p = Pattern.compile( "href=\"(/Manga/.*?)\">([^<]+)" +
+                "</a>[^<]+<p>[^<]+<span class=\"info\"" );
         Matcher m = p.matcher(source);
         if (m.find()) {
-            lista = new ArrayList<>();
-            boolean status = getFirstMacthDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9;
-            lista.add(new Manga(KISSMANGA, m.group(2), m.group(1), status));
+            searchList = new ArrayList<>();
+            boolean status = getFirstMacthDefault( "Status:</span>&nbsp;" +
+                    "([\\S]+)", source, "Ongoing").length() == 9;
+            searchList.add(
+                    new Manga(KISSMANGA, m.group(2), m.group(1), status));
         } else {
-            lista = getMangasSource(source);
+            searchList = getMangasSource(source);
         }
 
-        return lista;
+        return searchList;
     }
 
     @Override
     public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
+        if ( m.getChapters() == null || m.getChapters().size() == 0 ||
+                forceReload )
             loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-
-        Navegador nav = new Navegador();
-        nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
-        String source = nav.post( HOST + m.getPath() );
+    public void loadMangaInformation(Manga m, boolean forceReload)
+            throws Exception {
+        String source = getNavWithHeader().post( HOST + m.getPath() );
 
         // summary
-        m.setSinopsis(Html.fromHtml(getFirstMacthDefault("<span class=\"info\">Summary:</span>(.+?)</div>", source, "Without synopsis.")).toString());
+        m.setSinopsis(Html.fromHtml(getFirstMacthDefault( "<span " +
+                "class=\"info\">Summary:</span>(.+?)</div>", source,
+                "Without" + " synopsis.") ).toString());
         // title
-        String imagen = getFirstMacthDefault("rel=\"image_src\" href=\"(.+?)\"", source, null);
-        if (imagen != null) {
-            m.setImages( HOST + imagen.replace( HOST, "" ) + "|kissmanga.com" );
+        String pictures = getFirstMacthDefault("rel=\"image_src\" href=\"(" +
+                ".+?)" + "\"", source, null);
+        if (pictures != null) {
+            m.setImages(HOST + pictures.replace( HOST, "" ) + "|kissmanga.com");
         }
 
         // author
 
-        m.setAuthor(getFirstMacthDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
+        m.setAuthor( getFirstMacthDefault("href=\"/AuthorArtist/.+?>(.+?)<",
+                source, "") );
 
         // chapter
-        Pattern p = Pattern.compile("<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<");
+        Pattern p = Pattern.compile(
+                "<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<"
+        );
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -106,11 +129,9 @@ public class KissManga extends ServerBase {
     public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2) {
 
-            Navegador nav = new Navegador();
-            nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
-            String source = nav.post( HOST + c.getPath() );
+            String source = getNavWithHeader().post(HOST + c.getPath());
 
-            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
+            Pattern p = Pattern.compile( "lstImages.push\\(\"(.+?)\"" );
             Matcher m = p.matcher(source);
             String images = "";
             while (m.find()) {
@@ -127,43 +148,42 @@ public class KissManga extends ServerBase {
         int pages = 0;
         if (c.getExtra() == null || c.getExtra().length() < 2) {
 
-            Navegador nav = new Navegador();
-            nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
-            String source = nav.post( HOST + c.getPath() );
+            String source = getNavWithHeader().post(HOST + c.getPath());
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
-            String imagenes = "";
+            String images = "";
             while (m.find()) {
                 pages++;
-                imagenes = imagenes + "|" + m.group(1);
+                images = images + "|" + m.group(1);
             }
-            c.setExtra(imagenes);
+            c.setExtra(images);
         }
         c.setPages(pages);
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
+    public ArrayList<Manga> getMangasFiltered(
+            int category, int order, int pageNumber) throws Exception {
         String web = genreV[category] + KissManga.order[order];
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-
-        Navegador nav = new Navegador();
-        nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
-        String source = nav.post( HOST + web );
-
-        return getMangasSource(source);
+        String source = getNavWithHeader().post(HOST + web);
+        return getMangasSource( source );
     }
 
     public ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
+        Pattern p = Pattern.compile(
+                "src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<"
+        );
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(KISSMANGA, m.group(3), m.group(2), false);
-            manga.setImages( HOST + m.group(1).replace( HOST, "" ) + "|kissmanga.com" );
+            manga.setImages(
+                    HOST + m.group(1).replace( HOST, "" ) + "|kissmanga.com"
+            );
             mangas.add(manga);
         }
         return mangas;
@@ -176,8 +196,9 @@ public class KissManga extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{ "Popularity", "Lastest Update", "New Manga",
-                "a-z" };
+        return new String[]{
+                "Popularity", "Latest Update", "New Manga", "a-z"
+        };
     }
 
     @Override

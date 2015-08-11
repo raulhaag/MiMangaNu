@@ -15,8 +15,6 @@
  *******************************************************************************/
 package it.gmariotti.android.example.colorpicker.calendarstock;
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -30,6 +28,9 @@ import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.Utils;
 
 /**
  * ColorPreference based on ColorPickerDialog of Stock Calendar
@@ -102,7 +103,7 @@ public class ColorPickerPreference extends Preference{
     protected void onClick() {
         super.onClick();
 
-        ColorPickerDialog colorcalendar = (ColorPickerDialog) ColorPickerDialog.newInstance(R.string.color_picker_default_title,
+        ColorPickerDialog colorcalendar = ColorPickerDialog.newInstance(R.string.color_picker_default_title,
 				mColorChoices, getValue(), mNumColumns, Utils.isTablet(getContext())? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
         
         //colorcalendar.setPreference(this);

@@ -20,8 +20,6 @@ package it.gmariotti.android.example.colorpicker.calendarstock;
  */
 
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerSwatch.OnColorSelectedListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,6 +28,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerSwatch.OnColorSelectedListener;
 
 
 
