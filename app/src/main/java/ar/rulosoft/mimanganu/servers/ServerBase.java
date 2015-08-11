@@ -20,12 +20,13 @@ public abstract class ServerBase {
     public static final int SUBMANGA = 6;
     public static final int ESMANGA = 7;
     public static final int HEAVENMANGACOM = 8;
-    public static final int MANGAREADER = 9;
+    public static final int STARKANACOM = 9;
     public static final int ESNINEMANGA = 10;
     public static final int LECTUREENLIGNE = 11;
     public static final int KISSMANGA = 12;
     public static final int ITNINEMANGA = 13;
     public static final int TUSMANGAS = 14;
+    public static final int MANGAREADER = 15;
     public boolean hayMas = true;
     private String serverName;
     private int icon;
@@ -73,6 +74,9 @@ public abstract class ServerBase {
                 break;
             case TUSMANGAS:
                 s = new TusMangasOnlineCom();
+                break;
+            case STARKANACOM:
+                s = new StarkanaCom();
                 break;
             default:
                 break;
