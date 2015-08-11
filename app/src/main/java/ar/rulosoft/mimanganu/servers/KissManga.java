@@ -110,7 +110,7 @@ public class KissManga extends ServerBase {
 
         // chapter
         Pattern p = Pattern.compile(
-                "<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<"
+                "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>"
         );
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();

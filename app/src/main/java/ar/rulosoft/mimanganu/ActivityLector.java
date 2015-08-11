@@ -318,12 +318,12 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 keepOn = 1;
                 keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
                 getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on), Toast.LENGTH_SHORT).show();
             } else {
                 keepOn = 0;
                 keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off), Toast.LENGTH_SHORT).show();
             }
             SharedPreferences.Editor editor = pm.edit();
             editor.putInt(KEEP_SCREEN_ON, keepOn);

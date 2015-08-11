@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message">Cambios 1.30 \n\t* Agregado este mensaje :-P \n\t* Agregado auto apdates (ver config) \n\t* Fix TuMangaOnline \n\t* Otros fix menores </string>
+    <string name="update_message">Cambios  1.31 \n\t* Fixed kissmanga\n\t* Agregado Mangareader.net\n\t*Errores de traducción\n\t*otros fix menores\n\t* Gracias a Johndeep por su contribucion</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
 
