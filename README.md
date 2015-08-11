@@ -4,11 +4,6 @@
 Lector Manga online
 
 Cambios 1.31
-* Fix KissManga
-* Agregado mangareader solo lista
-* Otros fix menores
-
-Cambios 1.31
 * Agregado Mangareader
 * Fixin Starkana
 * Errores de traducion
