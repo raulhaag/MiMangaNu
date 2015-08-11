@@ -87,7 +87,7 @@ public class SubManga extends ServerBase {
         //if (c.getExtra() == null || c.getExtra().length() < 2) {
         String data;
         data = new Navegador().get(this.getPagesNumber(c, page));
-        return getFirstMacthDefault("<img src=\"(http://.+?)\"", data, null);
+        return getFirstMatchDefault( "<img src=\"(http://.+?)\"", data, null );
         //} else {
         //	return (c.getExtra().split("|")[pagina]);
         //}

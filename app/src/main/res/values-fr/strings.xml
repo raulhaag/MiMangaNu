@@ -117,4 +117,5 @@
     <string name="lock_on_portrait">Écran vérouillé en mode portrait</string>
     <string name="lock_on_landscape">Écran vérouillé en mode paysage</string>
     <string name="rotation_no_locked">Rotation de l\'écran libre</string>
+    <string name="ui_settings">Les paramètres de UI</string>
 </resources>

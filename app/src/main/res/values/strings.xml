@@ -138,4 +138,5 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="vercomolista">View as List</string>
     <string name="vertical">Vertical</string>
     <string name="hello_world">Hello World</string>
+    <string name="ui_settings">UI Settings</string>
 </resources>

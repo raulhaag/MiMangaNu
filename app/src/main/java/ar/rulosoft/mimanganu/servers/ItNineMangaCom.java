@@ -86,18 +86,18 @@ public class ItNineMangaCom extends ServerBase {
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath() + "?waring=1");
         // portada
-        String portada = getFirstMacthDefault("Manga\" src=\"(.+?)\"", source, "");
+        String portada = getFirstMatchDefault( "Manga\" src=\"(.+?)\"", source, "" );
         m.setImages(portada);
         // sinopsis
-        String sinopsis = getFirstMacthDefault("<p itemprop=\"description\">(.+?)</p>", source, "Senza sinossi").replaceAll("<.+?>", "");
+        String sinopsis = getFirstMatchDefault( "<p itemprop=\"description\">(.+?)</p>", source, "Senza sinossi" ).replaceAll("<.+?>", "");
         m.setSinopsis(sinopsis);
 
         // estado
-        m.setFinished(getFirstMacthDefault("Stato:(.+?)</a>", source, "").contains("Completato"));
+        m.setFinished( getFirstMatchDefault( "Stato:(.+?)</a>", source, "" ).contains("Completato"));
 
         //autor
 
-        m.setAuthor(getFirstMacthDefault("Author.+?\">(.+?)<", source, ""));
+        m.setAuthor( getFirstMatchDefault( "Author.+?\">(.+?)<", source, "" ));
 
         // capítulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
@@ -137,7 +137,7 @@ public class ItNineMangaCom extends ServerBase {
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        String nop = getFirstMacth("\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el número de páginas");
+        String nop = getFirstMatch( "\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el número de páginas" );
         c.setPages(Integer.parseInt(nop));
     }
 

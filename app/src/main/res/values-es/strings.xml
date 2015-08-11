@@ -127,5 +127,6 @@
     <string name="update_message">Cambios  1.31 \n\t* Fixed kissmanga\n\t* Agregado Mangareader.net\n\t*Errores de traducción\n\t*otros fix menores\n\t* Gracias a Johndeep por su contribucion</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
+    <string name="ui_settings">Configuración de UI</string>
 
 </resources>

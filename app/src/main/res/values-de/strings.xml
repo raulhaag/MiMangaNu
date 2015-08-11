@@ -126,4 +126,5 @@
     <string name="update_settings_title">Update Einstellungen</string>
     <string name="update_subtitle">Nicht automatisch updated.</string>
     <string name="update_title">Aktualisierungsintervall</string>
+    <string name="ui_settings">UI Einstellungen</string>
 </resources>
