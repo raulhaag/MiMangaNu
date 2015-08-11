@@ -16,7 +16,6 @@
 
 package it.gmariotti.android.example.colorpicker.dashclockpicker;
 
-import it.gmariotti.android.example.colorpicker.R;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.support.v4.app.NavUtils;

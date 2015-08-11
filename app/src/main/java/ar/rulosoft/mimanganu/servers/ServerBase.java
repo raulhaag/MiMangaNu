@@ -20,7 +20,7 @@ public abstract class ServerBase {
     public static final int SUBMANGA = 6;
     public static final int ESMANGA = 7;
     public static final int HEAVENMANGACOM = 8;
-    public static final int STARKANACOM = 9;
+    public static final int MANGAREADER = 9;
     public static final int ESNINEMANGA = 10;
     public static final int LECTUREENLIGNE = 11;
     public static final int KISSMANGA = 12;
@@ -56,8 +56,8 @@ public abstract class ServerBase {
             case HEAVENMANGACOM:
                 s = new HeavenMangaCom();
                 break;
-            case STARKANACOM:
-                s = new StarkanaCom();
+            case MANGAREADER:
+                s = new MangaReader();
                 break;
             case ESNINEMANGA:
                 s = new EsNineMangaCom();
@@ -85,7 +85,7 @@ public abstract class ServerBase {
 
     public abstract ArrayList<Manga> search(String term) throws Exception;
 
-    // capitulos
+    // chapter
     public abstract void loadChapters(Manga m, boolean forceReload) throws Exception;
 
     public abstract void loadMangaInformation(Manga m, boolean forceReload) throws Exception;
@@ -251,9 +251,11 @@ public abstract class ServerBase {
         return true;
     }
 
-    Navegador getBrowserWhitHeaders() {
+    Navegador getNavWithHeader() {
         Navegador nav = new Navegador();
-        nav.addHeader("User-agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:27.0) Gecko/20100101 Firefox/27.0");
+        nav.addHeader(
+                "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)"
+        );
         return nav;
     }
 

@@ -11,9 +11,12 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
-public class MangaPanda extends ServerBase {
+public class MangaReader extends ServerBase {
 
-    public static String HOST = "http://www.mangapanda.com";
+    // It is almost identical with MangaPanda, don't know if MangaReader
+    // is really necessary
+
+    public static String HOST = "http://www.mangareader.net";
 
     private static final String PATTERN_SERIE =
             "<li><a href=\"([^\"]+)\">([^<]+)";
@@ -49,26 +52,26 @@ public class MangaPanda extends ServerBase {
 
     private static final String[] order = { "Popular" };
 
-    public MangaPanda() {
+    public MangaReader() {
         this.setFlag( R.drawable.flag_eng );
-        this.setIcon( R.drawable.mangapanda );
-        this.setServerName( "Mangapanda.com" );
-        setServerID( ServerBase.MANGAPANDA );
+        this.setIcon( R.drawable.mangareader );
+        this.setServerName( "Mangareader.net" );
+        setServerID( ServerBase.MANGAREADER );
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = new Navegador().get( HOST + "/alphabetical" );
-        Pattern p = Pattern.compile(PATTERN_SUB);
+                Pattern p = Pattern.compile(PATTERN_SUB);
         Matcher m = p.matcher(data);
         if (m.find()) {
             String b = m.group(1);
-            Pattern p1 = Pattern.compile(PATTERN_SERIE);
+            Pattern p1 = Pattern.compile( PATTERN_SERIE );
             Matcher m1 = p1.matcher(b);
             while (m1.find()) {
-                mangas.add( new Manga(
-                        this.getServerID(), m1.group(2), HOST +
+                mangas.add(
+                        new Manga( this.getServerID(), m1.group(2), HOST +
                         m1.group(1), false));
             }
         }
@@ -86,7 +89,7 @@ public class MangaPanda extends ServerBase {
         while (m.find()) {
             mangas.add(
                     new Manga( getServerID(), m.group(1).trim(), HOST + m
-                            .group(2), false));
+                    .group(2), false));
         }
         return mangas;
     }
@@ -96,7 +99,7 @@ public class MangaPanda extends ServerBase {
             throws Exception {
         if ( manga.getChapters() == null || manga.getChapters().size() == 0
                 || forceReload)
-            loadMangaInformation( manga, forceReload);
+            loadMangaInformation( manga, forceReload );
     }
 
     @Override
