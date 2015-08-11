@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.text.Html;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,17 +12,16 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
-    public static String IP = "185.57.82.157";
-    public static String HOST = "kissmanga.com";
-    static String[] generos = new String[]{"All", "Action", "Adult", "Adventure", "Comedy", "Comic", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem",
+    public static String HOST = "http://kissmanga.com";
+    static String[] genre = new String[]{"All", "Action", "Adult", "Adventure", "Comedy", "Comic", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem",
             "Historical", "Horror", "Lolicon", "Manga", "Manhua", "Manhwa", "Mature", "Mecha", "Mystery", "Psychological", "Romance", "Sci-fi", "Seinen",
             "Shotacon", "Shoujo", "Shounen", "Smut", "Sports", "Supernatural", "Webtoon", "Yuri"};
-    static String[] generosV = new String[]{"/MangaList", "/Genre/Action", "/Genre/Adult", "/Genre/Adventure", "/Genre/Comedy", "/Genre/Comic",
+    static String[] genreV = new String[]{"/MangaList", "/Genre/Action", "/Genre/Adult", "/Genre/Adventure", "/Genre/Comedy", "/Genre/Comic",
             "/Genre/Doujinshi", "/Genre/Drama", "/Genre/Ecchi", "/Genre/Fantasy", "/Genre/Harem", "/Genre/Historical", "/Genre/Horror", "/Genre/Lolicon",
             "/Genre/Manga", "/Genre/Manhua", "/Genre/Manhwa", "/Genre/Mature", "/Genre/Mecha", "/Genre/Mystery", "/Genre/Psychological", "/Genre/Romance",
             "/Genre/Sci-fi", "/Genre/Seinen", "/Genre/Shotacon", "/Genre/Shoujo", "/Genre/Shounen", "/Genre/Smut", "/Genre/Sports", "/Genre/Supernatural",
             "/Genre/Webtoon", "/Genre/Yuri"};
-    static String[] ordenes = new String[]{"", "/MostPopular", "/LatestUpdate", "/Newest"};
+    static String[] order = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
 
     public KissManga() {
         this.setFlag(R.drawable.flag_eng);
@@ -39,10 +37,18 @@ public class KissManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
+
         Navegador nav = new Navegador();
-        nav.addPost("keyword", URLEncoder.encode(term, "UTF-8"));
-        String source = nav.post(IP, "/Search/Manga", HOST);
-        ArrayList<Manga> lista = null;
+
+        nav.addPost( "authorArtist", "" );
+        nav.addPost( "mangaName", term );
+        nav.addPost( "status", "" );
+        nav.addPost( "genres", "" );
+
+        nav.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
+        String source = nav.post( HOST + "/AdvanceSearch" );
+
+        ArrayList<Manga> lista;
         Pattern p = Pattern.compile("href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"");
         Matcher m = p.matcher(source);
         if (m.find()) {
@@ -64,20 +70,24 @@ public class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = new Navegador().get(IP, m.getPath(), HOST);
-        // sinopsis
+
+        Navegador nav = new Navegador();
+        nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
+        String source = nav.post( HOST + m.getPath() );
+
+        // summary
         m.setSinopsis(Html.fromHtml(getFirstMacthDefault("<span class=\"info\">Summary:</span>(.+?)</div>", source, "Without synopsis.")).toString());
-        // portada
+        // title
         String imagen = getFirstMacthDefault("rel=\"image_src\" href=\"(.+?)\"", source, null);
         if (imagen != null) {
-            m.setImages("http://" + IP + imagen.replace("http://kissmanga.com", "") + "|" + HOST);
+            m.setImages( HOST + imagen.replace( HOST, "" ) + "|kissmanga.com" );
         }
 
-        //autor
+        // author
 
         m.setAuthor(getFirstMacthDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
 
-        // capitulos
+        // chapter
         Pattern p = Pattern.compile("<td>[\\s]+<a[\\s]+href=\"(.+?)\".+?>[\\s]+(.+?)<");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
@@ -95,24 +105,32 @@ public class KissManga extends ServerBase {
     @Override
     public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2) {
-            String source = new Navegador().get(IP, c.getPath(), HOST);
+
+            Navegador nav = new Navegador();
+            nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
+            String source = nav.post( HOST + c.getPath() );
+
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
-            String imagenes = "";
+            String images = "";
             while (m.find()) {
-                imagenes = imagenes + "|" + m.group(1);
+                images = images + "|" + m.group(1);
             }
-            c.setExtra(imagenes);
+            c.setExtra(images);
         }
-        String[] imagenes = c.getExtra().split("\\|");
-        return imagenes[page];
+
+        return c.getExtra().split("\\|")[page];
     }
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
         int pages = 0;
         if (c.getExtra() == null || c.getExtra().length() < 2) {
-            String source = new Navegador().get(IP, c.getPath(), HOST);
+
+            Navegador nav = new Navegador();
+            nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
+            String source = nav.post( HOST + c.getPath() );
+
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String imagenes = "";
@@ -126,12 +144,16 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String web = generosV[categorie] + ordenes[order];
+    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
+        String web = genreV[category] + KissManga.order[order];
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = new Navegador().get(IP, web, HOST);
+
+        Navegador nav = new Navegador();
+        nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
+        String source = nav.post( HOST + web );
+
         return getMangasSource(source);
     }
 
@@ -141,7 +163,7 @@ public class KissManga extends ServerBase {
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(KISSMANGA, m.group(3), m.group(2), false);
-            manga.setImages("http://" + IP + m.group(1).replace("http://kissmanga.com", "") + "|" + HOST);
+            manga.setImages( HOST + m.group(1).replace( HOST, "" ) + "|kissmanga.com" );
             mangas.add(manga);
         }
         return mangas;
@@ -149,12 +171,13 @@ public class KissManga extends ServerBase {
 
     @Override
     public String[] getCategories() {
-        return generos;
+        return genre;
     }
 
     @Override
     public String[] getOrders() {
-        return new String[]{"a-z", "Popularity", "Lastest Update", "New Manga"};
+        return new String[]{ "Popularity", "Lastest Update", "New Manga",
+                "a-z" };
     }
 
     @Override

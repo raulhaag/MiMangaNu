@@ -72,13 +72,13 @@
     <string name="mejor_ajuste">"Meilleur ajustement"</string>
     <string name="ajuste_ancho">"Ajuster à la largeur"</string>
     <string name="ajuste_alto">"Ajuster à la hauteur"</string>
-    <string name="max_texture_title">"Taille de texture maximale supportée par l'accélérateur"</string>
-    <string name="max_texture_subtitle">"0 pour désactiver l'accélération"</string>
+    <string name="max_texture_title">"Taille de texture maximale supportée par l\'accélérateur"</string>
+    <string name="max_texture_subtitle">"0 pour désactiver l\'accélération"</string>
     <string name="opciones_descarga">"Paramètres de téléchargement"</string>
     <string name="cantidad_descargas_title">"Téléchargement simultanés"</string>
     <string name="cantidad_descargas_subtitle">"Nombre de téléchargement simultanés (2 par défaut)"</string>
     <string name="cantidad_errores_title">"Nombre maximum d'erreurs"</string>
-    <string name="cantidad_errores_subtitle">"Avant d'arrêter le téléchargement d'un chapitre"</string>
+    <string name="cantidad_errores_subtitle">"Avant d'arrêter le téléchargement d\'un chapitre"</string>
     <string name="cantidad_reintentos_title">"Nombre de tentatives"</string>
     <string name="cantidad_reintentos_subtitle">"Par image"</string>
     <string name="borrar_imagenes">Supprimer les images pour libérer de l\'espace</string>
@@ -101,7 +101,7 @@
     <string name="State_New">Nouveau</string>
     <string name="new_manga_found">Nouveau manga trouvé.</string>
     <string name="new_mangas_found">Nouveau mangas trouvés</string>
-    <string name="keep_on">Garder l'écran allumé</string>
+    <string name="keep_on">Garder l\'écran allumé</string>
     <string name="rotation">Rotation</string>
     <string name="no_update">Ne pas chercher de mise à jour</string>
     <string name="_6hours">6 Heures</string>
@@ -116,5 +116,5 @@
     <string name="stay_awake_off">Laisser allumé off</string>
     <string name="lock_on_portrait">Écran vérouillé en mode portrait</string>
     <string name="lock_on_landscape">Écran vérouillé en mode paysage</string>
-    <string name="rotation_no_locked">Rotation de l'écran libre</string>
+    <string name="rotation_no_locked">Rotation de l\'écran libre</string>
 </resources>
