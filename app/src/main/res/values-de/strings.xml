@@ -22,7 +22,7 @@
     <string name="buscarnuevos">Updates suchen</string>
     <string name="buscarupdates">Updates suchen</string>
     <string name="busquedanores">Suche ergab keine Treffer</string>
-    <string name="cantidad_descargas_subtitle">Anzahl der Download-Threads (Standard: 2)</string>
+    <string name="cantidad_descargas_subtitle">Anzahl gleichzeitig laufende Downloads (Standard ist 2): %s</string>
     <string name="cantidad_descargas_title">Parallele Downloads</string>
     <string name="cantidad_errores_subtitle">Bis zum Abbruch des Downloads</string>
     <string name="cantidad_errores_title">Maximale Anzahl der Fehler</string>
@@ -121,7 +121,6 @@
     <string name="rotation_no_locked">Rotation automatisch anpassen</string>
     <string name="stay_awake_on">Wach bleiben aus</string>
     <string name="title_activity_preference">Einstellungen</string>
-    <string name="update_message">Version 1.30 \n\t* Diese Nachricht hinzugefügt :)\n\t* Auto Update hinzugefügt (in Einstellungen) \n\t* TuMangaOnline gefixt\n\t* weitere fixs</string>
     <string name="update_news">Neuigkeiten</string>
     <string name="update_settings_title">Update Einstellungen</string>
     <string name="update_subtitle">Nicht automatisch updated.</string>

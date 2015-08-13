@@ -78,7 +78,7 @@
     <string name="max_texture_subtitle">0 para deshabilitar la acceleración en el lector.</string>
     <string name="opciones_descarga">Opciones de descarga</string>
     <string name="cantidad_descargas_title">Descargas simultaneas</string>
-    <string name="cantidad_descargas_subtitle">Cantidad de hilos (2 por defecto)</string>
+    <string name="cantidad_descargas_subtitle">Cantidad de hilos (2 por defecto): %s</string>
     <string name="cantidad_errores_title">Máxima cantidad de errores</string>
     <string name="cantidad_errores_subtitle">Antes de detener una descarga</string>
     <string name="cantidad_reintentos_title">Cantidad de reintentos</string>

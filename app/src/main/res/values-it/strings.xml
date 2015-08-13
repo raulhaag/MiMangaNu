@@ -79,7 +79,7 @@
     <string name="max_texture_subtitle">"0 per disabilitare l'accelerazione hardware"</string>
     <string name="opciones_descarga">"Impostazioni download"</string>
     <string name="cantidad_descargas_title">"Scarica Slot"</string>
-    <string name="cantidad_descargas_subtitle">"Numero di scaricare fili (2 di default)"</string>
+    <string name="cantidad_descargas_subtitle">Numero di scaricare fili (2 di default): %s</string>
     <string name="cantidad_errores_title">"Numero massimo di errori"</string>
     <string name="cantidad_errores_subtitle">"Prima di interrompere un capitolo di download"</string>
     <string name="cantidad_reintentos_title">"Numero di tentativi"</string>
