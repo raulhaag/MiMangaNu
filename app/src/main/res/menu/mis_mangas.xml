@@ -1,12 +1,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ar.rulosoft.mimanganu.MisMangas">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="ar.rulosoft.mimanganu.MisMangas">
 
-    <item android:id="@+id/descargas"
+    <item
+        android:id="@+id/descargas"
         android:icon="@drawable/ic_action_downloads"
-        android:title="Downloads"
-        app:showAsAction="ifRoom"/>
+        android:title="@string/descargas"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_configurar"

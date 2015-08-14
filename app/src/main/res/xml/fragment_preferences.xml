@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:key="first_preferencescreen">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:key="first_preferencescreen">
 
     <PreferenceCategory android:title="@string/opciones_mm">
         <CheckBoxPreference
@@ -104,8 +105,18 @@
 
     <PreferenceCategory android:title="License">
         <Preference
-            android:title="@string/app_name"
             android:summary="1.31"
+            android:title="@string/app_name"
+            />
+
+        <PreferenceScreen
+            android:summary="Tap to see license"
+            android:title="@string/apachelic">
+        </PreferenceScreen>
+
+        <Preference
+            android:summary="Tap to see license and Thanks"
+            android:title="@string/mitlic"
             />
     </PreferenceCategory>
 

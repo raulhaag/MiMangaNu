@@ -109,7 +109,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
             Intent intent = new Intent(this, ActivityDownloads.class);
             startActivity(intent);
         } else if (id == R.id.licencia) {
-            Intent intent = new Intent(this, ActivityLicencia.class);
+            Intent intent = new Intent(this, ActivityLicenseView.class);
             startActivity(intent);
         } else if (id == R.id.action_esconder_leidos) {
             if (item.isChecked()) {
