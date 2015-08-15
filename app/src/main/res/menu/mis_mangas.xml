@@ -1,29 +1,33 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ar.rulosoft.mimanganu.MisMangas">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="ar.rulosoft.mimanganu.MisMangas">
 
-    <item android:id="@+id/descargas"
+    <item
+        android:id="@+id/descargas"
         android:icon="@drawable/ic_action_downloads"
-        android:title="Downloads"
-        app:showAsAction="ifRoom"/>
+        android:title="@string/descargas"
+        app:showAsAction="ifRoom" />
+
+    <!--<group android:checkableBehavior="all">-->
+    <item
+        android:id="@+id/action_esconder_leidos"
+        android:icon="@drawable/ic_action_image_filter_none"
+        android:title="@string/esconder_leido"
+        app:showAsAction="ifRoom" />
+    <!--</group>-->
 
     <item
         android:id="@+id/action_configurar"
         android:icon="@drawable/ic_action_action_settings"
-        android:title="@string/configuraciones"
-        app:showAsAction="ifRoom" />
-
-    <group android:checkableBehavior="all">
-        <item
-            android:id="@+id/action_esconder_leidos"
-            android:orderInCategory="100"
-            android:title="@string/esconder_leido" />
-    </group>
-
-    <item
-        android:id="@+id/licencia"
         android:orderInCategory="100"
-        android:title="@string/licencia" />
+        android:title="@string/configuraciones" />
+    <!--app:showAsAction="ifRoom" />-->
+
+    <!--<item-->
+        <!--android:id="@+id/licencia"-->
+        <!--android:orderInCategory="100"-->
+        <!--android:title="@string/licencia" />-->
+
 
 </menu>

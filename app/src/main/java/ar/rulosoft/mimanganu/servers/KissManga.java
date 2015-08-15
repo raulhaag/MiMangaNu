@@ -12,7 +12,14 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
+
     public static String HOST = "http://kissmanga.com";
+
+    private static final String PATTERN_CHAPTER =
+            "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
+    private static final String PATTERN_SEARCH =
+            "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+
     static String[] genre = new String[]{
             "All", "Action", "Adult", "Adventure", "Comedy", "Comic",
             "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem", "Historical",
@@ -63,16 +70,14 @@ public class KissManga extends ServerBase {
         String source = nav.post( HOST + "/AdvanceSearch" );
 
         ArrayList<Manga> searchList;
-        Pattern p = Pattern.compile( "href=\"(/Manga/.*?)\">([^<]+)" +
-                                     "</a>[^<]+<p>[^<]+<span class=\"info\"" );
+        Pattern p = Pattern.compile( PATTERN_SEARCH );
         Matcher m = p.matcher( source );
         if ( m.find() ) {
             searchList = new ArrayList<>();
-            boolean status = getFirstMatchDefault( "Status:</span>&nbsp;" +
-                                                   "([\\S]+)", source, "Ongoing" ).length() ==
-                             9;
+            boolean status = getFirstMatchDefault( "Status:</span>&nbsp;([\\S]+)", source, "Ongoing" ).length() == 9;
             searchList.add( new Manga( KISSMANGA, m.group( 2 ), m.group( 1 ), status ) );
-        } else {
+        }
+        else {
             searchList = getMangasSource( source );
         }
 
@@ -89,29 +94,27 @@ public class KissManga extends ServerBase {
     public void loadMangaInformation( Manga m, boolean forceReload ) throws Exception {
         String source = getNavWithHeader().post( HOST + m.getPath() );
 
-        // summary
+        // Summary
         m.setSinopsis( Html.fromHtml( getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 "Without" + " synopsis." ) ).toString() );
-        // title
-        String pictures = getFirstMatchDefault( "rel=\"image_src\" href=\"(" +
-                                                ".+?)" + "\"", source, null );
+        // Title
+        String pictures = getFirstMatchDefault(
+                "rel=\"image_src\" href=\"(.+?)" + "\"", source, null );
         if ( pictures != null ) {
             m.setImages(
                     HOST + pictures.replace( HOST, "" ) + "|kissmanga.com" );
         }
 
-        // author
+        // Author
         m.setAuthor( getFirstMatchDefault( "href=\"/AuthorArtist/.+?>(.+?)<", source, "" ) );
 
-        // chapter
-        Pattern p = Pattern.compile(
-                "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)" +
-                "\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>" );
+        // Chapter
+        Pattern p = Pattern.compile( PATTERN_CHAPTER );
         Matcher matcher = p.matcher( source );
         ArrayList<Chapter> chapters = new ArrayList<>();
         while ( matcher.find() ) {
-            chapters.add( 0, new Chapter( matcher.group( 2 ), matcher.group( 1 ) ) );
+            chapters.add( 0, new Chapter( matcher.group( 2 ).replace( " Read Online", "" ), matcher.group( 1 ) ) );
         }
         m.setChapters( chapters );
     }

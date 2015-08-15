@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.CheckBoxPreference;
@@ -92,11 +93,20 @@ public class OpcionesActivity extends PreferenceActivity {
                 if ( time > 0 ) {
                     AlarmReceiver.setAlarms( getApplicationContext(),
                             System.currentTimeMillis() + time, time );
-                } else {
+                }
+                else {
                     AlarmReceiver.stopAlarms( getApplicationContext() );
                 }
                 return true;
             }
         } );
+
+        /** This.. sets the Version Number, that's all */
+        Preference prefAbout =
+                getPreferenceManager().findPreference( "about_text" );
+        prefAbout.setSummary( "v" + BuildConfig.VERSION_NAME );
+
+        Preference prefLicense = getPreferenceManager().findPreference( "license_view" );
+        prefLicense.setIntent( new Intent( this, ActivityLicenseView.class ) );
     }
 }

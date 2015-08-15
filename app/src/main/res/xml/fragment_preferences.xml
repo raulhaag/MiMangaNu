@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:app="http://schemas.android.com/apk/res-auto"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:key="first_preferencescreen">
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:key="first_preferencescreen">
 
     <PreferenceCategory android:title="@string/opciones_mm">
         <CheckBoxPreference
@@ -12,7 +13,6 @@
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria" />
     </PreferenceCategory>
-
 
     <PreferenceCategory android:title="@string/update_settings_title">
         <ListPreference
@@ -29,7 +29,6 @@
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
     </PreferenceCategory>
-
 
     <PreferenceCategory android:title="@string/opciones_lec">
         <ListPreference
@@ -49,13 +48,13 @@
             android:summary="%s"
             android:title="@string/ajuste_imagen" />
         <ListPreference
+            android:defaultValue="2048"
             android:entries="@array/max_texture_support_acceleration"
             android:entryValues="@array/max_texture_support_acceleration"
             android:key="max_texture"
             android:summary="@string/max_texture_subtitle"
             android:title="@string/max_texture_title" />
     </PreferenceCategory>
-
 
     <PreferenceCategory android:title="@string/opciones_descarga">
         <ar.rulosoft.mimanganu.componentes.PreferencesListDir
@@ -71,10 +70,10 @@
             app:val_max="5"
             app:val_min="1" />
         <ar.rulosoft.custompref.NumberPickerPref
-            android:defaultValue="3"
+            android:defaultValue="2"
             android:dialogTitle="@string/cantidad_errores_title"
             android:key="error_tolerancia"
-            android:summary="%s"
+            android:summary="@string/cantidad_errores_subtitle"
             android:title="@string/cantidad_errores_title"
             app:val_max="9"
             app:val_min="1" />
@@ -82,31 +81,36 @@
             android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
             android:key="reintentos"
-            android:summary="%s"
+            android:summary="@string/cantidad_reintentos_subtitle"
             android:title="@string/cantidad_reintentos_title"
             app:val_max="9"
             app:val_min="1" />
     </PreferenceCategory>
 
-
+    <!-- Don't ask me, those colours popped up in the debugger, it's ugly, I know -->
     <PreferenceCategory android:title="@string/ui_settings">
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
-            android:defaultValue="0"
+            android:defaultValue="-10453621"
             android:key="primario"
             android:title="@string/color_primario"
             app:cal_numColumns="4" />
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
-            android:defaultValue="#10395294"
+            android:defaultValue="-16738680"
             android:key="secundario"
             android:title="@string/color_secundario"
             app:cal_numColumns="4" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="License">
+    <PreferenceCategory android:title="About">
         <Preference
             android:title="@string/app_name"
-            android:summary="1.31"
-            />
+            android:key="about_text"
+            android:summary="%s" />
+
+        <Preference
+            android:title="@string/licencia"
+            android:key="license_view"
+            android:summary="Tap to see license and thanks" />
     </PreferenceCategory>
 
 </PreferenceScreen>

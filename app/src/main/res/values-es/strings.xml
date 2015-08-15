@@ -74,15 +74,15 @@
     <string name="mejor_ajuste">Mejor ajuste</string>
     <string name="ajuste_ancho">Ajustar en ancho</string>
     <string name="ajuste_alto">Ajustar en altura</string>
-    <string name="max_texture_title">Tamaño máximo de textura soportado</string>
-    <string name="max_texture_subtitle">0 para deshabilitar la acceleración en el lector.</string>
+    <string name="max_texture_title">Tamaño máximo de textura</string>
+    <string name="max_texture_subtitle">Tamaño de texturas, que se utilizará (0 para desactivar la aceleración de hardware)\n%s</string>
     <string name="opciones_descarga">Opciones de descarga</string>
     <string name="cantidad_descargas_title">Descargas simultaneas</string>
     <string name="cantidad_descargas_subtitle">Cantidad de hilos (2 por defecto): %s</string>
-    <string name="cantidad_errores_title">Máxima cantidad de errores</string>
-    <string name="cantidad_errores_subtitle">Antes de detener una descarga</string>
-    <string name="cantidad_reintentos_title">Cantidad de reintentos</string>
-    <string name="cantidad_reintentos_subtitle">Por página descargada</string>
+    <string name="cantidad_errores_title"> Reintentos máximos por capítulo</string>
+    <string name="cantidad_errores_subtitle">Número de descargas de intentos por capítulo (2 es estándar): %s</string>
+    <string name="cantidad_reintentos_title">Reintentos máximos por imagen</string>
+    <string name="cantidad_reintentos_subtitle">Número de descargas de intentos por imagen (3 es por defecto): %s</string>
     <string name="borrar_imagenes">Borrar imagenes</string>
     <string name="seleccionar_todo">Selecionar todo</string>
     <string name="quitar_seleccion">Deseleccionar todo</string>
@@ -115,8 +115,8 @@
     <string name="new_mangas_found">Nuevos mangas encontrados.</string>
     <string name="rotation_no_locked">Rotacion de pantalla libre</string>
     <string name="no_update">No buscar actualizaciones</string>
-    <string name="stay_awake_off">Mantener depierta la pantalla activado</string>
-    <string name="stay_awake_on">Mantener depierta la pantalla desactivado</string>
+    <string name="stay_awake_off">Mantener depierta la pantalla desactivado</string>
+    <string name="stay_awake_on">Mantener depierta la pantalla activado</string>
     <string name="update_settings_title">Búsqueda automatica de nuevos mangas</string>
     <string name="update_subtitle">Sin Búsqueda automatica por defecto</string>
     <string name="update_title">Intervalo de búsqueda</string>
@@ -128,5 +128,7 @@
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>
+    <string name="previous">Anterior</string>
+    <string name="next">Siguiente</string>
 
 </resources>

@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="ar.rulosoft.mimanganu.ActivityLector">
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="ar.rulosoft.mimanganu.ActivityLector">
     <item
         android:id="@+id/action_keep_screen_on"
         android:icon="@drawable/ic_action_mantain_screen_off"

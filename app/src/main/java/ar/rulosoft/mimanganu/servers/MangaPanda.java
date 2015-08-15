@@ -15,11 +15,17 @@ public class MangaPanda extends ServerBase {
 
     public static String HOST = "http://www.mangapanda.com";
 
-    private static final String PATTERN_SERIE = "<li><a href=\"([^\"]+)\">([^<]+)";
-    private static final String PATTERN_SUB = "<div class=\"series_col\">([\\s\\S]+?)<div id=\"adfooter\">";
+    private static final String PATTERN_SERIE =
+            "<li><a href=\"([^\"]+)\">([^<]+)";
+    private static final String PATTERN_SUB =
+            "<div class=\"series_col\">([\\s\\S]+?)<div id=\"adfooter\">";
 
-    private static final String PATTERN_FRAG_CHAPTER = "<div id=\"chapterlist\">([\\s\\S]+?)</table>";
-    private static final String PATTERN_CHAPTER = "<a href=\"([^\"]+)\">([^\"]+?)</td>";
+    private static final String PATTERN_FRAG_CHAPTER =
+            "<div id=\"chapterlist\">([\\s\\S]+?)</table>";
+    private static final String PATTERN_CHAPTER =
+            "<a href=\"([^\"]+)\">([^\"]+?)</a>.:([^\"]+?)</td>";
+    private static final String PATTERN_CHAPTER_WEB =
+            "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
 
     public static String[] genre = new String[]{
             "All", "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
@@ -50,6 +56,10 @@ public class MangaPanda extends ServerBase {
         setServerID( ServerBase.MANGAPANDA );
     }
 
+    public void SetHost( String new_host ) {
+        HOST = new_host;
+    }
+
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -78,7 +88,7 @@ public class MangaPanda extends ServerBase {
         Matcher m = p.matcher( data );
         while ( m.find() ) {
             mangas.add( new Manga( getServerID(), m.group( 1 ).trim(),
-                            HOST + m.group( 2 ), false ) );
+                    HOST + m.group( 2 ), false ) );
         }
         return mangas;
     }
@@ -100,18 +110,15 @@ public class MangaPanda extends ServerBase {
             Matcher m1 = p1.matcher( m.group( 1 ) );
             while ( m1.find() ) {
                 String web = m1.group( 1 );
-                if ( web.matches( "/[-|\\d]+/([^/]+)/chapter-(\\d+).html" ) ) {
-                    Pattern p2 = Pattern.compile( "/[-|\\d]+/([^/]+)/chapter-(\\d+).html" );
+                if ( web.matches( PATTERN_CHAPTER_WEB ) ) {
+                    Pattern p2 = Pattern.compile( PATTERN_CHAPTER_WEB );
                     Matcher m2 = p2.matcher( web );
                     if ( m2.find() ) web = m2.group( 1 ) + "/" + m2.group( 2 );
                 }
-                if ( web.startsWith( "/" ) ) {
-                    manga.addChapter( new Chapter( m1.group( 2 ).replace( "</a>", "" ),
-                            HOST + web ) );
-                } else {
-                    manga.addChapter( new Chapter( m1.group( 2 ).replace( "</a>", "" ),
-                            HOST + web ) );
-                }
+                String chName = m1.group( 2 );
+                if ( !m1.group( 3 ).trim().isEmpty() )
+                    chName += " :" + m1.group( 3 );
+                manga.addChapter( new Chapter( chName, HOST + web ) );
             }
         }
         // Summary
@@ -141,7 +148,8 @@ public class MangaPanda extends ServerBase {
     public void chapterInit( Chapter c ) throws Exception {
         String data;
         data = new Navegador().get( c.getPath() );
-        String pages = getFirstMatch( "of (\\d+)</div>", data, "Error: Could not get the number of pages" );
+        String pages =
+                getFirstMatch( "of (\\d+)</div>", data, "Error: Could not get the number of pages" );
         c.setPages( Integer.parseInt( pages ) );
     }
 
@@ -155,16 +163,16 @@ public class MangaPanda extends ServerBase {
                    genreV[category] + "/" + ( pageNumber - 1 ) * 20;
 
         String data = new Navegador().get( web );
-        Pattern p = Pattern.compile( "url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>" );
+        Pattern p =
+                Pattern.compile( "url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>" );
         Matcher m = p.matcher( data );
         while ( m.find() ) {
             Manga manga;
-            if ( m.group( 2 ).startsWith( "/" ) )
-                manga = new Manga( getServerID(), m.group( 3 ),
-                        HOST + m.group( 2 ), false );
+            if ( m.group( 2 ).startsWith( "/" ) ) manga =
+                    new Manga( getServerID(), m.group( 3 ),
+                            HOST + m.group( 2 ), false );
             else manga = new Manga( getServerID(), m.group( 3 ),
                     HOST + m.group( 2 ), false );
-
             manga.setImages( m.group( 1 ) );
             mangas.add( manga );
         }
