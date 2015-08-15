@@ -68,7 +68,7 @@
     <string name="sentido_lectura_subtitle">"Per impostazione predefinita"</string>
     <string name="r2l">"Da destra a sinistra"</string>
     <string name="l2r">Da sinistra a destra</string>
-    <string name="vertical">"Verticale"</string>
+    <string name="vertical">Verticale</string>
     <string name="ajuste_imagen">"Immagine in forma di default"</string>
     <string name="ajuste_imagen_subtitle">"(Altezza, larghezza, o meglio si adattano Original)"</string>
     <string name="no_scale">"Dimensioni originali"</string>
@@ -91,4 +91,6 @@
     <string name="estado">Stato</string>
     <string name="new_manga_found">Nuovi manga trovati.</string>
     <string name="new_mangas_found">Nuovi mangas trovati.</string>
+    <string name="previous">Precedente</string>
+    <string name="next">Prossimo</string>
 </resources>

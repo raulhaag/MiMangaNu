@@ -106,8 +106,8 @@
     <string name="_7day">1 Woche</string>
     <string name="download_image_again">Bild neu laden</string>
     <string name="keep_on">Halte Bildschirm wach</string>
-    <string name="lock_on_landscape">Bildschirm auf Querformat sperren</string>
-    <string name="lock_on_portrait">Bildschirm auf Hochformat sperren</string>
+    <string name="lock_on_landscape">Bildschirm auf Querformat gesperrt</string>
+    <string name="lock_on_portrait">Bildschirm auf Hochformat gesperrt</string>
     <string name="new_manga_found">Neue Manga gefunden.</string>
     <string name="new_mangas_found">Neue Mangas gefunden.</string>
     <string name="no_update">Nicht auf Updates überprüfen</string>
@@ -116,9 +116,9 @@
     <string name="notification_sound_title">Ton abspielen</string>
     <string name="rotation">Rotation</string>
     <string name="see_later">Später lesen</string>
-    <string name="stay_awake_off">Wach bleiben an</string>
+    <string name="stay_awake_off">Wach bleiben aus</string>
     <string name="rotation_no_locked">Rotation automatisch anpassen</string>
-    <string name="stay_awake_on">Wach bleiben aus</string>
+    <string name="stay_awake_on">Wach bleiben an</string>
     <string name="title_activity_preference">Einstellungen</string>
     <string name="update_news">Neuigkeiten</string>
     <string name="update_settings_title">Update Einstellungen</string>
@@ -126,4 +126,6 @@
     <string name="update_title">Aktualisierungsintervall</string>
     <string name="ui_settings">UI Einstellungen</string>
     <string name="cantidad_errores_subtitle">Anzahl der Download Versuche pro Kapitel (2 ist Standard): %s</string>
+    <string name="next">Nächstes</string>
+    <string name="previous">Vorheriges</string>
 </resources>

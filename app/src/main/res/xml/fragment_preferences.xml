@@ -48,7 +48,7 @@
             android:summary="%s"
             android:title="@string/ajuste_imagen" />
         <ListPreference
-            android:defaultValue="1024"
+            android:defaultValue="2048"
             android:entries="@array/max_texture_support_acceleration"
             android:entryValues="@array/max_texture_support_acceleration"
             android:key="max_texture"
@@ -87,7 +87,7 @@
             app:val_min="1" />
     </PreferenceCategory>
 
-    <!-- Don't ask me, how I got the defaultValues, they popped up in the debugger -->
+    <!-- Don't ask me, those colours popped up in the debugger, it's ugly, I know -->
     <PreferenceCategory android:title="@string/ui_settings">
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
             android:defaultValue="-10453621"
@@ -99,6 +99,18 @@
             android:key="secundario"
             android:title="@string/color_secundario"
             app:cal_numColumns="4" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:title="@string/app_name"
+            android:key="about_text"
+            android:summary="%s" />
+
+        <Preference
+            android:title="@string/licencia"
+            android:key="license_view"
+            android:summary="Tap to see license and thanks" />
     </PreferenceCategory>
 
 </PreferenceScreen>

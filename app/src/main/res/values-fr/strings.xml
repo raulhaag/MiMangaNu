@@ -65,7 +65,7 @@
     <string name="sentido_lectura_subtitle">"Par défaut"</string>
     <string name="r2l">"De droite à gauche"</string>
     <string name="l2r">De gauche à droite</string>
-    <string name="vertical">"Vertical"</string>
+    <string name="vertical">Vertical</string>
     <string name="ajuste_imagen">"Adapter l'image par défaut"</string>
     <string name="ajuste_imagen_subtitle">"(Original, hauteur, largeur, ou meilleur ajustement)"</string>
     <string name="no_scale">"Taille originale"</string>
@@ -119,4 +119,6 @@
     <string name="rotation_no_locked">Rotation de l\'écran libre</string>
     <string name="ui_settings">Les paramètres de UI</string>
     <string name="mitlic">MIT Licence et Merci</string>
+    <string name="previous">Précédent</string>
+    <string name="next">Prochaine</string>
 </resources>

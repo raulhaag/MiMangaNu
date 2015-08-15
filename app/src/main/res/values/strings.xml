@@ -128,4 +128,7 @@
     <string name="hello_world">Hello World</string>
     <string name="ui_settings">UI Settings</string>
     <string name="cantidad_errores_subtitle">Number of download attempts per chapter (2 is default): %s</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="title_activity_text_view">TextViewActivity</string>
 </resources>

@@ -18,7 +18,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/mark_unread"
-        android:icon="@drawable/ic_action_read"
+        android:icon="@drawable/ic_action_unread"
         android:title="@string/markSelectedUnread"
         app:showAsAction="always" />
     <item

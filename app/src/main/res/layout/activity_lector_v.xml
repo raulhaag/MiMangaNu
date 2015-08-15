@@ -42,11 +42,13 @@
         android:layout_height="wrap_content"
         android:layout_above="@+id/seeker_layout"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/borde"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
         android:textColor="@android:color/darker_gray"
-        android:textSize="40sp"
+        android:textSize="36sp"
         android:visibility="invisible" />
+    <!--android:background="@drawable/borde"-->
 
 </RelativeLayout>
