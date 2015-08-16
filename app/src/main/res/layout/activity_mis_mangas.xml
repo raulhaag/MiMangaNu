@@ -6,7 +6,7 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="ar.rulosoft.mimanganu.ActivityMisMangas"></ar.rulosoft.mimanganu.componentes.NoSwipeViewPager>
+        tools:context="ar.rulosoft.mimanganu.ActivityMisMangas" />
 
     <com.melnykov.fab.FloatingActionButton
         android:id="@+id/button_add"

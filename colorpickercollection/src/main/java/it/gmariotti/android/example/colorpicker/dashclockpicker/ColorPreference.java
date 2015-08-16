@@ -250,7 +250,7 @@ public class ColorPreference extends Preference {
         }
 
         private class ColorGridAdapter extends BaseAdapter {
-            private List<Integer> mChoices = new ArrayList<Integer>();
+            private List<Integer> mChoices = new ArrayList<>();
             private int mSelectedColor;
 
             private ColorGridAdapter() {

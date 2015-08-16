@@ -5,12 +5,17 @@
         android:id="@+id/seleccionar_todo"
         android:icon="@drawable/ic_action_selecionar_todos"
         android:title="@string/seleccionar_todo"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
     <item
         android:id="@+id/seleccionar_nada"
         android:icon="@drawable/ic_action_image_filter_none"
         android:title="@string/quitar_seleccion"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/download_selection"
+        android:icon="@drawable/ic_action_downloads"
+        android:title="@string/download_selection"
+        app:showAsAction="always" />
     <item
         android:id="@+id/marcar_leido"
         android:icon="@drawable/ic_action_read"
@@ -18,22 +23,22 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/mark_unread"
-        android:icon="@drawable/ic_action_read"
+        android:icon="@drawable/ic_action_unread"
         android:title="@string/markSelectedUnread"
         app:showAsAction="always" />
     <item
         android:id="@+id/borrar_imagenes"
         android:icon="@drawable/ic_action_delete_images"
         android:title="@string/borrar_imagenes"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
     <item
         android:id="@+id/reset"
         android:icon="@drawable/ic_action_av_reload"
         android:title="@string/resetcap"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
     <item
         android:id="@+id/borrar"
         android:icon="@drawable/ic_action_ic_borrar_light"
         android:title="@string/borrarcap"
-        app:showAsAction="always"></item>
+        app:showAsAction="always" />
 </menu>

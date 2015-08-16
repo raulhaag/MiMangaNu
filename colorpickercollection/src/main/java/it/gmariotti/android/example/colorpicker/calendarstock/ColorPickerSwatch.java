@@ -19,13 +19,14 @@
 
 package it.gmariotti.android.example.colorpicker.calendarstock;
 
-import it.gmariotti.android.example.colorpicker.R;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+
+import it.gmariotti.android.example.colorpicker.R;
 
 /**
  * Creates a circular swatch of a specified color.  Adds a checkmark if marked as checked.
@@ -35,17 +36,6 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
     private ImageView mSwatchImage;
     private ImageView mCheckmarkImage;
     private OnColorSelectedListener mOnColorSelectedListener;
-
-    /**
-     * Interface for a callback when a color square is selected.
-     */
-    public interface OnColorSelectedListener {
-
-        /**
-         * Called when a specific color square has been selected.
-         */
-        public void onColorSelected(int color);
-    }
 
     public ColorPickerSwatch(Context context, int color, boolean checked,
             OnColorSelectedListener listener) {
@@ -80,5 +70,16 @@ public class ColorPickerSwatch extends FrameLayout implements View.OnClickListen
         if (mOnColorSelectedListener != null) {
             mOnColorSelectedListener.onColorSelected(mColor);
         }
+    }
+
+    /**
+     * Interface for a callback when a color square is selected.
+     */
+    public interface OnColorSelectedListener {
+
+        /**
+         * Called when a specific color square has been selected.
+         */
+        void onColorSelected(int color);
     }
 }

@@ -62,11 +62,11 @@ public class EsMangaCom extends ServerBase {
         Navegador nav = new Navegador();
         String source = nav.get(m.getPath());
         //sinopsis
-        m.setSinopsis(getFirstMacthDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s", source, "Sin Sinopsis").replaceAll("<.+?>", ""));
+        m.setSinopsis( getFirstMatchDefault( "<b>Sinopsis</b><br>([\\s\\S]+?)</s", source, "Sin Sinopsis" ).replaceAll("<.+?>", ""));
         //imagen
-        m.setImages(getFirstMacthDefault("(http://esmanga.com/img/mangas/.+?)\"", source, ""));
+        m.setImages( getFirstMatchDefault( "(http://esmanga.com/img/mangas/.+?)\"", source, "" ));
         //status
-        m.setFinished(getFirstMacthDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
+        m.setFinished( getFirstMatchDefault( "<b>Estado:(.+?)</span>", source, "" ).contains("Finalizado"));
         // capitulos
         ArrayList<Chapter> chapters = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(http://esmanga.com/[^\"]+/c\\d+)\">(.+?)</a><");
@@ -86,14 +86,14 @@ public class EsMangaCom extends ServerBase {
     public String getImageFrom(Chapter c, int page) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(this.getPagesNumber(c, page));
-        return getFirstMacth("src=\"([^\"]+\\d.(jpg|png|bmp))", source, "Error en plugin (obtener imager)");
+        return getFirstMatch( "src=\"([^\"]+\\d.(jpg|png|bmp))", source, "Error en plugin (obtener imager)" );
     }
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(c.getPath());
-        String textNum = getFirstMacth("option value=\"(\\d+)[^=]+</option></select>", source, "Error en plugin (obtener p�ginas)");
+        String textNum = getFirstMatch( "option value=\"(\\d+)[^=]+</option></select>", source, "Error en plugin (obtener p�ginas)" );
         c.setPages(Integer.parseInt(textNum));
     }
 

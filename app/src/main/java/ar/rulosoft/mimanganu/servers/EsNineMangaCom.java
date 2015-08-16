@@ -80,17 +80,17 @@ public class EsNineMangaCom extends ServerBase {
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath() + "?waring=1");
         // portada
-        String portada = getFirstMacthDefault("Manga\" src=\"(.+?)\"", source, "");
+        String portada = getFirstMatchDefault( "Manga\" src=\"(.+?)\"", source, "" );
         m.setImages(portada);
         // sinopsis
-        String sinopsis = getFirstMacthDefault("<p itemprop=\"description\">(.+?)&nbsp;Show less", source, "Sin sinopsis").replaceAll("<.+?>", "");
+        String sinopsis = getFirstMatchDefault( "<p itemprop=\"description\">(.+?)&nbsp;Show less", source, "Sin sinopsis" ).replaceAll("<.+?>", "");
         m.setSinopsis(sinopsis);
 
         //estado
-        m.setFinished(getFirstMacthDefault("Estado(.+?)</a>", source, "").contains("Completado"));
+        m.setFinished( getFirstMatchDefault( "Estado(.+?)</a>", source, "" ).contains("Completado"));
 
         //autor
-        m.setAuthor(getFirstMacthDefault("Autor.+?\">(.+?)<", source, ""));
+        m.setAuthor( getFirstMatchDefault( "Autor.+?\">(.+?)<", source, "" ));
 
         // cap�tulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
@@ -130,7 +130,7 @@ public class EsNineMangaCom extends ServerBase {
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        String nop = getFirstMacth("\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el n�mero de p�ginas");
+        String nop = getFirstMatch( "\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el n�mero de p�ginas" );
         c.setPages(Integer.parseInt(nop));
     }
 

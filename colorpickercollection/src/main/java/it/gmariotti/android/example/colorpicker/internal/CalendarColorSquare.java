@@ -19,13 +19,14 @@ package it.gmariotti.android.example.colorpicker.internal;
  */
 
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.calendarstock.ColorStateDrawable;
-import it.gmariotti.android.example.colorpicker.dashclockpicker.ColorPickerDialogDash;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.widget.QuickContactBadge;
+
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.calendarstock.ColorStateDrawable;
+import it.gmariotti.android.example.colorpicker.dashclockpicker.ColorPickerDialogDash;
 
 /**
  * 

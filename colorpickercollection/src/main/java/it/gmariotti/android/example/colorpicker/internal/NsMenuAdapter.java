@@ -16,16 +16,15 @@
 package it.gmariotti.android.example.colorpicker.internal;
 
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.Utils;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
+
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.Utils;
 
 /**
  * MenuAdapter
@@ -72,30 +71,6 @@ public class NsMenuAdapter extends ArrayAdapter<NsMenuItemModel> {
 
 	//-----------------------------------------------------------------------------------------------
 	
-	public static class ViewHolder {
-		public final TextView textHolder;
-		//public final ImageView imageHolder;
-		public final CalendarColorSquare squareHolder;
-
-		public ViewHolder(TextView text1, CalendarColorSquare squareHolder) {
-			this.textHolder = text1;
-			//this.imageHolder = image1;
-			this.squareHolder=squareHolder;
-		}
-	}
-
-	public static class ViewHolderHeader {
-	
-		public final TextView textHolder;
-		
-		public ViewHolderHeader(TextView text1) {
-			this.textHolder = text1;
-		}
-	}
-	
-	//-----------------------------------------------------------------------------------------------
-		
-	
 	public View getView(int position, View convertView, ViewGroup parent) {
 
 		NsMenuItemModel item = getItem(position);
@@ -105,7 +80,7 @@ public class NsMenuAdapter extends ArrayAdapter<NsMenuItemModel> {
 	        switch (viewType){
 	            case TYPE_HEADER:
 	            	ViewHolderHeader viewHolderHeader=null;
-	            	
+
 	            	if (view != null) {
 	            		Object obj= view.getTag();
 	            		if (obj instanceof ViewHolderHeader){
@@ -114,7 +89,7 @@ public class NsMenuAdapter extends ArrayAdapter<NsMenuItemModel> {
 	            			viewHolderHeader = null;
 	            		}
 	            	}
-	            	
+
 	            	if (view == null || viewHolderHeader==null){
 	        			int layout = R.layout.ns_menu_row_header;
 	        			view = LayoutInflater.from(getContext()).inflate(layout, null);
@@ -123,45 +98,45 @@ public class NsMenuAdapter extends ArrayAdapter<NsMenuItemModel> {
 	        			viewHolderHeader= new ViewHolderHeader(text1);
 	        			view.setTag(viewHolderHeader);
 	        		}
-	            	
-	            	if(item != null && viewHolderHeader != null){
-	            		if (viewHolderHeader.textHolder != null)
-	        				viewHolderHeader.textHolder.setText(item.title);
-	            	}
-	            	
+
+					if (item != null && viewHolderHeader != null) {
+						if (viewHolderHeader.textHolder != null)
+							viewHolderHeader.textHolder.setText(item.title);
+					}
+
 	            	break;
-	            	
+
 	            case TYPE_ROW:
 	            	ViewHolder viewHolder=null;
-	            	
-	            	if (view != null) {
-	            		Object obj= view.getTag();
+
+					if (view != null) {
+						Object obj= view.getTag();
 	            		if (obj instanceof ViewHolder){
 	            			viewHolder = (ViewHolder) obj;
 	            		}else{
 	            			viewHolder = null;
 	            		}
 	            	}
-	            	
-	            	if (view == null || viewHolder==null){
-	            		int layout = R.layout.ns_menu_row;
+
+					if (view == null || viewHolder == null) {
+						int layout = R.layout.ns_menu_row;
 	            		view = LayoutInflater.from(getContext()).inflate(layout, null);
-	            		
-	            		TextView text1 = (TextView) view.findViewById(R.id.menurow_title);
-	            		//ImageView imageView = (ImageView) view.findViewById(R.id.menurow_icon);
+
+						TextView text1 = (TextView) view.findViewById(R.id.menurow_title);
+						//ImageView imageView = (ImageView) view.findViewById(R.id.menurow_icon);
 	            		CalendarColorSquare square1 = (CalendarColorSquare) view.findViewById(R.id.menurow_square);
 	            		viewHolder = new ViewHolder(text1, square1);
 	            		view.setTag(viewHolder);
-	            		
-	            	}
-	            	
-	            	
-	            	if(item != null && viewHolder != null){
-	            		if (viewHolder.textHolder != null)
+
+					}
+
+
+					if (item != null && viewHolder != null) {
+						if (viewHolder.textHolder != null)
 	            			viewHolder.textHolder.setText(item.title);
-	            		
-	            		if (viewHolder.squareHolder != null) {
-	        				if (item.colorSquare != 0) {
+
+						if (viewHolder.squareHolder != null) {
+							if (item.colorSquare != 0) {
 	        					//viewHolder.squareHolder.setVisibility(View.VISIBLE);
 	        					viewHolder.squareHolder.setBackgroundColor(item.colorSquare);
 	        				} else {
@@ -169,14 +144,37 @@ public class NsMenuAdapter extends ArrayAdapter<NsMenuItemModel> {
 	        					viewHolder.squareHolder.setBackgroundColor(Utils.ColorUtils.parseWhiteColor());
 	        				}
 	        			}
-	            	}	
-	            	
+					}
+
 	            	break;
 	            default:
 	                //Throw exception, unknown data type
 	        }
-	    
-	    return view;		
+
+		return view;
+	}
+
+	public static class ViewHolder {
+		public final TextView textHolder;
+		//public final ImageView imageHolder;
+		public final CalendarColorSquare squareHolder;
+
+		public ViewHolder(TextView text1, CalendarColorSquare squareHolder) {
+			this.textHolder = text1;
+			//this.imageHolder = image1;
+			this.squareHolder = squareHolder;
+		}
+	}
+
+	//-----------------------------------------------------------------------------------------------
+
+	public static class ViewHolderHeader {
+
+		public final TextView textHolder;
+
+		public ViewHolderHeader(TextView text1) {
+			this.textHolder = text1;
+		}
 	}
 
 }

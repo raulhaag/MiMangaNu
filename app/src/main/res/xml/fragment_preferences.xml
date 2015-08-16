@@ -10,15 +10,17 @@
             android:defaultValue="false"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
-            android:title="@string/escondergaleria"></CheckBoxPreference>
+            android:title="@string/escondergaleria" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/update_settings_title">
         <ListPreference
+            android:defaultValue="0"
             android:dialogTitle="@string/update_title"
             android:entries="@array/periodo"
             android:entryValues="@array/periodo_val"
             android:key="update_interval"
-            android:summary="@string/update_subtitle"
+            android:summary="%s"
             android:title="@string/update_title" />
         <CheckBoxPreference
             android:defaultValue="false"
@@ -26,67 +28,88 @@
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/opciones_lec">
         <ListPreference
+            android:defaultValue="0"
             android:dialogTitle="@string/sentido_lectura"
             android:entries="@array/sentido_lectura"
             android:entryValues="@array/sentido_lectura_val"
             android:key="direcciondelectura"
-            android:summary="@string/sentido_lectura_subtitle"
+            android:summary="%s"
             android:title="@string/sentido_lectura" />
         <ListPreference
+            android:defaultValue="FIT_TO_WIDTH"
             android:dialogTitle="@string/ajuste_imagen"
             android:entries="@array/ajustar_a"
             android:entryValues="@array/ajustar_valores"
             android:key="ajustar_a"
-            android:summary="@string/ajuste_imagen_subtitle"
+            android:summary="%s"
             android:title="@string/ajuste_imagen" />
         <ListPreference
+            android:defaultValue="2048"
             android:entries="@array/max_texture_support_acceleration"
             android:entryValues="@array/max_texture_support_acceleration"
             android:key="max_texture"
             android:summary="@string/max_texture_subtitle"
             android:title="@string/max_texture_title" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/opciones_descarga">
         <ar.rulosoft.mimanganu.componentes.PreferencesListDir
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
             android:title="@string/directorio_title" />
-
-        <ListPreference
+        <ar.rulosoft.custompref.NumberPickerPref
+            android:defaultValue="2"
             android:dialogTitle="@string/cantidad_descargas_title"
-            android:entries="@array/download_threads"
-            android:entryValues="@array/download_threads"
             android:key="download_threads"
             android:summary="@string/cantidad_descargas_subtitle"
-            android:title="@string/cantidad_descargas_title" />
-        <ListPreference
+            android:title="@string/cantidad_descargas_title"
+            app:val_max="5"
+            app:val_min="1" />
+        <ar.rulosoft.custompref.NumberPickerPref
+            android:defaultValue="2"
             android:dialogTitle="@string/cantidad_errores_title"
-            android:entries="@array/uno_a_nueve"
-            android:entryValues="@array/uno_a_nueve"
             android:key="error_tolerancia"
             android:summary="@string/cantidad_errores_subtitle"
-            android:title="@string/cantidad_errores_title" />
-        <ListPreference
+            android:title="@string/cantidad_errores_title"
+            app:val_max="9"
+            app:val_min="1" />
+        <ar.rulosoft.custompref.NumberPickerPref
+            android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
-            android:entries="@array/uno_a_nueve"
-            android:entryValues="@array/uno_a_nueve"
             android:key="reintentos"
             android:summary="@string/cantidad_reintentos_subtitle"
-            android:title="@string/cantidad_reintentos_title" />
+            android:title="@string/cantidad_reintentos_title"
+            app:val_max="9"
+            app:val_min="1" />
     </PreferenceCategory>
-    <PreferenceCategory android:title="UI Settings">
+
+    <!-- Don't ask me, those colours popped up in the debugger, it's ugly, I know -->
+    <PreferenceCategory android:title="@string/ui_settings">
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
-            android:defaultValue="0"
+            android:defaultValue="-10453621"
             android:key="primario"
             android:title="@string/color_primario"
             app:cal_numColumns="4" />
         <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
-            android:defaultValue="#10395294"
+            android:defaultValue="-16738680"
             android:key="secundario"
             android:title="@string/color_secundario"
             app:cal_numColumns="4" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="About">
+        <Preference
+            android:key="about_text"
+            android:summary="%s"
+            android:title="@string/app_name" />
+
+        <Preference
+            android:key="license_view"
+            android:summary="Tap to see license and thanks"
+            android:title="@string/licencia" />
     </PreferenceCategory>
 
 </PreferenceScreen>

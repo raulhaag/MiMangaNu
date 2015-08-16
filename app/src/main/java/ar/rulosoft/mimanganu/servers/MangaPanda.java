@@ -13,139 +13,168 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class MangaPanda extends ServerBase {
 
-    private static final String PATTERN_SERIE = "<li><a href=\"([^\"]+)\">([^<]+)";
-    private static final String PATTERN_SUB = "<div class=\"series_col\">([\\s\\S]+?)<div id=\"adfooter\">";
+    public static String HOST = "http://www.mangapanda.com";
 
-    private static final String PATTERN_FRAG_CAPITULOS = "<div id=\"chapterlist\">([\\s\\S]+?)</table>";
-    private static final String PATTERN_CAPITULOS = "<a href=\"([^\"]+)\">([^\"]+?)</td>";
+    private static final String PATTERN_SERIE =
+            "<li><a href=\"([^\"]+)\">([^<]+)";
+    private static final String PATTERN_SUB =
+            "<div class=\"series_col\">([\\s\\S]+?)<div id=\"adfooter\">";
 
-    private static final String PATRON_LAST = "of (\\d+)</div>";
-    private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
+    private static final String PATTERN_FRAG_CHAPTER =
+            "<div id=\"chapterlist\">([\\s\\S]+?)</table>";
+    private static final String PATTERN_CHAPTER =
+            "<a href=\"([^\"]+)\">([^\"]+?)</a>.:([^\"]+?)</td>";
+    private static final String PATTERN_CHAPTER_WEB =
+            "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
 
-    private static final String PATRON_VISUAL = "url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>";
+    public static String[] genre = new String[]{
+            "All", "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
+            "Fantasy", "Gender bender", "Harem", "Historical", "Horror",
+            "Josei", "Magic", "Martial arts", "Mature", "Mecha", "Military",
+            "Mystery", "One Shot", "Psychological", "Romance", "School life",
+            "Sci-fi", "Seinen", "Shoujo", "Shoujoai", "Shounen", "Shounenai",
+            "Slice of Life", "Smut", "Sports", "Super Power", "Supernatural",
+            "Tragedy", "Vampire", "Yaoi", "Yuri"
+    };
 
-    private static final String[] generos = {"All", "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi", "Fantasy", "Gender Bender", "Harem",
-            "Historical", "Horror", "Josei", "Magic", "Martial Arts", "Mature", "Mecha", "Military", "Mystery", "One Shot", "Psychological", "Romance",
-            "School Life", "Sci-Fi", "Seinen", "Shoujo", "Shoujoai", "Shounen", "Slice of Life", "Smut", "Sports", "Super Power", "Supernatural", "Tragedy",
-            "Vampire", "Yuri"};
+    private static final String[] genreV = {
+            "", "action", "adventure", "comedy", "demons", "drama", "ecchi",
+            "fantasy", "gender-bender", "harem", "historical", "horror",
+            "josei", "magic", "martial-arts", "mature", "mecha", "military",
+            "mystery", "one-shot", "psychological", "romance", "school-life",
+            "sci-fi", "seinen", "shoujo", "shoujoai", "shounen", "shounenai",
+            "slice-of-life", "smut", "sports", "super-power", "supernatural",
+            "tragedy", "vampire", "yaoi", "yuri"
+    };
 
-    private static final String[] generosV = {"", "action", "adventure", "comedy", "demons", "drama", "ecchi", "fantasy", "gender-bender", "harem",
-            "historical", "horror", "josei", "magic", "martial-arts", "mature", "mecha", "military", "mystery", "one-shot", "psychological", "romance",
-            "school-life", "sci-fi", "seinen", "shoujo", "shoujoai", "shounen", "slice-of-life", "smut", "sports", "super-power", "supernatural", "tragedy",
-            "vampire", "yuri"};
-
-    private static final String[] orden = {"Popular"};
+    private static final String[] order = {"Popular"};
 
     public MangaPanda() {
-        this.setFlag(R.drawable.flag_eng);
-        this.setIcon(R.drawable.mangapanda);
-        this.setServerName("MangaPanda");
-        setServerID(ServerBase.MANGAPANDA);
+        this.setFlag( R.drawable.flag_eng );
+        this.setIcon( R.drawable.mangapanda );
+        this.setServerName( "Mangapanda.com" );
+        setServerID( ServerBase.MANGAPANDA );
+    }
+
+    public void SetHost( String new_host ) {
+        HOST = new_host;
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = new Navegador().get("http://www.mangapanda.com/alphabetical");
-        Pattern p = Pattern.compile(PATTERN_SUB);
-        Matcher m = p.matcher(data);
-        if (m.find()) {
-            String b = m.group(1);
-            Pattern p1 = Pattern.compile(PATTERN_SERIE);
-            Matcher m1 = p1.matcher(b);
-            while (m1.find()) {
-                mangas.add(new Manga(this.getServerID(), m1.group(2), "http://www.mangapanda.com" + m1.group(1), false));
+        String data = new Navegador().get( HOST + "/alphabetical" );
+        Pattern p = Pattern.compile( PATTERN_SUB );
+        Matcher m = p.matcher( data );
+        if ( m.find() ) {
+            String b = m.group( 1 );
+            Pattern p1 = Pattern.compile( PATTERN_SERIE );
+            Matcher m1 = p1.matcher( b );
+            while ( m1.find() ) {
+                mangas.add( new Manga( this.getServerID(), m1.group( 2 ),
+                        HOST + m1.group( 1 ), false ) );
             }
         }
         return mangas;
     }
 
     @Override
-    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(manga, forceReload);
+    public ArrayList<Manga> search( String term ) throws Exception {
+        ArrayList<Manga> mangas = new ArrayList<>();
+        Navegador nav = new Navegador();
+        String data = nav.get( HOST + "/actions/search/?q=" + term +
+                               "&limit=100" );
+        Pattern p = Pattern.compile( "(.+?)\\|.+?\\|(/.+?)\\|\\d+" );
+        Matcher m = p.matcher( data );
+        while ( m.find() ) {
+            mangas.add( new Manga( getServerID(), m.group( 1 ).trim(),
+                    HOST + m.group( 2 ), false ) );
+        }
+        return mangas;
     }
 
     @Override
-    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+    public void loadChapters( Manga manga, boolean forceReload ) throws Exception {
+        if ( manga.getChapters() == null || manga.getChapters().size() == 0 ||
+             forceReload ) loadMangaInformation( manga, forceReload );
+    }
 
-        String data = new Navegador().get((manga.getPath()));
-        Pattern p = Pattern.compile(PATTERN_FRAG_CAPITULOS);
-        Matcher m = p.matcher(data);
-        if (m.find()) {
-            Pattern p1 = Pattern.compile(PATTERN_CAPITULOS);
-            Matcher m1 = p1.matcher(m.group(1));
-            while (m1.find()) {
-                String web = m1.group(1);
-                if (web.matches("/[-|\\d]+/([^/]+)/chapter-(\\d+).html")) {
-                    Pattern p2 = Pattern.compile("/[-|\\d]+/([^/]+)/chapter-(\\d+).html");
-                    Matcher m2 = p2.matcher(web);
-                    if (m2.find())
-                        web = m2.group(1) + "/" + m2.group(2);
+    @Override
+    public void loadMangaInformation( Manga manga, boolean forceReload ) throws Exception {
+
+        String data = new Navegador().get( manga.getPath() );
+        Pattern p = Pattern.compile( PATTERN_FRAG_CHAPTER );
+        Matcher m = p.matcher( data );
+        if ( m.find() ) {
+            Pattern p1 = Pattern.compile( PATTERN_CHAPTER );
+            Matcher m1 = p1.matcher( m.group( 1 ) );
+            while ( m1.find() ) {
+                String web = m1.group( 1 );
+                if ( web.matches( PATTERN_CHAPTER_WEB ) ) {
+                    Pattern p2 = Pattern.compile( PATTERN_CHAPTER_WEB );
+                    Matcher m2 = p2.matcher( web );
+                    if ( m2.find() ) web = m2.group( 1 ) + "/" + m2.group( 2 );
                 }
-                if (web.startsWith("/")) {
-                    manga.addChapter(new Chapter(m1.group(2).replace("</a>", ""), "http://www.mangapanda.com" + web));
-                } else {
-                    manga.addChapter(new Chapter(m1.group(2).replace("</a>", ""), "http://www.mangapanda.com/" + web));
-                }
+                String chName = m1.group( 2 );
+                if ( !m1.group( 3 ).trim().isEmpty() )
+                    chName += " :" + m1.group( 3 );
+                manga.addChapter( new Chapter( chName, HOST + web ) );
             }
         }
-
-        // sinopsis
-        manga.setSinopsis(getFirstMacthDefault("<p>(.+)</p>", data, "Without synopsis"));
-        // portada
-        manga.setImages(getFirstMacthDefault("mangaimg\"><img src=\"([^\"]+)", data, ""));
-        //status
-        manga.setFinished(data.contains("</td><td>Completed</td>"));
-        //autor
-        manga.setAuthor(Html.fromHtml(getFirstMacthDefault("Author:</td><td>(.+?)<", data, "")).toString());
+        // Summary
+        manga.setSinopsis( getFirstMatchDefault( "<p>(.+)</p>", data, "Without synopsis" ) );
+        // Title
+        manga.setImages( getFirstMatchDefault( "mangaimg\"><img src=\"([^\"]+)", data, "" ) );
+        // Status
+        manga.setFinished( data.contains( "</td><td>Completed</td>" ) );
+        // Author
+        manga.setAuthor( Html.fromHtml( getFirstMatchDefault( "Author:</td><td>(.+?)<", data, "" ) ).toString() );
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        if (page > c.getPages()) {
-            page = 1;
-        }
+    public String getPagesNumber( Chapter c, int page ) {
+        page = ( page > c.getPages() ) ? 1 : page;
         return c.getPath() + "/" + page;
-
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom( Chapter c, int page ) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(c, page));
-        return getFirstMacth(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
+        data = new Navegador().get( this.getPagesNumber( c, page ) );
+        return getFirstMatch( "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data, "Error: Could not get the link to the image" );
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit( Chapter c ) throws Exception {
         String data;
-        data = new Navegador().get(c.getPath());
-        String paginas = getFirstMacth(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        c.setPages(Integer.parseInt(paginas));
+        data = new Navegador().get( c.getPath() );
+        String pages =
+                getFirstMatch( "of (\\d+)</div>", data, "Error: Could not get the number of pages" );
+        c.setPages( Integer.parseInt( pages ) );
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+    public ArrayList<Manga> getMangasFiltered( int category, int order, int pageNumber ) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web;
-        if (categorie == 0)
-            web = "http://www.mangapanda.com/popular" + "/" + (pageNumber - 1) * 20;
-        else
-            web = "http://www.mangapanda.com/popular" + "/" + generosV[categorie] + "/" + (pageNumber - 1) * 20;
+        if ( category == 0 )
+            web = HOST + "/popular" + "/" + ( pageNumber - 1 ) * 20;
+        else web = HOST + "/popular" + "/" +
+                   genreV[category] + "/" + ( pageNumber - 1 ) * 20;
 
-        String data = new Navegador().get(web);
-        Pattern p = Pattern.compile(PATRON_VISUAL);
-        Matcher m = p.matcher(data);
-        while (m.find()) {
+        String data = new Navegador().get( web );
+        Pattern p =
+                Pattern.compile( "url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>" );
+        Matcher m = p.matcher( data );
+        while ( m.find() ) {
             Manga manga;
-            if (m.group(2).startsWith("/"))
-                manga = new Manga(getServerID(), m.group(3), "http://www.mangapanda.com" + m.group(2), false);
-            else
-                manga = new Manga(getServerID(), m.group(3), "http://www.mangapanda.com/" + m.group(2), false);
-
-            manga.setImages(m.group(1));
-            mangas.add(manga);
+            if ( m.group( 2 ).startsWith( "/" ) ) manga =
+                    new Manga( getServerID(), m.group( 3 ),
+                            HOST + m.group( 2 ), false );
+            else manga = new Manga( getServerID(), m.group( 3 ),
+                    HOST + m.group( 2 ), false );
+            manga.setImages( m.group( 1 ) );
+            mangas.add( manga );
         }
         hayMas = !mangas.isEmpty();
         return mangas;
@@ -153,30 +182,17 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public String[] getCategories() {
-        return generos;
+        return genre;
     }
 
     @Override
     public String[] getOrders() {
-        return orden;
+        return order;
     }
 
     @Override
     public boolean hasList() {
         return true;
-    }
-
-    @Override
-    public ArrayList<Manga> search(String term) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Navegador nav = new Navegador();
-        String data = nav.get("http://www.mangapanda.com/actions/search/?q=" + term + "&limit=100");
-        Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(1).trim(), "http://www.mangapanda.com" + m.group(2), false));
-        }
-        return mangas;
     }
 
 }

@@ -135,7 +135,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     }
 
     public void cargarMangas() {
-        ArrayList<Manga> mangas = new ArrayList<Manga>();
+        ArrayList<Manga> mangas = new ArrayList<>();
         int value = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(SELECTOR_MODO, MODO_ULTIMA_LECTURA_Y_NUEVOS);
         switch (value) {
             case MODO_ULTIMA_LECTURA_Y_NUEVOS:

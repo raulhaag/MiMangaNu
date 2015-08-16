@@ -15,8 +15,6 @@
  *******************************************************************************/
 package it.gmariotti.android.example.colorpicker.calendarstock;
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.Utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
@@ -31,6 +29,9 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.Utils;
+
 /**
  * ColorPreference based on ColorPickerDialog of Stock Calendar
  * 
@@ -41,15 +42,25 @@ public class ColorPickerPreference extends Preference{
 	
 	private int[] mColorChoices = {};
     private int mValue = 0;
+    /**
+     * Implement listener to get selected color value
+     */
+    ColorPickerSwatch.OnColorSelectedListener listener = new ColorPickerSwatch.OnColorSelectedListener() {
+
+        @Override
+        public void onColorSelected(int color) {
+            setValue(color);
+        }
+    };
     private int mItemLayoutId = R.layout.calendar_grid_item_color;
     private int mNumColumns = 5;
     private View mPreviewView;
 
-	public ColorPickerPreference(Context context) {
-		super(context);
+    public ColorPickerPreference(Context context) {
+        super(context);
 		initAttrs(null, 0);
 	}
-	
+
 	public ColorPickerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
         initAttrs(attrs, 0);
@@ -59,7 +70,38 @@ public class ColorPickerPreference extends Preference{
         super(context, attrs, defStyle);
         initAttrs(attrs, defStyle);
     }
-	
+
+    private static void setColorViewValue(View view, int color) {
+        if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+            Resources res = imageView.getContext().getResources();
+
+            Drawable currentDrawable = imageView.getDrawable();
+            GradientDrawable colorChoiceDrawable;
+            if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
+                // Reuse drawable
+                colorChoiceDrawable = (GradientDrawable) currentDrawable;
+            } else {
+                colorChoiceDrawable = new GradientDrawable();
+                colorChoiceDrawable.setShape(GradientDrawable.OVAL);
+            }
+
+            // Set stroke to dark version of color
+            int darkenedColor = Color.rgb(
+                    Color.red(color) * 192 / 256,
+                    Color.green(color) * 192 / 256,
+                    Color.blue(color) * 192 / 256);
+
+            colorChoiceDrawable.setColor(color);
+            colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
+            imageView.setImageDrawable(colorChoiceDrawable);
+
+        } else if (view instanceof TextView) {
+            ((TextView) view).setTextColor(color);
+        }
+    }
+
     private void initAttrs(AttributeSet attrs, int defStyle) {
     	TypedArray a = getContext().getTheme().obtainStyledAttributes(
                 attrs, R.styleable.ColorPickerPreference, defStyle, defStyle);
@@ -82,7 +124,7 @@ public class ColorPickerPreference extends Preference{
         }
         setWidgetLayoutResource(mItemLayoutId);
     }
-    
+
     @Override
     protected void onBindView(View view) {
         super.onBindView(view);
@@ -90,41 +132,22 @@ public class ColorPickerPreference extends Preference{
         setColorViewValue(mPreviewView, mValue);
     }
 
-    public void setValue(int value) {
-        if (callChangeListener(value)) {
-            mValue = value;
-            persistInt(value);
-            notifyChanged();
-        }
-    }
-
     @Override
     protected void onClick() {
         super.onClick();
 
-        ColorPickerDialog colorcalendar = (ColorPickerDialog) ColorPickerDialog.newInstance(R.string.color_picker_default_title,
-				mColorChoices, getValue(), mNumColumns, Utils.isTablet(getContext())? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
-        
+        ColorPickerDialog colorcalendar = ColorPickerDialog.newInstance(R.string.color_picker_default_title,
+                mColorChoices, getValue(), mNumColumns, Utils.isTablet(getContext()) ? ColorPickerDialog.SIZE_LARGE : ColorPickerDialog.SIZE_SMALL);
+
         //colorcalendar.setPreference(this);
 
         Activity activity = (Activity) getContext();
         activity.getFragmentManager().beginTransaction()
                 .add(colorcalendar, getFragmentTag())
                 .commit();
-        
-       colorcalendar.setOnColorSelectedListener(listener);
+
+        colorcalendar.setOnColorSelectedListener(listener);
     }
-    
-    /**
-     * Implement listener to get selected color value
-     */
-    ColorPickerSwatch.OnColorSelectedListener listener = new ColorPickerSwatch.OnColorSelectedListener() {
-		
-		@Override
-		public void onColorSelected(int color) {
-			setValue(color);
-		}
-	};
     
     @Override
     protected void onAttachedToActivity() {
@@ -156,35 +179,12 @@ public class ColorPickerPreference extends Preference{
     public int getValue() {
         return mValue;
     }
-    
-    private static void setColorViewValue(View view, int color) {
-        if (view instanceof ImageView) {
-            ImageView imageView = (ImageView) view;
-            Resources res = imageView.getContext().getResources();
 
-            Drawable currentDrawable = imageView.getDrawable();
-            GradientDrawable colorChoiceDrawable;
-            if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
-                // Reuse drawable
-                colorChoiceDrawable = (GradientDrawable) currentDrawable;
-            } else {
-                colorChoiceDrawable = new GradientDrawable();
-                colorChoiceDrawable.setShape(GradientDrawable.OVAL);
-            }
-
-            // Set stroke to dark version of color
-            int darkenedColor = Color.rgb(
-                    Color.red(color) * 192 / 256,
-                    Color.green(color) * 192 / 256,
-                    Color.blue(color) * 192 / 256);
-
-            colorChoiceDrawable.setColor(color);
-            colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
-            imageView.setImageDrawable(colorChoiceDrawable);
-
-        } else if (view instanceof TextView) {
-            ((TextView) view).setTextColor(color);
+    public void setValue(int value) {
+        if (callChangeListener(value)) {
+            mValue = value;
+            persistInt(value);
+            notifyChanged();
         }
     }
     

@@ -43,24 +43,6 @@
         <item>2048</item>
         <item>4096</item>
     </string-array>
-    <string-array name="download_threads">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
-    <string-array name="uno_a_nueve">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-        <item>6</item>
-        <item>7</item>
-        <item>8</item>
-        <item>9</item>
-    </string-array>
     <string-array name="periodo">
         <item>@string/no_update</item>
         <item>@string/_6hours</item>

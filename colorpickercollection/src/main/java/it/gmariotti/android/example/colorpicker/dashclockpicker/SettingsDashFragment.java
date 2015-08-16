@@ -15,9 +15,10 @@
  *******************************************************************************/
 package it.gmariotti.android.example.colorpicker.dashclockpicker;
 
-import it.gmariotti.android.example.colorpicker.R;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
+
+import it.gmariotti.android.example.colorpicker.R;
 
 public class SettingsDashFragment extends PreferenceFragment {
 

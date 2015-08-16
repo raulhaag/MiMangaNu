@@ -19,13 +19,6 @@
 
 package it.gmariotti.android.example.colorpicker.dashclockpicker;
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerSwatch.OnColorSelectedListener;
-
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -44,7 +37,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.gmariotti.android.example.colorpicker.R;
 
 /**
  * ColorDialog extracted from {@link ColorPreference}.
@@ -56,26 +53,24 @@ import android.widget.Toast;
  *
  */
 public class ColorPickerDialogDash extends DialogFragment {
-	
+
+    //Bundle
+    protected static final String KEY_TITLE_ID = "title_id";
+    protected static final String KEY_COLORS = "colors";
+    protected static final String KEY_SELECTED_COLOR = "selected_color";
+    protected static final String KEY_COLUMNS = "columns";
+    //---------------------------------------------------------------------------------------------------
+    //Added
+    //---------------------------------------------------------------------------------------------------
+    protected int mSelectedColor;
+    protected int mTitleResId = R.string.color_picker_default_title;
+    protected OnColorSelectedListener mListener;
     private ColorGridAdapter mAdapter;
     private GridView mColorGrid;
     private int[] mColorChoices = {};
     private int mValue = 0;
     private int mItemLayoutId = R.layout.dash_grid_item_color;
     private int mNumColumns = 5;
-    
-    //---------------------------------------------------------------------------------------------------
-    //Added
-    //---------------------------------------------------------------------------------------------------
-    protected int mSelectedColor; 
-    protected int mTitleResId = R.string.color_picker_default_title;
-    protected OnColorSelectedListener mListener;
-    
-    //Bundle
-    protected static final String KEY_TITLE_ID = "title_id";
-    protected static final String KEY_COLORS = "colors";
-    protected static final String KEY_SELECTED_COLOR = "selected_color";
-    protected static final String KEY_COLUMNS = "columns";
     
     
     
@@ -104,6 +99,37 @@ public class ColorPickerDialogDash extends DialogFragment {
     	colorPicker.initialize(titleResId, colors, selectedColor, columns);
     	return colorPicker;
     }
+
+    private static void setColorViewValue(View view, int color) {
+        if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+            Resources res = imageView.getContext().getResources();
+
+            Drawable currentDrawable = imageView.getDrawable();
+            GradientDrawable colorChoiceDrawable;
+            if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
+                // Reuse drawable
+                colorChoiceDrawable = (GradientDrawable) currentDrawable;
+            } else {
+                colorChoiceDrawable = new GradientDrawable();
+                colorChoiceDrawable.setShape(GradientDrawable.OVAL);
+            }
+
+            // Set stroke to dark version of color
+            int darkenedColor = Color.rgb(
+                    Color.red(color) * 192 / 256,
+                    Color.green(color) * 192 / 256,
+                    Color.blue(color) * 192 / 256);
+
+            colorChoiceDrawable.setColor(color);
+            colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
+            imageView.setImageDrawable(colorChoiceDrawable);
+
+        } else if (view instanceof TextView) {
+            ((TextView) view).setTextColor(color);
+        }
+    }
     
     public void setArguments(int titleResId, int columns) {
         Bundle bundle = new Bundle();
@@ -111,18 +137,6 @@ public class ColorPickerDialogDash extends DialogFragment {
         bundle.putInt(KEY_COLUMNS, columns);
         setArguments(bundle);
     }
-    
-    /**
-     * Interface for a callback when a color square is selected.
-     */
-    public interface OnColorSelectedListener {
-
-        /**
-         * Called when a specific color square has been selected.
-         */
-        public void onColorSelected(int color);
-    }
-    
     
     public void setOnColorSelectedListener(OnColorSelectedListener listener) {
             mListener = listener;
@@ -213,8 +227,26 @@ public class ColorPickerDialogDash extends DialogFragment {
         }
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putIntArray(KEY_COLORS, mColorChoices);
+        outState.putSerializable(KEY_SELECTED_COLOR, mSelectedColor);
+    }
+
+    /**
+     * Interface for a callback when a color square is selected.
+     */
+    public interface OnColorSelectedListener {
+
+        /**
+         * Called when a specific color square has been selected.
+         */
+        void onColorSelected(int color);
+    }
+
     private class ColorGridAdapter extends BaseAdapter {
-        private List<Integer> mChoices = new ArrayList<Integer>();
+        private List<Integer> mChoices = new ArrayList<>();
         private int mSelectedColor;
 
         private ColorGridAdapter() {
@@ -254,50 +286,11 @@ public class ColorPickerDialogDash extends DialogFragment {
         }
 
         public void setSelectedColor(int selectedColor) {
-        	
-        	if (mSelectedColor != selectedColor) {
-        		mSelectedColor = selectedColor;
+
+            if (mSelectedColor != selectedColor) {
+                mSelectedColor = selectedColor;
         		notifyDataSetChanged();
         	}
         }
     }
-    
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putIntArray(KEY_COLORS, mColorChoices);
-        outState.putSerializable(KEY_SELECTED_COLOR, mSelectedColor);
-    }
-
-
-	private static void setColorViewValue(View view, int color) {
-	    if (view instanceof ImageView) {
-	        ImageView imageView = (ImageView) view;
-	        Resources res = imageView.getContext().getResources();
-	
-	        Drawable currentDrawable = imageView.getDrawable();
-	        GradientDrawable colorChoiceDrawable;
-	        if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
-	            // Reuse drawable
-	            colorChoiceDrawable = (GradientDrawable) currentDrawable;
-	        } else {
-	            colorChoiceDrawable = new GradientDrawable();
-	            colorChoiceDrawable.setShape(GradientDrawable.OVAL);
-	        }
-	
-	        // Set stroke to dark version of color
-	        int darkenedColor = Color.rgb(
-	                Color.red(color) * 192 / 256,
-	                Color.green(color) * 192 / 256,
-	                Color.blue(color) * 192 / 256);
-	
-	        colorChoiceDrawable.setColor(color);
-	        colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
-	                TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
-	        imageView.setImageDrawable(colorChoiceDrawable);
-	
-	    } else if (view instanceof TextView) {
-	        ((TextView) view).setTextColor(color);
-	    }
-	}
 }

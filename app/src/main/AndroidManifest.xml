@@ -40,7 +40,7 @@
             android:name=".ActivityResultadoDeBusqueda"
             android:label="@string/title_activity_activity_resultado_de_busqueda" />
         <activity
-            android:name=".ActivityLicencia"
+            android:name=".ActivityLicenseView"
             android:label="@string/licencia" />
         <activity
             android:name=".OpcionesActivity"
@@ -60,7 +60,6 @@
         <receiver android:name=".services.AlarmReceiver">
             <action android:name="ar.rulosoft.CHECK_UPDATES" />
         </receiver>
-
         <receiver android:name=".services.BootAndUpdateReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
