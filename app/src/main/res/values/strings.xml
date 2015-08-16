@@ -26,12 +26,11 @@
     <string name="buscarnuevos">Search for updates</string>
     <string name="buscarupdates">Search for updates</string>
     <string name="busquedanores">The search returned no results</string>
-    <string name="cantidad_descargas_subtitle">Number of download threads (2 as default)</string>
+    <string name="cantidad_descargas_subtitle">Number of download threads (2 is default): %s</string>
     <string name="cantidad_descargas_title">Download slot</string>
-    <string name="cantidad_errores_subtitle">Before stopping a chapter download</string>
-    <string name="cantidad_errores_title">Maximum number of errors</string>
-    <string name="cantidad_reintentos_subtitle">By image</string>
-    <string name="cantidad_reintentos_title">Number of retries</string>
+    <string name="cantidad_errores_title">Maximum retries per chapter</string>
+    <string name="cantidad_reintentos_subtitle">retries to get an image after encountering an error (3 is default): %s</string>
+    <string name="cantidad_reintentos_title">Maximum retries per image</string>
     <string name="capitulos">Chapters</string>
     <string name="cargando">Loading&#8230;</string>
     <string name="color_primario">Primary Color</string>
@@ -72,21 +71,10 @@
     <string name="markSelectedUnread">Mark selected as unread</string>
     <string name="masmangas">Add Mangas</string>
     <string name="mas">More</string>
-    <string name="max_texture_subtitle">0 to disable hardware acceleration</string>
-    <string name="max_texture_title">Maximum texture size supported by the device accelerator</string>
+    <string name="max_texture_subtitle">Size of texture, which will be used (0 to deactivate hardware acceleration)\n%s</string>
+    <string name="max_texture_title">Maximum texture size</string>
     <string name="mejor_ajuste">Best fit</string>
     <string name="mismangas">My Mangas</string>
-    <string name="mit">The MIT License (MIT)
-        Copyright &#169; 2014 rulosoft (Raul Haag)
-        Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-Thanks to sephiroth74 for the library ImageViewTouch, castorflex for VeticalViewPager and  thest1 for LazyList.
-
-Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.</string>
     <string name="mitlic">MIT Licence and Thanks</string>
     <string name="new_manga_found">New manga found.</string>
     <string name="new_mangas_found">New mangas found</string>
@@ -104,7 +92,7 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="orden_de_capitulos">Chapters order</string>
     <string name="orden_de_capitulos_subtitle">Ascending, descending</string>
     <string name="orden_dsc">Descending</string>
-    <string name="orden">Order.</string>
+    <string name="orden">Order</string>
     <string name="quitar_descarga">Can\'t remove active download</string>
     <string name="quitar_seleccion">Select none</string>
     <string name="r2l">Right to Left</string>
@@ -138,4 +126,9 @@ Este programa solo automatiza funciones que se podrian hacer con un navegador de
     <string name="vercomolista">View as List</string>
     <string name="vertical">Vertical</string>
     <string name="hello_world">Hello World</string>
+    <string name="ui_settings">UI Settings</string>
+    <string name="cantidad_errores_subtitle">Number of download attempts per chapter (2 is default): %s</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+    <string name="title_activity_text_view">TextViewActivity</string>
 </resources>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
     android:id="@+id/listitem_layout"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
@@ -37,11 +38,11 @@
         android:layout_alignRight="@+id/capitulo_paginas"
         android:layout_alignTop="@+id/boton"
         android:background="#e57373"
+        android:padding="2sp"
         android:text="@string/State_New"
         android:textColor="#FFFFFFFF"
         android:textSize="10sp"
-        android:textStyle="italic|bold"
-        android:padding="2sp"/>
+        android:textStyle="italic|bold" />
 
     <ImageView
         android:id="@+id/boton"

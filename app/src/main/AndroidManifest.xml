@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     package="ar.rulosoft.mimanganu" >
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -40,7 +41,7 @@
             android:name=".ActivityResultadoDeBusqueda"
             android:label="@string/title_activity_activity_resultado_de_busqueda" />
         <activity
-            android:name=".ActivityLicencia"
+            android:name=".ActivityLicenseView"
             android:label="@string/licencia" />
         <activity
             android:name=".OpcionesActivity"
@@ -57,11 +58,10 @@
             android:label="@string/title_activity_activity_manga" >
         </activity>
 
-        <receiver android:name=".services.AlarmReceiver">
+        <receiver android:name=".services.AlarmReceiver" >
             <action android:name="ar.rulosoft.CHECK_UPDATES" />
         </receiver>
-
-        <receiver android:name=".services.BootAndUpdateReceiver">
+        <receiver android:name=".services.BootAndUpdateReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />

@@ -1,0 +1,9 @@
+<resources>
+
+    <declare-styleable name="NumberPickerPref">
+        <attr name="val_min" format="integer" />
+        <attr name="val_max" format="integer" />
+        <attr name="wrap_around" format="boolean" />
+    </declare-styleable>
+
+</resources>
