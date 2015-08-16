@@ -117,4 +117,6 @@
     <string name="lock_on_portrait">Écran vérouillé en mode portrait</string>
     <string name="lock_on_landscape">Écran vérouillé en mode paysage</string>
     <string name="rotation_no_locked">Rotation de l\'écran libre</string>
+    <string name="notification_sound_title">Notification sonnore</string>
+    <string name="notification_sound_subtitle">Quand un nouveau manga est trouvé.</string>
 </resources>
