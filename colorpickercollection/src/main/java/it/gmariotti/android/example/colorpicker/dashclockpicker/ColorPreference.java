@@ -19,11 +19,6 @@
 
 package it.gmariotti.android.example.colorpicker.dashclockpicker;
 
-import it.gmariotti.android.example.colorpicker.R;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,6 +41,11 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import it.gmariotti.android.example.colorpicker.R;
 
 /**
  * A preference that allows the user to choose an application or shortcut.
@@ -70,6 +70,37 @@ public class ColorPreference extends Preference {
     public ColorPreference(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         initAttrs(attrs, defStyle);
+    }
+
+    private static void setColorViewValue(View view, int color) {
+        if (view instanceof ImageView) {
+            ImageView imageView = (ImageView) view;
+            Resources res = imageView.getContext().getResources();
+
+            Drawable currentDrawable = imageView.getDrawable();
+            GradientDrawable colorChoiceDrawable;
+            if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
+                // Reuse drawable
+                colorChoiceDrawable = (GradientDrawable) currentDrawable;
+            } else {
+                colorChoiceDrawable = new GradientDrawable();
+                colorChoiceDrawable.setShape(GradientDrawable.OVAL);
+            }
+
+            // Set stroke to dark version of color
+            int darkenedColor = Color.rgb(
+                    Color.red(color) * 192 / 256,
+                    Color.green(color) * 192 / 256,
+                    Color.blue(color) * 192 / 256);
+
+            colorChoiceDrawable.setColor(color);
+            colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
+            imageView.setImageDrawable(colorChoiceDrawable);
+
+        } else if (view instanceof TextView) {
+            ((TextView) view).setTextColor(color);
+        }
     }
 
     private void initAttrs(AttributeSet attrs, int defStyle) {
@@ -101,14 +132,6 @@ public class ColorPreference extends Preference {
         super.onBindView(view);
         mPreviewView = view.findViewById(R.id.color_view);
         setColorViewValue(mPreviewView, mValue);
-    }
-
-    public void setValue(int value) {
-        if (callChangeListener(value)) {
-            mValue = value;
-            persistInt(value);
-            notifyChanged();
-        }
     }
 
     @Override
@@ -155,6 +178,14 @@ public class ColorPreference extends Preference {
         return mValue;
     }
 
+    public void setValue(int value) {
+        if (callChangeListener(value)) {
+            mValue = value;
+            persistInt(value);
+            notifyChanged();
+        }
+    }
+
     public static class ColorDialogFragment extends DialogFragment {
         private ColorPreference mPreference;
         private ColorGridAdapter mAdapter;
@@ -184,9 +215,9 @@ public class ColorPreference extends Preference {
             View rootView = layoutInflater.inflate(R.layout.dash_dialog_colors, null);
 
             mColorGrid = (GridView) rootView.findViewById(R.id.color_grid);
-            
+
             mColorGrid.setNumColumns(mPreference.mNumColumns);
-            
+
             mColorGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> listView, View view,
@@ -262,37 +293,6 @@ public class ColorPreference extends Preference {
                 mSelectedColor = selectedColor;
                 notifyDataSetChanged();
             }
-        }
-    }
-
-    private static void setColorViewValue(View view, int color) {
-        if (view instanceof ImageView) {
-            ImageView imageView = (ImageView) view;
-            Resources res = imageView.getContext().getResources();
-
-            Drawable currentDrawable = imageView.getDrawable();
-            GradientDrawable colorChoiceDrawable;
-            if (currentDrawable != null && currentDrawable instanceof GradientDrawable) {
-                // Reuse drawable
-                colorChoiceDrawable = (GradientDrawable) currentDrawable;
-            } else {
-                colorChoiceDrawable = new GradientDrawable();
-                colorChoiceDrawable.setShape(GradientDrawable.OVAL);
-            }
-
-            // Set stroke to dark version of color
-            int darkenedColor = Color.rgb(
-                    Color.red(color) * 192 / 256,
-                    Color.green(color) * 192 / 256,
-                    Color.blue(color) * 192 / 256);
-
-            colorChoiceDrawable.setColor(color);
-            colorChoiceDrawable.setStroke((int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP, 1, res.getDisplayMetrics()), darkenedColor);
-            imageView.setImageDrawable(colorChoiceDrawable);
-
-        } else if (view instanceof TextView) {
-            ((TextView) view).setTextColor(color);
         }
     }
 }

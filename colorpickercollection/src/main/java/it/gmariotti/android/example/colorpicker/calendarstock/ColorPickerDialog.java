@@ -20,8 +20,6 @@ package it.gmariotti.android.example.colorpicker.calendarstock;
  */
 
 
-import it.gmariotti.android.example.colorpicker.R;
-import it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerSwatch.OnColorSelectedListener;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -30,6 +28,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ProgressBar;
+
+import it.gmariotti.android.example.colorpicker.R;
+import it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerSwatch.OnColorSelectedListener;
 
 
 
@@ -41,25 +42,20 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
 
     public static final int SIZE_LARGE = 1;
     public static final int SIZE_SMALL = 2;
-
-    protected AlertDialog mAlertDialog;
-
     protected static final String KEY_TITLE_ID = "title_id";
     protected static final String KEY_COLORS = "colors";
     protected static final String KEY_SELECTED_COLOR = "selected_color";
     protected static final String KEY_COLUMNS = "columns";
     protected static final String KEY_SIZE = "size";
-
+    protected AlertDialog mAlertDialog;
     protected int mTitleResId = R.string.color_picker_default_title;
     protected int[] mColors = null;
     protected int mSelectedColor;
     protected int mColumns;
     protected int mSize;
-
+    protected OnColorSelectedListener mListener;
     private ColorPickerPalette mPalette;
     private ProgressBar mProgress;
-
-    protected OnColorSelectedListener mListener;
 
     public ColorPickerDialog() {
         // Empty constructor required for dialog fragments.
@@ -170,20 +166,6 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         }
     }
 
-    public void setColors(int[] colors) {
-        if (mColors != colors) {
-            mColors = colors;
-            refreshPalette();
-        }
-    }
-
-    public void setSelectedColor(int color) {
-        if (mSelectedColor != color) {
-            mSelectedColor = color;
-            refreshPalette();
-        }
-    }
-
     private void refreshPalette() {
         if (mPalette != null && mColors != null) {
             mPalette.drawPalette(mColors, mSelectedColor);
@@ -194,8 +176,22 @@ public class ColorPickerDialog extends DialogFragment implements OnColorSelected
         return mColors;
     }
 
+    public void setColors(int[] colors) {
+        if (mColors != colors) {
+            mColors = colors;
+            refreshPalette();
+        }
+    }
+
     public int getSelectedColor() {
         return mSelectedColor;
+    }
+
+    public void setSelectedColor(int color) {
+        if (mSelectedColor != color) {
+            mSelectedColor = color;
+            refreshPalette();
+        }
     }
 
     @Override
