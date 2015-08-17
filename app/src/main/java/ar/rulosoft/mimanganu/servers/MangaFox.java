@@ -39,7 +39,7 @@ public class MangaFox extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = new Navegador().get("http://mangafox.me/manga/");
-        data = getFirstMatch( SEGMENTO, data, "no se ha obtenido el segmento" );
+        data = getFirstMatch(SEGMENTO, data, "no se ha obtenido el segmento");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -60,14 +60,14 @@ public class MangaFox extends ServerBase {
             String data = new Navegador().get((manga.getPath()));
 
             // portada
-            manga.setImages( getFirstMatchDefault( PATRON_PORTADA, data, "" ));
+            manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
             // sinopsis
-            manga.setSinopsis( getFirstMatchDefault( PATRON_SINOPSIS, data, "Without synopsis." ));
+            manga.setSinopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
 
             manga.setFinished(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
 
             //autor
-            manga.setAuthor( getFirstMatchDefault( "\"/search/author/.+?>(.+?)<", data, "" ));
+            manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, ""));
 
             // capitulos
             p = Pattern.compile(PATTERN_CAPITULOS);
@@ -106,14 +106,14 @@ public class MangaFox extends ServerBase {
     public String getImageFrom(Chapter c, int page) throws Exception {
         String data;
         data = new Navegador().get(this.getPagesNumber(c, page));
-        return getFirstMatch( PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen" );
+        return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String data;
         data = new Navegador().get(c.getPath());
-        String paginas = getFirstMatch( PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas" );
+        String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
         c.setPages(Integer.parseInt(paginas));
     }
 

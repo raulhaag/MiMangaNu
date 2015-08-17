@@ -41,129 +41,129 @@ public class StarkanaCom extends ServerBase {
     };
 
     public StarkanaCom() {
-        this.setFlag( R.drawable.flag_eng );
-        this.setIcon( R.drawable.rip );
-        this.setServerName( "Starkana" );
-        setServerID( ServerBase.STARKANACOM );
+        this.setFlag(R.drawable.flag_eng);
+        this.setIcon(R.drawable.rip);
+        this.setServerName("Starkana");
+        setServerID(ServerBase.STARKANACOM);
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        String source = new Navegador().get( "http://starkana.com/manga/list" );
-        Pattern p = Pattern.compile( "http://starkana.(jp|com)/img/icons/tick_(.+?).png\".+?href=\"(.+?)\">(.+?)<" );
-        Matcher m = p.matcher( source );
+        String source = new Navegador().get("http://starkana.com/manga/list");
+        Pattern p = Pattern.compile("http://starkana.(jp|com)/img/icons/tick_(.+?).png\".+?href=\"(.+?)\">(.+?)<");
+        Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
-        while ( m.find() ) {
-            if ( m.group( 2 ).length() == 4 ) {
-                mangas.add( new Manga( STARKANACOM, m.group( 4 ),
-                        "http://starkana.com" + m.group( 3 ), false ) );
+        while (m.find()) {
+            if (m.group(2).length() == 4) {
+                mangas.add(new Manga(STARKANACOM, m.group(4),
+                        "http://starkana.com" + m.group(3), false));
             } else {
-                mangas.add( new Manga( STARKANACOM, m.group( 4 ),
-                        "http://starkana.com" + m.group( 3 ), true ) );
+                mangas.add(new Manga(STARKANACOM, m.group(4),
+                        "http://starkana.com" + m.group(3), true));
             }
         }
         return mangas;
     }
 
     @Override
-    public ArrayList<Manga> search( String term ) throws Exception {
+    public ArrayList<Manga> search(String term) throws Exception {
         String source = new Navegador().get(
                 "http://starkana.com/manga/search?k=" +
-                URLEncoder.encode( term, "UTF-8" ) );
-        return getMangasFromSource( source );
+                        URLEncoder.encode(term, "UTF-8"));
+        return getMangasFromSource(source);
     }
 
     @Override
-    public void loadChapters( Manga m, boolean forceReload ) throws Exception {
-        if ( m.getChapters() == null || m.getChapters().size() == 0 ||
-             forceReload ) loadMangaInformation( m, forceReload );
+    public void loadChapters(Manga m, boolean forceReload) throws Exception {
+        if (m.getChapters() == null || m.getChapters().size() == 0 ||
+                forceReload) loadMangaInformation(m, forceReload);
     }
 
     @Override
-    public void loadMangaInformation( Manga m, boolean forceReload ) throws Exception {
-        String source = new Navegador().get( m.getPath() );
+    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
+        String source = new Navegador().get(m.getPath());
         // Title
-        String portada = getFirstMatchDefault( "<img class=\"a_img\" src=\"(.+?)\"", source, "" );
-        m.setImages( portada );
+        String portada = getFirstMatchDefault("<img class=\"a_img\" src=\"(.+?)\"", source, "");
+        m.setImages(portada);
         // Summary
-        String sinopsis = getFirstMatchDefault( "<b>Summary:.+?<div>(.+?)<", source, "Without synopsis" );
-        m.setSinopsis( sinopsis );
+        String sinopsis = getFirstMatchDefault("<b>Summary:.+?<div>(.+?)<", source, "Without synopsis");
+        m.setSinopsis(sinopsis);
         // Status
-        m.setFinished( source.contains( "<b>Completed</b></span>" ) );
+        m.setFinished(source.contains("<b>Completed</b></span>"));
         // Chapter
-        Pattern p = Pattern.compile( "<a class=\"download-link\" href=\"(.+?)\">(.+?)</a>" );
-        Matcher matcher = p.matcher( source );
+        Pattern p = Pattern.compile("<a class=\"download-link\" href=\"(.+?)\">(.+?)</a>");
+        Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
-        while ( matcher.find() ) {
-            chapters.add( 0, new Chapter( matcher.group( 2 ).replaceAll( "<.+?>", "" ),
-                    "http://starkana.com" + matcher.group( 1 ) ) );
+        while (matcher.find()) {
+            chapters.add(0, new Chapter(matcher.group(2).replaceAll("<.+?>", ""),
+                    "http://starkana.com" + matcher.group(1)));
         }
-        m.setChapters( chapters );
+        m.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber( Chapter c, int page ) {
+    public String getPagesNumber(Chapter c, int page) {
         return c.getPath() + "/" + page;
     }
 
     @Override
-    public String getImageFrom( Chapter c, int page ) throws Exception {
-        if ( c.getExtra() == null ) setExtra( c );
-        String[] imagenes = c.getExtra().split( "\\|" );
+    public String getImageFrom(Chapter c, int page) throws Exception {
+        if (c.getExtra() == null) setExtra(c);
+        String[] imagenes = c.getExtra().split("\\|");
         return imagenes[page];
     }
 
-    public void setExtra( Chapter c ) throws Exception {
-        String source = new Navegador().get( c.getPath() + "?scroll" );
-        Pattern p = Pattern.compile( "<img src=\"([^\"]+)\" alt=\"[^\"]*\" class=\"dyn\">" );
-        Matcher m = p.matcher( source );
+    public void setExtra(Chapter c) throws Exception {
+        String source = new Navegador().get(c.getPath() + "?scroll");
+        Pattern p = Pattern.compile("<img src=\"([^\"]+)\" alt=\"[^\"]*\" class=\"dyn\">");
+        Matcher m = p.matcher(source);
         String imagenes = "";
-        while ( m.find() ) {
-            imagenes = imagenes + "|" + m.group( 1 );
+        while (m.find()) {
+            imagenes = imagenes + "|" + m.group(1);
         }
-        c.setExtra( imagenes );
+        c.setExtra(imagenes);
     }
 
     @Override
-    public void chapterInit( Chapter c ) throws Exception {
-        String source = new Navegador().get( c.getPath() );
-        c.setPages( Integer.parseInt( getFirstMatch( "of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas" ) ) );
+    public void chapterInit(Chapter c) throws Exception {
+        String source = new Navegador().get(c.getPath());
+        c.setPages(Integer.parseInt(getFirstMatch("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered( int categorie, int order, int pageNumber ) throws Exception {
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         int paginaLoc = pageNumber - 1;
         ArrayList<Manga> mangas = null;
         String web = "";
-        if ( categorie == 0 && paginaLoc < paginas.length ) {
+        if (categorie == 0 && paginaLoc < paginas.length) {
             web = paginas[paginaLoc];
-        } else if ( paginaLoc < 1 ) {
+        } else if (paginaLoc < 1) {
             web = "/manga/search?" + generosV[categorie];
         }
-        if ( web.length() > 2 ) {
+        if (web.length() > 2) {
 
-            String source = new Navegador().get( "http://starkana.com" + web );
-            mangas = getMangasFromSource( source );
+            String source = new Navegador().get("http://starkana.com" + web);
+            mangas = getMangasFromSource(source);
         }
         return mangas;
     }
 
-    ArrayList<Manga> getMangasFromSource( String source ) {
+    ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile( "title=\"([^\"]+)\" href=\"(/manga/.+?)\".+?src=\"(.+?)\".+?tick_(.+?)\\." );// "<img class=\"a_img\" src=\"(.+?)\".+?<img src=\"http://starkana.com/img/icons/tick_(.+?).png\".+?href=\"(.+?)\".+?>(.+?)</a>");
-        Matcher m = p.matcher( source );
-        while ( m.find() ) {
+        Pattern p = Pattern.compile("title=\"([^\"]+)\" href=\"(/manga/.+?)\".+?src=\"(.+?)\".+?tick_(.+?)\\.");// "<img class=\"a_img\" src=\"(.+?)\".+?<img src=\"http://starkana.com/img/icons/tick_(.+?).png\".+?href=\"(.+?)\".+?>(.+?)</a>");
+        Matcher m = p.matcher(source);
+        while (m.find()) {
             Manga manga;
-            String title = m.group( 1 ).replaceAll( "<.+?>", "" );
-            if ( m.group( 4 ).length() == 4 ) {
-                manga = new Manga( STARKANACOM, title,
-                        "http://starkana.com" + m.group( 2 ), false );
+            String title = m.group(1).replaceAll("<.+?>", "");
+            if (m.group(4).length() == 4) {
+                manga = new Manga(STARKANACOM, title,
+                        "http://starkana.com" + m.group(2), false);
             } else {
-                manga = new Manga( STARKANACOM, title,
-                        "http://starkana.com" + m.group( 2 ), true );
+                manga = new Manga(STARKANACOM, title,
+                        "http://starkana.com" + m.group(2), true);
             }
-            manga.setImages( m.group( 3 ).replace( "small_", "default_" ) );
-            mangas.add( manga );
+            manga.setImages(m.group(3).replace("small_", "default_"));
+            mangas.add(manga);
         }
         return mangas;
     }

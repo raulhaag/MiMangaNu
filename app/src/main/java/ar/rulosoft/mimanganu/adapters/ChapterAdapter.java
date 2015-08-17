@@ -177,6 +177,14 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         return selected;
     }
 
+    public Chapter[] getSelectedChapters() {
+        Chapter[] chapters = new Chapter[selected.size()];
+        for (int j = 0; j < selected.size(); j++) {
+            chapters[j] = getItem(selected.keyAt(j));
+        }
+        return chapters;
+    }
+
     public static class ViewHolder {
         private TextView textViewName;
         private TextView textViewStatus;

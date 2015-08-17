@@ -33,9 +33,9 @@ public abstract class ServerBase {
     private int flag;
     private int serverID;
 
-    public static ServerBase getServer( int id ) {
+    public static ServerBase getServer(int id) {
         ServerBase s = null;
-        switch ( id ) {
+        switch (id) {
             case MANGAPANDA:
                 s = new MangaPanda();
                 break;
@@ -87,22 +87,22 @@ public abstract class ServerBase {
     // server
     public abstract ArrayList<Manga> getMangas() throws Exception;
 
-    public abstract ArrayList<Manga> search( String term ) throws Exception;
+    public abstract ArrayList<Manga> search(String term) throws Exception;
 
     // chapter
-    public abstract void loadChapters( Manga m, boolean forceReload ) throws Exception;
+    public abstract void loadChapters(Manga m, boolean forceReload) throws Exception;
 
-    public abstract void loadMangaInformation( Manga m, boolean forceReload ) throws Exception;
+    public abstract void loadMangaInformation(Manga m, boolean forceReload) throws Exception;
 
     // manga
-    public abstract String getPagesNumber( Chapter c, int page );
+    public abstract String getPagesNumber(Chapter c, int page);
 
-    public abstract String getImageFrom( Chapter c, int page ) throws Exception;
+    public abstract String getImageFrom(Chapter c, int page) throws Exception;
 
-    public abstract void chapterInit( Chapter c ) throws Exception;
+    public abstract void chapterInit(Chapter c) throws Exception;
 
     // server visual
-    public abstract ArrayList<Manga> getMangasFiltered( int categorie, int order, int pageNumber ) throws Exception;
+    public abstract ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception;
 
     public abstract String[] getCategories();
 
@@ -112,97 +112,97 @@ public abstract class ServerBase {
 
     // public abstract boolean supportStatus();
 
-    public int searchForNewChapters( int id, Context context ) throws Exception {
+    public int searchForNewChapters(int id, Context context) throws Exception {
         int returnValue = 0;
-        Manga mangaDb = Database.getFullManga( context, id );
+        Manga mangaDb = Database.getFullManga(context, id);
         Manga manga =
-                new Manga( mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false );
-        manga.setId( mangaDb.getId() );
-        this.loadMangaInformation( manga, true );
-        this.loadChapters( manga, false );
+                new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
+        manga.setId(mangaDb.getId());
+        this.loadMangaInformation(manga, true);
+        this.loadChapters(manga, false);
         int diff = manga.getChapters().size() - mangaDb.getChapters().size();
-        if ( diff > 0 ) {
+        if (diff > 0) {
             ArrayList<Chapter> simpleList = new ArrayList<>();
-            if ( manga.getChapters().size() < diff ) {
-                simpleList.addAll( manga.getChapters().subList( 0, diff ) );
-                simpleList.addAll( manga.getChapters().subList(
+            if (manga.getChapters().size() < diff) {
+                simpleList.addAll(manga.getChapters().subList(0, diff));
+                simpleList.addAll(manga.getChapters().subList(
                         manga.getChapters().size() -
-                        diff, manga.getChapters().size() ) );
+                                diff, manga.getChapters().size()));
                 ArrayList<Chapter> simpleListC = new ArrayList<>();
-                simpleListC.addAll( mangaDb.getChapters().subList( 0, diff ) );
-                simpleListC.addAll( mangaDb.getChapters().subList(
+                simpleListC.addAll(mangaDb.getChapters().subList(0, diff));
+                simpleListC.addAll(mangaDb.getChapters().subList(
                         mangaDb.getChapters().size() -
-                        diff, mangaDb.getChapters().size() ) );
-                for ( Chapter c : simpleListC ) {
-                    for ( Chapter csl : simpleList ) {
-                        if ( c.getPath().equalsIgnoreCase( csl.getPath() ) ) {
-                            simpleList.remove( csl );
+                                diff, mangaDb.getChapters().size()));
+                for (Chapter c : simpleListC) {
+                    for (Chapter csl : simpleList) {
+                        if (c.getPath().equalsIgnoreCase(csl.getPath())) {
+                            simpleList.remove(csl);
                             break;
                         }
                     }
                 }
             }
-            if ( simpleList.size() == 1 ) {
-                Chapter c = simpleList.get( 0 );
-                for ( Chapter cap : manga.getChapters() ) {
-                    if ( cap.getPath().equalsIgnoreCase( c.getPath() ) ) {
-                        simpleList.remove( 0 );
+            if (simpleList.size() == 1) {
+                Chapter c = simpleList.get(0);
+                for (Chapter cap : manga.getChapters()) {
+                    if (cap.getPath().equalsIgnoreCase(c.getPath())) {
+                        simpleList.remove(0);
                         break;
                     }
                 }
             }
 
-            if ( !( simpleList.size() >= diff ) ) {
+            if (!(simpleList.size() >= diff)) {
                 simpleList = new ArrayList<>();
-                for ( Chapter c : manga.getChapters() ) {
+                for (Chapter c : manga.getChapters()) {
                     boolean masUno = true;
-                    for ( Chapter csl : mangaDb.getChapters() ) {
-                        if ( c.getPath().equalsIgnoreCase( csl.getPath() ) ) {
-                            mangaDb.getChapters().remove( csl );
+                    for (Chapter csl : mangaDb.getChapters()) {
+                        if (c.getPath().equalsIgnoreCase(csl.getPath())) {
+                            mangaDb.getChapters().remove(csl);
                             masUno = false;
                             break;
                         }
                     }
-                    if ( masUno ) {
-                        simpleList.add( c );
+                    if (masUno) {
+                        simpleList.add(c);
                     }
                 }
                 // simpleList = manga.getChapters();
             }
-            for ( Chapter c : simpleList ) {
-                c.setMangaID( mangaDb.getId() );
-                c.setReadStatus( Chapter.NEW );
-                Database.addChapter( context, c, mangaDb.getId() );
+            for (Chapter c : simpleList) {
+                c.setMangaID(mangaDb.getId());
+                c.setReadStatus(Chapter.NEW);
+                Database.addChapter(context, c, mangaDb.getId());
             }
 
-            if ( simpleList.size() > 0 ) {
-                Database.updateMangaRead( context, mangaDb.getId() );
-                Database.updateNewMangas( context, mangaDb, diff );
+            if (simpleList.size() > 0) {
+                Database.updateMangaRead(context, mangaDb.getId());
+                Database.updateNewMangas(context, mangaDb, diff);
             }
 
             returnValue = simpleList.size();
         }
 
         boolean cambios = false;
-        if ( !mangaDb.getAuthor().equals( manga.getAuthor() ) &&
-             manga.getAuthor().length() > 2 ) {
-            mangaDb.setAuthor( manga.getAuthor() );
+        if (!mangaDb.getAuthor().equals(manga.getAuthor()) &&
+                manga.getAuthor().length() > 2) {
+            mangaDb.setAuthor(manga.getAuthor());
             cambios = true;
         }
 
-        if ( !mangaDb.getImages().equals( manga.getImages() ) &&
-             manga.getImages().length() > 2 ) {
-            mangaDb.setImages( manga.getImages() );
+        if (!mangaDb.getImages().equals(manga.getImages()) &&
+                manga.getImages().length() > 2) {
+            mangaDb.setImages(manga.getImages());
             cambios = true;
         }
 
-        if ( !mangaDb.getSynopsis().equals( manga.getSynopsis() ) &&
-             manga.getSynopsis().length() > 2 ) {
-            mangaDb.setSinopsis( manga.getSynopsis() );
+        if (!mangaDb.getSynopsis().equals(manga.getSynopsis()) &&
+                manga.getSynopsis().length() > 2) {
+            mangaDb.setSinopsis(manga.getSynopsis());
             cambios = true;
         }
 
-        if ( cambios ) Database.updateMangaNotime( context, mangaDb );
+        if (cambios) Database.updateMangaNotime(context, mangaDb);
 
         return returnValue;
     }
@@ -211,7 +211,7 @@ public abstract class ServerBase {
         return icon;
     }
 
-    public void setIcon( int icon ) {
+    public void setIcon(int icon) {
         this.icon = icon;
     }
 
@@ -219,7 +219,7 @@ public abstract class ServerBase {
         return flag;
     }
 
-    public void setFlag( int flag ) {
+    public void setFlag(int flag) {
         this.flag = flag;
     }
 
@@ -227,7 +227,7 @@ public abstract class ServerBase {
         return serverID;
     }
 
-    public void setServerID( int serverID ) {
+    public void setServerID(int serverID) {
         this.serverID = serverID;
     }
 
@@ -235,24 +235,24 @@ public abstract class ServerBase {
         return serverName;
     }
 
-    public void setServerName( String serverName ) {
+    public void setServerName(String serverName) {
         this.serverName = serverName;
     }
 
-    public String getFirstMatch( String patron, String source, String errorMsj ) throws Exception {
-        Pattern p = Pattern.compile( patron );
-        Matcher m = p.matcher( source );
-        if ( m.find() ) {
-            return m.group( 1 );
+    public String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
+        Pattern p = Pattern.compile(patron);
+        Matcher m = p.matcher(source);
+        if (m.find()) {
+            return m.group(1);
         }
-        throw new Exception( errorMsj );
+        throw new Exception(errorMsj);
     }
 
-    public String getFirstMatchDefault( String patron, String source, String mDefault ) throws Exception {
-        Pattern p = Pattern.compile( patron );
-        Matcher m = p.matcher( source );
-        if ( m.find() ) {
-            return m.group( 1 );
+    public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {
+        Pattern p = Pattern.compile(patron);
+        Matcher m = p.matcher(source);
+        if (m.find()) {
+            return m.group(1);
         } else {
             return mDefault;
         }
@@ -264,7 +264,7 @@ public abstract class ServerBase {
 
     Navegador getNavWithHeader() {
         Navegador nav = new Navegador();
-        nav.addHeader( "User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)" );
+        nav.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         return nav;
     }
 

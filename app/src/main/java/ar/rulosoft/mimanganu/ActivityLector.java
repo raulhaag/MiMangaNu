@@ -62,20 +62,18 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition
 public class ActivityLector extends ActionBarActivity implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
     // These are magic numbers
-    public static final String KEEP_SCREEN_ON = "keep_on";
+    public static final String KEEP_SCREEN_ON = "keep_screen_on";
     public static final String ORIENTATION = "orientation";
     public static final String AJUSTE_KEY = "ajustar_a";
     public static final String MAX_TEXTURE = "max_texture";
-
-    // These are values, which should be fetched from preference
-    SharedPreferences pm;
-    boolean val_KeepOn; // false = normal  | true = screen on
-    int val_orientation; // 0 = free | 1 = landscape | 2 = portrait
     static int val_textureMax;
     static DisplayType val_screenFit;
     public Direction direction;
     public InitialPosition iniPosition = InitialPosition.LEFT_UP;
-
+    // These are values, which should be fetched from preference
+    SharedPreferences pm;
+    boolean val_KeepOn; // false = normal  | true = screen on
+    int val_orientation; // 0 = free | 1 = landscape | 2 = portrait
     // These are layout components
     SectionsPagerAdapter mSectionsPagerAdapter;
     UnScrolledViewPager mViewPager;
@@ -93,172 +91,167 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     int[] thmColors;
 
     @Override
-    protected void onCreate( Bundle savedInstanceState ) {
-        super.onCreate( savedInstanceState );
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         pm =
-                PreferenceManager.getDefaultSharedPreferences( getApplicationContext() );
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
         thmColors =
-                ThemeColors.getColors( PreferenceManager.getDefaultSharedPreferences( getApplicationContext() ), getApplicationContext() );
+                ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         /**
          * The values are here to set, if no settings should be stored,
          * then take the provided standard value
          */
         val_screenFit =
-                DisplayType.valueOf( pm.getString( AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString() ) );
+                DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
         val_textureMax =
-                Integer.parseInt( pm.getString( MAX_TEXTURE, "2048" ) );
+                Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
 
-        val_KeepOn = pm.getBoolean( KEEP_SCREEN_ON, false );
-        val_orientation = pm.getInt( ORIENTATION, 0 );
+        val_KeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
+        val_orientation = pm.getInt(ORIENTATION, 0);
 
         chapter =
-                Database.getChapter( this, getIntent().getExtras().getInt( ActivityManga.CAPITULO_ID ) );
-        manga = Database.getFullManga( this, chapter.getMangaID() );
+                Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
+        manga = Database.getFullManga(this, chapter.getMangaID());
 
-        if ( manga.getReadingDirection() != -1 )
+        if (manga.getReadingDirection() != -1)
             direction = Direction.values()[manga.getReadingDirection()];
         else direction =
-                Direction.values()[Integer.parseInt( pm.getString( ActivityManga.DIRECCION,
-                        "" + Direction.R2L.ordinal() ) )];
-        getWindow().setFlags( WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN );
+                Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION,
+                        "" + Direction.R2L.ordinal()))];
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
 
             @Override
-            public void onPageSelected( int arg0 ) {
+            public void onPageSelected(int arg0) {
 
-                if ( anterior < arg0 ) {
+                if (anterior < arg0) {
                     iniPosition = InitialPosition.LEFT_UP;
-                }
-                else {
+                } else {
                     iniPosition = InitialPosition.LEFT_BOTTOM;
                 }
 
                 anterior = arg0;
-                if ( direction == Direction.R2L ||
-                     direction == Direction.VERTICAL )
-                    if ( arg0 < chapter.getPages() ) {
-                        chapter.setPagesRead( arg0 + 1 );
+                if (direction == Direction.R2L ||
+                        direction == Direction.VERTICAL)
+                    if (arg0 < chapter.getPages()) {
+                        chapter.setPagesRead(arg0 + 1);
                     }
                     else {
-                        chapter.setPagesRead( arg0 );
+                        chapter.setPagesRead(arg0);
                     }
                 else {
-                    chapter.setPagesRead( chapter.getPages() - arg0 + 1 );
+                    chapter.setPagesRead(chapter.getPages() - arg0 + 1);
                 }
 
-                if ( direction == Direction.R2L ||
-                     direction == Direction.VERTICAL ) {
-                    seekBar.setProgress( arg0 );
-                }
-                else {
-                    seekBar.setProgress( chapter.getPages() - arg0 );
+                if (direction == Direction.R2L ||
+                        direction == Direction.VERTICAL) {
+                    seekBar.setProgress(arg0);
+                } else {
+                    seekBar.setProgress(chapter.getPages() - arg0);
                 }
 
-                if ( arg0 >= chapter.getPages() - 1 ) {
-                    chapter.setReadStatus( Chapter.READ );
-                    Database.updateChapter( ActivityLector.this, chapter );
-                }
-                else if ( chapter.getReadStatus() == Chapter.READ ) {
-                    chapter.setReadStatus( Chapter.READING );
-                    Database.updateChapter( ActivityLector.this, chapter );
+                if (arg0 >= chapter.getPages() - 1) {
+                    chapter.setReadStatus(Chapter.READ);
+                    Database.updateChapter(ActivityLector.this, chapter);
+                } else if (chapter.getReadStatus() == Chapter.READ) {
+                    chapter.setReadStatus(Chapter.READING);
+                    Database.updateChapter(ActivityLector.this, chapter);
                 }
             }
 
             @Override
-            public void onPageScrolled( int arg0, float arg1, int arg2 ) {
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
             }
 
             @Override
-            public void onPageScrollStateChanged( int arg0 ) {
+            public void onPageScrollStateChanged(int arg0) {
             }
         };
 
-        if ( direction == Direction.VERTICAL ) {
-            setContentView( R.layout.activity_lector_v );
+        if (direction == Direction.VERTICAL) {
+            setContentView(R.layout.activity_lector_v);
             mViewPagerV =
-                    (UnScrolledViewPagerVertical) findViewById( R.id.pager );
-            mViewPagerV.setOnPageChangeListener( pageChangeListener );
-        }
-        else {
-            setContentView( R.layout.activity_lector );
-            mViewPager = (UnScrolledViewPager) findViewById( R.id.pager );
-            mViewPager.setOnPageChangeListener( pageChangeListener );
+                    (UnScrolledViewPagerVertical) findViewById(R.id.pager);
+            mViewPagerV.setOnPageChangeListener(pageChangeListener);
+        } else {
+            setContentView(R.layout.activity_lector);
+            mViewPager = (UnScrolledViewPager) findViewById(R.id.pager);
+            mViewPager.setOnPageChangeListener(pageChangeListener);
         }
 
-        s = ServerBase.getServer( manga.getServerId() );
-        if ( DownloadPoolService.actual != null )
-            DownloadPoolService.actual.setDownloadListener( this );
+        s = ServerBase.getServer(manga.getServerId());
+        if (DownloadPoolService.actual != null)
+            DownloadPoolService.actual.setDownloadListener(this);
         ultimaPaginaFragment = new UltimaPaginaFragment();
 
-        actionToolbar = (Toolbar) findViewById( R.id.action_bar );
-        actionToolbar.setTitle( chapter.getTitle() );
-        actionToolbar.setTitleTextColor( Color.WHITE );
-        actionToolbar.setAlpha( 0 );
-        actionToolbar.setVisibility( View.GONE );
+        actionToolbar = (Toolbar) findViewById(R.id.action_bar);
+        actionToolbar.setTitle(chapter.getTitle());
+        actionToolbar.setTitleTextColor(Color.WHITE);
+        actionToolbar.setAlpha(0);
+        actionToolbar.setVisibility(View.GONE);
 
-        seeker_Layout = (LinearLayout) findViewById( R.id.seeker_layout );
-        seeker_Layout.setAlpha( 0f );
-        seeker_Layout.setVisibility( View.GONE );
+        seeker_Layout = (LinearLayout) findViewById(R.id.seeker_layout);
+        seeker_Layout.setAlpha(0f);
+        seeker_Layout.setVisibility(View.GONE);
 
-        seekerPage = (TextView) findViewById( R.id.page );
-        seekerPage.setTextColor( Color.WHITE );
+        seekerPage = (TextView) findViewById(R.id.page);
+        seekerPage.setTextColor(Color.WHITE);
 
-        seekBar = (SeekBar) findViewById( R.id.seeker );
-        seekBar.setOnSeekBarChangeListener( this );
-        seekBar.setMax( chapter.getPages() );
-        if ( direction == Direction.L2R ) seekBar.setRotation( 180 );
+        seekBar = (SeekBar) findViewById(R.id.seeker);
+        seekBar.setOnSeekBarChangeListener(this);
+        seekBar.setMax(chapter.getPages());
+        if (direction == Direction.L2R) seekBar.setRotation(180);
 
-        if ( Build.VERSION.SDK_INT <
-             android.os.Build.VERSION_CODES.JELLY_BEAN ) {
-            actionToolbar.setBackgroundDrawable( new ColorDrawable( thmColors[0] ) );
-            seeker_Layout.setBackgroundDrawable( new ColorDrawable( thmColors[0] ) );
-            seekerPage.setBackgroundDrawable( new ColorDrawable( thmColors[0] ) );
-            seekBar.setBackgroundDrawable( new ColorDrawable( thmColors[0] ) );
+        if (Build.VERSION.SDK_INT <
+                android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            actionToolbar.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+            seeker_Layout.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+            seekerPage.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+            seekBar.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+        } else {
+            actionToolbar.setBackground(new ColorDrawable(thmColors[0]));
+            seeker_Layout.setBackground(new ColorDrawable(thmColors[0]));
+            seekerPage.setBackground(new ColorDrawable(thmColors[0]));
+            seekBar.setBackground(new ColorDrawable(thmColors[0]));
         }
-        else {
-            actionToolbar.setBackground( new ColorDrawable( thmColors[0] ) );
-            seeker_Layout.setBackground( new ColorDrawable( thmColors[0] ) );
-            seekerPage.setBackground( new ColorDrawable( thmColors[0] ) );
-            seekBar.setBackground( new ColorDrawable( thmColors[0] ) );
-        }
-        chapter.setReadStatus( Chapter.READING );
-        Database.updateChapter( ActivityLector.this, chapter );
-        setSupportActionBar( actionToolbar );
+        chapter.setReadStatus(Chapter.READING);
+        Database.updateChapter(ActivityLector.this, chapter);
+        setSupportActionBar(actionToolbar);
     }
 
     @Override
     public void onBackPressed() {
-        if ( !controlVisible ) super.onBackPressed();
+        if (!controlVisible) super.onBackPressed();
         else onCenterTap();
     }
 
-    public void actualizarIcono( DisplayType displayType, boolean showMsg ) {
-        if ( displayMenu != null ) {
+    public void actualizarIcono(DisplayType displayType, boolean showMsg) {
+        if (displayMenu != null) {
             String msg = "";
-            switch ( displayType ) {
+            switch (displayType) {
                 case NONE:
-                    displayMenu.setIcon( R.drawable.ic_action_original );
-                    msg = getString( R.string.no_scale );
+                    displayMenu.setIcon(R.drawable.ic_action_original);
+                    msg = getString(R.string.no_scale);
                     break;
                 case FIT_TO_HEIGHT:
-                    displayMenu.setIcon( R.drawable.ic_action_ajustar_alto );
-                    msg = getString( R.string.ajuste_alto );
+                    displayMenu.setIcon(R.drawable.ic_action_ajustar_alto);
+                    msg = getString(R.string.ajuste_alto);
                     break;
                 case FIT_TO_WIDTH:
-                    displayMenu.setIcon( R.drawable.ic_action_ajustar_ancho );
-                    msg = getString( R.string.ajuste_ancho );
+                    displayMenu.setIcon(R.drawable.ic_action_ajustar_ancho);
+                    msg = getString(R.string.ajuste_ancho);
                     break;
                 case FIT_TO_SCREEN:
-                    displayMenu.setIcon( R.drawable.ic_action_ajustar_diagonal );
-                    msg = getString( R.string.mejor_ajuste );
+                    displayMenu.setIcon(R.drawable.ic_action_ajustar_diagonal);
+                    msg = getString(R.string.mejor_ajuste);
                     break;
                 default:
                     break;
             }
-            if ( showMsg )
-                Toast.makeText( getApplicationContext(), msg, Toast.LENGTH_SHORT ).show();
+            if (showMsg)
+                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -266,268 +259,266 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     @Override
     protected void onResume() {
         mSectionsPagerAdapter =
-                new SectionsPagerAdapter( getSupportFragmentManager() );
-        if ( direction == Direction.VERTICAL )
-            mViewPagerV.setAdapter( mSectionsPagerAdapter );
-        else mViewPager.setAdapter( mSectionsPagerAdapter );
+                new SectionsPagerAdapter(getSupportFragmentManager());
+        if (direction == Direction.VERTICAL)
+            mViewPagerV.setAdapter(mSectionsPagerAdapter);
+        else mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        if ( chapter.getPagesRead() > 1 ) {
-            if ( direction == Direction.R2L )
-                mViewPager.setCurrentItem( chapter.getPagesRead() - 1 );
-            else if ( direction == Direction.VERTICAL )
-                mViewPagerV.setCurrentItem( chapter.getPagesRead() - 1 );
+        if (chapter.getPagesRead() > 1) {
+            if (direction == Direction.R2L)
+                mViewPager.setCurrentItem(chapter.getPagesRead() - 1);
+            else if (direction == Direction.VERTICAL)
+                mViewPagerV.setCurrentItem(chapter.getPagesRead() - 1);
             else mViewPager.setCurrentItem(
-                        chapter.getPages() - chapter.getPagesRead() + 1 );
+                        chapter.getPages() - chapter.getPagesRead() + 1);
+        } else {
+            if (direction == Direction.L2R)
+                mViewPager.setCurrentItem(chapter.getPages() + 1);
         }
-        else {
-            if ( direction == Direction.L2R )
-                mViewPager.setCurrentItem( chapter.getPages() + 1 );
-        }
-        DownloadPoolService.attachListener( this, chapter.getId() );
+        DownloadPoolService.attachListener(this, chapter.getId());
         super.onResume();
     }
 
-    public void setAdapter( SectionsPagerAdapter adapter ) {
-        if ( direction == Direction.VERTICAL )
-            mViewPagerV.setAdapter( adapter );
-        else mViewPager.setAdapter( adapter );
+    public void setAdapter(SectionsPagerAdapter adapter) {
+        if (direction == Direction.VERTICAL)
+            mViewPagerV.setAdapter(adapter);
+        else mViewPager.setAdapter(adapter);
     }
 
     public int getCurrentItem() {
-        if ( direction == Direction.VERTICAL )
+        if (direction == Direction.VERTICAL)
             return mViewPagerV.getCurrentItem();
         else return mViewPager.getCurrentItem();
     }
 
-    public void setCurrentItem( int pos ) {
-        if ( direction == Direction.VERTICAL )
-            mViewPagerV.setCurrentItem( pos );
-        else mViewPager.setCurrentItem( pos );
+    public void setCurrentItem(int pos) {
+        if (direction == Direction.VERTICAL)
+            mViewPagerV.setCurrentItem(pos);
+        else mViewPager.setCurrentItem(pos);
     }
 
     @Override
-    protected void onSaveInstanceState( Bundle outState ) {
+    protected void onSaveInstanceState(Bundle outState) {
         // super.onSaveInstanceState(outState);
-        Database.UpdateChapterPage( ActivityLector.this, chapter.getId(), chapter.getPagesRead() );
+        Database.UpdateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
     }
 
     @Override
     protected void onPause() {
-        Database.UpdateChapterPage( ActivityLector.this, chapter.getId(), chapter.getPagesRead() );
-        DownloadPoolService.detachListener( chapter.getId() );
+        Database.UpdateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
+        DownloadPoolService.detachListener(chapter.getId());
         super.onPause();
     }
 
     @Override
-    public boolean onCreateOptionsMenu( Menu menu ) {
-        getMenuInflater().inflate( R.menu.activity_lector, menu );
-        displayMenu = menu.findItem( R.id.action_ajustar );
-        keepOnMenuItem = menu.findItem( R.id.action_keep_screen_on );
-        screenRotationMenuItem = menu.findItem( R.id.action_orientation );
-        if ( val_KeepOn ) {
-            keepOnMenuItem.setIcon( R.drawable.ic_action_mantain_screen_on );
-            getWindow().addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_lector, menu);
+        displayMenu = menu.findItem(R.id.action_ajustar);
+        keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
+        screenRotationMenuItem = menu.findItem(R.id.action_orientation);
+        if (val_KeepOn) {
+            keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        if ( val_orientation == 1 ) {
-            ActivityLector.this.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE );
-            screenRotationMenuItem.setIcon( R.drawable.ic_action_screen_landscape );
+        if (val_orientation == 1) {
+            ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
+        } else if (val_orientation == 2) {
+            ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
         }
-        else if ( val_orientation == 2 ) {
-            ActivityLector.this.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
-            screenRotationMenuItem.setIcon( R.drawable.ic_action_screen_portrait );
-        }
-        actualizarIcono( val_screenFit, false );
+        actualizarIcono(val_screenFit, false);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected( MenuItem item ) {
-        switch ( item.getItemId() ) {
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.action_ajustar: {
                 val_screenFit = val_screenFit.getNext();
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putString( AJUSTE_KEY, val_screenFit.toString() );
+                editor.putString(AJUSTE_KEY, val_screenFit.toString());
                 editor.commit();
                 mSectionsPagerAdapter.actualizarDisplayTipe();
-                actualizarIcono( val_screenFit, true );
+                actualizarIcono(val_screenFit, true);
                 return true;
             }
             case R.id.action_keep_screen_on: {
-                if ( !val_KeepOn ) {
-                    keepOnMenuItem.setIcon( R.drawable.ic_action_mantain_screen_on );
-                    getWindow().addFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
-                    Toast.makeText( getApplicationContext(), getString( R.string.stay_awake_on ), Toast.LENGTH_SHORT ).show();
-                }
-                else {
-                    keepOnMenuItem.setIcon( R.drawable.ic_action_mantain_screen_off );
-                    getWindow().clearFlags( WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON );
-                    Toast.makeText( getApplicationContext(), getString( R.string.stay_awake_off ), Toast.LENGTH_SHORT ).show();
+                if (!val_KeepOn) {
+                    keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on), Toast.LENGTH_SHORT).show();
+                } else {
+                    keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off), Toast.LENGTH_SHORT).show();
                 }
                 val_KeepOn = !val_KeepOn;
 
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putBoolean( KEEP_SCREEN_ON, val_KeepOn );
+                editor.putBoolean(KEEP_SCREEN_ON, val_KeepOn);
                 editor.commit();
                 return true;
             }
             case R.id.action_orientation: {
-                if ( val_orientation == 0 ) {
+                if (val_orientation == 0) {
                     val_orientation = 1;
-                    ActivityLector.this.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE );
-                    screenRotationMenuItem.setIcon( R.drawable.ic_action_screen_landscape );
-                    Toast.makeText( getApplicationContext(), getString( R.string.lock_on_landscape ), Toast.LENGTH_SHORT ).show();
-                }
-                else if ( val_orientation == 1 ) {
+                    ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
+                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_landscape), Toast.LENGTH_SHORT).show();
+                } else if (val_orientation == 1) {
                     val_orientation = 2;
-                    ActivityLector.this.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
-                    screenRotationMenuItem.setIcon( R.drawable.ic_action_screen_portrait );
-                    Toast.makeText( getApplicationContext(), getString( R.string.lock_on_portrait ), Toast.LENGTH_SHORT ).show();
-                }
-                else if ( val_orientation == 2 ) {
+                    ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
+                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_portrait), Toast.LENGTH_SHORT).show();
+                } else if (val_orientation == 2) {
                     val_orientation = 0;
-                    ActivityLector.this.setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED );
-                    screenRotationMenuItem.setIcon( R.drawable.ic_action_screen_free );
-                    Toast.makeText( getApplicationContext(), getString( R.string.rotation_no_locked ), Toast.LENGTH_SHORT ).show();
+                    ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                    screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
+                    Toast.makeText(getApplicationContext(), getString(R.string.rotation_no_locked), Toast.LENGTH_SHORT).show();
                 }
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putInt( ORIENTATION, val_orientation );
+                editor.putInt(ORIENTATION, val_orientation);
                 editor.commit();
             }
         }
 
-        return super.onOptionsItemSelected( item );
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
-    public void onImagenDescargada( final int cid, final int pagina ) {
-        runOnUiThread( new Runnable() {
+    public void onImagenDescargada(final int cid, final int pagina) {
+        runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Fragment fragment =
-                        mSectionsPagerAdapter.getIfOnMemory( pagina );
-                if ( fragment != null &&
-                     !( (PlaceholderFragment) fragment ).imageLoaded ) {
-                    ( (PlaceholderFragment) fragment ).setImagen();
+                        mSectionsPagerAdapter.getIfOnMemory(pagina);
+                if (fragment != null &&
+                        !((PlaceholderFragment) fragment).imageLoaded) {
+                    ((PlaceholderFragment) fragment).setImagen();
                 }
             }
-        } );
+        });
     }
 
     @Override
-    public void onProgressChanged( SeekBar seekBar, int progress, boolean fromUser ) {
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         // This is happening, if you swipe left and right on the bar
-        if ( seekerPage != null ) seekerPage.setText( "" + ( progress + 1 ) );
+        if (seekerPage != null) seekerPage.setText("" + (progress + 1));
     }
 
     @Override
-    public void onStartTrackingTouch( SeekBar seekBar ) {
+    public void onStartTrackingTouch(SeekBar seekBar) {
         // This is happening, if you touch on the bar (no swipe)
-        seekerPage.setText( "" + ( seekBar.getProgress() + 1 ) );
-        seekerPage.setVisibility( SeekBar.VISIBLE );
+        seekerPage.setText("" + (seekBar.getProgress() + 1));
+        seekerPage.setVisibility(SeekBar.VISIBLE);
     }
 
     @Override
-    public void onStopTrackingTouch( SeekBar seekBar ) {
+    public void onStopTrackingTouch(SeekBar seekBar) {
         // This is happening, if you lift your finger off the bar
-        seekerPage.setVisibility( SeekBar.INVISIBLE );
-        if ( direction == Direction.R2L || direction == Direction.VERTICAL )
-            setCurrentItem( seekBar.getProgress() );
-        else {
-            setCurrentItem( chapter.getPages() - seekBar.getProgress() );
+        try {
+            seekerPage.setVisibility(SeekBar.INVISIBLE);
+            if (direction == Direction.R2L || direction == Direction.VERTICAL)
+                setCurrentItem(seekBar.getProgress());
+            else {
+                setCurrentItem(chapter.getPages() - seekBar.getProgress());
+            }
+        } catch (Exception e) {
+            //sometimes get an null just in case don't stop the app
         }
     }
 
     @Override
     public void onCenterTap() {
 
-        if ( controlVisible ) {
+        if (controlVisible) {
             controlVisible = false;
             ObjectAnimator anim =
-                    ObjectAnimator.ofFloat( actionToolbar, "alpha", .90f, 0f );
-            anim.addListener( new AnimatorListener() {
+                    ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);
+            anim.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationStart( Animator animation ) {
+                public void onAnimationStart(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationRepeat( Animator animation ) {
+                public void onAnimationRepeat(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationEnd( Animator animation ) {
-                    actionToolbar.setVisibility( View.GONE );
+                public void onAnimationEnd(Animator animation) {
+                    actionToolbar.setVisibility(View.GONE);
                 }
 
                 @Override
-                public void onAnimationCancel( Animator animation ) {
+                public void onAnimationCancel(Animator animation) {
                 }
-            } );
+            });
             anim.start();
             ObjectAnimator anim2 =
-                    ObjectAnimator.ofFloat( seeker_Layout, "alpha", .90f, 0f );
-            anim2.addListener( new AnimatorListener() {
+                    ObjectAnimator.ofFloat(seeker_Layout, "alpha", .90f, 0f);
+            anim2.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationStart( Animator animation ) {
+                public void onAnimationStart(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationRepeat( Animator animation ) {
+                public void onAnimationRepeat(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationEnd( Animator animation ) {
-                    seeker_Layout.setVisibility( View.GONE );
+                public void onAnimationEnd(Animator animation) {
+                    seeker_Layout.setVisibility(View.GONE);
                 }
 
                 @Override
-                public void onAnimationCancel( Animator animation ) {
+                public void onAnimationCancel(Animator animation) {
                 }
-            } );
+            });
             anim2.start();
-        }
-        else {
+        } else {
             controlVisible = true;
             ObjectAnimator anim =
-                    ObjectAnimator.ofFloat( actionToolbar, "alpha", 0f, .90f );
-            anim.addListener( new AnimatorListener() {
+                    ObjectAnimator.ofFloat(actionToolbar, "alpha", 0f, .90f);
+            anim.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationStart( Animator animation ) {
-                    actionToolbar.setVisibility( View.VISIBLE );
+                public void onAnimationStart(Animator animation) {
+                    actionToolbar.setVisibility(View.VISIBLE);
                 }
 
                 @Override
-                public void onAnimationRepeat( Animator animation ) {
+                public void onAnimationRepeat(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationEnd( Animator animation ) {
+                public void onAnimationEnd(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationCancel( Animator animation ) {
+                public void onAnimationCancel(Animator animation) {
                 }
-            } );
+            });
             anim.start();
             ObjectAnimator anim2 =
-                    ObjectAnimator.ofFloat( seeker_Layout, "alpha", 0f, .90f );
-            anim2.addListener( new AnimatorListener() {
+                    ObjectAnimator.ofFloat(seeker_Layout, "alpha", 0f, .90f);
+            anim2.addListener(new AnimatorListener() {
                 @Override
-                public void onAnimationStart( Animator animation ) {
-                    seeker_Layout.setVisibility( View.VISIBLE );
+                public void onAnimationStart(Animator animation) {
+                    seeker_Layout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
-                public void onAnimationRepeat( Animator animation ) {
+                public void onAnimationRepeat(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationEnd( Animator animation ) {
+                public void onAnimationEnd(Animator animation) {
                 }
 
                 @Override
-                public void onAnimationCancel( Animator animation ) {
+                public void onAnimationCancel(Animator animation) {
                 }
-            } );
+            });
             anim2.start();
         }
 
@@ -536,8 +527,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     @Override
     public void onLeftTap() {
         int act = getCurrentItem();
-        if ( act > 0 ) {
-            setCurrentItem( --act );
+        if (act > 0) {
+            setCurrentItem(--act);
         }
     }
 
@@ -545,26 +536,26 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     public void onRightTap() {
         int a = mSectionsPagerAdapter.getCount();
         int act = getCurrentItem();
-        if ( act < a ) {
-            setCurrentItem( ++act );
+        if (act < a) {
+            setCurrentItem(++act);
         }
 
     }
 
     @Override
-    public void onError( final Chapter chapter ) {
-        ActivityLector.this.runOnUiThread( new Runnable() {
+    public void onError(final Chapter chapter) {
+        ActivityLector.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    new AlertDialog.Builder( ActivityLector.this ).setTitle(
+                    new AlertDialog.Builder(ActivityLector.this).setTitle(
                             chapter.getTitle() + " " +
-                            getString( R.string.error ) ).setMessage( getString( R.string.demaciados_errores ) ).setIcon( R.drawable.ic_launcher ).setNeutralButton( getString( android.R.string.ok ), null ).show();
-                } catch ( Exception e ) {
+                                    getString(R.string.error)).setMessage(getString(R.string.demaciados_errores)).setIcon(R.drawable.ic_launcher).setNeutralButton(getString(android.R.string.ok), null).show();
+                } catch (Exception e) {
                     // lost references fixed con detachListener
                 }
             }
-        } );
+        });
     }
 
     public static class PlaceholderFragment extends Fragment {
@@ -581,48 +572,46 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         public PlaceholderFragment() {
         }
 
-        public static PlaceholderFragment newInstance( String ruta, ActivityLector activity ) {
+        public static PlaceholderFragment newInstance(String ruta, ActivityLector activity) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putString( RUTA, ruta );
+            args.putString(RUTA, ruta);
             fragment.activity = activity;
-            fragment.setArguments( args );
-            fragment.setRetainInstance( false );
+            fragment.setArguments(args);
+            fragment.setRetainInstance(false);
             return fragment;
         }
 
-        public void setTapListener( TapListener nTapListener ) {
+        public void setTapListener(TapListener nTapListener) {
             mTapListener = nTapListener;
         }
 
         @Override
-        public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rootView =
-                    inflater.inflate( R.layout.fragment_activity_lector_pagina, container, false );
-            visor = (ImageViewTouch) rootView.findViewById( R.id.visor );
-            if ( r != null ) {
-                new Thread( r ).start();
-            }
-            else visor.setDisplayType( val_screenFit );
-            visor.setTapListener( mTapListener );
-            visor.setScaleEnabled( false );
-            cargando = (ProgressBar) rootView.findViewById( R.id.cargando );
+                    inflater.inflate(R.layout.fragment_activity_lector_pagina, container, false);
+            visor = (ImageViewTouch) rootView.findViewById(R.id.visor);
+            if (r != null) {
+                new Thread(r).start();
+            } else visor.setDisplayType(val_screenFit);
+            visor.setTapListener(mTapListener);
+            visor.setScaleEnabled(false);
+            cargando = (ProgressBar) rootView.findViewById(R.id.cargando);
             cargando.bringToFront();
-            if ( getArguments() != null )
-                ruta = getArguments().getString( RUTA );
+            if (getArguments() != null)
+                ruta = getArguments().getString(RUTA);
 
             return rootView;
         }
 
-        public void setDisplayType( final DisplayType displayType ) {
-            if ( visor != null ) {
-                visor.setDisplayType( displayType );
-            }
-            else {
+        public void setDisplayType(final DisplayType displayType) {
+            if (visor != null) {
+                visor.setDisplayType(displayType);
+            } else {
                 r = new Runnable() {
                     @Override
                     public void run() {
-                        visor.setDisplayType( displayType );
+                        visor.setDisplayType(displayType);
                         r = null;
                     }
                 };
@@ -631,40 +620,42 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
         @Override
         public void onResume() {
-            visor = (ImageViewTouch) getView().findViewById( R.id.visor );
-
-            if ( visor == null ) cargando.setVisibility( ProgressBar.VISIBLE );
-            else if ( ruta != null ) setImagen();
-
+            try {
+                visor = (ImageViewTouch) getView().findViewById(R.id.visor);
+            } catch (NullPointerException n) {
+                //just nothing
+            }
+            if (visor == null) cargando.setVisibility(ProgressBar.VISIBLE);
+            else if (ruta != null) setImagen();
             super.onResume();
         }
 
         @Override
         public void onPause() {
             try {
-                ( (BitmapDrawable) visor.getDrawable() ).getBitmap().recycle();
-            } catch ( Exception exception ) {
+                ((BitmapDrawable) visor.getDrawable()).getBitmap().recycle();
+            } catch (Exception exception) {
                 // Do nothing?
             }
-            visor.setImageBitmap( null );
+            visor.setImageBitmap(null);
             imageLoaded = false;
             super.onPause();
         }
 
-        public boolean canScroll( int dx ) {
-            return visor == null || visor.canScroll( dx );
+        public boolean canScroll(int dx) {
+            return visor == null || visor.canScroll(dx);
         }
 
-        public boolean canScrollV( int dx ) {
-            return visor == null || visor.canScrollV( dx );
+        public boolean canScrollV(int dx) {
+            return visor == null || visor.canScrollV(dx);
         }
 
         public void setImagen() {
-            if ( !imageLoaded && visor != null )
-                new SetImagen().executeOnExecutor( AsyncTask.THREAD_POOL_EXECUTOR );
+            if (!imageLoaded && visor != null)
+                new SetImagen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        public void setImagen( String ruta ) {
+        public void setImagen(String ruta) {
             this.ruta = ruta;
             setImagen();
         }
@@ -673,40 +664,39 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
             @Override
             protected void onPreExecute() {
-                if ( cargando != null )
-                    cargando.setVisibility( ProgressBar.VISIBLE );
+                if (cargando != null)
+                    cargando.setVisibility(ProgressBar.VISIBLE);
                 super.onPreExecute();
             }
 
             @Override
-            protected Bitmap doInBackground( Void... params ) {
+            protected Bitmap doInBackground(Void... params) {
                 Bitmap bitmap;
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inPreferredConfig = Config.RGB_565;
-                bitmap = BitmapFactory.decodeFile( ruta, opts );
+                bitmap = BitmapFactory.decodeFile(ruta, opts);
                 return bitmap;
             }
 
-            @SuppressLint( "NewApi" )
+            @SuppressLint("NewApi")
             @Override
-            protected void onPostExecute( Bitmap result ) {
-                if ( result != null ) {
+            protected void onPostExecute(Bitmap result) {
+                if (result != null) {
                     imageLoaded = true;
-                    visor.setScaleEnabled( true );
-                    if ( activity.direction == Direction.VERTICAL )
-                        visor.setInitialPosition( activity.iniPosition );
-                    else visor.setInitialPosition( InitialPosition.LEFT_UP );
-                    if ( ( result.getHeight() > val_textureMax ||
-                           result.getWidth() > val_textureMax ) &&
-                         Build.VERSION.SDK_INT >= 11 ) {
-                        visor.setLayerType( View.LAYER_TYPE_SOFTWARE, null );
+                    visor.setScaleEnabled(true);
+                    if (activity.direction == Direction.VERTICAL)
+                        visor.setInitialPosition(activity.iniPosition);
+                    else visor.setInitialPosition(InitialPosition.LEFT_UP);
+                    if ((result.getHeight() > val_textureMax ||
+                            result.getWidth() > val_textureMax) &&
+                            Build.VERSION.SDK_INT >= 11) {
+                        visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     }
-                    visor.setImageBitmap( result );
-                    cargando.setVisibility( ProgressBar.INVISIBLE );
-                }
-                else if ( ruta != null ) {
-                    File f = new File( ruta );
-                    if ( f.exists() ) {
+                    visor.setImageBitmap(result);
+                    cargando.setVisibility(ProgressBar.INVISIBLE);
+                } else if (ruta != null) {
+                    File f = new File(ruta);
+                    if (f.exists()) {
                         f.delete();
                     }
                     /*
@@ -716,7 +706,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 					 * ColaDeDescarga.iniciarCola(getActivity()); }/
 					 */
                 }
-                super.onPostExecute( result );
+                super.onPostExecute(result);
             }
 
         }
@@ -729,94 +719,91 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         ActivityLector l;
 
         @Override
-        public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState ) {
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rView =
-                    inflater.inflate( R.layout.fragment_pagina_final, container, false );
-            b1 = (Button) rView.findViewById( R.id.button1 );
-            b2 = (Button) rView.findViewById( R.id.button2 );
-            b1.setTextColor( Color.WHITE );
-            b2.setTextColor( Color.WHITE );
-            if ( Build.VERSION.SDK_INT <
-                 android.os.Build.VERSION_CODES.JELLY_BEAN ) {
-                b1.setBackgroundDrawable( new ColorDrawable( thmColors[0] ) );
-                b2.setBackgroundDrawable( new ColorDrawable( thmColors[0] ) );
-            }
-            else {
-                b1.setBackground( new ColorDrawable( thmColors[0] ) );
-                b2.setBackground( new ColorDrawable( thmColors[0] ) );
+                    inflater.inflate(R.layout.fragment_pagina_final, container, false);
+            b1 = (Button) rView.findViewById(R.id.button1);
+            b2 = (Button) rView.findViewById(R.id.button2);
+            b1.setTextColor(Color.WHITE);
+            b2.setTextColor(Color.WHITE);
+            if (Build.VERSION.SDK_INT <
+                    android.os.Build.VERSION_CODES.JELLY_BEAN) {
+                b1.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+                b2.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+            } else {
+                b1.setBackground(new ColorDrawable(thmColors[0]));
+                b2.setBackground(new ColorDrawable(thmColors[0]));
             }
 
             return rView;
         }
 
         @Override
-        public void onActivityCreated( Bundle savedInstanceState ) {
+        public void onActivityCreated(Bundle savedInstanceState) {
             l = (ActivityLector) getActivity();
             int cid = l.chapter.getId();
             ArrayList<Chapter> caps = l.manga.getChapters();
-            for ( int i = 0; i < caps.size(); i++ ) {
-                if ( caps.get( i ).getId() == cid ) {
-                    if ( i > 0 ) {
-                        c1 = caps.get( i - 1 );
+            for (int i = 0; i < caps.size(); i++) {
+                if (caps.get(i).getId() == cid) {
+                    if (i > 0) {
+                        c1 = caps.get(i - 1);
                     }
-                    if ( i < caps.size() - 1 ) {
-                        c2 = caps.get( i + 1 );
+                    if (i < caps.size() - 1) {
+                        c2 = caps.get(i + 1);
                     }
                 }
             }
 
-            if ( c1 == null ) {
-                b1.setVisibility( Button.INVISIBLE );
-                b1.setOnClickListener( null );
-            }
-            else {
-                b1.setText( getString( R.string.next ) +
-                            "\n\n" + c1.getTitle() );
-                b1.setOnClickListener( new OnClickListener() {
+            if (c1 == null) {
+                b1.setVisibility(Button.INVISIBLE);
+                b1.setOnClickListener(null);
+            } else {
+                b1.setText(getString(R.string.next) +
+                        "\n\n" + c1.getTitle());
+                b1.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick( View v ) {
-                        new GetPaginas().execute( c1 );
+                    public void onClick(View v) {
+                        new GetPaginas().execute(c1);
                     }
-                } );
+                });
             }
 
-            if ( c2 == null ) {
-                b2.setVisibility( Button.INVISIBLE );
-                b2.setOnClickListener( null );
-            }
-            else {
-                b2.setText( getString( R.string.previous ) +
-                            "\n\n" + c2.getTitle() );
-                b2.setOnClickListener( new OnClickListener() {
+            if (c2 == null) {
+                b2.setVisibility(Button.INVISIBLE);
+                b2.setOnClickListener(null);
+            } else {
+                b2.setText(getString(R.string.previous) +
+                        "\n\n" + c2.getTitle());
+                b2.setOnClickListener(new OnClickListener() {
                     @Override
-                    public void onClick( View v ) {
-                        new GetPaginas().execute( c2 );
+                    public void onClick(View v) {
+                        new GetPaginas().execute(c2);
                     }
-                } );
+                });
             }
 
 
-            super.onActivityCreated( savedInstanceState );
+            super.onActivityCreated(savedInstanceState);
         }
 
         public class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
-            ProgressDialog asyncdialog = new ProgressDialog( getActivity() );
+            ProgressDialog asyncdialog = new ProgressDialog(getActivity());
             String error = "";
 
             @Override
             protected void onPreExecute() {
-                asyncdialog.setMessage( getResources().getString( R.string.iniciando ) );
+                asyncdialog.setMessage(getResources().getString(R.string.iniciando));
                 asyncdialog.show();
                 super.onPreExecute();
             }
 
             @Override
-            protected Chapter doInBackground( Chapter... arg0 ) {
+            protected Chapter doInBackground(Chapter... arg0) {
                 Chapter c = arg0[0];
-                ServerBase s = ServerBase.getServer( l.manga.getServerId() );
+                ServerBase s = ServerBase.getServer(l.manga.getServerId());
                 try {
-                    if ( c.getPages() < 1 ) s.chapterInit( c );
-                } catch ( Exception e ) {
+                    if (c.getPages() < 1) s.chapterInit(c);
+                } catch (Exception e) {
                     error = e.getMessage();
                     e.printStackTrace();
                 } finally {
@@ -826,28 +813,27 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             }
 
             @Override
-            protected void onProgressUpdate( Void... values ) {
+            protected void onProgressUpdate(Void... values) {
                 asyncdialog.dismiss();
-                super.onProgressUpdate( values );
+                super.onProgressUpdate(values);
             }
 
             @Override
-            protected void onPostExecute( Chapter result ) {
-                if ( error.length() > 1 ) {
-                    Toast.makeText( getActivity(), error, Toast.LENGTH_LONG ).show();
-                }
-                else {
+            protected void onPostExecute(Chapter result) {
+                if (error.length() > 1) {
+                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                } else {
                     asyncdialog.dismiss();
-                    Database.updateChapter( getActivity(), result );
-                    DownloadPoolService.agregarDescarga( getActivity(), result, true );
+                    Database.updateChapter(getActivity(), result);
+                    DownloadPoolService.agregarDescarga(getActivity(), result, true);
                     Intent intent =
-                            new Intent( getActivity(), ActivityLector.class );
-                    intent.putExtra( ActivityManga.CAPITULO_ID, result.getId() );
-                    getActivity().startActivity( intent );
-                    Database.updateChapter( l, l.chapter );
+                            new Intent(getActivity(), ActivityLector.class);
+                    intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
+                    getActivity().startActivity(intent);
+                    Database.updateChapter(l, l.chapter);
                     l.finish();
                 }
-                super.onPostExecute( result );
+                super.onPostExecute(result);
             }
 
         }
@@ -860,16 +846,16 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        ArrayList<PlaceholderFragment> fragments = new ArrayList<>( 6 );
+        ArrayList<PlaceholderFragment> fragments = new ArrayList<>(6);
         int[] pos = {-1, -1, -1, -1, -1, -1};
         int idx = 0;
         FragmentManager fm = null;
 
-        public SectionsPagerAdapter( FragmentManager fm ) {
-            super( fm );
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
             this.fm = fm;
             int i = pos.length;
-            while ( --i >= 0 ) fragments.add( new PlaceholderFragment() );
+            while (--i >= 0) fragments.add(new PlaceholderFragment());
         }
 
         private int getNextPos() {
@@ -879,49 +865,49 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         }
 
         @Override
-        public Fragment getItem( int position ) {
+        public Fragment getItem(int position) {
             Fragment rsta;
-            if ( direction == Direction.R2L || direction == Direction.VERTICAL )
-                if ( position == chapter.getPages() )
+            if (direction == Direction.R2L || direction == Direction.VERTICAL)
+                if (position == chapter.getPages())
                     rsta = ultimaPaginaFragment;
                 else {
-                    rsta = getFragmentIn( position );
+                    rsta = getFragmentIn(position);
                 }
             else {
-                if ( position == 0 ) rsta = ultimaPaginaFragment;
+                if (position == 0) rsta = ultimaPaginaFragment;
                 else {
-                    int pos = ( chapter.getPages() - position );
-                    rsta = getFragmentIn( pos );
+                    int pos = (chapter.getPages() - position);
+                    rsta = getFragmentIn(pos);
                 }
             }
             return rsta;
         }
 
-        public Fragment getFragmentIn( int position ) {
+        public Fragment getFragmentIn(int position) {
             PlaceholderFragment f = null;
-            for ( int i = 0; i < pos.length; i++ ) {
-                if ( pos[i] == position ) {
-                    f = fragments.get( i );
+            for (int i = 0; i < pos.length; i++) {
+                if (pos[i] == position) {
+                    f = fragments.get(i);
                     break;
                 }
             }
-            if ( f == null ) {
+            if (f == null) {
                 String ruta =
-                        DownloadPoolService.generarRutaBase( s, manga, chapter, getApplicationContext() ) +
-                        "/" + ( position + 1 ) + ".jpg";
+                        DownloadPoolService.generarRutaBase(s, manga, chapter, getApplicationContext()) +
+                                "/" + (position + 1) + ".jpg";
                 int idx;
                 do {
                     idx = getNextPos();
-                    if ( pos[idx] == -1 ) break;
-                } while ( pos[idx] + 1 > getCurrentItem() &&
-                          pos[idx] - 1 < getCurrentItem() );
+                    if (pos[idx] == -1) break;
+                } while (pos[idx] + 1 > getCurrentItem() &&
+                        pos[idx] - 1 < getCurrentItem());
                 pos[idx] = position;
-                Fragment old = fragments.get( idx );
-                fm.beginTransaction().remove( old ).commit();
+                Fragment old = fragments.get(idx);
+                fm.beginTransaction().remove(old).commit();
                 // old = null;
-                fragments.set( idx, PlaceholderFragment.newInstance( ruta, ActivityLector.this ) );
-                f = fragments.get( idx );
-                f.setTapListener( ActivityLector.this );
+                fragments.set(idx, PlaceholderFragment.newInstance(ruta, ActivityLector.this));
+                f = fragments.get(idx);
+                f.setTapListener(ActivityLector.this);
             }
             return f;
         }
@@ -932,23 +918,23 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         }
 
         public void actualizarDisplayTipe() {
-            for ( PlaceholderFragment iterable_element : fragments ) {
-                if ( iterable_element != null ) {
-                    iterable_element.setDisplayType( val_screenFit );
+            for (PlaceholderFragment iterable_element : fragments) {
+                if (iterable_element != null) {
+                    iterable_element.setDisplayType(val_screenFit);
                 }
             }
         }
 
         public Fragment getCurrentFragment() {
             return getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + R.id.pager + ":" + getCurrentItem() );
+                    "android:switcher:" + R.id.pager + ":" + getCurrentItem());
         }
 
-        public Fragment getIfOnMemory( int idx ) {
+        public Fragment getIfOnMemory(int idx) {
             Fragment fragment = null;
-            for ( int i = 0; i < pos.length; i++ ) {
-                if ( pos[i] == idx ) {
-                    fragment = fragments.get( i );
+            for (int i = 0; i < pos.length; i++) {
+                if (pos[i] == idx) {
+                    fragment = fragments.get(i);
                     break;
                 }
             }

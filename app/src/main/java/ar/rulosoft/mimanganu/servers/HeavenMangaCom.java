@@ -51,7 +51,7 @@ public class HeavenMangaCom extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         String source = new Navegador().get("http://heavenmanga.com/");
-        source = getFirstMatch( "<span>Lista Completa(.+)", source, "Error al obtener la lista" );
+        source = getFirstMatch("<span>Lista Completa(.+)", source, "Error al obtener la lista");
         Pattern p = Pattern.compile("<li class=\"rpwe-clearfix\"><a href=\"(.+?)\" title=\"(.+?)\"");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -77,11 +77,11 @@ public class HeavenMangaCom extends ServerBase {
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         String source = new Navegador().get(m.getPath());
         // portada
-        String portada = getFirstMatchDefault( "<meta property=\"og:image\" content=\"(.+?)\"", source, "" );
+        String portada = getFirstMatchDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, "");
         m.setImages(portada);
 
         // sinopsis
-        String sinopsis = getFirstMatchDefault( "<div class=\"sinopsis\">(.+?)<div", source, "Sin sinopsis" );
+        String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, "Sin sinopsis");
         m.setSinopsis(sinopsis.replaceAll("<.+?>", ""));
 
         //estado no soportado
@@ -115,7 +115,7 @@ public class HeavenMangaCom extends ServerBase {
     @Override
     public String getImageFrom(Chapter c, int page) throws Exception {
         String source = new Navegador().get(getPagesNumber(c, page));
-        return getFirstMatch( "src=\"([^\"]+)\" border=\"1\" id=\"p\">", source, "Error al obtener imagen" );
+        return getFirstMatch("src=\"([^\"]+)\" border=\"1\" id=\"p\">", source, "Error al obtener imagen");
     }
 
     @Override
@@ -123,13 +123,13 @@ public class HeavenMangaCom extends ServerBase {
         if (c.getExtra() == null)
             setExtra(c);
         String source = new Navegador().get(c.getExtra());
-        String nop = getFirstMatch( "(\\d+)</option></select>", source, "Error al cargar paginas" );
+        String nop = getFirstMatch("(\\d+)</option></select>", source, "Error al cargar paginas");
         c.setPages(Integer.parseInt(nop));
     }
 
     private void setExtra(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        String web = getFirstMatch( "<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source, "Error al obtener página" );
+        String web = getFirstMatch("<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source, "Error al obtener página");
         c.setExtra(web);
     }
 
