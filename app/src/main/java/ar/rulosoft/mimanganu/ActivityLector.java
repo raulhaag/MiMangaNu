@@ -93,32 +93,26 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pm =
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        thmColors =
-                ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        thmColors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         /**
          * The values are here to set, if no settings should be stored,
          * then take the provided standard value
          */
-        val_screenFit =
-                DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
-        val_textureMax =
-                Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
+        val_screenFit = DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
+        val_textureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
 
         val_KeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         val_orientation = pm.getInt(ORIENTATION, 0);
 
-        chapter =
-                Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
+        chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         manga = Database.getFullManga(this, chapter.getMangaID());
 
         if (manga.getReadingDirection() != -1)
             direction = Direction.values()[manga.getReadingDirection()];
-        else direction =
-                Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION,
-                        "" + Direction.R2L.ordinal()))];
+        else
+            direction = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
@@ -131,33 +125,40 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 } else {
                     iniPosition = InitialPosition.LEFT_BOTTOM;
                 }
-
                 anterior = arg0;
-                if (direction == Direction.R2L ||
-                        direction == Direction.VERTICAL)
-                    if (arg0 < chapter.getPages()) {
-                        chapter.setPagesRead(arg0 + 1);
-                    } else {
-                        chapter.setPagesRead(arg0);
+
+                switch (direction) {
+                    case L2R: {
+                        if (arg0 > 0) {
+                            chapter.setPagesRead(chapter.getPages() - arg0 + 1);
+                        } else {
+                            chapter.setPagesRead(chapter.getPages() - arg0);
+                        }
+                        seekBar.setProgress(chapter.getPages() - arg0);
+                        if (arg0 <= 1) {
+                            chapter.setReadStatus(Chapter.READ);
+                        } else if (chapter.getReadStatus() == Chapter.READ) {
+                            chapter.setReadStatus(Chapter.READING);
+                        }
+                        break;
                     }
-                else {
-                    chapter.setPagesRead(chapter.getPages() - arg0 + 1);
+                    case R2L:
+                    case VERTICAL: {
+                        if (arg0 < chapter.getPages()) {
+                            chapter.setPagesRead(arg0 + 1);
+                        } else {
+                            chapter.setPagesRead(arg0);
+                        }
+                        seekBar.setProgress(arg0);
+                        if (arg0 >= chapter.getPages() - 1) {
+                            chapter.setReadStatus(Chapter.READ);
+                        } else if (chapter.getReadStatus() == Chapter.READ) {
+                            chapter.setReadStatus(Chapter.READING);
+                        }
+                        break;
+                    }
                 }
-
-                if (direction == Direction.R2L ||
-                        direction == Direction.VERTICAL) {
-                    seekBar.setProgress(arg0);
-                } else {
-                    seekBar.setProgress(chapter.getPages() - arg0);
-                }
-
-                if (arg0 >= chapter.getPages() - 1) {
-                    chapter.setReadStatus(Chapter.READ);
-                    Database.updateChapter(ActivityLector.this, chapter);
-                } else if (chapter.getReadStatus() == Chapter.READ) {
-                    chapter.setReadStatus(Chapter.READING);
-                    Database.updateChapter(ActivityLector.this, chapter);
-                }
+                Database.updateChapter(ActivityLector.this, chapter);
             }
 
             @Override
@@ -171,8 +172,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
         if (direction == Direction.VERTICAL) {
             setContentView(R.layout.activity_lector_v);
-            mViewPagerV =
-                    (UnScrolledViewPagerVertical) findViewById(R.id.pager);
+            mViewPagerV = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
             mViewPagerV.setOnPageChangeListener(pageChangeListener);
         } else {
             setContentView(R.layout.activity_lector);
@@ -204,8 +204,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         seekBar.setMax(chapter.getPages());
         if (direction == Direction.L2R) seekBar.setRotation(180);
 
-        if (Build.VERSION.SDK_INT <
-                android.os.Build.VERSION_CODES.JELLY_BEAN) {
+        if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
             actionToolbar.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
             seeker_Layout.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
             seekerPage.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
@@ -713,7 +712,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
     }
 
-    public static class UltimaPaginaFragment extends Fragment {//need to be static
+    public static class UltimaPaginaFragment extends Fragment { //need to be static
         Button b1, b2;
         Chapter c1 = null, c2 = null;
         ActivityLector l;
@@ -721,8 +720,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rView =
-                    inflater.inflate(R.layout.fragment_pagina_final, container, false);
+            View rView = inflater.inflate(R.layout.fragment_pagina_final, container, false);
             b1 = (Button) rView.findViewById(R.id.button1);
             b2 = (Button) rView.findViewById(R.id.button2);
             b1.setTextColor(Color.WHITE);
@@ -886,9 +884,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 }
             }
             if (f == null) {
-                String ruta =
-                        DownloadPoolService.generarRutaBase(s, manga, chapter, getApplicationContext()) +
-                                "/" + (position + 1) + ".jpg";
+                String ruta = DownloadPoolService.generarRutaBase(s, manga, chapter, getApplicationContext()) + "/" + (position + 1) + ".jpg";
                 int idx;
                 do {
                     idx = getNextPos();
