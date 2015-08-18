@@ -173,7 +173,7 @@ public class ActivityDetails extends ActionBarActivity {
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < params[0].getChapters().size(); i++) {
                 if (System.currentTimeMillis() - initTime > 500) {
-                    onProgressUpdate(i);
+                    publishProgress(i);
                     initTime = System.currentTimeMillis();
                 }
                 Database.addChapter(ActivityDetails.this, params[0].getChapter(i), mid);
