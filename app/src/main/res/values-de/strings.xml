@@ -22,10 +22,10 @@
     <string name="buscarnuevos">Updates suchen</string>
     <string name="buscarupdates">Updates suchen</string>
     <string name="busquedanores">Suche ergab keine Treffer</string>
-    <string name="cantidad_descargas_subtitle">Anzahl gleichzeitig laufende Downloads (2 ist Standard): %s</string>
+    <string name="cantidad_descargas_subtitle">Anzahl gleichzeitig laufende Downloads: %s</string>
     <string name="cantidad_descargas_title">Simultane Downloads</string>
-    <string name="cantidad_errores_title">Maximale Versuche pro Kapitel</string>
-    <string name="cantidad_reintentos_subtitle">Anzahl der Download Versuche pro Bild (3 ist Standard): %s</string>
+    <string name="cantidad_errores_title">Fehlertoleranz pro Kapitel</string>
+    <string name="cantidad_reintentos_subtitle">Anzahl der Download Versuche pro Bild: %s</string>
     <string name="cantidad_reintentos_title">Maximale Versuche pro Bild</string>
     <string name="capitulos">Kapitel</string>
     <string name="cargando">Lädt...</string>
@@ -125,7 +125,7 @@
     <string name="update_subtitle">Nicht automatisch updated.</string>
     <string name="update_title">Aktualisierungsintervall</string>
     <string name="ui_settings">UI Einstellungen</string>
-    <string name="cantidad_errores_subtitle">Anzahl der Download Versuche pro Kapitel (2 ist Standard): %s</string>
+    <string name="cantidad_errores_subtitle">Toleriert Anzahl der Fehler pro Kapitel: %s</string>
     <string name="next">Nächstes</string>
     <string name="previous">Vorheriges</string>
 </resources>

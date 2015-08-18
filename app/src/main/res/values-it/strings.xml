@@ -79,11 +79,11 @@
     <string name="max_texture_subtitle">Dimensioni di texture, che sarà utilizzata (0 per disattivare l\'accelerazione hardware)\n%s</string>
     <string name="opciones_descarga">"Impostazioni download"</string>
     <string name="cantidad_descargas_title">Download simultanei</string>
-    <string name="cantidad_descargas_subtitle">Numero di scaricare fili (2 di default): %s</string>
-    <string name="cantidad_errores_title">Numero massimo di tentativi per capitolo</string>
-    <string name="cantidad_errores_subtitle">Numero di tentativi di download per capitolo (2 di serie): %s</string>
+    <string name="cantidad_descargas_subtitle">Numero di scaricare fili: %s</string>
+    <string name="cantidad_errores_title">Errore tolleranza per capitolo</string>
+    <string name="cantidad_errores_subtitle">Il numero tollerato di errori per capitolo: %s</string>
     <string name="cantidad_reintentos_title">Numero massimo di tentativi per immagine</string>
-    <string name="cantidad_reintentos_subtitle">Numero di tentativi di download per immagine (3 è l\'impostazione predefinita): %s</string>
+    <string name="cantidad_reintentos_subtitle">Numero di tentativi di download per immagine: %s</string>
     <string name="borrar_imagenes">Eliminare le immagini di spazio libero</string>
     <string name="seleccionar_todo">Seleziona tutto</string>
     <string name="quitar_seleccion">Nessuna selezione</string>

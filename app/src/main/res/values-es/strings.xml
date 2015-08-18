@@ -78,11 +78,11 @@
     <string name="max_texture_subtitle">Tamaño de texturas, que se utilizará (0 para desactivar la aceleración de hardware)\n%s</string>
     <string name="opciones_descarga">Opciones de descarga</string>
     <string name="cantidad_descargas_title">Descargas simultaneas</string>
-    <string name="cantidad_descargas_subtitle">Cantidad de hilos (2 por defecto): %s</string>
-    <string name="cantidad_errores_title"> Reintentos máximos por capítulo</string>
-    <string name="cantidad_errores_subtitle">Número de descargas de intentos por capítulo (2 es estándar): %s</string>
+    <string name="cantidad_descargas_subtitle">Cantidad de hilos: %s</string>
+    <string name="cantidad_errores_title">Tolerancia de error por capítulo</string>
+    <string name="cantidad_errores_subtitle">Número tolerado de errores por capítulo: %s</string>
     <string name="cantidad_reintentos_title">Reintentos máximos por imagen</string>
-    <string name="cantidad_reintentos_subtitle">Número de descargas de intentos por imagen (3 es por defecto): %s</string>
+    <string name="cantidad_reintentos_subtitle">Número de descargas de intentos por imagen: %s</string>
     <string name="borrar_imagenes">Borrar imagenes</string>
     <string name="seleccionar_todo">Selecionar todo</string>
     <string name="quitar_seleccion">Deseleccionar todo</string>

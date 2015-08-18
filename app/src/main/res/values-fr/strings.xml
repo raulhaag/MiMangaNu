@@ -76,11 +76,11 @@
     <string name="max_texture_subtitle">Taille de textures, qui sera utilisé (0 pour désactiver l\'accélération)\n%s</string>
     <string name="opciones_descarga">"Paramètres de téléchargement"</string>
     <string name="cantidad_descargas_title">Téléchargement simultanés</string>
-    <string name="cantidad_descargas_subtitle">Nombre de téléchargement simultanés (2 par défaut): %s</string>
-    <string name="cantidad_errores_title">Maximum de tentatives par chapitre</string>
-    <string name="cantidad_errores_subtitle">Nombre de tentatives de téléchargement par chapitre (2 est standard): %s</string>
+    <string name="cantidad_descargas_subtitle">Nombre de téléchargement simultanés: %s</string>
+    <string name="cantidad_errores_title">Tolérance d\'erreur par chapitre</string>
+    <string name="cantidad_errores_subtitle">Nombre d\'erreurs tolérées par chapitre: %s</string>
     <string name="cantidad_reintentos_title">Maximum de tentatives par image</string>
-    <string name="cantidad_reintentos_subtitle">Nombre de tentatives de téléchargement par image (3 est par défaut): %s</string>
+    <string name="cantidad_reintentos_subtitle">Nombre de tentatives de téléchargement par image: %s</string>
     <string name="borrar_imagenes">Supprimer les images pour libérer de l\'espace</string>
     <string name="seleccionar_todo">Tout sélectionner</string>
     <string name="quitar_seleccion">Ne rien sélectionner</string>

@@ -26,10 +26,9 @@
     <string name="buscarnuevos">Search for updates</string>
     <string name="buscarupdates">Search for updates</string>
     <string name="busquedanores">The search returned no results</string>
-    <string name="cantidad_descargas_subtitle">Number of download threads (2 is default): %s</string>
+    <string name="cantidad_descargas_subtitle">Number of download threads: %s</string>
     <string name="cantidad_descargas_title">Download slot</string>
-    <string name="cantidad_errores_title">Maximum retries per chapter</string>
-    <string name="cantidad_reintentos_subtitle">retries to get an image after encountering an error (3 is default): %s</string>
+    <string name="cantidad_reintentos_subtitle">retries to get an image after encountering an error: %s</string>
     <string name="cantidad_reintentos_title">Maximum retries per image</string>
     <string name="capitulos">Chapters</string>
     <string name="cargando">Loading&#8230;</string>
@@ -127,9 +126,10 @@
     <string name="vertical">Vertical</string>
     <string name="hello_world">Hello World</string>
     <string name="ui_settings">UI Settings</string>
-    <string name="cantidad_errores_subtitle">Number of download attempts per chapter (2 is default): %s</string>
+    <string name="cantidad_errores_subtitle">tolerated number of errors per chapter: %s</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
     <string name="title_activity_text_view">TextViewActivity</string>
     <string name="download_selection">Download selection</string>
+    <string name="cantidad_errores_title">Error toleration per chapter</string>
 </resources>
