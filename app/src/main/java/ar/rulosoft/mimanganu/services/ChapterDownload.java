@@ -104,10 +104,10 @@ public class ChapterDownload implements StateChange {
         pagesStatus[idx] = Status.ERROR_ON_UPLOAD;
         progess++;
         areErrors();
-        chackProgreso();
+        checkProgreso();
     }
 
-    public void chackProgreso() {
+    public void checkProgreso() {
         if (progess == chapter.getPages()) {
             Database.UpdateChapterDownloaded(DownloadPoolService.actual, chapter.getId(), 1);
             changeStatus(DownloadStatus.DOWNLOADED);
@@ -118,7 +118,7 @@ public class ChapterDownload implements StateChange {
     public void onChange(SingleDownload singleDownload) {
         pagesStatus[singleDownload.index] = singleDownload.status;
         progess++;
-        chackProgreso();
+        checkProgreso();
         if (chagesListener != null)
             chagesListener.onChange(singleDownload);
     }

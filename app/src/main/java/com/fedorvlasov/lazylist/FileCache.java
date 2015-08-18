@@ -1,6 +1,9 @@
 package com.fedorvlasov.lazylist;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import java.io.File;
 
@@ -10,8 +13,10 @@ public class FileCache {
 
     public FileCache(Context context) {
         //Find the dir to save cached images
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
-            cacheDir = new File(android.os.Environment.getExternalStorageDirectory(), "LazyList");
+            cacheDir = new File(dir, "cache");
         else
             cacheDir = context.getCacheDir();
         if (!cacheDir.exists())
