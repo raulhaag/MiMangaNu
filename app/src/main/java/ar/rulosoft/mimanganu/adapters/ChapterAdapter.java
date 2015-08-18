@@ -32,7 +32,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.parseColor("#00FFFFFF");
-    public static int COLOR_READ = Color.parseColor("#BDBDBD");
+    public static int COLOR_READ = Color.parseColor("#929292");
     public static int COLOR_READING = Color.parseColor("#424242");
     public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
@@ -96,7 +96,6 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     break;
             }
 
-
             if (selected.get(position)) {
                 convertView.setBackgroundColor(COLOR_SELECTED);
                 holder.textViewName.setTextColor(Color.WHITE);
@@ -104,10 +103,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             } else {
                 convertView.setBackgroundColor(TRANSPARENT);
             }
-
-            holder.textViewPages.setText("       ");
             if (item.getPages() > 0) {
                 holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPages());
+            } else {
+                holder.textViewPages.setText("");
             }
             if (item.isDownloaded()) {
                 holder.imageButton.setImageResource(R.drawable.ic_borrar);
