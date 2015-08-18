@@ -221,7 +221,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 error = e.getMessage();
                 e.printStackTrace();
             } finally {
-                onProgressUpdate();
+                publishProgress();
             }
             return c;
         }
