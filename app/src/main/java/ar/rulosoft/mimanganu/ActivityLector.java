@@ -137,8 +137,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                         direction == Direction.VERTICAL)
                     if (arg0 < chapter.getPages()) {
                         chapter.setPagesRead(arg0 + 1);
-                    }
-                    else {
+                    } else {
                         chapter.setPagesRead(arg0);
                     }
                 else {
@@ -185,6 +184,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         if (DownloadPoolService.actual != null)
             DownloadPoolService.actual.setDownloadListener(this);
         ultimaPaginaFragment = new UltimaPaginaFragment();
+        ultimaPaginaFragment.setThmColors(thmColors);
 
         actionToolbar = (Toolbar) findViewById(R.id.action_bar);
         actionToolbar.setTitle(chapter.getTitle());
@@ -713,10 +713,11 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
     }
 
-    public class UltimaPaginaFragment extends Fragment {
+    public static class UltimaPaginaFragment extends Fragment {//need to be static
         Button b1, b2;
         Chapter c1 = null, c2 = null;
         ActivityLector l;
+        int[] thmColors;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -726,8 +727,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             b2 = (Button) rView.findViewById(R.id.button2);
             b1.setTextColor(Color.WHITE);
             b2.setTextColor(Color.WHITE);
-            if (Build.VERSION.SDK_INT <
-                    android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
                 b1.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
                 b2.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
             } else {
@@ -755,8 +755,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             }
 
             if (c1 == null) {
-                b1.setVisibility(Button.INVISIBLE);
-                b1.setOnClickListener(null);
+                b1.setVisibility(Button.GONE);
             } else {
                 b1.setText(getString(R.string.next) +
                         "\n\n" + c1.getTitle());
@@ -769,8 +768,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             }
 
             if (c2 == null) {
-                b2.setVisibility(Button.INVISIBLE);
-                b2.setOnClickListener(null);
+                b2.setVisibility(Button.GONE);
             } else {
                 b2.setText(getString(R.string.previous) +
                         "\n\n" + c2.getTitle());
@@ -782,8 +780,11 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 });
             }
 
-
             super.onActivityCreated(savedInstanceState);
+        }
+
+        public void setThmColors(int[] thmColors) {
+            this.thmColors = thmColors;
         }
 
         public class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
@@ -805,25 +806,19 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                     if (c.getPages() < 1) s.chapterInit(c);
                 } catch (Exception e) {
                     error = e.getMessage();
-                    e.printStackTrace();
-                } finally {
-                    onProgressUpdate();
                 }
                 return c;
             }
 
             @Override
-            protected void onProgressUpdate(Void... values) {
-                asyncdialog.dismiss();
-                super.onProgressUpdate(values);
-            }
-
-            @Override
             protected void onPostExecute(Chapter result) {
+                try {
+                    asyncdialog.dismiss();
+                } catch (Exception e) {
+                }
                 if (error.length() > 1) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 } else {
-                    asyncdialog.dismiss();
                     Database.updateChapter(getActivity(), result);
                     DownloadPoolService.agregarDescarga(getActivity(), result, true);
                     Intent intent =
@@ -837,7 +832,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             }
 
         }
-
     }
 
     /**
