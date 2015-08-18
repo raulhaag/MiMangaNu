@@ -125,7 +125,7 @@
     <string name="update_subtitle">Nicht automatisch updated.</string>
     <string name="update_title">Aktualisierungsintervall</string>
     <string name="ui_settings">UI Einstellungen</string>
-    <string name="cantidad_errores_subtitle">Toleriert Anzahl der Fehler pro Kapitel: %s</string>
+    <string name="cantidad_errores_subtitle">Tolerierte Anzahl der Fehler pro Kapitel: %s</string>
     <string name="next">Nächstes</string>
     <string name="previous">Vorheriges</string>
 </resources>
