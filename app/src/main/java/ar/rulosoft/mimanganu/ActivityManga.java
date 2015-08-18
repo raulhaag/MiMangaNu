@@ -345,7 +345,7 @@ public class ActivityManga extends ActionBarActivity {
     }
 
     public enum Direction {
-        R2L, L2R, VERTICAL
+        L2R, R2L, VERTICAL
     }
 
 

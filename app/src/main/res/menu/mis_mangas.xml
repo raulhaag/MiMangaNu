@@ -21,8 +21,8 @@
         android:id="@+id/action_configurar"
         android:icon="@drawable/ic_action_action_settings"
         android:orderInCategory="100"
-        android:title="@string/configuraciones" />
-    <!--app:showAsAction="ifRoom" />-->
+        android:title="@string/configuraciones"
+        app:showAsAction="ifRoom" />
 
     <!--<item-->
     <!--android:id="@+id/licencia"-->

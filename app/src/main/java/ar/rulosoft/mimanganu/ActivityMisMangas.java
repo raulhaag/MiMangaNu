@@ -92,9 +92,9 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         getMenuInflater().inflate(R.menu.mis_mangas, menu);
         MenuItem menuHideRead =
                 menu.findItem(R.id.action_esconder_leidos);
-        boolean checkedLeidos =
-                pm.getInt(FragmentMisMangas.SELECTOR_MODO, FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS) >
-                        0;
+        boolean checkedLeidos = pm.getInt(FragmentMisMangas.SELECTOR_MODO, FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS) > 0;
+        if (checkedLeidos)
+            menuHideRead.setIcon(R.drawable.ic_action_selecionar_todos);
         menuHideRead.setChecked(checkedLeidos);
         return true;
     }
@@ -210,7 +210,5 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         public int getCount() {
             return fragments.size();
         }
-
     }
-
 }

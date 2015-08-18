@@ -121,4 +121,6 @@
     <string name="mitlic">MIT Licence et Merci</string>
     <string name="previous">Précédent</string>
     <string name="next">Prochaine</string>
+    <string name="notification_sound_title">Notification sonnore</string>
+    <string name="notification_sound_subtitle">Quand un nouveau manga est trouvé.</string>
 </resources>
