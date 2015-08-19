@@ -50,7 +50,7 @@ public class ActivityDetails extends ActionBarActivity {
         button_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AddManga().execute(m);
+                new AddMangaTask().execute(m);
                 AnimatorSet set = new AnimatorSet();
                 ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 1.0f, 0.0f);
                 anim1.setDuration(0);
@@ -76,7 +76,7 @@ public class ActivityDetails extends ActionBarActivity {
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new LoadDetails().execute();
+                new LoadDetailsTask().execute();
             }
         });
         str.post(new Runnable() {
@@ -85,10 +85,10 @@ public class ActivityDetails extends ActionBarActivity {
                 str.setRefreshing(true);
             }
         });
-        new LoadDetails().execute();
+        new LoadDetailsTask().execute();
     }
 
-    private class LoadDetails extends AsyncTask<Void, Void, Void> {
+    private class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
 
         String error = ".";
 
@@ -149,7 +149,7 @@ public class ActivityDetails extends ActionBarActivity {
 
     }
 
-    public class AddManga extends AsyncTask<Manga, Integer, Void> {
+    public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
         ProgressDialog adding = new ProgressDialog(ActivityDetails.this);
         String error = ".";
         int total = 0;
@@ -173,7 +173,7 @@ public class ActivityDetails extends ActionBarActivity {
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < params[0].getChapters().size(); i++) {
                 if (System.currentTimeMillis() - initTime > 500) {
-                    onProgressUpdate(i);
+                    publishProgress(i);
                     initTime = System.currentTimeMillis();
                 }
                 Database.addChapter(ActivityDetails.this, params[0].getChapter(i), mid);

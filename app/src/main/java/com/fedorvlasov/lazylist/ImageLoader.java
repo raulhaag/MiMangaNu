@@ -42,9 +42,14 @@ public class ImageLoader {
         res = context.getResources();
     }
 
+    /**
+     * Android lollipop automaticamente ignora estas lineas para verciones anteriores es realmente necesario
+     * Android lollipop automatically ignores these lines for previous versions, but it's necessary
+     *
+     * @param path to file
+     * @return bitmap, which is converted
+     */
     @SuppressWarnings("deprecation")
-    // Android lollipop automaticamente ignora estas lineas para verciones
-    // anteriores es realmente necesario
     public static Bitmap convertBitmap(String path) {
 
         Bitmap bitmap = null;
@@ -118,7 +123,7 @@ public class ImageLoader {
 
         // from web
         try {
-            Bitmap bitmap = null;
+            Bitmap bitmap;
             URL imageUrl;
             String host = null;
             {

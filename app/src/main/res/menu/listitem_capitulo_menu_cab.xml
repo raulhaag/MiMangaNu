@@ -12,11 +12,6 @@
         android:title="@string/quitar_seleccion"
         app:showAsAction="always" />
     <item
-        android:id="@+id/download_selection"
-        android:icon="@drawable/ic_action_downloads"
-        android:title="@string/download_selection"
-        app:showAsAction="always" />
-    <item
         android:id="@+id/marcar_leido"
         android:icon="@drawable/ic_action_read"
         android:title="@string/marcarleido"
@@ -25,6 +20,11 @@
         android:id="@+id/mark_unread"
         android:icon="@drawable/ic_action_unread"
         android:title="@string/markSelectedUnread"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/download_selection"
+        android:icon="@drawable/ic_action_downloads"
+        android:title="@string/download_selection"
         app:showAsAction="always" />
     <item
         android:id="@+id/borrar_imagenes"

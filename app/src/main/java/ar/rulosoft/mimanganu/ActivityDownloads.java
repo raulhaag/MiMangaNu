@@ -18,7 +18,7 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 public class ActivityDownloads extends ActionBarActivity {
 
     ListView list;
-    ShowDownloads sh;
+    ShowDownloadsTask sh;
     DownloadAdapter adap;
 
     @Override
@@ -34,7 +34,7 @@ public class ActivityDownloads extends ActionBarActivity {
     public void onResume() {
         adap = new DownloadAdapter(ActivityDownloads.this, new ArrayList<ChapterDownload>());
         list.setAdapter(adap);
-        sh = new ShowDownloads();
+        sh = new ShowDownloadsTask();
         sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         super.onResume();
     }
@@ -46,7 +46,7 @@ public class ActivityDownloads extends ActionBarActivity {
     }
 
 
-    private class ShowDownloads extends AsyncTask<Void, Void, Void> {
+    private class ShowDownloadsTask extends AsyncTask<Void, Void, Void> {
         boolean _continue = true;
 
         @Override

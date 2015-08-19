@@ -87,7 +87,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
                     pagina = 1;
                     mStart = true;
                     s.hayMas = true;
-                    new CargarUltima().execute(pagina);
+                    new LoadLastTask().execute(pagina);
                 } else {
                     neuvaTarea = true;
                 }
@@ -109,7 +109,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
                     pagina = 1;
                     mStart = true;
                     s.hayMas = true;
-                    new CargarUltima().execute(pagina);
+                    new LoadLastTask().execute(pagina);
                 } else {
                     neuvaTarea = true;
                 }
@@ -122,13 +122,13 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
             }
         });
 
-        new CargarUltima().execute(pagina);
+        new LoadLastTask().execute(pagina);
     }
 
     @Override
     public void onRequestedLastItem() {
         if (s.hayMas && !cargando.isShown() && !mStart)
-            new CargarUltima().execute(pagina);
+            new LoadLastTask().execute(pagina);
     }
 
     @Override
@@ -178,7 +178,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         return super.onOptionsItemSelected(item);
     }
 
-    public class CargarUltima extends AsyncTask<Integer, Void, ArrayList<Manga>> {
+    public class LoadLastTask extends AsyncTask<Integer, Void, ArrayList<Manga>> {
 
         String error = "";
 
@@ -220,7 +220,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
                     pagina = 1;
                     mStart = true;
                     s.hayMas = true;
-                    new CargarUltima().execute(pagina);
+                    new LoadLastTask().execute(pagina);
                     neuvaTarea = false;
                 }
             }
