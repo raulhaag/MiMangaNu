@@ -27,6 +27,7 @@ public abstract class ServerBase {
     public static final int ITNINEMANGA = 13;
     public static final int TUSMANGAS = 14;
     public static final int MANGAREADER = 15;
+    public static final int DENINEMANGA = 16;
     public boolean hayMas = true;
     private String serverName;
     private int icon;
@@ -77,6 +78,9 @@ public abstract class ServerBase {
                 break;
             case STARKANACOM:
                 s = new StarkanaCom();
+                break;
+            case DENINEMANGA:
+                s = new DeNineMangaCom();
                 break;
             default:
                 break;

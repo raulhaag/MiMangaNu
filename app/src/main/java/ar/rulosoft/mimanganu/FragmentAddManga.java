@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter.OnServerClickListener;
+import ar.rulosoft.mimanganu.servers.DeNineMangaCom;
 import ar.rulosoft.mimanganu.servers.EsMangaHere;
 import ar.rulosoft.mimanganu.servers.EsNineMangaCom;
 import ar.rulosoft.mimanganu.servers.HeavenMangaCom;
@@ -43,7 +44,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
         adapter = new ServerRecAdapter(new ServerBase[]{new HeavenMangaCom(),
                 new SubManga(),// new EsMangaCom(),
                 new EsNineMangaCom(), new EsMangaHere(), new TusMangasOnlineCom(), new MangaPanda(), new MangaHere(), new MangaFox(), new MangaReader(),
-                new KissManga(), new LectureEnLigne(), new ItNineMangaCom()});
+                new KissManga(), new LectureEnLigne(), new ItNineMangaCom(), new DeNineMangaCom()});
         lista_server.setAdapter(adapter);
         adapter.setOnServerClickListener(FragmentAddManga.this);
         super.onActivityCreated(savedInstanceState);

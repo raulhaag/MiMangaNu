@@ -12,13 +12,13 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class ItNineMangaCom extends ServerBase {
 
-    public static String[] generos = new String[]{"0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
+    public static String[] generos = new String[]{"Tutto", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
             "U", "W", "X", "Y", "Z", "Action", "Adult", "Adventure", "Avventura", "Azione", "Bara", "Comedy", "Commedia", "Demenziale", "Doujinshi",
             "Dounshinji", "Drama", "Ecchi", "Fantasy", "Gender Bender", "Harem", "Hentai", "Historical", "Horror", "Josei", "Magico", "Martial Arts", "Mature",
             "Mecha", "Misteri", "Musica", "Mystery", "Psicologico", "Psychological", "Raccolta", "Romance", "Romantico", "School Life", "Sci-Fi", "Scolastico",
             "Seinen", "Sentimentale", "Shota", "Shoujo", "Shounen", "Slice Of Life", "Smut", "Sovrannaturale", "Splatter", "Sportivo", "Sports", "Storico",
             "Supernatural", "Tragedy", "Vita Quotidiana", "Yuri"};
-    public static String[] generosV = new String[]{"http://it.ninemanga.com/category/0-9_.html", "http://it.ninemanga.com/category/A_.html",
+    public static String[] generosV = new String[]{"http://it.ninemanga.com/category/index_.html", "http://it.ninemanga.com/category/0-9_.html", "http://it.ninemanga.com/category/A_.html",
             "http://it.ninemanga.com/category/B_.html", "http://it.ninemanga.com/category/C_.html", "http://it.ninemanga.com/category/D_.html",
             "http://it.ninemanga.com/category/E_.html", "http://it.ninemanga.com/category/F_.html", "http://it.ninemanga.com/category/G_.html",
             "http://it.ninemanga.com/category/H_.html", "http://it.ninemanga.com/category/I_.html", "http://it.ninemanga.com/category/J_.html",
@@ -99,7 +99,7 @@ public class ItNineMangaCom extends ServerBase {
 
         m.setAuthor(getFirstMatchDefault("Author.+?\">(.+?)<", source, ""));
 
-        // capítulos
+        // capï¿½tulos
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
@@ -137,7 +137,7 @@ public class ItNineMangaCom extends ServerBase {
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el número de páginas");
+        String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el nï¿½mero de pï¿½ginas");
         c.setPages(Integer.parseInt(nop));
     }
 
@@ -166,7 +166,7 @@ public class ItNineMangaCom extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{"Popolarità"};
+        return new String[]{"Popolaritï¿½"};
     }
 
     @Override
