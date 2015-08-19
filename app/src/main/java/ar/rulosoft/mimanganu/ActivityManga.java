@@ -104,7 +104,7 @@ public class ActivityManga extends ActionBarActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Chapter c = (Chapter) lista.getAdapter().getItem(position);
-                new GetPaginas().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
+                new GetPagesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
             }
         });
         lista.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -141,7 +141,7 @@ public class ActivityManga extends ActionBarActivity {
                         capitulosAdapter.clearSelection();
                         return true;
                     case R.id.download_selection:
-                        new DownloadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, capitulosAdapter.getSelectedChapters());
+                        new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, capitulosAdapter.getSelectedChapters());
                         break;
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
@@ -241,7 +241,7 @@ public class ActivityManga extends ActionBarActivity {
                                 Database.COL_CAP_DOWNLOADED + " != 1", true);
                 Chapter[] arr = new Chapter[chapters.size()];
                 arr = chapters.toArray(arr);
-                new DownloadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arr);
+                new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arr);
                 // TODO show mechanisms progress / mecanimos mostrar progreso
                 return true;
             }
@@ -291,7 +291,7 @@ public class ActivityManga extends ActionBarActivity {
                                 Database.COL_CAP_STATE + " < 1", true);
                 Chapter[] arr = new Chapter[chapters.size()];
                 arr = chapters.toArray(arr);
-                new DownloadChapters().execute(arr);
+                new ChapterDownloadTask().execute(arr);
                 break;
             }
         }
@@ -340,7 +340,7 @@ public class ActivityManga extends ActionBarActivity {
     }
 
 
-    private class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
+    private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncdialog = new ProgressDialog(ActivityManga.this);
         String error = "";
 
@@ -394,7 +394,7 @@ public class ActivityManga extends ActionBarActivity {
         }
     }
 
-    public class DownloadChapters extends AsyncTask<Chapter, Void, Void> {
+    public class ChapterDownloadTask extends AsyncTask<Chapter, Void, Void> {
         private ServerBase server;
         private Context context;
 

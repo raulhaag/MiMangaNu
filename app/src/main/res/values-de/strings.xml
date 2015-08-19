@@ -28,7 +28,7 @@
     <string name="cantidad_reintentos_subtitle">Anzahl der Download Versuche pro Bild: %s</string>
     <string name="cantidad_reintentos_title">Maximale Versuche pro Bild</string>
     <string name="capitulos">Kapitel</string>
-    <string name="cargando">Lädt...</string>
+    <string name="cargando">Lädt…</string>
     <string name="color_primario">Primäre Farbe</string>
     <string name="color_secundario">Sekundäre Farbe</string>
     <string name="configuraciones">Einstellungen</string>

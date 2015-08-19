@@ -45,7 +45,7 @@ public class ActivityServerListadeMangas extends ActionBarActivity {
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
 
-        new CargarMangas().execute();
+        new LoadMangasTask().execute();
 
         lista.setOnItemClickListener(new OnItemClickListener() {
 
@@ -84,7 +84,7 @@ public class ActivityServerListadeMangas extends ActionBarActivity {
         return true;
     }
 
-    private class CargarMangas extends AsyncTask<Void, Void, List<Manga>> {
+    private class LoadMangasTask extends AsyncTask<Void, Void, List<Manga>> {
 
         String error = ".";
 

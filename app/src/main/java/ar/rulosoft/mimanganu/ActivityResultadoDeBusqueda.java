@@ -48,12 +48,12 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
 
             }
         });
-        new RealizarBusqueda().execute();
+        new PerformSearchTask().execute();
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
     }
 
-    public class RealizarBusqueda extends AsyncTask<Void, Void, ArrayList<Manga>> {
+    public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {
         public String error = "";
 
         @Override

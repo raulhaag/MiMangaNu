@@ -83,7 +83,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     Toolbar actionToolbar;
     Chapter chapter;
     boolean controlVisible = false;
-    UltimaPaginaFragment ultimaPaginaFragment;
+    LastPageFragment lastPageFrag;
     Manga manga;
     ServerBase s;
     TextView seekerPage;
@@ -183,8 +183,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         s = ServerBase.getServer(manga.getServerId());
         if (DownloadPoolService.actual != null)
             DownloadPoolService.actual.setDownloadListener(this);
-        ultimaPaginaFragment = new UltimaPaginaFragment();
-        ultimaPaginaFragment.setThmColors(thmColors);
+        lastPageFrag = new LastPageFragment();
+        lastPageFrag.setThmColors(thmColors);
 
         actionToolbar = (Toolbar) findViewById(R.id.action_bar);
         actionToolbar.setTitle(chapter.getTitle());
@@ -394,7 +394,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                         mSectionsPagerAdapter.getIfOnMemory(pagina);
                 if (fragment != null &&
                         !((PlaceholderFragment) fragment).imageLoaded) {
-                    ((PlaceholderFragment) fragment).setImagen();
+                    ((PlaceholderFragment) fragment).setImage();
                 }
             }
         });
@@ -424,7 +424,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 setCurrentItem(chapter.getPages() - seekBar.getProgress());
             }
         } catch (Exception e) {
-            //sometimes get an null just in case don't stop the app
+            // sometimes get an null just in case don't stop the app
         }
     }
 
@@ -625,7 +625,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 //just nothing
             }
             if (visor == null) cargando.setVisibility(ProgressBar.VISIBLE);
-            else if (ruta != null) setImagen();
+            else if (ruta != null) setImage();
             super.onResume();
         }
 
@@ -633,7 +633,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         public void onPause() {
             try {
                 ((BitmapDrawable) visor.getDrawable()).getBitmap().recycle();
-            } catch (Exception exception) {
+            } catch (Exception e) {
                 // Do nothing?
             }
             visor.setImageBitmap(null);
@@ -649,17 +649,17 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             return visor == null || visor.canScrollV(dx);
         }
 
-        public void setImagen() {
+        public void setImage() {
             if (!imageLoaded && visor != null)
-                new SetImagen().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        public void setImagen(String ruta) {
+        public void setImage(String ruta) {
             this.ruta = ruta;
-            setImagen();
+            setImage();
         }
 
-        public class SetImagen extends AsyncTask<Void, Void, Bitmap> {
+        public class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
 
             @Override
             protected void onPreExecute() {
@@ -700,7 +700,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                     }
                     /*
                      * if (!ColaDeDescarga.corriendo) {
-					 * ColaDeDescarga.add(((ActivityLector)
+					 * ColaDeDescarga.add(((ActivityReader)
 					 * getActivity()).capitulo);
 					 * ColaDeDescarga.iniciarCola(getActivity()); }/
 					 */
@@ -712,7 +712,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
     }
 
-    public static class UltimaPaginaFragment extends Fragment { //need to be static
+    public static class LastPageFragment extends Fragment { //need to be static
         Button b1, b2;
         Chapter c1 = null, c2 = null;
         ActivityLector l;
@@ -755,12 +755,11 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             if (c1 == null) {
                 b1.setVisibility(Button.GONE);
             } else {
-                b1.setText(getString(R.string.next) +
-                        "\n\n" + c1.getTitle());
+                b1.setText(getString(R.string.next) + "\n\n" + c1.getTitle());
                 b1.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new GetPaginas().execute(c1);
+                        new GetPageTask().execute(c1);
                     }
                 });
             }
@@ -768,16 +767,14 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             if (c2 == null) {
                 b2.setVisibility(Button.GONE);
             } else {
-                b2.setText(getString(R.string.previous) +
-                        "\n\n" + c2.getTitle());
+                b2.setText(getString(R.string.previous) + "\n\n" + c2.getTitle());
                 b2.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new GetPaginas().execute(c2);
+                        new GetPageTask().execute(c2);
                     }
                 });
             }
-
             super.onActivityCreated(savedInstanceState);
         }
 
@@ -785,7 +782,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             this.thmColors = thmColors;
         }
 
-        public class GetPaginas extends AsyncTask<Chapter, Void, Chapter> {
+        public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
             ProgressDialog asyncdialog = new ProgressDialog(getActivity());
             String error = "";
 
@@ -861,12 +858,12 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             Fragment rsta;
             if (direction == Direction.R2L || direction == Direction.VERTICAL)
                 if (position == chapter.getPages())
-                    rsta = ultimaPaginaFragment;
+                    rsta = lastPageFrag;
                 else {
                     rsta = getFragmentIn(position);
                 }
             else {
-                if (position == 0) rsta = ultimaPaginaFragment;
+                if (position == 0) rsta = lastPageFrag;
                 else {
                     int pos = (chapter.getPages() - position);
                     rsta = getFragmentIn(pos);

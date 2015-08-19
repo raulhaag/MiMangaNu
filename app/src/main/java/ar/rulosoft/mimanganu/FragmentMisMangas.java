@@ -39,7 +39,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     RecyclerView grilla;
     MangasRecAdapter adapter;
     SwipeRefreshLayout str;
-    BuscarNuevo buscarNuevo;
+    NewSearchTask newSearch;
     private Integer menuFor;
 
     public static void DeleteRecursive(File fileOrDirectory) {
@@ -57,9 +57,9 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(buscarNuevo == null ||buscarNuevo.getStatus() == AsyncTask.Status.FINISHED){
-                buscarNuevo = new BuscarNuevo();
-                buscarNuevo.execute();
+                if(newSearch == null || newSearch.getStatus() == AsyncTask.Status.FINISHED){
+                newSearch = new NewSearchTask();
+                newSearch.execute();
                 }
             }
         });
@@ -81,7 +81,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         else if (columnas > 6)
             columnas = 6;
         grilla.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
-        if(buscarNuevo != null && buscarNuevo.getStatus() == AsyncTask.Status.RUNNING){
+        if(newSearch != null && newSearch.getStatus() == AsyncTask.Status.RUNNING){
             str.post(new Runnable() {
                 @Override
                 public void run() {
@@ -161,7 +161,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         getActivity().startActivity(intent);
     }
 
-    public class BuscarNuevo extends AsyncTask<Void, String, Integer> {
+    public class NewSearchTask extends AsyncTask<Void, String, Integer> {
         String msg;
         String titulo;
 

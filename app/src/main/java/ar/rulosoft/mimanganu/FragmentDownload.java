@@ -16,25 +16,25 @@ import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
-public class FragmentDescarga extends Fragment {
+public class FragmentDownload extends Fragment {
 
-    ListView lista;
-    MostrarDescargas md;
-    DownloadAdapter adap;
+    ListView listDownload;
+    ShowDownloadsTask md;
+    DownloadAdapter downAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rView = inflater.inflate(R.layout.fragment_descargas, container, false);
-        lista = (ListView) rView.findViewById(R.id.descargas);
+        listDownload = (ListView) rView.findViewById(R.id.descargas);
         return rView;
     }
 
     @SuppressLint("NewApi")
     @Override
     public void onResume() {
-        adap = new DownloadAdapter(getActivity(), new ArrayList<ChapterDownload>());
-        lista.setAdapter(adap);
-        md = new MostrarDescargas();
+        downAdapter = new DownloadAdapter(getActivity(), new ArrayList<ChapterDownload>());
+        listDownload.setAdapter(downAdapter);
+        md = new ShowDownloadsTask();
         if (Build.VERSION.SDK_INT >= 11)
             md.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         else
@@ -48,14 +48,14 @@ public class FragmentDescarga extends Fragment {
         super.onPause();
     }
 
-    private class MostrarDescargas extends AsyncTask<Void, Void, Void> {
-        boolean seguir = true;
+    private class ShowDownloadsTask extends AsyncTask<Void, Void, Void> {
+        boolean follow = true;
 
         @Override
         protected Void doInBackground(Void... params) {
-            while (seguir) {
+            while (follow) {
                 try {
-                    adap.updateAll(DownloadPoolService.descargas);
+                    downAdapter.updateAll(DownloadPoolService.descargas);
                     publishProgress();
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
@@ -70,14 +70,14 @@ public class FragmentDescarga extends Fragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    adap.notifyDataSetChanged();
+                    downAdapter.notifyDataSetChanged();
                 }
             });
             super.onProgressUpdate(values);
         }
 
         public void stop() {
-            seguir = false;
+            follow = false;
         }
 
     }
