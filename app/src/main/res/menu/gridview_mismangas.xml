@@ -3,9 +3,9 @@
 
     <item
         android:id="@+id/borrar"
-        android:title="@string/borrar"></item>
+        android:title="@string/borrar"/>
     <item
         android:id="@+id/noupdate"
-        android:title="@string/nobuscarupdate"></item>
+        android:title="@string/nobuscarupdate"/>
 
 </menu>
