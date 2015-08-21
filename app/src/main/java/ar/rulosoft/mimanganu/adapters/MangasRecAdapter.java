@@ -59,7 +59,7 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
     public void onBindViewHolder(MangasHolder holder, int position) {
         final Manga m = mangas.get(position);
         holder.serie.setText(m.getTitle());
-        imageLoader.DisplayImage(m.getImages(), holder.serie);
+        imageLoader.displayImg(m.getImages(), holder.serie);
         holder.v.setTag(position);
         holder.v.setOnClickListener(new OnClickListener() {
             @Override

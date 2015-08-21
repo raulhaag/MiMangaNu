@@ -124,7 +124,7 @@ public class ActivityDetails extends ActionBarActivity {
                 } else {
                     data.setAuthor(getResources().getString(R.string.nodisponible));
                 }
-                imageLoader.DisplayImage(m.getImages(), data);
+                imageLoader.displayImg(m.getImages(), data);
                 if (error != null && error.length() > 2) {
                     Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
                 } else {
