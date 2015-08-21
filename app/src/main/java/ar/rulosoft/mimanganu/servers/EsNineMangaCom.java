@@ -12,12 +12,12 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class EsNineMangaCom extends ServerBase {
 
-    public static String[] generos = new String[]{"Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
+    public static String[] generos = new String[]{"Todo", "Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
             "Comedy", "Deporte", "Deportes", "Drama", "Ecchi", "Escolar", "Fantasía", "Fantasy", "Gender Bender", "Genial", "Harem", "Historical", "HistóRico",
             "Horror", "Josei", "Maduro", "Martial", "Martial Arts", "Mecha", "Misterio", "Mystery", "None", "One Shot", "Oneshot", "Parodia", "Psicológico",
             "Psychological", "Romance", "School Life", "Sci-Fi", "Seinen", "Shojo", "Shojo Ai", "Shonen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai",
             "Slice Of Life", "Smut", "Sobrenatural", "Sports", "Supernatural", "Tragedia", "Tragedy", "Vida Cotidiana", "Webcomic", "Yuri"};
-    public static String[] generosV = new String[]{"http://es.ninemanga.com/category/Acci%C3%B3n_.html", "http://es.ninemanga.com/category/Action_.html",
+    public static String[] generosV = new String[]{"http://es.ninemanga.com/category/index_.html", "http://es.ninemanga.com/category/Acci%C3%B3n_.html", "http://es.ninemanga.com/category/Action_.html",
             "http://es.ninemanga.com/category/Adult_.html", "http://es.ninemanga.com/category/Adventure_.html",
             "http://es.ninemanga.com/category/Artes+Marciales_.html", "http://es.ninemanga.com/category/Aventura_.html",
             "http://es.ninemanga.com/category/Ciencia+Ficci%C3%B3n_.html", "http://es.ninemanga.com/category/Comedia_.html",
