@@ -10,7 +10,7 @@ Cambios 1.31
 * Otros fix menores
 * Gracias a Johndeep por su contribucion
 
- Cambios 1.30
+Cambios 1.30
 * Agregado mensaje de cambios 
 * Agregado auto apdates (ver config) 
 * Fix TuMangaOnline 
