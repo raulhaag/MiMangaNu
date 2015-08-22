@@ -105,11 +105,17 @@
             android:key="about_text"
             android:summary="%s"
             android:title="@string/app_name" />
-
         <Preference
             android:key="license_view"
             android:summary="Tap to see license and thanks"
             android:title="@string/licencia" />
+
+        <ar.rulosoft.custompref.ColorListPref
+            android:defaultValue="0"
+            android:dialogTitle="My color pickery"
+            android:key="color_pick"
+            android:summary="Choose a color"
+            android:title="Third color" />
     </PreferenceCategory>
 
 </PreferenceScreen>

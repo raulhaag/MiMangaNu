@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/dirObject"
+    android:id="@+id/colorObject"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:padding="10dp">
 
     <ImageView
-        android:id="@+id/dirIcon"
+        android:id="@+id/colorIcon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_marginBottom="5dp"
@@ -16,7 +16,7 @@
         android:gravity="center_vertical" />
 
     <TextView
-        android:id="@+id/dirText"
+        android:id="@+id/colorText"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:padding="8dip"

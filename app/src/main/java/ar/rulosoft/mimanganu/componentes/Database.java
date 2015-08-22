@@ -144,7 +144,6 @@ public class Database extends SQLiteOpenHelper {
         getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + manga.getId(), null);
     }
 
-
     public static void updateMangaRead(Context c, int mid) {
         ContentValues cv = new ContentValues();
         cv.put(COL_LAST_READ, System.currentTimeMillis());
