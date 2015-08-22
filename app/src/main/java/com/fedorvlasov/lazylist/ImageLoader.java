@@ -1,7 +1,6 @@
 package com.fedorvlasov.lazylist;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
@@ -10,10 +9,7 @@ import android.os.Handler;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
@@ -27,40 +23,42 @@ import ar.rulosoft.mimanganu.componentes.Imaginable;
 
 public class ImageLoader {
 
-    private static Map<Imaginable, String> imageViews = Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
+    private static Map<Imaginable, String> imageViews =
+            Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
     final int stub_id = R.drawable.stub;
+
     MemoryCache memoryCache = new MemoryCache();
-    Resources res;
     FileCache fileCache;
-    ExecutorService executorService;
-    Handler handler = new Handler();// handler to display images in UI thread
+    ExecutorService imgThreadPool;
+    // handler to display images in UI thread
+    Handler handler = new Handler();
 
     public ImageLoader(Context context) {
         imageViews.clear();
         fileCache = new FileCache(context);
-        executorService = Executors.newFixedThreadPool(3);
-        res = context.getResources();
+        imgThreadPool = Executors.newFixedThreadPool(3);
     }
 
     /**
-     * Android lollipop automaticamente ignora estas lineas para verciones anteriores es realmente necesario
-     * Android lollipop automatically ignores these lines for previous versions, but it's necessary
+     * Android lollipop automaticamente ignora estas lineas para
+     * verciones anteriores es realmente necesario
+     * <p/>
+     * Android lollipop automatically ignores these lines for
+     * previous versions, but it's necessary
      *
      * @param path to file
      * @return bitmap, which is converted
      */
-    @SuppressWarnings("deprecation")
     public static Bitmap convertBitmap(String path) {
-
         Bitmap bitmap = null;
         BitmapFactory.Options bfOptions = new BitmapFactory.Options();
-        bfOptions.inDither = false; // Disable Dithering mode
-        bfOptions.inPurgeable = true; // Tell to gc that whether it needs free
-        // memory, the Bitmap can be cleared
-        bfOptions.inInputShareable = true; // Which kind of reference will be
-        // used to recover the Bitmap data
-        // after being clear, when it will
-        // be used in the future
+        // Disable Dithering mode
+        bfOptions.inDither = false;
+        // Tell to gc that whether it needs free memory, the Bitmap can be cleared
+        bfOptions.inPurgeable = true;
+        // Which kind of reference will be used to recover the Bitmap data after being clear,
+        // when it will be used in the future
+        bfOptions.inInputShareable = true;
         bfOptions.inPreferredConfig = Config.RGB_565;
         bfOptions.inTempStorage = new byte[32 * 1024];
 
@@ -90,8 +88,8 @@ public class ImageLoader {
         return bitmap;
     }
 
-    public void DisplayImage(String url, Imaginable imageView) {
-        if (alreadyDownloading(imageView, url)) {
+    public void displayImg(String url, Imaginable imageView) {
+        if (imageViewReUse(imageView, url)) {
             imageViews.put(imageView, url);
             Bitmap bitmap = memoryCache.get(url);
             if (bitmap != null) {
@@ -103,27 +101,25 @@ public class ImageLoader {
         }
     }
 
-    private boolean alreadyDownloading(Imaginable imageView, String url) {
+    private boolean imageViewReUse(Imaginable imageView, String url) {
         String tag = imageViews.get(imageView);
         return tag == null || !tag.equals(url);
     }
 
     private void queuePhoto(String url, Imaginable imageView) {
-        PhotoToLoad p = new PhotoToLoad(url, imageView);
-        executorService.submit(new PhotosLoader(p));
+        imgThreadPool.submit(new ImageGet(imageView, url));
     }
 
     private Bitmap getBitmap(String url) {
         File f = fileCache.getFile(url);
 
-        // from SD cache
-        Bitmap b = decodeFile(f);
-        if (b != null)
-            return b;
+        // Try to get Image from local storage, i.e. SD card
+        Bitmap imgFile = decodeFile(f);
+        if (imgFile != null)
+            return imgFile;
 
-        // from web
+        // If locally nothing works, try to get image from web
         try {
-            Bitmap bitmap;
             URL imageUrl;
             String host = null;
             {
@@ -141,64 +137,50 @@ public class ImageLoader {
             if (host != null) {
                 conn.addRequestProperty("Host", host);
             }
-            InputStream is = conn.getInputStream();
-            OutputStream os = new FileOutputStream(f);
-            Utils.CopyStream(is, os);
-            os.close();
+            fileCache.writeFile(conn.getInputStream(), f);
             conn.disconnect();
-            bitmap = decodeFile(f);
-            return bitmap;
+            return decodeFile(f);
         } catch (Throwable ex) {
-            // ex.printStackTrace();
             if (ex instanceof OutOfMemoryError)
                 memoryCache.clear();
             return null;
         }
     }
 
-    // decodes image and scales it to reduce memory consumption
-    private Bitmap decodeFile(File f) {
-        return convertBitmap(f.getPath());
+    /**
+     * decodes image and scales it to reduce memory consumption
+     *
+     * @param put_file data from disk
+     * @return Bitmap
+     */
+    private Bitmap decodeFile(File put_file) {
+        return convertBitmap(put_file.getPath());
     }
 
-    boolean imageViewReused(PhotoToLoad photoToLoad) {
-        String tag = imageViews.get(photoToLoad.imageView);
-        return tag == null || !tag.equals(photoToLoad.url);
-    }
+    /**
+     * An image getter, which is called, if Image is not found in memory
+     * It is a runnable, which will be submit into the imgThreadPool,
+     * so it won't block the UI
+     */
+    class ImageGet implements Runnable {
+        String url;
+        Imaginable imageView;
 
-    public void clearCache() {
-        memoryCache.clear();
-        fileCache.clear();
-    }
-
-    // Task for the queue
-    private class PhotoToLoad {
-        public String url;
-        public Imaginable imageView;
-
-        public PhotoToLoad(String u, Imaginable i) {
-            url = u;
-            imageView = i;
-        }
-    }
-
-    class PhotosLoader implements Runnable {
-        PhotoToLoad photoToLoad;
-
-        PhotosLoader(PhotoToLoad photoToLoad) {
-            this.photoToLoad = photoToLoad;
+        ImageGet(Imaginable _imageView, String _url) {
+            this.url = _url;
+            this.imageView = _imageView;
         }
 
         @Override
         public void run() {
             try {
-                if (imageViewReused(photoToLoad))
+                if (imageViewReUse(imageView, url))
                     return;
-                Bitmap bmp = getBitmap(photoToLoad.url);
-                memoryCache.put(photoToLoad.url, bmp);
-                if (imageViewReused(photoToLoad))
+                Bitmap bmp = getBitmap(url);
+                memoryCache.put(url, bmp);
+                if (imageViewReUse(imageView, url))
                     return;
-                BitmapDisplayer bd = new BitmapDisplayer(bmp, photoToLoad);
+                BitmapDisplay bd = new BitmapDisplay(bmp, imageView, url);
                 handler.post(bd);
             } catch (Throwable th) {
                 // th.printStackTrace();
@@ -206,25 +188,29 @@ public class ImageLoader {
         }
     }
 
-    // Used to display bitmap in the UI thread
-    class BitmapDisplayer implements Runnable {
+    /**
+     * Used to display bitmap in the UI thread,
+     * if the image finally arrived, then update the imageView with the new image
+     */
+    class BitmapDisplay implements Runnable {
         Bitmap bitmap;
-        PhotoToLoad photoToLoad;
+        String url;
+        Imaginable imageView;
 
-        public BitmapDisplayer(Bitmap b, PhotoToLoad p) {
-            bitmap = b;
-            photoToLoad = p;
+        public BitmapDisplay(Bitmap _bmp, Imaginable _imageView, String _url) {
+            bitmap = _bmp;
+            url = _url;
+            imageView = _imageView;
         }
 
         public void run() {
-            if (imageViewReused(photoToLoad))
+            if (imageViewReUse(imageView, url))
                 return;
             if (bitmap != null)
-                photoToLoad.imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
             else
-                photoToLoad.imageView.setImageResource(stub_id);
-            imageViews.remove(photoToLoad.imageView);
+                imageView.setImageResource(stub_id);
+            imageViews.remove(imageView);
         }
     }
-
 }

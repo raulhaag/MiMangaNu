@@ -6,6 +6,10 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class FileCache {
 
@@ -14,7 +18,8 @@ public class FileCache {
     public FileCache(Context context) {
         //Find the dir to save cached images
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+        String dir = prefs.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
             cacheDir = new File(dir, "cache");
         else
@@ -26,11 +31,26 @@ public class FileCache {
     public File getFile(String url) {
         //I identify images by hashcode. Not a perfect solution, good for the demo.
         String filename = String.valueOf(url.hashCode());
-        //Another possible solution (thanks to grantland)
-        //String filename = URLEncoder.encode(url);
-        File f = new File(cacheDir, filename);
-        return f;
+        return new File(cacheDir, filename);
+    }
 
+    public void writeFile(InputStream is, File f) throws IOException {
+        try {
+            OutputStream os = new FileOutputStream(f);
+            int buffer_size = 1024;
+            try {
+                byte[] bytes = new byte[buffer_size];
+                for (;;) {
+                    int count = is.read(bytes, 0, buffer_size);
+                    if (count == -1)
+                        break;
+                    os.write(bytes, 0, count);
+                }
+            } catch (Exception ex) {}
+            os.close();
+        } catch (Exception e) {
+            throw e;
+        }
     }
 
     public void clear() {
