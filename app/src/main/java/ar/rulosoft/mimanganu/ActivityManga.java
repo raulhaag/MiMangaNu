@@ -210,7 +210,7 @@ public class ActivityManga extends ActionBarActivity {
             } else {
                 datos.setAuthor(getResources().getString(R.string.nodisponible));
             }
-            imageLoader.DisplayImage(manga.getImages(), datos);
+            imageLoader.displayImg(manga.getImages(), datos);
         }
     }
 

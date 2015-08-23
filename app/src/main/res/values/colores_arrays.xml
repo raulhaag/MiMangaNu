@@ -21,6 +21,50 @@
         <item>#000000</item>
     </string-array>
 
+    <!--My own color arrangement, hopefully the names are not licensed-->
+    <!--The colors are an approximation of the color above, not the same, but almost-->
+    <string-array name="color_codes">
+        <item>#FF3F34</item>
+        <item>#E3256B</item>
+        <item>#9932CC</item>
+        <item>#652DC1</item>
+        <item>#2A52BE</item>
+        <item>#1E90FF</item>
+        <item>#00B7EB</item>
+        <item>#069B81</item>
+        <item>#4FA83D</item>
+        <item>#85BB65</item>
+        <item>#D1E231</item>
+        <item>#FFC40C</item>
+        <item>#FB9902</item>
+        <item>#F2552A</item>
+        <item>#795D4C</item>
+        <item>#9F9F9C</item>
+        <item>#51808F</item>
+        <item>#100C08</item>
+    </string-array>
+
+    <string-array name="color_names">
+        <item>Red Orange</item>
+        <item>Razzmatazz</item>
+        <item>Dark orchid</item>
+        <item>Purple Heart</item>
+        <item>Cerulean Blue</item>
+        <item>Dodger Blue</item>
+        <item>Cyan</item>
+        <item>Gossamer</item>
+        <item>Apple</item>
+        <item>Dollar bill</item>
+        <item>Pear</item>
+        <item>Mikado yellow</item>
+        <item>Orange</item>
+        <item>Flamingo</item>
+        <item>Roman Coffee</item>
+        <item>Star Dust</item>
+        <item>Smalt Blue</item>
+        <item>Smoky black</item>
+    </string-array>
+
     <string-array name="backgroungs" translatable="false">
         <item>#FFEBEE</item>
         <item>#FCE4EC</item>

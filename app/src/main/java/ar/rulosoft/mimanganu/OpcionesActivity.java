@@ -12,7 +12,7 @@ import android.preference.PreferenceActivity;
 import java.io.File;
 import java.io.IOException;
 
-import ar.rulosoft.custompref.NumberPickerPref;
+import ar.rulosoft.custompref.NumberPickerDialogPref;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -46,8 +46,8 @@ public class OpcionesActivity extends PreferenceActivity {
         });
 
         /** This sets the download threads (parallele Downloads) */
-        final NumberPickerPref listPreferenceDT =
-                (NumberPickerPref) getPreferenceManager().findPreference("download_threads");
+        final NumberPickerDialogPref listPreferenceDT =
+                (NumberPickerDialogPref) getPreferenceManager().findPreference("download_threads");
         listPreferenceDT.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -61,8 +61,8 @@ public class OpcionesActivity extends PreferenceActivity {
         });
 
         /** This sets the Maximum number of errors (Maximale Anzahl der Fehler) */
-        final NumberPickerPref listPrefET =
-                (NumberPickerPref) getPreferenceManager().findPreference("error_tolerancia");
+        final NumberPickerDialogPref listPrefET =
+                (NumberPickerDialogPref) getPreferenceManager().findPreference("error_tolerancia");
         listPrefET.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -73,8 +73,8 @@ public class OpcionesActivity extends PreferenceActivity {
         });
 
         /** This sets the Number of retries by image */
-        NumberPickerPref listPrefRT =
-                (NumberPickerPref) getPreferenceManager().findPreference("reintentos");
+        NumberPickerDialogPref listPrefRT =
+                (NumberPickerDialogPref) getPreferenceManager().findPreference("reintentos");
         listPrefRT.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
