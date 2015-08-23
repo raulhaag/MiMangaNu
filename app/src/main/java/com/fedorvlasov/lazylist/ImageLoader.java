@@ -91,6 +91,8 @@ public class ImageLoader {
     public void displayImg(String url, Imaginable imageView) {
         if (imageViewReUse(imageView, url)) {
             imageViews.put(imageView, url);
+
+            // First, try to fetch image from memory
             Bitmap bitmap = memoryCache.get(url);
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
@@ -113,12 +115,12 @@ public class ImageLoader {
     private Bitmap getBitmap(String url) {
         File f = fileCache.getFile(url);
 
-        // Try to get Image from local storage, i.e. SD card
+        // Second, try to get image from local storage, i.e. SD card
         Bitmap imgFile = decodeFile(f);
         if (imgFile != null)
             return imgFile;
 
-        // If locally nothing works, try to get image from web
+        // Last, if locally nothing works, try to get image from web
         try {
             URL imageUrl;
             String host = null;

@@ -28,8 +28,7 @@ import android.widget.NumberPicker;
 
 import ar.rulosoft.mimanganu.R;
 
-public class NumberPickerPref extends DialogPreference {
-
+public class NumberPickerDialogPref extends DialogPreference {
     private NumberPicker mNumberPicker;
     private int mMin;
     private int mMax;
@@ -38,15 +37,15 @@ public class NumberPickerPref extends DialogPreference {
 
     private String mSummary;
 
-    public NumberPickerPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
-        TypedArray a =
-                context.obtainStyledAttributes(attrs, R.styleable.NumberPickerPref, defStyleAttr, defStyleRes);
-        mMin = a.getInteger(R.styleable.NumberPickerPref_val_min, 0);
-        mMax = a.getInteger(R.styleable.NumberPickerPref_val_max, 9);
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.NumberPickerDialogPref, defStyleAttr, defStyleRes);
+        mMin = a.getInteger(R.styleable.NumberPickerDialogPref_val_min, 0);
+        mMax = a.getInteger(R.styleable.NumberPickerDialogPref_val_max, 9);
         mWrapAround =
-                a.getBoolean(R.styleable.NumberPickerPref_wrap_around, false);
+                a.getBoolean(R.styleable.NumberPickerDialogPref_wrap_around, false);
         a.recycle();
 
         /** In this case, I retrieve the summary, so I can simulate the
@@ -54,15 +53,15 @@ public class NumberPickerPref extends DialogPreference {
         mSummary = (String) super.getSummary();
     }
 
-    public NumberPickerPref(Context context, AttributeSet attrs, int defStyleAttr) {
+    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public NumberPickerPref(Context context, AttributeSet attrs) {
+    public NumberPickerDialogPref(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public NumberPickerPref(Context context) {
+    public NumberPickerDialogPref(Context context) {
         this(context, null);
     }
 

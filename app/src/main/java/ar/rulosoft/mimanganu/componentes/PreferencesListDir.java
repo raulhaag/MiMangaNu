@@ -8,18 +8,21 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.DialogPreference;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import ar.rulosoft.custompref.ArrayAdapterDirectory;
 import ar.rulosoft.mimanganu.R;
 
 public class PreferencesListDir extends DialogPreference {
@@ -27,23 +30,26 @@ public class PreferencesListDir extends DialogPreference {
     Context context = getContext();
     String actual;
     ListView dirs;
+    TextView dirs_path;
 
     public PreferencesListDir(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setDialogLayoutResource(R.layout.dialogo_selector_directorio);
+        setDialogLayoutResource(R.layout.dialog_select_directory);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getContext());
         actual = pm.getString(getKey(), Environment.getExternalStorageDirectory().getPath() + "/");
-
     }
 
     @Override
-    protected void onBindDialogView(View view) {
-        dirs = (ListView) view.findViewById(R.id.listaDirs);
-        ArrayList<String> lista = dirList(actual);
-        ArrayAdapter<String> adap = new ArrayAdapter<String>(context, R.layout.listitem_dir, lista);
+    protected void onBindDialogView(@NonNull View view) {
+        dirs = (ListView) view.findViewById(R.id.dirList);
+        dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
+
+        ArrayList<String> dirList = dirList(actual);
+        ArrayAdapter<String> adap =
+                new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
+        dirs_path.setText(actual);
         dirs.setAdapter(adap);
         dirs.setOnItemClickListener(new OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String item = (String) dirs.getItemAtPosition(arg2);
@@ -53,10 +59,11 @@ public class PreferencesListDir extends DialogPreference {
                     actual = actual.substring(0, actual.lastIndexOf("/"));
                     actual = actual.substring(0, actual.lastIndexOf("/") + 1);
                 }
-                ArrayList<String> lista = dirList(actual);
-                ArrayAdapter<String> adap = new ArrayAdapter<String>(context, R.layout.listitem_dir, lista);
+                ArrayList<String> dirList = dirList(actual);
+                ArrayAdapter<String> adap =
+                        new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
+                dirs_path.setText(actual);
                 dirs.setAdapter(adap);
-
             }
         });
         super.onBindDialogView(view);
@@ -66,11 +73,10 @@ public class PreferencesListDir extends DialogPreference {
     protected void onPrepareDialogBuilder(Builder builder) {
 
         builder.setPositiveButton(getPositiveButtonText(), new OnClickListener() {
-
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 File nd;
-                if (actual.indexOf("MiManga") > -1) {
+                if (actual.contains("MiManga")) {
                     nd = new File(actual, ".nomedia");
                 } else {
                     nd = new File(actual + "MiMangaNu/", ".nomedia");
@@ -84,7 +90,8 @@ public class PreferencesListDir extends DialogPreference {
                     if (nd.exists()) {
                         Toast.makeText(context, context.getResources().getString(R.string.folder_changed), Toast.LENGTH_SHORT).show();
                         //TODO moveFiles to new folder
-                        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                        SharedPreferences prefs =
+                                PreferenceManager.getDefaultSharedPreferences(getContext());
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString(getKey(), actual);
                         editor.commit();
@@ -93,7 +100,6 @@ public class PreferencesListDir extends DialogPreference {
                     }
                     dialog.dismiss();
                 }
-
             }
         });
 
@@ -108,7 +114,7 @@ public class PreferencesListDir extends DialogPreference {
     }
 
     public ArrayList<String> dirList(String directorio) {
-        ArrayList<String> list = new ArrayList<String>();
+        ArrayList<String> list = new ArrayList<>();
         if (directorio.length() != 1) {
             list.add("..");
         }
