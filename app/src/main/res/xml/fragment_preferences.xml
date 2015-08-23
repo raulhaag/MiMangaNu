@@ -60,7 +60,7 @@
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
             android:title="@string/directorio_title" />
-        <ar.rulosoft.custompref.NumberPickerPref
+        <ar.rulosoft.custompref.NumberPickerDialogPref
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_descargas_title"
             android:key="download_threads"
@@ -68,7 +68,7 @@
             android:title="@string/cantidad_descargas_title"
             app:val_max="5"
             app:val_min="1" />
-        <ar.rulosoft.custompref.NumberPickerPref
+        <ar.rulosoft.custompref.NumberPickerDialogPref
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_errores_title"
             android:key="error_tolerancia"
@@ -76,7 +76,7 @@
             android:title="@string/cantidad_errores_title"
             app:val_max="9"
             app:val_min="1" />
-        <ar.rulosoft.custompref.NumberPickerPref
+        <ar.rulosoft.custompref.NumberPickerDialogPref
             android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
             android:key="reintentos"
@@ -86,18 +86,18 @@
             app:val_min="1" />
     </PreferenceCategory>
 
-    <!-- Don't ask me, those colours popped up in the debugger, it's ugly, I know -->
+    <!-- Finally, replaced by a much lighter color picker -->
     <PreferenceCategory android:title="@string/ui_settings">
-        <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
-            android:defaultValue="-10453621"
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="5"
             android:key="primario"
-            android:title="@string/color_primario"
-            app:cal_numColumns="4" />
-        <it.gmariotti.android.example.colorpicker.calendarstock.ColorPickerPreference
-            android:defaultValue="-16738680"
+            android:summary="Main coloring, like titlebar etc."
+            android:title="@string/color_primario" />
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="6"
             android:key="secundario"
-            android:title="@string/color_secundario"
-            app:cal_numColumns="4" />
+            android:summary="Secondary coloring, for more varity"
+            android:title="@string/color_secundario" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="About">
@@ -109,13 +109,6 @@
             android:key="license_view"
             android:summary="Tap to see license and thanks"
             android:title="@string/licencia" />
-
-        <ar.rulosoft.custompref.ColorListPref
-            android:defaultValue="0"
-            android:dialogTitle="My color pickery"
-            android:key="color_pick"
-            android:summary="Choose a color"
-            android:title="Third color" />
     </PreferenceCategory>
 
 </PreferenceScreen>

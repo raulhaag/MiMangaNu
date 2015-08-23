@@ -1,7 +1,26 @@
 package ar.rulosoft.custompref;
 
+/*
+ * Copyright (C) 2013 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Created by Johndeep on 22.08.15.
+ */
+
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +29,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-
 import ar.rulosoft.mimanganu.R;
 
-/**
- * Custom Array Adapter for more control of content, this sets the color picker, which
- * could replace the entire colorpickercollection lib.
- * <p/>
- * Created by Johndeep on 22.08.15.
- */
 public class ArrayAdapterColor extends ArrayAdapter<String> {
     private final Context mContext;
-    private final ArrayList<String> mList;
+    private final String[] mColorCodeList;
+    private final String[] mColorNameList;
     private final int mResource;
+    private final int mDefValue;
 
     static class ViewHolder {
         public LinearLayout object;
@@ -31,11 +44,14 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         public ImageView image;
     }
 
-    public ArrayAdapterColor(Context context, int resource, ArrayList<String> itemList) {
-        super(context, resource, itemList);
+    public ArrayAdapterColor(Context context, int resource, String[] colorList, int defValue) {
+        super(context, resource, colorList);
         this.mContext = context;
-        this.mList = itemList;
+        this.mDefValue = defValue;
         this.mResource = resource;
+
+        this.mColorNameList = mContext.getResources().getStringArray(R.array.color_names);
+        this.mColorCodeList = colorList;
     }
 
     @Override
@@ -56,14 +72,13 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         // fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
 
-        if (position % 2 == 0) {
-            holder.object.setBackgroundColor(0x12242424);
-        } else {
-            holder.object.setBackgroundColor(0);
-        }
-        holder.text.setText(mList.get(position));
-        holder.image.setImageResource(R.drawable.ic_folder);
-        holder.image.setColorFilter(0xFF545454);
+        holder.text.setText(mColorNameList[position]);
+
+        if (mDefValue == position)
+            holder.image.setImageResource(R.drawable.ic_colorbox_check);
+        else
+            holder.image.setImageResource(R.drawable.ic_colorbox);
+        holder.image.setColorFilter(Color.parseColor(mColorCodeList[position]));
 
         return rowView;
     }

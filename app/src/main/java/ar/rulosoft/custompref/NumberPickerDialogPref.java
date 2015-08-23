@@ -15,7 +15,7 @@ package ar.rulosoft.custompref;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created by Johndeep on 22.08.15.
+ * Created by Johndeep on 13.08.15.
  */
 
 import android.content.Context;
@@ -24,38 +24,44 @@ import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-
-import java.util.ArrayList;
+import android.widget.NumberPicker;
 
 import ar.rulosoft.mimanganu.R;
 
-public class ColorListPref extends DialogPreference {
-
-    private ListView mListView;
+public class NumberPickerDialogPref extends DialogPreference {
+    private NumberPicker mNumberPicker;
+    private int mMin;
+    private int mMax;
+    private boolean mWrapAround;
     private int mValue = 0;
-    Context mContext = getContext();
 
     private String mSummary;
 
-    public ColorListPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
+
+        TypedArray a = context.obtainStyledAttributes(attrs,
+                R.styleable.NumberPickerDialogPref, defStyleAttr, defStyleRes);
+        mMin = a.getInteger(R.styleable.NumberPickerDialogPref_val_min, 0);
+        mMax = a.getInteger(R.styleable.NumberPickerDialogPref_val_max, 9);
+        mWrapAround =
+                a.getBoolean(R.styleable.NumberPickerDialogPref_wrap_around, false);
+        a.recycle();
 
         /** In this case, I retrieve the summary, so I can simulate the
          * behavior of the other pref widgets */
         mSummary = (String) super.getSummary();
     }
 
-    public ColorListPref(Context context, AttributeSet attrs, int defStyleAttr) {
+    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public ColorListPref(Context context, AttributeSet attrs) {
+    public NumberPickerDialogPref(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public ColorListPref(Context context) {
+    public NumberPickerDialogPref(Context context) {
         this(context, null);
     }
 
@@ -81,33 +87,24 @@ public class ColorListPref extends DialogPreference {
 
     @Override
     protected View onCreateDialogView() {
-        mListView = new ListView(getContext());
-        return (mListView);
+        mNumberPicker = new NumberPicker(getContext());
+        return (mNumberPicker);
     }
 
     @Override
     protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
-
-        ArrayList<String> color_list = new ArrayList<>();
-
-        color_list.add("Banane");
-        color_list.add("Wurst");
-        color_list.add("Kekse");
-        color_list.add("Kartoffel");
-        color_list.add("Aubergine");
-
-        ArrayAdapter<String> color_adapter = new ArrayAdapterDirectory(mContext,
-                R.layout.listitem_color, color_list);
-
-        mListView.setAdapter(color_adapter);
+        mNumberPicker.setMinValue(mMin);
+        mNumberPicker.setMaxValue(mMax);
+        mNumberPicker.setValue(mValue);
+        mNumberPicker.setWrapSelectorWheel(mWrapAround);
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
-            mValue = (int) mListView.getSelectedItemId();
+            mValue = mNumberPicker.getValue();
             String pushValue = String.valueOf(mValue);
             if (callChangeListener(pushValue)) {
                 persistString(pushValue);

@@ -2,12 +2,9 @@ package ar.rulosoft.mimanganu.componentes;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Environment;
-import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
 
@@ -37,10 +34,6 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_CAP_DOWNLOADED = "descargado";
     public static final String COL_CAP_ID = "id";
     private static final String COL_READ_ORDER = "orden_lectura";// sentido de
-
-    // name and path of database
-    private static String database_name;
-    private static String database_path;
 
     // Database creation sql statement
     private static final String DATABASE_MANGA_CREATE = "create table " +
@@ -72,19 +65,13 @@ public class Database extends SQLiteOpenHelper {
     private static SQLiteDatabase localDB;
     Context context;
 
-    // make private, should be singelton, right?
+    // make private, should be single instance
     private Database(Context context) {
-        super(context, database_path + database_name, null, 8);
+        super(context, "mangas.db", null, 8);
         this.context = context;
     }
 
     public static SQLiteDatabase getDatabase(Context c) {
-        // Setup path and database name
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        database_path = prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
-        database_name = "mangas.db";
-
         if ((localDB == null) || !localDB.isOpen()) {
             localDB = new Database(c).getReadableDatabase();
         }
@@ -258,7 +245,8 @@ public class Database extends SQLiteOpenHelper {
             Manga m = getMangasCondition(c, COL_ID + "=" + mangaID).get(0);
             m.setChapters(getChapters(c, mangaID));
             manga = m;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         return manga;
     }
 
@@ -268,7 +256,8 @@ public class Database extends SQLiteOpenHelper {
             Manga m = getMangasCondition(c, COL_ID + "=" + mangaID).get(0);
             m.setChapters(getChapters(c, mangaID, "1", asc));
             manga = m;
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
         return manga;
     }
 

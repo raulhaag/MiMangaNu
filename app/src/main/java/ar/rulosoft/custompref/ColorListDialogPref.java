@@ -15,54 +15,54 @@ package ar.rulosoft.custompref;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * Created by Johndeep on 13.08.15.
+ * Created by Johndeep on 22.08.15.
  */
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.NumberPicker;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
 
 import ar.rulosoft.mimanganu.R;
 
-public class NumberPickerPref extends DialogPreference {
-
-    private NumberPicker mNumberPicker;
-    private int mMin;
-    private int mMax;
-    private boolean mWrapAround;
+public class ColorListDialogPref extends DialogPreference {
+    private ListView mListView;
     private int mValue = 0;
+    private String[] mColorCodeList;
+    private Context mContext = getContext();
 
     private String mSummary;
 
-    public NumberPickerPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public ColorListDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
-        TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.NumberPickerPref, defStyleAttr, defStyleRes);
-        mMin = a.getInteger(R.styleable.NumberPickerPref_val_min, 0);
-        mMax = a.getInteger(R.styleable.NumberPickerPref_val_max, 9);
-        mWrapAround =
-                a.getBoolean(R.styleable.NumberPickerPref_wrap_around, false);
-        a.recycle();
+        /** Get and prepare list of colors */
+        mColorCodeList = mContext.getResources().getStringArray(R.array.color_codes);
+
+        /** Disable buttons, we choose color by clicking on it either way */
+        super.setPositiveButtonText(null);
 
         /** In this case, I retrieve the summary, so I can simulate the
          * behavior of the other pref widgets */
         mSummary = (String) super.getSummary();
     }
 
-    public NumberPickerPref(Context context, AttributeSet attrs, int defStyleAttr) {
+    public ColorListDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public NumberPickerPref(Context context, AttributeSet attrs) {
+    public ColorListDialogPref(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public NumberPickerPref(Context context) {
+    public ColorListDialogPref(Context context) {
         this(context, null);
     }
 
@@ -88,30 +88,48 @@ public class NumberPickerPref extends DialogPreference {
 
     @Override
     protected View onCreateDialogView() {
-        mNumberPicker = new NumberPicker(getContext());
-        return (mNumberPicker);
+        mListView = new ListView(getContext());
+        return (mListView);
     }
 
     @Override
     protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
-        mNumberPicker.setMinValue(mMin);
-        mNumberPicker.setMaxValue(mMax);
-        mNumberPicker.setValue(mValue);
-        mNumberPicker.setWrapSelectorWheel(mWrapAround);
+        ArrayAdapter<String> color_adapter = new ArrayAdapterColor(mContext,
+                R.layout.listitem_color, mColorCodeList, mValue);
+
+        mListView.setAdapter(color_adapter);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                mValue = position;
+                onDialogClosed(true);
+                setIconChange();
+                getDialog().dismiss();
+            }
+        });
+
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
-            mValue = mNumberPicker.getValue();
-            String pushValue = String.valueOf(mValue);
+            Integer pushValue = mValue;
             if (callChangeListener(pushValue)) {
-                persistString(pushValue);
+                persistInt(pushValue);
                 notifyChanged();
             }
         }
+    }
+
+    protected void setIconChange() {
+        /** Create ImageView, set color and push it into the icon, fast and small */
+        ImageView myColorDraw = new ImageView(mContext);
+        myColorDraw.setImageResource(R.drawable.ic_colorbox);
+        myColorDraw.setColorFilter(Color.parseColor(mColorCodeList[mValue]));
+        super.setIcon(myColorDraw.getDrawable());
     }
 
     @Override
@@ -121,16 +139,17 @@ public class NumberPickerPref extends DialogPreference {
 
     @Override
     protected void onSetInitialValue(boolean restorePrefValue, Object defaultValue) {
-        String getValue;
+        int getValue;
         if (restorePrefValue) {
             if (defaultValue == null) {
-                getValue = getPersistedString("0");
+                getValue = getPersistedInt(0);
             } else {
-                getValue = getPersistedString(String.valueOf(defaultValue));
+                getValue = getPersistedInt(Integer.valueOf((String) defaultValue));
             }
         } else {
-            getValue = String.valueOf(defaultValue);
+            getValue = Integer.valueOf((String) defaultValue);
         }
-        mValue = Integer.parseInt(getValue);
+        mValue = getValue;
+        setIconChange();
     }
 }

@@ -10,9 +10,7 @@
         android:id="@+id/colorIcon"
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="15dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginRight="10dp"
         android:gravity="center_vertical" />
 
     <TextView
@@ -21,5 +19,4 @@
         android:layout_height="fill_parent"
         android:padding="8dip"
         android:textSize="@dimen/abc_text_size_medium_material" />
-
 </LinearLayout>
