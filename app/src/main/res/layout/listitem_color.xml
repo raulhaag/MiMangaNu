@@ -9,14 +9,15 @@
     <ImageView
         android:id="@+id/colorIcon"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_marginRight="10dp"
-        android:gravity="center_vertical" />
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginRight="4dp" />
 
     <TextView
         android:id="@+id/colorText"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:padding="8dip"
         android:textSize="@dimen/abc_text_size_medium_material" />
 </LinearLayout>

@@ -7,7 +7,7 @@
 
     <PreferenceCategory android:title="@string/opciones_mm">
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria" />
@@ -75,26 +75,26 @@
             android:summary="@string/cantidad_errores_subtitle"
             android:title="@string/cantidad_errores_title"
             app:val_max="9"
-            app:val_min="1" />
+            app:val_min="0" />
         <ar.rulosoft.custompref.NumberPickerDialogPref
             android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
             android:key="reintentos"
             android:summary="@string/cantidad_reintentos_subtitle"
             android:title="@string/cantidad_reintentos_title"
-            app:val_max="9"
-            app:val_min="1" />
+            app:val_max="5"
+            app:val_min="0" />
     </PreferenceCategory>
 
     <!-- Finally, replaced by a much lighter color picker -->
     <PreferenceCategory android:title="@string/ui_settings">
         <ar.rulosoft.custompref.ColorListDialogPref
-            android:defaultValue="5"
+            android:defaultValue="-14003522"
             android:key="primario"
             android:summary="Main coloring, like titlebar etc."
             android:title="@string/color_primario" />
         <ar.rulosoft.custompref.ColorListDialogPref
-            android:defaultValue="6"
+            android:defaultValue="-14774017"
             android:key="secundario"
             android:summary="Secondary coloring, for more varity"
             android:title="@string/color_secundario" />
