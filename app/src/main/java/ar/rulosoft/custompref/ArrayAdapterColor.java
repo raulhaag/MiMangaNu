@@ -19,8 +19,10 @@ package ar.rulosoft.custompref;
  */
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
+import android.os.Build.VERSION;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,11 +34,13 @@ import android.widget.TextView;
 import ar.rulosoft.mimanganu.R;
 
 public class ArrayAdapterColor extends ArrayAdapter<String> {
-    private final Context mContext;
-    private final String[] mColorCodeList;
-    private final String[] mColorNameList;
-    private final int mResource;
-    private final int mDefValue;
+    private ColorListDialogPref mParent;
+    private String[] mColorCodeList;
+    private String[] mColorNameList;
+
+    private int mResource;
+    private int mDefValue;
+    private float dpiScale;
 
     static class ViewHolder {
         public LinearLayout object;
@@ -44,14 +48,15 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         public ImageView image;
     }
 
-    public ArrayAdapterColor(Context context, int resource, String[] colorList, int defValue) {
-        super(context, resource, colorList);
-        this.mContext = context;
-        this.mDefValue = defValue;
-        this.mResource = resource;
+    public ArrayAdapterColor(ColorListDialogPref parent, int resource, int defValue) {
+        super(parent.getContext(), resource, parent.getCodeList());
+        mParent = parent;
+        mDefValue = defValue;
+        mResource = resource;
+        mColorCodeList = parent.getCodeList();
+        mColorNameList = parent.getNameList();
 
-        this.mColorNameList = mContext.getResources().getStringArray(R.array.color_names);
-        this.mColorCodeList = colorList;
+        dpiScale = mParent.getContext().getResources().getDisplayMetrics().density;
     }
 
     @Override
@@ -59,7 +64,7 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         View rowView = convertView;
         // reuse views
         if (rowView == null) {
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+            LayoutInflater inflater = ((Activity) mParent.getContext()).getLayoutInflater();
             rowView = inflater.inflate(this.mResource, null);
             // configure view holder
             ViewHolder viewHolder = new ViewHolder();
@@ -69,16 +74,31 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
             rowView.setTag(viewHolder);
         }
 
-        // fill data
+        // set and fill data
         ViewHolder holder = (ViewHolder) rowView.getTag();
-
         holder.text.setText(mColorNameList[position]);
 
-        if (mDefValue == position)
-            holder.image.setImageResource(R.drawable.ic_colorbox_check);
+        // Some funky stuff, want to see it? Activate following lines!
+//        int weakColor = Color.argb(30,
+//                Color.red(Color.parseColor(mColorCodeList[position])),
+//                Color.green(Color.parseColor(mColorCodeList[position])),
+//                Color.blue(Color.parseColor(mColorCodeList[position])));
+//        holder.object.setBackgroundColor(weakColor);
+
+        ShapeDrawable mShapeDraw = new ShapeDrawable(new OvalShape());
+        mShapeDraw.setIntrinsicHeight((int) (36 * dpiScale));
+        mShapeDraw.setIntrinsicWidth((int) (36 * dpiScale));
+        mShapeDraw.getPaint().setColor(Color.parseColor(mColorCodeList[position]));
+
+        if (VERSION.SDK_INT > 16)
+            holder.image.setBackground(mShapeDraw);
         else
-            holder.image.setImageResource(R.drawable.ic_colorbox);
-        holder.image.setColorFilter(Color.parseColor(mColorCodeList[position]));
+            holder.image.setBackgroundDrawable(mShapeDraw);
+
+        if ((mDefValue == Color.parseColor(mColorCodeList[position])))
+            holder.image.setImageResource(R.drawable.ic_check);
+        else
+            holder.image.setImageResource(0);
 
         return rowView;
     }
