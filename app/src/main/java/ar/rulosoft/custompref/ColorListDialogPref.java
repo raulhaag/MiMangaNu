@@ -21,6 +21,8 @@ package ar.rulosoft.custompref;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.ShapeDrawable;
+import android.graphics.drawable.shapes.OvalShape;
 import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
@@ -33,18 +35,27 @@ import android.widget.ListView;
 import ar.rulosoft.mimanganu.R;
 
 public class ColorListDialogPref extends DialogPreference {
-    private ListView mListView;
-    private int mValue = 0;
-    private String[] mColorCodeList;
     private Context mContext = getContext();
+    private String[] mColorCodeList;
+    private String[] mColorNameList;
+    ShapeDrawable mShapeDraw;
 
+    private ListView mListView;
     private String mSummary;
+    private int mValue;
 
     public ColorListDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
         /** Get and prepare list of colors */
         mColorCodeList = mContext.getResources().getStringArray(R.array.color_codes);
+        mColorNameList = mContext.getResources().getStringArray(R.array.color_names);
+
+        /** Create simple filled circle shape */
+        float dpiScale = mContext.getResources().getDisplayMetrics().density;
+        mShapeDraw = new ShapeDrawable(new OvalShape());
+        mShapeDraw.setIntrinsicHeight((int) (36 * dpiScale));
+        mShapeDraw.setIntrinsicWidth((int) (36 * dpiScale));
 
         /** Disable buttons, we choose color by clicking on it either way */
         super.setPositiveButtonText(null);
@@ -64,6 +75,14 @@ public class ColorListDialogPref extends DialogPreference {
 
     public ColorListDialogPref(Context context) {
         this(context, null);
+    }
+
+    public String[] getCodeList() {
+        return mColorCodeList;
+    }
+
+    public String[] getNameList() {
+        return mColorNameList;
     }
 
     @Override
@@ -95,21 +114,19 @@ public class ColorListDialogPref extends DialogPreference {
     @Override
     protected void onBindDialogView(@NonNull View view) {
         super.onBindDialogView(view);
-        ArrayAdapter<String> color_adapter = new ArrayAdapterColor(mContext,
-                R.layout.listitem_color, mColorCodeList, mValue);
-
+        ArrayAdapter<String> color_adapter = new ArrayAdapterColor(this,
+                R.layout.listitem_color, mValue);
         mListView.setAdapter(color_adapter);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mValue = position;
+                mValue = Color.parseColor(mColorCodeList[position]);
                 onDialogClosed(true);
                 setIconChange();
                 getDialog().dismiss();
             }
         });
-
     }
 
     @Override
@@ -125,10 +142,10 @@ public class ColorListDialogPref extends DialogPreference {
     }
 
     protected void setIconChange() {
-        /** Create ImageView, set color and push it into the icon, fast and small */
+        /** Create Shape and ImageView, set color and push it into the icon, fast and small */
+        mShapeDraw.getPaint().setColor(mValue);
         ImageView myColorDraw = new ImageView(mContext);
-        myColorDraw.setImageResource(R.drawable.ic_colorbox);
-        myColorDraw.setColorFilter(Color.parseColor(mColorCodeList[mValue]));
+        myColorDraw.setImageDrawable(mShapeDraw);
         super.setIcon(myColorDraw.getDrawable());
     }
 

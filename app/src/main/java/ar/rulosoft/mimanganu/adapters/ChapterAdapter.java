@@ -31,7 +31,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
-    public static int TRANSPARENT = Color.parseColor("#00FFFFFF");
+    public static int TRANSPARENT = Color.TRANSPARENT;
     public static int COLOR_READ = Color.parseColor("#929292");
     public static int COLOR_READING = Color.parseColor("#424242");
     public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
@@ -40,7 +40,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     ActivityManga activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
-    private StateListDrawable stateListDrawable;
+//    private StateListDrawable stateListDrawable;
 
     public ChapterAdapter(Activity context, List<Chapter> items) {
         super(context, listItem, items);

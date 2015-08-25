@@ -721,8 +721,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rView = inflater.inflate(R.layout.fragment_pagina_final, container, false);
-            b1 = (Button) rView.findViewById(R.id.button1);
-            b2 = (Button) rView.findViewById(R.id.button2);
+            b1 = (Button) rView.findViewById(R.id.button_next);
+            b2 = (Button) rView.findViewById(R.id.button_previous);
             b1.setTextColor(Color.WHITE);
             b2.setTextColor(Color.WHITE);
             if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {

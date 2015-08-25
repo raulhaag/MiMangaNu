@@ -50,7 +50,8 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
 
     @Override
     public ServerViewHolder onCreateViewHolder(ViewGroup viewGroup, int pos) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.item_server, viewGroup, false);
+        View v = LayoutInflater.from(
+                viewGroup.getContext()).inflate(R.layout.listitem_server, viewGroup, false);
         return new ServerViewHolder(v);
     }
 
