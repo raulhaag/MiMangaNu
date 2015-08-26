@@ -48,6 +48,6 @@
         android:textColor="@android:color/darker_gray"
         android:textSize="36sp"
         android:visibility="invisible" />
-    <!--android:background="@drawable/borde"-->
+    <!--android:background="@drawable/border"-->
 
 </RelativeLayout>
