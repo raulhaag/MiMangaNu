@@ -190,9 +190,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{
-                "Popularity", "Latest Update", "New Manga", "a-z"
-        };
+        return new String[]{"Popularity", "Latest Update", "New Manga", "a-z"};
     }
 
     @Override

@@ -11,38 +11,33 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
 public class EsNineMangaCom extends ServerBase {
-
-    public static String[] generos = new String[]{"Todo", "Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
-            "Comedy", "Deporte", "Deportes", "Drama", "Ecchi", "Escolar", "Fantasía", "Fantasy", "Gender Bender", "Genial", "Harem", "Historical", "HistóRico",
-            "Horror", "Josei", "Maduro", "Martial", "Martial Arts", "Mecha", "Misterio", "Mystery", "None", "One Shot", "Oneshot", "Parodia", "Psicológico",
-            "Psychological", "Romance", "School Life", "Sci-Fi", "Seinen", "Shojo", "Shojo Ai", "Shonen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai",
-            "Slice Of Life", "Smut", "Sobrenatural", "Sports", "Supernatural", "Tragedia", "Tragedy", "Vida Cotidiana", "Webcomic", "Yuri"};
-    public static String[] generosV = new String[]{"http://es.ninemanga.com/category/index_.html", "http://es.ninemanga.com/category/Acci%C3%B3n_.html", "http://es.ninemanga.com/category/Action_.html",
-            "http://es.ninemanga.com/category/Adult_.html", "http://es.ninemanga.com/category/Adventure_.html",
-            "http://es.ninemanga.com/category/Artes+Marciales_.html", "http://es.ninemanga.com/category/Aventura_.html",
-            "http://es.ninemanga.com/category/Ciencia+Ficci%C3%B3n_.html", "http://es.ninemanga.com/category/Comedia_.html",
-            "http://es.ninemanga.com/category/Comedy_.html", "http://es.ninemanga.com/category/Deporte_.html",
-            "http://es.ninemanga.com/category/Deportes_.html", "http://es.ninemanga.com/category/Drama_.html", "http://es.ninemanga.com/category/Ecchi_.html",
-            "http://es.ninemanga.com/category/Escolar_.html", "http://es.ninemanga.com/category/Fantas%C3%ADa_.html",
-            "http://es.ninemanga.com/category/Fantasy_.html", "http://es.ninemanga.com/category/Gender+Bender_.html",
-            "http://es.ninemanga.com/category/Genial_.html", "http://es.ninemanga.com/category/Harem_.html",
-            "http://es.ninemanga.com/category/Historical_.html", "http://es.ninemanga.com/category/Hist%C3%B3rico_.html",
-            "http://es.ninemanga.com/category/Horror_.html", "http://es.ninemanga.com/category/Josei_.html", "http://es.ninemanga.com/category/Maduro_.html",
-            "http://es.ninemanga.com/category/Martial_.html", "http://es.ninemanga.com/category/Martial+Arts_.html",
-            "http://es.ninemanga.com/category/Mecha_.html", "http://es.ninemanga.com/category/Misterio_.html",
-            "http://es.ninemanga.com/category/Mystery_.html", "http://es.ninemanga.com/category/None_.html", "http://es.ninemanga.com/category/One+Shot_.html",
-            "http://es.ninemanga.com/category/Oneshot_.html", "http://es.ninemanga.com/category/Parodia_.html",
-            "http://es.ninemanga.com/category/Psicol%C3%B3gico_.html", "http://es.ninemanga.com/category/Psychological_.html",
-            "http://es.ninemanga.com/category/Romance_.html", "http://es.ninemanga.com/category/School+Life_.html",
-            "http://es.ninemanga.com/category/Sci-fi_.html", "http://es.ninemanga.com/category/Seinen_.html", "http://es.ninemanga.com/category/Shojo_.html",
-            "http://es.ninemanga.com/category/Shojo+Ai_.html", "http://es.ninemanga.com/category/Shonen_.html",
-            "http://es.ninemanga.com/category/Shoujo_.html", "http://es.ninemanga.com/category/Shoujo+Ai_.html",
-            "http://es.ninemanga.com/category/Shounen_.html", "http://es.ninemanga.com/category/Shounen+Ai_.html",
-            "http://es.ninemanga.com/category/Slice+Of+Life_.html", "http://es.ninemanga.com/category/Smut_.html",
-            "http://es.ninemanga.com/category/Sobrenatural_.html", "http://es.ninemanga.com/category/Sports_.html",
-            "http://es.ninemanga.com/category/Supernatural_.html", "http://es.ninemanga.com/category/Tragedia_.html",
-            "http://es.ninemanga.com/category/Tragedy_.html", "http://es.ninemanga.com/category/Vida+Cotidiana_.html",
-            "http://es.ninemanga.com/category/Webcomic_.html", "http://es.ninemanga.com/category/Yuri_.html"};
+    public static String HOST = "http://es.ninemanga.com";
+    public static String[] generos = new String[]{
+            "Todo", "Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura",
+            "Ciencia Ficción", "Comedia", "Comedy", "Deporte", "Deportes", "Drama", "Ecchi",
+            "Escolar", "Fantasía", "Fantasy", "Gender Bender", "Genial", "Harem", "Historical",
+            "HistóRico", "Horror", "Josei", "Maduro", "Martial", "Martial Arts", "Mecha",
+            "Misterio", "Mystery", "None", "One Shot", "Oneshot", "Parodia", "Psicológico",
+            "Psychological", "Romance", "School Life", "Sci-Fi", "Seinen", "Shojo", "Shojo Ai",
+            "Shonen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice Of Life", "Smut",
+            "Sobrenatural", "Sports", "Supernatural", "Tragedia", "Tragedy", "Vida Cotidiana",
+            "Webcomic", "Yuri"
+    };
+    public static String[] generosV = new String[]{
+            "index_.html", "Acci%C3%B3n_.html", "Action_.html", "Adult_.html", "Adventure_.html",
+            "Artes+Marciales_.html", "Aventura_.html", "Ciencia+Ficci%C3%B3n_.html", "Comedia_.html",
+            "Comedy_.html", "Deporte_.html", "Deportes_.html", "Drama_.html", "Ecchi_.html",
+            "Escolar_.html", "Fantas%C3%ADa_.html", "Fantasy_.html", "Gender+Bender_.html",
+            "Genial_.html", "Harem_.html", "Historical_.html", "Hist%C3%B3rico_.html",
+            "Horror_.html", "Josei_.html", "Maduro_.html", "Martial_.html", "Martial+Arts_.html",
+            "Mecha_.html", "Misterio_.html", "Mystery_.html", "None_.html", "One+Shot_.html",
+            "Oneshot_.html", "Parodia_.html", "Psicol%C3%B3gico_.html", "Psychological_.html",
+            "Romance_.html", "School+Life_.html", "Sci-fi_.html", "Seinen_.html", "Shojo_.html",
+            "Shojo+Ai_.html", "Shonen_.html", "Shoujo_.html", "Shoujo+Ai_.html",
+            "Shounen_.html", "Shounen+Ai_.html", "Slice+Of+Life_.html", "Smut_.html",
+            "Sobrenatural_.html", "Sports_.html", "Supernatural_.html", "Tragedia_.html",
+            "Tragedy_.html", "Vida+Cotidiana_.html", "Webcomic_.html", "Yuri_.html"
+    };
 
     public EsNineMangaCom() {
         this.setFlag(R.drawable.flag_esp);
@@ -53,18 +48,17 @@ public class EsNineMangaCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = new Navegador().get("http://es.ninemanga.com/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
+        String source = new Navegador().get(HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(ESNINEMANGA, m.group(2), "http://es.ninemanga.com" + m.group(1), false);
+            Manga manga = new Manga(ESNINEMANGA, m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -83,21 +77,23 @@ public class EsNineMangaCom extends ServerBase {
         String portada = getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, "");
         m.setImages(portada);
         // sinopsis
-        String sinopsis = getFirstMatchDefault("<p itemprop=\"description\">(.+?)&nbsp;Show less", source, "Sin sinopsis").replaceAll("<.+?>", "");
+        String sinopsis = getFirstMatchDefault(
+                "<p itemprop=\"description\">(.+?)&nbsp;Show less", source, "Sin sinopsis").replaceAll("<.+?>", "");
         m.setSinopsis(sinopsis);
 
-        //estado
+        // estado
         m.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
 
-        //autor
+        // autor
         m.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
 
         // cap�tulos
-        Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile(
+                "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            chapters.add(0, new Chapter(matcher.group(3), "http://es.ninemanga.com" + matcher.group(1)));
+            chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
         }
         m.setChapters(chapters);
 
@@ -130,22 +126,25 @@ public class EsNineMangaCom extends ServerBase {
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>", source, "Error al obtener el n�mero de p�ginas");
+        String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>",
+                source, "Error al obtener el n�mero de p�ginas");
         c.setPages(Integer.parseInt(nop));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = new Navegador().get(generosV[categorie].replace("_", "_" + pageNumber));
+        String source = new Navegador().get(
+                HOST + "/category/" + generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
     public ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
+        Pattern p = Pattern.compile(
+                "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(ESNINEMANGA, m.group(3), "http://es.ninemanga.com" + m.group(1), false);
+            Manga manga = new Manga(ESNINEMANGA, m.group(3), HOST + m.group(1), false);
             manga.setImages(m.group(2));
             mangas.add(manga);
         }
@@ -159,7 +158,7 @@ public class EsNineMangaCom extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{"Popularidad"};
+        return new String[]{"Popluar"};
     }
 
     @Override

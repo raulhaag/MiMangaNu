@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:background="@drawable/borde_negro"
+        android:background="@drawable/border_black"
         android:gravity="center"
         android:padding="10dp" />
 
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/button_next"
         android:layout_margin="10dp"
-        android:background="@drawable/borde_negro"
+        android:background="@drawable/border_black"
         android:gravity="center"
         android:padding="10dp" />
 </RelativeLayout>
