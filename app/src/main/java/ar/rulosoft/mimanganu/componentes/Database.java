@@ -80,7 +80,7 @@ public class Database extends SQLiteOpenHelper {
     // make private, should be single instance
     private Database(Context context) {
 
-        super(context, (PreferenceManager.getDefaultSharedPreferences(context).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/dbs/") + database_name, null, database_version);
+        super(context, database_path + database_name, null, database_version);
         this.context = context;
     }
 
@@ -90,6 +90,8 @@ public class Database extends SQLiteOpenHelper {
         database_path = (prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
         database_name = "mangas.db";
+        if (!new File(database_path).exists())
+            new File(database_path).mkdirs();
         if ((localDB == null) || !localDB.isOpen()) {
             localDB = new Database(c).getReadableDatabase();
         }
@@ -448,9 +450,6 @@ public class Database extends SQLiteOpenHelper {
             context.startActivity(i);
             System.exit(0);
         } else {
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
-            File destination = new File(sp.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/dbs");
-            destination.mkdirs();
             db.execSQL(DATABASE_MANGA_CREATE);
             db.execSQL(DATABASE_CAPITULOS_CREATE);
         }
