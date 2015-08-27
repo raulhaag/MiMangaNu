@@ -79,7 +79,8 @@ public class Database extends SQLiteOpenHelper {
 
     // make private, should be single instance
     private Database(Context context) {
-        super(context, (PreferenceManager.getDefaultSharedPreferences(context).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/dbs") + database_name, null, database_version);
+
+        super(context, (PreferenceManager.getDefaultSharedPreferences(context).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/dbs/") + database_name, null, database_version);
         this.context = context;
     }
 
@@ -436,7 +437,7 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        if (context.getDatabasePath("mangas.db").exists()) {
+        if (context.getDatabasePath("mangas.db").exists() && !(doesTableExist(db, TABLE_MANGA))) {
             //move to new path
             copyDbToSd(context);
             db.close();
@@ -478,5 +479,17 @@ public class Database extends SQLiteOpenHelper {
         } catch (IOException e) {
             Toast.makeText(c, "Error: ", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public boolean doesTableExist(SQLiteDatabase db, String tableName) {
+        Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
     }
 }
