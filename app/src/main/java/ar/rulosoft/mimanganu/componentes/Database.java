@@ -2,10 +2,21 @@ package ar.rulosoft.mimanganu.componentes;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.widget.Toast;
 
+import com.fedorvlasov.lazylist.FileCache;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 public class Database extends SQLiteOpenHelper {
@@ -34,7 +45,6 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_CAP_DOWNLOADED = "descargado";
     public static final String COL_CAP_ID = "id";
     private static final String COL_READ_ORDER = "orden_lectura";// sentido de
-
     // Database creation sql statement
     private static final String DATABASE_MANGA_CREATE = "create table " +
             TABLE_MANGA + "(" +
@@ -50,7 +60,6 @@ public class Database extends SQLiteOpenHelper {
             COL_SEARCH + " int DEFAULT 0, " +
             COL_READ_ORDER + " int not null DEFAULT -1, " +
             COL_AUTHOR + " TEXT NOT NULL DEFAULT 'N/A');";
-
     private static final String DATABASE_CAPITULOS_CREATE = "create table " +
             TABLE_CHAPTERS + "(" +
             COL_CAP_ID + " integer primary key autoincrement, " +
@@ -61,17 +70,25 @@ public class Database extends SQLiteOpenHelper {
             COL_CAP_STATE + " int DEFAULT 0," +
             COL_CAP_PAG_READ + " int DEFAULT 1, " +
             COL_CAP_DOWNLOADED + " int DEFAULT 0);";
-
+    // name and path of database
+    private static String database_name;
+    private static String database_path;
+    private static int database_version = 9;
     private static SQLiteDatabase localDB;
     Context context;
 
     // make private, should be single instance
     private Database(Context context) {
-        super(context, "mangas.db", null, 8);
+        super(context, database_path + database_name, null, database_version);
         this.context = context;
     }
 
     public static SQLiteDatabase getDatabase(Context c) {
+        // Setup path and database name
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        database_path = (prefs.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
+        database_name = "mangas.db";
         if ((localDB == null) || !localDB.isOpen()) {
             localDB = new Database(c).getReadableDatabase();
         }
@@ -419,13 +436,44 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(DATABASE_MANGA_CREATE);
-        db.execSQL(DATABASE_CAPITULOS_CREATE);
+        if (context.getDatabasePath("mangas.db").exists()) {
+            //move to new path
+            copyDbToSd(context);
+            db.close();
+            //restart app
+            Intent i = context.getPackageManager()
+                    .getLaunchIntentForPackage(context.getPackageName());
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(i);
+            System.exit(0);
+        } else {
+            db.execSQL(DATABASE_MANGA_CREATE);
+            db.execSQL(DATABASE_CAPITULOS_CREATE);
+        }
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        localDB = db;
-        db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_AUTHOR + " TEXT NOT NULL DEFAULT 'N/A';");
+
+    }
+
+    public void copyDbToSd(Context c) {
+        File dbFile = c.getDatabasePath("mangas.db");
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
+        String ruta = sp.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+        ruta += "dbs/";
+        File exportDir = new File(ruta, "");
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+        File file = new File(exportDir, dbFile.getName());
+        try {
+            file.createNewFile();
+            InputStream is = new FileInputStream(dbFile);
+            FileCache.writeFile(is, file);
+            is.close();
+        } catch (IOException e) {
+            Toast.makeText(c, "Error: ", Toast.LENGTH_LONG).show();
+        }
     }
 }

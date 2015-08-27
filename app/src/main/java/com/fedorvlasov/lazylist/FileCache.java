@@ -28,13 +28,7 @@ public class FileCache {
             cacheDir.mkdirs();
     }
 
-    public File getFile(String url) {
-        //I identify images by hashcode. Not a perfect solution, good for the demo.
-        String filename = String.valueOf(url.hashCode());
-        return new File(cacheDir, filename);
-    }
-
-    public void writeFile(InputStream is, File f) throws IOException {
+    public static void writeFile(InputStream is, File f) throws IOException {
         try {
             OutputStream os = new FileOutputStream(f);
             int buffer_size = 1024;
@@ -49,8 +43,14 @@ public class FileCache {
             } catch (Exception ex) {}
             os.close();
         } catch (Exception e) {
-            throw e;
+            // throw e;
         }
+    }
+
+    public File getFile(String url) {
+        //I identify images by hashcode. Not a perfect solution, good for the demo.
+        String filename = String.valueOf(url.hashCode());
+        return new File(cacheDir, filename);
     }
 
     public void clear() {
