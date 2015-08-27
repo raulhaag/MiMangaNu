@@ -79,7 +79,7 @@ public class Database extends SQLiteOpenHelper {
 
     // make private, should be single instance
     private Database(Context context) {
-        super(context, database_path + database_name, null, database_version);
+        super(context, (PreferenceManager.getDefaultSharedPreferences(context).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/dbs") + database_name, null, database_version);
         this.context = context;
     }
 
@@ -447,6 +447,9 @@ public class Database extends SQLiteOpenHelper {
             context.startActivity(i);
             System.exit(0);
         } else {
+            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+            File destination = new File(sp.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/dbs");
+            destination.mkdirs();
             db.execSQL(DATABASE_MANGA_CREATE);
             db.execSQL(DATABASE_CAPITULOS_CREATE);
         }
