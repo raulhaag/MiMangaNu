@@ -109,7 +109,7 @@ public class ChapterDownload implements StateChange {
 
     public void checkProgreso() {
         if (progess == chapter.getPages()) {
-            Database.UpdateChapterDownloaded(DownloadPoolService.actual, chapter.getId(), 1);
+            Database.updateChapterDownloaded(DownloadPoolService.actual, chapter.getId(), 1);
             changeStatus(DownloadStatus.DOWNLOADED);
         }
     }

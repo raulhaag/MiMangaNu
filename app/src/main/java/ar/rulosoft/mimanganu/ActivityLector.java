@@ -299,12 +299,12 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         // super.onSaveInstanceState(outState);
-        Database.UpdateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
+        Database.updateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
     }
 
     @Override
     protected void onPause() {
-        Database.UpdateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
+        Database.updateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
         DownloadPoolService.detachListener(chapter.getId());
         super.onPause();
     }

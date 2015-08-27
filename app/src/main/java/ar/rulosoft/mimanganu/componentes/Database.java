@@ -346,7 +346,7 @@ public class Database extends SQLiteOpenHelper {
         return cap;
     }
 
-    public static void UpdateChapterDownloaded(Context c, int cid, int state) {
+    public static void updateChapterDownloaded(Context c, int cid, int state) {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_DOWNLOADED, state);
         getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
@@ -364,7 +364,7 @@ public class Database extends SQLiteOpenHelper {
 
     }
 
-    public static void UpdateChapterPage(Context c, int cid, int pages) {
+    public static void updateChapterPage(Context c, int cid, int pages) {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_PAG_READ, pages);
         getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);

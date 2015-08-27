@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.graphics.drawable.StateListDrawable;
 import android.os.AsyncTask;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -126,7 +125,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         String ruta = DownloadPoolService.generarRutaBase(s, m, c, activity);
                         FragmentMisMangas.DeleteRecursive(new File(ruta));
                         getItem(position).setDownloaded(false);
-                        Database.UpdateChapterDownloaded(activity, c.getId(), 0);
+                        Database.updateChapterDownloaded(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
                         // ((ImageView)
