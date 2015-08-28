@@ -60,8 +60,6 @@ public class ColorListDialogPref extends DialogPreference {
         /** Disable buttons, we choose color by clicking on it either way */
         super.setPositiveButtonText(null);
 
-        /** In this case, I retrieve the summary, so I can simulate the
-         * behavior of the other pref widgets */
         mSummary = (String) super.getSummary();
     }
 

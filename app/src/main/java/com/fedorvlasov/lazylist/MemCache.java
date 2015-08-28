@@ -6,30 +6,23 @@ import android.util.LruCache;
 /**
  * Hopefully a nicer Memory cache than the previous one, this is inspired and taken from
  * http://stackoverflow.com/questions/1945201/android-image-caching
- * Thanks to Zubair Ahmad Khan
  */
-public class RamCache {
+public class MemCache {
     private LruCache<String, Bitmap> imagesWarehouse;
+    private static MemCache cache;
 
-    private static RamCache cache;
-
-    public static RamCache getInstance() {
+    public static MemCache getInstance() {
         if (cache == null) {
-            cache = new RamCache();
+            cache = new MemCache();
         }
-
         return cache;
     }
 
-    public RamCache() {
+    public MemCache() {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
-
-        System.out.println("cache size = " + cacheSize);
-
         imagesWarehouse = new LruCache<String, Bitmap>(cacheSize) {
             protected int sizeOf(String key, Bitmap value) {
-                // The cache size will be measured in kilobytes rather than number of items.
                 int bitmapByteCount = value.getRowBytes() * value.getHeight();
                 return bitmapByteCount / 1024;
             }
@@ -43,11 +36,10 @@ public class RamCache {
     }
 
     public Bitmap getImageToMem(String key) {
-        if (key != null) {
+        if (key != null)
             return imagesWarehouse.get(key);
-        } else {
+        else
             return null;
-        }
     }
 
     public void clearMem() {

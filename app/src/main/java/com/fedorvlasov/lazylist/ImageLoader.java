@@ -27,7 +27,7 @@ public class ImageLoader {
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
     final int stub_id = R.drawable.stub;
 
-    RamCache mRamCache;
+    MemCache mMemCache;
     FileCache mFileCache;
     ExecutorService imgThreadPool;
     // handler to display images in UI thread
@@ -36,7 +36,7 @@ public class ImageLoader {
     public ImageLoader(Context context) {
         imageViews.clear();
 
-        mRamCache = RamCache.getInstance();
+        mMemCache = MemCache.getInstance();
         mFileCache = new FileCache(context);
         imgThreadPool = Executors.newFixedThreadPool(3);
     }
@@ -95,7 +95,7 @@ public class ImageLoader {
             imageViews.put(imageView, url);
 
             // First, try to fetch image from memory
-            Bitmap bitmap = mRamCache.getImageToMem(url);
+            Bitmap bitmap = mMemCache.getImageToMem(url);
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             } else {
@@ -146,7 +146,7 @@ public class ImageLoader {
             return decodeFile(f);
         } catch (Throwable ex) {
             if (ex instanceof OutOfMemoryError)
-                mRamCache.clearMem();
+                mMemCache.clearMem();
             return null;
         }
     }
@@ -181,7 +181,7 @@ public class ImageLoader {
                 if (imageViewReUse(imageView, url))
                     return;
                 Bitmap bmp = getBitmap(url);
-                mRamCache.putImageToMem(url, bmp);
+                mMemCache.putImageToMem(url, bmp);
                 if (imageViewReUse(imageView, url))
                     return;
                 BitmapDisplay bd = new BitmapDisplay(bmp, imageView, url);

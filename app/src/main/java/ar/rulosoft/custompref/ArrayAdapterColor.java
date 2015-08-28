@@ -65,12 +65,12 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         // reuse views
         if (rowView == null) {
             LayoutInflater inflater = ((Activity) mParent.getContext()).getLayoutInflater();
-            rowView = inflater.inflate(this.mResource, null);
+            rowView = inflater.inflate(mResource, null);
             // configure view holder
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.text = (TextView) rowView.findViewById(R.id.colorText);
-            viewHolder.image = (ImageView) rowView.findViewById(R.id.colorIcon);
             viewHolder.object = (LinearLayout) rowView.findViewById(R.id.colorObject);
+            viewHolder.image = (ImageView) rowView.findViewById(R.id.colorIcon);
+            viewHolder.text = (TextView) rowView.findViewById(R.id.colorText);
             rowView.setTag(viewHolder);
         }
 
@@ -95,7 +95,7 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         else
             holder.image.setBackgroundDrawable(mShapeDraw);
 
-        if ((mDefValue == Color.parseColor(mColorCodeList[position])))
+        if (mDefValue == Color.parseColor(mColorCodeList[position]))
             holder.image.setImageResource(R.drawable.ic_check);
         else
             holder.image.setImageResource(0);

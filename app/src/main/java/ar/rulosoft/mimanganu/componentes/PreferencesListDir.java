@@ -94,7 +94,7 @@ public class PreferencesListDir extends DialogPreference {
                                 PreferenceManager.getDefaultSharedPreferences(getContext());
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString(getKey(), actual);
-                        editor.commit();
+                        editor.apply();
                     } else {
                         Toast.makeText(context, context.getResources().getString(R.string.unwritable_folder), Toast.LENGTH_SHORT).show();
                     }
@@ -113,12 +113,12 @@ public class PreferencesListDir extends DialogPreference {
         super.onPrepareDialogBuilder(builder);
     }
 
-    public ArrayList<String> dirList(String directorio) {
+    public ArrayList<String> dirList(String directory) {
         ArrayList<String> list = new ArrayList<>();
-        if (directorio.length() != 1) {
+        if (directory.length() != 1) {
             list.add("..");
         }
-        File dir = new File(directorio);
+        File dir = new File(directory);
         if (dir.listFiles() != null) {
             for (File child : dir.listFiles()) {
                 if (child.isDirectory()) {

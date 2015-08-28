@@ -55,9 +55,6 @@ public class ActivityManga extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
-
         setContentView(R.layout.activity_manga);
         id = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
         if (id == -1) {
@@ -67,17 +64,20 @@ public class ActivityManga extends ActionBarActivity {
         lista = (ListView) findViewById(R.id.lista);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
         imageLoader = new ImageLoader(ActivityManga.this);
-        colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        colors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
 
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
         if (savedInstanceState == null) {
             buscarNuevos = new FragmentUpdateSearchTask();
-            getSupportFragmentManager().beginTransaction().add(buscarNuevos, "BUSCAR_NUEVOS").commit();
+            getSupportFragmentManager().beginTransaction()
+                    .add(buscarNuevos, "BUSCAR_NUEVOS").commit();
         } else {
-            buscarNuevos =
-                    (FragmentUpdateSearchTask) getSupportFragmentManager().findFragmentByTag("BUSCAR_NUEVOS");
+            buscarNuevos = (FragmentUpdateSearchTask) getSupportFragmentManager()
+                    .findFragmentByTag("BUSCAR_NUEVOS");
             if (buscarNuevos.getStatus() == AsyncTask.Status.RUNNING) {
                 str.post(new Runnable() {
                     @Override
@@ -141,7 +141,8 @@ public class ActivityManga extends ActionBarActivity {
                         capitulosAdapter.clearSelection();
                         return true;
                     case R.id.download_selection:
-                        new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, capitulosAdapter.getSelectedChapters());
+                        new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
+                                capitulosAdapter.getSelectedChapters());
                         break;
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
@@ -186,7 +187,8 @@ public class ActivityManga extends ActionBarActivity {
             }
 
             @Override
-            public void onItemCheckedStateChanged(android.view.ActionMode mode, int position, long id, boolean checked) {
+            public void onItemCheckedStateChanged(
+                    android.view.ActionMode mode, int position, long id, boolean checked) {
                 capitulosAdapter.setSelectedOrUnselected(position);
             }
         });
@@ -263,9 +265,9 @@ public class ActivityManga extends ActionBarActivity {
                 if (manga.getReadingDirection() != -1) {
                     readDirection = manga.getReadingDirection();
                 } else {
-                    readDirection = Integer.parseInt(pm.getString(DIRECCION, "" + Direction.L2R.ordinal()));
+                    readDirection = Integer.parseInt(
+                            pm.getString(DIRECCION, "" + Direction.L2R.ordinal()));
                 }
-
                 if (readDirection == Direction.R2L.ordinal()) {
                     sentido.setIcon(R.drawable.ic_action_inverso);
                     this.direction = Direction.L2R;
