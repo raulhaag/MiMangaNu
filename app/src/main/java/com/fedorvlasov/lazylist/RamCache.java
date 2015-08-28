@@ -6,8 +6,7 @@ import android.util.LruCache;
 /**
  * Hopefully a nicer Memory cache than the previous one, this is inspired and taken from
  * http://stackoverflow.com/questions/1945201/android-image-caching
- * <p/>
- * Created by Johndeep on 28.08.15.
+ * Thanks to Zubair Ahmad Khan
  */
 public class RamCache {
     private LruCache<String, Bitmap> imagesWarehouse;
