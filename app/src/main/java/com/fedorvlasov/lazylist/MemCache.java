@@ -4,7 +4,7 @@ import android.graphics.Bitmap;
 import android.util.LruCache;
 
 /**
- * Hopefully a nicer Memory cache than the previous one, this is inspired and taken from
+ * A nicer Memory cache than the previous one, this is inspired and taken from
  * http://stackoverflow.com/questions/1945201/android-image-caching
  */
 public class MemCache {
@@ -18,7 +18,8 @@ public class MemCache {
         return cache;
     }
 
-    public MemCache() {
+    private MemCache() {
+        /** We want 1/8 of the available memory */
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
         imagesWarehouse = new LruCache<String, Bitmap>(cacheSize) {
@@ -29,13 +30,13 @@ public class MemCache {
         };
     }
 
-    public void putImageToMem(String key, Bitmap value) {
+    public void putImageInMem(String key, Bitmap value) {
         if (imagesWarehouse != null && imagesWarehouse.get(key) == null) {
             imagesWarehouse.put(key, value);
         }
     }
 
-    public Bitmap getImageToMem(String key) {
+    public Bitmap getImageInMem(String key) {
         if (key != null)
             return imagesWarehouse.get(key);
         else

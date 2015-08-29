@@ -95,7 +95,7 @@ public class ImageLoader {
             imageViews.put(imageView, url);
 
             // First, try to fetch image from memory
-            Bitmap bitmap = mMemCache.getImageToMem(url);
+            Bitmap bitmap = mMemCache.getImageInMem(url);
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             } else {
@@ -181,7 +181,7 @@ public class ImageLoader {
                 if (imageViewReUse(imageView, url))
                     return;
                 Bitmap bmp = getBitmap(url);
-                mMemCache.putImageToMem(url, bmp);
+                mMemCache.putImageInMem(url, bmp);
                 if (imageViewReUse(imageView, url))
                     return;
                 BitmapDisplay bd = new BitmapDisplay(bmp, imageView, url);
