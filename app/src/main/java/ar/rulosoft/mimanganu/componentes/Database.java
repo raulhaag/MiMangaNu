@@ -79,7 +79,6 @@ public class Database extends SQLiteOpenHelper {
 
     // make private, should be single instance
     private Database(Context context) {
-
         super(context, database_path + database_name, null, database_version);
         this.context = context;
     }
@@ -266,6 +265,7 @@ public class Database extends SQLiteOpenHelper {
             m.setChapters(getChapters(c, mangaID));
             manga = m;
         } catch (Exception e) {
+            // ignore this
         }
         return manga;
     }
@@ -277,6 +277,7 @@ public class Database extends SQLiteOpenHelper {
             m.setChapters(getChapters(c, mangaID, "1", asc));
             manga = m;
         } catch (Exception e) {
+            // ignore this
         }
         return manga;
     }

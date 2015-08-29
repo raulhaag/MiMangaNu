@@ -59,9 +59,9 @@ public class ArrayAdapterDirectory extends ArrayAdapter<String> {
             rowView = inflater.inflate(this.mResource, null);
             // configure view holder
             ViewHolder viewHolder = new ViewHolder();
-            viewHolder.text = (TextView) rowView.findViewById(R.id.dirText);
-            viewHolder.image = (ImageView) rowView.findViewById(R.id.dirIcon);
             viewHolder.object = (LinearLayout) rowView.findViewById(R.id.dirObject);
+            viewHolder.image = (ImageView) rowView.findViewById(R.id.dirIcon);
+            viewHolder.text = (TextView) rowView.findViewById(R.id.dirText);
             rowView.setTag(viewHolder);
         }
 

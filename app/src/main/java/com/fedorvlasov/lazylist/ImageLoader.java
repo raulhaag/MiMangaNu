@@ -27,15 +27,17 @@ public class ImageLoader {
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
     final int stub_id = R.drawable.stub;
 
-    MemoryCache memoryCache = new MemoryCache();
-    FileCache fileCache;
+    MemCache mMemCache;
+    FileCache mFileCache;
     ExecutorService imgThreadPool;
     // handler to display images in UI thread
     Handler handler = new Handler();
 
     public ImageLoader(Context context) {
         imageViews.clear();
-        fileCache = new FileCache(context);
+
+        mMemCache = MemCache.getInstance();
+        mFileCache = new FileCache(context);
         imgThreadPool = Executors.newFixedThreadPool(3);
     }
 
@@ -93,7 +95,7 @@ public class ImageLoader {
             imageViews.put(imageView, url);
 
             // First, try to fetch image from memory
-            Bitmap bitmap = memoryCache.get(url);
+            Bitmap bitmap = mMemCache.getImageInMem(url);
             if (bitmap != null) {
                 imageView.setImageBitmap(bitmap);
             } else {
@@ -113,7 +115,7 @@ public class ImageLoader {
     }
 
     private Bitmap getBitmap(String url) {
-        File f = fileCache.getFile(url);
+        File f = mFileCache.getFile(url);
 
         // Second, try to get image from local storage, i.e. SD card
         Bitmap imgFile = decodeFile(f);
@@ -139,12 +141,12 @@ public class ImageLoader {
             if (host != null) {
                 conn.addRequestProperty("Host", host);
             }
-            fileCache.writeFile(conn.getInputStream(), f);
+            FileCache.writeFile(conn.getInputStream(), f);
             conn.disconnect();
             return decodeFile(f);
         } catch (Throwable ex) {
             if (ex instanceof OutOfMemoryError)
-                memoryCache.clear();
+                mMemCache.clearMem();
             return null;
         }
     }
@@ -179,7 +181,7 @@ public class ImageLoader {
                 if (imageViewReUse(imageView, url))
                     return;
                 Bitmap bmp = getBitmap(url);
-                memoryCache.put(url, bmp);
+                mMemCache.putImageInMem(url, bmp);
                 if (imageViewReUse(imageView, url))
                     return;
                 BitmapDisplay bd = new BitmapDisplay(bmp, imageView, url);

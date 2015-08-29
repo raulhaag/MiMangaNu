@@ -44,12 +44,9 @@ public class NumberPickerDialogPref extends DialogPreference {
                 R.styleable.NumberPickerDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.NumberPickerDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.NumberPickerDialogPref_val_max, 9);
-        mWrapAround =
-                a.getBoolean(R.styleable.NumberPickerDialogPref_wrap_around, false);
+        mWrapAround = a.getBoolean(R.styleable.NumberPickerDialogPref_wrap_around, false);
         a.recycle();
 
-        /** In this case, I retrieve the summary, so I can simulate the
-         * behavior of the other pref widgets */
         mSummary = (String) super.getSummary();
     }
 

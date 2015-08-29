@@ -41,10 +41,22 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        adapter = new ServerRecAdapter(new ServerBase[]{new HeavenMangaCom(),
-                new SubManga(),// new EsMangaCom(),
-                new EsNineMangaCom(), new EsMangaHere(), new TusMangasOnlineCom(), new MangaPanda(), new MangaHere(), new MangaFox(), new MangaReader(),
-                new KissManga(), new LectureEnLigne(), new ItNineMangaCom(), new DeNineMangaCom()});
+        adapter = new ServerRecAdapter(new ServerBase[]{
+                new HeavenMangaCom(),
+                new SubManga(),
+                // new EsMangaCom(),
+                new EsNineMangaCom(),
+                new EsMangaHere(),
+                new TusMangasOnlineCom(),
+                new MangaPanda(),
+                new MangaHere(),
+                new MangaFox(),
+                new MangaReader(),
+                new KissManga(),
+                new LectureEnLigne(),
+                new ItNineMangaCom(),
+                new DeNineMangaCom()
+        });
         lista_server.setAdapter(adapter);
         adapter.setOnServerClickListener(FragmentAddManga.this);
         super.onActivityCreated(savedInstanceState);
@@ -54,7 +66,8 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
     public void onServerClick(ServerBase server) {
         Intent intent;
         if (server.hasVisualNavegation())
-            intent = new Intent(getActivity(), ActivityServerVisualNavegacion.class);// ActivityServerListadeMangas
+            // ActivityServerListadeMangas
+            intent = new Intent(getActivity(), ActivityServerVisualNavegacion.class);
         else
             intent = new Intent(getActivity(), ActivityServerListadeMangas.class);
         intent.putExtra(ActivityMisMangas.SERVER_ID, server.getServerID());

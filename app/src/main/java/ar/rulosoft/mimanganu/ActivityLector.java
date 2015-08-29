@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.animation.Animator;
 import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -59,12 +58,13 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
 
-public class ActivityLector extends ActionBarActivity implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
+public class ActivityLector extends ActionBarActivity
+        implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
     // These are magic numbers
     public static final String KEEP_SCREEN_ON = "keep_screen_on";
     public static final String ORIENTATION = "orientation";
-    public static final String AJUSTE_KEY = "ajustar_a";
+    public static final String ADJUST_KEY = "ajustar_a";
     public static final String MAX_TEXTURE = "max_texture";
     static int val_textureMax;
     static DisplayType val_screenFit;
@@ -95,12 +95,15 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         super.onCreate(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 
-        thmColors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        thmColors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
         /**
          * The values are here to set, if no settings should be stored,
          * then take the provided standard value
          */
-        val_screenFit = DisplayType.valueOf(pm.getString(AJUSTE_KEY, DisplayType.FIT_TO_WIDTH.toString()));
+        val_screenFit = DisplayType.valueOf(
+                pm.getString(ADJUST_KEY, DisplayType.FIT_TO_WIDTH.toString()));
         val_textureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
 
         val_KeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
@@ -112,8 +115,10 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         if (manga.getReadingDirection() != -1)
             direction = Direction.values()[manga.getReadingDirection()];
         else
-            direction = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            direction = Direction.values()[Integer.parseInt(
+                    pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
 
@@ -298,7 +303,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        // super.onSaveInstanceState(outState);
         Database.updateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
     }
 
@@ -336,8 +340,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             case R.id.action_ajustar: {
                 val_screenFit = val_screenFit.getNext();
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putString(AJUSTE_KEY, val_screenFit.toString());
-                editor.commit();
+                editor.putString(ADJUST_KEY, val_screenFit.toString());
+                editor.apply();
                 mSectionsPagerAdapter.actualizarDisplayTipe();
                 actualizarIcono(val_screenFit, true);
                 return true;
@@ -346,42 +350,45 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 if (!val_KeepOn) {
                     keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on),
+                            Toast.LENGTH_SHORT).show();
                 } else {
                     keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
                     getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off),
+                            Toast.LENGTH_SHORT).show();
                 }
                 val_KeepOn = !val_KeepOn;
 
                 SharedPreferences.Editor editor = pm.edit();
                 editor.putBoolean(KEEP_SCREEN_ON, val_KeepOn);
-                editor.commit();
+                editor.apply();
                 return true;
             }
             case R.id.action_orientation: {
                 if (val_orientation == 0) {
-                    val_orientation = 1;
-                    ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
-                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_landscape), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_landscape),
+                            Toast.LENGTH_SHORT).show();
                 } else if (val_orientation == 1) {
-                    val_orientation = 2;
-                    ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
-                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_portrait), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_portrait),
+                            Toast.LENGTH_SHORT).show();
                 } else if (val_orientation == 2) {
-                    val_orientation = 0;
-                    ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
-                    Toast.makeText(getApplicationContext(), getString(R.string.rotation_no_locked), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), getString(R.string.rotation_no_locked),
+                            Toast.LENGTH_SHORT).show();
                 }
+                val_orientation = (val_orientation + 1) % 3;
+
                 SharedPreferences.Editor editor = pm.edit();
                 editor.putInt(ORIENTATION, val_orientation);
-                editor.commit();
+                editor.apply();
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -424,7 +431,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 setCurrentItem(chapter.getPages() - seekBar.getProgress());
             }
         } catch (Exception e) {
-            // sometimes get an null just in case don't stop the app
+            // sometimes gets a null, just in case, don't stop the app
         }
     }
 
@@ -433,8 +440,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
 
         if (controlVisible) {
             controlVisible = false;
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);
+            ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);
             anim.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -454,8 +460,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 }
             });
             anim.start();
-            ObjectAnimator anim2 =
-                    ObjectAnimator.ofFloat(seeker_Layout, "alpha", .90f, 0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(seeker_Layout, "alpha", .90f, 0f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -520,7 +525,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             });
             anim2.start();
         }
-
     }
 
     @Override
@@ -538,7 +542,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         if (act < a) {
             setCurrentItem(++act);
         }
-
     }
 
     @Override
@@ -547,9 +550,12 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             @Override
             public void run() {
                 try {
-                    new AlertDialog.Builder(ActivityLector.this).setTitle(
-                            chapter.getTitle() + " " +
-                                    getString(R.string.error)).setMessage(getString(R.string.demaciados_errores)).setIcon(R.drawable.ic_launcher).setNeutralButton(getString(android.R.string.ok), null).show();
+                    new AlertDialog.Builder(ActivityLector.this)
+                            .setTitle(chapter.getTitle() + " " + getString(R.string.error))
+                            .setMessage(getString(R.string.demaciados_errores))
+                            .setIcon(R.drawable.ic_launcher)
+                            .setNeutralButton(getString(android.R.string.ok), null)
+                            .show();
                 } catch (Exception e) {
                     // lost references fixed con detachListener
                 }
@@ -622,7 +628,7 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             try {
                 visor = (ImageViewTouch) getView().findViewById(R.id.visor);
             } catch (NullPointerException n) {
-                //just nothing
+                // ignore null pointer exception
             }
             if (visor == null) cargando.setVisibility(ProgressBar.VISIBLE);
             else if (ruta != null) setImage();
@@ -677,7 +683,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 return bitmap;
             }
 
-            @SuppressLint("NewApi")
             @Override
             protected void onPostExecute(Bitmap result) {
                 if (result != null) {
@@ -707,32 +712,29 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 }
                 super.onPostExecute(result);
             }
-
         }
-
     }
 
     public static class LastPageFragment extends Fragment { //need to be static
-        Button b1, b2;
-        Chapter c1 = null, c2 = null;
+        Button btnNext, btnPrev;
+        Chapter chNext = null, chPrev = null;
         ActivityLector l;
         int[] thmColors;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rView = inflater.inflate(R.layout.fragment_pagina_final, container, false);
-            b1 = (Button) rView.findViewById(R.id.button_next);
-            b2 = (Button) rView.findViewById(R.id.button_previous);
-            b1.setTextColor(Color.WHITE);
-            b2.setTextColor(Color.WHITE);
+            btnNext = (Button) rView.findViewById(R.id.button_next);
+            btnPrev = (Button) rView.findViewById(R.id.button_previous);
+            btnNext.setTextColor(Color.WHITE);
+            btnPrev.setTextColor(Color.WHITE);
             if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                b1.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-                b2.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+                btnNext.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+                btnPrev.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
             } else {
-                b1.setBackground(new ColorDrawable(thmColors[0]));
-                b2.setBackground(new ColorDrawable(thmColors[0]));
+                btnNext.setBackground(new ColorDrawable(thmColors[0]));
+                btnPrev.setBackground(new ColorDrawable(thmColors[0]));
             }
-
             return rView;
         }
 
@@ -744,34 +746,34 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             for (int i = 0; i < caps.size(); i++) {
                 if (caps.get(i).getId() == cid) {
                     if (i > 0) {
-                        c1 = caps.get(i - 1);
+                        chNext = caps.get(i - 1);
                     }
                     if (i < caps.size() - 1) {
-                        c2 = caps.get(i + 1);
+                        chPrev = caps.get(i + 1);
                     }
                 }
             }
 
-            if (c1 == null) {
-                b1.setVisibility(Button.GONE);
+            if (chNext == null) {
+                btnNext.setVisibility(Button.GONE);
             } else {
-                b1.setText(getString(R.string.next) + "\n\n" + c1.getTitle());
-                b1.setOnClickListener(new OnClickListener() {
+                btnNext.setText(getString(R.string.next) + "\n\n" + chNext.getTitle());
+                btnNext.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new GetPageTask().execute(c1);
+                        new GetPageTask().execute(chNext);
                     }
                 });
             }
 
-            if (c2 == null) {
-                b2.setVisibility(Button.GONE);
+            if (chPrev == null) {
+                btnPrev.setVisibility(Button.GONE);
             } else {
-                b2.setText(getString(R.string.previous) + "\n\n" + c2.getTitle());
-                b2.setOnClickListener(new OnClickListener() {
+                btnPrev.setText(getString(R.string.previous) + "\n\n" + chPrev.getTitle());
+                btnPrev.setOnClickListener(new OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new GetPageTask().execute(c2);
+                        new GetPageTask().execute(chPrev);
                     }
                 });
             }
@@ -783,13 +785,13 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
         }
 
         public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
-            ProgressDialog asyncdialog = new ProgressDialog(getActivity());
+            ProgressDialog asyncDialog = new ProgressDialog(getActivity());
             String error = "";
 
             @Override
             protected void onPreExecute() {
-                asyncdialog.setMessage(getResources().getString(R.string.iniciando));
-                asyncdialog.show();
+                asyncDialog.setMessage(getResources().getString(R.string.iniciando));
+                asyncDialog.show();
                 super.onPreExecute();
             }
 
@@ -808,8 +810,9 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             @Override
             protected void onPostExecute(Chapter result) {
                 try {
-                    asyncdialog.dismiss();
+                    asyncDialog.dismiss();
                 } catch (Exception e) {
+                    // ignore error
                 }
                 if (error.length() > 1) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
@@ -825,7 +828,6 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 }
                 super.onPostExecute(result);
             }
-
         }
     }
 
@@ -881,7 +883,8 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
                 }
             }
             if (f == null) {
-                String ruta = DownloadPoolService.generarRutaBase(s, manga, chapter, getApplicationContext()) + "/" + (position + 1) + ".jpg";
+                String ruta = DownloadPoolService.generarRutaBase(s, manga, chapter,
+                        getApplicationContext()) + "/" + (position + 1) + ".jpg";
                 int idx;
                 do {
                     idx = getNextPos();
@@ -927,6 +930,5 @@ public class ActivityLector extends ActionBarActivity implements DownloadListene
             }
             return fragment;
         }
-
     }
 }

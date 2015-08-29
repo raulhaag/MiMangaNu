@@ -44,16 +44,14 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
         setContentView(R.layout.activity_mis_mangas);
-        mSectionsPagerAdapter =
-                new SectionsPagerAdapter(getSupportFragmentManager());
 
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         fragmentAddManga = new FragmentAddManga();
         fragmentMisMangas = new FragmentMisMangas();
 
         fragmentAddManga.setRetainInstance(true);
-
         mSectionsPagerAdapter.add(fragmentMisMangas);
         mSectionsPagerAdapter.add(fragmentAddManga);
 
@@ -63,8 +61,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
-        pm =
-                PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
+        pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
 
         final boolean show_dialog = pm.getBoolean("show_updates", false);
         if (!show_dialog) {//TODO ! o no segun la version 1.30 sin !
@@ -74,7 +71,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
             dlgAlert.setCancelable(true);
             dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    pm.edit().putBoolean("show_updates", !show_dialog).commit();
+                    pm.edit().putBoolean("show_updates", false).apply();
                 }
             });
             dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
@@ -90,12 +87,12 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mis_mangas, menu);
-        MenuItem menuHideRead =
-                menu.findItem(R.id.action_esconder_leidos);
-        boolean checkedLeidos = pm.getInt(FragmentMisMangas.SELECTOR_MODO, FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS) > 0;
-        if (checkedLeidos)
+        MenuItem menuHideRead = menu.findItem(R.id.action_esconder_leidos);
+        boolean checkedRead = pm.getInt(FragmentMisMangas.SELECTOR_MODO,
+                FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS) > 0;
+        if (checkedRead)
             menuHideRead.setIcon(R.drawable.ic_action_selecionar_todos);
-        menuHideRead.setChecked(checkedLeidos);
+        menuHideRead.setChecked(checkedRead);
         return true;
     }
 
@@ -121,17 +118,19 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
                 if (item.isChecked()) {
                     item.setChecked(false);
                     item.setIcon(R.drawable.ic_action_image_filter_none);
-                    pm.edit().putInt(FragmentMisMangas.SELECTOR_MODO, FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS).commit();
+                    pm.edit().putInt(FragmentMisMangas.SELECTOR_MODO,
+                            FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS).apply();
                 } else {
                     item.setChecked(true);
                     item.setIcon(R.drawable.ic_action_selecionar_todos);
-                    pm.edit().putInt(FragmentMisMangas.SELECTOR_MODO, FragmentMisMangas.MODO_SIN_LEER).commit();
+                    pm.edit().putInt(FragmentMisMangas.SELECTOR_MODO,
+                            FragmentMisMangas.MODO_SIN_LEER).apply();
                 }
                 try {
                     fragmentMisMangas.cargarMangas();
                 } catch (Exception e) {
+                    // TODO Handle cargar error properly
                     e.printStackTrace();
-                    // TODO
                 }
                 break;
             }
@@ -139,7 +138,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
                 startActivity(new Intent(ActivityMisMangas.this, OpcionesActivity.class));
             }
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -184,9 +182,9 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         }
     }
 
-    public interface OnFinishTask {
-        void onFinish();
-    }
+//    public interface OnFinishTask {
+//        void onFinish();
+//    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

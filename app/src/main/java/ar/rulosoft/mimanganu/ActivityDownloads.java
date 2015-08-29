@@ -16,16 +16,17 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 
 public class ActivityDownloads extends ActionBarActivity {
-
-    ListView list;
-    ShowDownloadsTask sh;
-    DownloadAdapter adap;
+    private ListView list;
+    private ShowDownloadsTask sh;
+    private DownloadAdapter adap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_descargas);
-        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        int[] colors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         list = (ListView) findViewById(R.id.descargas);
     }
@@ -44,7 +45,6 @@ public class ActivityDownloads extends ActionBarActivity {
         sh.stop();
         super.onPause();
     }
-
 
     private class ShowDownloadsTask extends AsyncTask<Void, Void, Void> {
         boolean _continue = true;
