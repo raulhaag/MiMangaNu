@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message">Cambios  1.31 \n\t* Fixed kissmanga\n\t* Agregado Mangareader.net\n\t*Errores de traducción\n\t*otros fix menores\n\t* Gracias a Johndeep por su contribucion</string>
+    <string name="update_message">Cambios 1.32\n\t* Agregado NineManga en Aleman\n\t* Movida la db al directorio de trabajo de la app\n\t* Agregada la traduccion a ruso (gracias a XpycT)\n\t* Cambiado el selector de color personalizado\n\t* muchas mejoras y fixes, demaciadas quizas :-) </string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>

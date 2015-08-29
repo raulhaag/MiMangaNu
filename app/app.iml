@@ -102,7 +102,6 @@
     <orderEntry type="library" exported="" name="cardview-v7-21.0.3" level="project" />
     <orderEntry type="library" exported="" name="library-2.4.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-21.0.3" level="project" />
-    <orderEntry type="module" module-name="colorpickercollection" exported="" />
     <orderEntry type="module" module-name="imageviewtouchlibrary" exported="" />
   </component>
 </module>

@@ -3,6 +3,13 @@
 
 Lector Manga online
 
+Cambios 1.32
+* Agregado NineManga en Aleman
+* Movida la db al directorio de trabajo de la app
+* Agregada la traduccion a ruso (gracias a XpycT)
+* Cambiado el selector de color personalizado
+* muchas mejoras y fixes, demaciadas quizas :-)
+
 Cambios 1.31
 * Agregado Mangareader
 * Fixin Starkana

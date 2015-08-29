@@ -117,7 +117,7 @@
     <string name="title_activity_server_listade_mangas">List of Manga</string>
     <string name="title_activity_server_visual_navegacion">Mangas in</string>
     <string name="unwritable_folder">Unwritable folder.</string>
-    <string name="update_message">Changes  1.31 \n\t* Fixed kissmanga\n\t* Added Mangareader.net\n\t*Translate errors fixed\n\t* others minors fix\n\t* Thanks Johndeep for his contribution</string>
+    <string name="update_message">Changes 1.32\n\t* Added NineManga in German\n\t* Db moved to work directory\n\t* Added the Russian translation (thanks to XpycT)\n\t* Changed the custom color selector\n\t* Many improvements and fixes , perhaps too :-) </string>
     <string name="update_news">Updates News</string>
     <string name="update_settings_title">Update Preferences</string>
     <string name="update_subtitle">Not auto update as default.</string>

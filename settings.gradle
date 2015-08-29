@@ -1,1 +1,1 @@
-include 'imageviewtouchlibrary',':colorpickercollection', ':app'
+include 'imageviewtouchlibrary', ':app'
