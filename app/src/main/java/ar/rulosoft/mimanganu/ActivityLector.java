@@ -223,8 +223,6 @@ public class ActivityLector extends ActionBarActivity
         chapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityLector.this, chapter);
         setSupportActionBar(actionToolbar);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
     @Override
