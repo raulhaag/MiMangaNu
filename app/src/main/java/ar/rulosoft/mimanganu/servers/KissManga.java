@@ -89,7 +89,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().post(HOST + m.getPath());
+        String source = getNavWithHeader().get(HOST + m.getPath());
 
         // Summary
         m.setSinopsis(Html.fromHtml(getFirstMatchDefault(
@@ -144,7 +144,7 @@ public class KissManga extends ServerBase {
         int pages = 0;
         if (c.getExtra() == null || c.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().post(HOST + c.getPath());
+            String source = getNavWithHeader().get(HOST + c.getPath().replaceAll("[^!-z]+", ""));
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
