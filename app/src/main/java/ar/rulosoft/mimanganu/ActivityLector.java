@@ -223,6 +223,8 @@ public class ActivityLector extends ActionBarActivity
         chapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityLector.this, chapter);
         setSupportActionBar(actionToolbar);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
     @Override
@@ -437,7 +439,6 @@ public class ActivityLector extends ActionBarActivity
 
     @Override
     public void onCenterTap() {
-
         if (controlVisible) {
             controlVisible = false;
             ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);

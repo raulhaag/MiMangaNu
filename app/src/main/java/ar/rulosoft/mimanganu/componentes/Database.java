@@ -85,10 +85,12 @@ public class Database extends SQLiteOpenHelper {
 
     public static SQLiteDatabase getDatabase(Context c) {
         // Setup path and database name
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
-        database_path = (prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
-        database_name = "mangas.db";
+        if (database_path == null || database_path.length() == 0) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            database_path = (prefs.getString("directorio",
+                    Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
+            database_name = "mangas.db";
+        }
         if (!new File(database_path).exists())
             new File(database_path).mkdirs();
         if ((localDB == null) || !localDB.isOpen()) {

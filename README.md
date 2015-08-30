@@ -3,6 +3,9 @@
 
 Lector Manga online
 
+Cambios 1.33
+* Fix en un gran error al descargar mangas
+
 Cambios 1.32
 * Agregado NineManga en Aleman
 * Movida la db al directorio de trabajo de la app
