@@ -91,23 +91,23 @@
         <ar.rulosoft.custompref.ColorListDialogPref
             android:defaultValue="-14003522"
             android:key="primario"
-            android:summary="Main coloring, like titlebar etc."
+            android:summary="@string/color_primario_sub"
             android:title="@string/color_primario" />
         <ar.rulosoft.custompref.ColorListDialogPref
             android:defaultValue="-14774017"
             android:key="secundario"
-            android:summary="Secondary coloring, for more varity"
+            android:summary="@string/color_secundario_sub"
             android:title="@string/color_secundario" />
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="About">
+    <PreferenceCategory android:title="@string/about">
         <Preference
             android:key="about_text"
             android:summary="%s"
             android:title="@string/app_name" />
         <Preference
             android:key="license_view"
-            android:summary="Tap to see license and thanks"
+            android:summary="@string/license_sub"
             android:title="@string/licencia" />
     </PreferenceCategory>
 

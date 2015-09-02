@@ -22,7 +22,7 @@ public class Chapter {
 
     public Chapter(String title, String path) {
         super();
-        this.title = title;
+        this.title = android.text.Html.fromHtml(title).toString();
         this.path = path;
     }
 
