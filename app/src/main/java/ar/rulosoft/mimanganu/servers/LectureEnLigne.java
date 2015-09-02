@@ -13,7 +13,7 @@ public class LectureEnLigne extends ServerBase {
 
     public LectureEnLigne() {
         setServerID(LECTUREENLIGNE);
-        setIcon(R.drawable.lectureenligne);
+        setIcon(R.drawable.lectureenligne_icon);
         this.setServerName("LectureEnLigne");
         setFlag(R.drawable.flag_fr);
     }
