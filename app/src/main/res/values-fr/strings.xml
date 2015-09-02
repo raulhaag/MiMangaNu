@@ -117,10 +117,11 @@
     <string name="lock_on_portrait">Écran vérouillé en mode portrait</string>
     <string name="lock_on_landscape">Écran vérouillé en mode paysage</string>
     <string name="rotation_no_locked">Rotation de l\'écran libre</string>
-    <string name="ui_settings">Les paramètres de UI</string>
+    <string name="ui_settings">Paramètres de l\'UI</string>
     <string name="mitlic">MIT Licence et Merci</string>
     <string name="previous">Précédent</string>
     <string name="next">Prochaine</string>
     <string name="notification_sound_title">Notification sonnore</string>
     <string name="notification_sound_subtitle">Quand un nouveau manga est trouvé.</string>
+     <string name="download_selection">Télécharger la sélection</string>
 </resources>
