@@ -46,7 +46,7 @@ public class MangaPanda extends ServerBase {
 
     public MangaPanda() {
         this.setFlag(R.drawable.flag_eng);
-        this.setIcon(R.drawable.mangapanda);
+        this.setIcon(R.drawable.mangapanda_icon);
         this.setServerName("Mangapanda.com");
         setServerID(ServerBase.MANGAPANDA);
     }
@@ -77,8 +77,7 @@ public class MangaPanda extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
-        String data = nav.get(HOST + "/actions/search/?q=" + term +
-                "&limit=100");
+        String data = nav.get(HOST + "/actions/search/?q=" + term + "&limit=100");
         Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -96,7 +95,6 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-
         String data = new Navegador().get(manga.getPath());
         Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER);
         Matcher m = p.matcher(data);
@@ -154,8 +152,8 @@ public class MangaPanda extends ServerBase {
         String web;
         if (category == 0)
             web = HOST + "/popular" + "/" + (pageNumber - 1) * 20;
-        else web = HOST + "/popular" + "/" +
-                genreV[category] + "/" + (pageNumber - 1) * 20;
+        else
+            web = HOST + "/popular" + "/" + genreV[category] + "/" + (pageNumber - 1) * 20;
 
         String data = new Navegador().get(web);
         Pattern p =

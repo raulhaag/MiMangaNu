@@ -132,4 +132,8 @@
     <string name="title_activity_text_view">TextViewActivity</string>
     <string name="download_selection">Download selection</string>
     <string name="cantidad_errores_title">Error toleration per chapter</string>
+    <string name="license_sub">Tap to see license and thanks</string>
+    <string name="color_primario_sub">Main coloring, like for titlebar etc.</string>
+    <string name="color_secundario_sub">Secondary coloring, for more variety</string>
+    <string name="about">About</string>
 </resources>

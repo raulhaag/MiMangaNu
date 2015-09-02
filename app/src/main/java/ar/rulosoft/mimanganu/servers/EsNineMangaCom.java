@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.text.Html;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,7 +10,6 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class EsNineMangaCom extends ServerBase {
     public static String HOST = "http://es.ninemanga.com";
@@ -38,6 +39,9 @@ public class EsNineMangaCom extends ServerBase {
             "Sobrenatural_.html", "Sports_.html", "Supernatural_.html", "Tragedia_.html",
             "Tragedy_.html", "Vida+Cotidiana_.html", "Webcomic_.html", "Yuri_.html"
     };
+    static String[] order = new String[]{
+            "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
+    };
 
     public EsNineMangaCom() {
         this.setFlag(R.drawable.flag_esp);
@@ -53,7 +57,8 @@ public class EsNineMangaCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = new Navegador().get(HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
+        String source = getNavWithHeader().get(
+                HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher m = p.matcher(source);
@@ -72,22 +77,18 @@ public class EsNineMangaCom extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = new Navegador().get(m.getPath() + "?waring=1");
+        String source = getNavWithHeader().get(m.getPath() + "?waring=1");
         // portada
-        String portada = getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, "");
-        m.setImages(portada);
+        m.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // sinopsis
-        String sinopsis = getFirstMatchDefault(
-                "<p itemprop=\"description\">(.+?)&nbsp;Show less", source, "Sin sinopsis").replaceAll("<.+?>", "");
-        m.setSinopsis(sinopsis);
-
+        String sinopsis = getFirstMatchDefault("<p itemprop=\"description\">(.+?)&nbsp;Show less",
+                source, "Sin sinopsis").replaceAll("<.+?>", "");
+        m.setSinopsis(Html.fromHtml(sinopsis).toString());
         // estado
         m.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
-
         // autor
         m.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
-
-        // cap�tulos
+        // capitulos
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
@@ -96,7 +97,6 @@ public class EsNineMangaCom extends ServerBase {
             chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
         }
         m.setChapters(chapters);
-
     }
 
     @Override
@@ -113,7 +113,8 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     public void setExtra(Chapter c) throws Exception {
-        String source = new Navegador().get(c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
+        String source = getNavWithHeader().get(
+                c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
         String imagenes = "";
@@ -125,16 +126,18 @@ public class EsNineMangaCom extends ServerBase {
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
-        String source = new Navegador().get(c.getPath());
-        String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>",
-                source, "Error al obtener el n�mero de p�ginas");
+        String source = getNavWithHeader().get(c.getPath());
+        String nop = getFirstMatch(
+                "\\d+/(\\d+)</option>[\\s]*</select>", source,
+                "Error al obtener el n�mero de p�ginas");
         c.setPages(Integer.parseInt(nop));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = new Navegador().get(
-                HOST + "/category/" + generosV[categorie].replace("_", "_" + pageNumber));
+        String source = getNavWithHeader().get(
+                HOST + EsNineMangaCom.order[order] +
+                        generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
@@ -158,12 +161,12 @@ public class EsNineMangaCom extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{"Popluar"};
+        // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
+        return new String[]{"Lista de Manga", "Recientes", "Popular", "Manga Nueva"};
     }
 
     @Override
     public boolean hasList() {
         return false;
     }
-
 }

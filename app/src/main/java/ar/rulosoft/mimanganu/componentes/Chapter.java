@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
+import android.text.Html;
 
 import java.io.File;
 
@@ -22,7 +23,7 @@ public class Chapter {
 
     public Chapter(String title, String path) {
         super();
-        this.title = title;
+        this.title = Html.fromHtml(title).toString();
         this.path = path;
     }
 

@@ -44,7 +44,7 @@ public class KissManga extends ServerBase {
 
     public KissManga() {
         this.setFlag(R.drawable.flag_eng);
-        this.setIcon(R.drawable.kissmanga);
+        this.setIcon(R.drawable.kissmanga_icon);
         this.setServerName("KissManga");
         setServerID(ServerBase.KISSMANGA);
     }

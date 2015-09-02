@@ -68,7 +68,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         Chapter item = getItem(position);
 
         if (item != null) {
-            holder.textViewName.setText(android.text.Html.fromHtml(item.getTitle()));
+            holder.textViewName.setText(item.getTitle());
             holder.textViewStatus.setVisibility(View.GONE);
 
             if (defaultColor == null) {

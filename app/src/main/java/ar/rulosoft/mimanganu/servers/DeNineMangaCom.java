@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.text.Html;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,20 +10,22 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class DeNineMangaCom extends ServerBase {
     public static String HOST = "http://de.ninemanga.com";
-    public static String[] generos = new String[]{"Alle",
-            "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I",
-            "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
-            "U", "W", "X", "Y", "Z"
+
+    // As you can guess, "V" is missing, but this is the fault of the website, somehow
+    public static String[] generos = new String[]{
+            "Alle", "0-9",
+            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
     public static String[] generosV = new String[]{
-            "index_.html", "0-9_.html", "A_.html", "B_.html", "C_.html", "D_.html",
-            "E_.html", "F_.html", "G_.html", "H_.html", "I_.html", "J_.html", "K_.html",
-            "L_.html", "M_.html", "N_.html", "O_.html", "P_.html", "Q_.html", "R_.html",
-            "S_.html", "T_.html", "U_.html", "W_.html", "X_.html", "Y_.html", "Z_.html"
+            "index_.html", "0-9_.html",
+            "A_.html", "B_.html", "C_.html", "D_.html", "E_.html", "F_.html", "G_.html",
+            "H_.html", "I_.html", "J_.html", "K_.html", "L_.html", "M_.html", "N_.html",
+            "O_.html", "P_.html", "Q_.html", "R_.html", "S_.html", "T_.html", "U_.html",
+            "W_.html", "X_.html", "Y_.html", "Z_.html"
     };
     static String[] order = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
@@ -41,7 +45,7 @@ public class DeNineMangaCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = new Navegador().get(
+        String source = getNavWithHeader().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
@@ -61,24 +65,18 @@ public class DeNineMangaCom extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = new Navegador().get(m.getPath() + "?waring=1");
+        String source = getNavWithHeader().get(m.getPath() + "?waring=1");
         // Front
-        String front = getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, "");
-        m.setImages(front);
-
-        // Zusammenfassung
+        m.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
+        // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
-        m.setSinopsis(summary);
-
+        m.setSinopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
         // Status
-        m.setFinished(!getFirstMatchDefault(
-                "<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
-
-        // Autor
+        m.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
+        // Author
         m.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
-
-        // Kapitel
+        // Chapter
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
@@ -87,7 +85,6 @@ public class DeNineMangaCom extends ServerBase {
             chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
         }
         m.setChapters(chapters);
-
     }
 
     @Override
@@ -104,7 +101,7 @@ public class DeNineMangaCom extends ServerBase {
     }
 
     public void setExtra(Chapter c) throws Exception {
-        String source = new Navegador().get(
+        String source = getNavWithHeader().get(
                 c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
@@ -117,7 +114,7 @@ public class DeNineMangaCom extends ServerBase {
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
-        String source = new Navegador().get(c.getPath());
+        String source = getNavWithHeader().get(c.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Es versäumt, die Anzahl der Seiten zu bekommen");
@@ -126,8 +123,9 @@ public class DeNineMangaCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = new Navegador().get(
-                HOST + DeNineMangaCom.order[order] + generosV[category].replace("_", "_" + pageNumber));
+        String source = getNavWithHeader().get(
+                HOST + DeNineMangaCom.order[order] +
+                        generosV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
@@ -152,7 +150,7 @@ public class DeNineMangaCom extends ServerBase {
     @Override
     public String[] getOrders() {
         // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
-        return new String[]{"Alle", "Neueste Manga Updates", "Beliebte Manga", "Neue Manga"};
+        return new String[]{"Manga Liste", "Updates", "Beliebte Manga", "Neue Manga"};
     }
 
     @Override
