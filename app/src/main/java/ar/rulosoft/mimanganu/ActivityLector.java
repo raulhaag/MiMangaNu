@@ -227,7 +227,7 @@ public class ActivityLector extends ActionBarActivity
     }
 
     private void hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= 18)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             getWindow().getDecorView().setSystemUiVisibility(
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
@@ -236,7 +236,7 @@ public class ActivityLector extends ActionBarActivity
     }
 
     private void showSystemUI() {
-        if (Build.VERSION.SDK_INT >= 18)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
