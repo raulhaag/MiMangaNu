@@ -132,4 +132,5 @@
     <string name="color_primario_sub">Primäre Färbung, etwa für Titleleiste usw.</string>
     <string name="color_secundario_sub">Sekundäre Farbe, für mehr Abwechselung</string>
     <string name="about">Über</string>
+    <string name="scroll_speed">Scroll-Geschwindigkeit</string>
 </resources>

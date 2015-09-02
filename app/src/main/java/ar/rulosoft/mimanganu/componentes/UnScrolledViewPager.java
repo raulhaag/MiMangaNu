@@ -5,7 +5,7 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.View;
 
-import ar.rulosoft.mimanganu.ActivityLector.PlaceholderFragment;
+import ar.rulosoft.mimanganu.ActivityLector.PageFragment;
 import ar.rulosoft.mimanganu.ActivityLector.SectionsPagerAdapter;
 
 public class UnScrolledViewPager extends ViewPager {
@@ -17,7 +17,7 @@ public class UnScrolledViewPager extends ViewPager {
     @Override
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
         try {
-            return ((PlaceholderFragment) ((SectionsPagerAdapter) getAdapter()).getCurrentFragment()).canScroll(dx);
+            return ((PageFragment) ((SectionsPagerAdapter) getAdapter()).getCurrentFragment()).canScroll(dx);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -46,6 +46,14 @@
             android:key="ajustar_a"
             android:summary="%s"
             android:title="@string/ajuste_imagen" />
+        <ar.rulosoft.custompref.NumberPickerDialogPref
+            android:defaultValue="1"
+            android:dialogTitle="@string/scroll_speed"
+            android:key="scroll_speed"
+            android:summary="%sX"
+            android:title="@string/scroll_speed"
+            app:val_max="15"
+            app:val_min="1" />
         <ListPreference
             android:defaultValue="2048"
             android:entries="@array/max_texture_support_acceleration"

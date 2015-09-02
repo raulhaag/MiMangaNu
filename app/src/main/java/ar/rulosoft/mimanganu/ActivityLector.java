@@ -70,6 +70,7 @@ public class ActivityLector extends ActionBarActivity
     static DisplayType val_screenFit;
     public Direction direction;
     public InitialPosition iniPosition = InitialPosition.LEFT_UP;
+    public float scrollFactor = 1f;
     // These are values, which should be fetched from preference
     SharedPreferences pm;
     boolean val_KeepOn; // false = normal  | true = screen on
@@ -108,6 +109,7 @@ public class ActivityLector extends ActionBarActivity
 
         val_KeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         val_orientation = pm.getInt(ORIENTATION, 0);
+        scrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
 
         chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         manga = Database.getFullManga(this, chapter.getMangaID());
@@ -415,8 +417,8 @@ public class ActivityLector extends ActionBarActivity
                 Fragment fragment =
                         mSectionsPagerAdapter.getIfOnMemory(pagina);
                 if (fragment != null &&
-                        !((PlaceholderFragment) fragment).imageLoaded) {
-                    ((PlaceholderFragment) fragment).setImage();
+                        !((PageFragment) fragment).imageLoaded) {
+                    ((PageFragment) fragment).setImage();
                 }
             }
         });
@@ -579,7 +581,7 @@ public class ActivityLector extends ActionBarActivity
         });
     }
 
-    public static class PlaceholderFragment extends Fragment {
+    public static class PageFragment extends Fragment {
 
         private static final String RUTA = "ruta";
         public ImageViewTouch visor;
@@ -590,11 +592,11 @@ public class ActivityLector extends ActionBarActivity
         boolean imageLoaded = false;
         private String ruta = null;
 
-        public PlaceholderFragment() {
+        public PageFragment() {
         }
 
-        public static PlaceholderFragment newInstance(String ruta, ActivityLector activity) {
-            PlaceholderFragment fragment = new PlaceholderFragment();
+        public static PageFragment newInstance(String ruta, ActivityLector activity) {
+            PageFragment fragment = new PageFragment();
             Bundle args = new Bundle();
             args.putString(RUTA, ruta);
             fragment.activity = activity;
@@ -621,7 +623,7 @@ public class ActivityLector extends ActionBarActivity
             cargando.bringToFront();
             if (getArguments() != null)
                 ruta = getArguments().getString(RUTA);
-
+            visor.setScrollFactor(activity.scrollFactor);
             return rootView;
         }
 
@@ -793,6 +795,7 @@ public class ActivityLector extends ActionBarActivity
                     }
                 });
             }
+
             super.onActivityCreated(savedInstanceState);
         }
 
@@ -853,7 +856,7 @@ public class ActivityLector extends ActionBarActivity
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        ArrayList<PlaceholderFragment> fragments = new ArrayList<>(6);
+        ArrayList<PageFragment> fragments = new ArrayList<>(6);
         int[] pos = {-1, -1, -1, -1, -1, -1};
         int idx = 0;
         FragmentManager fm = null;
@@ -862,7 +865,7 @@ public class ActivityLector extends ActionBarActivity
             super(fm);
             this.fm = fm;
             int i = pos.length;
-            while (--i >= 0) fragments.add(new PlaceholderFragment());
+            while (--i >= 0) fragments.add(new PageFragment());
         }
 
         private int getNextPos() {
@@ -891,7 +894,7 @@ public class ActivityLector extends ActionBarActivity
         }
 
         public Fragment getFragmentIn(int position) {
-            PlaceholderFragment f = null;
+            PageFragment f = null;
             for (int i = 0; i < pos.length; i++) {
                 if (pos[i] == position) {
                     f = fragments.get(i);
@@ -911,7 +914,7 @@ public class ActivityLector extends ActionBarActivity
                 Fragment old = fragments.get(idx);
                 fm.beginTransaction().remove(old).commit();
                 // old = null;
-                fragments.set(idx, PlaceholderFragment.newInstance(ruta, ActivityLector.this));
+                fragments.set(idx, PageFragment.newInstance(ruta, ActivityLector.this));
                 f = fragments.get(idx);
                 f.setTapListener(ActivityLector.this);
             }
@@ -924,7 +927,7 @@ public class ActivityLector extends ActionBarActivity
         }
 
         public void actualizarDisplayTipe() {
-            for (PlaceholderFragment iterable_element : fragments) {
+            for (PageFragment iterable_element : fragments) {
                 if (iterable_element != null) {
                     iterable_element.setDisplayType(val_screenFit);
                 }

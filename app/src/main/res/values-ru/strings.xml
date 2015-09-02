@@ -128,4 +128,5 @@
     <string name="update_title">Интервал проверки обновлений</string>
     <string name="vercomolista">Показать списком</string>
     <string name="vertical">Вертикально</string>
+    <string name="scroll_speed">скорость прокрутки</string>
 </resources>

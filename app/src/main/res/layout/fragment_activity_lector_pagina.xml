@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ar.rulosoft.mimanganu.ActivityLector$PlaceholderFragment">
+    tools:context="ar.rulosoft.mimanganu.ActivityLector.PageFragment">
 
     <it.sephiroth.android.library.imagezoom.ImageViewTouch
         android:id="@+id/visor"

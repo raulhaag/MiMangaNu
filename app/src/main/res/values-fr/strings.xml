@@ -124,4 +124,5 @@
     <string name="notification_sound_title">Notification sonnore</string>
     <string name="notification_sound_subtitle">Quand un nouveau manga est trouvé.</string>
      <string name="download_selection">Télécharger la sélection</string>
+    <string name="scroll_speed">La vitesse de défilement</string>
 </resources>

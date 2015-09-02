@@ -93,4 +93,5 @@
     <string name="new_mangas_found">Nuovi mangas trovati.</string>
     <string name="previous">Precedente</string>
     <string name="next">Prossimo</string>
+    <string name="scroll_speed">Velocità di scorrimento</string>
 </resources>
