@@ -223,6 +223,21 @@ public class ActivityLector extends ActionBarActivity
         chapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityLector.this, chapter);
         setSupportActionBar(actionToolbar);
+        hideSystemUI();
+    }
+
+    private void hideSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+    }
+
+    private void showSystemUI() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     @Override
@@ -438,6 +453,7 @@ public class ActivityLector extends ActionBarActivity
     @Override
     public void onCenterTap() {
         if (controlVisible) {
+            hideSystemUI();
             controlVisible = false;
             ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);
             anim.addListener(new AnimatorListener() {
@@ -480,6 +496,7 @@ public class ActivityLector extends ActionBarActivity
             });
             anim2.start();
         } else {
+            showSystemUI();
             controlVisible = true;
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(actionToolbar, "alpha", 0f, .90f);
