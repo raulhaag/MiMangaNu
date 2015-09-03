@@ -57,6 +57,8 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
     private OnDrawableChangeListener mDrawableChangeListener;
     private OnLayoutChangeListener mOnLayoutChangeListener;
 
+    private float scrollFactor = 1;
+
     public ImageViewTouchBase(Context context) {
         this(context, null);
     }
@@ -956,7 +958,7 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
 
     protected void panBy(double dx, double dy) {
         RectF rect = getBitmapRect();
-        mScrollRect.set((float) dx, (float) dy, 0, 0);
+        mScrollRect.set((float) dx * scrollFactor, (float) dy * scrollFactor, 0, 0);
         updateRect(rect, mScrollRect);
         postTranslate(mScrollRect.left, mScrollRect.top);
         center(true, true);
@@ -1046,6 +1048,14 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
     @Override
     public void dispose() {
         clear();
+    }
+
+    public float getScrollFactor() {
+        return scrollFactor;
+    }
+
+    public void setScrollFactor(float scrollFactor) {
+        this.scrollFactor = scrollFactor;
     }
 
     /**
