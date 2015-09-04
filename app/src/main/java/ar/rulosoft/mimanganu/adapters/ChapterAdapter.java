@@ -32,6 +32,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.TRANSPARENT;
     public static int COLOR_READ = Color.parseColor("#b2b2b2");
+    public static int COLOR_READ_DARK_THEME = Color.parseColor("#555555");
     public static int COLOR_READING = Color.parseColor("#121212");
     public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
@@ -83,8 +84,14 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     holder.textViewPages.setTextColor(defaultColor);
                     break;
                 case Chapter.READ:
-                    holder.textViewName.setTextColor(COLOR_READ);
-                    holder.textViewPages.setTextColor(COLOR_READ);
+                    if (darkTheme) {
+                        holder.textViewName.setTextColor(COLOR_READ_DARK_THEME);
+                        holder.textViewPages.setTextColor(COLOR_READ_DARK_THEME);
+
+                    } else {
+                        holder.textViewName.setTextColor(COLOR_READ);
+                        holder.textViewPages.setTextColor(COLOR_READ);
+                    }
                     break;
                 case Chapter.READING:
                     holder.textViewName.setTextColor(COLOR_READING);
