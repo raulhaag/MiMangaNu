@@ -40,9 +40,8 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private ColorStateList defaultColor;
     private LayoutInflater li;
     private boolean darkTheme = false;
-//    private StateListDrawable stateListDrawable;
 
-    public ChapterAdapter(Activity context, List<Chapter> items) {
+    public ChapterAdapter(Activity context, List<Chapter> items, boolean darkTheme) {
         super(context, listItem, items);
         activity = (ActivityManga) context;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
