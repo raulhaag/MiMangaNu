@@ -139,10 +139,10 @@
     <string name="scroll_speed">Scroll speed</string>
     <string name="theme_title">Use dark theme</string>
     <string name="sort">Sort</string>
-    <string name="sort_recent">recently read</string>
-    <string name="sort_title">title</string>
-    <string name="sort_author">author</string>
-    <string name="sort_recent_asc">recently read (oldest)</string>
-    <string name="sort_title_asc">title (desc.)</string>
-    <string name="sort_author_asc">author (desc.)</string>
+    <string name="sort_recent">Recently read</string>
+    <string name="sort_title">Title</string>
+    <string name="sort_author">Author</string>
+    <string name="sort_recent_asc">Recently read (oldest)</string>
+    <string name="sort_title_asc">Title (desc.)</string>
+    <string name="sort_author_asc">Author (desc.)</string>
 </resources>

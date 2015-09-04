@@ -133,5 +133,12 @@
     <string name="download_selection">Descargar seleccion</string>
     <string name="scroll_speed">Velocidad de desplazamiento (scroll)</string>
     <string name="theme_title">Usar tema oscuro</string>
+    <string name="sort">Ordenar</string>
+    <string name="sort_author">Autor</string>
+    <string name="sort_author_asc">Autor (z-a)</string>
+    <string name="sort_recent">Leidos recientemente</string>
+    <string name="sort_recent_asc">No leidos recientemente</string>
+    <string name="sort_title">Título</string>
+    <string name="sort_title_asc">Título (z-a)</string>
 
 </resources>

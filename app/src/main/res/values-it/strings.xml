@@ -96,4 +96,17 @@
     <string name="scroll_speed">Velocità di scorrimento</string>
     <string name="theme_title">Utilizzare tema scuro</string>
     <string name="autor">Autore</string>
+    <string name="sort">Ordine</string>
+    <string name="stay_awake_off">Mantenere depierta schermo disattivato</string>
+    <string name="stay_awake_on">Mantenere depierta schermo attivo</string>
+    <string name="sort_title">Titolo</string>
+    <string name="sort_title_asc">Titolo (z-a)</string>
+    <string name="sort_recent_asc">Non letto di recente</string>
+    <string name="sort_recent">Letto di recente</string>
+    <string name="sort_author">Autore </string>
+    <string name="sort_author_asc">Autore (z-a)</string>
+    <string name="notification_sound_subtitle">A encotrar nuove mangas.</string>
+    <string name="notification_sound_title">Notifica sonora</string>
+    <string name="nodisponible"></string>
+    <string name="no_update">Mai controllare gli aggiornamenti</string>
 </resources>

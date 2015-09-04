@@ -130,4 +130,11 @@
     <string name="color_secundario_sub">Couleur secondaire, pour plus de variété</string>
     <string name="about">À propos</string>
     <string name="license_sub">Licence et Remerciements</string>
+    <string name="sort_author">Auteur</string>
+    <string name="sort_author_asc">Auteur (z-a)</string>
+    <string name="sort_recent">Lu récemment</string>
+    <string name="sort_recent_asc">Lu récemment (z-a)</string>
+    <string name="sort_title">Titre</string>
+    <string name="sort_title_asc">Titre (z-a)</string>
+    <string name="sort">Ordre</string>
 </resources>
