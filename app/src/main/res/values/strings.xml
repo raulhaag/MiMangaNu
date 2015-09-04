@@ -138,8 +138,10 @@
     <string name="about">About</string>
     <string name="scroll_speed">Scroll speed</string>
     <string name="sort">Sort</string>
-    <string name="sort_recent">By last read</string>
-    <string name="sort_title">By title</string>
-    <string name="sort_author">By author</string>
-    <string name="sort_reverse">Reverse order</string>
+    <string name="sort_recent">recently read</string>
+    <string name="sort_title">title</string>
+    <string name="sort_author">author</string>
+    <string name="sort_recent_asc">recently read (desc.)</string>
+    <string name="sort_title_asc">title (desc.)</string>
+    <string name="sort_author_asc">author (desc.)</string>
 </resources>

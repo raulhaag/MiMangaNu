@@ -10,8 +10,8 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_hide_read"
-        android:title="@string/hide_read"
-        android:checkable="true" />
+        android:checkable="true"
+        android:title="@string/hide_read" />
     <item
         android:id="@+id/action_sort_by"
         android:title="@string/sort">
@@ -21,15 +21,20 @@
                     android:id="@+id/sort_last_read"
                     android:title="@string/sort_recent" />
                 <item
+                    android:id="@+id/sort_last_read_asc"
+                    android:title="@string/sort_recent_asc" />
+                <item
                     android:id="@+id/sort_name"
                     android:title="@string/sort_title" />
+                <item
+                    android:id="@+id/sort_name_asc"
+                    android:title="@string/sort_title_asc" />
                 <item
                     android:id="@+id/sort_author"
                     android:title="@string/sort_author" />
                 <item
-                    android:id="@+id/sortOrder_reverse"
-                    android:checkable="true"
-                    android:title="@string/sort_reverse" />
+                    android:id="@+id/sort_author_asc"
+                    android:title="@string/sort_author_asc" />
             </group>
         </menu>
     </item>

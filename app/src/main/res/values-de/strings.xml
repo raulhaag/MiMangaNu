@@ -16,7 +16,7 @@
     <string name="autor">Author</string>
     <string name="borrado_imagenes">Bilder gelöscht</string>
     <string name="borrar">Löschen</string>
-    <string name="borrar_imagenes">Lösche Bilder um Speicherplatz zu sparen</string>
+    <string name="borrar_imagenes">Lösche Bilder </string>
     <string name="borrarcap">Lösche Kapitel</string>
     <string name="buscandonuevo">Suche nach Updates</string>
     <string name="buscarnuevos">Updates suchen</string>
@@ -133,10 +133,12 @@
     <string name="color_secundario_sub">Sekundäre Farbe für mehr Abwechselung</string>
     <string name="about">Über</string>
     <string name="scroll_speed">Scroll-Geschwindigkeit</string>
-    <string name="download_selection">Herunterladen</string>
+    <string name="download_selection">Kapitel herunterladen</string>
     <string name="sort">Sortieren</string>
-    <string name="sort_title">Nach Titel</string>
-    <string name="sort_author">Nach Autor</string>
-    <string name="sort_recent">Nach Zuletzt gelesene</string>
-    <string name="sort_reverse">Umgekehrte Reihenfolge</string>
+    <string name="sort_title">Titel</string>
+    <string name="sort_author">Autor</string>
+    <string name="sort_recent">Zuletzt gelesen</string>
+    <string name="sort_author_asc">Autor (z-a)</string>
+    <string name="sort_recent_asc">Zuletzt gelesen (z-a)</string>
+    <string name="sort_title_asc">Title (z-a)</string>
 </resources>

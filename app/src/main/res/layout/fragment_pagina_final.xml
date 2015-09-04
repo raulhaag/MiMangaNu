@@ -13,7 +13,8 @@
         android:layout_margin="10dp"
         android:background="@drawable/border_black"
         android:gravity="center"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:textColor="@android:color/black" />
 
     <Button
         android:id="@+id/button_previous"
@@ -23,5 +24,6 @@
         android:layout_margin="10dp"
         android:background="@drawable/border_black"
         android:gravity="center"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:textColor="@android:color/black" />
 </RelativeLayout>

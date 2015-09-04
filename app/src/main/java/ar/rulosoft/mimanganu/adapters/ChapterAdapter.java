@@ -31,8 +31,8 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.TRANSPARENT;
-    public static int COLOR_READ = Color.parseColor("#929292");
-    public static int COLOR_READING = Color.parseColor("#424242");
+    public static int COLOR_READ = Color.parseColor("#b2b2b2");
+    public static int COLOR_READING = Color.parseColor("#121212");
     public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
