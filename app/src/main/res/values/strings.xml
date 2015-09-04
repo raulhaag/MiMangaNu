@@ -145,4 +145,5 @@
     <string name="sort_recent_asc">Recently read (oldest)</string>
     <string name="sort_title_asc">Title (desc.)</string>
     <string name="sort_author_asc">Author (desc.)</string>
+    <string name="more_options">More options</string>
 </resources>

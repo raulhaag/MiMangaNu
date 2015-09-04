@@ -137,4 +137,5 @@
     <string name="sort_title">Titre</string>
     <string name="sort_title_asc">Titre (z-a)</string>
     <string name="sort">Ordre</string>
+    <string name="more_options">Plus d'options </string>
 </resources>

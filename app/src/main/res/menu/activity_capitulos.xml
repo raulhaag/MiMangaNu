@@ -16,15 +16,23 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_descargar_restantes"
-        android:title="@string/descargarestantes" />
-    <item
-        android:id="@+id/action_descargar_no_leidos"
-        android:title="@string/descarga_no_leidos" />
-    <item
-        android:id="@+id/action_marcar_todo_no_leido"
-        android:title="@string/macartodonoleido" />
-    <item
-        android:id="@+id/action_marcar_todo_leido"
-        android:title="@string/macartodoleido" />
+        android:icon="@drawable/ic_action_core_overflow"
+        android:orderInCategory="100"
+        android:title="@+id/more_options"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/action_descargar_restantes"
+                android:title="@string/descargarestantes" />
+            <item
+                android:id="@+id/action_descargar_no_leidos"
+                android:title="@string/descarga_no_leidos" />
+            <item
+                android:id="@+id/action_marcar_todo_no_leido"
+                android:title="@string/macartodonoleido" />
+            <item
+                android:id="@+id/action_marcar_todo_leido"
+                android:title="@string/macartodoleido" />
+        </menu>
+    </item>
 </menu>

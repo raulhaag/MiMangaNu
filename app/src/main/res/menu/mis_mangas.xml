@@ -2,44 +2,52 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.MisMangas">
-
     <item
         android:id="@+id/descargas"
         android:icon="@drawable/ic_action_downloads"
         android:title="@string/descargas"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
-        android:id="@+id/action_hide_read"
-        android:checkable="true"
-        android:title="@string/hide_read" />
-    <item
-        android:id="@+id/action_sort_by"
-        android:title="@string/sort">
+        android:icon="@drawable/ic_action_core_overflow"
+        android:orderInCategory="100"
+        android:title="@string/more_options"
+        app:showAsAction="always">
         <menu>
-            <group android:checkableBehavior="single">
-                <item
-                    android:id="@+id/sort_last_read"
-                    android:title="@string/sort_recent" />
-                <item
-                    android:id="@+id/sort_last_read_asc"
-                    android:title="@string/sort_recent_asc" />
-                <item
-                    android:id="@+id/sort_name"
-                    android:title="@string/sort_title" />
-                <item
-                    android:id="@+id/sort_name_asc"
-                    android:title="@string/sort_title_asc" />
-                <item
-                    android:id="@+id/sort_author"
-                    android:title="@string/sort_author" />
-                <item
-                    android:id="@+id/sort_author_asc"
-                    android:title="@string/sort_author_asc" />
-            </group>
+            <item
+                android:id="@+id/action_hide_read"
+                android:checkable="true"
+                android:title="@string/hide_read" />
+            <item
+                android:id="@+id/action_sort_by"
+                android:title="@string/sort">
+                <menu>
+                    <group android:checkableBehavior="single">
+                        <item
+                            android:id="@+id/sort_last_read"
+                            android:title="@string/sort_recent" />
+                        <item
+                            android:id="@+id/sort_last_read_asc"
+                            android:title="@string/sort_recent_asc" />
+                        <item
+                            android:id="@+id/sort_name"
+                            android:title="@string/sort_title" />
+                        <item
+                            android:id="@+id/sort_name_asc"
+                            android:title="@string/sort_title_asc" />
+                        <item
+                            android:id="@+id/sort_author"
+                            android:title="@string/sort_author" />
+                        <item
+                            android:id="@+id/sort_author_asc"
+                            android:title="@string/sort_author_asc" />
+                    </group>
+                </menu>
+            </item>
+            <item
+                android:id="@+id/action_configurar"
+                android:title="@string/configuraciones" />
         </menu>
     </item>
-    <item
-        android:id="@+id/action_configurar"
-        android:title="@string/configuraciones" />
+
     <!--android:icon="@drawable/ic_action_action_settings"-->
 </menu>
