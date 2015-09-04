@@ -51,9 +51,15 @@ public class ActivityManga extends ActionBarActivity {
     ControlInfoNoScroll datos;
     ImageLoader imageLoader;
     ChapterAdapter capitulosAdapter;
+    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
         id = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
@@ -219,7 +225,7 @@ public class ActivityManga extends ActionBarActivity {
     public void cargarCapitulos(ArrayList<Chapter> chapters) {
         int fvi = 0;
         if (capitulosAdapter != null) fvi = lista.getFirstVisiblePosition();
-        capitulosAdapter = new ChapterAdapter(this, chapters);
+        capitulosAdapter = new ChapterAdapter(this, chapters, darkTheme);
         if (lista != null) {
             lista.setAdapter(capitulosAdapter);
             lista.setSelection(manga.getLastIndex());

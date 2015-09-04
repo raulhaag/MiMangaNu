@@ -5,7 +5,21 @@
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
     </style>
 
-    <style name="AppTheme.NoActionbar" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme_miDark" parent="AppBaseThemeDark">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="AppTheme.Light.NoActionbar" parent="Theme.AppCompat.Light.NoActionBar">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+        <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
+        <item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>
+    </style>
+
+    <style name="AppTheme.Dark.NoActionbar" parent="Theme.AppCompat.Light.NoActionBar">
         <!--
             Theme customizations available in newer API levels can go in
             res/values-vXX/styles.xml, while customizations related to

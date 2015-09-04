@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
 import android.support.v4.view.ViewCompat;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,11 +28,16 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
     OnMangaClick mangaClickListener;
     OnCreateContextMenuListener onCreateContextMenuListener;
     private ImageLoader imageLoader;
+    private boolean darkTheme = false;
+    private int darkBackground;
 
-    public MangasRecAdapter(ArrayList<Manga> lista, Context context) {
+
+    public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
         mangas = lista;
         imageLoader = new ImageLoader(context);
         this.context = context;
+        this.darkTheme = darkTheme;
+        this.darkBackground = context.getResources().getColor(R.color.background_floating_material_dark);
     }
 
     public void setLastItemListener(OnLastItem lastItemListener) {
@@ -119,6 +125,9 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
             notif = (ImageView) itemView.findViewById(R.id.notif);
             server = (ImageView) itemView.findViewById(R.id.server);
             v = itemView;
+            if (darkTheme) {
+                ((CardView) itemView.findViewById(R.id.cardview_server_container)).setCardBackgroundColor(darkBackground);
+            }
         }
     }
 

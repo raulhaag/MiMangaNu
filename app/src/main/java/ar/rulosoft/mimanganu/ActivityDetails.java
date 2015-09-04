@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -36,9 +37,17 @@ public class ActivityDetails extends ActionBarActivity {
     ServerBase s;
     Manga m;
     FloatingActionButton button_add;
+    SharedPreferences pm;
+    boolean darkTheme;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
         data = (ControlInfo) findViewById(R.id.datos);

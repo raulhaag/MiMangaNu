@@ -20,13 +20,15 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
 
     public static String[] states;
     private static int listItem = R.layout.listitem_descarga;
+    public boolean darkTheme;
     ArrayList<ChapterDownload> downloads = new ArrayList<>();
     private LayoutInflater li;
 
-    public DownloadAdapter(Context context, ArrayList<ChapterDownload> objects) {
+    public DownloadAdapter(Context context, ArrayList<ChapterDownload> objects, boolean darkTheme) {
         super(context, listItem);
         states = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.darkTheme = darkTheme;
     }
 
     @Override
@@ -49,7 +51,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
         ViewHolder holder;
         if (convertView == null) {
             convertView = li.inflate(listItem, null);
-            holder = new ViewHolder(convertView);
+            holder = new ViewHolder(convertView, darkTheme);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -106,10 +108,12 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
         private ProgressBar loadingProgressBar;
         private ImageButton buttonImageView;
 
-        public ViewHolder(View v) {
+        public ViewHolder(View v, boolean darkTheme) {
             this.textViewName = (TextView) v.findViewById(R.id.nombre);
             this.buttonImageView = (ImageButton) v.findViewById(R.id.boton);
             this.loadingProgressBar = (ProgressBar) v.findViewById(R.id.progreso);
+            if (darkTheme)
+                this.buttonImageView.setImageResource(R.drawable.ic_action_x_dark);
         }
     }
 

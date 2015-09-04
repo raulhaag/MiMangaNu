@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,11 +42,18 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
     ProgressBar cargando;
     MangasRecAdapter adap;
     boolean neuvaTarea = false;
+    SharedPreferences pm;
+    boolean darkTheme;
     private int pagina = 1;
     private MenuItem buscar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(ActivityServerVisualNavegacion.this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_visual_navegacion);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
@@ -187,6 +195,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
             cargando.setVisibility(ProgressBar.VISIBLE);
         }
 
+        @SuppressWarnings("ResourceType")//TODO ver problema
         @Override
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
@@ -206,7 +215,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
                 pagina++;
                 if (result != null && result.size() != 0 && grilla != null) {
                     if (adap == null) {
-                        adap = new MangasRecAdapter(result, ActivityServerVisualNavegacion.this);
+                        adap = new MangasRecAdapter(result, ActivityServerVisualNavegacion.this, darkTheme);
                         adap.setLastItemListener(ActivityServerVisualNavegacion.this);
                         adap.setMangaClickListener(ActivityServerVisualNavegacion.this);
                         grilla.setAdapter(adap);

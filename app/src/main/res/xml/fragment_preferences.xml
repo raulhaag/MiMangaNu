@@ -96,6 +96,10 @@
 
     <!-- Finally, replaced by a much lighter color picker -->
     <PreferenceCategory android:title="@string/ui_settings">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="dark_theme"
+            android:title="@string/theme_title" />
         <ar.rulosoft.custompref.ColorListDialogPref
             android:defaultValue="-14003522"
             android:key="primario"

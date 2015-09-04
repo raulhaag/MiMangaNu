@@ -137,4 +137,5 @@
     <string name="color_secundario_sub">Secondary coloring, for more variety</string>
     <string name="about">About</string>
     <string name="scroll_speed">Scroll speed</string>
+    <string name="theme_title">Use dark theme</string>
 </resources>

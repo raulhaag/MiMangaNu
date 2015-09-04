@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -26,9 +27,16 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
     int serverId;
     ProgressBar cargando;
     ListView lista;
+    SharedPreferences pm;
+    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_resultado_de_busqueda);
         serverId = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);

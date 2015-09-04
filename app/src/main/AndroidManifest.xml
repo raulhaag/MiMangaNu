@@ -32,7 +32,7 @@
             android:name=".ActivityLector"
             android:label="@string/title_activity_activity_lector"
             android:largeHeap="true"
-            android:theme="@style/AppTheme.NoActionbar" />
+            android:theme="@style/AppTheme.Light.NoActionbar" />
         <activity
             android:name=".ActivityServerVisualNavegacion"
             android:label="@string/title_activity_server_visual_navegacion" />

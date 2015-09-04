@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -36,6 +37,9 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
         View rView = inflater.inflate(R.layout.fragment_add_manga, container, false);
         lista_server = (RecyclerView) rView.findViewById(R.id.lista_de_servers);
         lista_server.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (((ActivityMisMangas) getActivity()).darkTheme) {
+            ((CardView) rView.findViewById(R.id.cardview_server_container)).setCardBackgroundColor(getResources().getColor(R.color.background_floating_material_dark));
+        }
         return rView;
     }
 

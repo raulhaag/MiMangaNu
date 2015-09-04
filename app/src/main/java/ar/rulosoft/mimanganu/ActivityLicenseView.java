@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -17,9 +18,16 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 public class ActivityLicenseView extends ActionBarActivity {
 
     TextView lic;
+    SharedPreferences pm;
+    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_licence);
         lic = (TextView) findViewById(R.id.licencia);

@@ -9,4 +9,10 @@
         <item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>
     </style>
 
+    <style name="AppBaseThemeDark" parent="Theme.AppCompat">
+        <!-- API 11 theme customizations can go here. -->
+        <item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>
+    </style>
+
+
 </resources>

@@ -129,4 +129,5 @@
     <string name="vercomolista">Показать списком</string>
     <string name="vertical">Вертикально</string>
     <string name="scroll_speed">скорость прокрутки</string>
+    <string name="theme_title">Используйте темно тему</string>
 </resources>

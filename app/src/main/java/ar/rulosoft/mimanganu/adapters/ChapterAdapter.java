@@ -31,7 +31,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.TRANSPARENT;
-    public static int COLOR_READ = Color.parseColor("#929292");
+    public static int COLOR_READ = Color.parseColor("#CFCFCF");
     public static int COLOR_READING = Color.parseColor("#424242");
     public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
@@ -39,12 +39,14 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     ActivityManga activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
+    private boolean darkTheme = false;
 //    private StateListDrawable stateListDrawable;
 
-    public ChapterAdapter(Activity context, List<Chapter> items) {
+    public ChapterAdapter(Activity context, List<Chapter> items, boolean darkTheme) {
         super(context, listItem, items);
         activity = (ActivityManga) context;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.darkTheme = darkTheme;
     }
 
     public static void setColorSelected(int colorSelected) {
@@ -107,10 +109,18 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             } else {
                 holder.textViewPages.setText("");
             }
-            if (item.isDownloaded()) {
-                holder.imageButton.setImageResource(R.drawable.ic_borrar);
+            if (darkTheme) {
+                if (item.isDownloaded()) {
+                    holder.imageButton.setImageResource(R.drawable.ic_action_delete_dark);
+                } else {
+                    holder.imageButton.setImageResource(R.drawable.ic_action_download_dark);
+                }
             } else {
-                holder.imageButton.setImageResource(R.drawable.ic_bajar);
+                if (item.isDownloaded()) {
+                    holder.imageButton.setImageResource(R.drawable.ic_action_delete_light);
+                } else {
+                    holder.imageButton.setImageResource(R.drawable.ic_action_download_light);
+                }
             }
 
             holder.imageButton.setTag(item);

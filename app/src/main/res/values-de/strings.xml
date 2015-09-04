@@ -133,4 +133,5 @@
     <string name="color_secundario_sub">Sekundäre Farbe, für mehr Abwechselung</string>
     <string name="about">Über</string>
     <string name="scroll_speed">Scroll-Geschwindigkeit</string>
+    <string name="theme_title">Verwenden dunkles Thema</string>
 </resources>

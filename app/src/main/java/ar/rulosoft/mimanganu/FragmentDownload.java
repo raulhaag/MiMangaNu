@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu;
 
-import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,10 +28,9 @@ public class FragmentDownload extends Fragment {
         return rView;
     }
 
-    @SuppressLint("NewApi")
     @Override
     public void onResume() {
-        downAdapter = new DownloadAdapter(getActivity(), new ArrayList<ChapterDownload>());
+        downAdapter = new DownloadAdapter(getActivity(), new ArrayList<ChapterDownload>(), ((ActivityDownloads) getActivity()).darkTheme);
         listDownload.setAdapter(downAdapter);
         md = new ShowDownloadsTask();
         if (Build.VERSION.SDK_INT >= 11)

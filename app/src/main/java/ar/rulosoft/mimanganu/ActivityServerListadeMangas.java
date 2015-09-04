@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -31,10 +32,17 @@ public class ActivityServerListadeMangas extends ActionBarActivity {
     ListView lista;
     ProgressBar cargando;
     MangaAdapter adapter;
+    SharedPreferences pm;
+    boolean darkTheme;
     private MenuItem buscar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_lista_de_mangas);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);

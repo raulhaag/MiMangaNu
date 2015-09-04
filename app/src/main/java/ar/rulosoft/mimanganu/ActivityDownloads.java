@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -16,12 +17,19 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 
 public class ActivityDownloads extends ActionBarActivity {
+    SharedPreferences pm;
+    boolean darkTheme;
     private ListView list;
     private ShowDownloadsTask sh;
     private DownloadAdapter adap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_descargas);
         int[] colors = ThemeColors.getColors(
@@ -33,7 +41,7 @@ public class ActivityDownloads extends ActionBarActivity {
 
     @Override
     public void onResume() {
-        adap = new DownloadAdapter(ActivityDownloads.this, new ArrayList<ChapterDownload>());
+        adap = new DownloadAdapter(ActivityDownloads.this, new ArrayList<ChapterDownload>(), darkTheme);
         list.setAdapter(adap);
         sh = new ShowDownloadsTask();
         sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

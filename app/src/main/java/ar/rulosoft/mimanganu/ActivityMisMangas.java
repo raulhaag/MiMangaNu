@@ -40,9 +40,15 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     FragmentAddManga fragmentAddManga;
     SharedPreferences pm;
     FloatingActionButton button_add;
+    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
+        darkTheme = pm.getBoolean("dark_theme", false);
+        if (darkTheme) {
+            setTheme(R.style.AppBaseThemeDark);
+        }
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
         setContentView(R.layout.activity_mis_mangas);
@@ -61,7 +67,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
-        pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
 
         final boolean show_dialog = pm.getBoolean("show_updates", true);
         if (show_dialog) {//TODO ! o no segun la version 1.30 sin !
@@ -157,6 +162,15 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
     @Override
     protected void onResume() {
+        if (darkTheme != pm.getBoolean("dark_theme", false)) {
+            // re start to apply new theme
+            Intent i = getPackageManager()
+                    .getLaunchIntentForPackage(getPackageName());
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            System.exit(0);
+        }
+
         colors = ThemeColors.getColors(pm, getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         button_add.setColorNormal(colors[1]);

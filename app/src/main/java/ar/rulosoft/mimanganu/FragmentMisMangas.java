@@ -148,7 +148,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             default:
                 break;
         }
-        adapter = new MangasRecAdapter(mangas, getActivity());
+        adapter = new MangasRecAdapter(mangas, getActivity(), ((ActivityMisMangas) getActivity()).darkTheme);
         adapter.setMangaClickListener(FragmentMisMangas.this);
         adapter.setOnCreateContextMenuListener(FragmentMisMangas.this);
         grilla.setAdapter(adapter);

@@ -14,6 +14,5 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:padding="@dimen/paddin_textitem"
-        android:textColor="#000000"
         android:textSize="@dimen/tamano_texto" />
 </RelativeLayout>
