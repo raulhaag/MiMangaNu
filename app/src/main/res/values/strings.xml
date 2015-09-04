@@ -141,7 +141,7 @@
     <string name="sort_recent">recently read</string>
     <string name="sort_title">title</string>
     <string name="sort_author">author</string>
-    <string name="sort_recent_asc">recently read (desc.)</string>
+    <string name="sort_recent_asc">recently read (oldest)</string>
     <string name="sort_title_asc">title (desc.)</string>
     <string name="sort_author_asc">author (desc.)</string>
 </resources>

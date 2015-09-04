@@ -139,6 +139,6 @@
     <string name="sort_author">Autor</string>
     <string name="sort_recent">Zuletzt gelesen</string>
     <string name="sort_author_asc">Autor (z-a)</string>
-    <string name="sort_recent_asc">Zuletzt gelesen (z-a)</string>
-    <string name="sort_title_asc">Title (z-a)</string>
+    <string name="sort_recent_asc">Zuletzt gelesen (älteste)</string>
+    <string name="sort_title_asc">Titel (z-a)</string>
 </resources>
