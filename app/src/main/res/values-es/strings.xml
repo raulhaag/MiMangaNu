@@ -38,7 +38,7 @@
     <string name="escondergaleria">Esconder de la galeria</string>
     <string name="filtrar">Filtrar</string>
     <string name="vercomolista">Ver como lista</string>
-    <string name="esconder_leido">Ocultar leídos</string>
+    <string name="hide_read">Ocultar leídos</string>
     <string name="macartodoleido">Marcar todo como leído</string>
     <string name="macartodonoleido">Marcar todo como no leído</string>
     <string name="sentido">Sentido de lectura</string>

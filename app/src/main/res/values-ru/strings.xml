@@ -53,7 +53,7 @@
     <string name="error">(Ошибка)</string>
     <string name="esconder">Скрыть из галереи</string>
     <string name="esconder_de_galeria_subtitle">Скрыть скачаные рисунки из галереи</string>
-    <string name="esconder_leido">Скрыть прочитаные</string>
+    <string name="hide_read">Скрыть прочитаные</string>
     <string name="escondergaleria">Скрыть из галереи</string>
     <string name="estado">Статус</string>
     <string name="filtrar">Фильтр</string>

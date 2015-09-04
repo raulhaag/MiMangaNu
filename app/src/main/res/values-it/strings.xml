@@ -38,7 +38,7 @@
     <string name="escondergaleria">Nascondi dalla galleria</string>
     <string name="filtrar">Filtra</string>
     <string name="vercomolista">Mostra come elenco</string>
-    <string name="esconder_leido">Nascondi già letti</string>
+    <string name="hide_read">Nascondi già letti</string>
     <string name="macartodoleido">Marca tutti come letti</string>
     <string name="macartodonoleido">Marca tutti come non letti</string>
     <string name="sentido">Verso</string>
@@ -94,4 +94,5 @@
     <string name="previous">Precedente</string>
     <string name="next">Prossimo</string>
     <string name="scroll_speed">Velocità di scorrimento</string>
+    <string name="autor">Autore</string>
 </resources>

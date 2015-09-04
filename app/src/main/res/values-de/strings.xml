@@ -34,10 +34,10 @@
     <string name="configuraciones">Einstellungen</string>
     <string name="datosde">Details</string>
     <string name="demaciados_errores">Zu viele Fehler (Download unterbrochen)</string>
-    <string name="descarga_no_leidos">Download ungelesen</string>
+    <string name="descarga_no_leidos">Lade Ungelesene</string>
     <string name="descargado">(Heruntergeladen)</string>
     <string name="descargando">(Lädt herunter)</string>
-    <string name="descargarestantes">Lade Fehlende herunter</string>
+    <string name="descargarestantes">Lade Fehlende</string>
     <string name="descargas">Downloads</string>
     <string name="direcctorio_subtitle">Für Downloads (Sie müssen bereits vorhandene Inhalte manuell in den neuen Ordner verschieben, die App und ggf. das Gerät neu starten)</string>
     <string name="directorio_title">Ordner auswählen</string>
@@ -46,7 +46,7 @@
     <string name="error">(Fehler)</string>
     <string name="esconder">Bilder verbergen</string>
     <string name="esconder_de_galeria_subtitle">Heruntergeladene Bilder nicht in der Galerie anzeigen.</string>
-    <string name="esconder_leido">Bereits gelesene ausblenden</string>
+    <string name="hide_read">Verstecke gelesene</string>
     <string name="escondergaleria">Bilder verbergen</string>
     <string name="estado">Status</string>
     <string name="filtrar">Filter</string>
@@ -60,7 +60,7 @@
     <string name="listaen">Manga-Liste von</string>
     <string name="macartodoleido">Alle als gelesen markieren</string>
     <string name="macartodonoleido">Alle als ungelesen markieren</string>
-    <string name="marcarleido">Ausgewählte als gelesen markieren</string>
+    <string name="marcarleido">Als gelesen markieren</string>
     <string name="mas">Mehr</string>
     <string name="masmangas">Mangas hinzufügen</string>
     <string name="max_texture_subtitle">Größe der Texturen, die benutzt werden sollen (0 zum Deaktivieren der Hardwarebeschleunigung)\n%s</string>
@@ -98,7 +98,7 @@
     <string name="unwritable_folder">Nicht beschreibbarer Ordner.</string>
     <string name="vercomolista">Als Liste anzeigen</string>
     <string name="vertical">Vertikal</string>
-    <string name="markSelectedUnread">Ausgewählte als ungelesen markieren</string>
+    <string name="markSelectedUnread">Als ungelesen markieren</string>
     <string name="_12hours">12 Stunden</string>
     <string name="_1day">1 Tag</string>
     <string name="_2day">2 Tage</string>
@@ -130,7 +130,13 @@
     <string name="previous">Vorheriges</string>
     <string name="license_sub">Tippe, um Lizenz und Danksagung zu sehen</string>
     <string name="color_primario_sub">Primäre Färbung, etwa für Titleleiste usw.</string>
-    <string name="color_secundario_sub">Sekundäre Farbe, für mehr Abwechselung</string>
+    <string name="color_secundario_sub">Sekundäre Farbe für mehr Abwechselung</string>
     <string name="about">Über</string>
     <string name="scroll_speed">Scroll-Geschwindigkeit</string>
+    <string name="download_selection">Herunterladen</string>
+    <string name="sort">Sortieren</string>
+    <string name="sort_title">Nach Titel</string>
+    <string name="sort_author">Nach Autor</string>
+    <string name="sort_recent">Nach Zuletzt gelesene</string>
+    <string name="sort_reverse">Umgekehrte Reihenfolge</string>
 </resources>

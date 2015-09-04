@@ -8,26 +8,33 @@
         android:icon="@drawable/ic_action_downloads"
         android:title="@string/descargas"
         app:showAsAction="ifRoom" />
-
-    <!--<group android:checkableBehavior="all">-->
     <item
-        android:id="@+id/action_esconder_leidos"
-        android:icon="@drawable/ic_action_image_filter_none"
-        android:title="@string/esconder_leido"
-        app:showAsAction="ifRoom" />
-    <!--</group>-->
-
+        android:id="@+id/action_hide_read"
+        android:title="@string/hide_read"
+        android:checkable="true" />
+    <item
+        android:id="@+id/action_sort_by"
+        android:title="@string/sort">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sort_last_read"
+                    android:title="@string/sort_recent" />
+                <item
+                    android:id="@+id/sort_name"
+                    android:title="@string/sort_title" />
+                <item
+                    android:id="@+id/sort_author"
+                    android:title="@string/sort_author" />
+                <item
+                    android:id="@+id/sortOrder_reverse"
+                    android:checkable="true"
+                    android:title="@string/sort_reverse" />
+            </group>
+        </menu>
+    </item>
     <item
         android:id="@+id/action_configurar"
-        android:icon="@drawable/ic_action_action_settings"
-        android:orderInCategory="100"
-        android:title="@string/configuraciones"
-        app:showAsAction="ifRoom" />
-
-    <!--<item-->
-    <!--android:id="@+id/licencia"-->
-    <!--android:orderInCategory="100"-->
-    <!--android:title="@string/licencia" />-->
-
-
+        android:title="@string/configuraciones" />
+    <!--android:icon="@drawable/ic_action_action_settings"-->
 </menu>

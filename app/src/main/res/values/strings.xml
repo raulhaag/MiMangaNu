@@ -51,7 +51,7 @@
     <string name="esconder_de_galeria_subtitle">Hide downloaded images from gallery</string>
     <string name="escondergaleria">Hide from gallery</string>
     <string name="esconder">Hide from gallery</string>
-    <string name="esconder_leido">Hide already read</string>
+    <string name="hide_read">Hide already read</string>
     <string name="estado">Status</string>
     <string name="filtrar">Filter</string>
     <string name="finalizado">Finished.</string>
@@ -137,4 +137,9 @@
     <string name="color_secundario_sub">Secondary coloring, for more variety</string>
     <string name="about">About</string>
     <string name="scroll_speed">Scroll speed</string>
+    <string name="sort">Sort</string>
+    <string name="sort_recent">By last read</string>
+    <string name="sort_title">By title</string>
+    <string name="sort_author">By author</string>
+    <string name="sort_reverse">Reverse order</string>
 </resources>
