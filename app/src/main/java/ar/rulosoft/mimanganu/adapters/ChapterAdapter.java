@@ -31,8 +31,8 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.TRANSPARENT;
-    public static int COLOR_READ = Color.parseColor("#CFCFCF");
-    public static int COLOR_READING = Color.parseColor("#424242");
+    public static int COLOR_READ = Color.parseColor("#b2b2b2");
+    public static int COLOR_READING = Color.parseColor("#121212");
     public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
@@ -42,7 +42,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private boolean darkTheme = false;
 //    private StateListDrawable stateListDrawable;
 
-    public ChapterAdapter(Activity context, List<Chapter> items, boolean darkTheme) {
+    public ChapterAdapter(Activity context, List<Chapter> items) {
         super(context, listItem, items);
         activity = (ActivityManga) context;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

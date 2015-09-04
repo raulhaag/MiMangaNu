@@ -206,7 +206,7 @@ public abstract class ServerBase {
             cambios = true;
         }
 
-        if (cambios) Database.updateMangaNotime(context, mangaDb);
+        if (cambios) Database.updateManga(context, mangaDb, false);
 
         return returnValue;
     }

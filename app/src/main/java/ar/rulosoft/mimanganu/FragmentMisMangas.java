@@ -31,15 +31,16 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
-    public static final String SELECTOR_MODO = "selector_modo";
-    public static final int MODO_ULTIMA_LECTURA_Y_NUEVOS = 0;
-    public static final int MODO_SIN_LEER = 1;
+    public static final String SELECT_MODE = "selector_modo";
+    public static final int MODE_SHOW_ALL = 0;
+    public static final int MODE_HIDE_READ = 1;
 
     public boolean buscar = false;
-    RecyclerView grilla;
-    MangasRecAdapter adapter;
-    SwipeRefreshLayout str;
-    NewSearchTask newSearch;
+
+    private RecyclerView grilla;
+    private MangasRecAdapter adapter;
+    private SwipeRefreshLayout str;
+    private NewSearchTask newSearch;
     private Integer menuFor;
 
     public static void DeleteRecursive(File fileOrDirectory) {
@@ -57,9 +58,9 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(newSearch == null || newSearch.getStatus() == AsyncTask.Status.FINISHED){
-                newSearch = new NewSearchTask();
-                newSearch.execute();
+                if (newSearch == null || newSearch.getStatus() == AsyncTask.Status.FINISHED) {
+                    newSearch = new NewSearchTask();
+                    newSearch.execute();
                 }
             }
         });
@@ -81,7 +82,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         else if (columnas > 6)
             columnas = 6;
         grilla.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
-        if(newSearch != null && newSearch.getStatus() == AsyncTask.Status.RUNNING){
+        if (newSearch != null && newSearch.getStatus() == AsyncTask.Status.RUNNING) {
             str.post(new Runnable() {
                 @Override
                 public void run() {
@@ -127,27 +128,53 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     @Override
     public void onResume() {
-        cargarMangas();
+        setListManga();
         ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         int[] colors = ((ActivityMisMangas) getActivity()).colors;
         str.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
     }
 
-    public void cargarMangas() {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        int value = PreferenceManager.getDefaultSharedPreferences(getActivity()).getInt(SELECTOR_MODO, MODO_ULTIMA_LECTURA_Y_NUEVOS);
-        switch (value) {
-            case MODO_ULTIMA_LECTURA_Y_NUEVOS:
-                mangas = Database.getMangas(getActivity());
+    public void setListManga() {
+        ArrayList<Manga> mangaList = new ArrayList<>();
+
+        boolean sort_asc = PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).getBoolean("manga_view_sort_asc", false);
+
+        /**
+         * sortBy 0 = last_read (default), 1 = title, 2 = author
+         * feel free to add more sort type */
+        String sort_by;
+        switch (PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).getInt("manga_view_sort_by", 0)) {
+            case 1:
+                sort_by = Database.COL_NAME;
                 break;
-            case MODO_SIN_LEER:
-                mangas = Database.getMangasCondition(getActivity(),
-                        "id in (select manga_id from capitulos where estado != 1 group by manga_id order by count(*) desc)");
+            case 2:
+                sort_by = Database.COL_AUTHOR;
+                break;
+            case 0:
+            default:
+                sort_by = Database.COL_LAST_READ;
+                sort_asc = !sort_asc;
+        }
+        int value = PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).getInt(SELECT_MODE, MODE_SHOW_ALL);
+        switch (value) {
+            case MODE_SHOW_ALL:
+                mangaList = Database.getMangas(getActivity(), sort_by, sort_asc);
+                break;
+            case MODE_HIDE_READ:
+                mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                        "SELECT manga_id " +
+                        "FROM capitulos " +
+                        "WHERE estado != 1 GROUP BY manga_id " +
+                        "ORDER BY Count(*) DESC)", sort_by, sort_asc);
                 break;
             default:
                 break;
         }
+        adapter = new MangasRecAdapter(mangaList, getActivity());
         adapter = new MangasRecAdapter(mangas, getActivity(), ((ActivityMisMangas) getActivity()).darkTheme);
         adapter.setMangaClickListener(FragmentMisMangas.this);
         adapter.setOnCreateContextMenuListener(FragmentMisMangas.this);
@@ -162,22 +189,22 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     }
 
     public class NewSearchTask extends AsyncTask<Void, String, Integer> {
-        String msg;
-        String titulo;
+        String mMessage;
+        String mTitle;
 
         @Override
         protected void onPreExecute() {
             buscar = true;
-            msg = getActivity().getResources().getString(R.string.buscandonuevo);
-            titulo = getActivity().getTitle().toString();
-            getActivity().setTitle(msg);
+            mMessage = getActivity().getResources().getString(R.string.buscandonuevo);
+            mTitle = getActivity().getTitle().toString();
+            getActivity().setTitle(mMessage);
             super.onPreExecute();
         }
 
         @Override
         protected void onProgressUpdate(String... values) {
             final String s = values[0];
-            msg = s;
+            mMessage = s;
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -210,8 +237,8 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         @Override
         protected void onPostExecute(Integer result) {
             try {
-                getActivity().setTitle(titulo);
-                cargarMangas();
+                getActivity().setTitle(mTitle);
+                setListManga();
             } catch (Exception e) {
                 e.printStackTrace();
             }

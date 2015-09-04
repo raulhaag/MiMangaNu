@@ -744,15 +744,15 @@ public class ActivityLector extends ActionBarActivity
             View rView = inflater.inflate(R.layout.fragment_pagina_final, container, false);
             btnNext = (Button) rView.findViewById(R.id.button_next);
             btnPrev = (Button) rView.findViewById(R.id.button_previous);
-            btnNext.setTextColor(Color.WHITE);
-            btnPrev.setTextColor(Color.WHITE);
-            if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-                btnNext.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-                btnPrev.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-            } else {
-                btnNext.setBackground(new ColorDrawable(thmColors[0]));
-                btnPrev.setBackground(new ColorDrawable(thmColors[0]));
-            }
+//            btnNext.setTextColor(Color.WHITE);
+//            btnPrev.setTextColor(Color.WHITE);
+//            if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//                btnNext.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+//                btnPrev.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+//            } else {
+//                btnNext.setBackground(new ColorDrawable(thmColors[0]));
+//                btnPrev.setBackground(new ColorDrawable(thmColors[0]));
+//            }
             return rView;
         }
 

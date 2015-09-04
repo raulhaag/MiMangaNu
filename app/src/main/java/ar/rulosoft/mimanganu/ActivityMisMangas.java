@@ -32,7 +32,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
-    public static final String MOSTRAR_EN_GALERIA = "mostrarengaleria";
+    //    public static final String MOSTRAR_EN_GALERIA = "mostrarengaleria";
     public int[] colors;
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -92,12 +92,21 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mis_mangas, menu);
-        MenuItem menuHideRead = menu.findItem(R.id.action_esconder_leidos);
-        boolean checkedRead = pm.getInt(FragmentMisMangas.SELECTOR_MODO,
-                FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS) > 0;
-        if (checkedRead)
-            menuHideRead.setIcon(R.drawable.ic_action_selecionar_todos);
-        menuHideRead.setChecked(checkedRead);
+
+        /** Set hide/unhide checkbox */
+        boolean checkedRead = pm.getInt(FragmentMisMangas.SELECT_MODE,
+                FragmentMisMangas.MODE_SHOW_ALL) > 0;
+        menu.findItem(R.id.action_hide_read).setChecked(checkedRead);
+
+        /** Set sort mode */
+        int sort_val = (pm.getBoolean("manga_view_sort_asc", false) ? 0 : 3) +
+                pm.getInt("manga_view_sort_by", 0);
+        int sortList[] = {
+                R.id.sort_last_read, R.id.sort_name, R.id.sort_author,
+                R.id.sort_last_read_asc, R.id.sort_name_asc, R.id.sort_author_asc
+        };
+        menu.findItem(sortList[sort_val]).setChecked(true);
+
         return true;
     }
 
@@ -110,37 +119,68 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.descargas: {
-                Intent intent = new Intent(this, ActivityDownloads.class);
-                startActivity(intent);
+                startActivity(new Intent(this, ActivityDownloads.class));
                 break;
             }
             case R.id.licencia: {
-                Intent intent = new Intent(this, ActivityLicenseView.class);
-                startActivity(intent);
+                startActivity(new Intent(this, ActivityLicenseView.class));
                 break;
             }
-            case R.id.action_esconder_leidos: {
-                if (item.isChecked()) {
-                    item.setChecked(false);
-                    item.setIcon(R.drawable.ic_action_image_filter_none);
-                    pm.edit().putInt(FragmentMisMangas.SELECTOR_MODO,
-                            FragmentMisMangas.MODO_ULTIMA_LECTURA_Y_NUEVOS).apply();
-                } else {
-                    item.setChecked(true);
-                    item.setIcon(R.drawable.ic_action_selecionar_todos);
-                    pm.edit().putInt(FragmentMisMangas.SELECTOR_MODO,
-                            FragmentMisMangas.MODO_SIN_LEER).apply();
-                }
-                try {
-                    fragmentMisMangas.cargarMangas();
-                } catch (Exception e) {
-                    // TODO Handle cargar error properly
-                    e.printStackTrace();
-                }
+            case R.id.action_hide_read: {
+                item.setChecked(!item.isChecked());
+                pm.edit().putInt(FragmentMisMangas.SELECT_MODE,
+                        item.isChecked() ?
+                                FragmentMisMangas.MODE_HIDE_READ : FragmentMisMangas.MODE_SHOW_ALL
+                ).apply();
+                fragmentMisMangas.setListManga();
                 break;
             }
             case R.id.action_configurar: {
-                startActivity(new Intent(ActivityMisMangas.this, OpcionesActivity.class));
+                startActivity(new Intent(this, OpcionesActivity.class));
+                break;
+            }
+
+            case R.id.sort_last_read: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 0).apply();
+                pm.edit().putBoolean("manga_view_sort_asc", true).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_name: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 1).apply();
+                pm.edit().putBoolean("manga_view_sort_asc", true).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_author: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 2).apply();
+                pm.edit().putBoolean("manga_view_sort_asc", true).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_last_read_asc: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 0).apply();
+                pm.edit().putBoolean("manga_view_sort_asc", false).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_name_asc: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 1).apply();
+                pm.edit().putBoolean("manga_view_sort_asc", false).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_author_asc: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 2).apply();
+                pm.edit().putBoolean("manga_view_sort_asc", false).apply();
+                fragmentMisMangas.setListManga();
+                break;
             }
         }
         return super.onOptionsItemSelected(item);

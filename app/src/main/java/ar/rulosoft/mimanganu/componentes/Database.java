@@ -99,57 +99,33 @@ public class Database extends SQLiteOpenHelper {
         return localDB;
     }
 
-    public static int addManga(Context c, Manga m) {
+    private static ContentValues setMangaCV(Manga manga, boolean setTime) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_NAME, m.title);
-        cv.put(COL_PATH, m.path);
-        cv.put(COL_IMAGE, m.images);
-        cv.put(COL_SYNOPSIS, m.synopsis);
-        cv.put(COL_SERVER_ID, m.serverId);
-        cv.put(COL_AUTHOR, m.getAuthor());
-        cv.put(COL_LAST_READ, System.currentTimeMillis());
-
-        if (m.finished)
-            cv.put(COL_SEARCH, 1);
-        else
-            cv.put(COL_SEARCH, 0);
-
-        return (int) getDatabase(c).insert(TABLE_MANGA, null, cv);
+        cv.put(COL_NAME, manga.getTitle());
+        cv.put(COL_PATH, manga.getPath());
+        cv.put(COL_IMAGE, manga.getImages());
+        cv.put(COL_SYNOPSIS, manga.getSynopsis());
+        cv.put(COL_SERVER_ID, manga.getServerId());
+        cv.put(COL_AUTHOR, manga.getAuthor());
+        cv.put(COL_SEARCH, manga.isFinished() ? 1 : 0);
+        if (setTime)
+            cv.put(COL_LAST_READ, System.currentTimeMillis());
+        return cv;
     }
 
-    public static void updateManga(Context context, Manga manga) {
-        ContentValues cv = new ContentValues();
-        cv.put(COL_NAME, manga.title);
-        cv.put(COL_PATH, manga.path);
-        cv.put(COL_IMAGE, manga.images);
-        cv.put(COL_SYNOPSIS, manga.synopsis);
-        cv.put(COL_SERVER_ID, manga.serverId);
-        cv.put(COL_AUTHOR, manga.getAuthor());
-        cv.put(COL_LAST_READ, System.currentTimeMillis());
-
-        if (manga.finished)
-            cv.put(COL_SEARCH, 1);
-        else
-            cv.put(COL_SEARCH, 0);
-
-        getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + manga.getId(), null);
+    public static int addManga(Context context, Manga manga) {
+        return (int) getDatabase(context).insert(TABLE_MANGA, null, setMangaCV(manga, true));
     }
 
-    public static void updateMangaNotime(Context context, Manga manga) {
-        ContentValues cv = new ContentValues();
-        cv.put(COL_NAME, manga.title);
-        cv.put(COL_PATH, manga.path);
-        cv.put(COL_IMAGE, manga.images);
-        cv.put(COL_SYNOPSIS, manga.synopsis);
-        cv.put(COL_SERVER_ID, manga.serverId);
-        cv.put(COL_AUTHOR, manga.getAuthor());
-
-        if (manga.finished)
-            cv.put(COL_SEARCH, 1);
-        else
-            cv.put(COL_SEARCH, 0);
-
-        getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + manga.getId(), null);
+    /**
+     * For information,
+     * <p/>
+     * setTime = false is "updateMangaNoTime"
+     * setTime = true is "updateManga"
+     */
+    public static void updateManga(Context context, Manga manga, boolean setTime) {
+        getDatabase(context).update(TABLE_MANGA,
+                setMangaCV(manga, setTime), COL_ID + "=" + manga.getId(), null);
     }
 
     public static void updateMangaRead(Context c, int mid) {
@@ -160,10 +136,7 @@ public class Database extends SQLiteOpenHelper {
 
     public static void setUpgradable(Context c, int mangaid, boolean buscar) {
         ContentValues cv = new ContentValues();
-        if (buscar)
-            cv.put(COL_SEARCH, 1);
-        else
-            cv.put(COL_SEARCH, 0);
+        cv.put(COL_SEARCH, buscar ? 1 : 0);
         getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
     }
 
@@ -176,7 +149,8 @@ public class Database extends SQLiteOpenHelper {
     public static void updateNewMangas(Context c, Manga m, int nuevos) {
         int actual = 0;
         if (nuevos > -99) {
-            Cursor cursor = getDatabase(c).query(TABLE_MANGA, new String[]{COL_NEW}, COL_ID + " = " + m.id, null, null, null, null);
+            Cursor cursor = getDatabase(c).query(TABLE_MANGA,
+                    new String[]{COL_NEW}, COL_ID + " = " + m.getId(), null, null, null, null);
             if (cursor.moveToFirst()) {
                 actual = cursor.getInt(cursor.getColumnIndex(COL_NEW));
                 actual += nuevos;
@@ -213,18 +187,24 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static ArrayList<Manga> getMangasForUpdates(Context c) {
-        return getMangasCondition(c, COL_SEARCH + "= 0");
+        return getMangasCondition(c, COL_SEARCH + "= 0", null, false);
     }
 
-    public static ArrayList<Manga> getMangas(Context c) {
-        return getMangasCondition(c, null);
+    public static ArrayList<Manga> getMangas(Context c, String sortBy, boolean asc) {
+        return getMangasCondition(c, null, sortBy, asc);
     }
 
-    public static ArrayList<Manga> getMangasCondition(Context c, String condition) {
+    public static ArrayList<Manga> getMangasCondition(
+            Context c, String condition, String sortBy, boolean asc) {
+        if (sortBy == null) sortBy = COL_LAST_READ;
         Cursor cursor = getDatabase(c).query(
                 TABLE_MANGA,
-                new String[]{COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS, COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_SEARCH, COL_LAST_INDEX,
-                        COL_READ_ORDER, COL_AUTHOR}, condition, null, null, null, COL_LAST_READ + " DESC");
+                new String[]{
+                        COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
+                        COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_SEARCH, COL_LAST_INDEX,
+                        COL_READ_ORDER, COL_AUTHOR
+                },
+                condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
         return getMangasFromCursor(cursor);
     }
 
@@ -244,7 +224,8 @@ public class Database extends SQLiteOpenHelper {
             int colAutor = cursor.getColumnIndex(COL_AUTHOR);
 
             do {
-                Manga m = new Manga(cursor.getInt(colServerId), cursor.getString(colTitulo), cursor.getString(colWeb), false);
+                Manga m = new Manga(cursor.getInt(colServerId),
+                        cursor.getString(colTitulo), cursor.getString(colWeb), false);
                 m.setSinopsis(cursor.getString(colSinopsis));
                 m.setImages(cursor.getString(colImagen));
                 m.setId(cursor.getInt(colId));
@@ -261,21 +242,13 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static Manga getFullManga(Context c, int mangaID) {
-        Manga manga = null;
-        try {
-            Manga m = getMangasCondition(c, COL_ID + "=" + mangaID).get(0);
-            m.setChapters(getChapters(c, mangaID));
-            manga = m;
-        } catch (Exception e) {
-            // ignore this
-        }
-        return manga;
+        return getFullManga(c, mangaID, false);
     }
 
     public static Manga getFullManga(Context c, int mangaID, boolean asc) {
         Manga manga = null;
         try {
-            Manga m = getMangasCondition(c, COL_ID + "=" + mangaID).get(0);
+            Manga m = getMangasCondition(c, COL_ID + "=" + mangaID, null, false).get(0);
             m.setChapters(getChapters(c, mangaID, "1", asc));
             manga = m;
         } catch (Exception e) {
@@ -294,13 +267,14 @@ public class Database extends SQLiteOpenHelper {
 
     public static ArrayList<Chapter> getChapters(Context c, int MangaId, String condicion, boolean asc) {
         ArrayList<Chapter> chapters = new ArrayList<>();
-        String order = " DESC";
-        if (asc)
-            order = " ASC";
         Cursor cursor = getDatabase(c).query(
                 TABLE_CHAPTERS,
-                new String[]{COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE,
-                        COL_CAP_DOWNLOADED}, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condicion, null, null, null, COL_CAP_ID + order);
+                new String[]{
+                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH,
+                        COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
+                }, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condicion,
+                null, null, null, COL_CAP_ID + (asc ? " ASC" : " DESC")
+        );
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_CAP_ID);
             int colTitle = cursor.getColumnIndex(COL_CAP_NAME);
@@ -328,8 +302,10 @@ public class Database extends SQLiteOpenHelper {
         Chapter cap = null;
         Cursor cursor = getDatabase(c).query(
                 TABLE_CHAPTERS,
-                new String[]{COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE,
-                        COL_CAP_DOWNLOADED}, COL_CAP_ID + "=" + capId, null, null, null, null);
+                new String[]{
+                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH,
+                        COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
+                }, COL_CAP_ID + "=" + capId, null, null, null, null);
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_CAP_ID);
             int colMID = cursor.getColumnIndex(COL_CAP_ID_MANGA);
@@ -388,7 +364,11 @@ public class Database extends SQLiteOpenHelper {
     public static Manga getManga(Context context, int mangaID) {
         Manga manga = null;
         Cursor cursor = getDatabase(context).query(TABLE_MANGA,
-                new String[]{COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS, COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_LAST_INDEX, COL_READ_ORDER, COL_AUTHOR},
+                new String[]{
+                        COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
+                        COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_LAST_INDEX,
+                        COL_READ_ORDER, COL_AUTHOR
+                },
                 COL_ID + "=" + mangaID, null, null, null, COL_LAST_READ + " DESC");
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_ID);
@@ -402,7 +382,8 @@ public class Database extends SQLiteOpenHelper {
             int colReadSense = cursor.getColumnIndex(COL_READ_ORDER);
             int colAuthor = cursor.getColumnIndex(COL_AUTHOR);
 
-            Manga m = new Manga(cursor.getInt(colServerId), cursor.getString(colTitle), cursor.getString(colWeb), false);
+            Manga m = new Manga(cursor.getInt(colServerId),
+                    cursor.getString(colTitle), cursor.getString(colWeb), false);
             m.setSinopsis(cursor.getString(colSummary));
             m.setImages(cursor.getString(colImages));
             m.setId(cursor.getInt(colId));
@@ -466,7 +447,8 @@ public class Database extends SQLiteOpenHelper {
     public void copyDbToSd(Context c) {
         File dbFile = c.getDatabasePath("mangas.db");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
-        String ruta = sp.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+        String ruta = sp.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
         ruta += "dbs/";
         File exportDir = new File(ruta, "");
         if (!exportDir.exists()) {
@@ -484,7 +466,9 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public boolean doesTableExist(SQLiteDatabase db, String tableName) {
-        Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
+        Cursor cursor = db.rawQuery(
+                "select DISTINCT tbl_name from sqlite_master where tbl_name = '" +
+                        tableName + "'", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.close();

@@ -38,7 +38,7 @@
     <string name="escondergaleria">Masquer dans la galerie</string>
     <string name="filtrar">Filtre</string>
     <string name="vercomolista">Vue en liste</string>
-    <string name="esconder_leido">Cacher déjà lu</string>
+    <string name="hide_read">Cacher déjà lu</string>
     <string name="macartodoleido">Marquer tout comme lu</string>
     <string name="macartodonoleido">Marquer tout comme non lu</string>
     <string name="sentido">Direction</string>
