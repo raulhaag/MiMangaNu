@@ -45,9 +45,7 @@ public class ActivityDetails extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
-        }
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
         data = (ControlInfo) findViewById(R.id.datos);
@@ -155,7 +153,6 @@ public class ActivityDetails extends ActionBarActivity {
             }
             str.setRefreshing(false);
         }
-
     }
 
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
@@ -214,7 +211,7 @@ public class ActivityDetails extends ActionBarActivity {
             try {
                 onBackPressed();
             } catch (Exception e) {
-
+                // Catch nothing.
             }
             super.onPostExecute(result);
         }

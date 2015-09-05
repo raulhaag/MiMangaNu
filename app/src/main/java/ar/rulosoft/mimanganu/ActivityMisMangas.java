@@ -46,9 +46,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(ActivityMisMangas.this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
-        }
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
         setContentView(R.layout.activity_mis_mangas);
