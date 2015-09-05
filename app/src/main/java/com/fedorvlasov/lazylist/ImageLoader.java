@@ -1,5 +1,6 @@
 package com.fedorvlasov.lazylist;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -18,14 +19,13 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Imaginable;
 
 public class ImageLoader {
 
     private static Map<Imaginable, String> imageViews =
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
-    final int stub_id = R.drawable.stub;
+    //final int stub_id = R.drawable.stub;
 
     MemCache mMemCache;
     FileCache mFileCache;
@@ -100,7 +100,7 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
             } else {
                 queuePhoto(url, imageView);
-                imageView.setImageResource(stub_id);
+                //imageView.setImageResource(stub_id);
             }
         }
     }
@@ -210,10 +210,11 @@ public class ImageLoader {
         public void run() {
             if (imageViewReUse(imageView, url))
                 return;
-            if (bitmap != null)
+            if (bitmap != null) {
+                imageView.setAlpha(0f);
                 imageView.setImageBitmap(bitmap);
-            else
-                imageView.setImageResource(stub_id);
+                ObjectAnimator.ofFloat(imageView, "alpha", 1f).start();
+            }
             imageViews.remove(imageView);
         }
     }

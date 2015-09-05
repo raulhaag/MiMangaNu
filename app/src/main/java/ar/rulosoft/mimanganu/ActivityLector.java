@@ -242,12 +242,6 @@ public class ActivityLector extends ActionBarActivity
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (!controlVisible) super.onBackPressed();
-        else onCenterTap();
-    }
-
     public void actualizarIcono(DisplayType displayType, boolean showMsg) {
         if (displayMenu != null) {
             String msg = "";
@@ -591,17 +585,19 @@ public class ActivityLector extends ActionBarActivity
         Runnable r = null;
         boolean imageLoaded = false;
         private String ruta = null;
+        private int index;
 
         public PageFragment() {
         }
 
-        public static PageFragment newInstance(String ruta, ActivityLector activity) {
+        public static PageFragment newInstance(String ruta, ActivityLector activity, int index) {
             PageFragment fragment = new PageFragment();
             Bundle args = new Bundle();
             args.putString(RUTA, ruta);
             fragment.activity = activity;
             fragment.setArguments(args);
             fragment.setRetainInstance(false);
+            fragment.index = index;
             return fragment;
         }
 
@@ -714,7 +710,13 @@ public class ActivityLector extends ActionBarActivity
                             Build.VERSION.SDK_INT >= 11) {
                         visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     }
-                    visor.setImageBitmap(result);
+                    if (index == ((ActivityLector) getActivity()).getCurrentItem()) {
+                        visor.setAlpha(0f);
+                        visor.setImageBitmap(result);
+                        ObjectAnimator.ofFloat(visor, "alpha", 1f).start();
+                    } else {
+                        visor.setImageBitmap(result);
+                    }
                     cargando.setVisibility(ProgressBar.INVISIBLE);
                 } else if (ruta != null) {
                     File f = new File(ruta);
@@ -914,7 +916,7 @@ public class ActivityLector extends ActionBarActivity
                 Fragment old = fragments.get(idx);
                 fm.beginTransaction().remove(old).commit();
                 // old = null;
-                fragments.set(idx, PageFragment.newInstance(ruta, ActivityLector.this));
+                fragments.set(idx, PageFragment.newInstance(ruta, ActivityLector.this, position));
                 f = fragments.get(idx);
                 f.setTapListener(ActivityLector.this);
             }

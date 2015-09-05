@@ -67,4 +67,5 @@ public class Cover extends RelativeLayout implements Imaginable {
         text.setCompoundDrawablesWithIntrinsicBounds(dra, 0, 0, 0);
     }
 
+
 }

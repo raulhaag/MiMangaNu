@@ -6,4 +6,6 @@ public interface Imaginable {
     void setImageBitmap(Bitmap b);
 
     void setImageResource(int id);
+
+    void setAlpha(float alpha);
 }
