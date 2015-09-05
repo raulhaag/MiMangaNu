@@ -58,7 +58,6 @@ public class ActivityManga extends ActionBarActivity {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
         id = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
