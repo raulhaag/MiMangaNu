@@ -38,16 +38,14 @@ public class ActivityDetails extends ActionBarActivity {
     Manga m;
     FloatingActionButton button_add;
     SharedPreferences pm;
-    boolean lightTheme;
+    boolean darkTheme;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
-        lightTheme = pm.getBoolean("dark_theme", false);
-        if (lightTheme) {
-            setTheme(R.style.AppTheme_miLight);
-        }
+        darkTheme = pm.getBoolean("dark_theme", false);
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
         data = (ControlInfo) findViewById(R.id.datos);
@@ -155,7 +153,6 @@ public class ActivityDetails extends ActionBarActivity {
             }
             str.setRefreshing(false);
         }
-
     }
 
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
