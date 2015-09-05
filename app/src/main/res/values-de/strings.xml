@@ -133,7 +133,7 @@
     <string name="color_secundario_sub">Sekundäre Farbe für mehr Abwechselung</string>
     <string name="about">Über</string>
     <string name="scroll_speed">Scroll-Geschwindigkeit</string>
-    <string name="theme_title">Verwenden dunkles Thema</string>
+    <string name="theme_title">Verwende dunkles Thema</string>
     <string name="download_selection">Kapitel herunterladen</string>
     <string name="sort">Sortieren</string>
     <string name="sort_title">Titel</string>
@@ -142,5 +142,5 @@
     <string name="sort_author_asc">Autor (z-a)</string>
     <string name="sort_recent_asc">Zuletzt gelesen (älteste)</string>
     <string name="sort_title_asc">Titel (z-a)</string>
-    <string name="more_options">Mehr Optionen </string>
+    <string name="more_options">Mehr Optionen</string>
 </resources>

@@ -25,9 +25,7 @@ public class ActivityLicenseView extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
-        }
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_licence);
         lic = (TextView) findViewById(R.id.licencia);

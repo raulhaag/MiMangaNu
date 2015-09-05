@@ -34,9 +34,7 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
-        }
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_resultado_de_busqueda);
         serverId = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
@@ -44,7 +42,6 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
         lista = (ListView) findViewById(R.id.resultados);
         cargando = (ProgressBar) findViewById(R.id.cargando);
         lista.setOnItemClickListener(new OnItemClickListener() {
-
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Manga m = (Manga) lista.getAdapter().getItem(position);
@@ -53,7 +50,6 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
                 intent.putExtra(ActivityDetails.TITLE, m.getTitle());
                 intent.putExtra(ActivityDetails.PATH, m.getPath());
                 startActivity(intent);
-
             }
         });
         new PerformSearchTask().execute();
@@ -71,7 +67,7 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
 
         @Override
         protected ArrayList<Manga> doInBackground(Void... params) {
-            ArrayList<Manga> mangas = new ArrayList<Manga>();
+            ArrayList<Manga> mangas = new ArrayList<>();
             ServerBase s = ServerBase.getServer(serverId);
             try {
                 mangas = s.search(termino);
@@ -86,7 +82,7 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
             cargando.setVisibility(ProgressBar.INVISIBLE);
             if (error.length() < 2) {
                 if (result != null && !result.isEmpty() && lista != null) {
-                    lista.setAdapter(new ArrayAdapter<Manga>(ActivityResultadoDeBusqueda.this, android.R.layout.simple_list_item_1, result));
+                    lista.setAdapter(new ArrayAdapter<>(ActivityResultadoDeBusqueda.this, android.R.layout.simple_list_item_1, result));
                 } else if (result == null || result.isEmpty()) {
                     Toast.makeText(ActivityResultadoDeBusqueda.this, getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
                 }

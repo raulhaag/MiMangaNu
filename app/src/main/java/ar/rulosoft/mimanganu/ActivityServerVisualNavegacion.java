@@ -51,9 +51,7 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(ActivityServerVisualNavegacion.this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
-        }
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_visual_navegacion);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
@@ -66,12 +64,12 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (s.getCategories() != null)
-            generos.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getCategories()));
+            generos.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, s.getCategories()));
         else
             generos.setVisibility(Spinner.INVISIBLE);
 
         if (s.getOrders() != null)
-            orden.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, s.getOrders()));
+            orden.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, s.getOrders()));
         else
             orden.setVisibility(Spinner.INVISIBLE);
 

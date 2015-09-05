@@ -30,9 +30,7 @@ public class OpcionesActivity extends PreferenceActivity {
     public void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
-        }
+        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.fragment_preferences);
 

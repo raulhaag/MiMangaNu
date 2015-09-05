@@ -38,15 +38,15 @@ public class ActivityDetails extends ActionBarActivity {
     Manga m;
     FloatingActionButton button_add;
     SharedPreferences pm;
-    boolean darkTheme;
+    boolean lightTheme;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
-        if (darkTheme) {
-            setTheme(R.style.AppBaseThemeDark);
+        lightTheme = pm.getBoolean("dark_theme", false);
+        if (lightTheme) {
+            setTheme(R.style.AppTheme_miLight);
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
@@ -214,7 +214,7 @@ public class ActivityDetails extends ActionBarActivity {
             try {
                 onBackPressed();
             } catch (Exception e) {
-
+                // Catch nothing.
             }
             super.onPostExecute(result);
         }

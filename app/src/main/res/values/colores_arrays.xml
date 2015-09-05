@@ -42,27 +42,39 @@
         <item>#9F9F9C</item>
         <item>#51808F</item>
         <item>#100C08</item>
+
+        <item>#413839</item>
+        <item>#151B54</item>
+        <item>#483D8B</item>
+        <item>#915c83</item>
+        <item>#336666</item>
     </string-array>
 
     <string-array name="color_names">
         <item>Red Orange</item>
         <item>Razzmatazz</item>
-        <item>Dark orchid</item>
+        <item>Dark Orchid</item>
         <item>Purple Heart</item>
         <item>Cerulean Blue</item>
         <item>Dodger Blue</item>
         <item>Cyan</item>
         <item>Gossamer</item>
         <item>Apple</item>
-        <item>Dollar bill</item>
+        <item>Dollar Bill</item>
         <item>Pear</item>
-        <item>Mikado yellow</item>
+        <item>Mikado Yellow</item>
         <item>Orange</item>
         <item>Flamingo</item>
         <item>Roman Coffee</item>
         <item>Star Dust</item>
         <item>Smalt Blue</item>
-        <item>Smoky black</item>
+        <item>Smoky Black</item>
+
+        <item>Black Cat</item>
+        <item>Midnight Blue</item>
+        <item>Dark Slate Blue</item>
+        <item>Antique Fuchsia</item>
+        <item>Dark Slate Gray</item>
     </string-array>
 
     <string-array name="backgroungs" translatable="false">
