@@ -579,7 +579,7 @@ public class ActivityLector extends ActionBarActivity
 
         private static final String RUTA = "ruta";
         public ImageViewTouch visor;
-        ActivityLector activity;
+        public ActivityLector activity;
         ProgressBar cargando;
         TapListener mTapListener;
         Runnable r = null;
@@ -699,7 +699,7 @@ public class ActivityLector extends ActionBarActivity
 
             @Override
             protected void onPostExecute(Bitmap result) {
-                if (result != null) {
+                if (result != null && visor != null) {
                     imageLoaded = true;
                     visor.setScaleEnabled(true);
                     if (activity.direction == Direction.VERTICAL)
@@ -710,13 +710,14 @@ public class ActivityLector extends ActionBarActivity
                             Build.VERSION.SDK_INT >= 11) {
                         visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     }
-                    if (index == ((ActivityLector) getActivity()).getCurrentItem()) {
-                        visor.setAlpha(0f);
-                        visor.setImageBitmap(result);
-                        ObjectAnimator.ofFloat(visor, "alpha", 1f).start();
+                    visor.setAlpha(0f);
+                    visor.setImageBitmap(result);
+                    if (activity != null && index == activity.getCurrentItem()) {
+                        ObjectAnimator.ofFloat(visor, "alpha", 1f).setDuration(500).start();
                     } else {
-                        visor.setImageBitmap(result);
+                        visor.setAlpha(1f);
                     }
+
                     cargando.setVisibility(ProgressBar.INVISIBLE);
                 } else if (ruta != null) {
                     File f = new File(ruta);
