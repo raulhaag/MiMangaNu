@@ -5,11 +5,20 @@ import java.util.ArrayList;
 import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 
 public class Manga {
-    int id, serverId, news, lastIndex, readingDirection = -1;
-    String title, synopsis, images, path, author;
-    ArrayList<Chapter> chapters = new ArrayList<>();
+    private int id;
+    private int serverId;
+    private int news;
+    private int lastIndex;
+    private int readingDirection = -1;
 
-    boolean finished;
+    private String title;
+    private String synopsis;
+    private String images;
+    private String path;
+    private String author;
+
+    private boolean finished;
+    private ArrayList<Chapter> chapters = new ArrayList<>();
 
     public Manga(int serverId, String title, String path, boolean finished) {
         super();
@@ -17,6 +26,7 @@ public class Manga {
         this.title = title;
         this.path = path;
         this.author = "";
+        this.finished = finished;
     }
 
     public int getId() {

@@ -138,43 +138,50 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public void setListManga() {
         ArrayList<Manga> mangaList = new ArrayList<>();
 
-        boolean sort_asc = PreferenceManager.getDefaultSharedPreferences(
-                getActivity()).getBoolean("manga_view_sort_asc", false);
-
         /**
-         * sortBy 0 = last_read (default), 1 = title, 2 = author
+         * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
+         *                  all odd numbers are asc, even numbers are desc
+         *
          * feel free to add more sort type */
+        int sort_val = PreferenceManager.getDefaultSharedPreferences(
+                getActivity()).getInt("manga_view_sort_by", 0);
+
         String sort_by;
-        switch (PreferenceManager.getDefaultSharedPreferences(
-                getActivity()).getInt("manga_view_sort_by", 0)) {
-            case 1:
-                sort_by = Database.COL_NAME;
-                break;
+        boolean sort_ord;
+        switch (sort_val) {
             case 2:
+            case 3:
+                sort_by = Database.COL_NAME;
+                sort_ord = sort_val % 2 == 0;
+                break;
+            case 4:
+            case 5:
                 sort_by = Database.COL_AUTHOR;
+                sort_ord = sort_val % 2 == 0;
                 break;
             case 0:
+            case 1:
             default:
                 sort_by = Database.COL_LAST_READ;
-                sort_asc = !sort_asc;
+                sort_ord = sort_val % 2 == 1;
         }
         int value = PreferenceManager.getDefaultSharedPreferences(
                 getActivity()).getInt(SELECT_MODE, MODE_SHOW_ALL);
         switch (value) {
             case MODE_SHOW_ALL:
-                mangaList = Database.getMangas(getActivity(), sort_by, sort_asc);
+                mangaList = Database.getMangas(getActivity(), sort_by, sort_ord);
                 break;
             case MODE_HIDE_READ:
                 mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
                         "SELECT manga_id " +
                         "FROM capitulos " +
-                        "WHERE estado != 1 GROUP BY manga_id " +
-                        "ORDER BY Count(*) DESC)", sort_by, sort_asc);
+                        "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
                 break;
             default:
                 break;
         }
-        adapter = new MangasRecAdapter(mangaList, getActivity(), ((ActivityMisMangas) getActivity()).darkTheme);
+        adapter = new MangasRecAdapter(mangaList, getActivity(),
+                ((ActivityMisMangas) getActivity()).darkTheme);
         adapter.setMangaClickListener(FragmentMisMangas.this);
         adapter.setOnCreateContextMenuListener(FragmentMisMangas.this);
         grilla.setAdapter(adapter);
