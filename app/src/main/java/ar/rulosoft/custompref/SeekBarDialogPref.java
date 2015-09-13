@@ -21,44 +21,50 @@ package ar.rulosoft.custompref;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
-import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.NumberPicker;
+import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import ar.rulosoft.mimanganu.R;
 
-public class NumberPickerDialogPref extends DialogPreference {
-    private NumberPicker mNumberPicker;
+public class SeekBarDialogPref extends DialogPreference {
+    private SeekBar mSeekBar;
+    private TextView mMessageValue;
+
+    private float dpiScale;
+
     private int mMin;
     private int mMax;
-    private boolean mWrapAround;
+
     private int mValue = 0;
 
     private String mSummary;
 
-    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SeekBarDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.NumberPickerDialogPref, defStyleAttr, defStyleRes);
-        mMin = a.getInteger(R.styleable.NumberPickerDialogPref_val_min, 0);
-        mMax = a.getInteger(R.styleable.NumberPickerDialogPref_val_max, 9);
-        mWrapAround = a.getBoolean(R.styleable.NumberPickerDialogPref_wrap_around, false);
+                R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
+        mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
+        mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
         a.recycle();
+
+        dpiScale = getContext().getResources().getDisplayMetrics().density;
 
         mSummary = (String) super.getSummary();
     }
 
-    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SeekBarDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public NumberPickerDialogPref(Context context, AttributeSet attrs) {
+    public SeekBarDialogPref(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public NumberPickerDialogPref(Context context) {
+    public SeekBarDialogPref(Context context) {
         this(context, null);
     }
 
@@ -84,24 +90,49 @@ public class NumberPickerDialogPref extends DialogPreference {
 
     @Override
     protected View onCreateDialogView() {
-        mNumberPicker = new NumberPicker(getContext());
-        return (mNumberPicker);
-    }
+        LinearLayout mLayout = new LinearLayout(getContext());
+        mLayout.setOrientation(LinearLayout.VERTICAL);
 
-    @Override
-    protected void onBindDialogView(@NonNull View view) {
-        super.onBindDialogView(view);
-        mNumberPicker.setMinValue(mMin);
-        mNumberPicker.setMaxValue(mMax);
-        mNumberPicker.setValue(mValue);
-        mNumberPicker.setWrapSelectorWheel(mWrapAround);
+        int padding = 15;
+
+        mMessageValue = new TextView(getContext());
+        mMessageValue.setTextSize(9 * dpiScale);
+        mMessageValue.setText(String.format(mSummary, mValue));
+        mMessageValue.setPadding(
+                (int) (padding * dpiScale), (int) (padding * dpiScale),
+                (int) (padding * dpiScale), 0);
+        mLayout.addView(mMessageValue);
+
+        mSeekBar = new SeekBar(getContext());
+        mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                mMessageValue.setText(String.format(mSummary, mSeekBar.getProgress() + mMin));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
+        mSeekBar.setMax(mMax - mMin);
+        mSeekBar.setProgress(mValue - mMin);
+        mSeekBar.setPadding(
+                (int) (padding * dpiScale * 2), (int) (padding * dpiScale),
+                (int) (padding * dpiScale * 2), (int) (padding * dpiScale / 2));
+        mLayout.addView(mSeekBar);
+
+        return mLayout;
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
-            mValue = mNumberPicker.getValue();
+            mValue = mSeekBar.getProgress() + mMin;
             String pushValue = String.valueOf(mValue);
             if (callChangeListener(pushValue)) {
                 persistString(pushValue);
