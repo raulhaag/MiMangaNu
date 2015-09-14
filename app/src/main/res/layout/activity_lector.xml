@@ -8,7 +8,6 @@
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:background="@android:color/black" />
 
@@ -30,10 +29,10 @@
 
         <SeekBar
             android:id="@+id/seeker"
+            style="@style/SeekBarSeekBartTheme"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/black"
-            style="@style/SeekBarSeekBartTheme" />
+            android:background="@android:color/black" />
     </LinearLayout>
 
     <TextView

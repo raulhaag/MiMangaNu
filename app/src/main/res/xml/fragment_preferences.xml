@@ -110,6 +110,11 @@
             android:key="secundario"
             android:summary="@string/color_secundario_sub"
             android:title="@string/color_secundario" />
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="-14774017"
+            android:key="reader_bg_col"
+            android:summary="@string/color_reader_sub"
+            android:title="@string/color_reader" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about">

@@ -66,39 +66,37 @@ public class ActivityLector extends ActionBarActivity
     public static final String ORIENTATION = "orientation";
     public static final String ADJUST_KEY = "ajustar_a";
     public static final String MAX_TEXTURE = "max_texture";
-    static int val_textureMax;
-    static DisplayType val_screenFit;
+    private static int val_textureMax;
+    private static DisplayType val_screenFit;
+
     public Direction direction;
     public InitialPosition iniPosition = InitialPosition.LEFT_UP;
-    public float scrollFactor = 1f;
     // These are values, which should be fetched from preference
-    SharedPreferences pm;
-    boolean val_KeepOn; // false = normal  | true = screen on
-    int val_orientation; // 0 = free | 1 = landscape | 2 = portrait
+    private SharedPreferences pm;
+    private boolean val_KeepOn; // false = normal  | true = screen on
+    private int val_orientation; // 0 = free | 1 = landscape | 2 = portrait
+    private float scrollFactor = 1f;
     // These are layout components
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    UnScrolledViewPager mViewPager;
-    UnScrolledViewPagerVertical mViewPagerV;
-    LinearLayout seeker_Layout;
-    SeekBar seekBar;
-    Toolbar actionToolbar;
-    Chapter chapter;
-    boolean controlVisible = false;
-    LastPageFragment lastPageFrag;
-    Manga manga;
-    ServerBase s;
-    TextView seekerPage;
-    MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
-    int[] thmColors;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private UnScrolledViewPager mViewPager;
+    private UnScrolledViewPagerVertical mViewPagerV;
+    private LinearLayout mSeekerLayout;
+    private SeekBar mSeekBar;
+    private Toolbar mActionBar;
+    private Chapter mChapter;
+    private Manga mManga;
+    private ServerBase mServerBase;
+    private TextView mSeekerPage;
+    private MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
+    private LastPageFragment mLastPageFrag;
+
+    private boolean controlVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-
-        thmColors = ThemeColors.getColors(
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
-                getApplicationContext());
+        int[] thmColors = ThemeColors.getColors(pm, getApplicationContext());
         /**
          * The values are here to set, if no settings should be stored,
          * then take the provided standard value
@@ -111,11 +109,11 @@ public class ActivityLector extends ActionBarActivity
         val_orientation = pm.getInt(ORIENTATION, 0);
         scrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
 
-        chapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
-        manga = Database.getFullManga(this, chapter.getMangaID());
+        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
+        mManga = Database.getFullManga(this, mChapter.getMangaID());
 
-        if (manga.getReadingDirection() != -1)
-            direction = Direction.values()[manga.getReadingDirection()];
+        if (mManga.getReadingDirection() != -1)
+            direction = Direction.values()[mManga.getReadingDirection()];
         else
             direction = Direction.values()[Integer.parseInt(
                     pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
@@ -137,35 +135,35 @@ public class ActivityLector extends ActionBarActivity
                 switch (direction) {
                     case L2R: {
                         if (arg0 > 0) {
-                            chapter.setPagesRead(chapter.getPages() - arg0 + 1);
+                            mChapter.setPagesRead(mChapter.getPages() - arg0 + 1);
                         } else {
-                            chapter.setPagesRead(chapter.getPages() - arg0);
+                            mChapter.setPagesRead(mChapter.getPages() - arg0);
                         }
-                        seekBar.setProgress(chapter.getPages() - arg0);
+                        mSeekBar.setProgress(mChapter.getPages() - arg0);
                         if (arg0 <= 1) {
-                            chapter.setReadStatus(Chapter.READ);
-                        } else if (chapter.getReadStatus() == Chapter.READ) {
-                            chapter.setReadStatus(Chapter.READING);
+                            mChapter.setReadStatus(Chapter.READ);
+                        } else if (mChapter.getReadStatus() == Chapter.READ) {
+                            mChapter.setReadStatus(Chapter.READING);
                         }
                         break;
                     }
                     case R2L:
                     case VERTICAL: {
-                        if (arg0 < chapter.getPages()) {
-                            chapter.setPagesRead(arg0 + 1);
+                        if (arg0 < mChapter.getPages()) {
+                            mChapter.setPagesRead(arg0 + 1);
                         } else {
-                            chapter.setPagesRead(arg0);
+                            mChapter.setPagesRead(arg0);
                         }
-                        seekBar.setProgress(arg0);
-                        if (arg0 >= chapter.getPages() - 1) {
-                            chapter.setReadStatus(Chapter.READ);
-                        } else if (chapter.getReadStatus() == Chapter.READ) {
-                            chapter.setReadStatus(Chapter.READING);
+                        mSeekBar.setProgress(arg0);
+                        if (arg0 >= mChapter.getPages() - 1) {
+                            mChapter.setReadStatus(Chapter.READ);
+                        } else if (mChapter.getReadStatus() == Chapter.READ) {
+                            mChapter.setReadStatus(Chapter.READING);
                         }
                         break;
                     }
                 }
-                Database.updateChapter(ActivityLector.this, chapter);
+                Database.updateChapter(ActivityLector.this, mChapter);
             }
 
             @Override
@@ -187,44 +185,45 @@ public class ActivityLector extends ActionBarActivity
             mViewPager.setOnPageChangeListener(pageChangeListener);
         }
 
-        s = ServerBase.getServer(manga.getServerId());
+        mServerBase = ServerBase.getServer(mManga.getServerId());
         if (DownloadPoolService.actual != null)
             DownloadPoolService.actual.setDownloadListener(this);
-        lastPageFrag = new LastPageFragment();
-        lastPageFrag.setThmColors(thmColors);
+        mLastPageFrag = new LastPageFragment();
 
-        actionToolbar = (Toolbar) findViewById(R.id.action_bar);
-        actionToolbar.setTitle(chapter.getTitle());
-        actionToolbar.setTitleTextColor(Color.WHITE);
-        actionToolbar.setAlpha(0);
-        actionToolbar.setVisibility(View.GONE);
+        mActionBar = (Toolbar) findViewById(R.id.action_bar);
+        mActionBar.setTitle(mChapter.getTitle());
+        mActionBar.setTitleTextColor(Color.WHITE);
+        mActionBar.setAlpha(0f);
+        mActionBar.setVisibility(View.GONE);
 
-        seeker_Layout = (LinearLayout) findViewById(R.id.seeker_layout);
-        seeker_Layout.setAlpha(0f);
-        seeker_Layout.setVisibility(View.GONE);
+        mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
+        mSeekerLayout.setAlpha(0f);
+        mSeekerLayout.setVisibility(View.GONE);
 
-        seekerPage = (TextView) findViewById(R.id.page);
-        seekerPage.setTextColor(Color.WHITE);
+        mSeekerPage = (TextView) findViewById(R.id.page);
+        mSeekerPage.setAlpha(.9f);
+        mSeekerPage.setTextColor(Color.WHITE);
 
-        seekBar = (SeekBar) findViewById(R.id.seeker);
-        seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setMax(chapter.getPages());
-        if (direction == Direction.L2R) seekBar.setRotation(180);
+        mSeekBar = (SeekBar) findViewById(R.id.seeker);
+        mSeekBar.setOnSeekBarChangeListener(this);
+        mSeekBar.setMax(mChapter.getPages());
+        if (direction == Direction.L2R) mSeekBar.setRotation(180);
 
+        ColorDrawable reader_bg = new ColorDrawable(ThemeColors.getReaderColor(pm));
         if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            actionToolbar.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-            seeker_Layout.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-            seekerPage.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-            seekBar.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
+            mActionBar.setBackgroundDrawable(reader_bg);
+            mSeekerLayout.setBackgroundDrawable(reader_bg);
+            mSeekerPage.setBackgroundDrawable(reader_bg);
+            mSeekBar.setBackgroundDrawable(reader_bg);
         } else {
-            actionToolbar.setBackground(new ColorDrawable(thmColors[0]));
-            seeker_Layout.setBackground(new ColorDrawable(thmColors[0]));
-            seekerPage.setBackground(new ColorDrawable(thmColors[0]));
-            seekBar.setBackground(new ColorDrawable(thmColors[0]));
+            mActionBar.setBackground(reader_bg);
+            mSeekerLayout.setBackground(reader_bg);
+            mSeekerPage.setBackground(reader_bg);
+            mSeekBar.setBackground(reader_bg);
         }
-        chapter.setReadStatus(Chapter.READING);
-        Database.updateChapter(ActivityLector.this, chapter);
-        setSupportActionBar(actionToolbar);
+        mChapter.setReadStatus(Chapter.READING);
+        Database.updateChapter(ActivityLector.this, mChapter);
+        setSupportActionBar(mActionBar);
         hideSystemUI();
     }
 
@@ -279,18 +278,18 @@ public class ActivityLector extends ActionBarActivity
             mViewPagerV.setAdapter(mSectionsPagerAdapter);
         else mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        if (chapter.getPagesRead() > 1) {
+        if (mChapter.getPagesRead() > 1) {
             if (direction == Direction.R2L)
-                mViewPager.setCurrentItem(chapter.getPagesRead() - 1);
+                mViewPager.setCurrentItem(mChapter.getPagesRead() - 1);
             else if (direction == Direction.VERTICAL)
-                mViewPagerV.setCurrentItem(chapter.getPagesRead() - 1);
+                mViewPagerV.setCurrentItem(mChapter.getPagesRead() - 1);
             else mViewPager.setCurrentItem(
-                        chapter.getPages() - chapter.getPagesRead() + 1);
+                        mChapter.getPages() - mChapter.getPagesRead() + 1);
         } else {
             if (direction == Direction.L2R)
-                mViewPager.setCurrentItem(chapter.getPages() + 1);
+                mViewPager.setCurrentItem(mChapter.getPages() + 1);
         }
-        DownloadPoolService.attachListener(this, chapter.getId());
+        DownloadPoolService.attachListener(this, mChapter.getId());
         super.onResume();
     }
 
@@ -314,13 +313,13 @@ public class ActivityLector extends ActionBarActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Database.updateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
+        Database.updateChapterPage(ActivityLector.this, mChapter.getId(), mChapter.getPagesRead());
     }
 
     @Override
     protected void onPause() {
-        Database.updateChapterPage(ActivityLector.this, chapter.getId(), chapter.getPagesRead());
-        DownloadPoolService.detachListener(chapter.getId());
+        Database.updateChapterPage(ActivityLector.this, mChapter.getId(), mChapter.getPagesRead());
+        DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
 
@@ -421,25 +420,25 @@ public class ActivityLector extends ActionBarActivity
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         // This is happening, if you swipe left and right on the bar
-        if (seekerPage != null) seekerPage.setText("" + (progress + 1));
+        if (mSeekerPage != null) mSeekerPage.setText("" + (progress + 1));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         // This is happening, if you touch on the bar (no swipe)
-        seekerPage.setText("" + (seekBar.getProgress() + 1));
-        seekerPage.setVisibility(SeekBar.VISIBLE);
+        mSeekerPage.setText("" + (seekBar.getProgress() + 1));
+        mSeekerPage.setVisibility(SeekBar.VISIBLE);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // This is happening, if you lift your finger off the bar
         try {
-            seekerPage.setVisibility(SeekBar.INVISIBLE);
+            mSeekerPage.setVisibility(SeekBar.INVISIBLE);
             if (direction == Direction.R2L || direction == Direction.VERTICAL)
                 setCurrentItem(seekBar.getProgress());
             else {
-                setCurrentItem(chapter.getPages() - seekBar.getProgress());
+                setCurrentItem(mChapter.getPages() - seekBar.getProgress());
             }
         } catch (Exception e) {
             // sometimes gets a null, just in case, don't stop the app
@@ -451,7 +450,7 @@ public class ActivityLector extends ActionBarActivity
         if (controlVisible) {
             hideSystemUI();
             controlVisible = false;
-            ObjectAnimator anim = ObjectAnimator.ofFloat(actionToolbar, "alpha", .90f, 0f);
+            ObjectAnimator anim = ObjectAnimator.ofFloat(mActionBar, "alpha", .90f, 0f);
             anim.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -463,7 +462,7 @@ public class ActivityLector extends ActionBarActivity
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    actionToolbar.setVisibility(View.GONE);
+                    mActionBar.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -471,7 +470,7 @@ public class ActivityLector extends ActionBarActivity
                 }
             });
             anim.start();
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(seeker_Layout, "alpha", .90f, 0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(mSeekerLayout, "alpha", .90f, 0f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -483,7 +482,7 @@ public class ActivityLector extends ActionBarActivity
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    seeker_Layout.setVisibility(View.GONE);
+                    mSeekerLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -495,11 +494,11 @@ public class ActivityLector extends ActionBarActivity
             showSystemUI();
             controlVisible = true;
             ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(actionToolbar, "alpha", 0f, .90f);
+                    ObjectAnimator.ofFloat(mActionBar, "alpha", 0f, .90f);
             anim.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    actionToolbar.setVisibility(View.VISIBLE);
+                    mActionBar.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -516,11 +515,11 @@ public class ActivityLector extends ActionBarActivity
             });
             anim.start();
             ObjectAnimator anim2 =
-                    ObjectAnimator.ofFloat(seeker_Layout, "alpha", 0f, .90f);
+                    ObjectAnimator.ofFloat(mSeekerLayout, "alpha", 0f, .90f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    seeker_Layout.setVisibility(View.VISIBLE);
+                    mSeekerLayout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -740,30 +739,20 @@ public class ActivityLector extends ActionBarActivity
         Button btnNext, btnPrev;
         Chapter chNext = null, chPrev = null;
         ActivityLector l;
-        int[] thmColors;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View rView = inflater.inflate(R.layout.fragment_pagina_final, container, false);
             btnNext = (Button) rView.findViewById(R.id.button_next);
             btnPrev = (Button) rView.findViewById(R.id.button_previous);
-//            btnNext.setTextColor(Color.WHITE);
-//            btnPrev.setTextColor(Color.WHITE);
-//            if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//                btnNext.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-//                btnPrev.setBackgroundDrawable(new ColorDrawable(thmColors[0]));
-//            } else {
-//                btnNext.setBackground(new ColorDrawable(thmColors[0]));
-//                btnPrev.setBackground(new ColorDrawable(thmColors[0]));
-//            }
             return rView;
         }
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
             l = (ActivityLector) getActivity();
-            int cid = l.chapter.getId();
-            ArrayList<Chapter> caps = l.manga.getChapters();
+            int cid = l.mChapter.getId();
+            ArrayList<Chapter> caps = l.mManga.getChapters();
             for (int i = 0; i < caps.size(); i++) {
                 if (caps.get(i).getId() == cid) {
                     if (i > 0) {
@@ -802,10 +791,6 @@ public class ActivityLector extends ActionBarActivity
             super.onActivityCreated(savedInstanceState);
         }
 
-        public void setThmColors(int[] thmColors) {
-            this.thmColors = thmColors;
-        }
-
         public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
             ProgressDialog asyncDialog = new ProgressDialog(getActivity());
             String error = "";
@@ -820,7 +805,7 @@ public class ActivityLector extends ActionBarActivity
             @Override
             protected Chapter doInBackground(Chapter... arg0) {
                 Chapter c = arg0[0];
-                ServerBase s = ServerBase.getServer(l.manga.getServerId());
+                ServerBase s = ServerBase.getServer(l.mManga.getServerId());
                 try {
                     if (c.getPages() < 1) s.chapterInit(c);
                 } catch (Exception e) {
@@ -845,7 +830,7 @@ public class ActivityLector extends ActionBarActivity
                             new Intent(getActivity(), ActivityLector.class);
                     intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
                     getActivity().startActivity(intent);
-                    Database.updateChapter(l, l.chapter);
+                    Database.updateChapter(l, l.mChapter);
                     l.finish();
                 }
                 super.onPostExecute(result);
@@ -881,15 +866,15 @@ public class ActivityLector extends ActionBarActivity
         public Fragment getItem(int position) {
             Fragment rsta;
             if (direction == Direction.R2L || direction == Direction.VERTICAL)
-                if (position == chapter.getPages())
-                    rsta = lastPageFrag;
+                if (position == mChapter.getPages())
+                    rsta = mLastPageFrag;
                 else {
                     rsta = getFragmentIn(position);
                 }
             else {
-                if (position == 0) rsta = lastPageFrag;
+                if (position == 0) rsta = mLastPageFrag;
                 else {
-                    int pos = (chapter.getPages() - position);
+                    int pos = (mChapter.getPages() - position);
                     rsta = getFragmentIn(pos);
                 }
             }
@@ -905,7 +890,7 @@ public class ActivityLector extends ActionBarActivity
                 }
             }
             if (f == null) {
-                String ruta = DownloadPoolService.generarRutaBase(s, manga, chapter,
+                String ruta = DownloadPoolService.generarRutaBase(mServerBase, mManga, mChapter,
                         getApplicationContext()) + "/" + (position + 1) + ".jpg";
                 int idx;
                 do {
@@ -926,7 +911,7 @@ public class ActivityLector extends ActionBarActivity
 
         @Override
         public int getCount() {
-            return chapter.getPages() + 1;
+            return mChapter.getPages() + 1;
         }
 
         public void actualizarDisplayTipe() {
