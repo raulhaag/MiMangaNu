@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/dialogText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_margin="@dimen/dialog_margin_layout"
+        android:text="20 Minuten"
+        android:textSize="@dimen/dialog_content_text_size" />
+
+    <SeekBar
+        android:id="@+id/dialogSeekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/dialog_margin_layout"
+        android:layout_marginRight="@dimen/dialog_margin_layout" />
+</LinearLayout>

@@ -25,13 +25,19 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import ar.rulosoft.mimanganu.R;
 
 public class NumPickDialogPref extends DialogPreference {
     private NumberPicker mNumberPicker;
+    private TextView mMessageValue;
+
+    private float dpiScale;
+
     private int mMin;
     private int mMax;
+
     private boolean mWrapAround;
     private int mValue = 0;
 
@@ -40,12 +46,16 @@ public class NumPickDialogPref extends DialogPreference {
     public NumPickDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
+        setDialogLayoutResource(R.layout.dialog_numpicker_pref);
+
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
         mWrapAround = a.getBoolean(R.styleable.CustomDialogPref_wrap_around, false);
         a.recycle();
+
+        dpiScale = getContext().getResources().getDisplayMetrics().density;
 
         mSummary = (String) super.getSummary();
     }
@@ -83,19 +93,26 @@ public class NumPickDialogPref extends DialogPreference {
     }
 
     @Override
-    protected View onCreateDialogView() {
-        mNumberPicker = new NumberPicker(getContext());
-        mNumberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
-        return (mNumberPicker);
-    }
-
-    @Override
     protected void onBindDialogView(@NonNull View view) {
-        super.onBindDialogView(view);
+
+        mMessageValue = (TextView) view.findViewById(R.id.dialogText);
+        mMessageValue.setText(String.format(mSummary, mValue + mMin));
+
+        mNumberPicker = (NumberPicker) view.findViewById(R.id.dialogNumPicker);
+        mNumberPicker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChange(NumberPicker view, int scrollState) {
+                mMessageValue.setText(String.format(mSummary, mNumberPicker.getValue()));
+            }
+        });
         mNumberPicker.setMinValue(mMin);
         mNumberPicker.setMaxValue(mMax);
         mNumberPicker.setValue(mValue);
         mNumberPicker.setWrapSelectorWheel(mWrapAround);
+        mNumberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+        super.onBindDialogView(view);
     }
 
     @Override
