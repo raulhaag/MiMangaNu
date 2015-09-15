@@ -147,23 +147,21 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 getActivity()).getInt("manga_view_sort_by", 0);
 
         String sort_by;
-        boolean sort_ord;
+        boolean sort_ord = sort_val % 2 == 0;
         switch (sort_val) {
             case 2:
             case 3:
                 sort_by = Database.COL_NAME;
-                sort_ord = sort_val % 2 == 0;
                 break;
             case 4:
             case 5:
                 sort_by = Database.COL_AUTHOR;
-                sort_ord = sort_val % 2 == 0;
                 break;
             case 0:
             case 1:
             default:
                 sort_by = Database.COL_LAST_READ;
-                sort_ord = sort_val % 2 == 1;
+                sort_ord = !sort_ord;
         }
         int value = PreferenceManager.getDefaultSharedPreferences(
                 getActivity()).getInt(SELECT_MODE, MODE_SHOW_ALL);
