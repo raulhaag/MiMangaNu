@@ -15,6 +15,7 @@ import android.widget.TextView;
 import ar.rulosoft.mimanganu.R;
 
 /**
+ * Series information.
  * Created by Raul on 16/05/2015.
  */
 public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
@@ -57,20 +58,6 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     }
 
     public void setColor(int color) {
-//        Drawable colorDrawable = new ColorDrawable(color);
-//        if (Build.VERSION.SDK_INT >= 16) {
-//            s1.setBackground(colorDrawable);
-//            s2.setBackground(colorDrawable);
-//            s3.setBackground(colorDrawable);
-//            s4.setBackground(colorDrawable);
-//            title.setBackground(colorDrawable);
-//        } else {
-//            s1.setBackgroundDrawable(colorDrawable);
-//            s2.setBackgroundDrawable(colorDrawable);
-//            s3.setBackgroundDrawable(colorDrawable);
-//            s4.setBackgroundDrawable(colorDrawable);
-//            title.setBackgroundDrawable(colorDrawable);
-//        }
         s1.setBackgroundColor(color);
         s2.setBackgroundColor(color);
         s3.setBackgroundColor(color);

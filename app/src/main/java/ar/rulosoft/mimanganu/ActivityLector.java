@@ -209,17 +209,6 @@ public class ActivityLector extends ActionBarActivity
         mSeekBar.setMax(mChapter.getPages());
         if (direction == Direction.L2R) mSeekBar.setRotation(180);
 
-//        if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-//            mActionBar.setBackgroundDrawable(reader_bg);
-//            mSeekerLayout.setBackgroundDrawable(reader_bg);
-//            mSeekerPage.setBackgroundDrawable(reader_bg);
-//            mSeekBar.setBackgroundDrawable(reader_bg);
-//        } else {
-//            mActionBar.setBackground(reader_bg);
-//            mSeekerLayout.setBackground(reader_bg);
-//            mSeekerPage.setBackground(reader_bg);
-//            mSeekBar.setBackground(reader_bg);
-//        }
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
         mSeekerLayout.setBackgroundColor(reader_bg);

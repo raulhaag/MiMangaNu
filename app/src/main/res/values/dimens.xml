@@ -9,6 +9,7 @@
 
     <!-- Some font and margin sizes for dialogs -->
     <dimen name="dialog_content_text_size">18sp</dimen>
+    <dimen name="dialog_margin_space">12dp</dimen>
     <dimen name="dialog_margin_layout">22dp</dimen>
 
 </resources>
