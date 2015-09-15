@@ -96,7 +96,7 @@ public class ActivityLector extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        int[] thmColors = ThemeColors.getColors(pm, getApplicationContext());
+//        int[] thmColors = ThemeColors.getColors(pm, getApplicationContext());
         /**
          * The values are here to set, if no settings should be stored,
          * then take the provided standard value
@@ -209,18 +209,23 @@ public class ActivityLector extends ActionBarActivity
         mSeekBar.setMax(mChapter.getPages());
         if (direction == Direction.L2R) mSeekBar.setRotation(180);
 
-        ColorDrawable reader_bg = new ColorDrawable(ThemeColors.getReaderColor(pm));
-        if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            mActionBar.setBackgroundDrawable(reader_bg);
-            mSeekerLayout.setBackgroundDrawable(reader_bg);
-            mSeekerPage.setBackgroundDrawable(reader_bg);
-            mSeekBar.setBackgroundDrawable(reader_bg);
-        } else {
-            mActionBar.setBackground(reader_bg);
-            mSeekerLayout.setBackground(reader_bg);
-            mSeekerPage.setBackground(reader_bg);
-            mSeekBar.setBackground(reader_bg);
-        }
+//        if (Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.JELLY_BEAN) {
+//            mActionBar.setBackgroundDrawable(reader_bg);
+//            mSeekerLayout.setBackgroundDrawable(reader_bg);
+//            mSeekerPage.setBackgroundDrawable(reader_bg);
+//            mSeekBar.setBackgroundDrawable(reader_bg);
+//        } else {
+//            mActionBar.setBackground(reader_bg);
+//            mSeekerLayout.setBackground(reader_bg);
+//            mSeekerPage.setBackground(reader_bg);
+//            mSeekBar.setBackground(reader_bg);
+//        }
+        int reader_bg = ThemeColors.getReaderColor(pm);
+        mActionBar.setBackgroundColor(reader_bg);
+        mSeekerLayout.setBackgroundColor(reader_bg);
+        mSeekerPage.setBackgroundColor(reader_bg);
+        mSeekBar.setBackgroundColor(reader_bg);
+
         mChapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityLector.this, mChapter);
         setSupportActionBar(mActionBar);
