@@ -36,22 +36,23 @@ import ar.rulosoft.mimanganu.utils.FragmentUpdateSearchTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityManga extends ActionBarActivity {
-
     public static final String DIRECCION = "direcciondelectura";
     public static final String CAPITULO_ID = "cap_id";
     public SwipeRefreshLayout str;
     public Manga manga;
     public Direction direction;
-    int[] colors;
+    public int[] colors;
+
+    private ChapterAdapter mChapterAdapter;
+    private SharedPreferences pm;
+    private ImageLoader mImageLoader;
+    private ListView mListView;
+    private MenuItem mMenuItem;
+    private int mMangaId;
+    private boolean darkTheme;
+
     FragmentUpdateSearchTask buscarNuevos;
-    ListView lista;
-    SharedPreferences pm;
-    MenuItem sentido;
-    int id;
     ControlInfoNoScroll datos;
-    ImageLoader imageLoader;
-    ChapterAdapter capitulosAdapter;
-    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,20 +61,20 @@ public class ActivityManga extends ActionBarActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
-        id = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
-        if (id == -1) {
+        mMangaId = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
+        if (mMangaId == -1) {
             onBackPressed();
             finish();
         }
-        lista = (ListView) findViewById(R.id.lista);
+        mListView = (ListView) findViewById(R.id.lista);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
-        imageLoader = new ImageLoader(ActivityManga.this);
+        mImageLoader = new ImageLoader(this);
         colors = ThemeColors.getColors(
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
                 getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
 
-        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+//        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
         if (savedInstanceState == null) {
             buscarNuevos = new FragmentUpdateSearchTask();
@@ -97,22 +98,21 @@ public class ActivityManga extends ActionBarActivity {
                 buscarNuevos.iniciaTarea(manga, ActivityManga.this);
             }
         });
-        lista.setDivider(new ColorDrawable(colors[0]));
-        lista.setDividerHeight(1);
+        mListView.setDivider(new ColorDrawable(colors[0]));
+        mListView.setDividerHeight(1);
         datos = new ControlInfoNoScroll(ActivityManga.this);
-        lista.addHeaderView(datos);
-        datos.setColor(colors[0]);
-        ChapterAdapter.setColorSelected(colors[1]);
-        ChapterAdapter.setColorReading(colors[0]);
-        lista.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.addHeaderView(datos);
+        datos.setColor(darkTheme, colors[0]);
+        ChapterAdapter.setColor(darkTheme, colors[1], colors[0]);
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Chapter c = (Chapter) lista.getAdapter().getItem(position);
+                Chapter c = (Chapter) mListView.getAdapter().getItem(position);
                 new GetPagesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
             }
         });
-        lista.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        lista.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             @Override
             public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
@@ -121,7 +121,7 @@ public class ActivityManga extends ActionBarActivity {
 
             @Override
             public void onDestroyActionMode(android.view.ActionMode mode) {
-                capitulosAdapter.clearSelection();
+                mChapterAdapter.clearSelection();
             }
 
             @Override
@@ -134,23 +134,23 @@ public class ActivityManga extends ActionBarActivity {
             @Override
             public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
 
-                SparseBooleanArray selection = capitulosAdapter.getSelection();
+                SparseBooleanArray selection = mChapterAdapter.getSelection();
                 ServerBase s = ServerBase.getServer(manga.getServerId());
 
                 switch (item.getItemId()) {
                     case R.id.seleccionar_todo:
-                        capitulosAdapter.selectAll();
+                        mChapterAdapter.selectAll();
                         return true;
                     case R.id.seleccionar_nada:
-                        capitulosAdapter.clearSelection();
+                        mChapterAdapter.clearSelection();
                         return true;
                     case R.id.download_selection:
                         new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                capitulosAdapter.getSelectedChapters());
+                                mChapterAdapter.getSelectedChapters());
                         break;
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
-                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.freeSpace(ActivityManga.this, manga, s);
                         }
                         break;
@@ -161,31 +161,31 @@ public class ActivityManga extends ActionBarActivity {
                         }
                         Arrays.sort(selecionados);
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.delete(ActivityManga.this, manga, s);
-                            capitulosAdapter.remove(c);
+                            mChapterAdapter.remove(c);
                         }
                         break;
                     case R.id.reset:
                         for (int i = 0; i < selection.size(); i++) {
-                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.reset(ActivityManga.this, manga, s);
                         }
                         break;
                     case R.id.marcar_leido:
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.markRead(ActivityManga.this, true);
                         }
                         break;
                     case R.id.mark_unread:
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = capitulosAdapter.getItem(selection.keyAt(i));
+                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.markRead(ActivityManga.this, false);
                         }
                         break;
                 }
-                capitulosAdapter.notifyDataSetChanged();
+                mChapterAdapter.notifyDataSetChanged();
                 mode.finish();
                 return false;
             }
@@ -193,7 +193,7 @@ public class ActivityManga extends ActionBarActivity {
             @Override
             public void onItemCheckedStateChanged(
                     android.view.ActionMode mode, int position, long id, boolean checked) {
-                capitulosAdapter.setSelectedOrUnselected(position);
+                mChapterAdapter.setSelectedOrUnselected(position);
             }
         });
     }
@@ -216,24 +216,24 @@ public class ActivityManga extends ActionBarActivity {
             } else {
                 datos.setAuthor(getResources().getString(R.string.nodisponible));
             }
-            imageLoader.displayImg(manga.getImages(), datos);
+            mImageLoader.displayImg(manga.getImages(), datos);
         }
     }
 
     public void cargarCapitulos(ArrayList<Chapter> chapters) {
         int fvi = 0;
-        if (capitulosAdapter != null) fvi = lista.getFirstVisiblePosition();
-        capitulosAdapter = new ChapterAdapter(this, chapters, darkTheme);
-        if (lista != null) {
-            lista.setAdapter(capitulosAdapter);
-            lista.setSelection(manga.getLastIndex());
+        if (mChapterAdapter != null) fvi = mListView.getFirstVisiblePosition();
+        mChapterAdapter = new ChapterAdapter(this, chapters);
+        if (mListView != null) {
+            mListView.setAdapter(mChapterAdapter);
+            mListView.setSelection(manga.getLastIndex());
         }
-        if (fvi != 0) lista.setSelection(fvi);
+        if (fvi != 0) mListView.setSelection(fvi);
     }
 
     @Override
     protected void onPause() {
-        int first = lista.getFirstVisiblePosition();
+        int first = mListView.getFirstVisiblePosition();
         Database.updateMangaLastIndex(this, manga.getId(), first);
         super.onPause();
     }
@@ -243,7 +243,7 @@ public class ActivityManga extends ActionBarActivity {
         switch (item.getItemId()) {
             case R.id.action_descargar_restantes: {
                 ArrayList<Chapter> chapters =
-                        Database.getChapters(ActivityManga.this, this.id,
+                        Database.getChapters(ActivityManga.this, this.mMangaId,
                                 Database.COL_CAP_DOWNLOADED + " != 1", true);
                 Chapter[] arr = new Chapter[chapters.size()];
                 arr = chapters.toArray(arr);
@@ -252,14 +252,14 @@ public class ActivityManga extends ActionBarActivity {
                 return true;
             }
             case R.id.action_marcar_todo_leido: {
-                Database.markAllChapters(ActivityManga.this, this.id, true);
-                manga = Database.getFullManga(getApplicationContext(), this.id);
+                Database.markAllChapters(ActivityManga.this, this.mMangaId, true);
+                manga = Database.getFullManga(getApplicationContext(), this.mMangaId);
                 cargarCapitulos(manga.getChapters());
                 break;
             }
             case R.id.action_marcar_todo_no_leido: {
-                Database.markAllChapters(ActivityManga.this, this.id, false);
-                manga = Database.getFullManga(getApplicationContext(), this.id);
+                Database.markAllChapters(ActivityManga.this, this.mMangaId, false);
+                manga = Database.getFullManga(getApplicationContext(), this.mMangaId);
                 cargarCapitulos(manga.getChapters());
                 break;
             }
@@ -273,13 +273,13 @@ public class ActivityManga extends ActionBarActivity {
                             pm.getString(DIRECCION, "" + Direction.L2R.ordinal()));
                 }
                 if (readDirection == Direction.R2L.ordinal()) {
-                    sentido.setIcon(R.drawable.ic_action_inverso);
+                    mMenuItem.setIcon(R.drawable.ic_action_inverso);
                     this.direction = Direction.L2R;
                 } else if (readDirection == Direction.L2R.ordinal()) {
-                    sentido.setIcon(R.drawable.ic_action_verical);
+                    mMenuItem.setIcon(R.drawable.ic_action_verical);
                     this.direction = Direction.VERTICAL;
                 } else {
-                    sentido.setIcon(R.drawable.ic_action_clasico);
+                    mMenuItem.setIcon(R.drawable.ic_action_clasico);
                     this.direction = Direction.R2L;
                 }
                 manga.setReadingDirection(this.direction.ordinal());
@@ -293,7 +293,7 @@ public class ActivityManga extends ActionBarActivity {
             }
             case R.id.action_descargar_no_leidos: {
                 ArrayList<Chapter> chapters =
-                        Database.getChapters(ActivityManga.this, ActivityManga.this.id,
+                        Database.getChapters(ActivityManga.this, ActivityManga.this.mMangaId,
                                 Database.COL_CAP_STATE + " < 1", true);
                 Chapter[] arr = new Chapter[chapters.size()];
                 arr = chapters.toArray(arr);
@@ -307,7 +307,7 @@ public class ActivityManga extends ActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        manga = Database.getFullManga(getApplicationContext(), id);
+        manga = Database.getFullManga(getApplicationContext(), mMangaId);
         setTitle(manga.getTitle());
         cargarCapitulos(manga.getChapters());
         Database.updateMangaRead(this, manga.getId());
@@ -319,24 +319,23 @@ public class ActivityManga extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
 
         getMenuInflater().inflate(R.menu.activity_capitulos, menu);
-        sentido = menu.findItem(R.id.action_sentido);
+        mMenuItem = menu.findItem(R.id.action_sentido);
         int readDirection;
         if (manga.getReadingDirection() != -1) {
             readDirection = manga.getReadingDirection();
         } else {
-            readDirection = Integer.parseInt(pm.getString(DIRECCION,
-                    "" + Direction.R2L.ordinal()));
+            readDirection = Integer.parseInt(pm.getString(DIRECCION, "" + Direction.R2L.ordinal()));
         }
 
         if (readDirection == Direction.R2L.ordinal()) {
             this.direction = Direction.R2L;
-            sentido.setIcon(R.drawable.ic_action_clasico);
+            mMenuItem.setIcon(R.drawable.ic_action_clasico);
         } else if (readDirection == Direction.L2R.ordinal()) {
             this.direction = Direction.L2R;
-            sentido.setIcon(R.drawable.ic_action_inverso);
+            mMenuItem.setIcon(R.drawable.ic_action_inverso);
         } else {
             this.direction = Direction.VERTICAL;
-            sentido.setIcon(R.drawable.ic_action_verical);
+            mMenuItem.setIcon(R.drawable.ic_action_verical);
         }
         return true;
     }
@@ -389,7 +388,7 @@ public class ActivityManga extends ActionBarActivity {
                 asyncdialog.dismiss();
                 Database.updateChapter(ActivityManga.this, result);
                 DownloadPoolService.agregarDescarga(ActivityManga.this, result, true);
-                int first = lista.getFirstVisiblePosition();
+                int first = mListView.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
                 Intent intent =
                         new Intent(ActivityManga.this, ActivityLector.class);

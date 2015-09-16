@@ -40,4 +40,44 @@ public class ThemeColors {
     public static int getReaderColor(SharedPreferences sp) {
         return sp.getInt("reader_bg_col", Color.parseColor("#100C08"));
     }
+
+    /**
+     * Returns the brightness of a color
+     *
+     * @param color integer
+     * @return brightness (0 - 255)
+     */
+    public static int brightness(int color) {
+        return (int) Math.sqrt(Color.red(color) * Color.red(color) * .241 +
+                Color.green(color) * Color.green(color) * .691 +
+                Color.blue(color) * Color.blue(color) * .068);
+    }
+
+    /**
+     * Make use of HSV and brighten up or darken down the color
+     * @param color integer
+     * @param factor 0..1 to darken and 1..inf to brighten color
+     * @return changed color
+     */
+    public static int brightnessColor(int color, float factor) {
+        float[] hsv = new float[3];
+        Color.colorToHSV(color, hsv);
+        hsv[2] *= factor;
+        return Color.HSVToColor(hsv);
+    }
+
+    /**
+     * Same as brightnessColor, but considers a tolerate value and only brighten up color,
+     * if color is not bright enough, don't change color
+     *
+     * @param color input color
+     * @param tolerate tolerate value, usually 0..255
+     * @return changed color, if below tolerate value
+     */
+    public static int brightenColor(int color, int tolerate) {
+        int colorBright = brightness(color);
+        if (colorBright < tolerate)
+            return brightnessColor(color, (tolerate + 10.0f) / (colorBright + 10.0f));
+        return color;
+    }
 }
