@@ -65,16 +65,16 @@ public class ActivityLector extends ActionBarActivity
     public static final String ORIENTATION = "orientation";
     public static final String ADJUST_KEY = "ajustar_a";
     public static final String MAX_TEXTURE = "max_texture";
-    private static int val_textureMax;
-    private static DisplayType val_screenFit;
+    private static int mTextureMax;
+    private static DisplayType mScreenFit;
 
-    public Direction direction;
+    public Direction mDirection;
     public InitialPosition iniPosition = InitialPosition.LEFT_UP;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
-    private boolean val_KeepOn; // false = normal  | true = screen on
-    private int val_orientation; // 0 = free | 1 = landscape | 2 = portrait
-    private float scrollFactor = 1f;
+    private boolean mKeepOn; // false = normal  | true = screen on
+    private int mOrientation; // 0 = free | 1 = landscape | 2 = portrait
+    private float mScrollFactor = 1f;
     // These are layout components
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private UnScrolledViewPager mViewPager;
@@ -95,26 +95,20 @@ public class ActivityLector extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//        int[] thmColors = ThemeColors.getColors(pm, getApplicationContext());
-        /**
-         * The values are here to set, if no settings should be stored,
-         * then take the provided standard value
-         */
-        val_screenFit = DisplayType.valueOf(
-                pm.getString(ADJUST_KEY, DisplayType.FIT_TO_WIDTH.toString()));
-        val_textureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
 
-        val_KeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
-        val_orientation = pm.getInt(ORIENTATION, 0);
-        scrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
+        mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, DisplayType.FIT_TO_WIDTH.toString()));
+        mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
+        mOrientation = pm.getInt(ORIENTATION, 0);
+        mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
+        mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
 
         mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         mManga = Database.getFullManga(this, mChapter.getMangaID());
 
         if (mManga.getReadingDirection() != -1)
-            direction = Direction.values()[mManga.getReadingDirection()];
+            mDirection = Direction.values()[mManga.getReadingDirection()];
         else
-            direction = Direction.values()[Integer.parseInt(
+            mDirection = Direction.values()[Integer.parseInt(
                     pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -124,20 +118,12 @@ public class ActivityLector extends ActionBarActivity
             @Override
             public void onPageSelected(int arg0) {
 
-                if (anterior < arg0) {
-                    iniPosition = InitialPosition.LEFT_UP;
-                } else {
-                    iniPosition = InitialPosition.LEFT_BOTTOM;
-                }
+                iniPosition = (anterior < arg0) ? InitialPosition.LEFT_UP : InitialPosition.LEFT_BOTTOM;
                 anterior = arg0;
 
-                switch (direction) {
+                switch (mDirection) {
                     case L2R: {
-                        if (arg0 > 0) {
-                            mChapter.setPagesRead(mChapter.getPages() - arg0 + 1);
-                        } else {
-                            mChapter.setPagesRead(mChapter.getPages() - arg0);
-                        }
+                        mChapter.setPagesRead(mChapter.getPages() - arg0 + ((arg0 > 0) ? 1 : 0));
                         mSeekBar.setProgress(mChapter.getPages() - arg0);
                         if (arg0 <= 1) {
                             mChapter.setReadStatus(Chapter.READ);
@@ -148,11 +134,7 @@ public class ActivityLector extends ActionBarActivity
                     }
                     case R2L:
                     case VERTICAL: {
-                        if (arg0 < mChapter.getPages()) {
-                            mChapter.setPagesRead(arg0 + 1);
-                        } else {
-                            mChapter.setPagesRead(arg0);
-                        }
+                        mChapter.setPagesRead(arg0 + ((arg0 < mChapter.getPages()) ? 1 : 0));
                         mSeekBar.setProgress(arg0);
                         if (arg0 >= mChapter.getPages() - 1) {
                             mChapter.setReadStatus(Chapter.READ);
@@ -174,7 +156,7 @@ public class ActivityLector extends ActionBarActivity
             }
         };
 
-        if (direction == Direction.VERTICAL) {
+        if (mDirection == Direction.VERTICAL) {
             setContentView(R.layout.activity_lector_v);
             mViewPagerV = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
             mViewPagerV.setOnPageChangeListener(pageChangeListener);
@@ -206,7 +188,7 @@ public class ActivityLector extends ActionBarActivity
         mSeekBar = (SeekBar) findViewById(R.id.seeker);
         mSeekBar.setOnSeekBarChangeListener(this);
         mSeekBar.setMax(mChapter.getPages());
-        if (direction == Direction.L2R) mSeekBar.setRotation(180);
+        if (mDirection == Direction.L2R) mSeekBar.setRotation(180);
 
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
@@ -267,19 +249,19 @@ public class ActivityLector extends ActionBarActivity
     protected void onResume() {
         mSectionsPagerAdapter =
                 new SectionsPagerAdapter(getSupportFragmentManager());
-        if (direction == Direction.VERTICAL)
+        if (mDirection == Direction.VERTICAL)
             mViewPagerV.setAdapter(mSectionsPagerAdapter);
         else mViewPager.setAdapter(mSectionsPagerAdapter);
 
         if (mChapter.getPagesRead() > 1) {
-            if (direction == Direction.R2L)
+            if (mDirection == Direction.R2L)
                 mViewPager.setCurrentItem(mChapter.getPagesRead() - 1);
-            else if (direction == Direction.VERTICAL)
+            else if (mDirection == Direction.VERTICAL)
                 mViewPagerV.setCurrentItem(mChapter.getPagesRead() - 1);
             else mViewPager.setCurrentItem(
                         mChapter.getPages() - mChapter.getPagesRead() + 1);
         } else {
-            if (direction == Direction.L2R)
+            if (mDirection == Direction.L2R)
                 mViewPager.setCurrentItem(mChapter.getPages() + 1);
         }
         DownloadPoolService.attachListener(this, mChapter.getId());
@@ -287,19 +269,19 @@ public class ActivityLector extends ActionBarActivity
     }
 
     public void setAdapter(SectionsPagerAdapter adapter) {
-        if (direction == Direction.VERTICAL)
+        if (mDirection == Direction.VERTICAL)
             mViewPagerV.setAdapter(adapter);
         else mViewPager.setAdapter(adapter);
     }
 
     public int getCurrentItem() {
-        if (direction == Direction.VERTICAL)
+        if (mDirection == Direction.VERTICAL)
             return mViewPagerV.getCurrentItem();
         else return mViewPager.getCurrentItem();
     }
 
     public void setCurrentItem(int pos) {
-        if (direction == Direction.VERTICAL)
+        if (mDirection == Direction.VERTICAL)
             mViewPagerV.setCurrentItem(pos);
         else mViewPager.setCurrentItem(pos);
     }
@@ -322,18 +304,18 @@ public class ActivityLector extends ActionBarActivity
         displayMenu = menu.findItem(R.id.action_ajustar);
         keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
         screenRotationMenuItem = menu.findItem(R.id.action_orientation);
-        if (val_KeepOn) {
+        if (mKeepOn) {
             keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
-        if (val_orientation == 1) {
+        if (mOrientation == 1) {
             ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
-        } else if (val_orientation == 2) {
+        } else if (mOrientation == 2) {
             ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
         }
-        actualizarIcono(val_screenFit, false);
+        actualizarIcono(mScreenFit, false);
         return true;
     }
 
@@ -341,16 +323,16 @@ public class ActivityLector extends ActionBarActivity
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_ajustar: {
-                val_screenFit = val_screenFit.getNext();
+                mScreenFit = mScreenFit.getNext();
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putString(ADJUST_KEY, val_screenFit.toString());
+                editor.putString(ADJUST_KEY, mScreenFit.toString());
                 editor.apply();
                 mSectionsPagerAdapter.actualizarDisplayTipe();
-                actualizarIcono(val_screenFit, true);
+                actualizarIcono(mScreenFit, true);
                 return true;
             }
             case R.id.action_keep_screen_on: {
-                if (!val_KeepOn) {
+                if (!mKeepOn) {
                     keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
                     getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                     Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on),
@@ -361,34 +343,34 @@ public class ActivityLector extends ActionBarActivity
                     Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off),
                             Toast.LENGTH_SHORT).show();
                 }
-                val_KeepOn = !val_KeepOn;
+                mKeepOn = !mKeepOn;
 
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putBoolean(KEEP_SCREEN_ON, val_KeepOn);
+                editor.putBoolean(KEEP_SCREEN_ON, mKeepOn);
                 editor.apply();
                 return true;
             }
             case R.id.action_orientation: {
-                if (val_orientation == 0) {
+                if (mOrientation == 0) {
                     this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
                     Toast.makeText(getApplicationContext(), getString(R.string.lock_on_landscape),
                             Toast.LENGTH_SHORT).show();
-                } else if (val_orientation == 1) {
+                } else if (mOrientation == 1) {
                     this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
                     Toast.makeText(getApplicationContext(), getString(R.string.lock_on_portrait),
                             Toast.LENGTH_SHORT).show();
-                } else if (val_orientation == 2) {
+                } else if (mOrientation == 2) {
                     this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
                     Toast.makeText(getApplicationContext(), getString(R.string.rotation_no_locked),
                             Toast.LENGTH_SHORT).show();
                 }
-                val_orientation = (val_orientation + 1) % 3;
+                mOrientation = (mOrientation + 1) % 3;
 
                 SharedPreferences.Editor editor = pm.edit();
-                editor.putInt(ORIENTATION, val_orientation);
+                editor.putInt(ORIENTATION, mOrientation);
                 editor.apply();
             }
         }
@@ -428,7 +410,7 @@ public class ActivityLector extends ActionBarActivity
         // This is happening, if you lift your finger off the bar
         try {
             mSeekerPage.setVisibility(SeekBar.INVISIBLE);
-            if (direction == Direction.R2L || direction == Direction.VERTICAL)
+            if (mDirection == Direction.R2L || mDirection == Direction.VERTICAL)
                 setCurrentItem(seekBar.getProgress());
             else {
                 setCurrentItem(mChapter.getPages() - seekBar.getProgress());
@@ -604,14 +586,14 @@ public class ActivityLector extends ActionBarActivity
             visor = (ImageViewTouch) rootView.findViewById(R.id.visor);
             if (r != null) {
                 new Thread(r).start();
-            } else visor.setDisplayType(val_screenFit);
+            } else visor.setDisplayType(mScreenFit);
             visor.setTapListener(mTapListener);
             visor.setScaleEnabled(false);
             cargando = (ProgressBar) rootView.findViewById(R.id.cargando);
             cargando.bringToFront();
             if (getArguments() != null)
                 ruta = getArguments().getString(RUTA);
-            visor.setScrollFactor(activity.scrollFactor);
+            visor.setScrollFactor(activity.mScrollFactor);
             return rootView;
         }
 
@@ -694,11 +676,11 @@ public class ActivityLector extends ActionBarActivity
                 if (result != null && visor != null) {
                     imageLoaded = true;
                     visor.setScaleEnabled(true);
-                    if (activity.direction == Direction.VERTICAL)
+                    if (activity.mDirection == Direction.VERTICAL)
                         visor.setInitialPosition(activity.iniPosition);
                     else visor.setInitialPosition(InitialPosition.LEFT_UP);
-                    if ((result.getHeight() > val_textureMax ||
-                            result.getWidth() > val_textureMax) &&
+                    if ((result.getHeight() > mTextureMax ||
+                            result.getWidth() > mTextureMax) &&
                             Build.VERSION.SDK_INT >= 11) {
                         visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     }
@@ -858,7 +840,7 @@ public class ActivityLector extends ActionBarActivity
         @Override
         public Fragment getItem(int position) {
             Fragment rsta;
-            if (direction == Direction.R2L || direction == Direction.VERTICAL)
+            if (mDirection == Direction.R2L || mDirection == Direction.VERTICAL)
                 if (position == mChapter.getPages())
                     rsta = mLastPageFrag;
                 else {
@@ -889,8 +871,7 @@ public class ActivityLector extends ActionBarActivity
                 do {
                     idx = getNextPos();
                     if (pos[idx] == -1) break;
-                } while (pos[idx] + 1 > getCurrentItem() &&
-                        pos[idx] - 1 < getCurrentItem());
+                } while (pos[idx] + 1 > getCurrentItem() && pos[idx] - 1 < getCurrentItem());
                 pos[idx] = position;
                 Fragment old = fragments.get(idx);
                 fm.beginTransaction().remove(old).commit();
@@ -910,7 +891,7 @@ public class ActivityLector extends ActionBarActivity
         public void actualizarDisplayTipe() {
             for (PageFragment iterable_element : fragments) {
                 if (iterable_element != null) {
-                    iterable_element.setDisplayType(val_screenFit);
+                    iterable_element.setDisplayType(mScreenFit);
                 }
             }
         }
