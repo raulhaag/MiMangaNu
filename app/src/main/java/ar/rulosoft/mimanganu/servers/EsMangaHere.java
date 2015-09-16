@@ -64,7 +64,7 @@ public class EsMangaHere extends ServerBase {
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
 
             // sinopsis
-            manga.setSinopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Sin sinopsis."));
+            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Sin sinopsis."));
 
             // estado
             manga.setFinished(

@@ -83,7 +83,7 @@ public class EsNineMangaCom extends ServerBase {
         // sinopsis
         String sinopsis = getFirstMatchDefault("<p itemprop=\"description\">(.+?)&nbsp;Show less",
                 source, "Sin sinopsis").replaceAll("<.+?>", "");
-        m.setSinopsis(Html.fromHtml(sinopsis).toString());
+        m.setSynopsis(Html.fromHtml(sinopsis).toString());
         // estado
         m.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
         // autor

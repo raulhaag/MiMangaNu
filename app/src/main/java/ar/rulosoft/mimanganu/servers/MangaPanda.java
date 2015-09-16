@@ -115,7 +115,7 @@ public class MangaPanda extends ServerBase {
             }
         }
         // Summary
-        manga.setSinopsis(getFirstMatchDefault("<p>(.+)</p>", data, "Without synopsis"));
+        manga.setSynopsis(getFirstMatchDefault("<p>(.+)</p>", data, "Without synopsis"));
         // Title
         manga.setImages(getFirstMatchDefault("mangaimg\"><img src=\"([^\"]+)", data, ""));
         // Status

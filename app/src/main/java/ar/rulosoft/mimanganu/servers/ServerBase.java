@@ -202,7 +202,7 @@ public abstract class ServerBase {
 
         if (!mangaDb.getSynopsis().equals(manga.getSynopsis()) &&
                 manga.getSynopsis().length() > 2) {
-            mangaDb.setSinopsis(manga.getSynopsis());
+            mangaDb.setSynopsis(manga.getSynopsis());
             cambios = true;
         }
 

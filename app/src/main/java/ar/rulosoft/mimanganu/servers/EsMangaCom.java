@@ -62,7 +62,7 @@ public class EsMangaCom extends ServerBase {
         Navegador nav = new Navegador();
         String source = nav.get(m.getPath());
         //sinopsis
-        m.setSinopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s", source, "Sin Sinopsis").replaceAll("<.+?>", ""));
+        m.setSynopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s", source, "Sin Sinopsis").replaceAll("<.+?>", ""));
         //imagen
         m.setImages(getFirstMatchDefault("(http://esmanga.com/img/mangas/.+?)\"", source, ""));
         //status

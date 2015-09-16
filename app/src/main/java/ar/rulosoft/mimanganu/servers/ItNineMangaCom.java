@@ -89,7 +89,7 @@ public class ItNineMangaCom extends ServerBase {
         // sinopsis
         String sinopsis = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, "Senza sinossi").replaceAll("<.+?>", "");
-        m.setSinopsis(Html.fromHtml(sinopsis.replaceFirst("Sommario:", "")).toString());
+        m.setSynopsis(Html.fromHtml(sinopsis.replaceFirst("Sommario:", "")).toString());
         // estado
         m.setFinished(getFirstMatchDefault("Stato:(.+?)</a>", source, "").contains("Completato"));
         // autor

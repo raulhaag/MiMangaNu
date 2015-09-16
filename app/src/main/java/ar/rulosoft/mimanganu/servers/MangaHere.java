@@ -73,7 +73,7 @@ public class MangaHere extends ServerBase {
             // Front
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
             // Summary
-            manga.setSinopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
+            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
             // Status
             manga.setFinished(data.contains("</label>Completed</li>"));
             // Author

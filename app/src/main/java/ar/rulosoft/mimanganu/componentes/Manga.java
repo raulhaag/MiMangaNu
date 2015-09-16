@@ -19,6 +19,7 @@ public class Manga {
 
     private boolean finished;
     private ArrayList<Chapter> chapters = new ArrayList<>();
+    private float scrollSensitive;
 
     public Manga(int serverId, String title, String path, boolean finished) {
         super();
@@ -27,6 +28,21 @@ public class Manga {
         this.path = path;
         this.author = "";
         this.finished = finished;
+    }
+
+    public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSentive, int readingDirection, int lastIndex, int news) {
+        this.serverId = serverId;
+        this.id = id;
+        this.title = title;
+        this.synopsis = synopsis;
+        this.images = images;
+        this.path = path;
+        this.author = author;
+        this.finished = finished;
+        this.scrollSensitive = scrollSentive;
+        this.readingDirection = readingDirection;
+        this.lastIndex = lastIndex;
+        this.news = news;
     }
 
     public int getId() {
@@ -57,7 +73,7 @@ public class Manga {
         return synopsis;
     }
 
-    public void setSinopsis(String synopsis) {
+    public void setSynopsis(String synopsis) {
         this.synopsis = HtmlUnescape.Unescape(synopsis);
     }
 
@@ -145,6 +161,14 @@ public class Manga {
 
     public void setReadingDirection(int readingDirection) {
         this.readingDirection = readingDirection;
+    }
+
+    public float getScrollSensitive() {
+        return scrollSensitive;
+    }
+
+    public void setScrollSensitive(float scrollSensitive) {
+        this.scrollSensitive = scrollSensitive;
     }
 
 }

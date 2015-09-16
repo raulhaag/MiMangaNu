@@ -30,7 +30,7 @@ public class SubManga extends ServerBase {
         Matcher m = p.matcher(source);
         while (m.find()) {
             String name = m.group(2);
-            if (name.contains("¡") && name.contains("¿") && name.contains("ñ") && name.contains("Ñ")) {
+            if (name.contains("ï¿½") && name.contains("ï¿½") && name.contains("ï¿½") && name.contains("ï¿½")) {
                 mangas.add(new Manga(SUBMANGA, name, m.group(1), false));
             }
         }
@@ -71,9 +71,9 @@ public class SubManga extends ServerBase {
 
         if (m.find()) {
             manga.setImages(m.group(1));
-            manga.setSinopsis(Html.fromHtml(m.group(2)).toString());
+            manga.setSynopsis(Html.fromHtml(m.group(2)).toString());
         } else {
-            manga.setSinopsis("Sin sinopsis.");
+            manga.setSynopsis("Sin sinopsis.");
         }
     }
 

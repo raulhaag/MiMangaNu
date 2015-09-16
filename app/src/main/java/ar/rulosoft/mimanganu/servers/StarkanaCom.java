@@ -87,7 +87,7 @@ public class StarkanaCom extends ServerBase {
         m.setImages(portada);
         // Summary
         String sinopsis = getFirstMatchDefault("<b>Summary:.+?<div>(.+?)<", source, "Without synopsis");
-        m.setSinopsis(sinopsis);
+        m.setSynopsis(sinopsis);
         // Status
         m.setFinished(source.contains("<b>Completed</b></span>"));
         // Chapter

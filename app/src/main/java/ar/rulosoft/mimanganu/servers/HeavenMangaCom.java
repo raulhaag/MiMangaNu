@@ -82,7 +82,7 @@ public class HeavenMangaCom extends ServerBase {
 
         // sinopsis
         String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, "Sin sinopsis");
-        m.setSinopsis(sinopsis.replaceAll("<.+?>", ""));
+        m.setSynopsis(sinopsis.replaceAll("<.+?>", ""));
 
         //estado no soportado
 
@@ -129,7 +129,7 @@ public class HeavenMangaCom extends ServerBase {
 
     private void setExtra(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
-        String web = getFirstMatch("<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source, "Error al obtener página");
+        String web = getFirstMatch("<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source, "Error al obtener pï¿½gina");
         c.setExtra(web);
     }
 

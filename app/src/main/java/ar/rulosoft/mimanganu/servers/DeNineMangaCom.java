@@ -71,7 +71,7 @@ public class DeNineMangaCom extends ServerBase {
         // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
-        m.setSinopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
+        m.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
         // Status
         m.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
         // Author

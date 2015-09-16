@@ -33,6 +33,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -79,15 +80,17 @@ public class ActivityLector extends ActionBarActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private UnScrolledViewPager mViewPager;
     private UnScrolledViewPagerVertical mViewPagerV;
+    private RelativeLayout mControlsLayout;
     private LinearLayout mSeekerLayout;
     private SeekBar mSeekBar;
     private Toolbar mActionBar;
     private Chapter mChapter;
     private Manga mManga;
     private ServerBase mServerBase;
-    private TextView mSeekerPage;
+    private TextView mSeekerPage, mScrollSensitiveTextView;
     private MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
     private LastPageFragment mLastPageFrag;
+    private Button mButtonMinus, mButtonPlus;
 
     private boolean controlVisible = false;
 
@@ -104,14 +107,18 @@ public class ActivityLector extends ActionBarActivity
 
         mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         mManga = Database.getFullManga(this, mChapter.getMangaID());
+        if (mManga.getScrollSensitive() > 0) {
+            mScrollFactor = mManga.getScrollSensitive();
+        }
 
-        if (mManga.getReadingDirection() != -1)
+        if (mManga.getReadingDirection() != -1) {
             mDirection = Direction.values()[mManga.getReadingDirection()];
-        else
-            mDirection = Direction.values()[Integer.parseInt(
-                    pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        } else {
+            mDirection = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
+        }
+
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
 
@@ -177,9 +184,9 @@ public class ActivityLector extends ActionBarActivity
         mActionBar.setAlpha(0f);
         mActionBar.setVisibility(View.GONE);
 
-        mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
-        mSeekerLayout.setAlpha(0f);
-        mSeekerLayout.setVisibility(View.GONE);
+        mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
+        mControlsLayout.setAlpha(0f);
+        mControlsLayout.setVisibility(View.GONE);
 
         mSeekerPage = (TextView) findViewById(R.id.page);
         mSeekerPage.setAlpha(.9f);
@@ -189,6 +196,12 @@ public class ActivityLector extends ActionBarActivity
         mSeekBar.setOnSeekBarChangeListener(this);
         mSeekBar.setMax(mChapter.getPages());
         if (mDirection == Direction.L2R) mSeekBar.setRotation(180);
+
+        mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
+        mButtonMinus = (Button) findViewById(R.id.minus);
+        mButtonPlus = (Button) findViewById(R.id.plus);
+        mScrollSensitiveTextView = (TextView) findViewById(R.id.scroll_level);
+        mScrollSensitiveTextView.setText("" + mScrollFactor);
 
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
@@ -200,6 +213,29 @@ public class ActivityLector extends ActionBarActivity
         Database.updateChapter(ActivityLector.this, mChapter);
         setSupportActionBar(mActionBar);
         hideSystemUI();
+
+        mButtonMinus.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                modScrollSensitive(-.5f);
+            }
+        });
+        mButtonPlus.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                modScrollSensitive(.5f);
+            }
+        });
+
+    }
+
+    private void modScrollSensitive(float diff) {
+        if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
+            mScrollFactor += diff;
+            Database.updateMangaScrollSensitive(ActivityLector.this, mManga.getId(), mScrollFactor);
+            mScrollSensitiveTextView.setText("" + mScrollFactor);
+            mSectionsPagerAdapter.setPageScroll(mScrollFactor);
+        }
     }
 
     private void hideSystemUI() {
@@ -445,7 +481,7 @@ public class ActivityLector extends ActionBarActivity
                 }
             });
             anim.start();
-            ObjectAnimator anim2 = ObjectAnimator.ofFloat(mSeekerLayout, "alpha", .90f, 0f);
+            ObjectAnimator anim2 = ObjectAnimator.ofFloat(mControlsLayout, "alpha", .90f, 0f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -457,7 +493,7 @@ public class ActivityLector extends ActionBarActivity
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mSeekerLayout.setVisibility(View.GONE);
+                    mControlsLayout.setVisibility(View.GONE);
                 }
 
                 @Override
@@ -490,11 +526,11 @@ public class ActivityLector extends ActionBarActivity
             });
             anim.start();
             ObjectAnimator anim2 =
-                    ObjectAnimator.ofFloat(mSeekerLayout, "alpha", 0f, .90f);
+                    ObjectAnimator.ofFloat(mControlsLayout, "alpha", 0f, .90f);
             anim2.addListener(new AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    mSeekerLayout.setVisibility(View.VISIBLE);
+                    mControlsLayout.setVisibility(View.VISIBLE);
                 }
 
                 @Override
@@ -910,6 +946,13 @@ public class ActivityLector extends ActionBarActivity
                 }
             }
             return fragment;
+        }
+
+        public void setPageScroll(float nScroll) {
+            for (PageFragment pageFragment : fragments) {
+                if (pageFragment.visor != null)
+                    pageFragment.visor.setScrollFactor(nScroll);
+            }
         }
     }
 }

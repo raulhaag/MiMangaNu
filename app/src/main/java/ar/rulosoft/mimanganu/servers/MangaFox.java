@@ -62,7 +62,7 @@ public class MangaFox extends ServerBase {
             // portada
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
             // sinopsis
-            manga.setSinopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
+            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
 
             manga.setFinished(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
 

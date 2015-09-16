@@ -92,7 +92,7 @@ public class KissManga extends ServerBase {
         String source = getNavWithHeader().get(HOST + m.getPath());
 
         // Summary
-        m.setSinopsis(Html.fromHtml(getFirstMatchDefault(
+        m.setSynopsis(Html.fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 "Without" + " synopsis.")).toString());
         // Title

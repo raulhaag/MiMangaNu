@@ -96,7 +96,7 @@ public class TusMangasOnlineCom extends ServerBase {
         // sinopsis
         String sinopsis = getFirstMatchDefault("(<p itemprop=\"description\".+?</p></div>)",
                 source, "Sin sinopsis");
-        m.setSinopsis(Html.fromHtml(sinopsis).toString());
+        m.setSynopsis(Html.fromHtml(sinopsis).toString());
         // portada
         m.setImages(getFirstMatchDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
         // estado
