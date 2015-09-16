@@ -25,40 +25,46 @@ import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.NumberPicker;
+import android.widget.TextView;
 
 import ar.rulosoft.mimanganu.R;
 
-public class NumberPickerDialogPref extends DialogPreference {
+public class NumPickDialogPref extends DialogPreference {
     private NumberPicker mNumberPicker;
+    private TextView mMessageValue;
+
     private int mMin;
     private int mMax;
+
     private boolean mWrapAround;
     private int mValue = 0;
 
     private String mSummary;
 
-    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public NumPickDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
 
+        setDialogLayoutResource(R.layout.dialog_numpicker_pref);
+
         TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.NumberPickerDialogPref, defStyleAttr, defStyleRes);
-        mMin = a.getInteger(R.styleable.NumberPickerDialogPref_val_min, 0);
-        mMax = a.getInteger(R.styleable.NumberPickerDialogPref_val_max, 9);
-        mWrapAround = a.getBoolean(R.styleable.NumberPickerDialogPref_wrap_around, false);
+                R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
+        mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
+        mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
+        mWrapAround = a.getBoolean(R.styleable.CustomDialogPref_wrap_around, false);
         a.recycle();
 
         mSummary = (String) super.getSummary();
     }
 
-    public NumberPickerDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
+    public NumPickDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public NumberPickerDialogPref(Context context, AttributeSet attrs) {
+    public NumPickDialogPref(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public NumberPickerDialogPref(Context context) {
+    public NumPickDialogPref(Context context) {
         this(context, null);
     }
 
@@ -83,18 +89,26 @@ public class NumberPickerDialogPref extends DialogPreference {
     }
 
     @Override
-    protected View onCreateDialogView() {
-        mNumberPicker = new NumberPicker(getContext());
-        return (mNumberPicker);
-    }
-
-    @Override
     protected void onBindDialogView(@NonNull View view) {
-        super.onBindDialogView(view);
+
+        mMessageValue = (TextView) view.findViewById(R.id.dialogText);
+        mMessageValue.setText(String.format(mSummary, mValue + mMin));
+
+        mNumberPicker = (NumberPicker) view.findViewById(R.id.dialogNumPicker);
+        mNumberPicker.setOnScrollListener(new NumberPicker.OnScrollListener() {
+
+            @Override
+            public void onScrollStateChange(NumberPicker view, int scrollState) {
+                mMessageValue.setText(String.format(mSummary, mNumberPicker.getValue()));
+            }
+        });
         mNumberPicker.setMinValue(mMin);
         mNumberPicker.setMaxValue(mMax);
         mNumberPicker.setValue(mValue);
         mNumberPicker.setWrapSelectorWheel(mWrapAround);
+        mNumberPicker.setDescendantFocusability(NumberPicker.FOCUS_BLOCK_DESCENDANTS);
+
+        super.onBindDialogView(view);
     }
 
     @Override

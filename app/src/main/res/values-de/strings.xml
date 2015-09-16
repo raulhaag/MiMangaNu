@@ -143,4 +143,6 @@
     <string name="sort_recent_asc">Zuletzt gelesen (älteste)</string>
     <string name="sort_title_asc">Titel (z-a)</string>
     <string name="more_options">Mehr Optionen</string>
+    <string name="color_reader">Reader Farbe</string>
+    <string name="color_reader_sub">Die Farbe der Leisten im Reader Modus</string>
 </resources>

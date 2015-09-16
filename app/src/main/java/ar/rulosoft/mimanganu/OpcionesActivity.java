@@ -14,7 +14,7 @@ import android.preference.PreferenceManager;
 import java.io.File;
 import java.io.IOException;
 
-import ar.rulosoft.custompref.NumberPickerDialogPref;
+import ar.rulosoft.custompref.SeekBarDialogPref;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -41,9 +41,8 @@ public class OpcionesActivity extends PreferenceActivity {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 boolean valor = (Boolean) newValue;
-                File f = new File(
-                        Environment.getExternalStorageDirectory().getAbsolutePath() +
-                                "/MiMangaNu/", ".nomedia");
+                File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                        "/MiMangaNu/", ".nomedia");
                 if (!valor) if (f.exists()) f.delete();
                 else if (!f.exists()) try {
                     f.createNewFile();
@@ -54,9 +53,9 @@ public class OpcionesActivity extends PreferenceActivity {
             }
         });
 
-        /** This sets the download threads (parallele Downloads) */
-        final NumberPickerDialogPref listPreferenceDT =
-                (NumberPickerDialogPref) getPreferenceManager().findPreference("download_threads");
+        /** This sets the download threads (parallel downloads) */
+        final SeekBarDialogPref listPreferenceDT =
+                (SeekBarDialogPref) getPreferenceManager().findPreference("download_threads");
         listPreferenceDT.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -69,9 +68,9 @@ public class OpcionesActivity extends PreferenceActivity {
             }
         });
 
-        /** This sets the Maximum number of errors (Maximale Anzahl der Fehler) */
-        final NumberPickerDialogPref listPrefET =
-                (NumberPickerDialogPref) getPreferenceManager().findPreference("error_tolerancia");
+        /** This sets the maximum number of errors to tolerate */
+        final SeekBarDialogPref listPrefET =
+                (SeekBarDialogPref) getPreferenceManager().findPreference("error_tolerancia");
         listPrefET.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -81,9 +80,9 @@ public class OpcionesActivity extends PreferenceActivity {
             }
         });
 
-        /** This sets the Number of retries by image */
-        NumberPickerDialogPref listPrefRT =
-                (NumberPickerDialogPref) getPreferenceManager().findPreference("reintentos");
+        /** This sets the number of retries to fetch images */
+        SeekBarDialogPref listPrefRT =
+                (SeekBarDialogPref) getPreferenceManager().findPreference("reintentos");
         listPrefRT.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {

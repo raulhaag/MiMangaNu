@@ -2,9 +2,6 @@ package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,12 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 /**
+ * Series information.
  * Created by Raul on 16/05/2015.
  */
 public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
-    View s1, s2, s3, s4;
+    View s1, s2, s3, b1;
     TextView author, status, server, synopsis, title;
     TextView authorTitle, statusTitle, serverTitle;
     ImageView image;
@@ -41,39 +40,31 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     public void initialize() {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.control_info, this, true);
-        s1 = findViewById(R.id.s1);
-        s2 = findViewById(R.id.s2);
-        s3 = findViewById(R.id.s3);
-        s4 = findViewById(R.id.s4);
-        authorTitle = (TextView) findViewById(R.id.autorTitle);
-        statusTitle = (TextView) findViewById(R.id.estadoTitle);
-        serverTitle = (TextView) findViewById(R.id.servidorTitle);
-        status = (TextView) findViewById(R.id.estado);
-        server = (TextView) findViewById(R.id.servidor);
+        b1 = findViewById(R.id.blockSummary);
+        s1 = findViewById(R.id.lineAuthor);
+        s2 = findViewById(R.id.lineStatus);
+        s3 = findViewById(R.id.lineServer);
+        authorTitle = (TextView) findViewById(R.id.titleAuthor);
+        statusTitle = (TextView) findViewById(R.id.titleStatus);
+        serverTitle = (TextView) findViewById(R.id.titleServer);
+        status = (TextView) findViewById(R.id.textStatus);
+        server = (TextView) findViewById(R.id.textServer);
         synopsis = (TextView) findViewById(R.id.sinopsis);
         title = (TextView) findViewById(R.id.titulo);
-        author = (TextView) findViewById(R.id.autor);
+        author = (TextView) findViewById(R.id.textAuthor);
         image = (ImageView) findViewById(R.id.imagen);
     }
 
-    public void setColor(int color) {
-        Drawable colorDrawable = new ColorDrawable(color);
-        if (Build.VERSION.SDK_INT >= 16) {
-            s1.setBackground(colorDrawable);
-            s2.setBackground(colorDrawable);
-            s3.setBackground(colorDrawable);
-            s4.setBackground(colorDrawable);
-            title.setBackground(colorDrawable);
-        } else {
-            s1.setBackgroundDrawable(colorDrawable);
-            s2.setBackgroundDrawable(colorDrawable);
-            s3.setBackgroundDrawable(colorDrawable);
-            s4.setBackgroundDrawable(colorDrawable);
-            title.setBackgroundDrawable(colorDrawable);
-        }
-        authorTitle.setTextColor(color);
-        statusTitle.setTextColor(color);
-        serverTitle.setTextColor(color);
+    public void setColor(boolean dark_theme, int color) {
+        int mColor = dark_theme ? ThemeColors.brightenColor(color, 150) : color;
+        b1.setBackgroundColor(color);
+        s1.setBackgroundColor(color);
+        s2.setBackgroundColor(color);
+        s3.setBackgroundColor(color);
+        title.setBackgroundColor(mColor);
+        authorTitle.setTextColor(mColor);
+        statusTitle.setTextColor(mColor);
+        serverTitle.setTextColor(mColor);
     }
 
     public void setAuthor(String author) {

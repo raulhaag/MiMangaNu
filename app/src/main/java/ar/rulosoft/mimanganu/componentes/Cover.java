@@ -15,9 +15,8 @@ import ar.rulosoft.mimanganu.R;
  */
 
 public class Cover extends RelativeLayout implements Imaginable {
-
-    ImageView image;
-    TextView text;
+    private ImageView image;
+    private TextView text;
 
     public Cover(Context context, AttributeSet attrs) {
         super(context, attrs);

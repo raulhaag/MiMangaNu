@@ -46,13 +46,13 @@
             android:key="ajustar_a"
             android:summary="%s"
             android:title="@string/ajuste_imagen" />
-        <ar.rulosoft.custompref.NumberPickerDialogPref
+        <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="1"
             android:dialogTitle="@string/scroll_speed"
             android:key="scroll_speed"
             android:summary="%sx"
             android:title="@string/scroll_speed"
-            app:val_max="10"
+            app:val_max="4"
             app:val_min="1" />
         <ListPreference
             android:defaultValue="2048"
@@ -68,7 +68,7 @@
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
             android:title="@string/directorio_title" />
-        <ar.rulosoft.custompref.NumberPickerDialogPref
+        <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_descargas_title"
             android:key="download_threads"
@@ -76,7 +76,7 @@
             android:title="@string/cantidad_descargas_title"
             app:val_max="5"
             app:val_min="1" />
-        <ar.rulosoft.custompref.NumberPickerDialogPref
+        <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_errores_title"
             android:key="error_tolerancia"
@@ -84,7 +84,7 @@
             android:title="@string/cantidad_errores_title"
             app:val_max="9"
             app:val_min="0" />
-        <ar.rulosoft.custompref.NumberPickerDialogPref
+        <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
             android:key="reintentos"
@@ -110,6 +110,11 @@
             android:key="secundario"
             android:summary="@string/color_secundario_sub"
             android:title="@string/color_secundario" />
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="-15725560"
+            android:key="reader_bg_col"
+            android:summary="@string/color_reader_sub"
+            android:title="@string/color_reader" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/about">

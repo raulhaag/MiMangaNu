@@ -16,7 +16,7 @@
             backward-compatibility can go here.
         -->
         <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
-        <item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>
+        <!--<item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>-->
     </style>
 
     <style name="AppTheme.Dark.NoActionbar" parent="Theme.AppCompat.Light.NoActionBar">
@@ -26,7 +26,7 @@
             backward-compatibility can go here.
         -->
         <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
-        <item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>
+        <!--<item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>-->
     </style>
 
 </resources>

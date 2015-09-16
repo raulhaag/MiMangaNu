@@ -40,10 +40,12 @@ public class FileCache {
                         break;
                     os.write(bytes, 0, count);
                 }
-            } catch (Exception ex) {}
+            } catch (Exception ex) {
+                // This happens, if writing or reading throws IOException
+            }
             os.close();
         } catch (Exception e) {
-            // throw e;
+            // This happens, if FileOutputStream throws FileNotFoundException
         }
     }
 

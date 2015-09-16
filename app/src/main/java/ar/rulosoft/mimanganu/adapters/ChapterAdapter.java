@@ -27,34 +27,41 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     public static int TRANSPARENT = Color.TRANSPARENT;
-    public static int COLOR_READ = Color.parseColor("#b2b2b2");
-    public static int COLOR_READ_DARK_THEME = Color.parseColor("#555555");
-    public static int COLOR_READING = Color.parseColor("#121212");
-    public static int COLOR_SELECTED = Color.parseColor("#33B5E5");
+
+    private static int COLOR_READ = Color.parseColor("#b2b2b2");
+    private static int COLOR_READING = Color.parseColor("#121212");
+    private static int COLOR_SELECTED = Color.parseColor("#33B5E5");
+
+    private static int buttonDelete = R.drawable.ic_action_delete_light;
+    private static int buttonDownload = R.drawable.ic_action_download_light;
+
     private static int listItem = R.layout.listitem_capitulo;
     SparseBooleanArray selected = new SparseBooleanArray();
     ActivityManga activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
-    private boolean darkTheme = false;
 
-    public ChapterAdapter(Activity context, List<Chapter> items, boolean darkTheme) {
+    public ChapterAdapter(Activity context, List<Chapter> items) {
         super(context, listItem, items);
         activity = (ActivityManga) context;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.darkTheme = darkTheme;
+
     }
 
-    public static void setColorSelected(int colorSelected) {
-        ChapterAdapter.COLOR_SELECTED = colorSelected;
-    }
-
-    public static void setColorReading(int colorReading) {
+    public static void setColor(boolean dark_theme, int colorSelected, int colorReading) {
+        COLOR_SELECTED = colorSelected;
         COLOR_READING = colorReading;
+        if (dark_theme) {
+            COLOR_READING = ThemeColors.brightenColor(COLOR_READING, 150);
+            COLOR_READ = Color.parseColor("#585858");
+            buttonDelete = R.drawable.ic_action_delete_dark;
+            buttonDownload = R.drawable.ic_action_download_dark;
+        }
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -84,14 +91,8 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     holder.textViewPages.setTextColor(defaultColor);
                     break;
                 case Chapter.READ:
-                    if (darkTheme) {
-                        holder.textViewName.setTextColor(COLOR_READ_DARK_THEME);
-                        holder.textViewPages.setTextColor(COLOR_READ_DARK_THEME);
-
-                    } else {
-                        holder.textViewName.setTextColor(COLOR_READ);
-                        holder.textViewPages.setTextColor(COLOR_READ);
-                    }
+                    holder.textViewName.setTextColor(COLOR_READ);
+                    holder.textViewPages.setTextColor(COLOR_READ);
                     break;
                 case Chapter.READING:
                     holder.textViewName.setTextColor(COLOR_READING);
@@ -115,20 +116,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             } else {
                 holder.textViewPages.setText("");
             }
-            if (darkTheme) {
-                if (item.isDownloaded()) {
-                    holder.imageButton.setImageResource(R.drawable.ic_action_delete_dark);
-                } else {
-                    holder.imageButton.setImageResource(R.drawable.ic_action_download_dark);
-                }
-            } else {
-                if (item.isDownloaded()) {
-                    holder.imageButton.setImageResource(R.drawable.ic_action_delete_light);
-                } else {
-                    holder.imageButton.setImageResource(R.drawable.ic_action_download_light);
-                }
-            }
-
+            holder.imageButton.setImageResource(item.isDownloaded() ? buttonDelete : buttonDownload);
             holder.imageButton.setTag(item);
             holder.imageButton.setOnClickListener(new OnClickListener() {
 

@@ -16,10 +16,16 @@ public class Chapter {
     public static final int READ = 1;
     public static final int READING = 2;
 
-    int id, pages, mangaID;
-    int pagesRead, readStatus;
-    String title, path, extra;
-    boolean finished, downloaded;
+    private int id;
+    private int pages;
+    private int mangaID;
+    private int pagesRead;
+    private int readStatus;
+    private String title;
+    private String path;
+    private String extra;
+    private boolean finished;
+    private boolean downloaded;
 
     public Chapter(String title, String path) {
         super();
@@ -167,6 +173,6 @@ public class Chapter {
     }
 
     public void addChapterFirst(Manga manga) {
-        manga.chapters.add(0, this);
+        manga.getChapters().add(0, this);
     }
 }

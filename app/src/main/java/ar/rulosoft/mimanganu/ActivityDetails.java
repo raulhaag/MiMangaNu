@@ -72,7 +72,7 @@ public class ActivityDetails extends ActionBarActivity {
         button_add.setColorPressed(colors[3]);
         button_add.setColorRipple(colors[0]);
         button_add.attachToScrollView(data);
-        data.setColor(colors[0]);
+        data.setColor(darkTheme, colors[0]);
         String title = getIntent().getExtras().getString(TITLE);
         getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + title);
         String path = getIntent().getExtras().getString(PATH);

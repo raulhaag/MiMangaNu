@@ -41,7 +41,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/autorTitle"
+                    android:id="@+id/titleAuthor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -50,23 +50,20 @@
                     android:textStyle="bold" />
 
                 <View
-                    android:id="@+id/s1"
+                    android:id="@+id/lineAuthor"
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:background="@color/accent_material_light" />
 
                 <TextView
-                    android:id="@+id/autor"
+                    android:id="@+id/textAuthor"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="N/A" />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="4dp" />
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/nodisponible" />
 
                 <TextView
-                    android:id="@+id/estadoTitle"
+                    android:id="@+id/titleStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -75,23 +72,20 @@
                     android:textStyle="bold" />
 
                 <View
-                    android:id="@+id/s2"
+                    android:id="@+id/lineStatus"
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:background="@color/accent_material_light" />
 
                 <TextView
-                    android:id="@+id/estado"
+                    android:id="@+id/textStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="N/A" />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="4dp" />
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/nodisponible" />
 
                 <TextView
-                    android:id="@+id/servidorTitle"
+                    android:id="@+id/titleServer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
@@ -100,26 +94,23 @@
                     android:textStyle="bold" />
 
                 <View
-                    android:id="@+id/s3"
+                    android:id="@+id/lineServer"
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:background="@color/accent_material_light" />
 
                 <TextView
-                    android:id="@+id/servidor"
+                    android:id="@+id/textServer"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="N/A" />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="4dp" />
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/nodisponible" />
             </LinearLayout>
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/s4"
+            android:id="@+id/blockSummary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/accent_material_light"
@@ -134,7 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:text="N/A" />
+            android:text="@string/nodisponible" />
 
     </LinearLayout>
 </com.melnykov.fab.ObservableScrollView>
