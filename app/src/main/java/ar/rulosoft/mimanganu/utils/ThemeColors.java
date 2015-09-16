@@ -55,7 +55,8 @@ public class ThemeColors {
 
     /**
      * Make use of HSV and brighten up or darken down the color
-     * @param color integer
+     *
+     * @param color  integer
      * @param factor 0..1 to darken and 1..inf to brighten color
      * @return changed color
      */
@@ -67,10 +68,9 @@ public class ThemeColors {
     }
 
     /**
-     * Same as brightnessColor, but considers a tolerate value and only brighten up color,
-     * if color is not bright enough, don't change color
+     * Same as brightnessColor, but only change color, if color brightness exceeds tolerate value
      *
-     * @param color input color
+     * @param color    input color
      * @param tolerate tolerate value, usually 0..255
      * @return changed color, if below tolerate value
      */
