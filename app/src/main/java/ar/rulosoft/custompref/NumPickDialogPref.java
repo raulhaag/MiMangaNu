@@ -33,8 +33,6 @@ public class NumPickDialogPref extends DialogPreference {
     private NumberPicker mNumberPicker;
     private TextView mMessageValue;
 
-    private float dpiScale;
-
     private int mMin;
     private int mMax;
 
@@ -54,8 +52,6 @@ public class NumPickDialogPref extends DialogPreference {
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
         mWrapAround = a.getBoolean(R.styleable.CustomDialogPref_wrap_around, false);
         a.recycle();
-
-        dpiScale = getContext().getResources().getDisplayMetrics().density;
 
         mSummary = (String) super.getSummary();
     }
