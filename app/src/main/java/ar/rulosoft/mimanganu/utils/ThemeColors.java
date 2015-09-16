@@ -68,7 +68,7 @@ public class ThemeColors {
     }
 
     /**
-     * Same as brightnessColor, but only change color, if color brightness exceeds tolerate value
+     * Same as brightnessColor, but only change color, if color brightness is below tolerate value
      *
      * @param color    input color
      * @param tolerate tolerate value, usually 0..255
