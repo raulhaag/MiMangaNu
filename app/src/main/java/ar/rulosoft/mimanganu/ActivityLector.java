@@ -181,8 +181,6 @@ public class ActivityLector extends ActionBarActivity
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
         mActionBar.setTitle(mChapter.getTitle());
         mActionBar.setTitleTextColor(Color.WHITE);
-        mActionBar.setAlpha(0f);
-        mActionBar.setVisibility(View.GONE);
 
         mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
         mControlsLayout.setAlpha(0f);
@@ -224,6 +222,13 @@ public class ActivityLector extends ActionBarActivity
             @Override
             public void onClick(View v) {
                 modScrollSensitive(.5f);
+            }
+        });
+        mScrollSensitiveTextView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(ActivityLector.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
 
@@ -461,26 +466,6 @@ public class ActivityLector extends ActionBarActivity
         if (controlVisible) {
             hideSystemUI();
             controlVisible = false;
-            ObjectAnimator anim = ObjectAnimator.ofFloat(mActionBar, "alpha", .90f, 0f);
-            anim.addListener(new AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mActionBar.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                }
-            });
-            anim.start();
             ObjectAnimator anim2 = ObjectAnimator.ofFloat(mControlsLayout, "alpha", .90f, 0f);
             anim2.addListener(new AnimatorListener() {
                 @Override
@@ -504,27 +489,6 @@ public class ActivityLector extends ActionBarActivity
         } else {
             showSystemUI();
             controlVisible = true;
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(mActionBar, "alpha", 0f, .90f);
-            anim.addListener(new AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                    mActionBar.setVisibility(View.VISIBLE);
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                }
-            });
-            anim.start();
             ObjectAnimator anim2 =
                     ObjectAnimator.ofFloat(mControlsLayout, "alpha", 0f, .90f);
             anim2.addListener(new AnimatorListener() {
