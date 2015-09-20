@@ -52,7 +52,7 @@
             android:key="scroll_speed"
             android:summary="%sx"
             android:title="@string/scroll_speed"
-            app:val_max="4"
+            app:val_max="5"
             app:val_min="1" />
         <ListPreference
             android:defaultValue="2048"
