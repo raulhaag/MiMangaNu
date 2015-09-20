@@ -80,14 +80,14 @@ public class ActivityLector extends ActionBarActivity
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private UnScrolledViewPager mViewPager;
     private UnScrolledViewPagerVertical mViewPagerV;
-    private RelativeLayout mControlsLayout;
+    private RelativeLayout mControlsLayout, mScrollSelect;
     private LinearLayout mSeekerLayout;
     private SeekBar mSeekBar;
     private Toolbar mActionBar;
     private Chapter mChapter;
     private Manga mManga;
     private ServerBase mServerBase;
-    private TextView mSeekerPage, mScrollSensitiveTextView;
+    private TextView mSeekerPage, mScrollSensitiveText;
     private MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
     private LastPageFragment mLastPageFrag;
     private Button mButtonMinus, mButtonPlus;
@@ -196,16 +196,19 @@ public class ActivityLector extends ActionBarActivity
         if (mDirection == Direction.L2R) mSeekBar.setRotation(180);
 
         mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
+
+        mScrollSelect = (RelativeLayout) findViewById(R.id.scroll_selector);
         mButtonMinus = (Button) findViewById(R.id.minus);
         mButtonPlus = (Button) findViewById(R.id.plus);
-        mScrollSensitiveTextView = (TextView) findViewById(R.id.scroll_level);
-        mScrollSensitiveTextView.setText("" + mScrollFactor);
+        mScrollSensitiveText = (TextView) findViewById(R.id.scroll_level);
+        mScrollSensitiveText.setText("" + mScrollFactor);
 
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
         mSeekerLayout.setBackgroundColor(reader_bg);
         mSeekerPage.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
+        mScrollSelect.setBackgroundColor(reader_bg);
 
         mChapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityLector.this, mChapter);
@@ -224,7 +227,7 @@ public class ActivityLector extends ActionBarActivity
                 modScrollSensitive(.5f);
             }
         });
-        mScrollSensitiveTextView.setOnLongClickListener(new View.OnLongClickListener() {
+        mScrollSensitiveText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 Toast.makeText(ActivityLector.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
@@ -238,7 +241,7 @@ public class ActivityLector extends ActionBarActivity
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
             Database.updateMangaScrollSensitive(ActivityLector.this, mManga.getId(), mScrollFactor);
-            mScrollSensitiveTextView.setText("" + mScrollFactor);
+            mScrollSensitiveText.setText("" + mScrollFactor);
             mSectionsPagerAdapter.setPageScroll(mScrollFactor);
         }
     }
