@@ -32,7 +32,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
-    //    public static final String MOSTRAR_EN_GALERIA = "mostrarengaleria";
     public int[] colors;
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
@@ -67,15 +66,15 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(this);
 
-        final boolean show_dialog = pm.getBoolean("show_updates", true);
-        if (show_dialog) {//TODO ! o no segun la version 1.30 sin !
+        final boolean show_dialog = pm.getBoolean("show_updates", false);
+        if (!show_dialog) {//TODO ! o no segun la version 1.30 sin !
             AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
             dlgAlert.setMessage(getString(R.string.update_message));
             dlgAlert.setTitle(R.string.app_name);
             dlgAlert.setCancelable(true);
             dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    pm.edit().putBoolean("show_updates", false).apply();
+                    pm.edit().putBoolean("show_updates", true).apply();
                 }
             });
             dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {

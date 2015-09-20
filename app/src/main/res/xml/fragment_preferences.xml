@@ -6,7 +6,7 @@
     android:key="first_preferencescreen">
 
     <PreferenceCategory android:title="@string/opciones_mm">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="true"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
@@ -22,7 +22,7 @@
             android:key="update_interval"
             android:summary="%s"
             android:title="@string/update_title" />
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="update_sound"
             android:summary="@string/notification_sound_subtitle"
@@ -96,7 +96,7 @@
 
     <!-- Finally, replaced by a much lighter color picker -->
     <PreferenceCategory android:title="@string/ui_settings">
-        <CheckBoxPreference
+        <SwitchPreference
             android:defaultValue="false"
             android:key="dark_theme"
             android:title="@string/theme_title" />

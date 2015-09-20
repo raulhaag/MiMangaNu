@@ -5,12 +5,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
-import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.preference.SwitchPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,15 +43,15 @@ public class SettingsActivity extends Activity {
             addPreferencesFromResource(R.xml.fragment_preferences);
 
             /** This enables to hide finished mangas, just a toggle */
-            final CheckBoxPreference cBoxPref =
-                    (CheckBoxPreference) getPreferenceManager().findPreference("mostrar_en_galeria");
+            final SwitchPreference cBoxPref =
+                    (SwitchPreference) getPreferenceManager().findPreference("mostrar_en_galeria");
             cBoxPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     boolean valor = (Boolean) newValue;
                     File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
                             "/MiMangaNu/", ".nomedia");
-                    if (!valor) if (f.exists()) f.delete();
+                    if (valor) if (f.exists()) f.delete();
                     else if (!f.exists()) try {
                         f.createNewFile();
                     } catch (IOException e) {

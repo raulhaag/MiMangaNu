@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message">Cambios 1.33\n\t* Fix en un gran error al descargar mangas\nCambios 1.32\n\t* Agregado NineManga en Aleman\n\t* Movida la db al directorio de trabajo de la app\n\t* Agregada la traduccion a ruso (gracias a XpycT)\n\t* Cambiado el selector de color personalizado\n\t* muchas mejoras y fixes, demaciadas quizas :-) </string>
+    <string name="update_message">Cambios 1.35\n\t* Agregado selector de velocidad de scroll tanto por defecto como por manga\n\t* Agregado immersive mode para kitkat y superior\n\t* Introduciendo al tema "Oscuro"\n\t* Agregado la opcion de color para el lector\n\t* Otros fixes</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>
@@ -141,5 +141,11 @@
     <string name="sort_title">Título</string>
     <string name="sort_title_asc">Título (z-a)</string>
     <string name="more_options">Más opciones</string>
+    <string name="about">Acerca</string>
+    <string name="color_primario_sub">Color primario, para la barra, etc</string>
+    <string name="color_reader">Color para el Lector</string>
+    <string name="color_reader_sub">Mas suave para el lector</string>
+    <string name="color_secundario_sub">Color secundario, para botones, etc.</string>
+    <string name="license_sub">Toca para ver licencias y agradecimientos</string>
 
 </resources>

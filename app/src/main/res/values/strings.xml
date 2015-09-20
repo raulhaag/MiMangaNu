@@ -117,7 +117,7 @@
     <string name="title_activity_server_listade_mangas">List of Manga</string>
     <string name="title_activity_server_visual_navegacion">Mangas in</string>
     <string name="unwritable_folder">Unwritable folder.</string>
-    <string name="update_message">Changes 1.33\n\t* Fix big error on download manga\nChanges 1.32\n\t* Added NineManga in German\n\t* Db moved to work directory\n\t* Added the Russian translation (thanks to XpycT)\n\t* Changed the custom color selector\n\t* Many improvements and fixes , perhaps too :-) </string>
+    <string name="update_message">1.35 Changes \n \t* Added scroll speed selector default option and individual \n\t* Added immersive mode to KitKat and superior \n\t* Introducing dark theme \n\t* Added the option color for reader \n\t* Other fixes</string>
     <string name="update_news">Updates News</string>
     <string name="update_settings_title">Update Preferences</string>
     <string name="update_subtitle">Not auto update as default.</string>
