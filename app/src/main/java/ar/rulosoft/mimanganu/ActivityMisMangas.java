@@ -134,7 +134,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
                 break;
             }
             case R.id.action_configurar: {
-                startActivity(new Intent(this, OpcionesActivity.class));
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             }
             case R.id.sort_last_read: {

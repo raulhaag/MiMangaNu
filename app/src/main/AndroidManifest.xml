@@ -47,7 +47,7 @@
             android:name=".ActivityLicenseView"
             android:label="@string/licencia" />
         <activity
-            android:name=".OpcionesActivity"
+            android:name=".SettingsActivity"
             android:label="@string/configuraciones" />
 
         <service android:name=".services.DownloadPoolService" />
