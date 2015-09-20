@@ -786,6 +786,9 @@ public class ActivityLector extends ActionBarActivity
                 } catch (Exception e) {
                     error = e.getMessage();
                 }
+                if (c.getPages() < 1) {
+                    error = getString(R.string.error);
+                }
                 return c;
             }
 

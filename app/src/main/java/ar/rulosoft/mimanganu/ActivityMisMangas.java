@@ -56,6 +56,7 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         fragmentMisMangas = new FragmentMisMangas();
 
         fragmentAddManga.setRetainInstance(true);
+        fragmentMisMangas.setRetainInstance(true);
         mSectionsPagerAdapter.add(fragmentMisMangas);
         mSectionsPagerAdapter.add(fragmentAddManga);
 

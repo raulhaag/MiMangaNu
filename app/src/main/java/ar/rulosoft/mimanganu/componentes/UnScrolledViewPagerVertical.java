@@ -19,7 +19,7 @@ public class UnScrolledViewPagerVertical extends VerticalViewPager {
         try {
             return ((PageFragment) ((SectionsPagerAdapter) getAdapter()).getCurrentFragment()).canScrollV(dx);
         } catch (Exception e) {
-            e.printStackTrace();
+            //is last page nothing to do
         }
         return super.canScroll(v, checkV, dx, x, y);
     }
