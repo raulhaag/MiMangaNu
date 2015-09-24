@@ -105,7 +105,7 @@ public class FragmentUpdateSearchTask extends Fragment {
                 if (result > 0) {
                     Toast.makeText(activity, result + activity.getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
                 } else if (errorMsg != null && errorMsg.length() > 2) {
-                    Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT);
+                    Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show();
                 }
                 running = false;
                 actual = null;
