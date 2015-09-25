@@ -22,6 +22,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,7 +59,7 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
 
-public class ActivityLector extends ActionBarActivity
+public class ActivityLector extends AppCompatActivity
         implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
     // These are magic numbers
@@ -170,7 +171,7 @@ public class ActivityLector extends ActionBarActivity
         } else {
             setContentView(R.layout.activity_lector);
             mViewPager = (UnScrolledViewPager) findViewById(R.id.pager);
-            mViewPager.setOnPageChangeListener(pageChangeListener);
+            mViewPager.addOnPageChangeListener(pageChangeListener);
         }
 
         mServerBase = ServerBase.getServer(mManga.getServerId());
@@ -519,18 +520,13 @@ public class ActivityLector extends ActionBarActivity
     @Override
     public void onLeftTap() {
         int act = getCurrentItem();
-        if (act > 0) {
-            setCurrentItem(--act);
-        }
+        if (act > 0) setCurrentItem(--act);
     }
 
     @Override
     public void onRightTap() {
-        int a = mSectionsPagerAdapter.getCount();
         int act = getCurrentItem();
-        if (act < a) {
-            setCurrentItem(++act);
-        }
+        if (act < mSectionsPagerAdapter.getCount()) setCurrentItem(++act);
     }
 
     @Override
@@ -584,14 +580,14 @@ public class ActivityLector extends ActionBarActivity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView =
-                    inflater.inflate(R.layout.fragment_activity_lector_pagina, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_activity_lector_pagina, container, false);
             visor = (ImageViewTouch) rootView.findViewById(R.id.visor);
-            if (r != null) {
-                new Thread(r).start();
-            } else visor.setDisplayType(mScreenFit);
+
+            if (r != null) new Thread(r).start();
+            else visor.setDisplayType(mScreenFit);
             visor.setTapListener(mTapListener);
             visor.setScaleEnabled(false);
+
             cargando = (ProgressBar) rootView.findViewById(R.id.cargando);
             cargando.bringToFront();
             if (getArguments() != null)
