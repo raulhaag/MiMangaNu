@@ -134,7 +134,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
             }
         } else {
             mDoubleTapDirection = 1;
-            return 1f;
+            return getDefaultScale(mScaleType);
         }
     }
 
@@ -236,13 +236,11 @@ public class ImageViewTouch extends ImageViewTouchBase {
     }
 
     public interface OnImageViewTouchDoubleTapListener {
-
         void onDoubleTap();
     }
 
 
     public interface OnImageViewTouchSingleTapListener {
-
         void onSingleTapConfirmed();
     }
 
@@ -273,9 +271,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
                 }
             }
 
-            if (null != mSingleTapListener) {
-                mSingleTapListener.onSingleTapConfirmed();
-            }
+            if (null != mSingleTapListener) mSingleTapListener.onSingleTapConfirmed();
             return ImageViewTouch.this.onSingleTapConfirmed(e);
         }
 
@@ -293,9 +289,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
                 invalidate();
             }
 
-            if (null != mDoubleTapListener) {
-                mDoubleTapListener.onDoubleTap();
-            }
+            if (null != mDoubleTapListener) mDoubleTapListener.onDoubleTap();
 
             return super.onDoubleTap(e);
         }
