@@ -35,6 +35,7 @@ public class SeekBarDialogPref extends DialogPreference {
 
     private int mMin;
     private int mMax;
+    private int mType;
 
     private int mValue = 0;
 
@@ -49,6 +50,11 @@ public class SeekBarDialogPref extends DialogPreference {
                 R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
+        /** type of SeekBar, currently:
+         * 0 - no type, no modification
+         * 1 - scrollFactor, so modify to have 0.5 steps */
+        mType = a.getInteger(R.styleable.CustomDialogPref_val_type, 0);
+        if (mType == 1) mMin = 1;
         a.recycle();
 
         mSummary = (String) super.getSummary();
@@ -72,7 +78,7 @@ public class SeekBarDialogPref extends DialogPreference {
         if (mSummary == null) {
             return super.getSummary();
         } else {
-            return String.format(mSummary, entry);
+            return setMessage(mSummary, entry);
         }
     }
 
@@ -86,17 +92,30 @@ public class SeekBarDialogPref extends DialogPreference {
         }
     }
 
+    protected String setMessage(String _summary, int _value) {
+        float newValue = _value;
+        switch (mType) {
+            case 1: {
+                newValue = _value * 0.5f;
+                return String.format(_summary, newValue);
+            }
+            default: {
+                return String.format(_summary, (int) newValue);
+            }
+        }
+    }
+
     @Override
     protected void onBindDialogView(@NonNull View view) {
 
         mMessageValue = (TextView) view.findViewById(R.id.dialogText);
-        mMessageValue.setText(String.format(mSummary, mValue + mMin));
+        mMessageValue.setText(setMessage(mSummary, mValue + mMin));
 
         mSeekBar = (SeekBar) view.findViewById(R.id.dialogSeekBar);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mMessageValue.setText(String.format(mSummary, mSeekBar.getProgress() + mMin));
+                mMessageValue.setText(setMessage(mSummary, mSeekBar.getProgress() + mMin));
             }
 
             @Override
@@ -107,7 +126,16 @@ public class SeekBarDialogPref extends DialogPreference {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-        mSeekBar.setMax(mMax - mMin);
+
+        switch (mType) {
+            case 1: {
+                mSeekBar.setMax((mMax - mMin) * 2 + 1);
+                break;
+            }
+            default: {
+                mSeekBar.setMax(mMax - mMin);
+            }
+        }
         mSeekBar.setProgress(mValue - mMin);
 
         super.onBindDialogView(view);
@@ -118,7 +146,13 @@ public class SeekBarDialogPref extends DialogPreference {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
             mValue = mSeekBar.getProgress() + mMin;
-            String pushValue = String.valueOf(mValue);
+
+            String pushValue;
+            if (mType == 1)
+                pushValue = String.valueOf(mValue * 0.5f);
+            else
+                pushValue = String.valueOf(mValue);
+
             if (callChangeListener(pushValue)) {
                 persistString(pushValue);
                 notifyChanged();
@@ -143,6 +177,9 @@ public class SeekBarDialogPref extends DialogPreference {
         } else {
             getValue = String.valueOf(defaultValue);
         }
-        mValue = Integer.parseInt(getValue);
+        if (mType == 1)
+            mValue = (int) (Float.parseFloat(getValue) * 2);
+        else
+            mValue = Integer.parseInt(getValue);
     }
 }
