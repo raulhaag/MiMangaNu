@@ -15,19 +15,19 @@ public class DeNineMangaCom extends ServerBase {
     public static String HOST = "http://de.ninemanga.com";
 
     // As you can guess, "V" is missing, but this is the fault of the website, somehow
-    public static String[] generos = new String[]{
+    private static String[] genre = new String[]{
             "Alle", "0-9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
-    public static String[] generosV = new String[]{
+    private static String[] genreV = new String[]{
             "index_.html", "0-9_.html",
             "A_.html", "B_.html", "C_.html", "D_.html", "E_.html", "F_.html", "G_.html",
             "H_.html", "I_.html", "J_.html", "K_.html", "L_.html", "M_.html", "N_.html",
             "O_.html", "P_.html", "Q_.html", "R_.html", "S_.html", "T_.html", "U_.html",
             "W_.html", "X_.html", "Y_.html", "Z_.html"
     };
-    static String[] order = new String[]{
+    private static String[] order = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
 
@@ -125,7 +125,7 @@ public class DeNineMangaCom extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
         String source = getNavWithHeader().get(
                 HOST + DeNineMangaCom.order[order] +
-                        generosV[category].replace("_", "_" + pageNumber));
+                        genreV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
@@ -144,7 +144,7 @@ public class DeNineMangaCom extends ServerBase {
 
     @Override
     public String[] getCategories() {
-        return generos;
+        return genre;
     }
 
     @Override

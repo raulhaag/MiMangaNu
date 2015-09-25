@@ -13,12 +13,12 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
 
+    public static String HOST = "http://kissmanga.com";
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
-    public static String HOST = "http://kissmanga.com";
-    static String[] genre = new String[]{
+    private static String[] genre = new String[]{
             "All", "Action", "Adult", "Adventure", "Comedy", "Comic",
             "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem", "Historical",
             "Horror", "Lolicon", "Manga", "Manhua", "Manhwa", "Mature", "Mecha",
@@ -26,7 +26,7 @@ public class KissManga extends ServerBase {
             "Shotacon", "Shoujo", "Shounen", "Smut", "Sports", "Supernatural",
             "Webtoon", "Yuri"
     };
-    static String[] genreV = new String[]{
+    private static String[] genreV = new String[]{
             "/MangaList", "/Genre/Action", "/Genre/Adult", "/Genre/Adventure",
             "/Genre/Comedy", "/Genre/Comic", "/Genre/Doujinshi", "/Genre/Drama",
             "/Genre/Ecchi", "/Genre/Fantasy", "/Genre/Harem",
@@ -38,7 +38,7 @@ public class KissManga extends ServerBase {
             "/Genre/Sports", "/Genre/Supernatural", "/Genre/Webtoon",
             "/Genre/Yuri"
     };
-    static String[] order = new String[]{
+    private static String[] order = new String[]{
             "/MostPopular", "/LatestUpdate", "/Newest", ""
     };
 
