@@ -108,11 +108,6 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
     }
 
     @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.descargas: {
@@ -183,11 +178,6 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
     }
 
     @Override
