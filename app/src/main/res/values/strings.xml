@@ -120,7 +120,7 @@
     <string name="update_message">1.35 Changes \n \t* Added scroll speed selector default option and individual \n\t* Added immersive mode to KitKat and superior \n\t* Introducing dark theme \n\t* Added the option color for reader \n\t* Other fixes</string>
     <string name="update_news">Updates News</string>
     <string name="update_settings_title">Update Preferences</string>
-    <string name="update_subtitle">Not auto update as default.</string>
+    <string name="update_subtitle">No auto update as default.</string>
     <string name="update_title">Update interval</string>
     <string name="vercomolista">View as List</string>
     <string name="vertical">Vertical</string>

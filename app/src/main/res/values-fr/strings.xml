@@ -106,9 +106,9 @@
     <string name="no_update">Ne pas chercher de mise à jour</string>
     <string name="_6hours">6 Heures</string>
     <string name="_12hours">12 Heures</string>
-    <string name="_1day">1 jour</string>
-    <string name="_2day">2 jours</string>
-    <string name="_7day">7 jours</string>
+    <string name="_1day">1 Jour</string>
+    <string name="_2day">2 Jours</string>
+    <string name="_7day">7 Semaine</string>
     <string name="update_settings_title">Préférence de mise à jour</string>
     <string name="update_subtitle">Pas de mise à jour par défaut.</string>
     <string name="update_title">Intervalle de mise à jour</string>
@@ -138,4 +138,12 @@
     <string name="sort_title_asc">Titre (z-a)</string>
     <string name="sort">Ordre</string>
     <string name="more_options">Plus d\'options </string>
+    <string name="apachelic">Licence Apache</string>
+    <string name="color_reader">Couleur Lecteur</string>
+    <string name="color_reader_sub">La couleur dans le mode de lecteur</string>
+    <string name="download_image_again">Télécharger l'image à nouveau</string>
+    <string name="hello_world">Bonjour le monde</string>
+    <string name="orden">Ordre</string>
+    <string name="see_later">Lire plus tard</string>
+    <string name="update_news">Nouvelles</string>
 </resources>
