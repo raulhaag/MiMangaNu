@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_server_listade_mangas">Liste des Mangas</string>
     <string name="title_activity_activity_detalles">Détails</string>
@@ -66,7 +65,7 @@
     <string name="r2l">"De droite à gauche"</string>
     <string name="l2r">De gauche à droite</string>
     <string name="vertical">Vertical</string>
-    <string name="ajuste_imagen">"Adapter l'image par défaut"</string>
+    <string name="ajuste_imagen">"Adapter l\'image par défaut"</string>
     <string name="ajuste_imagen_subtitle">"(Original, hauteur, largeur, ou meilleur ajustement)"</string>
     <string name="no_scale">"Taille originale"</string>
     <string name="mejor_ajuste">Meilleur ajustement</string>
@@ -141,7 +140,7 @@
     <string name="apachelic">Licence Apache</string>
     <string name="color_reader">Couleur Lecteur</string>
     <string name="color_reader_sub">La couleur dans le mode de lecteur</string>
-    <string name="download_image_again">Télécharger l'image à nouveau</string>
+    <string name="download_image_again">Télécharger l\'image à nouveau</string>
     <string name="hello_world">Bonjour le monde</string>
     <string name="orden">Ordre</string>
     <string name="see_later">Lire plus tard</string>

@@ -74,7 +74,7 @@
     <string name="no_scale">"Dimensioni originali"</string>
     <string name="mejor_ajuste">Scelta migliore</string>
     <string name="ajuste_ancho">"Adatta alla larghezza"</string>
-    <string name="ajuste_alto">"Adatta all'altezza"</string>
+    <string name="ajuste_alto">"Adatta all\'altezza"</string>
     <string name="max_texture_title">Dimensione massima trama</string>
     <string name="max_texture_subtitle">Dimensioni di texture, che sarà utilizzata (0 per disattivare l\'accelerazione hardware)\n%s</string>
     <string name="opciones_descarga">"Impostazioni download"</string>
@@ -127,7 +127,7 @@
     <string name="color_reader_sub">Il colore nel modo lettore</string>
     <string name="color_secundario">Colore secondario</string>
     <string name="color_secundario_sub">Colorante secondario, per una maggiore varietà</string>
-    <string name="direcctorio_subtitle"> Per i download (Devi spostare il contenuto nella nuova directory manualmente, riavviare l'applicazione e talvolta il dispositivo)</string>
+    <string name="direcctorio_subtitle"> Per i download (Devi spostare il contenuto nella nuova directory manualmente, riavviare l\'applicazione e talvolta il dispositivo)</string>
     <string name="directorio_title"> Selezionare la directory</string>
     <string name="download_image_again"> Scarica di nuovo immagine</string>
     <string name="download_selection">Scarica la selezione</string>
