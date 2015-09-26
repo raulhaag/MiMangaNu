@@ -28,9 +28,8 @@ import ar.rulosoft.mimanganu.servers.SubManga;
 import ar.rulosoft.mimanganu.servers.TusMangasOnlineCom;
 
 public class FragmentAddManga extends Fragment implements OnServerClickListener {
-
-    RecyclerView lista_server;
-    ServerRecAdapter adapter;
+    private RecyclerView lista_server;
+    private ServerRecAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,7 +37,9 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
         lista_server = (RecyclerView) rView.findViewById(R.id.lista_de_servers);
         lista_server.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (((ActivityMisMangas) getActivity()).darkTheme) {
-            ((CardView) rView.findViewById(R.id.cardview_server_container)).setCardBackgroundColor(getResources().getColor(R.color.background_floating_material_dark));
+            ((CardView) rView.findViewById(R.id.cardview_server_container))
+                    .setCardBackgroundColor(getResources()
+                            .getColor(R.color.background_floating_material_dark));
         }
         return rView;
     }

@@ -62,15 +62,15 @@ public class ActivityLector extends AppCompatActivity
         implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
     // These are magic numbers
-    public static final String KEEP_SCREEN_ON = "keep_screen_on";
-    public static final String ORIENTATION = "orientation";
-    public static final String ADJUST_KEY = "ajustar_a";
-    public static final String MAX_TEXTURE = "max_texture";
+    private static final String KEEP_SCREEN_ON = "keep_screen_on";
+    private static final String ORIENTATION = "orientation";
+    private static final String ADJUST_KEY = "ajustar_a";
+    private static final String MAX_TEXTURE = "max_texture";
     private static int mTextureMax;
     private static DisplayType mScreenFit;
 
-    public Direction mDirection;
-    public InitialPosition iniPosition = InitialPosition.LEFT_UP;
+    private Direction mDirection;
+    private InitialPosition iniPosition = InitialPosition.LEFT_UP;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
     private boolean mKeepOn; // false = normal  | true = screen on
@@ -260,7 +260,7 @@ public class ActivityLector extends AppCompatActivity
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    public void actualizarIcono(DisplayType displayType, boolean showMsg) {
+    private void actualizarIcono(DisplayType displayType, boolean showMsg) {
         if (displayMenu != null) {
             String msg = "";
             switch (displayType) {
@@ -318,13 +318,13 @@ public class ActivityLector extends AppCompatActivity
         else mViewPager.setAdapter(adapter);
     }
 
-    public int getCurrentItem() {
+    private int getCurrentItem() {
         if (mDirection == Direction.VERTICAL)
             return mViewPagerV.getCurrentItem();
         else return mViewPager.getCurrentItem();
     }
 
-    public void setCurrentItem(int pos) {
+    private void setCurrentItem(int pos) {
         if (mDirection == Direction.VERTICAL)
             mViewPagerV.setCurrentItem(pos);
         else mViewPager.setCurrentItem(pos);

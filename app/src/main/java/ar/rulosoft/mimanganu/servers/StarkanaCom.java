@@ -12,7 +12,7 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class StarkanaCom extends ServerBase {
 
-    public static String[] generos = new String[]{
+    private static String[] generos = new String[]{
             "All", "Action", "Adult", "Adventure", "Anime", "Comedy", "Cooking",
             "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender bender", "Harem",
             "Hentai", "Historical", "Horror", "Josei", "Live action", "Lolicon",
@@ -23,7 +23,7 @@ public class StarkanaCom extends ServerBase {
             "Shounen Ai", "Shounen-ai", "Slice of life", "Smut", "Sports",
             "Supernatural", "Tournament", "Tragedy", "Webtoons", "Yuri"
     };
-    public static String[] generosV = new String[]{
+    private static String[] generosV = new String[]{
             "", "g=1", "g=53", "g=21", "g=13", "g=2", "g=29", "g=46", "g=3",
             "g=27", "g=14", "g=22", "g=37", "g=52", "g=35", "g=6", "g=15",
             "g=25", "g=54", "g=50", "g=23", "g=28", "g=31", "g=32", "g=39",
@@ -31,7 +31,7 @@ public class StarkanaCom extends ServerBase {
             "g=26", "g=56", "g=20", "g=55", "g=40", "g=16", "g=51", "g=41",
             "g=33", "g=42", "g=30", "g=4", "g=49", "g=34", "g=47", "g=44"
     };
-    public static String[] paginas = new String[]{
+    private static String[] paginas = new String[]{
             "/manga/0", "/manga/A", "/manga/B", "/manga/C", "/manga/D",
             "/manga/E", "/manga/F", "/manga/G", "/manga/H", "/manga/I",
             "/manga/J", "/manga/K", "/manga/L", "/manga/M", "/manga/N",
@@ -113,7 +113,7 @@ public class StarkanaCom extends ServerBase {
         return imagenes[page];
     }
 
-    public void setExtra(Chapter c) throws Exception {
+    private void setExtra(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath() + "?scroll");
         Pattern p = Pattern.compile("<img src=\"([^\"]+)\" alt=\"[^\"]*\" class=\"dyn\">");
         Matcher m = p.matcher(source);
@@ -148,7 +148,7 @@ public class StarkanaCom extends ServerBase {
         return mangas;
     }
 
-    ArrayList<Manga> getMangasFromSource(String source) {
+    private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("title=\"([^\"]+)\" href=\"(/manga/.+?)\".+?src=\"(.+?)\".+?tick_(.+?)\\.");// "<img class=\"a_img\" src=\"(.+?)\".+?<img src=\"http://starkana.com/img/icons/tick_(.+?).png\".+?href=\"(.+?)\".+?>(.+?)</a>");
         Matcher m = p.matcher(source);

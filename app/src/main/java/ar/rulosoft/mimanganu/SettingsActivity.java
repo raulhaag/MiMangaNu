@@ -22,16 +22,16 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 
 public class SettingsActivity extends Activity {
-
-    boolean darkTheme;
-    SharedPreferences pm;
+    private boolean darkTheme;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-        getFragmentManager().beginTransaction().replace(android.R.id.content, new PreferencesFragment()).commit();
+        getFragmentManager().beginTransaction()
+                .replace(android.R.id.content, new PreferencesFragment())
+                .commit();
     }
 
     public static class PreferencesFragment extends PreferenceFragment {

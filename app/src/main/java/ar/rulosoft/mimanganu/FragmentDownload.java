@@ -17,9 +17,9 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentDownload extends Fragment {
 
-    ListView listDownload;
-    ShowDownloadsTask md;
-    DownloadAdapter downAdapter;
+    private ListView listDownload;
+    private ShowDownloadsTask md;
+    private DownloadAdapter downAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -30,7 +30,8 @@ public class FragmentDownload extends Fragment {
 
     @Override
     public void onResume() {
-        downAdapter = new DownloadAdapter(getActivity(), new ArrayList<ChapterDownload>(), ((ActivityDownloads) getActivity()).darkTheme);
+        downAdapter = new DownloadAdapter(getActivity(),
+                new ArrayList<ChapterDownload>(), ((ActivityDownloads) getActivity()).darkTheme);
         listDownload.setAdapter(downAdapter);
         md = new ShowDownloadsTask();
         if (Build.VERSION.SDK_INT >= 11)

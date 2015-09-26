@@ -12,9 +12,8 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.ServerViewHolder> {
-
-    OnServerClickListener onServerClickListener;
-    ServerBase[] servers;
+    private OnServerClickListener onServerClickListener;
+    private ServerBase[] servers;
 
     public ServerRecAdapter(ServerBase[] serverBases) {
         this.servers = serverBases;

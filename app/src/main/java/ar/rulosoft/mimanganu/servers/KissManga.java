@@ -13,7 +13,7 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
 
-    public static String HOST = "http://kissmanga.com";
+    private static String HOST = "http://kissmanga.com";
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
@@ -168,7 +168,7 @@ public class KissManga extends ServerBase {
         return getMangasSource(source);
     }
 
-    public ArrayList<Manga> getMangasSource(String source) {
+    private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p =
                 Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");

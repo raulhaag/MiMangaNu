@@ -38,7 +38,7 @@ public class ColorListDialogPref extends DialogPreference {
     private Context mContext = getContext();
     private String[] mColorCodeList;
     private String[] mColorNameList;
-    ShapeDrawable mShapeDraw;
+    private ShapeDrawable mShapeDraw;
 
     private ListView mListView;
     private String mSummary;
@@ -139,7 +139,7 @@ public class ColorListDialogPref extends DialogPreference {
         }
     }
 
-    protected void setIconChange() {
+    private void setIconChange() {
         /** Create Shape and ImageView, set color and push it into the icon, fast and small */
         mShapeDraw.getPaint().setColor(mValue);
         ImageView myColorDraw = new ImageView(mContext);

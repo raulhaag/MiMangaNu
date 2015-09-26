@@ -33,8 +33,8 @@ public class MangaPanda extends ServerBase {
             "tragedy", "vampire", "yaoi", "yuri"
     };
     private static final String[] order = {"Popular"};
-    public static String HOST = "http://www.mangapanda.com";
-    public static String[] genre = new String[]{
+    private static String HOST = "http://www.mangapanda.com";
+    private static String[] genre = new String[]{
             "All", "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
             "Fantasy", "Gender bender", "Harem", "Historical", "Horror",
             "Josei", "Magic", "Martial arts", "Mature", "Mecha", "Military",
@@ -51,7 +51,7 @@ public class MangaPanda extends ServerBase {
         setServerID(ServerBase.MANGAPANDA);
     }
 
-    public void SetHost(String new_host) {
+    protected void SetHost(String new_host) {
         HOST = new_host;
     }
 

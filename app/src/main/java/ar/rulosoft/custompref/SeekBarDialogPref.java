@@ -96,7 +96,7 @@ public class SeekBarDialogPref extends DialogPreference {
         }
     }
 
-    protected String setMessage(String _summary, int _value) {
+    private String setMessage(String _summary, int _value) {
         float newValue = _value;
         switch (mType) {
             case 1: {

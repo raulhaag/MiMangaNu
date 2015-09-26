@@ -16,7 +16,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
  * Created by Raul
  */
 public class FragmentUpdateSearchTask extends Fragment {
-    SearchForNewsChapters searchForNewsChapters;
+    private SearchForNewsChapters searchForNewsChapters;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {

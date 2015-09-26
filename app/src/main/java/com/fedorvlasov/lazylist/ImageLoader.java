@@ -22,16 +22,14 @@ import java.util.concurrent.Executors;
 import ar.rulosoft.mimanganu.componentes.Imaginable;
 
 public class ImageLoader {
-
     private static Map<Imaginable, String> imageViews =
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
-    //final int stub_id = R.drawable.stub;
 
-    MemCache mMemCache;
-    FileCache mFileCache;
-    ExecutorService imgThreadPool;
+    private MemCache mMemCache;
+    private FileCache mFileCache;
+    private ExecutorService imgThreadPool;
     // handler to display images in UI thread
-    Handler handler = new Handler();
+    private Handler handler = new Handler();
 
     public ImageLoader(Context context) {
         imageViews.clear();
@@ -51,7 +49,7 @@ public class ImageLoader {
      * @param path to file
      * @return bitmap, which is converted
      */
-    public static Bitmap convertBitmap(String path) {
+    private static Bitmap convertBitmap(String path) {
         Bitmap bitmap = null;
         BitmapFactory.Options bfOptions = new BitmapFactory.Options();
         // Disable Dithering mode

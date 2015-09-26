@@ -12,7 +12,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
 public class DeNineMangaCom extends ServerBase {
-    public static String HOST = "http://de.ninemanga.com";
+    private static String HOST = "http://de.ninemanga.com";
 
     // As you can guess, "V" is missing, but this is the fault of the website, somehow
     private static String[] genre = new String[]{
@@ -100,7 +100,7 @@ public class DeNineMangaCom extends ServerBase {
         return images[page];
     }
 
-    public void setExtra(Chapter c) throws Exception {
+    private void setExtra(Chapter c) throws Exception {
         String source = getNavWithHeader().get(
                 c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
@@ -129,7 +129,7 @@ public class DeNineMangaCom extends ServerBase {
         return getMangasFromSource(source);
     }
 
-    public ArrayList<Manga> getMangasFromSource(String source) {
+    private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile(
                 "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");

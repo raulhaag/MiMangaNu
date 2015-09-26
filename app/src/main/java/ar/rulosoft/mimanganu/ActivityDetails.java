@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -25,34 +26,37 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityDetails extends ActionBarActivity {
+public class ActivityDetails extends AppCompatActivity {
 
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
 
-    ImageLoader imageLoader;
-    ControlInfo data;
-    SwipeRefreshLayout str;
+    private ImageLoader imageLoader;
+    private ControlInfo data;
+    private SwipeRefreshLayout str;
 
-    ServerBase s;
-    Manga m;
-    FloatingActionButton button_add;
-    SharedPreferences pm;
-    boolean darkTheme;
-
+    private ServerBase s;
+    private Manga m;
+    private FloatingActionButton button_add;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
         data = (ControlInfo) findViewById(R.id.datos);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
-        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        int[] colors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(new OnClickListener() {
             @Override

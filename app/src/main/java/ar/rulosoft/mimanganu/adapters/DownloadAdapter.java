@@ -18,11 +18,11 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
 
-    public static String[] states;
+    private static String[] states;
     private static int listItem = R.layout.listitem_descarga;
-    public boolean darkTheme;
-    ArrayList<ChapterDownload> downloads = new ArrayList<>();
+    private ArrayList<ChapterDownload> downloads = new ArrayList<>();
     private LayoutInflater li;
+    private boolean darkTheme;
 
     public DownloadAdapter(Context context, ArrayList<ChapterDownload> objects, boolean darkTheme) {
         super(context, listItem);

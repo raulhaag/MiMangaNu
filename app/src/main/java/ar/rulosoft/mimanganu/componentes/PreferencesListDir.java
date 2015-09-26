@@ -26,11 +26,10 @@ import ar.rulosoft.custompref.ArrayAdapterDirectory;
 import ar.rulosoft.mimanganu.R;
 
 public class PreferencesListDir extends DialogPreference {
-
-    Context context = getContext();
-    String actual;
-    ListView dirs;
-    TextView dirs_path;
+    private Context context = getContext();
+    private String actual;
+    private ListView dirs;
+    private TextView dirs_path;
 
     public PreferencesListDir(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -113,7 +112,7 @@ public class PreferencesListDir extends DialogPreference {
         super.onPrepareDialogBuilder(builder);
     }
 
-    public ArrayList<String> dirList(String directory) {
+    private ArrayList<String> dirList(String directory) {
         ArrayList<String> list = new ArrayList<>();
         if (directory.length() != 1) {
             list.add("..");

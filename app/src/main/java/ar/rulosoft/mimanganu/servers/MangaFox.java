@@ -11,12 +11,20 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class MangaFox extends ServerBase {
 
-    public static final String[] generos = {"All", "Action", "Adult", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender",
-            "Harem", "Historical", "Horror", "Josei", "Martial Arts", "Mecha", "Mystery", "One Shot", "Psychological", "Romance", "School Life", "Sci-fi",
-            "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life", "Smut", "Sports", "Supernatural", "Tragedy", "Webtoons", "Yuri"};
-    public static final String[] generosV = {"directory", "action", "adult", "adventure", "comedy", "doujinshi", "Drama", "ecchi", "fantasy", "gender-bender",
-            "harem", "historical", "horror", "josei", "martial-arts", "mecha", "mystery", "one_shot", "psychological", "romance", "school-life", "sci-fi",
-            "seinen", "shoujo", "shoujo-Ai", "shounen", "slice-of-life", "smut", "sports", "supernatural", "tragedy", "webtoons", "yuri"};
+    private static final String[] genre = {
+            "All", "Action", "Adult", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi",
+            "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Martial Arts",
+            "Mecha", "Mystery", "One Shot", "Psychological", "Romance", "School Life", "Sci-fi",
+            "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life", "Smut", "Sports",
+            "Supernatural", "Tragedy", "Webtoons", "Yuri"
+    };
+    private static final String[] genreV = {
+            "directory", "action", "adult", "adventure", "comedy", "doujinshi", "Drama", "ecchi",
+            "fantasy", "gender-bender", "harem", "historical", "horror", "josei", "martial-arts",
+            "mecha", "mystery", "one_shot", "psychological", "romance", "school-life", "sci-fi",
+            "seinen", "shoujo", "shoujo-Ai", "shounen", "slice-of-life", "smut", "sports",
+            "supernatural", "tragedy", "webtoons", "yuri"
+    };
     private static final String PATRON_CAPS_VIS = "<a class=\"manga_img\" href=\"(.+?)\".+?src=\"(.+?)\".+?(<em class=\"tag_completed\"></em>						</a>|</a>).+?rel=\".+?\">(.+?)<";
     private static final String PATTERN_SERIE = "<li><a href=\"(.+?)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">(.+?)</a></li>";
     private static final String SEGMENTO = "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
@@ -25,8 +33,8 @@ public class MangaFox extends ServerBase {
     private static final String PATTERN_CAPITULOS = "<h\\d>[\\s]+<a href=\"([^\"]+)\".+?>([^<]+)([^\"]+<span class=\"title nowrap\">(.+?)<)?";
     private static final String PATRON_LAST = "(\\d+)</option>					<option value=\"0\"";
     private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
-    public static String[] orden = {"Popularity", "A - Z", "Rating", "Last Update"};
-    public static String[] ordenM = {"", "?az", "?rating", "?latest"};
+    private static String[] orden = {"Popularity", "A - Z", "Rating", "Last Update"};
+    private static String[] ordenM = {"", "?az", "?rating", "?latest"};
 
     public MangaFox() {
         this.setFlag(R.drawable.flag_eng);
@@ -59,17 +67,17 @@ public class MangaFox extends ServerBase {
             Matcher m;
             String data = new Navegador().get((manga.getPath()));
 
-            // portada
+            // Title
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
-            // sinopsis
+            // Summary
             manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
 
             manga.setFinished(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
 
-            //autor
+            // Author
             manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, ""));
 
-            // capitulos
+            // Chapter
             p = Pattern.compile(PATTERN_CAPITULOS);
             m = p.matcher(data);
 
@@ -120,7 +128,7 @@ public class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String web = "http://mangafox.me/" + generosV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
+        String web = "http://mangafox.me/" + genreV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
         String data = new Navegador().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher m = p.matcher(data);
@@ -138,7 +146,7 @@ public class MangaFox extends ServerBase {
 
     @Override
     public String[] getCategories() {
-        return generos;
+        return genre;
     }
 
     @Override

@@ -11,7 +11,7 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class MangaHere extends ServerBase {
 
-    public static final String[] generos = {
+    private static final String[] genre = {
             "All", "Action", "Adventure", "Comedy", "Doujinshi", "Drama",
             "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical",
             "Horror", "Josei", "Martial Arts", "Mature", "Mecha", "Mystery",
@@ -19,7 +19,7 @@ public class MangaHere extends ServerBase {
             "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life",
             "Sports", "Supernatural", "Tragedy", "Yuri"
     };
-    public static final String[] generosV = {
+    private static final String[] genreV = {
             "directory", "action", "adventure", "comedy", "doujinshi", "Drama",
             "ecchi", "fantasy", "gender_bender", "harem", "historical",
             "horror", "josei", "martial_arts", "mature", "mecha", "mystery",
@@ -39,11 +39,11 @@ public class MangaHere extends ServerBase {
     private static final String PATRON_LAST = ">(\\d+)</option>[^<]+?</select>";
     private static final String PATRON_IMAGEN =
             "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
-    public static String HOST = "http://www.mangahere.co";
-    public static String[] orden = {
+    private static String HOST = "http://www.mangahere.co";
+    private static String[] orden = {
             "Views", "A - Z", "Rating", "Last Update"
     };
-    public static String[] ordenM = {
+    private static String[] ordenM = {
             "?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"
     };
 
@@ -123,7 +123,7 @@ public class MangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String web = HOST + "/" + generosV[categorie] + "/" +
+        String web = HOST + "/" + genreV[categorie] + "/" +
                 pageNumber + ".htm" + ordenM[order];
         String data = new Navegador().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
@@ -140,7 +140,7 @@ public class MangaHere extends ServerBase {
 
     @Override
     public String[] getCategories() {
-        return generos;
+        return genre;
     }
 
     @Override

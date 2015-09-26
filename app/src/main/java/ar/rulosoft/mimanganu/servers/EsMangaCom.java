@@ -12,14 +12,22 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class EsMangaCom extends ServerBase {
 
-    public static String[] generos = new String[]{"Todos", "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia", "Deportes", "Drama",
-            "Ecchi", "Escolar", "Fantasía", "Harem", "Hentai", "Histórico", "Horror", "Josei", "Mecha", "Misterio", "Oneshot", "Psicológico", "Romance",
-            "Seinen", "Shojo", "Shounen", "Sobrenatural", "Tragedia", "Vida Cotidiana", "Yuri"};
-    public static String[] generosV = new String[]{"/lista-mangas/orden/vistas", "/genero/accion", "/genero/artes-marciales", "/genero/aventura",
-            "/genero/ciencia-ficcion", "/genero/comedia", "/genero/deportes", "/genero/drama", "/genero/ecchi", "/genero/escolar", "/genero/fantasia",
-            "/genero/harem", "/genero/hentai", "/genero/historico", "/genero/horror", "/genero/josei", "/genero/mecha", "/genero/misterio", "/genero/oneshot",
-            "/genero/psicologico", "/genero/romance", "/genero/seinen", "/genero/shojo", "/genero/shounen", "/genero/sobrenatural", "/genero/tragedia",
-            "/genero/vida-cotidiana", "/genero/yuri"};
+    private static String[] generos = new String[]{
+            "Todos", "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
+            "Deportes", "Drama", "Ecchi", "Escolar", "Fantasía", "Harem", "Hentai", "Histórico",
+            "Horror", "Josei", "Mecha", "Misterio", "Oneshot", "Psicológico", "Romance",
+            "Seinen", "Shojo", "Shounen", "Sobrenatural", "Tragedia", "Vida Cotidiana", "Yuri"
+    };
+    private static String[] generosV = new String[]{
+            "/lista-mangas/orden/vistas", "/genero/accion", "/genero/artes-marciales",
+            "/genero/aventura", "/genero/ciencia-ficcion", "/genero/comedia", "/genero/deportes",
+            "/genero/drama", "/genero/ecchi", "/genero/escolar", "/genero/fantasia",
+            "/genero/harem", "/genero/hentai", "/genero/historico", "/genero/horror",
+            "/genero/josei", "/genero/mecha", "/genero/misterio", "/genero/oneshot",
+            "/genero/psicologico", "/genero/romance", "/genero/seinen", "/genero/shojo",
+            "/genero/shounen", "/genero/sobrenatural", "/genero/tragedia",
+            "/genero/vida-cotidiana", "/genero/yuri"
+    };
 
     public EsMangaCom() {
         this.setFlag(R.drawable.flag_esp);
@@ -62,7 +70,8 @@ public class EsMangaCom extends ServerBase {
         Navegador nav = new Navegador();
         String source = nav.get(m.getPath());
         //sinopsis
-        m.setSynopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s", source, "Sin Sinopsis").replaceAll("<.+?>", ""));
+        m.setSynopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s",
+                source, "Sin Sinopsis").replaceAll("<.+?>", ""));
         //imagen
         m.setImages(getFirstMatchDefault("(http://esmanga.com/img/mangas/.+?)\"", source, ""));
         //status
@@ -93,7 +102,8 @@ public class EsMangaCom extends ServerBase {
     public void chapterInit(Chapter c) throws Exception {
         Navegador nav = new Navegador();
         String source = nav.get(c.getPath());
-        String textNum = getFirstMatch("option value=\"(\\d+)[^=]+</option></select>", source, "Error en plugin (obtener p�ginas)");
+        String textNum = getFirstMatch("option value=\"(\\d+)[^=]+</option></select>",
+                source, "Error en plugin (obtener p�ginas)");
         c.setPages(Integer.parseInt(textNum));
     }
 
@@ -103,7 +113,7 @@ public class EsMangaCom extends ServerBase {
         return getMangasWeb(web);
     }
 
-    public ArrayList<Manga> getMangasWeb(String web) throws Exception {
+    private ArrayList<Manga> getMangasWeb(String web) throws Exception {
         String source = new Navegador().get(web);
         Pattern p = Pattern.compile("src=\"([^\"]+)\".+?<a href=\"(http://esmanga.com/manga/.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
