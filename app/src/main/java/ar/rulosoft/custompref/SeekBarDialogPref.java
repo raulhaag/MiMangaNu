@@ -50,11 +50,15 @@ public class SeekBarDialogPref extends DialogPreference {
                 R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
-        /** type of SeekBar, currently:
-         * 0 - no type, no modification
-         * 1 - scrollFactor, so modify to have 0.5 steps */
+
+        /**  mType = 0 - no type, no modification */
         mType = a.getInteger(R.styleable.CustomDialogPref_val_type, 0);
-        if (mType == 1) mMin = 1;
+        if (mType == 1) {
+            /** mType = 1 - scrollFactor, so modify to have 0.5 steps,
+             *              range is from 0.5 to 5.0 */
+            mMin = 1;
+            mMax = 10;
+        }
         a.recycle();
 
         mSummary = (String) super.getSummary();
@@ -126,16 +130,7 @@ public class SeekBarDialogPref extends DialogPreference {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-
-        switch (mType) {
-            case 1: {
-                mSeekBar.setMax((mMax - mMin) * 2 + 1);
-                break;
-            }
-            default: {
-                mSeekBar.setMax(mMax - mMin);
-            }
-        }
+        mSeekBar.setMax(mMax - mMin);
         mSeekBar.setProgress(mValue - mMin);
 
         super.onBindDialogView(view);
@@ -146,13 +141,7 @@ public class SeekBarDialogPref extends DialogPreference {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
             mValue = mSeekBar.getProgress() + mMin;
-
-            String pushValue;
-            if (mType == 1)
-                pushValue = String.valueOf(mValue * 0.5f);
-            else
-                pushValue = String.valueOf(mValue);
-
+            String pushValue = String.valueOf((mType == 1) ? mValue * 0.5f : mValue);
             if (callChangeListener(pushValue)) {
                 persistString(pushValue);
                 notifyChanged();
@@ -177,9 +166,6 @@ public class SeekBarDialogPref extends DialogPreference {
         } else {
             getValue = String.valueOf(defaultValue);
         }
-        if (mType == 1)
-            mValue = (int) (Float.parseFloat(getValue) * 2);
-        else
-            mValue = Integer.parseInt(getValue);
+        mValue = (mType == 1) ? (int) (Float.parseFloat(getValue) * 2) : Integer.parseInt(getValue);
     }
 }
