@@ -6,7 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,18 +21,17 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityResultadoDeBusqueda extends ActionBarActivity {
+public class ActivityResultadoDeBusqueda extends AppCompatActivity {
     public static final String TERMINO = "termino_busqueda";
-    String termino = "";
-    int serverId;
-    ProgressBar cargando;
-    ListView lista;
-    SharedPreferences pm;
-    boolean darkTheme;
+    private String termino = "";
+    private int serverId;
+    private ProgressBar cargando;
+    private ListView lista;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
@@ -53,8 +52,11 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
             }
         });
         new PerformSearchTask().execute();
-        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        int[] colors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
     }
 
     public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {
@@ -82,9 +84,12 @@ public class ActivityResultadoDeBusqueda extends ActionBarActivity {
             cargando.setVisibility(ProgressBar.INVISIBLE);
             if (error.length() < 2) {
                 if (result != null && !result.isEmpty() && lista != null) {
-                    lista.setAdapter(new ArrayAdapter<>(ActivityResultadoDeBusqueda.this, android.R.layout.simple_list_item_1, result));
+                    lista.setAdapter(new ArrayAdapter<>(
+                            ActivityResultadoDeBusqueda.this, android.R.layout.simple_list_item_1, result
+                    ));
                 } else if (result == null || result.isEmpty()) {
-                    Toast.makeText(ActivityResultadoDeBusqueda.this, getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
+                    Toast.makeText(ActivityResultadoDeBusqueda.this,
+                            getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
                 }
             } else {
                 Toast.makeText(ActivityResultadoDeBusqueda.this, error, Toast.LENGTH_LONG).show();

@@ -12,7 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -28,16 +28,16 @@ import java.util.List;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityMisMangas extends ActionBarActivity implements OnClickListener {
+public class ActivityMisMangas extends AppCompatActivity implements OnClickListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     public int[] colors;
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    ViewPager mViewPager;
-    FragmentMisMangas fragmentMisMangas;
-    FragmentAddManga fragmentAddManga;
-    SharedPreferences pm;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private FragmentMisMangas fragmentMisMangas;
+    private FragmentAddManga fragmentAddManga;
+    private ViewPager mViewPager;
+    private SharedPreferences pm;
     FloatingActionButton button_add;
     boolean darkTheme;
 
@@ -105,11 +105,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
 
         return true;
-    }
-
-    @Override
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
@@ -186,11 +181,6 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
     protected void onResume() {
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
             // re start to apply new theme
@@ -202,7 +192,9 @@ public class ActivityMisMangas extends ActionBarActivity implements OnClickListe
         }
 
         colors = ThemeColors.getColors(pm, getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+
         button_add.setColorNormal(colors[1]);
         button_add.setColorPressed(colors[3]);
         button_add.setColorRipple(colors[0]);

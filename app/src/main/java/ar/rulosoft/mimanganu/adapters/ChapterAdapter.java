@@ -30,9 +30,6 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
-
-    public static int TRANSPARENT = Color.TRANSPARENT;
-
     private static int COLOR_READ = Color.parseColor("#b2b2b2");
     private static int COLOR_READING = Color.parseColor("#121212");
     private static int COLOR_SELECTED = Color.parseColor("#33B5E5");
@@ -41,8 +38,8 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private static int buttonDownload = R.drawable.ic_action_download_light;
 
     private static int listItem = R.layout.listitem_capitulo;
-    SparseBooleanArray selected = new SparseBooleanArray();
-    ActivityManga activity;
+    private SparseBooleanArray selected = new SparseBooleanArray();
+    private ActivityManga activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
 
@@ -109,7 +106,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 holder.textViewName.setTextColor(Color.WHITE);
                 holder.textViewPages.setTextColor(Color.WHITE);
             } else {
-                convertView.setBackgroundColor(TRANSPARENT);
+                convertView.setBackgroundColor(Color.TRANSPARENT);
             }
             if (item.getPages() > 0) {
                 holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPages());

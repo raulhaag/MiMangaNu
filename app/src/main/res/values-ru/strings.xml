@@ -138,4 +138,11 @@
     <string name="sort_author">автор</string>
     <string name="sort_author_asc">Автор по убыванию</string>
     <string name="more_options">Больше вариантов </string>
+    <string name="about">насчет</string>
+    <string name="apachelic">Apache Лицензия</string>
+    <string name="color_reader">Читатель Цвет</string>
+    <string name="color_primario_sub">Главная окраски, как для заголовка окна и т.д.</string>
+    <string name="color_reader_sub">Цвет в режиме чтения</string>
+    <string name="color_secundario_sub">Вторичный раскраски, для большего разнообразия</string>
+    <string name="license_sub">Нажмите, чтобы увидеть лицензии и благодаря</string>
 </resources>

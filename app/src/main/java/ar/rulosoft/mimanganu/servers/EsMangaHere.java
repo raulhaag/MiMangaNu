@@ -22,17 +22,28 @@ public class EsMangaHere extends ServerBase {
     private static final String PATRON_LAST = ">(\\d+)</option>[^<]+?</select>";
     private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
 
-    public static String[] categorias = {"Todo", "Acción", "Aventura", "Comedia", "Doujinshi", "Drama", "Ecchi", "Fantasía", "Gender Bender", "Harem",
-            "Histórico", "Horror", "Josei", "Artes Marciales", "Maduro", "Mecha", "Misterio", "Oneshot", "Psicológico", "Romance", "Escolar",
-            "Ciencia Ficción", "Seinen", "Shojo", "Shojo Ai", "Shounen", "Vida Cotidiana", "Deportes", "Sobrenatural", "Tragedia", "Yuri"};
+    private static String[] categorias = {
+            "Todo", "Acción", "Aventura", "Comedia", "Doujinshi", "Drama", "Ecchi", "Fantasía",
+            "Gender Bender", "Harem", "Histórico", "Horror", "Josei", "Artes Marciales", "Maduro",
+            "Mecha", "Misterio", "Oneshot", "Psicológico", "Romance", "Escolar",
+            "Ciencia Ficción", "Seinen", "Shojo", "Shojo Ai", "Shounen", "Vida Cotidiana",
+            "Deportes", "Sobrenatural", "Tragedia", "Yuri"
+    };
 
-    public static String[] categoriasV = {"directory/", "acción/", "aventura/", "comedia/", "doujinshi/", "drama/", "ecchi/", "fantasía/",
-            "gender_bender/", "harem/", "histórico/", "horror/", "josei/", "artes_marciales/", "maduro/", "mecha/", "misterio/", "oneshot/", "psicológico/",
-            "romance/", "escolar/", "ciencia_ficción/", "seinen/", "shojo/", "shojo_ai/", "shounen/", "vida_cotidiana/", "deportes/", "sobrenatural/",
-            "tragedia/", "yuri/"};
+    private static String[] categoriasV = {
+            "directory/", "acción/", "aventura/", "comedia/", "doujinshi/", "drama/", "ecchi/",
+            "fantasía/", "gender_bender/", "harem/", "histórico/", "horror/", "josei/",
+            "artes_marciales/", "maduro/", "mecha/", "misterio/", "oneshot/", "psicológico/",
+            "romance/", "escolar/", "ciencia_ficción/", "seinen/", "shojo/", "shojo_ai/",
+            "shounen/", "vida_cotidiana/", "deportes/", "sobrenatural/", "tragedia/", "yuri/"
+    };
 
-    public static String[] orden = {"Lecturas", "A - Z", "Mejor Calificados", "Ultimos Actualizados"};
-    public static String[] ordenM = {"?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"};
+    private static String[] orden = {
+            "Lecturas", "A - Z", "Mejor Calificados", "Ultimos Actualizados"
+    };
+    private static String[] ordenM = {
+            "?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"
+    };
 
     public EsMangaHere() {
         this.setFlag(R.drawable.flag_esp);
@@ -67,8 +78,8 @@ public class EsMangaHere extends ServerBase {
             manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Sin sinopsis."));
 
             // estado
-            manga.setFinished(
-                    getFirstMatchDefault("<li><label>Estado:</label>(.+?)</li>", data, "En desarrollo").length() == 9);
+            manga.setFinished(getFirstMatchDefault("<li><label>Estado:</label>(.+?)</li>",
+                    data, "En desarrollo").length() == 9);
 
             //autor
             manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", data, ""));

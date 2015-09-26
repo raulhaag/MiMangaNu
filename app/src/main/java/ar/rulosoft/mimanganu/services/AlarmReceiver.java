@@ -21,6 +21,8 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 /**
+ * Alarm Receiver
+ * <p/>
  * Created by Raul on 09/07/2015.
  */
 public class AlarmReceiver extends BroadcastReceiver {
@@ -49,7 +51,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         SearchUpdates su = new SearchUpdates();
         su.setContext(context);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).commit();
+        pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
         su.setSound(pm.getBoolean("update_sound", false));
         su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -82,7 +84,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                         res = res + manga.getTitle() + " " + diff + " " + context.getString(R.string.new_manga_found) + "\n";
                     }
                 } catch (Exception e) {
-
+                    // nothing
                 }
             }
             return null;
@@ -90,7 +92,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         @Override
         protected void onPreExecute() {
-            mNotificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            mNotificationManager = (NotificationManager)
+                    context.getSystemService(Context.NOTIFICATION_SERVICE);
             builder =
                     new NotificationCompat.Builder(context)
                             .setSmallIcon(R.drawable.ic_launcher)

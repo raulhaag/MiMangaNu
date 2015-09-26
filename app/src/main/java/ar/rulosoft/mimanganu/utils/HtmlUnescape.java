@@ -1,10 +1,11 @@
 package ar.rulosoft.mimanganu.utils;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**
+ * Own implementation of unescaping HTML code.
+ *
  * Created by TheSniperFan on 28.05.15.
  */
 public class HtmlUnescape {
@@ -19,12 +20,9 @@ public class HtmlUnescape {
     }};
 
     public static String Unescape(String input) {
-        Iterator it = definitions.entrySet().iterator();
-        while(it.hasNext()) {
-            Map.Entry<String, String> pair = (Map.Entry<String, String>)it.next();
+        for (Map.Entry<String, String> pair : definitions.entrySet()) {
             input = input.replaceAll(pair.getKey(), pair.getValue());
         }
-
         return input;
     }
 }

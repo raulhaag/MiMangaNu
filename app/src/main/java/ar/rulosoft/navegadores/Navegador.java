@@ -17,18 +17,17 @@ import java.util.zip.GZIPInputStream;
  * @author Raul
  */
 public class Navegador {
-
-    HttpURLConnection conn;
+    private HttpURLConnection conn;
     String modo = "GET";
-    private HashMap<String, String> encabezados = new HashMap<String, String>();
-    private HashMap<String, String> parametros = new HashMap<String, String>();
+
+    private HashMap<String, String> encabezados = new HashMap<>();
+    private HashMap<String, String> parametros = new HashMap<>();
     private String rawPost = "";
     private String last_cookie = "";
     private String lastHeaders = "";
 
     public Navegador() {
     }
-
 
     public String get(String web) throws Exception {
         return this.get(web, 5000);
@@ -273,7 +272,7 @@ public class Navegador {
 
     public HashMap<String, String> getFormParams(String url) throws Exception {
         String source = this.get(url);
-        HashMap<String, String> ParametrosForm = new HashMap<String, String>();
+        HashMap<String, String> ParametrosForm = new HashMap<>();
         Pattern p = Pattern.compile("<[F|f]orm[^$]*</[F|f]orm>");
         Matcher m = p.matcher(source);
         while (m.find()) {
@@ -288,7 +287,7 @@ public class Navegador {
 
     public HashMap<String, String> getFormParamsFromSource(String inSource) throws Exception {
         String source = inSource;
-        HashMap<String, String> ParametrosForm = new HashMap<String, String>();
+        HashMap<String, String> ParametrosForm = new HashMap<>();
         Pattern p = Pattern.compile("<[F|f]orm[^$]*</[F|f]orm>");
         Matcher m = p.matcher(source);
         while (m.find()) {

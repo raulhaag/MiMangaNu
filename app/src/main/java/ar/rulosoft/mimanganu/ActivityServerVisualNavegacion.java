@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -33,43 +33,50 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerVisualNavegacion extends ActionBarActivity implements OnLastItem, OnMangaClick {
+public class ActivityServerVisualNavegacion extends AppCompatActivity implements OnLastItem, OnMangaClick {
 
-    public boolean mStart = true;
-    ServerBase s;
-    Spinner generos, orden;
-    RecyclerView grilla;
-    ProgressBar cargando;
-    MangasRecAdapter adap;
-    boolean neuvaTarea = false;
-    SharedPreferences pm;
-    boolean darkTheme;
+    private boolean mStart = true;
+    private ServerBase s;
+    private Spinner generos;
+    private Spinner orden;
+    private RecyclerView grilla;
+    private ProgressBar cargando;
+    private MangasRecAdapter adap;
+    private boolean neuvaTarea = false;
     private int pagina = 1;
     private MenuItem buscar;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(ActivityServerVisualNavegacion.this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(ActivityServerVisualNavegacion.this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_visual_navegacion);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
         s = ServerBase.getServer(id);
-        getSupportActionBar().setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null)
+            mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+
         grilla = (RecyclerView) findViewById(R.id.grilla);
         generos = (Spinner) findViewById(R.id.generos);
         orden = (Spinner) findViewById(R.id.ordenar_por);
         cargando = (ProgressBar) findViewById(R.id.cargando);
-        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        int[] colors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (s.getCategories() != null)
-            generos.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, s.getCategories()));
+            generos.setAdapter(new ArrayAdapter<>(
+                    this, android.R.layout.simple_dropdown_item_1line, s.getCategories()));
         else
             generos.setVisibility(Spinner.INVISIBLE);
 
         if (s.getOrders() != null)
-            orden.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, s.getOrders()));
+            orden.setAdapter(new ArrayAdapter<>(
+                    this, android.R.layout.simple_dropdown_item_1line, s.getOrders()));
         else
             orden.setVisibility(Spinner.INVISIBLE);
 
@@ -198,7 +205,8 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
             try {
-                mangas = s.getMangasFiltered(generos.getSelectedItemPosition(), orden.getSelectedItemPosition(), params[0]);
+                mangas = s.getMangasFiltered(
+                        generos.getSelectedItemPosition(), orden.getSelectedItemPosition(), params[0]);
             } catch (Exception e) {
                 error = e.getMessage();
             }
@@ -208,7 +216,8 @@ public class ActivityServerVisualNavegacion extends ActionBarActivity implements
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityServerVisualNavegacion.this, "Error: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityServerVisualNavegacion.this,
+                        "Error: " + error, Toast.LENGTH_SHORT).show();
             } else {
                 pagina++;
                 if (result != null && result.size() != 0 && grilla != null) {

@@ -12,8 +12,8 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
 public class ItNineMangaCom extends ServerBase {
-    public static String HOST = "http://it.ninemanga.com";
-    public static String[] generos = new String[]{
+    private static String HOST = "http://it.ninemanga.com";
+    private static String[] generos = new String[]{
             "Tutto", "0-9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z",
@@ -26,7 +26,7 @@ public class ItNineMangaCom extends ServerBase {
             "Sovrannaturale", "Splatter", "Sportivo", "Sports", "Storico",
             "Supernatural", "Tragedy", "Vita Quotidiana", "Yuri"
     };
-    public static String[] generosV = new String[]{
+    private static String[] generosV = new String[]{
             "index_.html", "0-9_.html",
             "A_.html", "B_.html", "C_.html", "D_.html", "E_.html", "F_.html", "G_.html",
             "H_.html", "I_.html", "J_.html", "K_.html", "L_.html", "M_.html", "N_.html",
@@ -45,7 +45,7 @@ public class ItNineMangaCom extends ServerBase {
             "Sportivo_.html", "Sports_.html", "Storico_.html", "Supernatural_.html",
             "Tragedy_.html", "Vita+Quotidiana_.html", "Yuri_.html"
     };
-    static String[] order = new String[]{
+    private static String[] order = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
 
@@ -118,7 +118,7 @@ public class ItNineMangaCom extends ServerBase {
         return imagenes[page];
     }
 
-    public void setExtra(Chapter c) throws Exception {
+    private void setExtra(Chapter c) throws Exception {
         String source = getNavWithHeader().get(
                 c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
@@ -147,7 +147,7 @@ public class ItNineMangaCom extends ServerBase {
         return getMangasFromSource(source);
     }
 
-    public ArrayList<Manga> getMangasFromSource(String source) {
+    private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile(
                 "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");

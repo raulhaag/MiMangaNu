@@ -4,7 +4,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -15,15 +15,14 @@ import java.io.InputStream;
 
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityLicenseView extends ActionBarActivity {
+public class ActivityLicenseView extends AppCompatActivity {
 
-    TextView lic;
-    SharedPreferences pm;
-    boolean darkTheme;
+    private TextView lic;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
@@ -45,12 +44,14 @@ public class ActivityLicenseView extends ActionBarActivity {
                 showLicense("MIT.txt");
             }
         });
-        int[] colors =
-                ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        int[] colors = ThemeColors.getColors(
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
+                getApplicationContext());
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
     }
 
-    public void showLicense(String asset) {
+    private void showLicense(String asset) {
         try {
             InputStream is = getAssets().open(asset);
             int size = is.available();

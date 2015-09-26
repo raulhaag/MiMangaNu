@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.Menu;
@@ -26,26 +26,27 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerListadeMangas extends ActionBarActivity {
+public class ActivityServerListadeMangas extends AppCompatActivity {
 
-    ServerBase s;
-    ListView lista;
-    ProgressBar cargando;
-    MangaAdapter adapter;
-    SharedPreferences pm;
-    boolean darkTheme;
+    private ServerBase s;
+    private ListView lista;
+    private ProgressBar cargando;
+    private MangaAdapter adapter;
     private MenuItem buscar;
+    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_lista_de_mangas);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
         s = ServerBase.getServer(id);
-        getSupportActionBar().setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+
         lista = (ListView) findViewById(R.id.lista_de_mangas);
         cargando = (ProgressBar) findViewById(R.id.cargando);
         int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());

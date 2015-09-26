@@ -21,7 +21,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -58,19 +58,19 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
 
-public class ActivityLector extends ActionBarActivity
+public class ActivityLector extends AppCompatActivity
         implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
     // These are magic numbers
-    public static final String KEEP_SCREEN_ON = "keep_screen_on";
-    public static final String ORIENTATION = "orientation";
-    public static final String ADJUST_KEY = "ajustar_a";
-    public static final String MAX_TEXTURE = "max_texture";
+    private static final String KEEP_SCREEN_ON = "keep_screen_on";
+    private static final String ORIENTATION = "orientation";
+    private static final String ADJUST_KEY = "ajustar_a";
+    private static final String MAX_TEXTURE = "max_texture";
     private static int mTextureMax;
     private static DisplayType mScreenFit;
 
-    public Direction mDirection;
-    public InitialPosition iniPosition = InitialPosition.LEFT_UP;
+    private Direction mDirection;
+    private InitialPosition iniPosition = InitialPosition.LEFT_UP;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
     private boolean mKeepOn; // false = normal  | true = screen on
@@ -170,7 +170,7 @@ public class ActivityLector extends ActionBarActivity
         } else {
             setContentView(R.layout.activity_lector);
             mViewPager = (UnScrolledViewPager) findViewById(R.id.pager);
-            mViewPager.setOnPageChangeListener(pageChangeListener);
+            mViewPager.addOnPageChangeListener(pageChangeListener);
         }
 
         mServerBase = ServerBase.getServer(mManga.getServerId());
@@ -260,7 +260,7 @@ public class ActivityLector extends ActionBarActivity
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    public void actualizarIcono(DisplayType displayType, boolean showMsg) {
+    private void actualizarIcono(DisplayType displayType, boolean showMsg) {
         if (displayMenu != null) {
             String msg = "";
             switch (displayType) {
@@ -318,13 +318,13 @@ public class ActivityLector extends ActionBarActivity
         else mViewPager.setAdapter(adapter);
     }
 
-    public int getCurrentItem() {
+    private int getCurrentItem() {
         if (mDirection == Direction.VERTICAL)
             return mViewPagerV.getCurrentItem();
         else return mViewPager.getCurrentItem();
     }
 
-    public void setCurrentItem(int pos) {
+    private void setCurrentItem(int pos) {
         if (mDirection == Direction.VERTICAL)
             mViewPagerV.setCurrentItem(pos);
         else mViewPager.setCurrentItem(pos);
@@ -519,18 +519,13 @@ public class ActivityLector extends ActionBarActivity
     @Override
     public void onLeftTap() {
         int act = getCurrentItem();
-        if (act > 0) {
-            setCurrentItem(--act);
-        }
+        if (act > 0) setCurrentItem(--act);
     }
 
     @Override
     public void onRightTap() {
-        int a = mSectionsPagerAdapter.getCount();
         int act = getCurrentItem();
-        if (act < a) {
-            setCurrentItem(++act);
-        }
+        if (act < mSectionsPagerAdapter.getCount()) setCurrentItem(++act);
     }
 
     @Override
@@ -584,14 +579,14 @@ public class ActivityLector extends ActionBarActivity
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView =
-                    inflater.inflate(R.layout.fragment_activity_lector_pagina, container, false);
+            View rootView = inflater.inflate(R.layout.fragment_activity_lector_pagina, container, false);
             visor = (ImageViewTouch) rootView.findViewById(R.id.visor);
-            if (r != null) {
-                new Thread(r).start();
-            } else visor.setDisplayType(mScreenFit);
+
+            if (r != null) new Thread(r).start();
+            else visor.setDisplayType(mScreenFit);
             visor.setTapListener(mTapListener);
             visor.setScaleEnabled(false);
+
             cargando = (ProgressBar) rootView.findViewById(R.id.cargando);
             cargando.bringToFront();
             if (getArguments() != null)

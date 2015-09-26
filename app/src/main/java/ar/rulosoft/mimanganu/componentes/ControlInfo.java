@@ -18,10 +18,19 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
  * Created by Raul on 03/05/2015.
  */
 public class ControlInfo extends ObservableScrollView implements Imaginable {
-    View s1, s2, s3, b1;
-    TextView author, status, server, synopsis, title;
-    TextView authorTitle, statusTitle, serverTitle;
-    ImageView image;
+    private View s1;
+    private View s2;
+    private View s3;
+    private View b1;
+    private TextView author;
+    private TextView status;
+    private TextView server;
+    private TextView synopsis;
+    private TextView title;
+    private TextView authorTitle;
+    private TextView statusTitle;
+    private TextView serverTitle;
+    private ImageView image;
 
     public ControlInfo(Context context) {
         super(context);
@@ -38,7 +47,7 @@ public class ControlInfo extends ObservableScrollView implements Imaginable {
         initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.control_info, this, true);
         b1 = findViewById(R.id.blockSummary);

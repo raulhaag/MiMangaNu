@@ -12,8 +12,8 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
 public class EsNineMangaCom extends ServerBase {
-    public static String HOST = "http://es.ninemanga.com";
-    public static String[] generos = new String[]{
+    private static String HOST = "http://es.ninemanga.com";
+    private static String[] generos = new String[]{
             "Todo", "Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura",
             "Ciencia Ficción", "Comedia", "Comedy", "Deporte", "Deportes", "Drama", "Ecchi",
             "Escolar", "Fantasía", "Fantasy", "Gender Bender", "Genial", "Harem", "Historical",
@@ -24,7 +24,7 @@ public class EsNineMangaCom extends ServerBase {
             "Sobrenatural", "Sports", "Supernatural", "Tragedia", "Tragedy", "Vida Cotidiana",
             "Webcomic", "Yuri"
     };
-    public static String[] generosV = new String[]{
+    private static String[] generosV = new String[]{
             "index_.html", "Acci%C3%B3n_.html", "Action_.html", "Adult_.html", "Adventure_.html",
             "Artes+Marciales_.html", "Aventura_.html", "Ciencia+Ficci%C3%B3n_.html", "Comedia_.html",
             "Comedy_.html", "Deporte_.html", "Deportes_.html", "Drama_.html", "Ecchi_.html",
@@ -39,7 +39,7 @@ public class EsNineMangaCom extends ServerBase {
             "Sobrenatural_.html", "Sports_.html", "Supernatural_.html", "Tragedia_.html",
             "Tragedy_.html", "Vida+Cotidiana_.html", "Webcomic_.html", "Yuri_.html"
     };
-    static String[] order = new String[]{
+    private static String[] order = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
 
@@ -112,7 +112,7 @@ public class EsNineMangaCom extends ServerBase {
         return imagenes[page];
     }
 
-    public void setExtra(Chapter c) throws Exception {
+    private void setExtra(Chapter c) throws Exception {
         String source = getNavWithHeader().get(
                 c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
@@ -141,7 +141,7 @@ public class EsNineMangaCom extends ServerBase {
         return getMangasFromSource(source);
     }
 
-    public ArrayList<Manga> getMangasFromSource(String source) {
+    private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile(
                 "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");

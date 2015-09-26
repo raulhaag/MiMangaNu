@@ -8,17 +8,17 @@ public class ChapterDownload implements StateChange {
     public static int MAX_ERRORS = 5;
     public DownloadStatus status;
     public Chapter chapter;
-    OnErrorListener errorListener = null;
-    StateChange chagesListener = null;
-    Status[] pagesStatus;
-    int progess = 0;
+    private OnErrorListener errorListener = null;
+    private StateChange chagesListener = null;
+    private Status[] pagesStatus;
+    private int progess = 0;
 
     public ChapterDownload(Chapter chapter) {
         this.chapter = chapter;
         reset();
     }
 
-    public void reset() {
+    private void reset() {
         pagesStatus = new Status[chapter.getPages()];
         for (int i = 0; i < pagesStatus.length; i++) {
             pagesStatus[i] = Status.QUEUED;
@@ -26,7 +26,7 @@ public class ChapterDownload implements StateChange {
         status = DownloadStatus.QUEUED;
     }
 
-    public void changeStatus(DownloadStatus newStatus) {
+    private void changeStatus(DownloadStatus newStatus) {
         this.status = newStatus;
     }
 
@@ -50,7 +50,7 @@ public class ChapterDownload implements StateChange {
         return (j + 1);
     }
 
-    public boolean areErrors() {
+    private boolean areErrors() {
         int errors = 0;
         for (Status e : pagesStatus) {
             if (e.ordinal() > Status.DOWNLOAD_OK.ordinal()) {
@@ -107,7 +107,7 @@ public class ChapterDownload implements StateChange {
         checkProgreso();
     }
 
-    public void checkProgreso() {
+    private void checkProgreso() {
         if (progess == chapter.getPages()) {
             Database.updateChapterDownloaded(DownloadPoolService.actual, chapter.getId(), 1);
             changeStatus(DownloadStatus.DOWNLOADED);

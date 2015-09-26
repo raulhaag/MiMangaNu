@@ -21,23 +21,19 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.MangasHolder> {
-
-    ArrayList<Manga> mangas;
-    Context context;
-    OnLastItem lastItemListener;
-    OnMangaClick mangaClickListener;
-    OnCreateContextMenuListener onCreateContextMenuListener;
+    private ArrayList<Manga> mangas;
+    private OnLastItem lastItemListener;
+    private OnMangaClick mangaClickListener;
+    private OnCreateContextMenuListener onCreateContextMenuListener;
     private ImageLoader imageLoader;
     private boolean darkTheme = false;
     private int darkBackground;
 
-
     public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
-        mangas = lista;
-        imageLoader = new ImageLoader(context);
-        this.context = context;
         this.darkTheme = darkTheme;
         this.darkBackground = context.getResources().getColor(R.color.background_floating_material_dark);
+        mangas = lista;
+        imageLoader = new ImageLoader(context);
     }
 
     public void setLastItemListener(OnLastItem lastItemListener) {
@@ -127,7 +123,8 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
             server = (ImageView) itemView.findViewById(R.id.server);
             v = itemView;
             if (darkTheme) {
-                ((CardView) itemView.findViewById(R.id.cardview_server_container)).setCardBackgroundColor(darkBackground);
+                ((CardView) itemView.findViewById(R.id.cardview_server_container))
+                        .setCardBackgroundColor(darkBackground);
             }
         }
     }

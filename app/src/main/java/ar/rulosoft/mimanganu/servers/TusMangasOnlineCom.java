@@ -13,9 +13,9 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 
 public class TusMangasOnlineCom extends ServerBase {
 
-    final static int TIMEOUT = 20000;
+    private final static int TIMEOUT = 20000;
 
-    public static String[] generos = new String[]{
+    private static String[] generos = new String[]{
             "#", "A", "B", "C", "D", "E", "F", "G", "H", "I",
             "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S",
             "T", "U", "V", "W", "X", "Y", "Z",
@@ -25,7 +25,7 @@ public class TusMangasOnlineCom extends ServerBase {
             "Romance", "Seinen", "Shoujo", "Shonen", "Shonen-ai", "Shoujo-ai",
             "Sobrenatural", "Suspense", "Tragedia", "Vida escolar", "Yuri"
     };
-    public static String[] generosV = new String[]{
+    private static String[] generosV = new String[]{
             "tipo=2&filter=1", "tipo=2&filter=A", "tipo=2&filter=B", "tipo=2&filter=C",
             "tipo=2&filter=D", "tipo=2&filter=E", "tipo=2&filter=F", "tipo=2&filter=G",
             "tipo=2&filter=H", "tipo=2&filter=I", "tipo=2&filter=J", "tipo=2&filter=K",
@@ -62,7 +62,7 @@ public class TusMangasOnlineCom extends ServerBase {
             "tipo=3&filter=Yuri"
     };
 
-    public static String HOST = "http://www.tumangaonline.com";
+    private static String HOST = "http://www.tumangaonline.com";
 
 
     public TusMangasOnlineCom() {

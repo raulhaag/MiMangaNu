@@ -14,11 +14,12 @@ import java.net.URL;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    String fromURL, toFile;
-    StateChange changeListener = null;
+    private String fromURL;
+    private String toFile;
+    private StateChange changeListener = null;
     int index, cid;
     Status status = Status.QUEUED;
-    int retry = RETRY;
+    private int retry = RETRY;
 
     public SingleDownload(String fromURL, String toFile, int index, int cid) {
         super();
@@ -82,7 +83,7 @@ public class SingleDownload implements Runnable {
                 try {
                     changeStatus(Status.DOWNLOADING);
                     byte[] buffer = new byte[4096];
-                    int bytesRead = 0;
+                    int bytesRead;
                     while ((bytesRead = input.read(buffer, 0, buffer.length)) >= 0) {
                         output.write(buffer, 0, bytesRead);
                     }
@@ -97,7 +98,8 @@ public class SingleDownload implements Runnable {
                     boolean flagedOk = false;
                     if (status != Status.RETRY) {
                         if (contentLenght > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLenght + " size =" + o.length() + " on =" + o.getPath());
+                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLenght +
+                                    " size =" + o.length() + " on =" + o.getPath());
                             ot.delete();
                             retry--;
                             changeStatus(Status.RETRY);
@@ -130,12 +132,12 @@ public class SingleDownload implements Runnable {
         }
     }
 
-    void writeErrorImage(File ot) throws IOException {
+    private void writeErrorImage(File ot) throws IOException {
         if (DownloadPoolService.actual != null) {
             InputStream ims = DownloadPoolService.actual.getAssets().open("error_image.jpg");
             FileOutputStream output = new FileOutputStream(ot);
             byte[] buffer = new byte[4096];
-            int bytesRead = 0;
+            int bytesRead;
             while ((bytesRead = ims.read(buffer, 0, buffer.length)) >= 0) {
                 output.write(buffer, 0, bytesRead);
             }
@@ -145,7 +147,7 @@ public class SingleDownload implements Runnable {
         }
     }
 
-    void changeStatus(Status status) {
+    private void changeStatus(Status status) {
         this.status = status;
         if (changeListener != null && status.ordinal() > Status.POSTPONED.ordinal()) {
             changeListener.onChange(this);
@@ -157,6 +159,8 @@ public class SingleDownload implements Runnable {
     }
 
     enum Status {
-        QUEUED, INIT, DOWNLOADING, RETRY, POSTPONED, DOWNLOAD_OK, ERROR_CONNECTION, ERROR_404, ERROR_TIMEOUT, ERROR_ON_UPLOAD, ERROR_INVALID_URL, ERROR_WRITING_FILE, ERROR_OPENING_FILE
+        QUEUED, INIT, DOWNLOADING, RETRY, POSTPONED, DOWNLOAD_OK, ERROR_CONNECTION,
+        ERROR_404, ERROR_TIMEOUT, ERROR_ON_UPLOAD, ERROR_INVALID_URL, ERROR_WRITING_FILE,
+        ERROR_OPENING_FILE
     }
 }

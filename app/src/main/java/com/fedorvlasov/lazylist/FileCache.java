@@ -12,7 +12,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class FileCache {
-
     private File cacheDir;
 
     public FileCache(Context context) {
@@ -28,7 +27,7 @@ public class FileCache {
             cacheDir.mkdirs();
     }
 
-    public static void writeFile(InputStream is, File f) throws IOException {
+    public static void writeFile(InputStream is, File f) {
         try {
             OutputStream os = new FileOutputStream(f);
             int buffer_size = 1024;

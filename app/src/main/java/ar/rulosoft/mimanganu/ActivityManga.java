@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,13 +35,12 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.FragmentUpdateSearchTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityManga extends ActionBarActivity {
+public class ActivityManga extends AppCompatActivity {
     public static final String DIRECCION = "direcciondelectura";
     public static final String CAPITULO_ID = "cap_id";
     public SwipeRefreshLayout str;
     public Manga manga;
-    public Direction direction;
-    public int[] colors;
+    private Direction direction;
 
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
@@ -51,8 +50,8 @@ public class ActivityManga extends ActionBarActivity {
     private int mMangaId;
     private boolean darkTheme;
 
-    FragmentUpdateSearchTask buscarNuevos;
-    ControlInfoNoScroll datos;
+    private FragmentUpdateSearchTask buscarNuevos;
+    private ControlInfoNoScroll datos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,12 +68,12 @@ public class ActivityManga extends ActionBarActivity {
         mListView = (ListView) findViewById(R.id.lista);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
         mImageLoader = new ImageLoader(this);
-        colors = ThemeColors.getColors(
+        int[] colors = ThemeColors.getColors(
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
                 getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
 
-//        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
         if (savedInstanceState == null) {
             buscarNuevos = new FragmentUpdateSearchTask();

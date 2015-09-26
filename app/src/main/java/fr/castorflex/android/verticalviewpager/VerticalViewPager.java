@@ -103,7 +103,7 @@ public class VerticalViewPager extends ViewGroup {
     private static final int DRAW_ORDER_FORWARD = 1;
     private static final int DRAW_ORDER_REVERSE = 2;
     private static final ViewPositionComparator sPositionComparator = new ViewPositionComparator();
-    private final ArrayList<ItemInfo> mItems = new ArrayList<ItemInfo>();
+    private final ArrayList<ItemInfo> mItems = new ArrayList<>();
     private final ItemInfo mTempItem = new ItemInfo();
     private final Rect mTempRect = new Rect();
     /**
@@ -486,8 +486,7 @@ public class VerticalViewPager extends ViewGroup {
     @Override
     protected int getChildDrawingOrder(int childCount, int i) {
         final int index = mDrawingOrder == DRAW_ORDER_REVERSE ? childCount - 1 - i : i;
-        final int result = ((LayoutParams) mDrawingOrderedChildren.get(index).getLayoutParams()).childIndex;
-        return result;
+        return ((LayoutParams) mDrawingOrderedChildren.get(index).getLayoutParams()).childIndex;
     }
 
     /**
@@ -657,7 +656,7 @@ public class VerticalViewPager extends ViewGroup {
         final float distance = halfHeight + halfHeight *
                 distanceInfluenceForSnapDuration(distanceRatio);
 
-        int duration = 0;
+        int duration;
         velocity = Math.abs(velocity);
         if (velocity > 0) {
             duration = 4 * Math.round(1000 * Math.abs(distance / velocity));
@@ -690,8 +689,8 @@ public class VerticalViewPager extends ViewGroup {
 
         final int adapterCount = mAdapter.getCount();
         mExpectedAdapterCount = adapterCount;
-        boolean needPopulate = mItems.size() < mOffscreenPageLimit * 2 + 1 &&
-                mItems.size() < adapterCount;
+        boolean needPopulate =
+                mItems.size() < mOffscreenPageLimit * 2 + 1 && mItems.size() < adapterCount;
         int newCurrItem = mCurItem;
 
         boolean isUpdating = false;
@@ -814,7 +813,7 @@ public class VerticalViewPager extends ViewGroup {
         }
 
         // Locate the currently focused item or add it if needed.
-        int curIndex = -1;
+        int curIndex;
         ItemInfo curItem = null;
         for (curIndex = 0; curIndex < mItems.size(); curIndex++) {
             final ItemInfo ii = mItems.get(curIndex);
@@ -921,7 +920,7 @@ public class VerticalViewPager extends ViewGroup {
             final LayoutParams lp = (LayoutParams) child.getLayoutParams();
             lp.childIndex = i;
             if (!lp.isDecor && lp.heightFactor == 0.f) {
-                // 0 means requery the adapter for this, it doesn't have a valid width.
+                // 0 means re-query the adapter for this, it doesn't have a valid width.
                 final ItemInfo ii = infoForChild(child);
                 if (ii != null) {
                     lp.heightFactor = ii.heightFactor;
@@ -951,7 +950,7 @@ public class VerticalViewPager extends ViewGroup {
     private void sortChildDrawingOrder() {
         if (mDrawingOrder != DRAW_ORDER_DEFAULT) {
             if (mDrawingOrderedChildren == null) {
-                mDrawingOrderedChildren = new ArrayList<View>();
+                mDrawingOrderedChildren = new ArrayList<>();
             } else {
                 mDrawingOrderedChildren.clear();
             }
@@ -974,7 +973,7 @@ public class VerticalViewPager extends ViewGroup {
             // Base offsets off of oldCurInfo.
             if (oldCurPosition < curItem.position) {
                 int itemIndex = 0;
-                ItemInfo ii = null;
+                ItemInfo ii;
                 float offset = oldCurInfo.offset + oldCurInfo.heightFactor + marginOffset;
                 for (int pos = oldCurPosition + 1;
                      pos <= curItem.position && itemIndex < mItems.size(); pos++) {
@@ -994,7 +993,7 @@ public class VerticalViewPager extends ViewGroup {
                 }
             } else if (oldCurPosition > curItem.position) {
                 int itemIndex = mItems.size() - 1;
-                ItemInfo ii = null;
+                ItemInfo ii;
                 float offset = oldCurInfo.offset;
                 for (int pos = oldCurPosition - 1;
                      pos >= curItem.position && itemIndex >= 0; pos--) {
@@ -1187,7 +1186,7 @@ public class VerticalViewPager extends ViewGroup {
                     int widthMode = MeasureSpec.AT_MOST;
                     int heightMode = MeasureSpec.AT_MOST;
                     boolean consumeVertical = vgrav == Gravity.TOP || vgrav == Gravity.BOTTOM;
-                    boolean consumeHorizontal = hgrav == Gravity.LEFT || hgrav == Gravity.RIGHT;
+                    boolean consumeHorizontal = hgrav == Gravity.START || hgrav == Gravity.END;
 
                     if (consumeVertical) {
                         widthMode = MeasureSpec.EXACTLY;
@@ -1315,7 +1314,7 @@ public class VerticalViewPager extends ViewGroup {
                         default:
                             childLeft = paddingLeft;
                             break;
-                        case Gravity.LEFT:
+                        case Gravity.START:
                             childLeft = paddingLeft;
                             paddingLeft += child.getMeasuredWidth();
                             break;
@@ -1323,7 +1322,7 @@ public class VerticalViewPager extends ViewGroup {
                             childLeft = Math.max((width - child.getMeasuredWidth()) / 2,
                                     paddingLeft);
                             break;
-                        case Gravity.RIGHT:
+                        case Gravity.END:
                             childLeft = width - paddingRight - child.getMeasuredWidth();
                             paddingRight += child.getMeasuredWidth();
                             break;
@@ -2048,13 +2047,13 @@ public class VerticalViewPager extends ViewGroup {
 
     /**
      * Start a fake drag of the pager.
-     * <p>
+     * <p/>
      * <p>A fake drag can be useful if you want to synchronize the motion of the ViewPager
      * with the touch scrolling of another view, while still letting the ViewPager
      * control the snapping motion and fling behavior. (e.g. parallax-scrolling tabs.)
      * Call {@link #fakeDragBy(float)} to simulate the actual drag motion. Call
      * {@link #endFakeDrag()} to complete the fake drag and fling as necessary.
-     * <p>
+     * <p/>
      * <p>During a fake drag the ViewPager will ignore all touch events. If a real drag
      * is already in progress, this method will return false.
      *
@@ -2435,10 +2434,9 @@ public class VerticalViewPager extends ViewGroup {
         // FOCUS_AFTER_DESCENDANTS and there are some descendants focusable.  this is
         // to avoid the focus search finding layouts when a more precise search
         // among the focusable children would be more interesting.
-        if (
-                descendantFocusability != FOCUS_AFTER_DESCENDANTS ||
-                        // No focusable descendants
-                        (focusableCount == views.size())) {
+        if (descendantFocusability != FOCUS_AFTER_DESCENDANTS ||
+                // No focusable descendants
+                (focusableCount == views.size())) {
             // Note that we can't call the superclass here, because it will
             // add all views in.  So we need to do the same thing View does.
             if (!isFocusable()) {
@@ -2448,9 +2446,7 @@ public class VerticalViewPager extends ViewGroup {
                     isInTouchMode() && !isFocusableInTouchMode()) {
                 return;
             }
-            if (views != null) {
-                views.add(this);
-            }
+            views.add(this);
         }
     }
 
@@ -2477,8 +2473,7 @@ public class VerticalViewPager extends ViewGroup {
      * We only want the current page that is being shown to be focusable.
      */
     @Override
-    protected boolean onRequestFocusInDescendants(int direction,
-                                                  Rect previouslyFocusedRect) {
+    protected boolean onRequestFocusInDescendants(int direction, Rect previouslyFocusedRect) {
         int index;
         int increment;
         int end;

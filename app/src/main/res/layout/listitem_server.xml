@@ -8,8 +8,10 @@
         android:id="@+id/server_bandera"
         android:layout_width="30dp"
         android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:padding="2dp"
         android:src="@drawable/flag_eng" />
@@ -19,9 +21,11 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
         android:layout_marginBottom="13dp"
         android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="13dp"
         android:src="@drawable/mangapanda_icon" />
 
@@ -32,8 +36,10 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
+        android:layout_toEndOf="@+id/server_imagen"
         android:layout_toLeftOf="@+id/server_bandera"
         android:layout_toRightOf="@+id/server_imagen"
+        android:layout_toStartOf="@+id/server_bandera"
         android:ellipsize="end"
         android:padding="@dimen/paddin_textitem"
         android:singleLine="true"

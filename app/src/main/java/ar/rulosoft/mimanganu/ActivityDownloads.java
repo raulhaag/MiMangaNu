@@ -5,7 +5,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -16,16 +16,15 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 
-public class ActivityDownloads extends ActionBarActivity {
-    SharedPreferences pm;
-    boolean darkTheme;
+public class ActivityDownloads extends AppCompatActivity {
     private ListView list;
     private ShowDownloadsTask sh;
     private DownloadAdapter adap;
+    public boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
@@ -33,7 +32,9 @@ public class ActivityDownloads extends ActionBarActivity {
         int[] colors = ThemeColors.getColors(
                 PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
                 getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+
         list = (ListView) findViewById(R.id.descargas);
     }
 

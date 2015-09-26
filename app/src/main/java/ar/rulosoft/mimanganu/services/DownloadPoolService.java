@@ -25,11 +25,15 @@ import ar.rulosoft.mimanganu.services.SingleDownload.Status;
 
 public class DownloadPoolService extends Service implements StateChange {
 
-    final static int[] illegalChars = {34, 60, 62, 124, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27,
-            28, 29, 30, 31, 58, 42, 63, 92, 47};
+    private final static int[] illegalChars = {
+            34, 60, 62, 124,
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            58, 42, 63, 92, 47
+    };
     public static int SLOTS = 2;
     public static DownloadPoolService actual = null;
-    public static boolean intentPrending = false;
+    private static boolean intentPrending = false;
     public static ArrayList<ChapterDownload> descargas = new ArrayList<>();
 
     static {
@@ -37,7 +41,7 @@ public class DownloadPoolService extends Service implements StateChange {
     }
 
     public int slots = SLOTS;
-    DownloadListener downloadListener = null;
+    private DownloadListener downloadListener = null;
 
     public static void agregarDescarga(Activity activity, Chapter chapter, boolean lectura) {
         if (!chapter.isDownloaded()) {
@@ -78,7 +82,7 @@ public class DownloadPoolService extends Service implements StateChange {
         }
     }
 
-    public static void initValues(Context context) {
+    private static void initValues(Context context) {
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
         int descargas = Integer.parseInt(pm.getString("download_threads", "2"));
         int tolerancia = Integer.parseInt(pm.getString("error_tolerancia", "5"));
@@ -88,7 +92,7 @@ public class DownloadPoolService extends Service implements StateChange {
         DownloadPoolService.SLOTS = descargas;
     }
 
-    public static boolean descargaNueva(int cid) {
+    private static boolean descargaNueva(int cid) {
         boolean result = true;
         for (ChapterDownload dc : descargas) {
             if (dc.chapter.getId() == cid) {
@@ -130,17 +134,21 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public static String generarRutaBase(ServerBase s, Manga m, Chapter c, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" + cleanFileName(m.getTitle()).trim() + "/" + cleanFileName(c.getTitle()).trim();
+        String dir = prefs.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath());
+        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" +
+                cleanFileName(m.getTitle()).trim() + "/" + cleanFileName(c.getTitle()).trim();
     }
 
     public static String generarRutaBase(ServerBase s, Manga m, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()).trim() + "/" + cleanFileName(m.getTitle()).trim();
+        String dir = prefs.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath());
+        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()).trim() + "/" +
+                cleanFileName(m.getTitle()).trim();
     }
 
-    public static String cleanFileName(String badFileName) {
+    private static String cleanFileName(String badFileName) {
         StringBuilder cleanName = new StringBuilder();
         for (int i = 0; i < badFileName.length(); i++) {
             int c = (int) badFileName.charAt(i);
@@ -172,7 +180,6 @@ public class DownloadPoolService extends Service implements StateChange {
 
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -190,7 +197,7 @@ public class DownloadPoolService extends Service implements StateChange {
         this.downloadListener = downloadListener;
     }
 
-    public void iniciarCola() {
+    private void iniciarCola() {
         Manga manga = null;
         ServerBase s = null;
         String ruta = "";
@@ -222,7 +229,8 @@ public class DownloadPoolService extends Service implements StateChange {
                     try {
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = ruta + "/" + sig + ".jpg";
-                        SingleDownload des = new SingleDownload(origen, destino, sig - 1, dc.chapter.getId());
+                        SingleDownload des =
+                                new SingleDownload(origen, destino, sig - 1, dc.chapter.getId());
                         des.setChangeListener(dc);
                         dc.setChagesListener(this);
                         new Thread(des).start();
