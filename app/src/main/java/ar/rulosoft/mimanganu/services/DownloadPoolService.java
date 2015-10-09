@@ -14,7 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ar.rulosoft.mimanganu.ActivityLector;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -33,8 +32,8 @@ public class DownloadPoolService extends Service implements StateChange {
     };
     public static int SLOTS = 2;
     public static DownloadPoolService actual = null;
-    private static boolean intentPrending = false;
     public static ArrayList<ChapterDownload> descargas = new ArrayList<>();
+    private static boolean intentPrending = false;
 
     static {
         Arrays.sort(illegalChars);
@@ -119,7 +118,7 @@ public class DownloadPoolService extends Service implements StateChange {
         return result;
     }
 
-    public static void attachListener(ActivityLector lector, int cid) {
+    public static void attachListener(ChapterDownload.OnErrorListener lector, int cid) {
         for (ChapterDownload dc : descargas) {
             if (dc.chapter.getId() == cid) {
                 dc.setErrorListener(lector);
@@ -189,7 +188,7 @@ public class DownloadPoolService extends Service implements StateChange {
             slots++;
         }
         if (downloadListener != null) {
-            downloadListener.onImagenDescargada(singleDownload.cid, singleDownload.index);
+            downloadListener.onImageDownloaded(singleDownload.cid, singleDownload.index);
         }
     }
 

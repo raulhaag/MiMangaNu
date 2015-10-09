@@ -12,6 +12,7 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme_miDark">
+
         <!--
             Better if app starts dark and turns white than blinds you with white splash screen
             before it turns dark.
@@ -69,6 +70,10 @@
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".ActivityVerticalReader"
+            android:label="@string/title_activity_vertical_reader"
+            android:theme="@style/AppTheme.Light.NoActionbar"></activity>
     </application>
 
 </manifest>

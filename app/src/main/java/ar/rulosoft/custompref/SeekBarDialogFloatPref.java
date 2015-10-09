@@ -21,50 +21,58 @@ package ar.rulosoft.custompref;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.preference.DialogPreference;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import ar.rulosoft.mimanganu.R;
 
-public class SeekBarDialogPref extends DialogPreference {
+public class SeekBarDialogFloatPref extends DialogPreference {
     private SeekBar mSeekBar;
     private TextView mMessageValue;
 
-    private float dpiScale;
-
     private int mMin;
     private int mMax;
+    private int mType;
 
     private int mValue = 0;
 
     private String mSummary;
 
-    public SeekBarDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SeekBarDialogFloatPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
+
+        setDialogLayoutResource(R.layout.dialog_seekbar_pref);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
-        a.recycle();
 
-        dpiScale = getContext().getResources().getDisplayMetrics().density;
+        /**  mType = 0 - no type, no modification */
+        mType = a.getInteger(R.styleable.CustomDialogPref_val_type, 0);
+        if (mType == 1) {
+            /** mType = 1 - scrollFactor, so modify to have 0.5 steps,
+             *              range is from 0.5 to 5.0 */
+            mMin = 1;
+            mMax = 10;
+        }
+        a.recycle();
 
         mSummary = (String) super.getSummary();
     }
 
-    public SeekBarDialogPref(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SeekBarDialogFloatPref(Context context, AttributeSet attrs, int defStyleAttr) {
         this(context, attrs, defStyleAttr, 0);
     }
 
-    public SeekBarDialogPref(Context context, AttributeSet attrs) {
+    public SeekBarDialogFloatPref(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public SeekBarDialogPref(Context context) {
+    public SeekBarDialogFloatPref(Context context) {
         this(context, null);
     }
 
@@ -74,7 +82,7 @@ public class SeekBarDialogPref extends DialogPreference {
         if (mSummary == null) {
             return super.getSummary();
         } else {
-            return String.format(mSummary, entry);
+            return setMessage(mSummary, entry);
         }
     }
 
@@ -88,26 +96,30 @@ public class SeekBarDialogPref extends DialogPreference {
         }
     }
 
+    private String setMessage(String _summary, int _value) {
+        float newValue = _value;
+        switch (mType) {
+            case 1: {
+                newValue = _value * 0.5f;
+                return String.format(_summary, newValue);
+            }
+            default: {
+                return String.format(_summary, (int) newValue);
+            }
+        }
+    }
+
     @Override
-    protected View onCreateDialogView() {
-        LinearLayout mLayout = new LinearLayout(getContext());
-        mLayout.setOrientation(LinearLayout.VERTICAL);
+    protected void onBindDialogView(@NonNull View view) {
 
-        int padding = 15;
+        mMessageValue = (TextView) view.findViewById(R.id.dialogText);
+        mMessageValue.setText(setMessage(mSummary, mValue + mMin));
 
-        mMessageValue = new TextView(getContext());
-        mMessageValue.setTextSize(9 * dpiScale);
-        mMessageValue.setText(String.format(mSummary, mValue));
-        mMessageValue.setPadding(
-                (int) (padding * dpiScale), (int) (padding * dpiScale),
-                (int) (padding * dpiScale), 0);
-        mLayout.addView(mMessageValue);
-
-        mSeekBar = new SeekBar(getContext());
+        mSeekBar = (SeekBar) view.findViewById(R.id.dialogSeekBar);
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mMessageValue.setText(String.format(mSummary, mSeekBar.getProgress() + mMin));
+                mMessageValue.setText(setMessage(mSummary, mSeekBar.getProgress() + mMin));
             }
 
             @Override
@@ -120,12 +132,8 @@ public class SeekBarDialogPref extends DialogPreference {
         });
         mSeekBar.setMax(mMax - mMin);
         mSeekBar.setProgress(mValue - mMin);
-        mSeekBar.setPadding(
-                (int) (padding * dpiScale * 2), (int) (padding * dpiScale),
-                (int) (padding * dpiScale * 2), (int) (padding * dpiScale / 2));
-        mLayout.addView(mSeekBar);
 
-        return mLayout;
+        super.onBindDialogView(view);
     }
 
     @Override
@@ -133,7 +141,7 @@ public class SeekBarDialogPref extends DialogPreference {
         super.onDialogClosed(positiveResult);
         if (positiveResult) {
             mValue = mSeekBar.getProgress() + mMin;
-            String pushValue = String.valueOf(mValue);
+            String pushValue = String.valueOf((mType == 1) ? mValue * 0.5f : mValue);
             if (callChangeListener(pushValue)) {
                 persistString(pushValue);
                 notifyChanged();
@@ -158,6 +166,6 @@ public class SeekBarDialogPref extends DialogPreference {
         } else {
             getValue = String.valueOf(defaultValue);
         }
-        mValue = Integer.parseInt(getValue);
+        mValue = (mType == 1) ? (int) (Float.parseFloat(getValue) * 2) : Integer.parseInt(getValue);
     }
 }

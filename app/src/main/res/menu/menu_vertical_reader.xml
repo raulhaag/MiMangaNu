@@ -1,0 +1,29 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="ar.rulosoft.mimanganu.ActivityLector">
+    <item
+        android:id="@+id/action_keep_screen_on"
+        android:icon="@drawable/ic_action_mantain_screen_off"
+        android:title="@string/keep_on"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_orientation"
+        android:icon="@drawable/ic_action_screen_free"
+        android:title="@string/rotation"
+        app:showAsAction="always" />
+
+    <!--    <item
+          android:icon="@drawable/ic_action_overflow"
+          android:title="@string/mas"
+          android:orderInCategory="100"
+          app:showAsAction="always">
+          <menu>
+              <item
+                  android:id="@+id/redownload_image"
+                  android:title="@string/download_image_again" />
+          </menu>
+      </item>
+-->
+</menu>

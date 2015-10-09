@@ -148,4 +148,5 @@
     <string name="more_options">More options</string>
     <string name="color_reader">Reader Color</string>
     <string name="color_reader_sub">The color in the reader mode</string>
+    <string name="title_activity_vertical_reader">Reader</string>
 </resources>

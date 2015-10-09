@@ -30,7 +30,7 @@ public class SubManga extends ServerBase {
         Matcher m = p.matcher(source);
         while (m.find()) {
             String name = m.group(2);
-            if (name.contains("�") && name.contains("�") && name.contains("�") && name.contains("�")) {
+            if (name.contains("!") && name.contains("?") && name.contains("�") && name.contains("�")) {
                 mangas.add(new Manga(SUBMANGA, name, m.group(1), false));
             }
         }

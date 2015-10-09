@@ -422,12 +422,12 @@ public class ActivityLector extends AppCompatActivity
     }
 
     @Override
-    public void onImagenDescargada(final int cid, final int pagina) {
+    public void onImageDownloaded(final int cid, final int page) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 Fragment fragment =
-                        mSectionsPagerAdapter.getIfOnMemory(pagina);
+                        mSectionsPagerAdapter.getIfOnMemory(page);
                 if (fragment != null &&
                         !((PageFragment) fragment).imageLoaded) {
                     ((PageFragment) fragment).setImage();

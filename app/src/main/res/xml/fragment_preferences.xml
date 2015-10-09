@@ -3,7 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:key="first_preferencescreen">
+    android:key="first_preferencescreen">+
+
+    <PreferenceCategory android:title="Test">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="test_reader"
+            android:summary="Test Vertical Reader"
+            android:title="New Vertical Reader (preview)" />
+    </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_mm">
         <SwitchPreference
@@ -46,7 +54,7 @@
             android:key="ajustar_a"
             android:summary="%s"
             android:title="@string/ajuste_imagen" />
-        <ar.rulosoft.custompref.SeekBarDialogPref
+        <ar.rulosoft.custompref.SeekBarDialogFloatPref
             android:defaultValue="1"
             android:dialogTitle="@string/scroll_speed"
             android:key="scroll_speed"
