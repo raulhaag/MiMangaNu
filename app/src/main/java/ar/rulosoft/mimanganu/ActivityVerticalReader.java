@@ -45,6 +45,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     private static ImageViewTouchBase.DisplayType mScreenFit;
     public VerticalReader mReader;
     boolean updatedValue = false;
+
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
     private boolean mKeepOn; // false = normal  | true = screen on
@@ -60,7 +61,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     private Manga mManga;
     private ServerBase mServerBase;
     private TextView mSeekerPage, mScrollSensitiveText;
-    private MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
+    private MenuItem keepOnMenuItem, screenRotationMenuItem;
     private Button mButtonMinus, mButtonPlus;
 
     private boolean controlVisible = false;
@@ -206,7 +207,6 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_vertical_reader, menu);
-        displayMenu = menu.findItem(R.id.action_ajustar);
         keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
         screenRotationMenuItem = menu.findItem(R.id.action_orientation);
         if (mKeepOn) {

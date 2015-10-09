@@ -390,14 +390,12 @@ public class ActivityManga extends AppCompatActivity {
                 int first = mListView.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
                 Intent intent;
-                if (pm.getBoolean("test_reader", false)) {
+                if (manga.getReadingDirection() == Direction.VERTICAL.ordinal() && pm.getBoolean("test_reader", false)) {
                     intent = new Intent(ActivityManga.this, ActivityVerticalReader.class);
                 } else {
                     intent = new Intent(ActivityManga.this, ActivityLector.class);
                 }
                 intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
-                //          new Intent(ActivityManga.this, ActivityLector.class);
-                //  intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
                 ActivityManga.this.startActivity(intent);
             }
             super.onPostExecute(result);
