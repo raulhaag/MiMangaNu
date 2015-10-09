@@ -158,7 +158,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
             pages.add(DownloadPoolService.generarRutaBase(mServerBase, mManga, mChapter,
                     getApplicationContext()) + "/" + (i + 1) + ".jpg");
         }
-        mReader.setTextureMax(mTextureMax);
+        mReader.setMaxTexture(mTextureMax);
         mReader.setViewReadyListener(this);
         mReader.setPath(pages);
         mReader.setTapListener(this);

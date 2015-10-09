@@ -41,11 +41,11 @@ public class VerticalReader extends View implements OnGestureListener,
     int screenHeight, screenWidth;
     Handler mHandler;
     float ppi;
-    int mTextureMax = 1024;
     boolean pagesLoaded = false, viewReady = false;
     boolean animatingSeek = false;
     boolean stopAnimationsOnTouch = false, stopAnimationOnVerticalOver = false, stopAnimationOnHorizontalOver = false;
     boolean iniVisibility, endVisibility;
+    private int mTextureMax = 1024;
     private float totalHeight = 0;
     private float XScroll = 0, YScroll = 0;
     private ArrayList<Page> pages;
@@ -464,8 +464,9 @@ public class VerticalReader extends View implements OnGestureListener,
         this.mScrollSensitive = mScrollSensitive;
     }
 
-    public void setTextureMax(int mTextureMax) {
-        this.mTextureMax = mTextureMax;
+    public void setMaxTexture(int mTextureMax) {
+        if (mTextureMax > 0)
+            this.mTextureMax = mTextureMax;
     }
 
     public void setTapListener(OnTapListener mTapListener) {
@@ -634,7 +635,7 @@ public class VerticalReader extends View implements OnGestureListener,
             return visible || (init_visibility < YScroll && end_visibility >= visibleBottom);
         }
 
-        public boolean isNearToBeVisible() {
+        public boolean isNearToBeVisible() { // TODO check if ok, to preload images before the visibility reach
             float visibleBottomEx = YScroll + screenHeight + scaled_height / 2;
             float YsT = YScroll + scaled_height / 2;
             return (YsT <= init_visibility && init_visibility <= visibleBottomEx) || (YsT <= end_visibility && end_visibility <= visibleBottomEx);

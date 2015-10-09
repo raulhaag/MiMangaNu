@@ -3,6 +3,14 @@
 
 Lector Manga online
 
+Cambios 1.35
+* Agegado selector de velocidad de scroll tanto por defecto como por manga
+* Agregado inmersive mode para kitkat y superior
+* Introduciendo al tema "Oscuro"
+* Agregado la opcion de color para el lector
+* Otros fixes
+
+
 Cambios 1.33
 * Fix en un gran error al descargar mangas
 
