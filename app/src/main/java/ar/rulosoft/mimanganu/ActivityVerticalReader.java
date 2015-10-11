@@ -288,7 +288,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     protected void onResume() {
         super.onResume();
         DownloadPoolService.attachListener(this, mChapter.getId());
-        mReader.seekPage(mChapter.getPagesRead());
+        mReader.seekPage(mChapter.getPagesRead() - 1);
     }
 
     @Override
@@ -395,6 +395,6 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public void onViewReady() {
-        mReader.seekPage(mChapter.getPagesRead());
+        mReader.seekPage(mChapter.getPagesRead() - 1);
     }
 }
