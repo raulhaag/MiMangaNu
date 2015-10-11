@@ -21,7 +21,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
     protected GestureDetector mGestureDetector;
     protected int mTouchSlop;
     protected float mScaleFactor;
-    protected int mDoubleTapDirection;
     protected OnGestureListener mGestureListener;
     protected OnScaleGestureListener mScaleListener;
     protected boolean mDoubleTapEnabled = true;
@@ -52,8 +51,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
 
         mScaleDetector = new ScaleGestureDetector(getContext(), mScaleListener);
         mGestureDetector = new GestureDetector(getContext(), mGestureListener, null, true);
-
-        mDoubleTapDirection = 1;
     }
 
     public void setDoubleTapListener(OnImageViewTouchDoubleTapListener listener) {
@@ -117,25 +114,19 @@ public class ImageViewTouch extends ImageViewTouchBase {
 
     @Override
     protected void onZoomAnimationCompleted(float scale) {
-//        if (LOG_ENABLED) {
-//            Log.d(LOG_TAG, "onZoomAnimationCompleted. scale: " +
-//                    scale + ", minZoom: " + getMinScale());
-//        }
         if (scale < getMinScale()) zoomTo(getMinScale(), 50);
     }
 
-    protected float onDoubleTapPost(float scale, float maxZoom) {
-        if (mDoubleTapDirection == 1) {
-            if ((scale + (mScaleFactor * 2)) <= maxZoom) {
-                return scale + mScaleFactor;
-            } else {
-                mDoubleTapDirection = -1;
-                return maxZoom;
-            }
+    protected float onDoubleTapPost(float scale) {
+        float defScale = getDefaultScale(mScaleType);
+        if (scale <= 1.8f * defScale) {
+            return 2f * defScale;
+        } else if (scale <= 2.8f * defScale) {
+            return 3f * defScale;
         } else {
-            mDoubleTapDirection = 1;
-            return getDefaultScale(mScaleType);
+            return defScale;
         }
+        // Still don't know what mDoubleTapDirection is, but it seems to be useless
     }
 
     public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -277,14 +268,10 @@ public class ImageViewTouch extends ImageViewTouchBase {
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
-//            if (LOG_ENABLED) {
-//                Log.i(LOG_TAG, "onDoubleTap. double tap enabled? " + mDoubleTapEnabled);
-//            }
             if (mDoubleTapEnabled) {
                 mUserScaled = true;
-                float scale = getScale();
                 float targetScale = Math.min(getMaxScale(),
-                        Math.max(onDoubleTapPost(scale, getMaxScale()), getMinScale()));
+                        Math.max(onDoubleTapPost(getScale()), getMinScale()));
                 zoomTo(targetScale, e.getX(), e.getY(), DEFAULT_ANIMATION_DURATION);
                 invalidate();
             }
@@ -351,11 +338,9 @@ public class ImageViewTouch extends ImageViewTouchBase {
                     mUserScaled = true;
                     targetScale = Math.min(getMaxScale(), Math.max(targetScale, getMinScale() - 0.1f));
                     zoomTo(targetScale, detector.getFocusX(), detector.getFocusY());
-                    mDoubleTapDirection = 1;
                     invalidate();
                     return true;
                 }
-
                 // This is to prevent a glitch the first time image is scaled.
                 if (!mScaled) mScaled = true;
             }
