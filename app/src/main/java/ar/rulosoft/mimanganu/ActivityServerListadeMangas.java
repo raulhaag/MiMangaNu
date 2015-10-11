@@ -45,7 +45,8 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
         s = ServerBase.getServer(id);
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null) mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+        if (mActBar != null)
+            mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
 
         lista = (ListView) findViewById(R.id.lista_de_mangas);
         cargando = (ProgressBar) findViewById(R.id.cargando);
@@ -93,7 +94,7 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
 
     private class LoadMangasTask extends AsyncTask<Void, Void, List<Manga>> {
 
-        String error = ".";
+        String error = "";
 
         @Override
         protected void onPreExecute() {
@@ -107,7 +108,10 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
             try {
                 mangas = s.getMangas();
             } catch (Exception e) {
-                error = e.getMessage();
+                if (e.getMessage() != null)
+                    error = e.getMessage();
+                else
+                    error = e.toString();
             }
             return mangas;
         }
@@ -118,7 +122,7 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
                 adapter = new MangaAdapter(getApplicationContext(), result);
                 lista.setAdapter(adapter);
             }
-            if (error.length() > 2) {
+            if (error != null && error.length() > 2) {
                 Toast.makeText(getApplicationContext(), "Error: " + error, Toast.LENGTH_LONG).show();
             }
             cargando.setVisibility(ProgressBar.INVISIBLE);

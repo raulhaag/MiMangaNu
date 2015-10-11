@@ -310,6 +310,7 @@ public class VerticalReader extends View implements OnGestureListener,
         stopAnimationOnVerticalOver = false;
         mHandler.post(new Runnable() {
             final int fps = 25;
+            final float deceleration_rate = 0.95f;
             final int timeLapse = 1000 / fps;
             final float min_velocity = 250;
             float velocity_Y = velocityY * mScaleFactor;
@@ -318,8 +319,8 @@ public class VerticalReader extends View implements OnGestureListener,
             @Override
             public void run() {
                 relativeScroll(-velocity_X / fps, -(velocity_Y / fps));
-                velocity_Y = velocity_Y * 0.8f;
-                velocity_X = velocity_X * 0.8f;
+                velocity_Y = velocity_Y * deceleration_rate;
+                velocity_X = velocity_X * deceleration_rate;
                 invalidate();
                 if (stopAnimationOnHorizontalOver) {
                     velocity_X = 0;
