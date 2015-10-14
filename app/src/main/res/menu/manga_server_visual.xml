@@ -3,18 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.MisMangas">
-
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_action_action_search"
         android:title="@string/filtrar"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="always" />
-
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/ver_como_lista"
         android:icon="@drawable/ic_view_as_list"
         android:title="@string/vercomolista"
         app:showAsAction="always" />
-
 </menu>

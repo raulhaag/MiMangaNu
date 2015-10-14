@@ -39,7 +39,7 @@
             android:largeHeap="true"
             android:theme="@style/AppTheme.Light.NoActionbar" />
         <activity
-            android:name=".ActivityServerVisualNavegacion"
+            android:name=".ActivityServerVisualNavigation"
             android:label="@string/title_activity_server_visual_navegacion" />
         <activity
             android:name=".ActivityResultadoDeBusqueda"
@@ -48,7 +48,7 @@
             android:name=".ActivityLicenseView"
             android:label="@string/licencia" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".ActivitySettings"
             android:label="@string/configuraciones" />
 
         <service android:name=".services.DownloadPoolService" />
@@ -73,7 +73,7 @@
         <activity
             android:name=".ActivityVerticalReader"
             android:label="@string/title_activity_vertical_reader"
-            android:theme="@style/AppTheme.Light.NoActionbar"></activity>
+            android:theme="@style/AppTheme.Light.NoActionbar" />
     </application>
 
 </manifest>

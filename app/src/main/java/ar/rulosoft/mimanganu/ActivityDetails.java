@@ -41,16 +41,14 @@ public class ActivityDetails extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);
         data = (ControlInfo) findViewById(R.id.datos);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
-        int[] colors = ThemeColors.getColors(
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
-                getApplicationContext());
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         str.setColorSchemeColors(colors[0], colors[1]);
 
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();

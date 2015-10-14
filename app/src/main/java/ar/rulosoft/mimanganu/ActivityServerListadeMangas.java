@@ -50,7 +50,7 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
 
         lista = (ListView) findViewById(R.id.lista_de_mangas);
         cargando = (ProgressBar) findViewById(R.id.cargando);
-        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getApplicationContext()), getApplicationContext());
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
 
         new LoadMangasTask().execute();

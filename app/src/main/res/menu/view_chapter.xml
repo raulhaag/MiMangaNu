@@ -7,12 +7,12 @@
         android:icon="@drawable/ic_action_clasico"
         android:orderInCategory="100"
         android:title="@string/sentido"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/descargas"
         android:icon="@drawable/ic_action_downloads"
-        android:title="Downloads"
+        android:title="@string/descargas"
         app:showAsAction="always" />
 
     <item

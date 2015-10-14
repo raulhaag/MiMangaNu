@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,7 +87,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mis_mangas, menu);
+        getMenuInflater().inflate(R.menu.view_mismangas, menu);
 
         /** Set hide/unhide checkbox */
         boolean checkedRead = pm.getInt(FragmentMisMangas.SELECT_MODE,
@@ -114,10 +112,6 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                 startActivity(new Intent(this, ActivityDownloads.class));
                 break;
             }
-            case R.id.licencia: {
-                startActivity(new Intent(this, ActivityLicenseView.class));
-                break;
-            }
             case R.id.action_hide_read: {
                 item.setChecked(!item.isChecked());
                 pm.edit().putInt(FragmentMisMangas.SELECT_MODE,
@@ -128,7 +122,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                 break;
             }
             case R.id.action_configurar: {
-                startActivity(new Intent(this, SettingsActivity.class));
+                startActivity(new Intent(this, ActivitySettings.class));
                 break;
             }
             case R.id.sort_last_read: {
