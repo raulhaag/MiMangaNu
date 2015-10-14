@@ -33,10 +33,10 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerVisualNavegacion extends AppCompatActivity implements OnLastItem, OnMangaClick {
+public class ActivityServerVisualNavigation extends AppCompatActivity implements OnLastItem, OnMangaClick {
 
     private boolean mStart = true;
-    private ServerBase s;
+    private ServerBase sBase;
     private Spinner generos;
     private Spinner orden;
     private RecyclerView grilla;
@@ -49,34 +49,34 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(ActivityServerVisualNavegacion.this);
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_visual_navegacion);
         int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
-        s = ServerBase.getServer(id);
+        sBase = ServerBase.getServer(id);
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null)
-            mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+        if (mActBar != null) {
+            mActBar.setTitle(getResources()
+                    .getString(R.string.listaen) + " " + sBase.getServerName());
+            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        }
 
         grilla = (RecyclerView) findViewById(R.id.grilla);
         generos = (Spinner) findViewById(R.id.generos);
         orden = (Spinner) findViewById(R.id.ordenar_por);
         cargando = (ProgressBar) findViewById(R.id.cargando);
-        int[] colors = ThemeColors.getColors(
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
-                getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
-        if (s.getCategories() != null)
+        if (sBase.getCategories() != null)
             generos.setAdapter(new ArrayAdapter<>(
-                    this, android.R.layout.simple_dropdown_item_1line, s.getCategories()));
+                    this, android.R.layout.simple_dropdown_item_1line, sBase.getCategories()));
         else
             generos.setVisibility(Spinner.INVISIBLE);
 
-        if (s.getOrders() != null)
+        if (sBase.getOrders() != null)
             orden.setAdapter(new ArrayAdapter<>(
-                    this, android.R.layout.simple_dropdown_item_1line, s.getOrders()));
+                    this, android.R.layout.simple_dropdown_item_1line, sBase.getOrders()));
         else
             orden.setVisibility(Spinner.INVISIBLE);
 
@@ -90,7 +90,7 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
             columnas = 2;
         else if (columnas > 6)
             columnas = 6;
-        grilla.setLayoutManager(new GridLayoutManager(ActivityServerVisualNavegacion.this, columnas));
+        grilla.setLayoutManager(new GridLayoutManager(ActivityServerVisualNavigation.this, columnas));
         orden.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
@@ -99,7 +99,7 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
                     adap = null;
                     pagina = 1;
                     mStart = true;
-                    s.hayMas = true;
+                    sBase.hayMas = true;
                     new LoadLastTask().execute(pagina);
                 } else {
                     neuvaTarea = true;
@@ -109,7 +109,6 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // TODO Auto-generated method stub
-
             }
         });
 
@@ -121,7 +120,7 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
                     adap = null;
                     pagina = 1;
                     mStart = true;
-                    s.hayMas = true;
+                    sBase.hayMas = true;
                     new LoadLastTask().execute(pagina);
                 } else {
                     neuvaTarea = true;
@@ -131,7 +130,6 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 // TODO Auto-generated method stub
-
             }
         });
 
@@ -140,14 +138,14 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
 
     @Override
     public void onRequestedLastItem() {
-        if (s.hayMas && !cargando.isShown() && !mStart)
+        if (sBase.hayMas && !cargando.isShown() && !mStart)
             new LoadLastTask().execute(pagina);
     }
 
     @Override
     public void onMangaClick(Manga manga) {
         Intent intent = new Intent(getApplication(), ActivityDetails.class);
-        intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
+        intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
         intent.putExtra(ActivityDetails.TITLE, manga.getTitle());
         intent.putExtra(ActivityDetails.PATH, manga.getPath());
         startActivity(intent);
@@ -158,16 +156,17 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.manga_server_visual, menu);
         buscar = menu.findItem(R.id.action_search);
         MenuItem vcl = menu.findItem(R.id.ver_como_lista);
-        if (!s.hasList())
+        if (!sBase.hasList())
             vcl.setVisible(false);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(buscar);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String st) {
-                Intent intent = new Intent(ActivityServerVisualNavegacion.this, ActivityResultadoDeBusqueda.class);
+                Intent intent = new Intent(ActivityServerVisualNavigation.this,
+                        ActivityResultadoDeBusqueda.class);
                 intent.putExtra(ActivityResultadoDeBusqueda.TERMINO, st);
-                intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
+                intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
                 startActivity(intent);
                 return true;
             }
@@ -184,7 +183,7 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.ver_como_lista) {
             Intent intent = new Intent(this, ActivityServerListadeMangas.class);
-            intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
+            intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
             startActivity(intent);
             finish();
         }
@@ -205,7 +204,7 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
             try {
-                mangas = s.getMangasFiltered(
+                mangas = sBase.getMangasFiltered(
                         generos.getSelectedItemPosition(), orden.getSelectedItemPosition(), params[0]);
             } catch (Exception e) {
                 error = e.getMessage();
@@ -216,15 +215,16 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityServerVisualNavegacion.this,
+                Toast.makeText(ActivityServerVisualNavigation.this,
                         "Error: " + error, Toast.LENGTH_SHORT).show();
             } else {
                 pagina++;
                 if (result != null && result.size() != 0 && grilla != null) {
                     if (adap == null) {
-                        adap = new MangasRecAdapter(result, ActivityServerVisualNavegacion.this, darkTheme);
-                        adap.setLastItemListener(ActivityServerVisualNavegacion.this);
-                        adap.setMangaClickListener(ActivityServerVisualNavegacion.this);
+                        adap = new MangasRecAdapter(result,
+                                ActivityServerVisualNavigation.this, darkTheme);
+                        adap.setLastItemListener(ActivityServerVisualNavigation.this);
+                        adap.setMangaClickListener(ActivityServerVisualNavigation.this);
                         grilla.setAdapter(adap);
                     } else {
                         adap.addAll(result);
@@ -235,7 +235,7 @@ public class ActivityServerVisualNavegacion extends AppCompatActivity implements
                     adap = null;
                     pagina = 1;
                     mStart = true;
-                    s.hayMas = true;
+                    sBase.hayMas = true;
                     new LoadLastTask().execute(pagina);
                     neuvaTarea = false;
                 }

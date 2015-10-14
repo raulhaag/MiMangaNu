@@ -55,10 +55,10 @@ public class ActivityManga extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
         mMangaId = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
         if (mMangaId == -1) {
@@ -68,9 +68,7 @@ public class ActivityManga extends AppCompatActivity {
         mListView = (ListView) findViewById(R.id.lista);
         str = (SwipeRefreshLayout) findViewById(R.id.str);
         mImageLoader = new ImageLoader(this);
-        int[] colors = ThemeColors.getColors(
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
-                getApplicationContext());
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
 
@@ -317,7 +315,7 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.activity_capitulos, menu);
+        getMenuInflater().inflate(R.menu.view_chapter, menu);
         mMenuItem = menu.findItem(R.id.action_sentido);
         int readDirection;
         if (manga.getReadingDirection() != -1) {

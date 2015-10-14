@@ -29,9 +29,7 @@ public class ActivityDownloads extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_descargas);
-        int[] colors = ThemeColors.getColors(
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
-                getApplicationContext());
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
 
