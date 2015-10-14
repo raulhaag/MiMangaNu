@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -33,13 +31,13 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     public int[] colors;
+    FloatingActionButton button_add;
+    boolean darkTheme;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private FragmentMisMangas fragmentMisMangas;
     private FragmentAddManga fragmentAddManga;
     private ViewPager mViewPager;
     private SharedPreferences pm;
-    FloatingActionButton button_add;
-    boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +122,8 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                         item.isChecked() ?
                                 FragmentMisMangas.MODE_HIDE_READ : FragmentMisMangas.MODE_SHOW_ALL
                 ).apply();
-                fragmentMisMangas.setListManga();
+                if (fragmentMisMangas != null)
+                    fragmentMisMangas.setListManga();
                 break;
             }
             case R.id.action_configurar: {

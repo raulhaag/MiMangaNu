@@ -21,7 +21,6 @@ import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
-import android.view.animation.LinearInterpolator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +33,7 @@ public class VerticalReader extends View implements OnGestureListener,
         OnDoubleTapListener {
 
     public Paint paint = new Paint();
-    public int currentPage = 0, lastVisiblePage = 0;
+    public int currentPage = 0, firstVisiblePage = 0;
     public float mScrollSensitive = 1.f;
     float mScaleFactor = 1.f;
     Matrix m = new Matrix();
@@ -191,6 +190,7 @@ public class VerticalReader extends View implements OnGestureListener,
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (viewReady) {
+            firstVisiblePage = -1;
             iniVisibility = false;
             endVisibility = false;
             if (pages != null) {
@@ -198,7 +198,8 @@ public class VerticalReader extends View implements OnGestureListener,
                     if (page.state != ImagesStates.ERROR) {
                         if (page.isVisible()) {
                             iniVisibility = true;
-                            lastVisiblePage = pages.indexOf(page);
+                            if (firstVisiblePage == -1)
+                                firstVisiblePage = pages.indexOf(page);
                             if (page.state == ImagesStates.LOADED) {
                                 page.draw(canvas);
                             } else {
@@ -216,8 +217,8 @@ public class VerticalReader extends View implements OnGestureListener,
                             break;
                     }
                 }
-                if (currentPage != lastVisiblePage && !animatingSeek) {
-                    setPage(lastVisiblePage);
+                if (currentPage != firstVisiblePage && !animatingSeek) {
+                    setPage(firstVisiblePage);
                 }
             }
         } else if (pagesLoaded) {
@@ -256,23 +257,23 @@ public class VerticalReader extends View implements OnGestureListener,
 
         ValueAnimator va = ValueAnimator.ofFloat(ini, end);
         va.setDuration(300);
-        va.setInterpolator(new LinearInterpolator());
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             float nScale;
             float final_x = ((XScroll + e.getX() / ini)) - (screenWidth / 2) + (screenWidth * end - screenWidth) / (end * 2) - XScroll;
             float final_y = ((YScroll + e.getY() / ini)) - (screenHeight / 2) + (screenHeight * end - screenHeight) / (end * 2) - YScroll;
             float initial_x_scroll = XScroll;
             float initial_y_scroll = YScroll;
-            float nPx, nPy;
+            float nPx, nPy, aP;
 
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 nScale = (float) valueAnimator.getAnimatedValue();
-                nPx = initial_x_scroll + (final_x * valueAnimator.getAnimatedFraction());
-                nPy = initial_y_scroll + (final_y * valueAnimator.getAnimatedFraction());
+                aP = valueAnimator.getAnimatedFraction();
+                nPx = initial_x_scroll + (final_x * aP);
+                nPy = initial_y_scroll + (final_y * aP);
                 mScaleFactor = nScale;
                 absoluteScroll(nPx, nPy);
-                VerticalReader.this.postInvalidate();
+                VerticalReader.this.invalidate();
             }
         });
         va.start();
@@ -308,9 +309,10 @@ public class VerticalReader extends View implements OnGestureListener,
         stopAnimationsOnTouch = false;
         stopAnimationOnHorizontalOver = false;
         stopAnimationOnVerticalOver = false;
+
         mHandler.post(new Runnable() {
-            final int fps = 120;
-            final float deceleration_rate = 0.95f;
+            final int fps = 60;
+            final float deceleration_rate = 0.90f;
             final int timeLapse = 1000 / fps;
             final float min_velocity = 250;
             float velocity_Y = velocityY * mScrollSensitive;
@@ -459,6 +461,10 @@ public class VerticalReader extends View implements OnGestureListener,
 
     public void setPageChangeListener(OnPageChangeListener pageChangeListener) {
         this.pageChangeListener = pageChangeListener;
+    }
+
+    public boolean isLastPageVisible() {
+        return pages.get(pages.size() - 1).isVisible();
     }
 
     public void setScrollSensitive(float mScrollSensitive) {

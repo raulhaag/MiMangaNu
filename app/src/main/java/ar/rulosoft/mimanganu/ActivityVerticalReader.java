@@ -169,9 +169,10 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
             @Override
             public void onPageChanged(int page) {
                 updatedValue = true;
-                mChapter.setPagesRead(page + ((page < mChapter.getPages()) ? 1 : 0));
+                mChapter.setPagesRead(page + 1);
                 mSeekBar.setProgress(page);
-                if (page >= mChapter.getPages() - 1) {
+                if (mReader.isLastPageVisible()) {
+                    mChapter.setPagesRead(mChapter.getPages());
                     mChapter.setReadStatus(Chapter.READ);
                 } else if (mChapter.getReadStatus() == Chapter.READ) {
                     mChapter.setReadStatus(Chapter.READING);
@@ -279,6 +280,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     protected void onPause() {
+        Database.updateChapter(ActivityVerticalReader.this, mChapter);
         Database.updateChapterPage(ActivityVerticalReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
