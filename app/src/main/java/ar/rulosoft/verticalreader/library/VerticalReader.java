@@ -157,8 +157,9 @@ public class VerticalReader extends View implements OnGestureListener,
         float acc = 0;
         for (int i = 0; i < pages.size(); i++) {
             Page d = pages.get(i);
-            d.init_visibility = acc;
+            d.init_visibility = (float) Math.floor(acc);
             acc += d.scaled_height;
+            acc = (float) Math.floor(acc);
             d.end_visibility = acc;
         }
         totalHeight = acc;
@@ -413,6 +414,8 @@ public class VerticalReader extends View implements OnGestureListener,
     }
 
     public void seekPage(int index) {
+        if (index < 0)
+            index = 0;
         absoluteScroll(XScroll, getPagePosition(index));
     }
 
@@ -514,6 +517,7 @@ public class VerticalReader extends View implements OnGestureListener,
         float scaled_height;
         float scaled_width;
         boolean initialized = false;
+        boolean slowLoad = false;
         int[] alphas;
         Bitmap[] image;
         float pw, ph;
@@ -521,13 +525,83 @@ public class VerticalReader extends View implements OnGestureListener,
         int vp, hp, tp, partsLoaded; //vertical and horizontal parts count and total
 
         public void loadBitmap() {
-            for (int i = 0; i < tp; i++) {
-                loadBitmap(i);
+            if (!slowLoad) {
+                for (int i = 0; i < tp; i++) {
+                    loadBitmap(i);
+                }
+            } else {
+                slowLoad();
             }
+
+        }
+
+        public void slowLoad() {
+            if (!animatingSeek)
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            BitmapFactory.Options options = new BitmapFactory.Options();
+                            options.inPreferredConfig = Bitmap.Config.RGB_565;
+                            Bitmap allBitmap = BitmapFactory.decodeFile(path, options);
+                            if (allBitmap != null) {
+                                for (int i = 0; i < tp; i++) {
+                                    image[i] = Bitmap.createBitmap(allBitmap, (int) dx[i], (int) dy[i], (int) pw, (int) ph);
+                                }
+                                allBitmap.recycle();
+                                allBitmap = null;
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        state = ImagesStates.LOADED;
+                                        if (Page.this.isVisible()) {
+                                            ValueAnimator va = ValueAnimator.ofInt(0, 255);
+                                            va.setDuration(200);
+                                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                                @Override
+                                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                                    for (int i = 0; i < alphas.length; i++)
+                                                        alphas[i] = (int) valueAnimator.getAnimatedValue();
+                                                    invalidate();
+                                                }
+                                            });
+                                            va.addListener(new Animator.AnimatorListener() {
+                                                @Override
+                                                public void onAnimationStart(Animator animator) {
+
+                                                }
+
+                                                @Override
+                                                public void onAnimationEnd(Animator animator) {
+                                                    invalidate();
+                                                }
+
+                                                @Override
+                                                public void onAnimationCancel(Animator animator) {
+
+                                                }
+
+                                                @Override
+                                                public void onAnimationRepeat(Animator animator) {
+
+                                                }
+                                            });
+                                            va.start();
+                                        }
+                                    }
+                                });
+                            } else {
+                                state = ImagesStates.NULL;
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }).start();
         }
 
         public void loadBitmap(final int pos) {
-            if (!animatingSeek)
+            if (!animatingSeek && !slowLoad)
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -537,9 +611,17 @@ public class VerticalReader extends View implements OnGestureListener,
                                 state = ImagesStates.LOADING;
                                 BitmapFactory.Options options = new BitmapFactory.Options();
                                 options.inPreferredConfig = Bitmap.Config.RGB_565;
-                                BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(path, false);
-                                image[pos] = decoder.decodeRegion(new Rect((int) dx[pos], (int) dy[pos], (int) (dx[pos] + pw + 2), (int) (dy[pos] + ph + 2)), options);
-                                if (image != null) {
+                                if (tp == 1) {
+                                    image[pos] = BitmapFactory.decodeFile(path, options);
+                                } else {
+                                    try {
+                                        BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(new FileInputStream(path), false);
+                                        image[pos] = decoder.decodeRegion(new Rect((int) dx[pos], (int) dy[pos], (int) (dx[pos] + pw + 2), (int) (dy[pos] + ph + 2)), options);
+                                    } catch (Exception e) {
+                                        slowLoad = true;
+                                    }
+                                }
+                                if (image[pos] != null) {
                                     mHandler.post(new Runnable() {
                                         @Override
                                         public void run() {
@@ -589,6 +671,7 @@ public class VerticalReader extends View implements OnGestureListener,
                     }
                 }).start();
         }
+
 
         public void draw(Canvas canvas) {
             for (int i = 0; i < vp; i++) {
