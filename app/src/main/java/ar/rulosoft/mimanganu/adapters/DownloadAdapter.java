@@ -24,7 +24,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
     private LayoutInflater li;
     private boolean darkTheme;
 
-    public DownloadAdapter(Context context, ArrayList<ChapterDownload> objects, boolean darkTheme) {
+    public DownloadAdapter(Context context, boolean darkTheme) {
         super(context, listItem);
         states = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);

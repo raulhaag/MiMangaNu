@@ -30,8 +30,7 @@ public class FragmentDownload extends Fragment {
 
     @Override
     public void onResume() {
-        downAdapter = new DownloadAdapter(getActivity(),
-                new ArrayList<ChapterDownload>(), ((ActivityDownloads) getActivity()).darkTheme);
+        downAdapter = new DownloadAdapter(getActivity(), ((ActivityDownloads) getActivity()).darkTheme);
         listDownload.setAdapter(downAdapter);
         md = new ShowDownloadsTask();
         if (Build.VERSION.SDK_INT >= 11)

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.ListView;
 
 import java.util.ArrayList;
@@ -31,14 +32,29 @@ public class ActivityDownloads extends AppCompatActivity {
         setContentView(R.layout.activity_descargas);
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
-
+        if (mActBar != null) {
+            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            mActBar.setDisplayHomeAsUpEnabled(true);
+        }
         list = (ListView) findViewById(R.id.descargas);
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                onBackPressed();
+                return true;
+            }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onResume() {
-        adap = new DownloadAdapter(ActivityDownloads.this, new ArrayList<ChapterDownload>(), darkTheme);
+        adap = new DownloadAdapter(ActivityDownloads.this, darkTheme);
         list.setAdapter(adap);
         sh = new ShowDownloadsTask();
         sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
