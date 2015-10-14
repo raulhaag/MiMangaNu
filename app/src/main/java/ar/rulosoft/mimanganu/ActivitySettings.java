@@ -1,8 +1,8 @@
 package ar.rulosoft.mimanganu;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.ListPreference;
@@ -11,6 +11,9 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,8 +23,9 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class SettingsActivity extends Activity {
+public class ActivitySettings extends AppCompatActivity {
     private boolean darkTheme;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -30,8 +34,26 @@ public class SettingsActivity extends Activity {
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, new PreferencesFragment())
-                .commit();
+                .replace(android.R.id.content, new PreferencesFragment()).commit();
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
+        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        if (mActBar != null) {
+            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            mActBar.setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                onBackPressed();
+                return true;
+            }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public static class PreferencesFragment extends PreferenceFragment {

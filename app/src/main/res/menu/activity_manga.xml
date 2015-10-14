@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.ActivityCapitulos">
 
+    <!-- TODO check if this is used -->
+
     <item
         android:id="@+id/action_orden"
         android:icon="@drawable/ic_action_9a1"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:icon="@drawable/ic_view_as_list"
+        android:orderInCategory="100"
+        android:title="Show more licenses"
+        app:showAsAction="always">
+        <menu>
+            <item
+                android:id="@+id/licenseViewMIT"
+                android:title="@string/mitlic" />
+            <item
+                android:id="@+id/licenseViewAPACHE"
+                android:title="@string/apachelic" />
+        </menu>
+    </item>
+</menu>

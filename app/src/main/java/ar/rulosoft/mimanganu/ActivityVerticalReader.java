@@ -207,7 +207,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_vertical_reader, menu);
+        getMenuInflater().inflate(R.menu.view_reader_vertical, menu);
         keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
         screenRotationMenuItem = menu.findItem(R.id.action_orientation);
         if (mKeepOn) {

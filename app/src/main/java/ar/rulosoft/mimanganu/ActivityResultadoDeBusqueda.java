@@ -52,9 +52,7 @@ public class ActivityResultadoDeBusqueda extends AppCompatActivity {
             }
         });
         new PerformSearchTask().execute();
-        int[] colors = ThemeColors.getColors(
-                PreferenceManager.getDefaultSharedPreferences(getApplicationContext()),
-                getApplicationContext());
+        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
     }
