@@ -35,7 +35,7 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.verticalreader.library.VerticalReader;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 
-public class ActivityVerticalReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.ViewReady {
+public class ActivityVerticalReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 
     // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -120,7 +120,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         mButtonMinus = (Button) findViewById(R.id.minus);
         mButtonPlus = (Button) findViewById(R.id.plus);
         mScrollSensitiveText = (TextView) findViewById(R.id.scroll_level);
-        mScrollSensitiveText.setText("" + mScrollFactor);
+        mScrollSensitiveText.setText(mScrollFactor + "x");
 
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
@@ -179,13 +179,14 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                 }
             }
         });
+        mReader.setOnEndFlingListener(this);
     }
 
     private void modScrollSensitive(float diff) {
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
             Database.updateMangaScrollSensitive(ActivityVerticalReader.this, mManga.getId(), mScrollFactor);
-            mScrollSensitiveText.setText("" + mScrollFactor);
+            mScrollSensitiveText.setText(mScrollFactor + "x");
             mReader.setScrollSensitive(mScrollFactor);
         }
     }
@@ -398,5 +399,16 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     @Override
     public void onViewReady() {
         mReader.seekPage(mChapter.getPagesRead() - 1);
+    }
+
+    @Override
+    public void onEndFling() {
+        new AlertDialog.Builder(ActivityVerticalReader.this)
+                .setTitle(mChapter.getTitle() + " finalizado")
+                .setMessage("Desea cargar el proximo capitulo")
+                .setIcon(R.drawable.ic_launcher)
+                .setNegativeButton(getString(android.R.string.no), null)
+                .setPositiveButton(getString(android.R.string.ok), null)
+                .show();
     }
 }

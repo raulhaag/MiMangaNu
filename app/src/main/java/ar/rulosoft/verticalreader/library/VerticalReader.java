@@ -52,7 +52,9 @@ public class VerticalReader extends View implements OnGestureListener,
     private GestureDetector mGestureDetector;
     private OnPageChangeListener pageChangeListener;
     private OnTapListener mTapListener;
-    private ViewReady mViewReadyListener;
+    private OnEndFlingListener mOnEndFlingListener;
+
+    private OnViewReadyListener mViewReadyListener;
 
     public VerticalReader(Context context) {
         super(context);
@@ -310,6 +312,9 @@ public class VerticalReader extends View implements OnGestureListener,
         stopAnimationsOnTouch = false;
         stopAnimationOnHorizontalOver = false;
         stopAnimationOnVerticalOver = false;
+        if (mOnEndFlingListener != null && e1.getY() - e2.getY() > 100 && (YScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
+            mOnEndFlingListener.onEndFling();
+        }
 
         mHandler.post(new Runnable() {
             final int fps = 60;
@@ -466,6 +471,10 @@ public class VerticalReader extends View implements OnGestureListener,
         this.pageChangeListener = pageChangeListener;
     }
 
+    public void setOnEndFlingListener(OnEndFlingListener onEndFlingListener) {
+        this.mOnEndFlingListener = onEndFlingListener;
+    }
+
     public boolean isLastPageVisible() {
         return pages.get(pages.size() - 1).isVisible();
     }
@@ -483,7 +492,7 @@ public class VerticalReader extends View implements OnGestureListener,
         this.mTapListener = mTapListener;
     }
 
-    public void setViewReadyListener(ViewReady mViewReadyListener) {
+    public void setViewReadyListener(OnViewReadyListener mViewReadyListener) {
         this.mViewReadyListener = mViewReadyListener;
     }
 
@@ -501,8 +510,12 @@ public class VerticalReader extends View implements OnGestureListener,
         void onRightTap();
     }
 
-    public interface ViewReady {
+    public interface OnViewReadyListener {
         void onViewReady();
+    }
+
+    public interface OnEndFlingListener {
+        void onEndFling();
     }
 
     private class Page {
@@ -535,6 +548,7 @@ public class VerticalReader extends View implements OnGestureListener,
 
         }
 
+        //sometimes region decoder don´t work
         public void slowLoad() {
             if (!animatingSeek)
                 new Thread(new Runnable() {
@@ -546,7 +560,13 @@ public class VerticalReader extends View implements OnGestureListener,
                             Bitmap allBitmap = BitmapFactory.decodeFile(path, options);
                             if (allBitmap != null) {
                                 for (int i = 0; i < tp; i++) {
-                                    image[i] = Bitmap.createBitmap(allBitmap, (int) dx[i], (int) dy[i], (int) pw, (int) ph);
+                                    float with = pw;
+                                    if ((dx[i] + with + 2) < allBitmap.getWidth())
+                                        with += 2;
+                                    float height = ph;
+                                    if ((dy[i] + height + 2) < allBitmap.getHeight())
+                                        height += 2;
+                                    image[i] = Bitmap.createBitmap(allBitmap, (int) dx[i], (int) dy[i], (int) with, (int) height);
                                 }
                                 allBitmap.recycle();
                                 allBitmap = null;
