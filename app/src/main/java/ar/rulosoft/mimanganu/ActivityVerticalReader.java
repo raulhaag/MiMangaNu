@@ -3,9 +3,12 @@ package ar.rulosoft.mimanganu;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -57,7 +60,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     private LinearLayout mSeekerLayout;
     private SeekBar mSeekBar;
     private Toolbar mActionBar;
-    private Chapter mChapter;
+    private Chapter mChapter, nextChapter;
     private Manga mManga;
     private ServerBase mServerBase;
     private TextView mSeekerPage, mScrollSensitiveText;
@@ -84,24 +87,10 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         }
 
         mReader = (VerticalReader) findViewById(R.id.reader);
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        /*
-                        mChapter.setPagesRead(arg0 + ((arg0 < mChapter.getPages()) ? 1 : 0));
-                        mSeekBar.setProgress(arg0);
-                        if (arg0 >= mChapter.getPages() - 1) {
-                            mChapter.setReadStatus(Chapter.READ);
-                        } else if (mChapter.getReadStatus() == Chapter.READ) {
-                            mChapter.setReadStatus(Chapter.READING);
-                        }
-        */
 
         mServerBase = ServerBase.getServer(mManga.getServerId());
-        if (DownloadPoolService.actual != null)
-            DownloadPoolService.actual.setDownloadListener(this);
-
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
-        mActionBar.setTitle(mChapter.getTitle());
         mActionBar.setTitleTextColor(Color.WHITE);
 
         mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
@@ -129,8 +118,6 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         mSeekBar.setBackgroundColor(reader_bg);
         mScrollSelect.setBackgroundColor(reader_bg);
 
-        mChapter.setReadStatus(Chapter.READING);
-        Database.updateChapter(ActivityVerticalReader.this, mChapter);
         setSupportActionBar(mActionBar);
         hideSystemUI();
 
@@ -153,33 +140,60 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                 return false;
             }
         });
-        ArrayList<String> pages = new ArrayList<>();
-        for (int i = 0; i < mChapter.getPages(); i++) {
-            pages.add(DownloadPoolService.generarRutaBase(mServerBase, mManga, mChapter,
-                    getApplicationContext()) + "/" + (i + 1) + ".jpg");
-        }
         mReader.setMaxTexture(mTextureMax);
         mReader.setViewReadyListener(this);
-        mReader.setPath(pages);
         mReader.setTapListener(this);
         mReader.mScrollSensitive = mScrollFactor;
         mSeekBar.setOnSeekBarChangeListener(this);
-        mSeekBar.setMax(mChapter.getPages() - 1);
-        mReader.setPageChangeListener(new VerticalReader.OnPageChangeListener() {
-            @Override
-            public void onPageChanged(int page) {
-                updatedValue = true;
-                mChapter.setPagesRead(page + 1);
-                mSeekBar.setProgress(page);
-                if (mReader.isLastPageVisible()) {
-                    mChapter.setPagesRead(mChapter.getPages());
-                    mChapter.setReadStatus(Chapter.READ);
-                } else if (mChapter.getReadStatus() == Chapter.READ) {
-                    mChapter.setReadStatus(Chapter.READING);
+        mReader.setOnEndFlingListener(this);
+        loadChapter(mChapter);
+    }
+
+    private void loadChapter(Chapter nChapter) {
+        mChapter = nChapter;
+        if (nChapter.getPages() == 0) {
+            new GetPageTask().execute(nChapter);
+        } else {
+            DownloadPoolService.setDownloadListener(this);
+            mSeekBar.setProgress(0);
+            mChapter.setReadStatus(Chapter.READING);
+            Database.updateChapter(ActivityVerticalReader.this, mChapter);
+            mReader.reset();
+            ArrayList<String> pages = new ArrayList<>();
+            for (int i = 0; i < mChapter.getPages(); i++) {
+                pages.add(DownloadPoolService.generarRutaBase(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (i + 1) + ".jpg");
+            }
+            mReader.setPaths(pages);
+            mActionBar.setTitle(mChapter.getTitle());
+            mSeekBar.setMax(mChapter.getPages() - 1);
+            mReader.setPageChangeListener(new VerticalReader.OnPageChangeListener() {
+                @Override
+                public void onPageChanged(int page) {
+                    updatedValue = true;
+                    mChapter.setPagesRead(page + 1);
+                    mSeekBar.setProgress(page);
+                    if (mReader.isLastPageVisible()) {
+                        mChapter.setPagesRead(mChapter.getPages());
+                        mChapter.setReadStatus(Chapter.READ);
+                    } else if (mChapter.getReadStatus() == Chapter.READ) {
+                        mChapter.setReadStatus(Chapter.READING);
+                    }
+                }
+            });
+            DownloadPoolService.attachListener(this, mChapter.getId());
+            boolean next = false;
+            for (int i = 0; i < mManga.getChapters().size(); i++) {
+                if (mManga.getChapters().get(i).getId() == mChapter.getId()) {
+                    if (i > 0) {
+                        next = true;
+                        nextChapter = mManga.getChapters().get(i - 1);
+                        break;
+                    }
                 }
             }
-        });
-        mReader.setOnEndFlingListener(this);
+            if (!next)
+                nextChapter = null;
+        }
     }
 
     private void modScrollSensitive(float diff) {
@@ -306,12 +320,8 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
- /*       if(updatedValue){
-            updatedValue = false;
-        }else{/*/
         int pm = seekBar.getProgress();
         mReader.goToPage(pm);
-        // }
     }
 
     @Override
@@ -403,12 +413,77 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public void onEndFling() {
-        new AlertDialog.Builder(ActivityVerticalReader.this)
-                .setTitle(mChapter.getTitle() + " finalizado")
-                .setMessage("Desea cargar el proximo capitulo")
-                .setIcon(R.drawable.ic_launcher)
-                .setNegativeButton(getString(android.R.string.no), null)
-                .setPositiveButton(getString(android.R.string.ok), null)
-                .show();
+        if (nextChapter != null) {
+            new AlertDialog.Builder(ActivityVerticalReader.this)
+                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                    .setMessage(R.string.read_next)
+                    .setIcon(R.drawable.ic_launcher)
+                    .setNegativeButton(getString(android.R.string.no), null)
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mChapter.setReadStatus(Chapter.READ);
+                            mChapter.setPagesRead(mChapter.getPages());
+                            Database.updateChapter(ActivityVerticalReader.this, mChapter);
+                            loadChapter(nextChapter);
+                        }
+                    })
+                    .show();
+        } else {
+            new AlertDialog.Builder(ActivityVerticalReader.this)
+                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                    .setMessage(R.string.last_chapter)
+                    .setIcon(R.drawable.ic_launcher)
+                    .setPositiveButton(getString(android.R.string.ok), null)
+                    .show();
+        }
     }
+
+    public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
+        ProgressDialog asyncDialog = new ProgressDialog(ActivityVerticalReader.this);
+        String error;
+
+        @Override
+        protected void onPreExecute() {
+            asyncDialog.setMessage(getResources().getString(R.string.iniciando));
+            asyncDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Chapter doInBackground(Chapter... arg0) {
+            Chapter c = arg0[0];
+            ServerBase s = ServerBase.getServer(ActivityVerticalReader.this.mManga.getServerId());
+            try {
+                if (c.getPages() < 1) s.chapterInit(c);
+            } catch (Exception e) {
+                if (e.getMessage() != null)
+                    error = e.getMessage();
+                else
+                    error = e.getLocalizedMessage();
+            }
+            if (c.getPages() < 1) {
+                error = getString(R.string.error);
+            }
+            return c;
+        }
+
+        @Override
+        protected void onPostExecute(Chapter result) {
+            try {
+                asyncDialog.dismiss();
+            } catch (Exception e) {
+                // ignore error
+            }
+            if (error != null && error.length() > 1) {
+                Toast.makeText(ActivityVerticalReader.this, error, Toast.LENGTH_LONG).show();
+            } else {
+                Database.updateChapter(ActivityVerticalReader.this, result);
+                DownloadPoolService.agregarDescarga(ActivityVerticalReader.this, result, true);
+                loadChapter(result);
+            }
+            super.onPostExecute(result);
+        }
+    }
+
 }

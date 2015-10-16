@@ -149,4 +149,6 @@
     <string name="color_reader">Reader Color</string>
     <string name="color_reader_sub">The color in the reader mode</string>
     <string name="title_activity_vertical_reader">Reader</string>
+    <string name="read_next">You want to open the next chapter?</string>
+    <string name="last_chapter">Currently this is the last chapter</string>
 </resources>

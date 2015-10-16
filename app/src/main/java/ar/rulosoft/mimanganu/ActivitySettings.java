@@ -12,7 +12,6 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import java.io.File;
@@ -29,10 +28,10 @@ public class ActivitySettings extends AppCompatActivity {
     private boolean darkTheme;
 
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
+        super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PreferencesFragment()).commit();
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());

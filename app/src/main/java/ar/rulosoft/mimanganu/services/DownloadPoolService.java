@@ -34,13 +34,14 @@ public class DownloadPoolService extends Service implements StateChange {
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> descargas = new ArrayList<>();
     private static boolean intentPrending = false;
+    private static DownloadListener downloadListener = null;
+
 
     static {
         Arrays.sort(illegalChars);
     }
 
     public int slots = SLOTS;
-    private DownloadListener downloadListener = null;
 
     public static void agregarDescarga(Activity activity, Chapter chapter, boolean lectura) {
         if (!chapter.isDownloaded()) {
@@ -158,6 +159,10 @@ public class DownloadPoolService extends Service implements StateChange {
         return cleanName.toString();
     }
 
+    public static void setDownloadListener(DownloadListener nDownloadListener) {
+        downloadListener = nDownloadListener;
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
@@ -190,10 +195,6 @@ public class DownloadPoolService extends Service implements StateChange {
         if (downloadListener != null) {
             downloadListener.onImageDownloaded(singleDownload.cid, singleDownload.index);
         }
-    }
-
-    public void setDownloadListener(DownloadListener downloadListener) {
-        this.downloadListener = downloadListener;
     }
 
     private void iniciarCola() {

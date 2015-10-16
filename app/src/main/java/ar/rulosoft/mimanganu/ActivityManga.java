@@ -55,10 +55,10 @@ public class ActivityManga extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
         mMangaId = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
         if (mMangaId == -1) {

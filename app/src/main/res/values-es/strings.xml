@@ -147,5 +147,7 @@
     <string name="color_reader_sub">Mas suave para el lector</string>
     <string name="color_secundario_sub">Color secundario, para botones, etc.</string>
     <string name="license_sub">Toca para ver licencias y agradecimientos</string>
+    <string name="read_next">Quieres abrir el siguiente capítulo?</string>
+    <string name="last_chapter">Actualmente este es el ultimo capitulo</string>
 
 </resources>

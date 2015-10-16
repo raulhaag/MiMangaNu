@@ -40,7 +40,7 @@ public class VerticalReader extends View implements OnGestureListener,
     int screenHeight, screenWidth;
     Handler mHandler;
     float ppi;
-    boolean pagesLoaded = false, viewReady = false;
+    boolean pagesLoaded = false, viewReady = false, layoutReady = false;
     boolean animatingSeek = false;
     boolean stopAnimationsOnTouch = false, stopAnimationOnVerticalOver = false, stopAnimationOnHorizontalOver = false;
     boolean iniVisibility, endVisibility;
@@ -79,12 +79,16 @@ public class VerticalReader extends View implements OnGestureListener,
         ppi = context.getResources().getDisplayMetrics().density * 160.0f;
     }
 
-    public void setPath(List<String> paths) {
+    public void setPaths(List<String> paths) {
         pages = new ArrayList<>();
         for (int i = 0; i < paths.size(); i++) {
             pages.add(initValues(paths.get(i)));
         }
-
+        if (layoutReady) {
+            calculateParticularScale();
+            calculateVisibilities();
+            this.invalidate();
+        }
     }
 
     public void changePath(int idx, String path) {
@@ -187,6 +191,7 @@ public class VerticalReader extends View implements OnGestureListener,
             this.postInvalidateDelayed(100);
         }
         super.onLayout(changed, left, top, right, bottom);
+        layoutReady = true;
     }
 
     @Override
@@ -415,13 +420,17 @@ public class VerticalReader extends View implements OnGestureListener,
      * Starting from 0
      */
     public float getPagePosition(int page) {
-        return pages.get(page).init_visibility;
+        if (page < 0) {
+            return pages.get(0).init_visibility;
+        } else if (page < pages.size())
+            return pages.get(page).init_visibility;
+        else
+            return pages.get(pages.size() - 1).init_visibility;
     }
 
     public void seekPage(int index) {
-        if (index < 0)
-            index = 0;
         absoluteScroll(XScroll, getPagePosition(index));
+        VerticalReader.this.invalidate();
     }
 
     public void goToPage(final int index) {
@@ -494,6 +503,17 @@ public class VerticalReader extends View implements OnGestureListener,
 
     public void setViewReadyListener(OnViewReadyListener mViewReadyListener) {
         this.mViewReadyListener = mViewReadyListener;
+    }
+
+    public void reset() {
+        XScroll = 0;
+        YScroll = 0;
+        currentPage = 0;
+        pages = null;
+        pagesLoaded = false;
+        viewReady = false;
+        animatingSeek = false;
+        totalHeight = 0;
     }
 
     public enum ImagesStates {NULL, RECYCLED, ERROR, LOADING, LOADED}

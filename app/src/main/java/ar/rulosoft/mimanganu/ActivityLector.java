@@ -175,7 +175,7 @@ public class ActivityLector extends AppCompatActivity
 
         mServerBase = ServerBase.getServer(mManga.getServerId());
         if (DownloadPoolService.actual != null)
-            DownloadPoolService.actual.setDownloadListener(this);
+            DownloadPoolService.setDownloadListener(this);
         mLastPageFrag = new LastPageFragment();
 
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
@@ -260,7 +260,7 @@ public class ActivityLector extends AppCompatActivity
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    private void actualizarIcono(DisplayType displayType, boolean showMsg) {
+    private void updateIcon(DisplayType displayType, boolean showMsg) {
         if (displayMenu != null) {
             String msg = "";
             switch (displayType) {
@@ -359,7 +359,7 @@ public class ActivityLector extends AppCompatActivity
             ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
         }
-        actualizarIcono(mScreenFit, false);
+        updateIcon(mScreenFit, false);
         return true;
     }
 
@@ -372,7 +372,7 @@ public class ActivityLector extends AppCompatActivity
                 editor.putString(ADJUST_KEY, mScreenFit.toString());
                 editor.apply();
                 mSectionsPagerAdapter.actualizarDisplayTipe();
-                actualizarIcono(mScreenFit, true);
+                updateIcon(mScreenFit, true);
                 return true;
             }
             case R.id.action_keep_screen_on: {

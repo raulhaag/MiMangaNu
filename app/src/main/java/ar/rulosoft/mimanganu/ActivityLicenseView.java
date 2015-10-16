@@ -15,20 +15,24 @@ import java.io.InputStream;
 
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
+import static android.R.color.black;
+
 public class ActivityLicenseView extends AppCompatActivity {
     private TextView lic;
     private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-
+        super.onCreate(savedInstanceState);
         lic = new TextView(getBaseContext());
         lic.setTextAppearance(getApplicationContext(), android.R.style.TextAppearance_Medium);
         lic.setPadding(10, 10, 10, 10);
+        if (!darkTheme) {
+            lic.setTextColor(getResources().getColor(black));
+        }
         ScrollView newScroll = new ScrollView(getApplicationContext());
         newScroll.addView(lic);
         setContentView(newScroll);
