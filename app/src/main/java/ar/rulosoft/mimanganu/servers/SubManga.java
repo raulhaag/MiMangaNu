@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.servers;
 import android.text.Html;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -25,13 +26,13 @@ public class SubManga extends ServerBase {
         // <td><a href="(http://submanga.com/.+?)".+?</b>(.+?)<
         ArrayList<Manga> mangas = new ArrayList<>();
         Navegador nav = new Navegador();
-        String source = nav.get("http://submanga.com/series/n");
+        String source = nav.get("http://submanga.com/series");
         Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
             String name = m.group(2);
             if (!name.contains("!") && !name.contains("?") && !name.contains("�") && !name.contains("�")) {
-                mangas.add(new Manga(SUBMANGA, name, m.group(1), false));
+                mangas.add(new Manga(SUBMANGA, name, m.group(1).toLowerCase(Locale.getDefault()), false));
             }
         }
         return mangas;
@@ -49,11 +50,11 @@ public class SubManga extends ServerBase {
             Pattern p;
             Matcher m;
             String data = new Navegador().get((manga.getPath() + "/completa"));
-            p = Pattern.compile("<tr><td><a href=\"(http://submanga.com/.+?)\">(.+?)</td>");
+            p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>");
             m = p.matcher(data);
 
             while (m.find()) {
-                String web = "http://submanga.com/c/" + m.group(1).substring(m.group(1).lastIndexOf("/"));
+                String web = "http://submanga.com/c" + m.group(1).substring(m.group(1).lastIndexOf("/"));
                 Chapter mc = new Chapter(Html.fromHtml(m.group(2)).toString(), web);
                 mc.addChapterFirst(manga);
             }
@@ -66,7 +67,7 @@ public class SubManga extends ServerBase {
         Matcher m;
         String data = new Navegador().get((manga.getPath()));
 
-        p = Pattern.compile("</h1><img src=\"(http://.+?)\"/><br />(.+?)</div>");
+        p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>");
         m = p.matcher(data);
 
         if (m.find()) {
@@ -75,6 +76,7 @@ public class SubManga extends ServerBase {
         } else {
             manga.setSynopsis("Sin sinopsis.");
         }
+        manga.setAuthor(Html.fromHtml(getFirstMatchDefault("<p>Creado por ().+?</p>", data, "")).toString().trim());
     }
 
     @Override
@@ -95,16 +97,8 @@ public class SubManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
-        String pagina;
-        int i = 1;
-        String extra = "";
-        while ((pagina = getImageFrom(c, i)) != null) {
-            extra = extra + "|" + pagina;
-            i++;
-        }
-        c.setExtra(extra);
-        i--;
-        c.setPages(i);
+        String data = new Navegador().get(c.getPath());
+        c.setPages(Integer.parseInt(getFirstMatch("<option value=\"(\\d+)\">\\d+</option></select>", data, "No se pudo obtener la cantidad de páginas")));
     }
 
     @Override

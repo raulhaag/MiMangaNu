@@ -97,14 +97,17 @@ public class ActivityDetails extends AppCompatActivity {
     }
 
     private class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
-        String error = ".";
+        String error;
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
                 s.loadMangaInformation(m, true);
             } catch (Exception e) {
-                error = e.getMessage();
+                if (e.getMessage() != null)
+                    error = e.getMessage();
+                else
+                    error = e.getLocalizedMessage();
             }
             return null;
         }
@@ -112,7 +115,7 @@ public class ActivityDetails extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void v) {
             String infoExtra = "";
-            if (error.length() < 2) {
+            if (error == null || error.length() < 2) {
                 if (m.isFinished()) {
                     infoExtra = infoExtra + getResources().getString(R.string.finalizado);
                 } else {

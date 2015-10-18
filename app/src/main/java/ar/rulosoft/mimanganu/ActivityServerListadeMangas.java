@@ -119,7 +119,7 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Manga> result) {
             if (lista != null && result != null && !result.isEmpty()) {
-                adapter = new MangaAdapter(getApplicationContext(), result);
+                adapter = new MangaAdapter(getApplicationContext(), result, darkTheme);
                 lista.setAdapter(adapter);
             }
             if (error != null && error.length() > 2) {
