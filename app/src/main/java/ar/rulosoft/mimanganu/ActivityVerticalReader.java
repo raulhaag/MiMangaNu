@@ -296,7 +296,10 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     @Override
     protected void onPause() {
         Database.updateChapter(ActivityVerticalReader.this, mChapter);
-        Database.updateChapterPage(ActivityVerticalReader.this, mChapter.getId(), mChapter.getPagesRead());
+        if (mReader.isLastPageVisible())
+            Database.updateChapterPage(ActivityVerticalReader.this, mChapter.getId(), mChapter.getPages());
+        else
+            Database.updateChapterPage(ActivityVerticalReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
