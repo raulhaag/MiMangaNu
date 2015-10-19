@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.text.Html;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -84,8 +86,12 @@ public class EsMangaHere extends ServerBase {
             //autor
             manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", data, ""));
 
+
+            //generos
+            manga.setGenre((Html.fromHtml(getFirstMatchDefault("<li>[^:]+nero\\(s\\):(.+?)</li>", data, "")).toString().trim()));
+
             // capitulos
-            data = getFirstMatch(PATRON_SEG_CAP, data, "Error al obtener lista de cap�tulos");
+            data = getFirstMatch(PATRON_SEG_CAP, data, "Error al obtener lista de capítulos");
             p = Pattern.compile(PATTERN_CAPITULOS);
             m = p.matcher(data);
 

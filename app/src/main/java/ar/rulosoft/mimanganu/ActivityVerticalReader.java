@@ -310,16 +310,18 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+        if (mSeekerPage != null) mSeekerPage.setText("" + (progress + 1));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
+        mSeekerPage.setText("" + (seekBar.getProgress() + 1));
+        mSeekerPage.setVisibility(SeekBar.VISIBLE);
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        mSeekerPage.setVisibility(SeekBar.INVISIBLE);
         int pm = seekBar.getProgress();
         mReader.goToPage(pm);
     }

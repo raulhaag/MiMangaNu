@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.text.Html;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -113,6 +115,9 @@ public class HeavenMangaCom extends ServerBase {
 
         //estado no soportado
 
+        //genero
+        m.setGenre((Html.fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
+
         // capitulos
         Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"");
         Matcher matcher = p.matcher(source);
@@ -157,7 +162,7 @@ public class HeavenMangaCom extends ServerBase {
     private void setExtra(Chapter c) throws Exception {
         String source = new Navegador().get(c.getPath());
         String web = getFirstMatch("<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>",
-                source, "Error al obtener p�gina");
+                source, "Error al obtener página");
         c.setExtra(web);
     }
 

@@ -213,6 +213,11 @@ public class ActivityManga extends AppCompatActivity {
             } else {
                 datos.setAuthor(getResources().getString(R.string.nodisponible));
             }
+            if (manga.getGenre().length() > 4) {
+                datos.setGenre(manga.getGenre());
+            } else {
+                datos.setGenre(getResources().getString(R.string.nodisponible));
+            }
             mImageLoader.displayImg(manga.getImages(), datos);
         }
     }

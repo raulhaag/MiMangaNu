@@ -48,12 +48,12 @@ public class VerticalReader extends View implements OnGestureListener,
     private float totalHeight = 0;
     private float XScroll = 0, YScroll = 0;
     private ArrayList<Page> pages;
+
     private ScaleGestureDetector mScaleDetector;
     private GestureDetector mGestureDetector;
     private OnPageChangeListener pageChangeListener;
     private OnTapListener mTapListener;
     private OnEndFlingListener mOnEndFlingListener;
-
     private OnViewReadyListener mViewReadyListener;
 
     public VerticalReader(Context context) {
@@ -226,7 +226,10 @@ public class VerticalReader extends View implements OnGestureListener,
                     }
                 }
                 if (currentPage != firstVisiblePage && !animatingSeek) {
-                    setPage(firstVisiblePage);
+                    if (!isLastPageVisible())
+                        setPage(firstVisiblePage);
+                    else
+                        setPage(pages.size());
                 }
             }
         } else if (pagesLoaded) {
@@ -435,7 +438,7 @@ public class VerticalReader extends View implements OnGestureListener,
 
     public void goToPage(final int index) {
         if (pages != null) {
-            final float finalScroll = getPagePosition(index);
+            final float finalScroll = getPagePosition(index) + 1;
             final ValueAnimator va = ValueAnimator.ofFloat(YScroll, finalScroll).setDuration(500);
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override

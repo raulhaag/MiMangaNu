@@ -145,4 +145,5 @@
     <string name="color_reader_sub">Цвет в режиме чтения</string>
     <string name="color_secundario_sub">Вторичный раскраски, для большего разнообразия</string>
     <string name="license_sub">Нажмите, чтобы увидеть лицензии и благодаря</string>
+    <string name="genre">жанр</string>
 </resources>

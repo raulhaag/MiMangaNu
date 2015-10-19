@@ -120,6 +120,8 @@ public class MangaPanda extends ServerBase {
         manga.setImages(getFirstMatchDefault("mangaimg\"><img src=\"([^\"]+)", data, ""));
         // Status
         manga.setFinished(data.contains("</td><td>Completed</td>"));
+        // Genre
+        manga.setGenre(Html.fromHtml(getFirstMatchDefault("Genre:</td><td>(.+?)</td>", data, "").replace("a> <a", "a>, <a")).toString());
         // Author
         manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Author:</td><td>(.+?)<", data, "")).toString());
     }

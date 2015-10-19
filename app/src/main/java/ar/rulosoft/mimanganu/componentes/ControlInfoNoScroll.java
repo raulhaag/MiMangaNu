@@ -20,15 +20,18 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     private View s1;
     private View s2;
     private View s3;
+    private View s4;
     private View b1;
     private TextView author;
     private TextView status;
     private TextView server;
     private TextView synopsis;
     private TextView title;
+    private TextView genre;
     private TextView authorTitle;
     private TextView statusTitle;
     private TextView serverTitle;
+    private TextView genreTitle;
     private ImageView image;
 
     public ControlInfoNoScroll(Context context) {
@@ -53,14 +56,17 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
         s1 = findViewById(R.id.lineAuthor);
         s2 = findViewById(R.id.lineStatus);
         s3 = findViewById(R.id.lineServer);
+        s4 = findViewById(R.id.lineGenre);
         authorTitle = (TextView) findViewById(R.id.titleAuthor);
         statusTitle = (TextView) findViewById(R.id.titleStatus);
         serverTitle = (TextView) findViewById(R.id.titleServer);
+        genreTitle = (TextView) findViewById(R.id.titleGenre);
         status = (TextView) findViewById(R.id.textStatus);
         server = (TextView) findViewById(R.id.textServer);
         synopsis = (TextView) findViewById(R.id.sinopsis);
         title = (TextView) findViewById(R.id.titulo);
         author = (TextView) findViewById(R.id.textAuthor);
+        genre = (TextView) findViewById(R.id.textGenre);
         image = (ImageView) findViewById(R.id.imagen);
     }
 
@@ -70,10 +76,12 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
         s1.setBackgroundColor(color);
         s2.setBackgroundColor(color);
         s3.setBackgroundColor(color);
+        s4.setBackgroundColor(color);
         title.setBackgroundColor(mColor);
         authorTitle.setTextColor(mColor);
         statusTitle.setTextColor(mColor);
         serverTitle.setTextColor(mColor);
+        genreTitle.setTextColor(mColor);
     }
 
     public void setAuthor(String author) {
@@ -90,6 +98,10 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
 
     public void setSynopsis(String synopsis) {
         this.synopsis.setText(synopsis);
+    }
+
+    public void setGenre(String genre) {
+        this.genre.setText(genre);
     }
 
     @Override

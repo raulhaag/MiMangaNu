@@ -146,4 +146,5 @@
     <string name="sinopsis">Sinossi</string>
     <string name="update_title">Intervallo di aggiornamento</string>
     <string name="State_New">Nuovo</string>
+    <string name="genre">Genere</string>
 </resources>

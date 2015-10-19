@@ -103,6 +103,8 @@ public class TusMangasOnlineCom extends ServerBase {
         m.setFinished(!(getFirstMatchDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
         // autor
         m.setAuthor(getFirstMatchDefault("5&amp;filter=.+?>(.+?)<", source, ""));
+        // genero
+        m.setGenre(Html.fromHtml(getFirstMatchDefault("<tr><td><strong>G&eacute;neros(.+?)</tr>", source, "")).toString());
         // capitulos
         ArrayList<Chapter> caps = new ArrayList<>();
         Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)<");

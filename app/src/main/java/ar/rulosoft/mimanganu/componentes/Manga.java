@@ -16,6 +16,7 @@ public class Manga {
     private String images;
     private String path;
     private String author;
+    private String genre;
 
     private boolean finished;
     private ArrayList<Chapter> chapters = new ArrayList<>();
@@ -27,6 +28,7 @@ public class Manga {
         this.title = title;
         this.path = path;
         this.author = "";
+        this.genre = "";
         this.finished = finished;
     }
 
@@ -171,4 +173,11 @@ public class Manga {
         this.scrollSensitive = scrollSensitive;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
 }

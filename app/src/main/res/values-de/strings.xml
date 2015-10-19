@@ -145,4 +145,5 @@
     <string name="more_options">Mehr Optionen</string>
     <string name="color_reader">Reader Farbe</string>
     <string name="color_reader_sub">Die Farbe im Reader Modus</string>
+    <string name="genre">Genre</string>
 </resources>

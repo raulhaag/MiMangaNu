@@ -206,6 +206,12 @@ public abstract class ServerBase {
             cambios = true;
         }
 
+        if (!mangaDb.getGenre().equals(manga.getGenre()) &&
+                manga.getGenre().length() > 2) {
+            mangaDb.setGenre(manga.getGenre());
+            cambios = true;
+        }
+
         if (cambios) Database.updateManga(context, mangaDb, false);
 
         return returnValue;

@@ -124,6 +124,7 @@ public class ActivityDetails extends AppCompatActivity {
                 data.setStatus(infoExtra);
                 data.setSynopsis(m.getSynopsis());
                 data.setServer(s.getServerName());
+                data.setGenre(m.getGenre());
                 if (m.getAuthor() != null && m.getAuthor().length() > 1) {
                     data.setAuthor(m.getAuthor());
                 } else {

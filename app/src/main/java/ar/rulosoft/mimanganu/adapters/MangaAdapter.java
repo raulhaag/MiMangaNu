@@ -48,7 +48,7 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         public ViewHolder(View v, boolean darkTheme) {
             this.textViewName = (TextView) v.findViewById(R.id.manga_titulo);
             if (!darkTheme) {
-                this.textViewName.setTextColor(Color.parseColor("#000000"));
+                this.textViewName.setTextColor(Color.parseColor("#111111"));
             }
         }
     }

@@ -77,6 +77,7 @@ public class SubManga extends ServerBase {
             manga.setSynopsis("Sin sinopsis.");
         }
         manga.setAuthor(Html.fromHtml(getFirstMatchDefault("<p>Creado por ().+?</p>", data, "")).toString().trim());
+        manga.setGenre(Html.fromHtml(getFirstMatchDefault("(<a class=\"b\" href=\"http://submanga.com/ge.+?</p>)", data, "")).toString().trim());
     }
 
     @Override

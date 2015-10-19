@@ -151,4 +151,5 @@
     <string name="title_activity_vertical_reader">Reader</string>
     <string name="read_next">You want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
+    <string name="genre">Genre</string>
 </resources>

@@ -13,11 +13,11 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
 
-    private static String HOST = "http://kissmanga.com";
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+    private static String HOST = "http://kissmanga.com";
     private static String[] genre = new String[]{
             "All", "Action", "Adult", "Adventure", "Comedy", "Comic",
             "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem", "Historical",
@@ -105,6 +105,9 @@ public class KissManga extends ServerBase {
 
         // Author
         m.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
+
+        //genre
+        m.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().trim()));
 
         // Chapter
         Pattern p = Pattern.compile(PATTERN_CHAPTER);

@@ -149,5 +149,6 @@
     <string name="license_sub">Toca para ver licencias y agradecimientos</string>
     <string name="read_next">Quieres abrir el siguiente capítulo?</string>
     <string name="last_chapter">Actualmente este es el ultimo capitulo</string>
+    <string name="genre">Genero</string>
 
 </resources>

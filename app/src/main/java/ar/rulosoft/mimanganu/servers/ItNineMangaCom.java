@@ -94,6 +94,8 @@ public class ItNineMangaCom extends ServerBase {
         m.setFinished(getFirstMatchDefault("Stato:(.+?)</a>", source, "").contains("Completato"));
         // autor
         m.setAuthor(getFirstMatchDefault("Author.+?\">(.+?)<", source, ""));
+        //genere
+        m.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // capitulos
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");

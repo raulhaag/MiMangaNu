@@ -53,6 +53,9 @@ public class LectureEnLigne extends ServerBase {
         //autor
         manga.setAuthor(getFirstMatchDefault("Auteur :.+?d>(.+?)<", data, ""));
 
+        //genre
+        manga.setGenre(getFirstMatchDefault("<tr><th>Genres :</th><td>(.+?)</td>", data, ""));
+
         // capitulos
         ArrayList<Chapter> chapters = new ArrayList<>();
         Pattern p = Pattern.compile("<td class=\"td\">(.+?)</td>[^\\.]+\\.\\./\\.\\.(.+?)\"");

@@ -88,6 +88,8 @@ public class EsNineMangaCom extends ServerBase {
         m.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
         // autor
         m.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
+        //generos
+        m.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // capitulos
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");

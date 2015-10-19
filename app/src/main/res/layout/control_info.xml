@@ -30,7 +30,9 @@
                 android:id="@+id/imagen"
                 android:layout_width="100dp"
                 android:layout_height="150dp"
-                android:layout_margin="4dp"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="4dp"
                 android:scaleType="centerCrop" />
 
             <LinearLayout
@@ -57,6 +59,28 @@
 
                 <TextView
                     android:id="@+id/textAuthor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:text="@string/nodisponible" />
+
+                <TextView
+                    android:id="@+id/titleGenre"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/genre"
+                    android:textColor="@color/accent_material_light"
+                    android:textStyle="bold" />
+
+                <View
+                    android:id="@+id/lineGenre"
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/accent_material_light" />
+
+                <TextView
+                    android:id="@+id/textGenre"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
