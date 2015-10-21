@@ -3,6 +3,11 @@
 
 Lector Manga online
 
+Cambios 1.36
+* nuevo lector vertical (ver configuraciones)
+* agregado generos a los mangas
+* otros fixes para seguir mejorando
+
 Cambios 1.35
 * Agegado selector de velocidad de scroll tanto por defecto como por manga
 * Agregado inmersive mode para kitkat y superior
