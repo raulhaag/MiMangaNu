@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -18,12 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.GridView;
 
 import java.io.File;
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnMangaClick;
+import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -35,13 +35,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
 
-    public boolean buscar = false;
+    public boolean search = false;
 
-    private RecyclerView grilla;
-    private MangasRecAdapter adapter;
+    private GridView grid;
+    private MisMangasAdapter adapter;
     private SwipeRefreshLayout str;
     private NewSearchTask newSearch;
-    private Integer menuFor;
 
     public static void DeleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -53,7 +52,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rView = inflater.inflate(R.layout.fragment_mis_mangas, container, false);
-        grilla = (RecyclerView) rView.findViewById(R.id.grilla_mis_mangas);
+        grid = (GridView) rView.findViewById(R.id.grilla_mis_mangas);
         str = (SwipeRefreshLayout) rView.findViewById(R.id.str);
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -81,7 +80,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             columnas = 2;
         else if (columnas > 6)
             columnas = 6;
-        grilla.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
+        grid.setNumColumns(columnas);
         if (newSearch != null && newSearch.getStatus() == AsyncTask.Status.RUNNING) {
             str.post(new Runnable() {
                 @Override
@@ -90,6 +89,15 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 }
             });
         }
+        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ActivityManga.class);
+                intent.putExtra(ActivityMisMangas.MANGA_ID, adapter.getItem(position).getId());
+                getActivity().startActivity(intent);
+            }
+        });
+        registerForContextMenu(grid);
     }
 
     @Override
@@ -97,8 +105,8 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.gridview_mismangas, menu);
         MenuItem m = menu.findItem(R.id.noupdate);
-        menuFor = (Integer) v.getTag();
-        if (adapter.getItem(menuFor).isFinished()) {
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+        if (adapter.getItem(info.position).isFinished()) {
             m.setTitle(getActivity().getResources().getString(R.string.buscarupdates));
         } else {
             m.setTitle(getActivity().getResources().getString(R.string.nobuscarupdate));
@@ -107,11 +115,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        Manga m = adapter.getItem(menuFor);
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        Manga m = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.borrar) {
             ServerBase s = ServerBase.getServer(m.getServerId());
-            String ruta = DownloadPoolService.generarRutaBase(s, m, getActivity());
-            DeleteRecursive(new File(ruta));
+            String path = DownloadPoolService.generarRutaBase(s, m, getActivity());
+            DeleteRecursive(new File(path));
             Database.deleteManga(getActivity(), m.getId());
             adapter.remove(m);
         } else if (item.getItemId() == R.id.noupdate) {
@@ -129,7 +138,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onResume() {
         setListManga();
-        ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
+        // ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         int[] colors = ((ActivityMisMangas) getActivity()).colors;
         str.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
@@ -178,11 +187,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             default:
                 break;
         }
-        adapter = new MangasRecAdapter(mangaList, getActivity(),
-                ((ActivityMisMangas) getActivity()).darkTheme);
-        adapter.setMangaClickListener(FragmentMisMangas.this);
-        adapter.setOnCreateContextMenuListener(FragmentMisMangas.this);
-        grilla.setAdapter(adapter);
+        adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
+        //  adapter.setMangaClickListener(FragmentMisMangas.this);
+        //adapter.setOnCreateContextMenuListener(FragmentMisMangas.this);
+        grid.setAdapter(adapter);
     }
 
     @Override
@@ -198,7 +206,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
         @Override
         protected void onPreExecute() {
-            buscar = true;
+            search = true;
             mMessage = getActivity().getResources().getString(R.string.buscandonuevo);
             mTitle = getActivity().getTitle().toString();
             getActivity().setTitle(mMessage);
@@ -247,7 +255,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 e.printStackTrace();
             }
             str.setRefreshing(false);
-            buscar = false;
+            search = false;
         }
     }
 }

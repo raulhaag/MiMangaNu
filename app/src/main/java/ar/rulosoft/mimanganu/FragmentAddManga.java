@@ -71,10 +71,9 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
     public void onServerClick(ServerBase server) {
         Intent intent;
         if (server.hasVisualNavegation())
-            // ActivityServerListadeMangas
             intent = new Intent(getActivity(), ActivityServerVisualNavigation.class);
         else
-            intent = new Intent(getActivity(), ActivityServerListadeMangas.class);
+            intent = new Intent(getActivity(), ActivityServerMangaList.class);
         intent.putExtra(ActivityMisMangas.SERVER_ID, server.getServerID());
         getActivity().startActivity(intent);
     }

@@ -11,7 +11,7 @@ import android.widget.TextView;
 import ar.rulosoft.mimanganu.R;
 
 /**
- * serie cover by Raúl
+ * serie cover by Raï¿½l
  */
 
 public class Cover extends RelativeLayout implements Imaginable {
@@ -32,7 +32,6 @@ public class Cover extends RelativeLayout implements Imaginable {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int height = MeasureSpec.makeMeasureSpec((int) (MeasureSpec.getSize(widthMeasureSpec) * 1.3), MeasureSpec.EXACTLY);
         super.onMeasure(widthMeasureSpec, height);
-
     }
 
     private void initialize() {
@@ -45,7 +44,13 @@ public class Cover extends RelativeLayout implements Imaginable {
     @Override
     public void setImageBitmap(Bitmap b) {
         if (image != null) {
-            image.setImageBitmap(b);
+            if (b == null) {
+                image.setVisibility(INVISIBLE);
+            } else {
+                image.setImageBitmap(b);
+                image.setVisibility(VISIBLE);
+            }
+            image.invalidate();
         }
     }
 

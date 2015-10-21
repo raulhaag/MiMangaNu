@@ -117,7 +117,7 @@
     <string name="title_activity_server_listade_mangas">List of Manga</string>
     <string name="title_activity_server_visual_navegacion">Mangas in</string>
     <string name="unwritable_folder">Unwritable folder.</string>
-    <string name="update_message">1.35 Changes \n \t* Added scroll speed selector default option and individual \n\t* Added immersive mode to KitKat and superior \n\t* Introducing dark theme \n\t* Added the option color for reader \n\t* Other fixes</string>
+    <string name="update_message">Changes 1.36\t\n *New vertical reader (see settings)\t\n *Added genres to manga description.\t\n *Other fixes to further improve.</string>
     <string name="update_news">Updates News</string>
     <string name="update_settings_title">Update Preferences</string>
     <string name="update_subtitle">No auto update as default.</string>

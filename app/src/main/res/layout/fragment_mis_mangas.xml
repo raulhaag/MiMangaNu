@@ -6,7 +6,7 @@
     android:layout_margin="10dp"
     tools:context="ar.rulosoft.mimanganu.MisMangas$PlaceholderFragment">
 
-    <android.support.v7.widget.RecyclerView
+    <GridView
         android:id="@+id/grilla_mis_mangas"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

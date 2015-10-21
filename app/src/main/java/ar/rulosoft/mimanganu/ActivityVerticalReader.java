@@ -36,7 +36,6 @@ import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.verticalreader.library.VerticalReader;
-import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 
 public class ActivityVerticalReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 
@@ -45,9 +44,8 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
     private static int mTextureMax;
-    private static ImageViewTouchBase.DisplayType mScreenFit;
     public VerticalReader mReader;
-    boolean updatedValue = false;
+    boolean updatedValue = false;//just a flag to no seek when the reader seek
 
     // These are values, which should be fetched from preference
     private SharedPreferences pm;

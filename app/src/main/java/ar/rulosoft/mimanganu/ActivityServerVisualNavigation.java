@@ -182,7 +182,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.ver_como_lista) {
-            Intent intent = new Intent(this, ActivityServerListadeMangas.class);
+            Intent intent = new Intent(this, ActivityServerMangaList.class);
             intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
             startActivity(intent);
             finish();

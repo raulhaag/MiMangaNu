@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityServerListadeMangas"
+            android:name=".ActivityServerMangaList"
             android:label="@string/title_activity_server_listade_mangas" />
         <activity
             android:name=".ActivityDetails"

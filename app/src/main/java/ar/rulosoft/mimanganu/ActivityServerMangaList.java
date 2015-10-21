@@ -26,13 +26,13 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerListadeMangas extends AppCompatActivity {
+public class ActivityServerMangaList extends AppCompatActivity {
 
     private ServerBase s;
-    private ListView lista;
-    private ProgressBar cargando;
+    private ListView list;
+    private ProgressBar loading;
     private MangaAdapter adapter;
-    private MenuItem buscar;
+    private MenuItem search;
     private boolean darkTheme;
 
     @Override
@@ -48,18 +48,18 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
         if (mActBar != null)
             mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
 
-        lista = (ListView) findViewById(R.id.lista_de_mangas);
-        cargando = (ProgressBar) findViewById(R.id.cargando);
+        list = (ListView) findViewById(R.id.lista_de_mangas);
+        loading = (ProgressBar) findViewById(R.id.cargando);
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
 
         new LoadMangasTask().execute();
 
-        lista.setOnItemClickListener(new OnItemClickListener() {
+        list.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Manga m = (Manga) lista.getAdapter().getItem(position);
+                Manga m = (Manga) list.getAdapter().getItem(position);
                 Intent intent = new Intent(getApplication(), ActivityDetails.class);
                 intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
                 intent.putExtra(ActivityDetails.TITLE, m.getTitle());
@@ -73,8 +73,8 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.manga_server, menu);
-        buscar = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(buscar);
+        search = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
             @Override
@@ -85,7 +85,8 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
 
             @Override
             public boolean onQueryTextChange(String s) {
-                adapter.getFilter().filter(s);
+                if (adapter != null)
+                    adapter.getFilter().filter(s);
                 return false;
             }
         });
@@ -98,7 +99,7 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            cargando.setVisibility(ProgressBar.VISIBLE);
+            loading.setVisibility(ProgressBar.VISIBLE);
             super.onPreExecute();
         }
 
@@ -118,14 +119,14 @@ public class ActivityServerListadeMangas extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<Manga> result) {
-            if (lista != null && result != null && !result.isEmpty()) {
+            if (list != null && result != null && !result.isEmpty()) {
                 adapter = new MangaAdapter(getApplicationContext(), result, darkTheme);
-                lista.setAdapter(adapter);
+                list.setAdapter(adapter);
             }
             if (error != null && error.length() > 2) {
                 Toast.makeText(getApplicationContext(), "Error: " + error, Toast.LENGTH_LONG).show();
             }
-            cargando.setVisibility(ProgressBar.INVISIBLE);
+            loading.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 

@@ -8,8 +8,8 @@ android {
         applicationId "ar.rulosoft.mimanganu"
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 35
-        versionName "1.35"
+        versionCode 36
+        versionName "1.36"
     }
     buildTypes {
         release {
