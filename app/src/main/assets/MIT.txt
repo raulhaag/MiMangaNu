@@ -8,4 +8,5 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 Thanks to sephiroth74 for the library ImageViewTouch, thest1 for LazyList and castorflex for VerticalViewPager.
 
+Contribuciones de Dostoi, TheSniperFan, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
 Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.
