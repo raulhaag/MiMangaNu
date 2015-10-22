@@ -2,11 +2,13 @@ package ar.rulosoft.mimanganu;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -44,6 +46,11 @@ public class ActivityLicenseView extends AppCompatActivity {
         if (mActBar != null) {
             mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
             mActBar.setDisplayHomeAsUpEnabled(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
         }
     }
 

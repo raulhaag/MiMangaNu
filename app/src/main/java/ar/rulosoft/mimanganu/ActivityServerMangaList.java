@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
@@ -13,6 +14,7 @@ import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -52,7 +54,11 @@ public class ActivityServerMangaList extends AppCompatActivity {
         loading = (ProgressBar) findViewById(R.id.cargando);
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
+        }
         new LoadMangasTask().execute();
 
         list.setOnItemClickListener(new OnItemClickListener() {

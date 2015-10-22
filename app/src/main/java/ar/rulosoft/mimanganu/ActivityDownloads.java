@@ -3,25 +3,24 @@ package ar.rulosoft.mimanganu;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.Window;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-
 import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
-import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 
 public class ActivityDownloads extends AppCompatActivity {
+    public boolean darkTheme;
     private ListView list;
     private ShowDownloadsTask sh;
     private DownloadAdapter adap;
-    public boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +34,11 @@ public class ActivityDownloads extends AppCompatActivity {
         if (mActBar != null) {
             mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
             mActBar.setDisplayHomeAsUpEnabled(true);
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
         }
         list = (ListView) findViewById(R.id.descargas);
     }

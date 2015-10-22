@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -55,6 +57,11 @@ public class ActivityResultadoDeBusqueda extends AppCompatActivity {
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
+        }
     }
 
     public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {

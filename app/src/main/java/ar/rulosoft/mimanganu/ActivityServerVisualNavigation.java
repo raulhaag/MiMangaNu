@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.view.MenuItemCompat;
@@ -17,6 +18,7 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -62,6 +64,11 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
             mActBar.setTitle(getResources()
                     .getString(R.string.listaen) + " " + sBase.getServerName());
             mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
         }
 
         grilla = (RecyclerView) findViewById(R.id.grilla);

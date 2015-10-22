@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 
 import com.melnykov.fab.FloatingActionButton;
 
@@ -189,10 +191,14 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
-
         button_add.setColorNormal(colors[1]);
         button_add.setColorPressed(colors[3]);
         button_add.setColorRipple(colors[0]);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
+        }
         super.onResume();
     }
 

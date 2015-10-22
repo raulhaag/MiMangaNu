@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -115,6 +116,11 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         mSeekerPage.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
         mScrollSelect.setBackgroundColor(reader_bg);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(reader_bg);
+            window.setStatusBarColor(reader_bg);
+        }
 
         setSupportActionBar(mActionBar);
         hideSystemUI();

@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
@@ -72,6 +74,11 @@ public class ActivityDetails extends AppCompatActivity {
         button_add.setColorNormal(colors[1]);
         button_add.setColorPressed(colors[3]);
         button_add.setColorRipple(colors[0]);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[0]);
+        }
         button_add.attachToScrollView(data);
         data.setColor(darkTheme, colors[0]);
         String title = getIntent().getExtras().getString(TITLE);
