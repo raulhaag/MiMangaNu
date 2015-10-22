@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message">Cambios 1.36\n\t * nuevo lector vertical (ver configuraciones)\n\t * agregado generos a los mangas\n\t * otros fixes para seguir mejorando</string>
+    <string name="update_message">Cambios 1.37\n\t * agregado los colores a system y navegation bar en lollipop\n\t * y unos fix bastante importantes\n\t Cambios 1.36\n\t * nuevo lector vertical (ver configuraciones)\n\t * agregado generos a los mangas\n\t * otros fixes para seguir mejorando</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>

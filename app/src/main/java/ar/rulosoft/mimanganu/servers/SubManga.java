@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
-
 public class SubManga extends ServerBase {
 
     public SubManga() {
@@ -25,8 +23,7 @@ public class SubManga extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         // <td><a href="(http://submanga.com/.+?)".+?</b>(.+?)<
         ArrayList<Manga> mangas = new ArrayList<>();
-        Navegador nav = new Navegador();
-        String source = nav.get("http://submanga.com/series");
+        String source = getNavWithHeader().get("http://submanga.com/series");
         Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
@@ -49,7 +46,7 @@ public class SubManga extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
-            String data = new Navegador().get((manga.getPath() + "/completa"));
+            String data = getNavWithHeader().get((manga.getPath() + "/completa"));
             p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>");
             m = p.matcher(data);
 
@@ -65,7 +62,7 @@ public class SubManga extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         Pattern p;
         Matcher m;
-        String data = new Navegador().get((manga.getPath()));
+        String data = getNavWithHeader().get((manga.getPath()));
 
         p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>");
         m = p.matcher(data);
@@ -89,7 +86,7 @@ public class SubManga extends ServerBase {
     public String getImageFrom(Chapter c, int page) throws Exception {
         //if (c.getExtra() == null || c.getExtra().length() < 2) {
         String data;
-        data = new Navegador().get(this.getPagesNumber(c, page));
+        data = getNavWithHeader().get(this.getPagesNumber(c, page));
         return getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);
         //} else {
         //	return (c.getExtra().split("|")[pagina]);
@@ -98,7 +95,7 @@ public class SubManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
-        String data = new Navegador().get(c.getPath());
+        String data = getNavWithHeader().get(c.getPath());
         c.setPages(Integer.parseInt(getFirstMatch("<option value=\"(\\d+)\">\\d+</option></select>", data, "No se pudo obtener la cantidad de páginas")));
     }
 

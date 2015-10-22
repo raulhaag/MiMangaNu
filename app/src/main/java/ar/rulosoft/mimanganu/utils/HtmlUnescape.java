@@ -20,6 +20,7 @@ public class HtmlUnescape {
     }};
 
     public static String Unescape(String input) {
+        if (input != null)
         for (Map.Entry<String, String> pair : definitions.entrySet()) {
             input = input.replaceAll(pair.getKey(), pair.getValue());
         }

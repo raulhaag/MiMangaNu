@@ -3,6 +3,10 @@
 
 Lector Manga online
 
+Cambios 1.37
+* agregado los colores a system y navegation bar en lollipop
+* y unos fix bastante importantes
+
 Cambios 1.36
 * nuevo lector vertical (ver configuraciones)
 * agregado generos a los mangas

@@ -129,13 +129,21 @@ public class ActivityDetails extends AppCompatActivity {
                     infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                 }
                 data.setStatus(infoExtra);
-                data.setSynopsis(m.getSynopsis());
                 data.setServer(s.getServerName());
-                data.setGenre(m.getGenre());
                 if (m.getAuthor() != null && m.getAuthor().length() > 1) {
                     data.setAuthor(m.getAuthor());
                 } else {
                     data.setAuthor(getResources().getString(R.string.nodisponible));
+                }
+                if (m.getGenre() != null && m.getGenre().length() > 1) {
+                    data.setGenre(m.getGenre());
+                } else {
+                    data.setGenre(getResources().getString(R.string.nodisponible));
+                }
+                if (m.getSynopsis() != null && m.getSynopsis().length() > 1) {
+                    data.setSynopsis(m.getSynopsis());
+                } else {
+                    data.setSynopsis(getResources().getString(R.string.nodisponible));
                 }
                 imageLoader.displayImg(m.getImages(), data);
                 if (error != null && error.length() > 2) {
