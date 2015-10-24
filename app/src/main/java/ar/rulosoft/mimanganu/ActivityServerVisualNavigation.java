@@ -68,7 +68,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[0]);
+            window.setStatusBarColor(colors[4]);
         }
 
         grilla = (RecyclerView) findViewById(R.id.grilla);

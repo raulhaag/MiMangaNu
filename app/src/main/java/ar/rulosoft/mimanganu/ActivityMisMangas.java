@@ -197,7 +197,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[0]);
+            window.setStatusBarColor(colors[4]);
         }
         super.onResume();
     }

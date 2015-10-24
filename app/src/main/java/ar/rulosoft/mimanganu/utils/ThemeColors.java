@@ -13,12 +13,13 @@ public class ThemeColors {
     /**
      * traer colores de la interfaz
      * [0] principal
-     * [2] secundario
-     * [3] backgrounds
-     * [4] pressed
+     * [1] secundario
+     * [2] backgrounds
+     * [3] pressed
+     * [4] dark
      */
     public static int[] getColors(SharedPreferences sp, Context context) {
-        int[] colors = new int[4];
+        int[] colors = new int[5];
         colors[0] = sp.getInt("primario", Color.parseColor("#2A52BE"));
         colors[1] = sp.getInt("secundario", Color.parseColor("#1E90FF"));
         if (colors[0] == 0) {
@@ -27,6 +28,7 @@ public class ThemeColors {
         }
         colors[2] = (31 << 24) | (colors[0] & 0x00ffffff);
         colors[3] = (colors[1]) & 0xFFCCCCCC;
+        colors[4] = brightnessColor(colors[0], 0.81f); // 700
         return colors;
     }
 

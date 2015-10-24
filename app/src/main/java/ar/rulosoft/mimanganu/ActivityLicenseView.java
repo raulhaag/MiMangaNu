@@ -50,7 +50,7 @@ public class ActivityLicenseView extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[0]);
+            window.setStatusBarColor(colors[4]);
         }
     }
 

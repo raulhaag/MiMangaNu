@@ -38,7 +38,7 @@ public class ActivityDownloads extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[0]);
+            window.setStatusBarColor(colors[4]);
         }
         list = (ListView) findViewById(R.id.descargas);
     }
