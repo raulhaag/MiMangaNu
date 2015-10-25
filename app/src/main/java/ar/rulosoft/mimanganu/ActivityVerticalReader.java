@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -331,6 +332,15 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         mSeekerPage.setVisibility(SeekBar.INVISIBLE);
         int pm = seekBar.getProgress();
         mReader.goToPage(pm);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            onCenterTap();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override

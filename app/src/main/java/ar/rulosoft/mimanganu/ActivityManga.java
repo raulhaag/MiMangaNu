@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -51,6 +52,7 @@ public class ActivityManga extends AppCompatActivity {
     private MenuItem mMenuItem;
     private int mMangaId;
     private boolean darkTheme;
+    private Menu menu;
 
     private FragmentUpdateSearchTask buscarNuevos;
     private ControlInfoNoScroll datos;
@@ -247,6 +249,15 @@ public class ActivityManga extends AppCompatActivity {
     }
 
     @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            menu.performIdentifierAction(R.id.submenu, 0);
+            return true;
+        } else
+            return super.onKeyUp(keyCode, event);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_descargar_restantes: {
@@ -325,7 +336,6 @@ public class ActivityManga extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.view_chapter, menu);
         mMenuItem = menu.findItem(R.id.action_sentido);
         int readDirection;
@@ -345,6 +355,7 @@ public class ActivityManga extends AppCompatActivity {
             this.direction = Direction.VERTICAL;
             mMenuItem.setIcon(R.drawable.ic_action_verical);
         }
+        this.menu = menu;
         return true;
     }
 

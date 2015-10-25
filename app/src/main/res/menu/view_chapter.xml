@@ -16,6 +16,7 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/submenu"
         android:icon="@drawable/ic_action_core_overflow"
         android:orderInCategory="100"
         android:title="@+id/more_options"

@@ -23,6 +23,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -469,6 +470,15 @@ public class ActivityLector extends AppCompatActivity
         } catch (Exception e) {
             // sometimes gets a null, just in case, don't stop the app
         }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            onCenterTap();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
