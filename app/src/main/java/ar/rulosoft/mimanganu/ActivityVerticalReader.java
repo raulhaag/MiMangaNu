@@ -37,7 +37,7 @@ import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.verticalreader.library.VerticalReader;
+import ar.rulosoft.readers.library.VerticalReader;
 
 public class ActivityVerticalReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 

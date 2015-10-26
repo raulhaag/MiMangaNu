@@ -12,7 +12,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
-    <ar.rulosoft.verticalreader.library.VerticalReader
+    <ar.rulosoft.readers.library.VerticalReader
         android:id="@+id/reader"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
