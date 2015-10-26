@@ -138,7 +138,7 @@
     <string name="sort">Ordre</string>
     <string name="more_options">Plus d\'options </string>
     <string name="apachelic">Licence Apache</string>
-    <string name="color_reader">Couleur Lecteur</string>
+    <string name="color_reader">Couleur Du Lecteur</string>
     <string name="color_reader_sub">La couleur dans le mode de lecteur</string>
     <string name="download_image_again">Télécharger l\'image à nouveau</string>
     <string name="hello_world">Bonjour le monde</string>
@@ -146,4 +146,6 @@
     <string name="see_later">Lire plus tard</string>
     <string name="update_news">Nouvelles</string>
     <string name="genre">Genre</string>
+    <string name="read_next">Voulez-vous lire le chapitre suivant ?</string>
+    <string name="last_chapter">C'est le dernier chapitre actuellement</string>
 </resources>
