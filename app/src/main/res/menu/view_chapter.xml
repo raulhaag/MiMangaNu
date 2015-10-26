@@ -7,7 +7,7 @@
         android:icon="@drawable/ic_action_clasico"
         android:orderInCategory="100"
         android:title="@string/sentido"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/descargas"
