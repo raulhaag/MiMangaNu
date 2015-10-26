@@ -146,4 +146,6 @@
     <string name="color_reader">Reader Farbe</string>
     <string name="color_reader_sub">Die Farbe im Reader Modus</string>
     <string name="genre">Genre</string>
+    <string name="read_next">Möchtest du das nächste Kapitel öffnen?</string>
+    <string name="last_chapter">Dies ist zurzeit das letzte Kapitel</string>
 </resources>
