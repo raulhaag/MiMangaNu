@@ -34,7 +34,7 @@ public class MangaFox extends ServerBase {
     private static final String PATRON_SINOPSIS = "<p class=\"summary\">(.+?)</p>";
     private static final String PATTERN_CAPITULOS = "<h\\d>[\\s]+<a href=\"([^\"]+)\".+?>([^<]+)([^\"]+<span class=\"title nowrap\">(.+?)<)?";
     private static final String PATRON_LAST = "(\\d+)</option>					<option value=\"0\"";
-    private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
+    private static final String PATRON_IMAGEN = "><img src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
     private static String[] orden = {"Popularity", "A - Z", "Rating", "Last Update"};
     private static String[] ordenM = {"", "?az", "?rating", "?latest"};
 

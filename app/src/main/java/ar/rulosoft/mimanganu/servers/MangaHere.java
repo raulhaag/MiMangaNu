@@ -38,7 +38,7 @@ public class MangaHere extends ServerBase {
             "<li>[^<]*<span class=\"left\">[^<]*<a class=\"color_0077\" href=\"([^\"]*)\"[^>]*>([^<]*)</a>";
     private static final String PATRON_LAST = ">(\\d+)</option>[^<]+?</select>";
     private static final String PATRON_IMAGEN =
-            "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
+            "><img src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
     private static String HOST = "http://www.mangahere.co";
     private static String[] orden = {
             "Views", "A - Z", "Rating", "Last Update"
