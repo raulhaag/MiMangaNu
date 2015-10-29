@@ -12,8 +12,8 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
-    <ar.rulosoft.readers.library.VerticalReader
-        android:id="@+id/reader"
+    <FrameLayout
+        android:id="@+id/reader_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
@@ -59,7 +59,6 @@
             android:textColor="@android:color/darker_gray"
             android:textSize="36sp"
             android:visibility="invisible" />
-        <!--android:background="@drawable/border"-->
 
         <RelativeLayout
             android:id="@+id/scroll_selector"

@@ -71,7 +71,7 @@
         </receiver>
 
         <activity
-            android:name=".ActivityVerticalReader"
+            android:name=".ActivityReader"
             android:label="@string/title_activity_vertical_reader"
             android:theme="@style/AppTheme.Light.NoActionbar" />
     </application>

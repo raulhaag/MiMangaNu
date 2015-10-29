@@ -18,9 +18,11 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import ar.rulosoft.mimanganu.ActivityManga.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -37,18 +40,21 @@ import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.readers.library.L2RReader;
+import ar.rulosoft.readers.library.R2LReader;
+import ar.rulosoft.readers.library.Reader;
 import ar.rulosoft.readers.library.VerticalReader;
 
-public class ActivityVerticalReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
+public class ActivityReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 
     // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
     private static int mTextureMax;
-    public VerticalReader mReader;
+    public Reader mReader;
     boolean updatedValue = false;//just a flag to no seek when the reader seek
-
+    private Direction direction;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
     private boolean mKeepOn; // false = normal  | true = screen on
@@ -72,21 +78,27 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_vertical_reader);
+        setContentView(R.layout.activity_reader);
+
+        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
+        mManga = Database.getFullManga(this, mChapter.getMangaID());
+
+
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
         mOrientation = pm.getInt(ORIENTATION, 0);
         mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
-
-        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
-        mManga = Database.getFullManga(this, mChapter.getMangaID());
+        if (mManga.getReadingDirection() != -1) {
+            direction = Direction.values()[mManga.getReadingDirection()];
+        } else {
+            direction = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
+        }
 
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
         }
 
-        mReader = (VerticalReader) findViewById(R.id.reader);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mServerBase = ServerBase.getServer(mManga.getServerId());
@@ -102,21 +114,20 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         mSeekerPage.setTextColor(Color.WHITE);
 
         mSeekBar = (SeekBar) findViewById(R.id.seeker);
-
         mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
-
         mScrollSelect = (RelativeLayout) findViewById(R.id.scroll_selector);
         mButtonMinus = (Button) findViewById(R.id.minus);
         mButtonPlus = (Button) findViewById(R.id.plus);
         mScrollSensitiveText = (TextView) findViewById(R.id.scroll_level);
-        mScrollSensitiveText.setText(mScrollFactor + "x");
 
+        mScrollSensitiveText.setText(mScrollFactor + "x");
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
         mSeekerLayout.setBackgroundColor(reader_bg);
         mSeekerPage.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
         mScrollSelect.setBackgroundColor(reader_bg);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(reader_bg);
@@ -132,6 +143,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                 modScrollSensitive(-.5f);
             }
         });
+
         mButtonPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -141,15 +153,30 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         mScrollSensitiveText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(ActivityVerticalReader.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityReader.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
+
+        mSeekBar.setOnSeekBarChangeListener(this);
+        setReader();
+    }
+
+    private void setReader() {
+        if (direction == Direction.R2L) {
+            mReader = new R2LReader(this);
+        } else if (direction == Direction.L2R) {
+            mReader = new L2RReader(this);
+        } else {
+            mReader = new VerticalReader(this);
+        }
+        mReader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        ((FrameLayout) findViewById(R.id.reader_placeholder)).removeAllViews();
+        ((FrameLayout) findViewById(R.id.reader_placeholder)).addView(mReader);
         mReader.setMaxTexture(mTextureMax);
         mReader.setViewReadyListener(this);
         mReader.setTapListener(this);
         mReader.mScrollSensitive = mScrollFactor;
-        mSeekBar.setOnSeekBarChangeListener(this);
         mReader.setOnEndFlingListener(this);
         loadChapter(mChapter);
     }
@@ -162,7 +189,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
             DownloadPoolService.setDownloadListener(this);
             mSeekBar.setProgress(0);
             mChapter.setReadStatus(Chapter.READING);
-            Database.updateChapter(ActivityVerticalReader.this, mChapter);
+            Database.updateChapter(ActivityReader.this, mChapter);
             mReader.reset();
             ArrayList<String> pages = new ArrayList<>();
             for (int i = 0; i < mChapter.getPages(); i++) {
@@ -204,7 +231,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     private void modScrollSensitive(float diff) {
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
-            Database.updateMangaScrollSensitive(ActivityVerticalReader.this, mManga.getId(), mScrollFactor);
+            Database.updateMangaScrollSensitive(ActivityReader.this, mManga.getId(), mScrollFactor);
             mScrollSensitiveText.setText(mScrollFactor + "x");
             mReader.setScrollSensitive(mScrollFactor);
         }
@@ -227,7 +254,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.view_reader_vertical, menu);
+        getMenuInflater().inflate(R.menu.menu_reader, menu);
         keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
         screenRotationMenuItem = menu.findItem(R.id.action_orientation);
         if (mKeepOn) {
@@ -235,11 +262,23 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mOrientation == 1) {
-            ActivityVerticalReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            ActivityReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
         } else if (mOrientation == 2) {
-            ActivityVerticalReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            ActivityReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
+        }
+        MenuItem mMenuItem = menu.findItem(R.id.action_sentido);
+
+        if (direction == Direction.R2L) {
+            this.direction = Direction.R2L;
+            mMenuItem.setIcon(R.drawable.ic_action_clasico);
+        } else if (direction == Direction.L2R) {
+            this.direction = Direction.L2R;
+            mMenuItem.setIcon(R.drawable.ic_action_inverso);
+        } else {
+            this.direction = Direction.VERTICAL;
+            mMenuItem.setIcon(R.drawable.ic_action_verical);
         }
         return true;
     }
@@ -264,7 +303,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                 SharedPreferences.Editor editor = pm.edit();
                 editor.putBoolean(KEEP_SCREEN_ON, mKeepOn);
                 editor.apply();
-                return true;
+                break;
             }
             case R.id.action_orientation: {
                 if (mOrientation == 0) {
@@ -287,6 +326,23 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                 SharedPreferences.Editor editor = pm.edit();
                 editor.putInt(ORIENTATION, mOrientation);
                 editor.apply();
+                break;
+            }
+            case R.id.action_sentido: {
+                if (direction == Direction.R2L) {
+                    item.setIcon(R.drawable.ic_action_inverso);
+                    this.direction = Direction.L2R;
+                } else if (direction == Direction.L2R) {
+                    item.setIcon(R.drawable.ic_action_verical);
+                    this.direction = Direction.VERTICAL;
+                } else {
+                    item.setIcon(R.drawable.ic_action_clasico);
+                    this.direction = Direction.R2L;
+                }
+                mManga.setReadingDirection(this.direction.ordinal());
+                Database.updadeReadOrder(ActivityReader.this, this.direction.ordinal(), mManga.getId());
+                setReader();
+                break;
             }
         }
         return super.onOptionsItemSelected(item);
@@ -300,11 +356,11 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     protected void onPause() {
-        Database.updateChapter(ActivityVerticalReader.this, mChapter);
+        Database.updateChapter(ActivityReader.this, mChapter);
         if (mReader.isLastPageVisible())
-            Database.updateChapterPage(ActivityVerticalReader.this, mChapter.getId(), mChapter.getPages());
+            Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mChapter.getPages());
         else
-            Database.updateChapterPage(ActivityVerticalReader.this, mChapter.getId(), mChapter.getPagesRead());
+            Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
@@ -407,11 +463,11 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
 
     @Override
     public void onError(final Chapter chapter) {
-        ActivityVerticalReader.this.runOnUiThread(new Runnable() {
+        ActivityReader.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    new AlertDialog.Builder(ActivityVerticalReader.this)
+                    new AlertDialog.Builder(ActivityReader.this)
                             .setTitle(chapter.getTitle() + " " + getString(R.string.error))
                             .setMessage(getString(R.string.demaciados_errores))
                             .setIcon(R.drawable.ic_launcher)
@@ -433,7 +489,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     @Override
     public void onEndFling() {
         if (nextChapter != null) {
-            new AlertDialog.Builder(ActivityVerticalReader.this)
+            new AlertDialog.Builder(ActivityReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                     .setMessage(R.string.read_next)
                     .setIcon(R.drawable.ic_launcher)
@@ -443,13 +499,13 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                         public void onClick(DialogInterface dialog, int which) {
                             mChapter.setReadStatus(Chapter.READ);
                             mChapter.setPagesRead(mChapter.getPages());
-                            Database.updateChapter(ActivityVerticalReader.this, mChapter);
+                            Database.updateChapter(ActivityReader.this, mChapter);
                             loadChapter(nextChapter);
                         }
                     })
                     .show();
         } else {
-            new AlertDialog.Builder(ActivityVerticalReader.this)
+            new AlertDialog.Builder(ActivityReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                     .setMessage(R.string.last_chapter)
                     .setIcon(R.drawable.ic_launcher)
@@ -459,7 +515,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
     }
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncDialog = new ProgressDialog(ActivityVerticalReader.this);
+        ProgressDialog asyncDialog = new ProgressDialog(ActivityReader.this);
         String error;
 
         @Override
@@ -472,7 +528,7 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
         @Override
         protected Chapter doInBackground(Chapter... arg0) {
             Chapter c = arg0[0];
-            ServerBase s = ServerBase.getServer(ActivityVerticalReader.this.mManga.getServerId());
+            ServerBase s = ServerBase.getServer(ActivityReader.this.mManga.getServerId());
             try {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {
@@ -495,10 +551,10 @@ public class ActivityVerticalReader extends AppCompatActivity implements Downloa
                 // ignore error
             }
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityVerticalReader.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
             } else {
-                Database.updateChapter(ActivityVerticalReader.this, result);
-                DownloadPoolService.agregarDescarga(ActivityVerticalReader.this, result, true);
+                Database.updateChapter(ActivityReader.this, result);
+                DownloadPoolService.agregarDescarga(ActivityReader.this, result, true);
                 loadChapter(result);
             }
             super.onPostExecute(result);

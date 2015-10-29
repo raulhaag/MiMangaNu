@@ -117,6 +117,12 @@ public class R2LReader extends Reader {
     }
 
     @Override
+    public void seekPage(int index) {
+        absoluteScroll(getPagePosition(index), YScroll);
+        invalidate();
+    }
+
+    @Override
     public void goToPage(final int aPage) {
         if (pages != null) {
             final float finalScroll = getPagePosition(aPage) + 1;
@@ -166,11 +172,6 @@ public class R2LReader extends Reader {
     }
 
     @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-
-    @Override
     public boolean onDoubleTapEvent(MotionEvent e) {
         return false;
     }
@@ -214,6 +215,18 @@ public class R2LReader extends Reader {
         return false;
     }
 
+    @Override
+    public void reset() {
+        XScroll = 0;
+        YScroll = 0;
+        currentPage = 0;
+        pages = null;
+        pagesLoaded = false;
+        viewReady = false;
+        animatingSeek = false;
+        totalWidth = 0;
+    }
+
     protected class HPage extends Page {
         @Override
         public boolean isVisible() {
@@ -248,4 +261,5 @@ public class R2LReader extends Reader {
             }
         }
     }
+
 }

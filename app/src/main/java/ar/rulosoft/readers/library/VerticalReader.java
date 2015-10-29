@@ -150,6 +150,7 @@ public class VerticalReader extends Reader {
         }
     }
 
+    @Override
     public void seekPage(int index) {
         absoluteScroll(XScroll, getPagePosition(index));
         VerticalReader.this.invalidate();
@@ -203,6 +204,7 @@ public class VerticalReader extends Reader {
         return new VPage();
     }
 
+    @Override
     public void reset() {
         XScroll = 0;
         YScroll = 0;

@@ -410,8 +410,8 @@ public class ActivityManga extends AppCompatActivity {
                 int first = mListView.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
                 Intent intent;
-                if (manga.getReadingDirection() == Direction.VERTICAL.ordinal() && pm.getBoolean("test_reader", false)) {
-                    intent = new Intent(ActivityManga.this, ActivityVerticalReader.class);
+                if (pm.getBoolean("test_reader", false)) {
+                    intent = new Intent(ActivityManga.this, ActivityReader.class);
                 } else {
                     intent = new Intent(ActivityManga.this, ActivityLector.class);
                 }

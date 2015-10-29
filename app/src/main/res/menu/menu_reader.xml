@@ -2,6 +2,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.ActivityLector">
+
+    <item
+        android:id="@+id/action_sentido"
+        android:icon="@drawable/ic_action_clasico"
+        android:orderInCategory="100"
+        android:title="@string/sentido"
+        app:showAsAction="always" />
+
     <item
         android:id="@+id/action_keep_screen_on"
         android:icon="@drawable/ic_action_mantain_screen_off"

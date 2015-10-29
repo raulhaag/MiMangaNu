@@ -83,6 +83,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     protected abstract Page getNewPage();
 
+    public abstract void reset();
+
+    public abstract void seekPage(int index);
+
     public void init(Context context) {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
