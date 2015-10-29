@@ -147,5 +147,5 @@
     <string name="update_news">Nouvelles</string>
     <string name="genre">Genre</string>
     <string name="read_next">Voulez-vous lire le chapitre suivant ?</string>
-    <string name="last_chapter">C'est le dernier chapitre actuellement</string>
+    <string name="last_chapter">C\'est le dernier chapitre actuellement</string>
 </resources>
