@@ -160,11 +160,11 @@ public class ActivityManga extends AppCompatActivity {
                         }
                         break;
                     case R.id.borrar:
-                        int[] selecionados = new int[selection.size()];
+                        int[] selected = new int[selection.size()];
                         for (int j = 0; j < selection.size(); j++) {
-                            selecionados[j] = selection.keyAt(j);
+                            selected[j] = selection.keyAt(j);
                         }
-                        Arrays.sort(selecionados);
+                        Arrays.sort(selected);
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.delete(ActivityManga.this, manga, s);

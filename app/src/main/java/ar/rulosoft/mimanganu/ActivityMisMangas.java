@@ -69,14 +69,14 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         button_add.setOnClickListener(this);
 
         final boolean show_dialog = pm.getBoolean("show_updates", false);
-        if (show_dialog) {//! o no segun la version 1.36 sin !
+        if (!show_dialog) {//! o no segun la version 1.36 sin !
             AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
             dlgAlert.setMessage(getString(R.string.update_message));
             dlgAlert.setTitle(R.string.app_name);
             dlgAlert.setCancelable(true);
             dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    pm.edit().putBoolean("show_updates", false).apply(); //false 1.36
+                    pm.edit().putBoolean("show_updates", true).apply(); //false 1.36
                 }
             });
             dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {

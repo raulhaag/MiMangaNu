@@ -3,6 +3,11 @@
 
 Lector Manga online
 
+Cambios 1.38
+* fixed MangaHere, MangaPanda
+* nuevo lector L2R and R2L on test
+* otros fix
+
 Cambios 1.37
 * agregado los colores a system y navegation bar en lollipop
 * y unos fix bastante importantes

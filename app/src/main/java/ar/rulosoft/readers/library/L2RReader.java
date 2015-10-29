@@ -80,4 +80,17 @@ public class L2RReader extends R2LReader {
         XScroll = getPagePosition(0);
         pagesLoaded = true;
     }
+
+    /*
+     * Starting from 0
+    */
+    @Override
+    public float getPagePosition(int page) {
+        if (page < 0) {
+            return pages.get(0).init_visibility;
+        } else if (page < pages.size())
+            return pages.get(page).end_visibility - screenWidth - 2;
+        else
+            return pages.get(pages.size() - 1).init_visibility;
+    }
 }
