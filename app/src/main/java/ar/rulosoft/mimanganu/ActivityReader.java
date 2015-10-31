@@ -83,7 +83,6 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
         mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
         mManga = Database.getFullManga(this, mChapter.getMangaID());
 
-
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
         mOrientation = pm.getInt(ORIENTATION, 0);
@@ -163,6 +162,9 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     }
 
     private void setReader() {
+        if(mReader != null) {
+            mReader.freeMemory();
+        }
         if (direction == Direction.R2L) {
             mReader = new R2LReader(this);
         } else if (direction == Direction.L2R) {
@@ -236,7 +238,6 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
             mReader.setScrollSensitive(mScrollFactor);
         }
     }
-
 
     private void hideSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
@@ -363,6 +364,12 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
             Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mReader.freeMemory();
+        super.onDestroy();
     }
 
     @Override

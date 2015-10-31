@@ -26,7 +26,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'com.android.support:support-v4:22.0.0'
-    compile 'com.shamanland:fab:0.0.8'
     compile 'com.melnykov:floatingactionbutton:1.3.0'
     compile project(':imageviewtouchlibrary')
     compile 'com.android.support:appcompat-v7:22.2.0'

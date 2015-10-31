@@ -7,7 +7,7 @@
 
     <PreferenceCategory android:title="Test">
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="test_reader"
             android:summary="Test Vertical Reader"
             android:title="New Vertical Reader (preview)" />

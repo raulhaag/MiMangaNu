@@ -87,6 +87,13 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public abstract void seekPage(int index);
 
+    public void freeMemory() {
+        for (Page p : pages) {
+            if (p.partsLoaded > 0)
+                p.freeMemory();
+        }
+    }
+
     public void init(Context context) {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
@@ -382,6 +389,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     protected abstract class Page {
 
         String path;
+        Paint mPaint;
         ImagesStates state = ImagesStates.NULL;
         float original_width;
         float original_height;
@@ -392,11 +400,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         float scaled_width;
         boolean initialized = false;
         boolean slowLoad = false;
-        int[] alphas;
+        int alpha;
         Bitmap[] image;
-        float pw, ph;
+        int pw, ph;
         float[] dx, dy; //dx & dy displacement in x and y axis | pw & ph heights and widths from segments | ls & le lines start and lines end
         int vp, hp, tp, partsLoaded; //vertical and horizontal parts count and total
+        boolean bigImage = false;
 
         public abstract boolean isVisible();
 
@@ -424,59 +433,14 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                         try {
                             BitmapFactory.Options options = new BitmapFactory.Options();
                             options.inPreferredConfig = Bitmap.Config.RGB_565;
-                            Bitmap allBitmap = BitmapFactory.decodeFile(path, options);
-                            if (allBitmap != null) {
-                                for (int i = 0; i < tp; i++) {
-                                    float with = pw;
-                                    if ((dx[i] + with + 2) < allBitmap.getWidth())
-                                        with += 2;
-                                    float height = ph;
-                                    if ((dy[i] + height + 2) < allBitmap.getHeight())
-                                        height += 2;
-                                    image[i] = Bitmap.createBitmap(allBitmap, (int) dx[i], (int) dy[i], (int) with, (int) height);
-                                }
-                                allBitmap.recycle();
-                                allBitmap = null;
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        state = ImagesStates.LOADED;
-                                        if (Page.this.isVisible()) {
-                                            ValueAnimator va = ValueAnimator.ofInt(0, 255);
-                                            va.setDuration(200);
-                                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                                @Override
-                                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                                    for (int i = 0; i < alphas.length; i++)
-                                                        alphas[i] = (int) valueAnimator.getAnimatedValue();
-                                                    invalidate();
-                                                }
-                                            });
-                                            va.addListener(new Animator.AnimatorListener() {
-                                                @Override
-                                                public void onAnimationStart(Animator animator) {
-
-                                                }
-
-                                                @Override
-                                                public void onAnimationEnd(Animator animator) {
-                                                    invalidate();
-                                                }
-
-                                                @Override
-                                                public void onAnimationCancel(Animator animator) {
-
-                                                }
-
-                                                @Override
-                                                public void onAnimationRepeat(Animator animator) {
-
-                                                }
-                                            });
-                                            va.start();
-                                        }
-                                    }
-                                });
+                            tp = 1;
+                            bigImage = true;
+                            image[0] = BitmapFactory.decodeFile(path, options);
+                            if (image[0] != null) {
+                                partsLoaded++;
+                                alpha = 255;
+                                setLayerType(View.LAYER_TYPE_SOFTWARE, mPaint);
+                                invalidate();
                             } else {
                                 state = ImagesStates.NULL;
                             }
@@ -494,7 +458,6 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     public void run() {
                         try {
                             if (state == ImagesStates.NULL || partsLoaded < tp) {
-                                partsLoaded++;
                                 state = ImagesStates.LOADING;
                                 BitmapFactory.Options options = new BitmapFactory.Options();
                                 options.inPreferredConfig = Bitmap.Config.RGB_565;
@@ -509,45 +472,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                     }
                                 }
                                 if (image[pos] != null) {
-                                    mHandler.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            state = ImagesStates.LOADED;
-                                            if (Page.this.isVisible()) {
-                                                ValueAnimator va = ValueAnimator.ofInt(0, 255);
-                                                va.setDuration(150);
-                                                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                                    @Override
-                                                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                                        alphas[pos] = (int) valueAnimator.getAnimatedValue();
-                                                        invalidate();
-                                                    }
-                                                });
-                                                va.addListener(new Animator.AnimatorListener() {
-                                                    @Override
-                                                    public void onAnimationStart(Animator animator) {
-
-                                                    }
-
-                                                    @Override
-                                                    public void onAnimationEnd(Animator animator) {
-                                                        invalidate();
-                                                    }
-
-                                                    @Override
-                                                    public void onAnimationCancel(Animator animator) {
-
-                                                    }
-
-                                                    @Override
-                                                    public void onAnimationRepeat(Animator animator) {
-
-                                                    }
-                                                });
-                                                va.start();
-                                            }
-                                        }
-                                    });
+                                    partsLoaded++;
+                                    showOnLoad();
                                 } else {
                                     state = ImagesStates.NULL;
                                 }
@@ -562,12 +488,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         public void initValues() {
             vp = (int) (original_height / mTextureMax) + 1;
             hp = (int) (original_width / mTextureMax) + 1;
-            pw = (original_width / hp);
-            ph = (original_height / vp);
+            pw = (int) (original_width / hp);
+            ph = (int) (original_height / vp);
             tp = vp * hp;
             dy = new float[tp];
             dx = new float[tp];
-            alphas = new int[tp];
+            alpha = 0;
             image = new Bitmap[tp];
             for (int i = 0; i < vp; i++) {
                 for (int j = 0; j < hp; j++) {
@@ -576,6 +502,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     dx[idx] = j * pw;
                 }
             }
+            mPaint = new Paint();
             initialized = true;
         }
 
@@ -585,6 +512,49 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             image = null;
             image = new Bitmap[tp];
             state = ImagesStates.NULL;
+        }
+
+        public void showOnLoad() {
+            if (tp == partsLoaded)
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        state = ImagesStates.LOADED;
+                        if (Page.this.isVisible()) {
+                            ValueAnimator va = ValueAnimator.ofInt(0, 255);
+                            va.setDuration(300);
+                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                                @Override
+                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                    alpha = (int) valueAnimator.getAnimatedValue();
+                                    invalidate();
+                                }
+                            });
+                            va.addListener(new Animator.AnimatorListener() {
+                                @Override
+                                public void onAnimationStart(Animator animator) {
+
+                                }
+
+                                @Override
+                                public void onAnimationEnd(Animator animator) {
+                                    invalidate();
+                                }
+
+                                @Override
+                                public void onAnimationCancel(Animator animator) {
+
+                                }
+
+                                @Override
+                                public void onAnimationRepeat(Animator animator) {
+
+                                }
+                            });
+                            va.start();
+                        }
+                    }
+                });
         }
 
     }

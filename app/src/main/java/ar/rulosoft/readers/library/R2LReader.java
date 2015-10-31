@@ -244,19 +244,15 @@ public class R2LReader extends Reader {
 
         @Override
         public void draw(Canvas canvas) {
-            for (int i = 0; i < vp; i++) {
-                for (int j = 0; j < hp; j++) {
-                    int idx = i * hp + j;
-                    if (image[idx] != null) {
-                        paint.setAlpha(alphas[idx]);
-                        m.reset();
-                        m.reset();
-                        m.postTranslate(dx[idx], dy[idx]);
-                        m.postScale(unification_scale, unification_scale);
-                        m.postTranslate(init_visibility - XScroll, -YScroll);
-                        m.postScale(mScaleFactor, mScaleFactor);
-                        canvas.drawBitmap(image[idx], m, paint);
-                    }
+            mPaint.setAlpha(alpha);
+            for (int idx = 0; idx < tp; idx++) {
+                if (image[idx] != null) {
+                    m.reset();
+                    m.postTranslate(dx[idx], dy[idx]);
+                    m.postScale(unification_scale, unification_scale);
+                    m.postTranslate(init_visibility - XScroll, -YScroll);
+                    m.postScale(mScaleFactor, mScaleFactor);
+                    canvas.drawBitmap(image[idx], m, mPaint);
                 }
             }
         }
