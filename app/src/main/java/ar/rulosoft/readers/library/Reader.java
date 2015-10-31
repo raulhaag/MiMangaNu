@@ -440,7 +440,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                 partsLoaded++;
                                 alpha = 255;
                                 setLayerType(View.LAYER_TYPE_SOFTWARE, mPaint);
-                                invalidate();
+                                mHandler.post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        invalidate();
+                                    }
+                                });
                             } else {
                                 state = ImagesStates.NULL;
                             }

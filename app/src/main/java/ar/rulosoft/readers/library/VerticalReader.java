@@ -32,10 +32,10 @@ public class VerticalReader extends Reader {
                 dimension.scaled_height = dimension.original_height * dimension.unification_scale;
             } else {
                 dimension.original_width = screenWidth;
-                dimension.original_height = screenHeight / 4;
+                dimension.original_height = screenHeight;
                 dimension.unification_scale = 1;
                 dimension.scaled_width = screenWidth;
-                dimension.scaled_height = screenHeight / 4;
+                dimension.scaled_height = screenHeight;
             }
         }
     }
