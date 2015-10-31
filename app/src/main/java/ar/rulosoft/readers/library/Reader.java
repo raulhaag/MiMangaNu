@@ -32,7 +32,6 @@ import java.util.List;
  */
 public abstract class Reader extends View implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
-    public Paint paint = new Paint();
     public int currentPage = 0, firstVisiblePage = 0;
     public float mScrollSensitive = 1.f;
     protected int mTextureMax = 1024;
@@ -98,7 +97,6 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
         mHandler = new Handler();
-        paint.setFilterBitmap(true);
         ppi = context.getResources().getDisplayMetrics().density * 160.0f;
     }
 
@@ -435,7 +433,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             options.inPreferredConfig = Bitmap.Config.RGB_565;
                             tp = 1;
                             bigImage = true;
-                            image[0] = BitmapFactory.decodeFile(path, options);
+                            try {
+                                image[0] = BitmapFactory.decodeFile(path, options);
+                            } catch (OutOfMemoryError e) {
+                                //can do nothing to load :-( try to resample?
+                                e.printStackTrace();
+                            }
                             if (image[0] != null) {
                                 partsLoaded++;
                                 alpha = 255;
