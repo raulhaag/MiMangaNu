@@ -17,7 +17,8 @@ public class KissManga extends ServerBase {
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
-    private static String HOST = "http://kissmanga.com";
+    public static String IP = "93.174.95.110";
+    private static String HOST = "kissmanga.com";
     private static String[] genre = new String[]{
             "All", "Action", "Adult", "Adventure", "Comedy", "Comic",
             "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem", "Historical",
@@ -65,7 +66,7 @@ public class KissManga extends ServerBase {
         nav.addPost("status", "");
         nav.addPost("genres", "");
 
-        String source = nav.post(HOST + "/AdvanceSearch");
+        String source = nav.post(IP, "/AdvanceSearch", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -89,7 +90,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(HOST + m.getPath());
+        String source = getNavWithHeader().get(IP, m.getPath(), HOST);
 
         // Summary
         m.setSynopsis(Html.fromHtml(getFirstMatchDefault(
@@ -99,8 +100,7 @@ public class KissManga extends ServerBase {
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
         if (pictures != null) {
-            m.setImages(
-                    HOST + pictures.replace(HOST, "") + "|kissmanga.com");
+            m.setImages("http://" + IP + pictures.replace("http://kissmanga.com", "") + "|" + HOST);
         }
 
         // Author
@@ -128,7 +128,7 @@ public class KissManga extends ServerBase {
     public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null || c.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().post(HOST + c.getPath());
+            String source = getNavWithHeader().post(IP, c.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -147,7 +147,7 @@ public class KissManga extends ServerBase {
         int pages = 0;
         if (c.getExtra() == null || c.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().get(HOST + c.getPath().replaceAll("[^!-z]+", ""));
+            String source = getNavWithHeader().get(IP, c.getPath().replaceAll("[^!-z]+", ""), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -167,7 +167,7 @@ public class KissManga extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavWithHeader().post(HOST + web);
+        String source = getNavWithHeader().post(IP, web, HOST);
         return getMangasSource(source);
     }
 
@@ -179,8 +179,7 @@ public class KissManga extends ServerBase {
         while (m.find()) {
             Manga manga =
                     new Manga(KISSMANGA, m.group(3), m.group(2), false);
-            manga.setImages(HOST + m.group(1).replace(HOST, "") +
-                    "|kissmanga.com");
+            manga.setImages("http://" + IP + m.group(1).replace("http://kissmanga.com", "") + "|" + HOST);
             mangas.add(manga);
         }
         return mangas;

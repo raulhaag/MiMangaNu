@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.navegadores.Navegador;
 
 public class TusMangasOnlineCom extends ServerBase {
 
@@ -155,7 +156,12 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     private void getExtraWeb(Chapter c) throws Exception {
-        String source = getNavWithHeader().get(c.getPath(), TIMEOUT);
+        String cId = getFirstMatch("idCapitulo=([^&]+)", c.getPath(), "Error al iniciar Capítulo");
+        String mId = getFirstMatch("idManga=([^&]+)", c.getPath(), "Error al iniciar Capítulo");
+        Navegador nav = getNavWithHeader();
+        nav.addPost("idManga", mId);
+        nav.addPost("idCapitulo", cId);
+        String source = nav.post("http://www.tumangaonline.com/index.php?option=com_controlmanga&view=capitulos&format=raw");
         String fs = getFirstMatch("(http://www.tumangaonline.com/visor/.+?)\"",
                 source, "Error al iniciar Capítulo");
         c.setExtra(fs);
