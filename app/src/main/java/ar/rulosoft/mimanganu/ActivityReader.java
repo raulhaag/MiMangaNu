@@ -185,6 +185,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
 
     private void loadChapter(Chapter nChapter) {
         mChapter = nChapter;
+        setTitle(mChapter.getTitle());
         if (nChapter.getPages() == 0) {
             new GetPageTask().execute(nChapter);
         } else {
