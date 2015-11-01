@@ -32,8 +32,8 @@ import rapid.decoder.BitmapDecoder;
  */
 public abstract class Reader extends View implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
-    public int currentPage = 0, firstVisiblePage = 0;
     public float mScrollSensitive = 1.f;
+    protected int currentPage = 0, firstVisiblePage = 0;
     protected int mTextureMax = 1024;
     protected OnTapListener mTapListener;
     protected OnEndFlingListener mOnEndFlingListener;
@@ -348,9 +348,13 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         }
     }
 
+    public int getCurrentPage() {
+        return currentPage;
+    }
+
     /*
-     * Starting from 0
-     */
+         * Starting from 0
+         */
     public float getPagePosition(int page) {
         if (page < 0) {
             return pages.get(0).init_visibility;

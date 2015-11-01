@@ -162,7 +162,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     }
 
     private void setReader() {
-        if(mReader != null) {
+        if (mReader != null) {
             mReader.freeMemory();
         }
         if (direction == Direction.R2L) {
@@ -359,10 +359,12 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     @Override
     protected void onPause() {
         Database.updateChapter(ActivityReader.this, mChapter);
-        if (mReader.isLastPageVisible())
-            Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mChapter.getPages());
-        else
-            Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mChapter.getPagesRead());
+        if (mReader.isLastPageVisible()) {
+            mChapter.setPagesRead(mChapter.getPages());
+            mChapter.setReadStatus(Chapter.READ);
+            Database.updateChapter(ActivityReader.this, mChapter);
+        } else
+            Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
@@ -461,12 +463,12 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
 
     @Override
     public void onLeftTap() {
-        mReader.goToPage(mReader.currentPage - 1);
+        mReader.goToPage(mReader.getCurrentPage() - 1);
     }
 
     @Override
     public void onRightTap() {
-        mReader.goToPage(mReader.currentPage + 1);
+        mReader.goToPage(mReader.getCurrentPage() + 1);
     }
 
     @Override
