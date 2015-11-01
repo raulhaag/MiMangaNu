@@ -12,7 +12,7 @@ import android.view.MotionEvent;
  */
 public class R2LReader extends Reader {
 
-    float totalWidth = 0;
+    protected float totalWidth = 0;
 
     public R2LReader(Context context) {
         super(context);

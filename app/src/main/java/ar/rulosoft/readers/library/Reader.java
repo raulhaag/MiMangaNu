@@ -5,11 +5,9 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.BitmapRegionDecoder;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -26,6 +24,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import rapid.decoder.BitmapDecoder;
 
 /**
  * Created by Raul on 22/10/2015.
@@ -473,8 +473,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                     image[pos] = BitmapFactory.decodeFile(path, options);
                                 } else {
                                     try {
-                                        BitmapRegionDecoder decoder = BitmapRegionDecoder.newInstance(new FileInputStream(path), false);
-                                        image[pos] = decoder.decodeRegion(new Rect((int) dx[pos], (int) dy[pos], (int) (dx[pos] + pw + 2), (int) (dy[pos] + ph + 2)), options);
+                                        int right = (int) (dx[pos] + pw + 2), bottom = (int) (dy[pos] + ph + 2);
+                                        if (right > original_width)
+                                            right = (int) original_width;
+                                        if (bottom > original_height)
+                                            bottom = (int) original_height;
+                                        image[pos] = BitmapDecoder.from(path).region((int) dx[pos], (int) dy[pos], right, bottom).useBuiltInDecoder(true).decode();
                                     } catch (Exception e) {
                                         slowLoad = true;
                                     }
