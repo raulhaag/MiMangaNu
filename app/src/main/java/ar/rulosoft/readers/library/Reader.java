@@ -519,6 +519,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 }
             }
             mPaint = new Paint();
+            mPaint.setFilterBitmap(true);
             initialized = true;
         }
 

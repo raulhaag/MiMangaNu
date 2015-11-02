@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message">Cambios 1.38 \n\t * fixed MangaHere, MangaPanda \n\t * nuevo lecto L2R and R2L on test \n\t * otros fix </string>
+    <string name="update_message">Cambios 1.39\n\t* fixed MangaHere de nuevo, KissManga y TuMangaOnline\n\t* trabajando en el nuevo lector\n\t* agregado un decoder de imagen mas estable que el de android\n\t* otros issue fix</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>

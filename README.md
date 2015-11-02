@@ -3,6 +3,10 @@
 
 Lector Manga online
 
+Cambios 1.39
+* fixed MangaHere de nuevo, KissManga y TuMangaOnline
+* trabajando en el nuevo lector
+
 Cambios 1.38
 * fixed MangaHere, MangaPanda
 * nuevo lector L2R and R2L on test

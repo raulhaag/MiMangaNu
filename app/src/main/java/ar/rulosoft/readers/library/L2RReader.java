@@ -8,6 +8,7 @@ import android.util.AttributeSet;
  */
 public class L2RReader extends R2LReader {
 
+    boolean firstTime = true;
     float totalWidth = 0;
 
     public L2RReader(Context context) {
@@ -77,7 +78,10 @@ public class L2RReader extends R2LReader {
             d.end_visibility = acc;
         }
         totalWidth = acc;
-        XScroll = getPagePosition(0);
+        if (firstTime) {
+            XScroll = getPagePosition(0);
+            firstTime = false;
+        }
         pagesLoaded = true;
     }
 
