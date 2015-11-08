@@ -119,7 +119,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         Manga m = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.borrar) {
             ServerBase s = ServerBase.getServer(m.getServerId());
-            String path = DownloadPoolService.generarRutaBase(s, m, getActivity());
+            String path = DownloadPoolService.generateBasePath(s, m, getActivity());
             DeleteRecursive(new File(path));
             Database.deleteManga(getActivity(), m.getId());
             adapter.remove(m);

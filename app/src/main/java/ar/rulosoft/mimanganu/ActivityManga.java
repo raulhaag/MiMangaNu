@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -406,7 +405,7 @@ public class ActivityManga extends AppCompatActivity {
             } else {
                 asyncdialog.dismiss();
                 Database.updateChapter(ActivityManga.this, result);
-                DownloadPoolService.agregarDescarga(ActivityManga.this, result, true);
+                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, result, true);
                 int first = mListView.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, manga.getId(), first);
                 Intent intent;
@@ -423,24 +422,13 @@ public class ActivityManga extends AppCompatActivity {
     }
 
     public class ChapterDownloadTask extends AsyncTask<Chapter, Void, Void> {
-        private ServerBase server;
-        private Context context;
-
-        @Override
-        protected void onPreExecute() {
-            server =
-                    ServerBase.getServer(ActivityManga.this.manga.getServerId());
-            context = getApplicationContext();
-            super.onPreExecute();
-        }
 
         @Override
         protected Void doInBackground(Chapter... chapters) {
             for (Chapter c : chapters) {
                 try {
-                    server.chapterInit(c);
-                    Database.updateChapter(context, c);
-                    DownloadPoolService.agregarDescarga(ActivityManga.this, c, false);
+
+                    DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -9,10 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-
 import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
-import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentDownload extends Fragment {
@@ -53,7 +50,7 @@ public class FragmentDownload extends Fragment {
         protected Void doInBackground(Void... params) {
             while (follow) {
                 try {
-                    downAdapter.updateAll(DownloadPoolService.descargas);
+                    downAdapter.updateAll(DownloadPoolService.chapterDownloads);
                     publishProgress();
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

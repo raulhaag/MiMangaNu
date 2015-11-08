@@ -1,11 +1,9 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.os.AsyncTask;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,7 +121,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                     if (c.isDownloaded()) {
                         Manga m = activity.manga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
-                        String ruta = DownloadPoolService.generarRutaBase(s, m, c, activity);
+                        String ruta = DownloadPoolService.generateBasePath(s, m, c, activity);
                         FragmentMisMangas.DeleteRecursive(new File(ruta));
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
@@ -132,7 +130,8 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         // ((ImageView)
                         // v).setImageResource(R.drawable.ic_bajar);
                     } else {
-                        new AgregarCola().execute(c);
+                        DownloadPoolService.addChapterDownloadPool(activity, c, false);
+                        Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -197,52 +196,5 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             this.imageButton = (ImageView) v.findViewById(R.id.boton);
         }
 
-    }
-
-    private class AgregarCola extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncdialog = new ProgressDialog(activity);
-        String error = "";
-
-        @Override
-        protected void onPreExecute() {
-            asyncdialog.setMessage(activity.getResources().getString(R.string.iniciando));
-            asyncdialog.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Chapter doInBackground(Chapter... arg0) {
-            Chapter c = arg0[0];
-            ServerBase s = ServerBase.getServer(activity.manga.getServerId());
-            try {
-                if (c.getPages() < 1)
-                    s.chapterInit(c);
-            } catch (Exception e) {
-                error = e.getMessage();
-                e.printStackTrace();
-            } finally {
-                publishProgress();
-            }
-            return c;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            asyncdialog.dismiss();
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Chapter result) {
-            if (error.length() > 1) {
-                Toast.makeText(activity, error, Toast.LENGTH_LONG).show();
-            } else {
-                asyncdialog.dismiss();
-                Database.updateChapter(activity, result);
-                DownloadPoolService.agregarDescarga(activity, result, false);
-                Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
-            }
-            super.onPostExecute(result);
-        }
     }
 }

@@ -69,41 +69,10 @@ public class VerticalReader extends Reader {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        stopAnimationsOnTouch = false;
-        stopAnimationOnHorizontalOver = false;
-        stopAnimationOnVerticalOver = false;
         if (mOnEndFlingListener != null && e1.getY() - e2.getY() > 100 && (YScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
             mOnEndFlingListener.onEndFling();
         }
-
-        mHandler.post(new Runnable() {
-            final int fps = 60;
-            final float deceleration_rate = 0.90f;
-            final int timeLapse = 1000 / fps;
-            final float min_velocity = 250;
-            float velocity_Y = velocityY * mScrollSensitive;
-            float velocity_X = velocityX * mScrollSensitive;
-
-            @Override
-            public void run() {
-                relativeScroll(-velocity_X / fps, -(velocity_Y / fps));
-                velocity_Y = velocity_Y * deceleration_rate;
-                velocity_X = velocity_X * deceleration_rate;
-                invalidate();
-                if (stopAnimationOnHorizontalOver) {
-                    velocity_X = 0;
-                }
-                if (stopAnimationOnVerticalOver) {
-                    velocity_Y = 0;
-                }
-                if ((Math.abs(velocity_Y) > min_velocity || Math.abs(velocity_X) > min_velocity) && !stopAnimationsOnTouch) {
-                    mHandler.postDelayed(this, timeLapse);
-                } else {
-                    invalidate();
-                }
-            }
-        });
-        return false;
+        return super.onFling(e1, e2, velocityX, velocityY);
     }
 
     @Override

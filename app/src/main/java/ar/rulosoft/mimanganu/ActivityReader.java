@@ -196,7 +196,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
             mReader.reset();
             ArrayList<String> pages = new ArrayList<>();
             for (int i = 0; i < mChapter.getPages(); i++) {
-                pages.add(DownloadPoolService.generarRutaBase(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (i + 1) + ".jpg");
+                pages.add(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (i + 1) + ".jpg");
             }
             mReader.setPaths(pages);
             mActionBar.setTitle(mChapter.getTitle());
@@ -564,7 +564,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
                 Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
             } else {
                 Database.updateChapter(ActivityReader.this, result);
-                DownloadPoolService.agregarDescarga(ActivityReader.this, result, true);
+                DownloadPoolService.addChapterDownloadPool(ActivityReader.this, result, true);
                 loadChapter(result);
             }
             super.onPostExecute(result);

@@ -78,7 +78,7 @@ public class ActivityDownloads extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             while (_continue) {
                 try {
-                    adap.updateAll(DownloadPoolService.descargas);
+                    adap.updateAll(DownloadPoolService.chapterDownloads);
                     publishProgress();
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {

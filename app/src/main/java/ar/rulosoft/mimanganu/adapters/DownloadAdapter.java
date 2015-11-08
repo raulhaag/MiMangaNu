@@ -63,7 +63,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
             String textInfo = " " + states[item.status.ordinal()];
             holder.textViewName.setText(android.text.Html.fromHtml(item.getChapter().getTitle() + textInfo));
             holder.loadingProgressBar.setMax(item.getChapter().getPages());
-            holder.loadingProgressBar.setProgress(item.getProgess());
+            holder.loadingProgressBar.setProgress(item.getProgress());
             holder.buttonImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -91,7 +91,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
                     if (getItem(j).getChapter().getId() == toCompare.getChapter().getId()) {
                         isNew = false;
                         ChapterDownload item = getItem(j);
-                        item.setProgess(toCompare.getProgess());
+                        item.setProgress(toCompare.getProgress());
                         item.status = toCompare.status;
                         break;
                     }

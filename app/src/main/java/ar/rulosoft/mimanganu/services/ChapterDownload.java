@@ -11,14 +11,14 @@ public class ChapterDownload implements StateChange {
     private OnErrorListener errorListener = null;
     private StateChange chagesListener = null;
     private Status[] pagesStatus;
-    private int progess = 0;
+    private int progress = 0;
 
     public ChapterDownload(Chapter chapter) {
         this.chapter = chapter;
         reset();
     }
 
-    private void reset() {
+    public void reset() {
         pagesStatus = new Status[chapter.getPages()];
         for (int i = 0; i < pagesStatus.length; i++) {
             pagesStatus[i] = Status.QUEUED;
@@ -34,10 +34,10 @@ public class ChapterDownload implements StateChange {
         int j = -2;
         if (status.ordinal() < DownloadStatus.DOWNLOADED.ordinal()) {
             if (status == DownloadStatus.QUEUED)
-                changeStatus(DownloadStatus.DOWNLOADIND);
+                changeStatus(DownloadStatus.DOWNLOADING);
             if (areErrors()) {
                 j = -11;
-            } else if (progess < chapter.getPages()) {
+            } else if (progress < chapter.getPages()) {
                 for (int i = 0; i < chapter.getPages(); i++) {
                     if (pagesStatus[i] == Status.QUEUED || pagesStatus[i] == Status.POSTPONED) {
                         pagesStatus[i] = Status.INIT;
@@ -80,12 +80,12 @@ public class ChapterDownload implements StateChange {
         return ret;
     }
 
-    public int getProgess() {
-        return progess;
+    public int getProgress() {
+        return progress;
     }
 
-    public void setProgess(int progess) {
-        this.progess = progess;
+    public void setProgress(int progress) {
+        this.progress = progress;
     }
 
     public Chapter getChapter() {
@@ -102,13 +102,13 @@ public class ChapterDownload implements StateChange {
 
     public void setErrorIdx(int idx) {
         pagesStatus[idx] = Status.ERROR_ON_UPLOAD;
-        progess++;
+        progress++;
         areErrors();
         checkProgreso();
     }
 
     private void checkProgreso() {
-        if (progess == chapter.getPages()) {
+        if (progress == chapter.getPages()) {
             Database.updateChapterDownloaded(DownloadPoolService.actual, chapter.getId(), 1);
             changeStatus(DownloadStatus.DOWNLOADED);
         }
@@ -117,7 +117,7 @@ public class ChapterDownload implements StateChange {
     @Override
     public void onChange(SingleDownload singleDownload) {
         pagesStatus[singleDownload.index] = singleDownload.status;
-        progess++;
+        progress++;
         checkProgreso();
         if (chagesListener != null)
             chagesListener.onChange(singleDownload);
@@ -131,7 +131,7 @@ public class ChapterDownload implements StateChange {
     }
 
     public enum DownloadStatus {
-        QUEUED, DOWNLOADIND, DOWNLOADED, ERROR
+        QUEUED, DOWNLOADING, DOWNLOADED, ERROR
     }
 
     public interface OnErrorListener {

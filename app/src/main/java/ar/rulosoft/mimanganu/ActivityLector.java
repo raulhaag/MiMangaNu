@@ -713,12 +713,6 @@ public class ActivityLector extends AppCompatActivity
                     if (f.exists()) {
                         f.delete();
                     }
-                    /*
-                     * if (!ColaDeDescarga.corriendo) {
-					 * ColaDeDescarga.add(((ActivityReader)
-					 * getActivity()).capitulo);
-					 * ColaDeDescarga.iniciarCola(getActivity()); }/
-					 */
                 }
                 super.onPostExecute(result);
             }
@@ -818,7 +812,7 @@ public class ActivityLector extends AppCompatActivity
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 } else {
                     Database.updateChapter(getActivity(), result);
-                    DownloadPoolService.agregarDescarga(getActivity(), result, true);
+                    DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                     Intent intent =
                             new Intent(getActivity(), ActivityLector.class);
                     intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
@@ -883,7 +877,7 @@ public class ActivityLector extends AppCompatActivity
                 }
             }
             if (f == null) {
-                String ruta = DownloadPoolService.generarRutaBase(mServerBase, mManga, mChapter,
+                String ruta = DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter,
                         getApplicationContext()) + "/" + (position + 1) + ".jpg";
                 int idx;
                 do {

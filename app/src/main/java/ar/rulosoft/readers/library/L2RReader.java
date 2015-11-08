@@ -2,6 +2,7 @@ package ar.rulosoft.readers.library;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.MotionEvent;
 
 /**
  * Created by Raul on 25/10/2015.
@@ -83,6 +84,14 @@ public class L2RReader extends R2LReader {
             firstTime = false;
         }
         pagesLoaded = true;
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
+        if (mOnEndFlingListener != null && e2.getX() - e1.getX() > 100 && (XScroll == 0)) {
+            mOnEndFlingListener.onEndFling();
+        }
+        return super.onFling(e1, e2, velocityX, velocityY);
     }
 
     /*

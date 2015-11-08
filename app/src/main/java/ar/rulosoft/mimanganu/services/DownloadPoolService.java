@@ -32,8 +32,8 @@ public class DownloadPoolService extends Service implements StateChange {
     };
     public static int SLOTS = 2;
     public static DownloadPoolService actual = null;
-    public static ArrayList<ChapterDownload> descargas = new ArrayList<>();
-    private static boolean intentPrending = false;
+    public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
+    private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
 
 
@@ -43,31 +43,31 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public int slots = SLOTS;
 
-    public static void agregarDescarga(Activity activity, Chapter chapter, boolean lectura) {
+    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) {
         if (!chapter.isDownloaded()) {
-            if (descargaNueva(chapter.getId())) {
+            if (isNewDownload(chapter.getId())) {
                 ChapterDownload dc = new ChapterDownload(chapter);
                 if (lectura)
-                    descargas.add(0, dc);
+                    chapterDownloads.add(0, dc);
                 else
-                    descargas.add(dc);
+                    chapterDownloads.add(dc);
             } else {
-                for (ChapterDownload dc : descargas) {
+                for (ChapterDownload dc : chapterDownloads) {
                     if (dc.chapter.getId() == chapter.getId()) {
                         if (dc.status == DownloadStatus.ERROR) {
                             dc.chapter.deleteImages(activity);
-                            descargas.remove(dc);
+                            chapterDownloads.remove(dc);
                             dc = null;
                             ChapterDownload ndc = new ChapterDownload(chapter);
                             if (lectura) {
-                                descargas.add(0, ndc);
+                                chapterDownloads.add(0, ndc);
                             } else {
-                                descargas.add(ndc);
+                                chapterDownloads.add(ndc);
                             }
                         } else {
                             if (lectura) {
-                                descargas.remove(dc);
-                                descargas.add(0, dc);
+                                chapterDownloads.remove(dc);
+                                chapterDownloads.add(0, dc);
                             }
                         }
                         break;
@@ -75,8 +75,8 @@ public class DownloadPoolService extends Service implements StateChange {
                 }
             }
             initValues(activity);
-            if (!intentPrending && actual == null) {
-                intentPrending = true;
+            if (!intentPending && actual == null) {
+                intentPending = true;
                 activity.startService(new Intent(activity, DownloadPoolService.class));
             }
         }
@@ -92,9 +92,9 @@ public class DownloadPoolService extends Service implements StateChange {
         DownloadPoolService.SLOTS = descargas;
     }
 
-    private static boolean descargaNueva(int cid) {
+    private static boolean isNewDownload(int cid) {
         boolean result = true;
-        for (ChapterDownload dc : descargas) {
+        for (ChapterDownload dc : chapterDownloads) {
             if (dc.chapter.getId() == cid) {
                 result = false;
                 break;
@@ -105,10 +105,10 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public static boolean quitarDescarga(int cid, Context c) {
         boolean result = true;
-        for (ChapterDownload dc : descargas) {
+        for (ChapterDownload dc : chapterDownloads) {
             if (dc.chapter.getId() == cid) {
-                if (dc.status.ordinal() != DownloadStatus.DOWNLOADIND.ordinal()) {
-                    descargas.remove(dc);
+                if (dc.status.ordinal() != DownloadStatus.DOWNLOADING.ordinal()) {
+                    chapterDownloads.remove(dc);
                 } else {
                     Toast.makeText(c, R.string.quitar_descarga, Toast.LENGTH_LONG).show();
                     result = false;
@@ -120,7 +120,7 @@ public class DownloadPoolService extends Service implements StateChange {
     }
 
     public static void attachListener(ChapterDownload.OnErrorListener lector, int cid) {
-        for (ChapterDownload dc : descargas) {
+        for (ChapterDownload dc : chapterDownloads) {
             if (dc.chapter.getId() == cid) {
                 dc.setErrorListener(lector);
                 break;
@@ -132,7 +132,7 @@ public class DownloadPoolService extends Service implements StateChange {
         attachListener(null, cid);
     }
 
-    public static String generarRutaBase(ServerBase s, Manga m, Chapter c, Context context) {
+    public static String generateBasePath(ServerBase s, Manga m, Chapter c, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
@@ -140,7 +140,7 @@ public class DownloadPoolService extends Service implements StateChange {
                 cleanFileName(m.getTitle()).trim() + "/" + cleanFileName(c.getTitle()).trim();
     }
 
-    public static String generarRutaBase(ServerBase s, Manga m, Context context) {
+    public static String generateBasePath(ServerBase s, Manga m, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
@@ -172,12 +172,12 @@ public class DownloadPoolService extends Service implements StateChange {
     public void onCreate() {
         super.onCreate();
         actual = this;
-        intentPrending = false;
+        intentPending = false;
         new Thread(new Runnable() {
 
             @Override
             public void run() {
-                iniciarCola();
+                initPool();
             }
         }).start();
     }
@@ -197,17 +197,28 @@ public class DownloadPoolService extends Service implements StateChange {
         }
     }
 
-    private void iniciarCola() {
+    private void initPool() {
         Manga manga = null;
         ServerBase s = null;
         String ruta = "";
         int lcid = -1;
-        while (!descargas.isEmpty()) {
+        while (!chapterDownloads.isEmpty()) {
             if (slots > 0) {
                 slots--;
                 ChapterDownload dc = null;
                 int sig = 1;
-                for (ChapterDownload d : descargas) {
+                for (ChapterDownload d : chapterDownloads) {
+                    if (d.chapter.getPages() == 0) {
+                        Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
+                        ServerBase server = ServerBase.getServer(m.getServerId());
+                        try {
+                            server.chapterInit(d.chapter);
+                            d.reset();
+                        } catch (Exception e) {
+                            d.status = DownloadStatus.ERROR;
+                        }
+                        Database.updateChapter(getApplicationContext(), d.chapter);
+                    }
                     if (d.status != DownloadStatus.ERROR) {
                         sig = d.getNext();
                         if (sig > -1) {
@@ -223,7 +234,7 @@ public class DownloadPoolService extends Service implements StateChange {
                     }
                     if (lcid != dc.chapter.getId()) {
                         lcid = dc.chapter.getId();
-                        ruta = generarRutaBase(s, manga, dc.chapter, getApplicationContext());
+                        ruta = generateBasePath(s, manga, dc.chapter, getApplicationContext());
                         new File(ruta).mkdirs();
                     }
                     try {
