@@ -49,6 +49,7 @@ public class VerticalReader extends Reader {
 
     @Override
     public void calculateVisibilities() {
+        float scrollYAd = getPagePosition(currentPage);
         float acc = 0;
         for (int i = 0; i < pages.size(); i++) {
             Page d = pages.get(i);
@@ -58,6 +59,8 @@ public class VerticalReader extends Reader {
             d.end_visibility = acc;
         }
         totalHeight = acc;
+        scrollYAd = getPagePosition(currentPage) - scrollYAd;
+        relativeScroll(0, scrollYAd);
         pagesLoaded = true;
     }
 

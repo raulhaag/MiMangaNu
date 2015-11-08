@@ -104,6 +104,7 @@ public class R2LReader extends Reader {
 
     @Override
     protected void calculateVisibilities() {
+        float scrollXAd = getPagePosition(currentPage);
         float acc = 0;
         for (int i = 0; i < pages.size(); i++) {
             Page d = pages.get(i);
@@ -113,7 +114,10 @@ public class R2LReader extends Reader {
             d.end_visibility = acc;
         }
         totalWidth = acc;
+        scrollXAd = getPagePosition(currentPage) - scrollXAd;
+        relativeScroll(scrollXAd, 0);
         pagesLoaded = true;
+
     }
 
     @Override
