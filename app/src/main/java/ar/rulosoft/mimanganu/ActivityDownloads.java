@@ -58,11 +58,11 @@ public class ActivityDownloads extends AppCompatActivity {
 
     @Override
     public void onResume() {
-        adap = new DownloadAdapter(ActivityDownloads.this, darkTheme);
+        super.onResume();
+        adap = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
         list.setAdapter(adap);
         sh = new ShowDownloadsTask();
         sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        super.onResume();
     }
 
     @Override
@@ -76,14 +76,16 @@ public class ActivityDownloads extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(Void... params) {
+            try {
+                Thread.sleep(1000);//time to init big adapters =\_(-.-)_/=
             while (_continue) {
-                try {
+
                     adap.updateAll(DownloadPoolService.chapterDownloads);
                     publishProgress();
                     Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
             return null;
         }

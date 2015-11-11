@@ -3,6 +3,11 @@
 
 Lector Manga online
 
+Cambion 1.40
+* mejorado el sitema de descarga 
+* mejorados los nuevos lectores 
+* ....
+
 Cambios 1.39
 * fixed MangaHere de nuevo, KissManga y TuMangaOnline
 * trabajando en el nuevo lector

@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -23,11 +24,13 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
     private ArrayList<ChapterDownload> downloads = new ArrayList<>();
     private LayoutInflater li;
     private boolean darkTheme;
+    private AppCompatActivity mActivity;
 
-    public DownloadAdapter(Context context, boolean darkTheme) {
+    public DownloadAdapter(Context context, AppCompatActivity activity, boolean darkTheme) {
         super(context, listItem);
         states = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mActivity = activity;
         this.darkTheme = darkTheme;
     }
 
@@ -69,7 +72,12 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
                 public void onClick(View v) {
                     if (DownloadPoolService.quitarDescarga(item.chapter.getId(), getContext())) {
                         remove(item);
-                        notifyDataSetChanged();
+                        mActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                DownloadAdapter.this.notifyDataSetChanged();
+                            }
+                        });
                     }
                 }
             });
@@ -82,7 +90,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
         downloads.remove(object);
     }
 
-    public void updateAll(ArrayList<ChapterDownload> mDescargas) {
+    public synchronized void updateAll(ArrayList<ChapterDownload> mDescargas) {
         if (mDescargas != null) {
             for (int i = 0; i < mDescargas.size(); i++) {
                 boolean isNew = true;
@@ -93,7 +101,6 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
                         ChapterDownload item = getItem(j);
                         item.setProgress(toCompare.getProgress());
                         item.status = toCompare.status;
-                        break;
                     }
                 }
                 if (isNew) {
@@ -101,6 +108,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
                 }
             }
         }
+
     }
 
     public static class ViewHolder {

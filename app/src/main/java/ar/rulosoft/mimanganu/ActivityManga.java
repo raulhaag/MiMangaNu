@@ -149,8 +149,14 @@ public class ActivityManga extends AppCompatActivity {
                         mChapterAdapter.clearSelection();
                         return true;
                     case R.id.download_selection:
-                        new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,
-                                mChapterAdapter.getSelectedChapters());
+                        Chapter[] chapters = mChapterAdapter.getSelectedChapters();
+                        for (Chapter c : chapters) {
+                            try {
+                                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                         break;
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
@@ -263,10 +269,13 @@ public class ActivityManga extends AppCompatActivity {
                 ArrayList<Chapter> chapters =
                         Database.getChapters(ActivityManga.this, this.mMangaId,
                                 Database.COL_CAP_DOWNLOADED + " != 1", true);
-                Chapter[] arr = new Chapter[chapters.size()];
-                arr = chapters.toArray(arr);
-                new ChapterDownloadTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, arr);
-                // TODO show mechanisms progress / mecanimos mostrar progreso
+                for (Chapter c : chapters) {
+                    try {
+                        DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 return true;
             }
             case R.id.action_marcar_todo_leido: {
@@ -313,9 +322,13 @@ public class ActivityManga extends AppCompatActivity {
                 ArrayList<Chapter> chapters =
                         Database.getChapters(ActivityManga.this, ActivityManga.this.mMangaId,
                                 Database.COL_CAP_STATE + " < 1", true);
-                Chapter[] arr = new Chapter[chapters.size()];
-                arr = chapters.toArray(arr);
-                new ChapterDownloadTask().execute(arr);
+                for (Chapter c : chapters) {
+                    try {
+                        DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 break;
             }
         }
@@ -421,21 +434,5 @@ public class ActivityManga extends AppCompatActivity {
         }
     }
 
-    public class ChapterDownloadTask extends AsyncTask<Chapter, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Chapter... chapters) {
-            for (Chapter c : chapters) {
-                try {
-
-                    DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-    }
 
 }
