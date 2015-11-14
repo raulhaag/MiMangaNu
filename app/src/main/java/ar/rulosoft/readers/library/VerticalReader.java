@@ -130,7 +130,7 @@ public class VerticalReader extends Reader {
 
     public void goToPage(final int aPage) {
         if (pages != null) {
-            final float finalScroll = getPagePosition(aPage) + 1;
+            final float finalScroll = getPagePosition(aPage - 1);
             final ValueAnimator va = ValueAnimator.ofFloat(YScroll, finalScroll).setDuration(500);
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override

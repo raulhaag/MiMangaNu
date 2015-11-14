@@ -108,11 +108,11 @@ public class TusMangasOnlineCom extends ServerBase {
         m.setGenre(Html.fromHtml(getFirstMatchDefault("<tr><td><strong>G&eacute;neros(.+?)</tr>", source, "")).toString());
         // capitulos
         ArrayList<Chapter> caps = new ArrayList<>();
-        Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)<");
+        Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)</a");
         Matcher ma = p.matcher(source);
         while (ma.find()) {
             Chapter c = new Chapter(Html.fromHtml(
-                    ma.group(3)).toString(),
+                    ma.group(3)).toString().replace("0 0",""),
                     HOST + "/index.php?option=com_controlmanga&view=capitulos&format=raw&idManga=" +
                             ma.group(1) + "&idCapitulo=" + ma.group(2));
             caps.add(0, c);

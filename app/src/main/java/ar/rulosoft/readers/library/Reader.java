@@ -389,12 +389,15 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
          * Starting from 0
          */
     public float getPagePosition(int page) {
-        if (page < 0) {
-            return pages.get(0).init_visibility;
-        } else if (page < pages.size())
-            return pages.get(page).init_visibility;
+        if (pages != null && pages.size() > 1)
+            if (page < 0) {
+                return pages.get(0).init_visibility;
+            } else if (page < pages.size())
+                return pages.get(page).init_visibility;
+            else
+                return pages.get(pages.size() - 1).init_visibility;
         else
-            return pages.get(pages.size() - 1).init_visibility;
+            return 0;
     }
 
 

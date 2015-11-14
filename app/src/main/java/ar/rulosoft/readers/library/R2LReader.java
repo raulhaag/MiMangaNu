@@ -129,7 +129,7 @@ public class R2LReader extends Reader {
     @Override
     public void goToPage(final int aPage) {
         if (pages != null) {
-            final float finalScroll = getPagePosition(aPage) + 1;
+            final float finalScroll = getPagePosition(aPage - 1);
             final ValueAnimator va = ValueAnimator.ofFloat(XScroll, finalScroll).setDuration(500);
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
@@ -146,7 +146,8 @@ public class R2LReader extends Reader {
             va.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    animatingSeek = true;
+                    if (Math.abs(aPage - currentPage) > 1)
+                        animatingSeek = true;
                 }
 
                 @Override

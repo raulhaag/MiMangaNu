@@ -397,7 +397,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     public void onStopTrackingTouch(SeekBar seekBar) {
         mSeekerPage.setVisibility(SeekBar.INVISIBLE);
         int pm = seekBar.getProgress();
-        mReader.goToPage(pm);
+        mReader.goToPage(pm + 1);//start on 0
     }
 
     @Override
