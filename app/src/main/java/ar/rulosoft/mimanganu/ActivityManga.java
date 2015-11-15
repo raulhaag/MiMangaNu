@@ -1,6 +1,8 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -266,17 +268,31 @@ public class ActivityManga extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_descargar_restantes: {
-                ArrayList<Chapter> chapters =
-                        Database.getChapters(ActivityManga.this, this.mMangaId,
-                                Database.COL_CAP_DOWNLOADED + " != 1", true);
-                for (Chapter c : chapters) {
-                    try {
-                        DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+                dlgAlert.setMessage(getString(R.string.descargarestantes));
+                dlgAlert.setTitle(R.string.app_name);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ArrayList<Chapter> chapters =
+                                Database.getChapters(ActivityManga.this, mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
+                        for (Chapter c : chapters) {
+                            try {
+                                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }
-                return true;
+                });
+                dlgAlert.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dlgAlert.create().show();
+                break;
             }
             case R.id.action_marcar_todo_leido: {
                 Database.markAllChapters(ActivityManga.this, this.mMangaId, true);
@@ -319,16 +335,31 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.action_descargar_no_leidos: {
-                ArrayList<Chapter> chapters =
-                        Database.getChapters(ActivityManga.this, ActivityManga.this.mMangaId,
-                                Database.COL_CAP_STATE + " < 1", true);
-                for (Chapter c : chapters) {
-                    try {
-                        DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+                dlgAlert.setMessage(getString(R.string.descarga_no_leidos));
+                dlgAlert.setTitle(R.string.app_name);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ArrayList<Chapter> chapters =
+                                Database.getChapters(ActivityManga.this, ActivityManga.this.mMangaId,
+                                        Database.COL_CAP_STATE + " < 1", true);
+                        for (Chapter c : chapters) {
+                            try {
+                                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }
+                });
+                dlgAlert.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dlgAlert.create().show();
                 break;
             }
         }
@@ -407,7 +438,8 @@ public class ActivityManga extends AppCompatActivity {
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            asyncdialog.dismiss();
+            if (asyncdialog != null)
+                asyncdialog.dismiss();
             super.onProgressUpdate(values);
         }
 
