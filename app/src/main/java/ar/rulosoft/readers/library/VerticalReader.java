@@ -72,7 +72,7 @@ public class VerticalReader extends Reader {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        if (mOnEndFlingListener != null && e1.getY() - e2.getY() > 100 && (YScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
+        if (mOnEndFlingListener != null && e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
             mOnEndFlingListener.onEndFling();
         }
         return super.onFling(e1, e2, velocityX, velocityY);
@@ -80,22 +80,22 @@ public class VerticalReader extends Reader {
 
     @Override
     public void relativeScroll(double distanceX, double distanceY) {
-        if (YScroll + distanceY > (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
-            YScroll = ((totalHeight * mScaleFactor) - screenHeight) / mScaleFactor;
+        if (yScroll + distanceY > (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
+            yScroll = ((totalHeight * mScaleFactor) - screenHeight) / mScaleFactor;
             stopAnimationOnVerticalOver = true;
-        } else if (YScroll + distanceY > 0) {
-            YScroll += distanceY;
+        } else if (yScroll + distanceY > 0) {
+            yScroll += distanceY;
         } else {
-            YScroll = 0;
+            yScroll = 0;
             stopAnimationOnVerticalOver = true;
         }
-        if (XScroll + distanceX > (((screenWidth * mScaleFactor) - screenWidth)) / mScaleFactor) {
-            XScroll = ((screenWidth * mScaleFactor) - screenWidth) / mScaleFactor;
+        if (xScroll + distanceX > (((screenWidth * mScaleFactor) - screenWidth)) / mScaleFactor) {
+            xScroll = ((screenWidth * mScaleFactor) - screenWidth) / mScaleFactor;
             stopAnimationOnHorizontalOver = true;
-        } else if (XScroll + distanceX < 0) {
-            XScroll = 0;
+        } else if (xScroll + distanceX < 0) {
+            xScroll = 0;
         } else {
-            XScroll += distanceX;
+            xScroll += distanceX;
             stopAnimationOnHorizontalOver = true;
         }
     }
@@ -103,39 +103,39 @@ public class VerticalReader extends Reader {
     @Override
     public void absoluteScroll(float x, float y) {
         if (y > (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
-            YScroll = ((totalHeight * mScaleFactor) - screenHeight) / mScaleFactor;
+            yScroll = ((totalHeight * mScaleFactor) - screenHeight) / mScaleFactor;
             stopAnimationOnVerticalOver = true;
         } else if (y > 0) {
-            YScroll = y;
+            yScroll = y;
         } else {
-            YScroll = 0;
+            yScroll = 0;
             stopAnimationOnVerticalOver = true;
         }
         if (x > (((screenWidth * mScaleFactor) - screenWidth)) / mScaleFactor) {
-            XScroll = ((screenWidth * mScaleFactor) - screenWidth) / mScaleFactor;
+            xScroll = ((screenWidth * mScaleFactor) - screenWidth) / mScaleFactor;
             stopAnimationOnHorizontalOver = true;
         } else if (x < 0) {
-            XScroll = 0;
+            xScroll = 0;
         } else {
-            XScroll = x;
+            xScroll = x;
             stopAnimationOnHorizontalOver = true;
         }
     }
 
     @Override
     public void seekPage(int index) {
-        absoluteScroll(XScroll, getPagePosition(index));
+        absoluteScroll(xScroll, getPagePosition(index));
         VerticalReader.this.invalidate();
     }
 
     public void goToPage(final int aPage) {
         if (pages != null) {
             final float finalScroll = getPagePosition(aPage - 1);
-            final ValueAnimator va = ValueAnimator.ofFloat(YScroll, finalScroll).setDuration(500);
+            final ValueAnimator va = ValueAnimator.ofFloat(yScroll, finalScroll).setDuration(500);
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    relativeScroll(0, (float) valueAnimator.getAnimatedValue() - YScroll);
+                    relativeScroll(0, (float) valueAnimator.getAnimatedValue() - yScroll);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -178,8 +178,8 @@ public class VerticalReader extends Reader {
 
     @Override
     public void reset() {
-        XScroll = 0;
-        YScroll = 0;
+        xScroll = 0;
+        yScroll = 0;
         currentPage = 0;
         pages = null;
         pagesLoaded = false;
@@ -191,15 +191,15 @@ public class VerticalReader extends Reader {
     protected class VPage extends Page {
         @Override
         public boolean isVisible() {
-            float visibleBottom = YScroll + screenHeight;
-            boolean visible = (YScroll <= init_visibility && init_visibility <= visibleBottom) || (YScroll <= end_visibility && end_visibility <= visibleBottom);
-            return visible || (init_visibility < YScroll && end_visibility >= visibleBottom);
+            float visibleBottom = yScroll + screenHeight;
+            boolean visible = (yScroll <= init_visibility && init_visibility <= visibleBottom) || (yScroll <= end_visibility && end_visibility <= visibleBottom);
+            return visible || (init_visibility < yScroll && end_visibility >= visibleBottom);
         }
 
         @Override
         public boolean isNearToBeVisible() { // TODO check if ok, to preload images before the visibility reach
-            float visibleBottomEx = YScroll + screenHeight + scaled_height / 2;
-            float YsT = YScroll + scaled_height / 2;
+            float visibleBottomEx = yScroll + screenHeight + scaled_height / 2;
+            float YsT = yScroll + scaled_height / 2;
             return (YsT <= init_visibility && init_visibility <= visibleBottomEx) || (YsT <= end_visibility && end_visibility <= visibleBottomEx);
         }
 
@@ -211,13 +211,29 @@ public class VerticalReader extends Reader {
                     m.reset();
                     m.postTranslate(dx[idx], dy[idx]);
                     m.postScale(unification_scale, unification_scale);
-                    m.postTranslate(-XScroll, init_visibility - YScroll);
+                    m.postTranslate(-xScroll, init_visibility - yScroll);
                     m.postScale(mScaleFactor, mScaleFactor);
                     canvas.drawBitmap(image[idx], m, mPaint);
                 }
             }
         }
-    }
 
+        @Override
+        public float getVisiblePercent() {
+            if (init_visibility < yScroll) {
+                if (end_visibility < yScroll + screenHeight) {
+                    return (end_visibility - yScroll) / scaled_height;
+                } else {
+                    return screenHeight / scaled_height;
+                }
+            } else {
+                if (end_visibility < yScroll + screenHeight) {
+                    return 1;
+                } else {
+                    return (yScroll + screenHeight - init_visibility) / scaled_height;
+                }
+            }
+        }
+    }
 
 }

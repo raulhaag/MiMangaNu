@@ -33,7 +33,8 @@ import rapid.decoder.BitmapDecoder;
 public abstract class Reader extends View implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
     public float mScrollSensitive = 1.f;
-    protected int currentPage = 0, firstVisiblePage = 0;
+    protected int currentPage = 0, lastBestVisible = 0;
+    protected float lastPageBestPercent = 0f;
     protected int mTextureMax = 1024;
     protected OnTapListener mTapListener;
     protected OnEndFlingListener mOnEndFlingListener;
@@ -43,7 +44,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     protected boolean stopAnimationsOnTouch = false, stopAnimationOnVerticalOver = false, stopAnimationOnHorizontalOver = false;
     protected boolean iniVisibility, endVisibility;
     protected boolean pagesLoaded = false, viewReady = false, layoutReady = false;
-    protected float XScroll = 0, YScroll = 0;
+    protected float xScroll = 0, yScroll = 0;
     protected ArrayList<Page> pages;
     protected ScaleGestureDetector mScaleDetector;
     protected GestureDetector mGestureDetector;
@@ -117,22 +118,25 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (viewReady) {
-            firstVisiblePage = -1;
+            lastBestVisible = -1;
             iniVisibility = false;
             endVisibility = false;
+            lastPageBestPercent = 0f;
             if (pages != null) {
                 for (Page page : pages) {
                     if (page.state != ImagesStates.ERROR) {
                         if (page.isVisible()) {
                             iniVisibility = true;
-                            if (firstVisiblePage == -1)
-                                firstVisiblePage = pages.indexOf(page);
                             if (page.state == ImagesStates.LOADED) {
                                 page.draw(canvas);
                             } else {
                                 if (page.state == ImagesStates.NULL) {
                                     page.loadBitmap();
                                 }
+                            }
+                            if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                lastPageBestPercent = page.getVisiblePercent();
+                                lastBestVisible = pages.indexOf(page);
                             }
                         } else {
                             if (iniVisibility) endVisibility = true;
@@ -144,11 +148,11 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             break;
                     }
                 }
-                if (currentPage != firstVisiblePage && !animatingSeek) {
-                    if (!isLastPageVisible())
-                        setPage(firstVisiblePage);
-                    else
-                        setPage(pages.size());
+                if (currentPage != lastBestVisible && !animatingSeek) {
+                    //if (!isLastPageVisible())
+                    setPage(lastBestVisible);
+                    //  else
+                    //    setPage(pages.size());
                 }
             }
         } else if (pagesLoaded) {
@@ -344,10 +348,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         va.setDuration(300);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             float nScale;
-            float final_x = ((XScroll + e.getX() / ini)) - (screenWidth / 2) + (screenWidth * end - screenWidth) / (end * 2) - XScroll;
-            float final_y = ((YScroll + e.getY() / ini)) - (screenHeight / 2) + (screenHeight * end - screenHeight) / (end * 2) - YScroll;
-            float initial_x_scroll = XScroll;
-            float initial_y_scroll = YScroll;
+            float final_x = ((xScroll + e.getX() / ini)) - (screenWidth / 2) + (screenWidth * end - screenWidth) / (end * 2) - xScroll;
+            float final_y = ((yScroll + e.getY() / ini)) - (screenHeight / 2) + (screenHeight * end - screenHeight) / (end * 2) - yScroll;
+            float initial_x_scroll = xScroll;
+            float initial_y_scroll = yScroll;
             float nPx, nPy, aP;
 
             @Override
@@ -448,6 +452,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         public abstract boolean isVisible();
 
         public abstract boolean isNearToBeVisible();
+
+        public abstract float getVisiblePercent();
 
         public abstract void draw(Canvas canvas);
 

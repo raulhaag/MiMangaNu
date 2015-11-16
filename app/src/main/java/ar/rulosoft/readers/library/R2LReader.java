@@ -28,22 +28,22 @@ public class R2LReader extends Reader {
 
     @Override
     public void relativeScroll(double distanceX, double distanceY) {
-        if (XScroll + distanceX > (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor) {
-            XScroll = ((totalWidth * mScaleFactor) - screenWidth) / mScaleFactor;
+        if (xScroll + distanceX > (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor) {
+            xScroll = ((totalWidth * mScaleFactor) - screenWidth) / mScaleFactor;
             stopAnimationOnHorizontalOver = true;
-        } else if (XScroll + distanceX > 0) {
-            XScroll += distanceX;
+        } else if (xScroll + distanceX > 0) {
+            xScroll += distanceX;
         } else {
-            XScroll = 0;
+            xScroll = 0;
             stopAnimationOnHorizontalOver = true;
         }
-        if (YScroll + distanceY > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
-            YScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
+        if (yScroll + distanceY > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
+            yScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
             stopAnimationOnVerticalOver = true;
-        } else if (YScroll + distanceY < 0) {
-            YScroll = 0;
+        } else if (yScroll + distanceY < 0) {
+            yScroll = 0;
         } else {
-            YScroll += distanceY;
+            yScroll += distanceY;
             stopAnimationOnVerticalOver = true;
         }
     }
@@ -51,21 +51,21 @@ public class R2LReader extends Reader {
     @Override
     public void absoluteScroll(float x, float y) {
         if (x > (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor) {
-            XScroll = ((totalWidth * mScaleFactor) - screenWidth) / mScaleFactor;
+            xScroll = ((totalWidth * mScaleFactor) - screenWidth) / mScaleFactor;
             stopAnimationOnHorizontalOver = true;
         } else if (x > 0) {
-            XScroll = x;
+            xScroll = x;
         } else {
-            XScroll = 0;
+            xScroll = 0;
             stopAnimationOnHorizontalOver = true;
         }
         if (y > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
-            YScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
+            yScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
             stopAnimationOnVerticalOver = true;
         } else if (y < 0) {
-            YScroll = 0;
+            yScroll = 0;
         } else {
-            YScroll = y;
+            yScroll = y;
             stopAnimationOnVerticalOver = true;
         }
     }
@@ -122,7 +122,7 @@ public class R2LReader extends Reader {
 
     @Override
     public void seekPage(int index) {
-        absoluteScroll(getPagePosition(index), YScroll);
+        absoluteScroll(getPagePosition(index), yScroll);
         invalidate();
     }
 
@@ -130,11 +130,11 @@ public class R2LReader extends Reader {
     public void goToPage(final int aPage) {
         if (pages != null) {
             final float finalScroll = getPagePosition(aPage - 1);
-            final ValueAnimator va = ValueAnimator.ofFloat(XScroll, finalScroll).setDuration(500);
+            final ValueAnimator va = ValueAnimator.ofFloat(xScroll, finalScroll).setDuration(500);
             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                    relativeScroll((float) valueAnimator.getAnimatedValue() - XScroll, 0);
+                    relativeScroll((float) valueAnimator.getAnimatedValue() - xScroll, 0);
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
@@ -183,7 +183,7 @@ public class R2LReader extends Reader {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        if (mOnEndFlingListener != null && e1.getX() - e2.getX() > 100 && (XScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
+        if (mOnEndFlingListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
             mOnEndFlingListener.onEndFling();
         }
         return super.onFling(e1, e2, velocityX, velocityY);
@@ -191,8 +191,8 @@ public class R2LReader extends Reader {
 
     @Override
     public void reset() {
-        XScroll = 0;
-        YScroll = 0;
+        xScroll = 0;
+        yScroll = 0;
         currentPage = 0;
         pages = null;
         pagesLoaded = false;
@@ -204,15 +204,15 @@ public class R2LReader extends Reader {
     protected class HPage extends Page {
         @Override
         public boolean isVisible() {
-            float visibleRight = XScroll + screenWidth;
-            boolean visible = (XScroll <= init_visibility && init_visibility <= visibleRight) || (XScroll <= end_visibility && end_visibility <= visibleRight);
-            return visible || (init_visibility < XScroll && end_visibility >= visibleRight);
+            float visibleRight = xScroll + screenWidth;
+            boolean visible = (xScroll <= init_visibility && init_visibility <= visibleRight) || (xScroll <= end_visibility && end_visibility <= visibleRight);
+            return visible || (init_visibility < xScroll && end_visibility >= visibleRight);
         }
 
         @Override
         public boolean isNearToBeVisible() { // TODO check if ok, to preload images before the visibility reach
-            float visibleRightEx = XScroll + screenWidth + scaled_width / 2;
-            float XsT = XScroll + scaled_width / 2;
+            float visibleRightEx = xScroll + screenWidth + scaled_width / 2;
+            float XsT = xScroll + scaled_width / 2;
             return (XsT <= init_visibility && init_visibility <= visibleRightEx) || (XsT <= end_visibility && end_visibility <= visibleRightEx);
         }
 
@@ -224,9 +224,26 @@ public class R2LReader extends Reader {
                     m.reset();
                     m.postTranslate(dx[idx], dy[idx]);
                     m.postScale(unification_scale, unification_scale);
-                    m.postTranslate(init_visibility - XScroll, -YScroll);
+                    m.postTranslate(init_visibility - xScroll, -yScroll);
                     m.postScale(mScaleFactor, mScaleFactor);
                     canvas.drawBitmap(image[idx], m, mPaint);
+                }
+            }
+        }
+
+        @Override
+        public float getVisiblePercent() {
+            if (init_visibility < xScroll) {
+                if (end_visibility < xScroll + screenWidth) {
+                    return (end_visibility - xScroll) / scaled_width;
+                } else {
+                    return screenWidth / scaled_width;
+                }
+            } else {
+                if (end_visibility < xScroll + screenWidth) {
+                    return 1;
+                } else {
+                    return (xScroll + screenWidth - init_visibility) / scaled_width;
                 }
             }
         }
