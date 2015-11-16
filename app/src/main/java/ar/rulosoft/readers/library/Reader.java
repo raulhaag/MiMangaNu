@@ -149,10 +149,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     }
                 }
                 if (currentPage != lastBestVisible && !animatingSeek) {
-                    //if (!isLastPageVisible())
                     setPage(lastBestVisible);
-                    //  else
-                    //    setPage(pages.size());
                 }
             }
         } else if (pagesLoaded) {
