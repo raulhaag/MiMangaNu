@@ -35,15 +35,15 @@ import ar.rulosoft.mimanganu.ActivityManga.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.readers.L2RReader;
+import ar.rulosoft.mimanganu.componentes.readers.R2LReader;
+import ar.rulosoft.mimanganu.componentes.readers.Reader;
+import ar.rulosoft.mimanganu.componentes.readers.VerticalReader;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.readers.library.L2RReader;
-import ar.rulosoft.readers.library.R2LReader;
-import ar.rulosoft.readers.library.Reader;
-import ar.rulosoft.readers.library.VerticalReader;
 
 public class ActivityReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 

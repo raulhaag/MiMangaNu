@@ -208,6 +208,13 @@ public class ActivityManga extends AppCompatActivity {
                 mChapterAdapter.setSelectedOrUnselected(position);
             }
         });
+
+        manga = Database.getFullManga(getApplicationContext(), mMangaId);
+        setTitle(manga.getTitle());
+        cargarCapitulos(manga.getChapters());
+        Database.updateMangaRead(this, manga.getId());
+        Database.updateNewMangas(ActivityManga.this, manga, -100);
+        cargarDatos(manga);
     }
 
     public void cargarDatos(Manga manga) {
@@ -369,12 +376,7 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        manga = Database.getFullManga(getApplicationContext(), mMangaId);
-        setTitle(manga.getTitle());
-        cargarCapitulos(manga.getChapters());
-        Database.updateMangaRead(this, manga.getId());
-        Database.updateNewMangas(ActivityManga.this, manga, -100);
-        cargarDatos(manga);
+
     }
 
     @Override

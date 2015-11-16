@@ -1,4 +1,4 @@
-package ar.rulosoft.readers.library;
+package ar.rulosoft.mimanganu.componentes.readers;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
