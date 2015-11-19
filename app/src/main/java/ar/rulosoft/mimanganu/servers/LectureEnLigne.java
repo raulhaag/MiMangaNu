@@ -11,6 +11,8 @@ import ar.rulosoft.navegadores.Navegador;
 
 public class LectureEnLigne extends ServerBase {
 
+    public static String HOST = "http://www.lecture-en-ligne.com/";
+
     public LectureEnLigne() {
         setServerID(LECTUREENLIGNE);
         setIcon(R.drawable.lectureenligne_icon);
@@ -21,11 +23,11 @@ public class LectureEnLigne extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String source = new Navegador().get("http://www.lecture-en-ligne.com/");
+        String source = new Navegador().get(HOST);
         Pattern p = Pattern.compile("<option value=\"([^\"]+)\">(.+?)</option>");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            mangas.add(new Manga(LECTUREENLIGNE, m.group(2), m.group(1), false));
+            mangas.add(new Manga(LECTUREENLIGNE, m.group(2), HOST + m.group(1), false));
         }
         return mangas;
     }
@@ -48,7 +50,7 @@ public class LectureEnLigne extends ServerBase {
         String data = new Navegador().get((manga.getPath()));// :</p><p>(.+?)</p>
 
         manga.setSynopsis(getFirstMatchDefault("</p>[\\s]+<p>(.+?)</p>", data, "Sans synopsis"));
-        manga.setImages("http://www.lecture-en-ligne.com/" + getFirstMatchDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
+        manga.setImages(getFirstMatchDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
 
         //autor
         manga.setAuthor(getFirstMatchDefault("Auteur :.+?d>(.+?)<", data, ""));
@@ -58,10 +60,10 @@ public class LectureEnLigne extends ServerBase {
 
         // capitulos
         ArrayList<Chapter> chapters = new ArrayList<>();
-        Pattern p = Pattern.compile("<td class=\"td\">(.+?)</td>[^\\.]+\\.\\./\\.\\.(.+?)\"");
+        Pattern p = Pattern.compile("<td class=\"td\">(.+?)</td>[\\s\\S]+?<a href=\"(.+?)\"");
         Matcher ma = p.matcher(data);
         while (ma.find()) {
-            chapters.add(0, new Chapter(ma.group(1), "http://www.lecture-en-ligne.com/" + ma.group(2)));
+            chapters.add(0, new Chapter(ma.group(1), HOST + ma.group(2)));
         }
         manga.setChapters(chapters);
     }
