@@ -57,6 +57,6 @@
         <item>43200000</item>
         <item>86400000</item>
         <item>172800000</item>
-        <item>604800000</item>
+        <item>180000</item>
     </string-array>
 </resources>

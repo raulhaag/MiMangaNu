@@ -42,6 +42,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     private SwipeRefreshLayout str;
     private NewSearchTask newSearch;
 
+
     public static void DeleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
@@ -201,8 +202,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     }
 
     public class NewSearchTask extends AsyncTask<Void, String, Integer> {
+        final ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
         String mMessage;
         String mTitle;
+        int result = 0;
+        int keys = 2;
+        int threads;
 
         @Override
         protected void onPreExecute() {
@@ -228,21 +233,39 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
         @Override
         protected Integer doInBackground(Void... params) {
-            ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
-            int result = 0;
-            Database.removeOrphanedChapters(getActivity());
+            threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
+            keys = threads;
             for (int i = 0; i < mangas.size(); i++) {
-                Manga manga = mangas.get(i);
-                ServerBase s = ServerBase.getServer(manga.getServerId());
-                try {
-                    publishProgress(manga.getTitle());
-                    s.loadChapters(manga, false);
-                    int diff = s.searchForNewChapters(manga.getId(), getActivity());
-                    result += diff;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                final int j = i;
+                while (keys == 0)
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
+                    }
+                keys--;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Manga manga = mangas.get(j);
+                        ServerBase s = ServerBase.getServer(manga.getServerId());
+                        try {
+                            publishProgress("(" + (j + 1) + "/" + mangas.size() + ")" + manga.getTitle());
+                            s.loadChapters(manga, false);
+                            int diff = s.searchForNewChapters(manga.getId(), getActivity());
+                            result += diff;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            keys++;
+                        }
+                    }
+                }).start();
             }
+            while (keys < threads)
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                }
             return result;
         }
 

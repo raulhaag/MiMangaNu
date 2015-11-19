@@ -9,8 +9,8 @@
         <SwitchPreference
             android:defaultValue="false"
             android:key="test_reader"
-            android:summary="Test Vertical Reader"
-            android:title="New Vertical Reader (preview)" />
+            android:summary="Test new Readers"
+            android:title="New Readers (preview)" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_mm">
@@ -35,6 +35,22 @@
             android:key="update_sound"
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
+        <ar.rulosoft.custompref.SeekBarDialogPref
+            android:defaultValue="1"
+            android:dialogTitle="@string/update_thread_background_title"
+            android:key="update_threads_background"
+            android:summary="@string/update_threads_background_summary"
+            android:title="@string/update_thread_background_title"
+            app:val_max="7"
+            app:val_min="1" />
+        <ar.rulosoft.custompref.SeekBarDialogPref
+            android:defaultValue="2"
+            android:dialogTitle="@string/update_thread_manual_title"
+            android:key="update_threads_manual"
+            android:summary="@string/update_threads_manual_summary"
+            android:title="@string/update_thread_manual_title"
+            app:val_max="7"
+            app:val_min="1" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_lec">

@@ -53,11 +53,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
         pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
         su.setSound(pm.getBoolean("update_sound", false));
-        su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
+        su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
     }
 
 
-    public class SearchUpdates extends AsyncTask<Void, Void, Void> {
+    public class SearchUpdates extends AsyncTask<Integer, String, Void> {
         Context context;
         String res = "";
         int found = 0;
@@ -65,29 +66,61 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder;
         int NOTIF_ID = 12598521;
         boolean sound = false;
+        ArrayList<Manga> mangas;
+        int keys = 3;
+
 
         public void setContext(Context context) {
             this.context = context;
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-            ArrayList<Manga> mangas = Database.getMangasForUpdates(context);
+        protected Void doInBackground(Integer... params) {
+            keys = params[0];
+            mangas = Database.getMangasForUpdates(context);
             for (int i = 0; i < mangas.size(); i++) {
-                Manga manga = mangas.get(i);
-                ServerBase s = ServerBase.getServer(manga.getServerId());
-                try {
-                    s.loadChapters(manga, false);
-                    int diff = s.searchForNewChapters(manga.getId(), context);
-                    if (diff > 0) {
-                        found = found + diff;
-                        res = res + manga.getTitle() + " " + diff + " " + context.getString(R.string.new_manga_found) + "\n";
+                final int j = i;
+                while (keys == 0)
+                    try {
+                        Thread.sleep(1000);
+                    } catch (Exception e) {
                     }
-                } catch (Exception e) {
-                    // nothing
-                }
+                keys--;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Manga manga = mangas.get(j);
+                            ServerBase s = ServerBase.getServer(manga.getServerId());
+                            publishProgress("(" + (j + 1) + "/" + mangas.size() + ")" + manga.getTitle());
+                            s.loadChapters(manga, false);
+                            int diff = s.searchForNewChapters(manga.getId(), context);
+                            if (diff > 0) {
+                                found += diff;
+                                res = res + manga.getTitle() + " " + diff + " " + context.getString(R.string.new_manga_found) + "\n";
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        } finally {
+                            keys++;
+                        }
+                    }
+                }).start();
             }
+            while (keys < params[0])
+                try {
+                    Thread.sleep(1000);
+                } catch (Exception e) {
+                }
             return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+            builder.setContentTitle(values[0]);
+            builder.setContentText(values[0]);
+            mNotificationManager.notify(NOTIF_ID, builder.build());
         }
 
         @Override
@@ -97,7 +130,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             builder =
                     new NotificationCompat.Builder(context)
                             .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("Search for updates")
+                            .setContentTitle(context.getString(R.string.search_for_updates))
                             .setContentText("MiMangaNu");
             mNotificationManager.notify(NOTIF_ID, builder.build());
             super.onPreExecute();

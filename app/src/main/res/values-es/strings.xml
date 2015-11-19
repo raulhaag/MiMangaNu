@@ -150,5 +150,6 @@
     <string name="read_next">Quieres abrir el siguiente capítulo?</string>
     <string name="last_chapter">Actualmente este es el ultimo capitulo</string>
     <string name="genre">Genero</string>
+    <string name="search_for_updates">Buscando nuevos capitulos</string>
 
 </resources>
