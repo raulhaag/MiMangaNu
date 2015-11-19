@@ -148,4 +148,9 @@
     <string name="genre">Genre</string>
     <string name="read_next">Möchtest du das nächste Kapitel öffnen?</string>
     <string name="last_chapter">Dies ist zurzeit das letzte Kapitel</string>
+    <string name="search_for_updates">Auf der Suche nach neuen Kapiteln</string>
+    <string name="update_thread_background_title">Update Threads (Hintergrund)</string>
+    <string name="update_thread_manual_title">Update Threads (Manuell)</string>
+    <string name="update_threads_background_summary">Anzahl der Update-Themen: %s</string>
+    <string name="update_threads_manual_summary">Anzahl der Update-Themen: %s</string>
 </resources>

@@ -147,4 +147,11 @@
     <string name="update_title">Intervallo di aggiornamento</string>
     <string name="State_New">Nuovo</string>
     <string name="genre">Genere</string>
+    <string name="last_chapter">Attualmente questo è l'ultimo capitolo</string>
+    <string name="read_next">Si vuole aprire il prossimo capitolo?</string>
+    <string name="search_for_updates">Alla ricerca di nuovi capitoli</string>
+    <string name="update_thread_manual_title">Aggiornamento fili (manuale)</string>
+    <string name="update_thread_background_title">Aggiornamento thread (sfondo)</string>
+    <string name="update_threads_background_summary">Quantità di aggiornamento thread: %s</string>
+    <string name="update_threads_manual_summary">Quantità di aggiornamento thread: %s</string>
 </resources>

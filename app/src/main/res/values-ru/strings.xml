@@ -146,4 +146,11 @@
     <string name="color_secundario_sub">Вторичный раскраски, для большего разнообразия</string>
     <string name="license_sub">Нажмите, чтобы увидеть лицензии и благодаря</string>
     <string name="genre">жанр</string>
+    <string name="last_chapter">В настоящее время это последняя глава</string>
+    <string name="read_next">Вы хотите, чтобы открыть следующую главу?</string>
+    <string name="search_for_updates">В поисках новых глав</string>
+    <string name="update_thread_background_title">Обновление темы (фон)</string>
+    <string name="update_thread_manual_title">Обновление темы (ручные)</string>
+    <string name="update_threads_background_summary">Сумма обновления нитей: %s</string>
+    <string name="update_threads_manual_summary">Сумма обновления нитей: %s</string>
 </resources>

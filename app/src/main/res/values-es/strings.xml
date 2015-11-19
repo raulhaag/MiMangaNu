@@ -151,5 +151,9 @@
     <string name="last_chapter">Actualmente este es el ultimo capitulo</string>
     <string name="genre">Genero</string>
     <string name="search_for_updates">Buscando nuevos capitulos</string>
+    <string name="update_thread_background_title">Hilos para buscar capítulos (Automatico)</string>
+    <string name="update_thread_manual_title">Hilos para buscar capítulos (Manual)</string>
+    <string name="update_threads_background_summary">Cantidad de hilos: %s</string>
+    <string name="update_threads_manual_summary">Cantidad de hilos: %s</string>
 
 </resources>
