@@ -147,10 +147,10 @@
     <string name="update_news">Nouvelles</string>
     <string name="genre">Genre</string>
     <string name="read_next">Voulez-vous lire le chapitre suivant ?</string>
-    <string name="last_chapter">C\'est le dernier chapitre actuellement</string>
+    <string name="last_chapter">C\'est le dernier chapitre actuellement.</string>
     <string name="search_for_updates">Vous recherchez de nouveaux chapitres</string>
-    <string name="update_thread_manual_title">Fils de mise à jour (Manuel)</string>
-    <string name="update_thread_background_title">Fils de mise à jour (de fond)</string>
-    <string name="update_threads_background_summary">Montant de la mise à jour pour les discussions: %s</string>
-    <string name="update_threads_manual_summary">Montant de la mise à jour pour les discussions: %s</string>
+    <string name="update_thread_manual_title">Mise à jour (Manuel)</string>
+    <string name="update_thread_background_title">Mise à jour (Automatique)</string>
+    <string name="update_threads_background_summary">Nombre de mises à jour simultanées : %s</string>
+    <string name="update_threads_manual_summary">Nombre de mises à jour simultanées : %s</string>
 </resources>
