@@ -376,7 +376,8 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
+        ArrayList<Chapter> chapters = Database.getChapters(getApplicationContext(),mMangaId);
+        mChapterAdapter.replaceData(chapters);
     }
 
     @Override

@@ -15,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.ActivityManga;
@@ -40,12 +42,13 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private ActivityManga activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
+    private ArrayList<Chapter> chapters;
 
-    public ChapterAdapter(Activity context, List<Chapter> items) {
-        super(context, listItem, items);
+    public ChapterAdapter(Activity context, ArrayList<Chapter> items) {
+        super(context, listItem);
         activity = (ActivityManga) context;
+        this.chapters = items;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
     }
 
     public static void setColor(boolean dark_theme, int colorSelected, int colorReading) {
@@ -168,6 +171,48 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         } else {
             selected.put(position - 1, true);
         }
+        notifyDataSetChanged();
+    }
+
+
+    @Override
+    public int getCount() {
+        return chapters.size();
+    }
+
+    @Override
+    public Chapter getItem(int position) {
+        return chapters.get(position);
+    }
+
+    @Override
+    public void remove(Chapter object) {
+        chapters.remove(object);
+    }
+
+    @Override
+    public void insert(Chapter object, int index) {
+        chapters.add(index, object);
+    }
+
+    @Override
+    public void addAll(Chapter... items) {
+        //chapters.addAll(items);
+        //("Not Supported yet");
+    }
+
+    @Override
+    public void addAll(Collection<? extends Chapter> collection) {
+        chapters.addAll(collection);
+    }
+
+    @Override
+    public void add(Chapter object) {
+        chapters.add(object);
+    }
+
+    public void replaceData(ArrayList<Chapter> chapters){
+        this.chapters = chapters;
         notifyDataSetChanged();
     }
 
