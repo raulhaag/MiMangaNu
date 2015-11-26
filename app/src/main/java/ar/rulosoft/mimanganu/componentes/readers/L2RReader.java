@@ -105,11 +105,11 @@ public class L2RReader extends R2LReader {
     public float getPagePosition(int page) {
         if (pages != null && pages.size() > 1)
             if (page < 0) {
-                return pages.get(0).init_visibility;
+                return pages.get(0).end_visibility;
             } else if (page < pages.size())
                 return pages.get(page).end_visibility - screenWidth - 2;
             else
-                return pages.get(pages.size() - 1).init_visibility;
+                return pages.get(pages.size() - 1).end_visibility;
         else
             return 0;
     }
