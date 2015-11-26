@@ -137,12 +137,12 @@ public class Chapter {
 
     private void deleteImages(Context context, Manga manga, ServerBase s) {
         String ruta = DownloadPoolService.generateBasePath(s, manga, this, context);
-        FragmentMisMangas.DeleteRecursive(new File(ruta));
+        FragmentMisMangas.deleteRecursive(new File(ruta));
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        FragmentMisMangas.DeleteRecursive(new File(path));
+        FragmentMisMangas.deleteRecursive(new File(path));
         setPages(0);
         setDownloaded(false);
         setPagesRead(0);

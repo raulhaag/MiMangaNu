@@ -209,14 +209,21 @@ public class DownloadPoolService extends Service implements StateChange {
                 int sig = 1;
                 for (ChapterDownload d : chapterDownloads) {
                     if (d.chapter.getPages() == 0) {
-                        Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
-                        ServerBase server = ServerBase.getServer(m.getServerId());
+                        ServerBase server = null;
+                        if (d.status != DownloadStatus.ERROR)
                         try {
-                            server.chapterInit(d.chapter);
-                            d.reset();
+                            Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
+                            server = ServerBase.getServer(m.getServerId());
                         } catch (Exception e) {
                             d.status = DownloadStatus.ERROR;
                         }
+                        if (d.status != DownloadStatus.ERROR)
+                            try {
+                                server.chapterInit(d.chapter);
+                                d.reset();
+                            } catch (Exception e) {
+                                d.status = DownloadStatus.ERROR;
+                            }
                         Database.updateChapter(getApplicationContext(), d.chapter);
                     }
                     if (d.status != DownloadStatus.ERROR) {
@@ -229,8 +236,12 @@ public class DownloadPoolService extends Service implements StateChange {
                 }
                 if (dc != null) {
                     if (manga == null || manga.getId() != dc.chapter.getMangaID()) {
-                        manga = Database.getManga(actual.getApplicationContext(), dc.chapter.getMangaID());
-                        s = ServerBase.getServer(manga.getServerId());
+                        try {
+                            manga = Database.getManga(actual.getApplicationContext(), dc.chapter.getMangaID());
+                            s = ServerBase.getServer(manga.getServerId());
+                        } catch (Exception e) {
+                            dc.status = DownloadStatus.ERROR;
+                        }
                     }
                     if (lcid != dc.chapter.getId()) {
                         lcid = dc.chapter.getId();
@@ -270,4 +281,13 @@ public class DownloadPoolService extends Service implements StateChange {
         actual = null;
         stopSelf();
     }
+
+    public static void forceStop(int mangaId){
+        for (ChapterDownload cd:chapterDownloads){
+            if(cd.getChapter().getMangaID() == mangaId){
+                cd.status = DownloadStatus.ERROR;
+            }
+        }
+    }
+
 }

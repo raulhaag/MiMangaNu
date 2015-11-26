@@ -17,7 +17,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import ar.rulosoft.mimanganu.ActivityManga;
 import ar.rulosoft.mimanganu.FragmentMisMangas;
@@ -125,7 +124,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         Manga m = activity.manga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
                         String ruta = DownloadPoolService.generateBasePath(s, m, c, activity);
-                        FragmentMisMangas.DeleteRecursive(new File(ruta));
+                        FragmentMisMangas.deleteRecursive(new File(ruta));
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();

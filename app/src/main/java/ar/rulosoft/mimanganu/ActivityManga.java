@@ -468,6 +468,4 @@ public class ActivityManga extends AppCompatActivity {
             super.onPostExecute(result);
         }
     }
-
-
 }

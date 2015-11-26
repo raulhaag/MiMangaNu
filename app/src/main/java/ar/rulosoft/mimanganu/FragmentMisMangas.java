@@ -43,10 +43,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     private NewSearchTask newSearch;
 
 
-    public static void DeleteRecursive(File fileOrDirectory) {
+    public static void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
             for (File child : fileOrDirectory.listFiles())
-                DeleteRecursive(child);
+                deleteRecursive(child);
         fileOrDirectory.delete();
     }
 
@@ -119,9 +119,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Manga m = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.borrar) {
+            DownloadPoolService.forceStop(m.getId());
             ServerBase s = ServerBase.getServer(m.getServerId());
             String path = DownloadPoolService.generateBasePath(s, m, getActivity());
-            DeleteRecursive(new File(path));
+            deleteRecursive(new File(path));
             Database.deleteManga(getActivity(), m.getId());
             adapter.remove(m);
         } else if (item.getItemId() == R.id.noupdate) {
