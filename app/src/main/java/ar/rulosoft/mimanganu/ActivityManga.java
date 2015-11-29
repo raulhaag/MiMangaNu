@@ -276,8 +276,8 @@ public class ActivityManga extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_descargar_restantes: {
                 AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-                dlgAlert.setMessage(getString(R.string.descargarestantes));
-                dlgAlert.setTitle(R.string.app_name);
+                dlgAlert.setMessage(getString(R.string.download_remain_confirmation));
+                dlgAlert.setTitle(R.string.descargarestantes);
                 dlgAlert.setCancelable(true);
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -343,8 +343,8 @@ public class ActivityManga extends AppCompatActivity {
             }
             case R.id.action_descargar_no_leidos: {
                 AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-                dlgAlert.setMessage(getString(R.string.descarga_no_leidos));
-                dlgAlert.setTitle(R.string.app_name);
+                dlgAlert.setMessage(getString(R.string.download_unread_confirmation));
+                dlgAlert.setTitle(R.string.descarga_no_leidos);
                 dlgAlert.setCancelable(true);
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {

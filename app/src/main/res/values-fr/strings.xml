@@ -153,4 +153,6 @@
     <string name="update_thread_background_title">Mise à jour (Automatique)</string>
     <string name="update_threads_background_summary">Nombre de mises à jour simultanées : %s</string>
     <string name="update_threads_manual_summary">Nombre de mises à jour simultanées : %s</string>
+    <string name="download_remain_confirmation">Voulez-vous télécharger les chapitres pas encore téléchargé?</string>
+    <string name="download_unread_confirmation">Voulez-vous télécharger les chapitres non lus?</string>
 </resources>

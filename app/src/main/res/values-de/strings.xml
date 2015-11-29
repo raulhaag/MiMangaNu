@@ -153,4 +153,6 @@
     <string name="update_thread_manual_title">Update Threads (Manuell)</string>
     <string name="update_threads_background_summary">Anzahl der Update-Themen: %s</string>
     <string name="update_threads_manual_summary">Anzahl der Update-Themen: %s</string>
+    <string name="download_remain_confirmation">Wollen Sie die Kapitel noch nicht heruntergeladen herunterladen?</string>
+    <string name="download_unread_confirmation">Wollen Sie die Kapitel ungelesenen herunterladen?</string>
 </resources>

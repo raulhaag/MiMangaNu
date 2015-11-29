@@ -153,4 +153,6 @@
     <string name="update_thread_manual_title">Обновление темы (ручные)</string>
     <string name="update_threads_background_summary">Сумма обновления нитей: %s</string>
     <string name="update_threads_manual_summary">Сумма обновления нитей: %s</string>
+    <string name="download_remain_confirmation">Вы хотите, чтобы загрузить главы еще не скачал?</string>
+    <string name="download_unread_confirmation">Вы хотите, чтобы загрузить главы непрочитанных?</string>
 </resources>
