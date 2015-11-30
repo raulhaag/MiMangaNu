@@ -23,6 +23,7 @@ import ar.rulosoft.mimanganu.servers.MangaFox;
 import ar.rulosoft.mimanganu.servers.MangaHere;
 import ar.rulosoft.mimanganu.servers.MangaPanda;
 import ar.rulosoft.mimanganu.servers.MangaReader;
+import ar.rulosoft.mimanganu.servers.RuNineMangaCom;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.servers.SubManga;
 import ar.rulosoft.mimanganu.servers.TusMangasOnlineCom;
@@ -49,7 +50,6 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
         adapter = new ServerRecAdapter(new ServerBase[]{
                 new HeavenMangaCom(),
                 new SubManga(),
-                // new EsMangaCom(),
                 new EsNineMangaCom(),
                 new EsMangaHere(),
                 new TusMangasOnlineCom(),
@@ -58,6 +58,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
                 new MangaFox(),
                 new MangaReader(),
                 new KissManga(),
+                new RuNineMangaCom(),
                 new LectureEnLigne(),
                 new ItNineMangaCom(),
                 new DeNineMangaCom()
