@@ -3,9 +3,14 @@
 
 Lector Manga online
 
+Cambios 1.41
+* Mejorado el sistema de busqueda de actualizaciones
+* agregado server ruso
+* otros fixs
+
 Cambios 1.40
 * mejorado el sitema de descarga 
-* mejorados los nuevos lectores 
+* mejorados los nuevos lectores
 * otros fixs
 
 Cambios 1.39
