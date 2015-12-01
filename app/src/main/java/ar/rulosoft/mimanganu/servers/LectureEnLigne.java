@@ -107,7 +107,7 @@ public class LectureEnLigne extends ServerBase {
     }
 
     @Override
-    public boolean hasVisualNavegation() {
+    public boolean hasFilteredNavigation() {
         return false;
     }
 

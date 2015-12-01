@@ -80,7 +80,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reader);
 
-        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
+        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID));
         mManga = Database.getFullManga(this, mChapter.getMangaID());
 
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -91,7 +91,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
         if (mManga.getReadingDirection() != -1) {
             direction = Direction.values()[mManga.getReadingDirection()];
         } else {
-            direction = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
+            direction = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECTION, "" + Direction.R2L.ordinal()))];
         }
 
         if (mManga.getScrollSensitive() > 0) {
@@ -167,10 +167,13 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
         }
         if (direction == Direction.R2L) {
             mReader = new R2LReader(this);
+            mSeekBar.setRotation(0);
         } else if (direction == Direction.L2R) {
             mReader = new L2RReader(this);
+            mSeekBar.setRotation(180);
         } else {
             mReader = new VerticalReader(this);
+            mSeekBar.setRotation(0);
         }
         mReader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         ((FrameLayout) findViewById(R.id.reader_placeholder)).removeAllViews();
@@ -463,12 +466,18 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
 
     @Override
     public void onLeftTap() {
-        mReader.goToPage(mReader.getCurrentPage() - 1);
+        if (direction == Direction.L2R)
+            mReader.goToPage(mReader.getCurrentPage() + 1);
+        else
+            mReader.goToPage(mReader.getCurrentPage() - 1);
     }
 
     @Override
     public void onRightTap() {
-        mReader.goToPage(mReader.getCurrentPage() + 1);
+        if (direction == Direction.L2R)
+            mReader.goToPage(mReader.getCurrentPage() - 1);
+        else
+            mReader.goToPage(mReader.getCurrentPage() + 1);
     }
 
     @Override

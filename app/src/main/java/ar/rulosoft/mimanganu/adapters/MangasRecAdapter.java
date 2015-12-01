@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
@@ -20,32 +19,13 @@ import ar.rulosoft.mimanganu.componentes.Cover;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
-public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.MangasHolder> {
-    private ArrayList<Manga> mangas;
-    private OnLastItem lastItemListener;
-    private OnMangaClick mangaClickListener;
-    private OnCreateContextMenuListener onCreateContextMenuListener;
-    private ImageLoader imageLoader;
-    private boolean darkTheme = false;
-    private int darkBackground;
+public class MangasRecAdapter extends MangaRecAdapterBase {
+    protected ImageLoader imageLoader;
+
 
     public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
-        this.darkTheme = darkTheme;
-        this.darkBackground = context.getResources().getColor(R.color.background_floating_material_dark);
-        mangas = lista;
+        super(lista,context,darkTheme);
         imageLoader = new ImageLoader(context);
-    }
-
-    public void setLastItemListener(OnLastItem lastItemListener) {
-        this.lastItemListener = lastItemListener;
-    }
-
-    public void setMangaClickListener(OnMangaClick mangaClickListener) {
-        this.mangaClickListener = mangaClickListener;
-    }
-
-    public void setOnCreateContextMenuListener(OnCreateContextMenuListener onCreateContextMenuListener) {
-        this.onCreateContextMenuListener = onCreateContextMenuListener;
     }
 
     public Manga getItem(int position) {
@@ -90,24 +70,6 @@ public class MangasRecAdapter extends RecyclerView.Adapter<MangasRecAdapter.Mang
         if (onCreateContextMenuListener != null)
             v.setOnCreateContextMenuListener(onCreateContextMenuListener);
         return new MangasHolder(v);
-    }
-
-    public void remove(Manga m) {
-        mangas.remove(m);
-        notifyDataSetChanged();
-    }
-
-    public void addAll(ArrayList<Manga> result) {
-        mangas.addAll(result);
-        notifyDataSetChanged();
-    }
-
-    public interface OnLastItem {
-        void onRequestedLastItem();
-    }
-
-    public interface OnMangaClick {
-        void onMangaClick(Manga manga);
     }
 
     public class MangasHolder extends RecyclerView.ViewHolder {

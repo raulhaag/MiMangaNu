@@ -121,7 +121,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 public void onClick(final View v) {
                     Chapter c = (Chapter) v.getTag();
                     if (c.isDownloaded()) {
-                        Manga m = activity.manga;
+                        Manga m = activity.mManga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
                         String ruta = DownloadPoolService.generateBasePath(s, m, c, activity);
                         FragmentMisMangas.deleteRecursive(new File(ruta));

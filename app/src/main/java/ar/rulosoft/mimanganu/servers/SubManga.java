@@ -128,7 +128,7 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public boolean hasVisualNavegation() {
+    public boolean hasFilteredNavigation() {
         return false;
     }
 

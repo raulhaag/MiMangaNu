@@ -100,7 +100,7 @@ public class FragmentUpdateSearchTask extends Fragment {
             if (activity != null) {
                 activity.cargarCapitulos(manga.getChapters());
                 activity.cargarDatos(manga);
-                activity.str.setRefreshing(false);
+                activity.mSwipeRefreshLayout.setRefreshing(false);
                 activity.setTitle(orgMsg);
                 if (result > 0) {
                     Toast.makeText(activity, result + activity.getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();

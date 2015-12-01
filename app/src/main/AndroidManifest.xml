@@ -39,7 +39,7 @@
             android:largeHeap="true"
             android:theme="@style/AppTheme.Light.NoActionbar" />
         <activity
-            android:name=".ActivityServerVisualNavigation"
+            android:name=".ActivityServerFilteredNavigation"
             android:label="@string/title_activity_server_visual_navegacion" />
         <activity
             android:name=".ActivityResultadoDeBusqueda"

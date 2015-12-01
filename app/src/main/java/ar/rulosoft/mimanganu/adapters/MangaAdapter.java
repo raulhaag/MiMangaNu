@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.R;
@@ -40,6 +41,12 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
             holder.textViewName.setText(android.text.Html.fromHtml(item.getTitle()));
         }
         return convertView;
+    }
+
+    public void addAll(ArrayList<Manga> mangasNuevos) {
+        for (Manga manga : mangasNuevos) {
+            add(manga);
+        }
     }
 
     public static class ViewHolder {

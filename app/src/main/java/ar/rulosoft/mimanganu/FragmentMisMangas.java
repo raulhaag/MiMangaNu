@@ -22,7 +22,7 @@ import android.widget.GridView;
 import java.io.File;
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnMangaClick;
+import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnMangaClick;
 import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;

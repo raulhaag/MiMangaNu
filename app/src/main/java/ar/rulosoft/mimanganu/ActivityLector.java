@@ -107,7 +107,7 @@ public class ActivityLector extends AppCompatActivity
         mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
 
-        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CAPITULO_ID));
+        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID));
         mManga = Database.getFullManga(this, mChapter.getMangaID());
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
@@ -116,7 +116,7 @@ public class ActivityLector extends AppCompatActivity
         if (mManga.getReadingDirection() != -1) {
             mDirection = Direction.values()[mManga.getReadingDirection()];
         } else {
-            mDirection = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECCION, "" + Direction.R2L.ordinal()))];
+            mDirection = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECTION, "" + Direction.R2L.ordinal()))];
         }
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -815,7 +815,7 @@ public class ActivityLector extends AppCompatActivity
                     DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                     Intent intent =
                             new Intent(getActivity(), ActivityLector.class);
-                    intent.putExtra(ActivityManga.CAPITULO_ID, result.getId());
+                    intent.putExtra(ActivityManga.CHAPTER_ID, result.getId());
                     getActivity().startActivity(intent);
                     Database.updateChapter(l, l.mChapter);
                     l.finish();

@@ -29,21 +29,21 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
-import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnLastItem;
-import ar.rulosoft.mimanganu.adapters.MangasRecAdapter.OnMangaClick;
+import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnLastItem;
+import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnMangaClick;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerVisualNavigation extends AppCompatActivity implements OnLastItem, OnMangaClick {
+public class ActivityServerFilteredNavigation extends AppCompatActivity implements OnLastItem, OnMangaClick {
 
     private boolean mStart = true;
     private ServerBase sBase;
-    private Spinner generos;
-    private Spinner orden;
-    private RecyclerView grilla;
-    private ProgressBar cargando;
-    private MangasRecAdapter adap;
+    private Spinner genres;
+    private Spinner order;
+    private RecyclerView grid;
+    private ProgressBar loading;
+    private MangasRecAdapter mAdapter;
     private boolean neuvaTarea = false;
     private int pagina = 1;
     private MenuItem buscar;
@@ -71,21 +71,21 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
             window.setStatusBarColor(colors[4]);
         }
 
-        grilla = (RecyclerView) findViewById(R.id.grilla);
-        generos = (Spinner) findViewById(R.id.generos);
-        orden = (Spinner) findViewById(R.id.ordenar_por);
-        cargando = (ProgressBar) findViewById(R.id.cargando);
+        grid = (RecyclerView) findViewById(R.id.grilla);
+        genres = (Spinner) findViewById(R.id.generos);
+        order = (Spinner) findViewById(R.id.ordenar_por);
+        loading = (ProgressBar) findViewById(R.id.cargando);
         if (sBase.getCategories() != null)
-            generos.setAdapter(new ArrayAdapter<>(
+            genres.setAdapter(new ArrayAdapter<>(
                     this, android.R.layout.simple_dropdown_item_1line, sBase.getCategories()));
         else
-            generos.setVisibility(Spinner.INVISIBLE);
+            genres.setVisibility(Spinner.INVISIBLE);
 
         if (sBase.getOrders() != null)
-            orden.setAdapter(new ArrayAdapter<>(
+            order.setAdapter(new ArrayAdapter<>(
                     this, android.R.layout.simple_dropdown_item_1line, sBase.getOrders()));
         else
-            orden.setVisibility(Spinner.INVISIBLE);
+            order.setVisibility(Spinner.INVISIBLE);
 
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -93,17 +93,19 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
         float density = getResources().getDisplayMetrics().density;
         float dpWidth = outMetrics.widthPixels / density;
         int columnas = (int) (dpWidth / 150);
-        if (columnas == 0)
+        if(sBase.getFilteredType() == ServerBase.FilteredType.TEXT)
+            columnas = 1;
+        else if (columnas == 0)
             columnas = 2;
         else if (columnas > 6)
             columnas = 6;
-        grilla.setLayoutManager(new GridLayoutManager(ActivityServerVisualNavigation.this, columnas));
-        orden.setOnItemSelectedListener(new OnItemSelectedListener() {
+        grid.setLayoutManager(new GridLayoutManager(ActivityServerFilteredNavigation.this, columnas));
+        order.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!cargando.isShown()) {
-                    adap = null;
+                if (!loading.isShown()) {
+                    mAdapter = null;
                     pagina = 1;
                     mStart = true;
                     sBase.hayMas = true;
@@ -119,12 +121,12 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
             }
         });
 
-        generos.setOnItemSelectedListener(new OnItemSelectedListener() {
+        genres.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!cargando.isShown()) {
-                    adap = null;
+                if (!loading.isShown()) {
+                    mAdapter = null;
                     pagina = 1;
                     mStart = true;
                     sBase.hayMas = true;
@@ -145,7 +147,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
 
     @Override
     public void onRequestedLastItem() {
-        if (sBase.hayMas && !cargando.isShown() && !mStart)
+        if (sBase.hayMas && !loading.isShown() && !mStart)
             new LoadLastTask().execute(pagina);
     }
 
@@ -170,7 +172,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
 
             @Override
             public boolean onQueryTextSubmit(String st) {
-                Intent intent = new Intent(ActivityServerVisualNavigation.this,
+                Intent intent = new Intent(ActivityServerFilteredNavigation.this,
                         ActivityResultadoDeBusqueda.class);
                 intent.putExtra(ActivityResultadoDeBusqueda.TERMINO, st);
                 intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
@@ -203,7 +205,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
 
         @Override
         protected void onPreExecute() {
-            cargando.setVisibility(ProgressBar.VISIBLE);
+            loading.setVisibility(ProgressBar.VISIBLE);
         }
 
         @SuppressWarnings("ResourceType")//TODO ver problema
@@ -212,7 +214,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
             ArrayList<Manga> mangas = null;
             try {
                 mangas = sBase.getMangasFiltered(
-                        generos.getSelectedItemPosition(), orden.getSelectedItemPosition(), params[0]);
+                        genres.getSelectedItemPosition(), order.getSelectedItemPosition(), params[0]);
             } catch (Exception e) {
                 error = e.getMessage();
             }
@@ -222,24 +224,24 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityServerVisualNavigation.this,
+                Toast.makeText(ActivityServerFilteredNavigation.this,
                         "Error: " + error, Toast.LENGTH_SHORT).show();
             } else {
                 pagina++;
-                if (result != null && result.size() != 0 && grilla != null) {
-                    if (adap == null) {
-                        adap = new MangasRecAdapter(result,
-                                ActivityServerVisualNavigation.this, darkTheme);
-                        adap.setLastItemListener(ActivityServerVisualNavigation.this);
-                        adap.setMangaClickListener(ActivityServerVisualNavigation.this);
-                        grilla.setAdapter(adap);
+                if (result != null && result.size() != 0 && grid != null) {
+                    if (mAdapter == null) {
+                        mAdapter = new MangasRecAdapter(result,
+                                ActivityServerFilteredNavigation.this, darkTheme);
+                        mAdapter.setLastItemListener(ActivityServerFilteredNavigation.this);
+                        mAdapter.setMangaClickListener(ActivityServerFilteredNavigation.this);
+                        grid.setAdapter(mAdapter);
                     } else {
-                        adap.addAll(result);
+                        mAdapter.addAll(result);
                     }
                 }
                 mStart = false;
                 if (neuvaTarea) {
-                    adap = null;
+                    mAdapter = null;
                     pagina = 1;
                     mStart = true;
                     sBase.hayMas = true;
@@ -247,7 +249,7 @@ public class ActivityServerVisualNavigation extends AppCompatActivity implements
                     neuvaTarea = false;
                 }
             }
-            cargando.setVisibility(ProgressBar.INVISIBLE);
+            loading.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 

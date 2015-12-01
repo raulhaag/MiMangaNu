@@ -13,6 +13,7 @@ import ar.rulosoft.navegadores.Navegador;
 
 public abstract class ServerBase {
 
+    public enum FilteredType {VISUAL,TEXT};
     public static final int MANGAPANDA = 1;
     public static final int ESMANGAHERE = 3;
     public static final int MANGAHERE = 4;
@@ -272,7 +273,7 @@ public abstract class ServerBase {
         }
     }
 
-    public boolean hasVisualNavegation() {
+    public boolean hasFilteredNavigation() {
         return true;
     }
 
@@ -280,6 +281,10 @@ public abstract class ServerBase {
         Navegador nav = new Navegador();
         nav.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
         return nav;
+    }
+
+    public FilteredType getFilteredType(){
+        return FilteredType.VISUAL;
     }
 
 }
