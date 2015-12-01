@@ -54,7 +54,7 @@
     <string name="folder_changed">Ordner gewechselt.</string>
     <string name="hello_world">Hallo Welt</string>
     <string name="info">Details</string>
-    <string name="iniciando">Lädt Seitenzahl</string>
+    <string name="iniciando">Lade Seitenzahl</string>
     <string name="l2r">Links nach rechts</string>
     <string name="licencia">Lizenz</string>
     <string name="listaen">Manga-Liste von</string>
@@ -79,7 +79,7 @@
     <string name="orden_dsc">Absteigend</string>
     <string name="orden_de_capitulos_subtitle">Aufsteigend, absteigend</string>
     <string name="orden_de_capitulos">Kapitel Reihenfolge</string>
-    <string name="quitar_descarga">Kann laufenden Download nicht entfernen</string>
+    <string name="quitar_descarga">Kann laufende Download nicht entfernen</string>
     <string name="quitar_seleccion">Auswahl leeren</string>
     <string name="r2l">Rechts nach links</string>
     <string name="resetcap">Kapitel zurücksetzen</string>
@@ -133,7 +133,7 @@
     <string name="color_secundario_sub">Sekundäre Farbe für mehr Abwechselung</string>
     <string name="about">Über</string>
     <string name="scroll_speed">Scroll-Geschwindigkeit</string>
-    <string name="theme_title">Verwende dunkles Thema</string>
+    <string name="theme_title">Verwende dunkles Theme</string>
     <string name="download_selection">Kapitel herunterladen</string>
     <string name="sort">Sortieren</string>
     <string name="sort_title">Titel</string>
@@ -146,13 +146,13 @@
     <string name="color_reader">Reader Farbe</string>
     <string name="color_reader_sub">Die Farbe im Reader Modus</string>
     <string name="genre">Genre</string>
-    <string name="read_next">Möchtest du das nächste Kapitel öffnen?</string>
+    <string name="read_next">Nächstes Kapitel öffnen?</string>
     <string name="last_chapter">Dies ist zurzeit das letzte Kapitel</string>
-    <string name="search_for_updates">Auf der Suche nach neuen Kapiteln</string>
+    <string name="search_for_updates">Nach neue Kapiteln suchen</string>
     <string name="update_thread_background_title">Update Threads (Hintergrund)</string>
     <string name="update_thread_manual_title">Update Threads (Manuell)</string>
-    <string name="update_threads_background_summary">Anzahl der Update-Themen: %s</string>
-    <string name="update_threads_manual_summary">Anzahl der Update-Themen: %s</string>
-    <string name="download_remain_confirmation">Wollen Sie die Kapitel noch nicht heruntergeladen herunterladen?</string>
-    <string name="download_unread_confirmation">Wollen Sie die Kapitel ungelesenen herunterladen?</string>
+    <string name="update_threads_background_summary">Anzahl Threads im Hintergrund: %s</string>
+    <string name="update_threads_manual_summary">Anzahl Threads für manuelle Suche: %s</string>
+    <string name="download_remain_confirmation">Noch nicht geladene Kapiteln downloaden?</string>
+    <string name="download_unread_confirmation">Ungelesene Kapiteln herunterladen?</string>
 </resources>
