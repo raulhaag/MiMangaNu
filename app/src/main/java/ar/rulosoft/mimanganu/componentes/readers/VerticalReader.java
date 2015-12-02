@@ -235,5 +235,4 @@ public class VerticalReader extends Reader {
             }
         }
     }
-
 }
