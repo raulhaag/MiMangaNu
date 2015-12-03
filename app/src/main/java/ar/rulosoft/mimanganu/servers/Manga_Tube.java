@@ -42,8 +42,7 @@ public class Manga_Tube extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String source = getNavWithHeader().get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=1&q="+ URLEncoder.encode(term,"UTF-8")+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
-
-        return null;
+        return getMangasFromSource(source);
     }
 
 
@@ -59,7 +58,7 @@ public class Manga_Tube extends ServerBase {
         // Front
         m.setImages(getFirstMatchDefault("p=\"image\" content=\"(.+?)\"", source, ""));
         // Summary
-        String summary = getFirstMatchDefault("\"dmescription\" content=\"(.+?)\"",
+        String summary = getFirstMatchDefault("ion\" content=\"(.+?)\"",
                 source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
         m.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
 
