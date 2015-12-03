@@ -28,23 +28,16 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
         imageLoader = new ImageLoader(context);
     }
 
-    public Manga getItem(int position) {
-        return mangas.get(position);
-    }
-
     @Override
-    public int getItemCount() {
-        return mangas.size();
-    }
-
-    @Override
-    public void onBindViewHolder(MangasHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Manga m = mangas.get(position);
-        holder.serie.setImageBitmap(null);
-        holder.serie.setText(m.getTitle());
-        imageLoader.displayImg(m.getImages(), holder.serie);
-        holder.v.setTag(position);
-        holder.v.setOnClickListener(new OnClickListener() {
+        MangasHolder mHolder = (MangasHolder)holder;
+
+        mHolder.serie.setImageBitmap(null);
+        mHolder.serie.setText(m.getTitle());
+        imageLoader.displayImg(m.getImages(), mHolder.serie);
+        mHolder.v.setTag(position);
+        mHolder.v.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (mangaClickListener != null) {
@@ -53,18 +46,18 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
             }
         });
         ServerBase server = ServerBase.getServer(m.getServerId());
-        holder.server.setImageResource(server.getIcon());
+        mHolder.server.setImageResource(server.getIcon());
         if (m.getNews() > 0) {
-            holder.notif.setVisibility(ImageView.VISIBLE);
+            mHolder.notif.setVisibility(ImageView.VISIBLE);
         } else {
-            holder.notif.setVisibility(ImageView.INVISIBLE);
+            mHolder.notif.setVisibility(ImageView.INVISIBLE);
         }
         if (position == getItemCount() - 1 && lastItemListener != null)
             lastItemListener.onRequestedLastItem();
     }
 
     @Override
-    public MangasHolder onCreateViewHolder(ViewGroup viewGroup, int pos) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int pos) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tapa_manga, viewGroup, false);
         ViewCompat.setElevation(v, 5f);
         if (onCreateContextMenuListener != null)
@@ -90,5 +83,4 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
             }
         }
     }
-
 }

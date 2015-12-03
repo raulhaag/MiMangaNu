@@ -29,8 +29,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
+import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnLastItem;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnMangaClick;
+import ar.rulosoft.mimanganu.adapters.MangasRecAdapterText;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -43,7 +45,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
     private Spinner order;
     private RecyclerView grid;
     private ProgressBar loading;
-    private MangasRecAdapter mAdapter;
+    private MangaRecAdapterBase mAdapter;
     private boolean neuvaTarea = false;
     private int pagina = 1;
     private MenuItem buscar;
@@ -230,8 +232,13 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
                 pagina++;
                 if (result != null && result.size() != 0 && grid != null) {
                     if (mAdapter == null) {
+                        if(sBase.getFilteredType() == ServerBase.FilteredType.VISUAL){
                         mAdapter = new MangasRecAdapter(result,
-                                ActivityServerFilteredNavigation.this, darkTheme);
+                                ActivityServerFilteredNavigation.this, darkTheme);}
+                        else {
+                            mAdapter = new MangasRecAdapterText(result,
+                                    ActivityServerFilteredNavigation.this, darkTheme);
+                        }
                         mAdapter.setLastItemListener(ActivityServerFilteredNavigation.this);
                         mAdapter.setMangaClickListener(ActivityServerFilteredNavigation.this);
                         grid.setAdapter(mAdapter);

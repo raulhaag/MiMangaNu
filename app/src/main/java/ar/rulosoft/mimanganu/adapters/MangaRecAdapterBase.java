@@ -12,7 +12,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 /**
  * Created by Raul on 30/11/2015.
  */
-public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<MangasRecAdapter.MangasHolder> {
+public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     protected ArrayList<Manga> mangas;
     protected OnLastItem lastItemListener;
     protected OnMangaClick mangaClickListener;
@@ -38,6 +38,15 @@ public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<MangasRec
         this.onCreateContextMenuListener = onCreateContextMenuListener;
     }
 
+
+    public Manga getItem(int position) {
+        return mangas.get(position);
+    }
+
+    @Override
+    public int getItemCount() {
+        return mangas.size();
+    }
 
     public void remove(Manga m) {
         mangas.remove(m);

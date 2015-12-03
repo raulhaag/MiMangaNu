@@ -19,6 +19,7 @@ import ar.rulosoft.mimanganu.servers.HeavenMangaCom;
 import ar.rulosoft.mimanganu.servers.ItNineMangaCom;
 import ar.rulosoft.mimanganu.servers.KissManga;
 import ar.rulosoft.mimanganu.servers.LectureEnLigne;
+import ar.rulosoft.mimanganu.servers.MangaEdenIt;
 import ar.rulosoft.mimanganu.servers.MangaFox;
 import ar.rulosoft.mimanganu.servers.MangaHere;
 import ar.rulosoft.mimanganu.servers.MangaPanda;
@@ -62,6 +63,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
                 new RuNineMangaCom(),
                 new LectureEnLigne(),
                 new ItNineMangaCom(),
+                new MangaEdenIt(),
                 new DeNineMangaCom(),
                 new Manga_Tube()
         });
