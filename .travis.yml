@@ -1,0 +1,26 @@
+language: android
+android:
+  components:
+    # Uncomment the lines below if you want to
+    # use the latest revision of Android SDK Tools
+    - platform-tools
+    - tools
+
+    # The BuildTools version used by your project
+    - build-tools-22.0.1
+
+    # The SDK version used to compile your project
+    - android-22
+
+    - extra
+    - add-on
+
+install:
+  - true
+
+script:
+  - ./gradlew :app:assembleDebug
+
+after_failure: "cat /home/travis/build/null-dev/animeopenings-android/app/build/outputs/lint-results.html"
+after_success:
+    "curl --ftp-create-dirs -T app/build/outputs/apk/app-debug.apk -u $FTP_USER:$FTP_PASSWORD ftp://185.28.20.24/mmn-build/mmn-br$TRAVIS_BRANCH-co$TRAVIS_COMMIT-bu$TRAVIS_BUILD_NUMBER.apk"
