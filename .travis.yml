@@ -19,9 +19,9 @@ install:
   - true
 
 script:
+  - chmod 777 gradlew
   - ./gradlew :app:assembleDebug
 
 after_failure: "cat /home/travis/build/null-dev/animeopenings-android/app/build/outputs/lint-results.html"
 after_success:
     "curl --ftp-create-dirs -T app/build/outputs/apk/app-debug.apk -u $FTP_USER:$FTP_PASSWORD ftp://185.28.20.24/mmn-build/mmn-br$TRAVIS_BRANCH-co$TRAVIS_COMMIT-bu$TRAVIS_BUILD_NUMBER.apk"
-
