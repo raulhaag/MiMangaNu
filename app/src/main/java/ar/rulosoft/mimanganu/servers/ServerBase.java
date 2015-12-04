@@ -32,6 +32,8 @@ public abstract class ServerBase {
     public static final int RUNINEMANGA = 17;
     public static final int MANGATUBE = 18;
     public static final int MANGAEDENIT = 19;
+    public static final int MYMANGAIO = 20;
+
     public boolean hayMas = true;
     private String serverName;
     private int icon;
@@ -94,6 +96,9 @@ public abstract class ServerBase {
                 break;
             case MANGAEDENIT:
                 s = new MangaEdenIt();
+                break;
+            case MYMANGAIO:
+                s = new MyMangaIo();
                 break;
             default:
                 break;
@@ -269,6 +274,16 @@ public abstract class ServerBase {
             return m.group(1);
         }
         throw new Exception(errorMsj);
+    }
+
+    public ArrayList<String> getAllMatch(String patron, String source) throws Exception {
+        Pattern p = Pattern.compile(patron);
+        Matcher m = p.matcher(source);
+        ArrayList<String> matches = new ArrayList<>();
+        if (m.find()) {
+            matches.add(m.group(1));
+        }
+        return matches;
     }
 
     public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {
