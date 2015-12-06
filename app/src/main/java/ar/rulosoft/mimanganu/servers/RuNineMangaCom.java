@@ -55,7 +55,7 @@ public class RuNineMangaCom extends ServerBase {
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(DENINEMANGA, m.group(2), HOST + m.group(1), false);
+            Manga manga = new Manga(RUNINEMANGA, m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -123,7 +123,7 @@ public class RuNineMangaCom extends ServerBase {
         String source = getNavWithHeader().get(c.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
-                "Es versäumt, die Anzahl der Seiten zu bekommen");
+                "Не удалось получить количество страниц");
         c.setPages(Integer.parseInt(nop));
     }
 
@@ -140,7 +140,7 @@ public class RuNineMangaCom extends ServerBase {
                 "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(DENINEMANGA, m.group(3), HOST + m.group(1), false);
+            Manga manga = new Manga(RUNINEMANGA, m.group(3), HOST + m.group(1), false);
             manga.setImages(m.group(2));
             mangas.add(manga);
         }
