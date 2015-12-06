@@ -51,9 +51,9 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     float mScaleFactor = 1.f;
     Matrix m = new Matrix();
     int screenHeight, screenWidth;
+    int screenHeightSS,screenWidthSS; // Sub scaled
     Handler mHandler;
     float ppi;
-
     public Reader(Context context) {
         super(context);
         init(context);
@@ -105,6 +105,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         screenHeight = Math.abs(bottom - top);
         screenWidth = Math.abs(right - left);
+        screenWidthSS = screenWidth;
+        screenHeightSS = screenHeight;
         if (pages != null) {
             calculateParticularScale();
             calculateVisibilities();
@@ -389,17 +391,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     /*
          * Starting from 0
          */
-    public float getPagePosition(int page) {
-        if (pages != null && pages.size() > 1)
-            if (page < 0) {
-                return pages.get(0).init_visibility;
-            } else if (page < pages.size())
-                return pages.get(page).init_visibility;
-            else
-                return pages.get(pages.size() - 1).init_visibility;
-        else
-            return 0;
-    }
+    public abstract float getPagePosition(int page);
 
 
     public enum ImagesStates {NULL, RECYCLED, ERROR, LOADING, LOADED}
@@ -619,14 +611,19 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
-            float nScale = mScaleFactor * detector.getScaleFactor();
+            float nScale = Math.max(.8f, Math.min(mScaleFactor * detector.getScaleFactor(), 3.0f));
             if ((nScale <= 3f && nScale >= 1f)) {//can be better, but how ?
                 float final_x = (((((screenWidth * nScale) - screenWidth)) / nScale) - ((((screenWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) * detector.getFocusX() / screenWidth;
                 float final_y = (((((screenHeight * nScale) - screenHeight)) / nScale) - ((((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) * detector.getFocusX() / screenHeight;
+                screenHeightSS = screenHeight;
+                screenWidthSS = screenWidth;
                 relativeScroll(final_x, final_y);
+            }else if(nScale < 1){
+                screenHeightSS = (int)(nScale * screenHeight);
+                screenWidthSS = (int)(nScale * screenWidth);
+                relativeScroll(0,0);
             }
             mScaleFactor = nScale;
-            mScaleFactor = Math.max(1.0f, Math.min(mScaleFactor, 3.0f));
             invalidate();
             return true;
         }

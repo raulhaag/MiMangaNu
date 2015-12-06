@@ -35,13 +35,18 @@ public class L2RReader extends R2LReader {
             xScroll = 0;
             stopAnimationOnHorizontalOver = true;
         }
-        if (yScroll + distanceY > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
-            yScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
-            stopAnimationOnVerticalOver = true;
-        } else if (yScroll + distanceY < 0) {
-            yScroll = 0;
+        if (mScaleFactor >= 1) {
+            if (yScroll + distanceY > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
+                yScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
+                stopAnimationOnVerticalOver = true;
+            } else if (yScroll + distanceY < 0) {
+                yScroll = 0;
+            } else {
+                yScroll += distanceY;
+                stopAnimationOnVerticalOver = true;
+            }
         } else {
-            yScroll += distanceY;
+            yScroll = (screenHeightSS - screenHeight) / 2;
             stopAnimationOnVerticalOver = true;
         }
     }
@@ -57,13 +62,18 @@ public class L2RReader extends R2LReader {
             xScroll = 0;
             stopAnimationOnHorizontalOver = true;
         }
-        if (y > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
-            yScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
-            stopAnimationOnVerticalOver = true;
-        } else if (y < 0) {
-            yScroll = 0;
+        if (mScaleFactor >= 1) {
+            if (y > (((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor) {
+                yScroll = ((screenHeight * mScaleFactor) - screenHeight) / mScaleFactor;
+                stopAnimationOnVerticalOver = true;
+            } else if (y < 0) {
+                yScroll = 0;
+            } else {
+                yScroll = y;
+                stopAnimationOnVerticalOver = true;
+            }
         } else {
-            yScroll = y;
+            yScroll = (screenHeightSS - screenHeight) / 2;
             stopAnimationOnVerticalOver = true;
         }
     }
@@ -103,14 +113,21 @@ public class L2RReader extends R2LReader {
     */
     @Override
     public float getPagePosition(int page) {
-        if (pages != null && pages.size() > 1)
+        if (pages != null && pages.size() > 1) {
             if (page < 0) {
                 return pages.get(0).end_visibility;
-            } else if (page < pages.size())
-                return pages.get(page).end_visibility - screenWidth - 2;
-            else
+            } else if (page < pages.size()) {
+                if (pages.get(page).scaled_width * mScaleFactor > screenWidth) {
+                    return (pages.get(page).end_visibility - (screenWidth / mScaleFactor));
+                } else {
+                    int add = (int) (pages.get(page).scaled_width * mScaleFactor - screenWidth) / 2;
+                    return (pages.get(page).end_visibility - (screenWidth / mScaleFactor)) - add;
+                }
+            } else {
                 return pages.get(pages.size() - 1).end_visibility;
-        else
+            }
+        } else {
             return 0;
+        }
     }
 }
