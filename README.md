@@ -1,6 +1,7 @@
 ﻿MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
 =========
 *ESP - Lector de Manga online / offline, gratuito y de código abierto.
+
 *ENG - Manga reader online / offline, free and open source.
 
 Screeshots
