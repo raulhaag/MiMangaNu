@@ -20,7 +20,7 @@ Downloads
 
 ![separator](/images/separador.png)[![Download GitHub](/images/downloadGithub.png)](https://github.com/raulhaag/MiMangaNu/releases/latest)
 
-![separator](/images/separador.png)[![Download Travis](/images/downloadTravis.png)](http://cirelease.nulldev.xyz/mmn-build)    
+![separator](/images/separador.png)[![Download Travis](/images/downloadTravis.png)](http://cirelease.nulldev.xyz/mmn-build/?s=m&d=d)    
 
 
 Changelog
