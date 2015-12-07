@@ -1,7 +1,29 @@
 ﻿MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
 =========
+*ESP - Lector de Manga online / offline, gratuito y de código abierto.
+*ENG - Manga reader online / offline, free and open source.
 
-Lector Manga online
+Screeshots
+----------
+![Mis Mangas](/images/MisMangas.png)-       -![Add Manga](/images/addM.png)-       -![Browse Manga Server](/images/addMaVN.png)
+
+![Details](/images/info.png)-       -![Reader](/images/reader.png)-       -![Vertical Reader](/images/verticalreader.png)
+
+
+
+Downloads
+---------
+   --[![Download F-droid](/images/downloadFdroid.png)](https://f-droid.org/repository/browse/?fdfilter=mimanganu&fdid=ar.rulosoft.mimanganu)-       -[![Download GitHub](/images/downloadGithub.png)](https://github.com/raulhaag/MiMangaNu/releases/latest)-       -[![Download Travis](/images/downloadTravis.png)](http://cirelease.nulldev.xyz/mmn-build)-       
+
+
+Changelog
+---------
+
+ Cambios 1.42
+* Agregado MangaEdenIT, Manga-Tube y MyMangaIo
+* Agregado soporte nuevo tipo de servidores (como los de mangaeden)
+* Agregado zoom out a los nuevos lectores
+* otros fixs
 
 Cambios 1.41
 * Mejorado el sistema de busqueda de actualizaciones
@@ -164,12 +186,10 @@ Cambios 1.06
 
 The MIT License (MIT)
 
-Copyright &#169; 2014 rulosoft (Raul Haag)
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+     Copyright &#169; 2014 rulosoft (Raul Haag)
+     Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+     The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 Thanks to sephiroth74 for the library ImageViewTouch, thest1 for LazyList and castorflex for VerticalViewPager.
 
