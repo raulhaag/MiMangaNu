@@ -5,15 +5,17 @@
 
 Screeshots
 ----------
-![Mis Mangas](/images/MisMangas.png)-       -![Add Manga](/images/addM.png)-       -![Browse Manga Server](/images/addMaVN.png)
-
-![Details](/images/info.png)-       -![Reader](/images/reader.png)-       -![Vertical Reader](/images/verticalreader.png)
+![Mis Mangas](/images/MisMangas.png)![separator](/images/separador.png)![Add Manga](/images/addM.png)
+![separator](/images/separador.png)
+![Browse Manga Server](/images/addMaVN.png)![separator](/images/separador.png)![separator](/images/separador.png)![Details](/images/info.png)
+![separator](/images/separador.png)
+![Reader](/images/reader.png)![separator](/images/separador.png)![Vertical Reader](/images/verticalreader.png)
 
 
 
 Downloads
 ---------
-   --[![Download F-droid](/images/downloadFdroid.png)](https://f-droid.org/repository/browse/?fdfilter=mimanganu&fdid=ar.rulosoft.mimanganu)-       -[![Download GitHub](/images/downloadGithub.png)](https://github.com/raulhaag/MiMangaNu/releases/latest)-       -[![Download Travis](/images/downloadTravis.png)](http://cirelease.nulldev.xyz/mmn-build)-       
+![separator](/images/separador.png)[![Download F-droid](/images/downloadFdroid.png)](https://f-droid.org/repository/browse/?fdfilter=mimanganu&fdid=ar.rulosoft.mimanganu)![separator](/images/separador.png)[![Download GitHub](/images/downloadGithub.png)](https://github.com/raulhaag/MiMangaNu/releases/latest)![separator](/images/separador.png)[![Download Travis](/images/downloadTravis.png)](http://cirelease.nulldev.xyz/mmn-build)    
 
 
 Changelog
