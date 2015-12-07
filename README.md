@@ -1,4 +1,4 @@
-﻿MiMangaNu
+﻿MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
 =========
 
 Lector Manga online
