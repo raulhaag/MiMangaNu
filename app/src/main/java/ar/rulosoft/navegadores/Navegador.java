@@ -34,7 +34,7 @@ public class Navegador {
         Response response = httpClient.newCall(new Request.Builder().url(web).build()).execute();
 
         if (response.isSuccessful()) {
-            return response.body().string();
+            return formatResponseBody(response.body());
         } else {
             return "";
         }
@@ -50,7 +50,7 @@ public class Navegador {
         Response response = httpClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return response.body().string();
+            return formatResponseBody(response.body());
         } else {
             return "";
         }
@@ -66,7 +66,7 @@ public class Navegador {
         Response response = httpClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return response.body().string();
+            return formatResponseBody(response.body());
         } else {
             return "";
         }
@@ -83,10 +83,14 @@ public class Navegador {
         Response response = httpClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return response.body().string();
+            return formatResponseBody(response.body());
         } else {
             return "";
         }
+    }
+
+    public String formatResponseBody(ResponseBody body) throws IOException {
+        return body.string().replaceAll("(\n|\r)","");
     }
 
     public RequestBody getPostParams() throws Exception {
