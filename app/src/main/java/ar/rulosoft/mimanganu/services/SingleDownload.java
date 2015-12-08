@@ -1,19 +1,17 @@
 package ar.rulosoft.mimanganu.services;
 
 import android.util.Log;
+import ar.rulosoft.navegadores.Navegador;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.io.*;
+import java.util.concurrent.TimeUnit;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
+    public static Navegador NAVEGADOR = null;
     private String fromURL;
     private String toFile;
     private StateChange changeListener = null;
@@ -33,6 +31,11 @@ public class SingleDownload implements Runnable {
         return index;
     }
 
+    public static Navegador initAndGetNavegador() {
+        if (NAVEGADOR == null) NAVEGADOR = new Navegador();
+        return NAVEGADOR;
+    }
+
     @Override
     public void run() {
         changeStatus(Status.INIT);
@@ -45,15 +48,14 @@ public class SingleDownload implements Runnable {
             if (o.length() == 0) {
                 InputStream input;
                 OutputStream output;
-                int contentLenght;
+                long contentLenght;
                 try {
-                    URL url = new URL(fromURL);
-                    HttpURLConnection con = (HttpURLConnection) url.openConnection();
-                    con.setConnectTimeout(3000);
-                    con.setReadTimeout(3000);
-                    int code = con.getResponseCode();
-                    if (code != 200) {
-                        if (code == 404) {
+                    OkHttpClient client = initAndGetNavegador().getHttpClient();
+                    client.setConnectTimeout(3, TimeUnit.SECONDS);
+                    client.setReadTimeout(3, TimeUnit.SECONDS);
+                    Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
+                    if(!response.isSuccessful()) {
+                        if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);
                         } else {
                             changeStatus(Status.ERROR_CONNECTION);
@@ -64,13 +66,9 @@ public class SingleDownload implements Runnable {
                         ot.renameTo(o);
                         break;
                     }
-                    contentLenght = con.getContentLength();
-                    input = con.getInputStream();
+                    contentLenght = response.body().contentLength();
+                    input = response.body().byteStream();
                     output = new FileOutputStream(ot);
-                } catch (MalformedURLException e) {
-                    changeStatus(Status.ERROR_INVALID_URL);
-                    retry = 0;
-                    break;
                 } catch (FileNotFoundException e) {
                     changeStatus(Status.ERROR_WRITING_FILE);
                     retry = 0;
