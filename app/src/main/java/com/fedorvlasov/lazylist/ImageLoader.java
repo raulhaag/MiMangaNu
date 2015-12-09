@@ -6,24 +6,27 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
+import ar.rulosoft.mimanganu.componentes.Imaginable;
+import ar.rulosoft.navegadores.Navegador;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import ar.rulosoft.mimanganu.componentes.Imaginable;
+import java.util.concurrent.TimeUnit;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
+    public static Navegador NAVEGADOR = null;
 
     private MemCache mMemCache;
     private FileCache mFileCache;
@@ -37,6 +40,11 @@ public class ImageLoader {
         mMemCache = MemCache.getInstance();
         mFileCache = new FileCache(context);
         imgThreadPool = Executors.newFixedThreadPool(3);
+    }
+
+    public static Navegador initAndGetNavegador() {
+        if (NAVEGADOR == null) NAVEGADOR = new Navegador();
+        return NAVEGADOR;
     }
 
     /**
@@ -122,7 +130,6 @@ public class ImageLoader {
 
         // Last, if locally nothing works, try to get image from web
         try {
-            URL imageUrl;
             String host = null;
             {
                 int idx;
@@ -131,16 +138,15 @@ public class ImageLoader {
                     url = url.substring(0, idx);
                 }
             }
-            imageUrl = new URL(url);
-            HttpURLConnection conn = (HttpURLConnection) imageUrl.openConnection();
-            conn.setConnectTimeout(5000);
-            conn.setReadTimeout(5000);
-            conn.setInstanceFollowRedirects(true);
+            OkHttpClient client = initAndGetNavegador().getHttpClient();
+            client.setConnectTimeout(5, TimeUnit.SECONDS);
+            client.setReadTimeout(5, TimeUnit.SECONDS);
+            Request.Builder builder = new Request.Builder().url(url);
             if (host != null) {
-                conn.addRequestProperty("Host", host);
+                builder.addHeader("Host", host);
             }
-            FileCache.writeFile(conn.getInputStream(), f);
-            conn.disconnect();
+            Response response = client.newCall(builder.build()).execute();
+            FileCache.writeFile(response.body().byteStream(), f);
             return decodeFile(f);
         } catch (Throwable ex) {
             if (ex instanceof OutOfMemoryError)

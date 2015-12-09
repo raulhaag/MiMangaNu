@@ -1,15 +1,14 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
+
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class ServerBase {
 
@@ -301,9 +300,7 @@ public abstract class ServerBase {
     }
 
     Navegador getNavWithHeader() {
-        Navegador nav = new Navegador();
-        nav.addHeader("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)");
-        return nav;
+        return new Navegador();
     }
 
     public FilteredType getFilteredType(){
