@@ -5,6 +5,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="paddin_textitem">6dp</dimen>
     <dimen name="tamano_texto">18sp</dimen>
+    <dimen name="tamano_texto_dp">18dp</dimen>
     <dimen name="padding_recycleview">-4dp</dimen>
 
     <!-- Some font and margin sizes for dialogs -->
