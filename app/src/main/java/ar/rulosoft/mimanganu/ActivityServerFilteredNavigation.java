@@ -196,7 +196,6 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
             Intent intent = new Intent(this, ActivityServerMangaList.class);
             intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
             startActivity(intent);
-            finish();
         }
         return super.onOptionsItemSelected(item);
     }
