@@ -4,7 +4,9 @@
 
 *ENG - Manga reader online / offline, free and open source.
 
-Screeshots
+*FR - Lecteur de manga en ligne / hors ligne, gratuit et open source.
+
+Screenshots
 ----------
 ![Mis Mangas](/images/MisMangas.png)![separator](/images/separador.png)![Add Manga](/images/addM.png)
 ![separator](/images/separador.png)
