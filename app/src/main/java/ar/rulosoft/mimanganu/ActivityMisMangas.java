@@ -102,7 +102,8 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         int sortList[] = {
                 R.id.sort_last_read, R.id.sort_last_read_asc,
                 R.id.sort_name, R.id.sort_name_asc,
-                R.id.sort_author, R.id.sort_author_asc
+                R.id.sort_author, R.id.sort_author_asc,
+                R.id.sort_finished, R.id.sort_finished_asc
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
         this.menu = menu;
@@ -172,6 +173,18 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
             case R.id.sort_author_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 5).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_finished: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 6).apply();
+                fragmentMisMangas.setListManga();
+                break;
+            }
+            case R.id.sort_finished_asc: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 7).apply();
                 fragmentMisMangas.setListManga();
                 break;
             }

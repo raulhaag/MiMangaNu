@@ -168,6 +168,11 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             case 5:
                 sort_by = Database.COL_AUTHOR;
                 break;
+            case 7:
+            case 6:
+                sort_by = Database.COL_SEARCH;
+                sort_ord = !sort_ord;
+                break;
             case 0:
             case 1:
             default:

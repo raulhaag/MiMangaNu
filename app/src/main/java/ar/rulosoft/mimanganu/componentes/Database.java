@@ -36,6 +36,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_AUTHOR = "autor";
     public static final String COL_SCROLL_SENSITIVE = "scroll_s";
     public static final String COL_GENRE = "genres";
+    private static final String COL_READ_ORDER = "orden_lectura";// sentido de
     // Table for each chapter
     public static final String TABLE_CHAPTERS = "capitulos";
     public static final String COL_CAP_ID_MANGA = "manga_id";
@@ -46,7 +47,6 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_CAP_STATE = "estado";
     public static final String COL_CAP_DOWNLOADED = "descargado";
     public static final String COL_CAP_ID = "id";
-    private static final String COL_READ_ORDER = "orden_lectura";// sentido de
     // Database creation sql statement
     private static final String DATABASE_MANGA_CREATE = "create table " +
             TABLE_MANGA + "(" +
@@ -214,7 +214,7 @@ public class Database extends SQLiteOpenHelper {
                 new String[]{
                         COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
                         COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_SEARCH, COL_LAST_INDEX,
-                        COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE
+                        COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE,
                 },
                 condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
         return getMangasFromCursor(cursor);
