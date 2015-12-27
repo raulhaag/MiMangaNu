@@ -160,6 +160,13 @@ public class ActivityManga extends AppCompatActivity {
                             }
                         }
                         break;
+                    case R.id.mar_and_di:
+                        for (int i = selection.size() - 1; i >= 0; i--) {
+                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
+                            c.markRead(ActivityManga.this, true);
+                            c.freeSpace(ActivityManga.this, mManga, s);
+                        }
+                        break;
                     case R.id.borrar_imagenes:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
@@ -184,7 +191,7 @@ public class ActivityManga extends AppCompatActivity {
                             c.reset(ActivityManga.this, mManga, s);
                         }
                         break;
-                    case R.id.marcar_leido:
+                    case R.id.mark_as_read:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.markRead(ActivityManga.this, true);

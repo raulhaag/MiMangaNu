@@ -157,5 +157,6 @@
     <string name="update_threads_manual_summary">Cantidad de hilos: %s</string>
     <string name="download_remain_confirmation">¿Quieres descargar los capitulos aun no descargados?</string>
     <string name="download_unread_confirmation">¿Quieres descargar los capitulos aun no leidos?</string>
+    <string name="mar_and_di">Marcar como leido y borrar imagenes</string>
 
 </resources>

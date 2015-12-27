@@ -155,4 +155,5 @@
     <string name="update_threads_manual_summary">Nombre de mises à jour simultanées : %s</string>
     <string name="download_remain_confirmation">Voulez-vous télécharger les chapitres pas encore téléchargé?</string>
     <string name="download_unread_confirmation">Voulez-vous télécharger les chapitres non lus?</string>
+    <string name="mar_and_di"> Marquer comme lire et supprimer des images</string>
 </resources>
