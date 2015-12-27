@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -48,12 +49,16 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     protected ArrayList<Page> pages;
     protected ScaleGestureDetector mScaleDetector;
     protected GestureDetector mGestureDetector;
+    protected Rect screen;
     float mScaleFactor = 1.f;
     Matrix m = new Matrix();
     int screenHeight, screenWidth;
-    int screenHeightSS,screenWidthSS; // Sub scaled
+    int screenHeightSS, screenWidthSS; // Sub scaled
     Handler mHandler;
+    boolean drawing = false, waiting = false;
+
     float ppi;
+
     public Reader(Context context) {
         super(context);
         init(context);
@@ -89,8 +94,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public void freeMemory() {
         for (Page p : pages) {
-            if (p.partsLoaded > 0)
-                p.freeMemory();
+            p.freeMemory();
         }
     }
 
@@ -108,43 +112,37 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         screenWidthSS = screenWidth;
         screenHeightSS = screenHeight;
         if (pages != null) {
-            calculateParticularScale();
-            calculateVisibilities();
-            this.postInvalidateDelayed(100);
-        }
+                    calculateParticularScale();
+                    calculateVisibilities();
+                    Reader.this.postInvalidateDelayed(100);
+                    layoutReady = true;
+                }
+
         super.onLayout(changed, left, top, right, bottom);
-        layoutReady = true;
     }
 
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (viewReady) {
+        if(!drawing){
+            drawing = true;
+            if (viewReady) {
             lastBestVisible = -1;
             iniVisibility = false;
             endVisibility = false;
             lastPageBestPercent = 0f;
             if (pages != null) {
                 for (Page page : pages) {
-                    if (page.state != ImagesStates.ERROR) {
+                    if (!page.error) {
                         if (page.isVisible()) {
                             iniVisibility = true;
-                            if (page.state == ImagesStates.LOADED) {
-                                page.draw(canvas);
-                            } else {
-                                if (page.state == ImagesStates.NULL) {
-                                    page.loadBitmap();
-                                }
-                            }
+                            page.draw(canvas);
                             if (page.getVisiblePercent() >= lastPageBestPercent) {
                                 lastPageBestPercent = page.getVisiblePercent();
                                 lastBestVisible = pages.indexOf(page);
                             }
                         } else {
                             if (iniVisibility) endVisibility = true;
-                            if (page.state == ImagesStates.LOADED) {
-                                page.freeMemory();
-                            }
                         }
                         if (iniVisibility && endVisibility)
                             break;
@@ -159,6 +157,15 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 mViewReadyListener.onViewReady();
             viewReady = true;
         }
+            drawing = false;
+            if(waiting){
+                waiting = false;
+                postInvalidate();
+            }
+        }else{
+            waiting = true;
+        }
+
     }
 
 
@@ -170,7 +177,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         if (layoutReady) {
             calculateParticularScale();
             calculateVisibilities();
-            this.invalidate();
+            postInvalidate();
         }
     }
 
@@ -209,7 +216,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             }
             dimension.initValues();
         } else {
-            dimension.state = ImagesStates.ERROR;
+            dimension.error = true;
         }
         return dimension;
     }
@@ -389,8 +396,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     }
 
     /*
-         * Starting from 0
-         */
+     * Starting from 0
+     */
     public abstract float getPagePosition(int page);
 
 
@@ -420,8 +427,6 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     protected abstract class Page {
 
         String path;
-        Paint mPaint;
-        ImagesStates state = ImagesStates.NULL;
         float original_width;
         float original_height;
         float init_visibility;
@@ -430,107 +435,19 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         float scaled_height;
         float scaled_width;
         boolean initialized = false;
-        boolean slowLoad = false;
-        int alpha;
-        Bitmap[] image;
+        Segment[] segments;
         int pw, ph;
-        float[] dx, dy; //dx & dy displacement in x and y axis | pw & ph heights and widths from segments | ls & le lines start and lines end
-        int vp, hp, tp, partsLoaded; //vertical and horizontal parts count and total
-        boolean bigImage = false;
+        int vp, hp, tp; //vertical and horizontal parts count and total
+        boolean error = false;
+        boolean lastVisibleState = false;
 
         public abstract boolean isVisible();
 
-        public abstract boolean isNearToBeVisible();
+        public abstract Segment getNewSegment();
 
         public abstract float getVisiblePercent();
 
         public abstract void draw(Canvas canvas);
-
-        public void loadBitmap() {
-            if (!slowLoad) {
-                for (int i = 0; i < tp; i++) {
-                    loadBitmap(i);
-                }
-            } else {
-                slowLoad();
-            }
-
-        }
-
-        //sometimes region decoder don´t work
-        public void slowLoad() {
-            if (!animatingSeek)
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            BitmapFactory.Options options = new BitmapFactory.Options();
-                            options.inPreferredConfig = Bitmap.Config.RGB_565;
-                            tp = 1;
-                            bigImage = true;
-                            try {
-                                image[0] = BitmapFactory.decodeFile(path, options);
-                            } catch (OutOfMemoryError e) {
-                                //can do nothing to load :-( try to resample?
-                                e.printStackTrace();
-                            }
-                            if (image[0] != null) {
-                                partsLoaded++;
-                                alpha = 255;
-                                setLayerType(View.LAYER_TYPE_SOFTWARE, mPaint);
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        invalidate();
-                                    }
-                                });
-                            } else {
-                                state = ImagesStates.NULL;
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-        }
-
-        public void loadBitmap(final int pos) {
-            if (!animatingSeek && !slowLoad)
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            if (state == ImagesStates.NULL || partsLoaded < tp) {
-                                state = ImagesStates.LOADING;
-                                BitmapFactory.Options options = new BitmapFactory.Options();
-                                options.inPreferredConfig = Bitmap.Config.RGB_565;
-                                if (tp == 1) {
-                                    image[pos] = BitmapFactory.decodeFile(path, options);
-                                } else {
-                                    try {
-                                        int right = (int) (dx[pos] + pw + 2), bottom = (int) (dy[pos] + ph + 2);
-                                        if (right > original_width)
-                                            right = (int) original_width;
-                                        if (bottom > original_height)
-                                            bottom = (int) original_height;
-                                        image[pos] = BitmapDecoder.from(path).region((int) dx[pos], (int) dy[pos], right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
-                                    } catch (Exception e) {
-                                        slowLoad = true;
-                                    }
-                                }
-                                if (image[pos] != null) {
-                                    partsLoaded++;
-                                    showOnLoad();
-                                } else {
-                                    state = ImagesStates.NULL;
-                                }
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).start();
-        }
 
         public void initValues() {
             vp = (int) (original_height / mTextureMax) + 1;
@@ -538,44 +455,37 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             pw = (int) (original_width / hp);
             ph = (int) (original_height / vp);
             tp = vp * hp;
-            dy = new float[tp];
-            dx = new float[tp];
-            alpha = 0;
-            image = new Bitmap[tp];
+            segments = new Segment[tp];
             for (int i = 0; i < vp; i++) {
                 for (int j = 0; j < hp; j++) {
                     int idx = (i * hp) + j;
-                    dy[idx] = i * ph;
-                    dx[idx] = j * pw;
+                    segments[idx] = getNewSegment();
+                    segments[idx].dy = i * ph;
+                    segments[idx].dx = j * pw;
                 }
             }
-            mPaint = new Paint();
-            mPaint.setFilterBitmap(true);
             initialized = true;
         }
 
+
         public void freeMemory() {
-            partsLoaded = 0;
-            state = ImagesStates.RECYCLED;
-            image = null;
-            image = new Bitmap[tp];
-            state = ImagesStates.NULL;
+            for (Segment s : segments) {
+                s.freeMemory();
+            }
         }
 
-        public void showOnLoad() {
-            if (tp == partsLoaded)
+        public synchronized void showOnLoad(final Segment segment) {
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        state = ImagesStates.LOADED;
                         if (Page.this.isVisible()) {
                             ValueAnimator va = ValueAnimator.ofInt(0, 255);
                             va.setDuration(300);
                             va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                                 @Override
                                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                    alpha = (int) valueAnimator.getAnimatedValue();
-                                    invalidate();
+                                    segment.alpha = (int) valueAnimator.getAnimatedValue();
+                                    postInvalidate();
                                 }
                             });
                             va.addListener(new Animator.AnimatorListener() {
@@ -605,6 +515,86 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 });
         }
 
+        public abstract class Segment {
+            boolean visible = false;
+            Bitmap segment;
+            ImagesStates state;
+            int dx, dy;
+            Paint mPaint;
+            int alpha;
+
+            public Segment() {
+                mPaint = new Paint();
+                mPaint.setAlpha(0);
+                mPaint.setFilterBitmap(true);
+                alpha = 0;
+                state = ImagesStates.NULL;
+            }
+
+            public boolean isVisible() {
+                return visible;
+            }
+
+            public abstract boolean checkVisibility();
+
+            public void visibilityChanged() {
+                visible = !visible;
+                if (visible) {
+                    loadBitmap();
+                } else {
+                    freeMemory();
+                }
+            }
+
+
+            public void freeMemory() {
+                if (segment != null) {
+                    visible = false;
+                    state = ImagesStates.RECYCLED;
+                    segment.recycle();
+                    segment = null;
+                }
+                state = ImagesStates.NULL;
+            }
+
+            public void loadBitmap() {
+                if (!animatingSeek)
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                if (state == ImagesStates.NULL) {
+                                    state = ImagesStates.LOADING;
+                                    BitmapFactory.Options options = new BitmapFactory.Options();
+                                    options.inPreferredConfig = Bitmap.Config.RGB_565;
+                                    if (tp == 1) {
+                                        segment = BitmapFactory.decodeFile(path, options);
+                                    } else {
+                                        try {
+                                            int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
+                                            if (right > original_width)
+                                                right = (int) original_width;
+                                            if (bottom > original_height)
+                                                bottom = (int) original_height;
+                                            segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    if (segment != null) {
+                                        state = ImagesStates.LOADED;
+                                        showOnLoad(Segment.this);
+                                    } else {
+                                        state = ImagesStates.NULL;
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+            }
+        }
     }
 
     protected class ScaleListener extends
@@ -618,10 +608,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 screenHeightSS = screenHeight;
                 screenWidthSS = screenWidth;
                 relativeScroll(final_x, final_y);
-            }else if(nScale < 1){
-                screenHeightSS = (int)(nScale * screenHeight);
-                screenWidthSS = (int)(nScale * screenWidth);
-                relativeScroll(0,0);
+            } else if (nScale < 1) {
+                screenHeightSS = (int) (nScale * screenHeight);
+                screenWidthSS = (int) (nScale * screenWidth);
+                relativeScroll(0, 0);
             }
             mScaleFactor = nScale;
             invalidate();

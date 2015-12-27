@@ -26,7 +26,7 @@ public class VerticalReader extends Reader {
     @Override
     public void calculateParticularScale() {
         for (Page dimension : pages) {
-            if (dimension.state != ImagesStates.ERROR) {
+            if (!dimension.error) {
                 dimension.unification_scale = (screenWidth / dimension.original_width);
                 dimension.scaled_width = screenWidth;
                 dimension.scaled_height = dimension.original_height * dimension.unification_scale;
@@ -223,31 +223,47 @@ public class VerticalReader extends Reader {
     protected class VPage extends Page {
         @Override
         public boolean isVisible() {
-            float visibleRight = (yScroll * mScaleFactor + screenHeight);
-            return (yScroll * mScaleFactor <= init_visibility * mScaleFactor && init_visibility * mScaleFactor <= visibleRight) ||
-                    (yScroll * mScaleFactor <= end_visibility * mScaleFactor && end_visibility * mScaleFactor <= visibleRight) ||
-                    (init_visibility * mScaleFactor < yScroll * mScaleFactor && end_visibility * mScaleFactor >= visibleRight);
+            float visibleBottom = (yScroll * mScaleFactor + screenHeight);
+            final boolean visibility = (yScroll * mScaleFactor <= init_visibility * mScaleFactor && init_visibility * mScaleFactor <= visibleBottom) ||
+                    (yScroll * mScaleFactor <= end_visibility * mScaleFactor && end_visibility * mScaleFactor <= visibleBottom) ||
+                    (init_visibility * mScaleFactor < yScroll * mScaleFactor && end_visibility * mScaleFactor >= visibleBottom);
 
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    if(visibility != lastVisibleState){
+                        lastVisibleState = visibility;
+                        if(!visibility){
+                            freeMemory();
+                        }
+                    }
+                    if(visibility)
+                    for(Segment s: segments){
+                        s.checkVisibility();
+                    }
+                }
+            }).start();
+            return visibility;
         }
 
         @Override
-        public boolean isNearToBeVisible() { // TODO check if ok, to preload images before the visibility reach
-            float visibleBottomEx = yScroll + screenHeight + scaled_height / 2;
-            float YsT = yScroll + scaled_height / 2;
-            return (YsT <= init_visibility && init_visibility <= visibleBottomEx) || (YsT <= end_visibility && end_visibility <= visibleBottomEx);
+        public Segment getNewSegment() {
+            return new VSegment();
         }
 
         @Override
         public void draw(Canvas canvas) {
-            mPaint.setAlpha(alpha);
             for (int idx = 0; idx < tp; idx++) {
-                if (image[idx] != null) {
+                if (segments[idx].segment != null) {
+                    segments[idx].mPaint.setAlpha(segments[idx].alpha);
                     m.reset();
-                    m.postTranslate(dx[idx], dy[idx]);
+                    m.postTranslate(segments[idx].dx, segments[idx].dy);
                     m.postScale(unification_scale, unification_scale);
                     m.postTranslate(-xScroll, init_visibility - yScroll);
                     m.postScale(mScaleFactor, mScaleFactor);
-                    canvas.drawBitmap(image[idx], m, mPaint);
+                    try {
+                        canvas.drawBitmap(segments[idx].segment, m, segments[idx].mPaint);
+                    }catch (Exception e){};
                 }
             }
         }
@@ -266,6 +282,24 @@ public class VerticalReader extends Reader {
                 } else {
                     return (yScroll + screenHeight - init_visibility) / scaled_height;
                 }
+            }
+        }
+
+        public class VSegment extends Segment{
+            @Override
+            public boolean checkVisibility() {
+                float visibleTop = yScroll;
+                float visibleBottom = visibleTop + screenHeight;
+                float _init_visibility = (init_visibility + dy * unification_scale) ;
+                float _end_visibility = _init_visibility + ph * unification_scale;
+
+                boolean visibility = (visibleTop <= _init_visibility && _init_visibility <= visibleBottom) ||
+                        (visibleTop <= _end_visibility && _end_visibility  <= visibleBottom) ||
+                        (visibleTop > _init_visibility && _end_visibility  > visibleBottom);
+                if(visible != visibility){
+                    visibilityChanged();
+                }
+                return visibility;
             }
         }
     }
