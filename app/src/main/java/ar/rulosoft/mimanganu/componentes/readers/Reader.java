@@ -469,13 +469,15 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
 
         public void freeMemory() {
+            if(segments != null)
             for (Segment s : segments) {
                 s.freeMemory();
             }
         }
 
         public synchronized void showOnLoad(final Segment segment) {
-                mHandler.post(new Runnable() {
+            postInvalidate();
+               /* mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (Page.this.isVisible()) {
@@ -512,7 +514,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             va.start();
                         }
                     }
-                });
+                });/*/
         }
 
         public abstract class Segment {
@@ -525,9 +527,9 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
             public Segment() {
                 mPaint = new Paint();
-                mPaint.setAlpha(0);
+                mPaint.setAlpha(255);
                 mPaint.setFilterBitmap(true);
-                alpha = 0;
+                alpha = 255;
                 state = ImagesStates.NULL;
             }
 

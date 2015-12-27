@@ -154,6 +154,20 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         notifyDataSetChanged();
     }
 
+    public void selectTo(int idx) {
+        for (int i = idx; i < getCount(); i++) {
+            selected.put(i, true);
+        }
+        notifyDataSetChanged();
+    }
+
+    public void selectFrom(int idx) {
+        for (int i = 0; i < idx; i++) {
+            selected.put(i, true);
+        }
+        notifyDataSetChanged();
+    }
+
     public void removeSelection(int position) {
         selected.delete(position - 1);
         notifyDataSetChanged();

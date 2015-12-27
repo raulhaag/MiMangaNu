@@ -150,6 +150,12 @@ public class ActivityManga extends AppCompatActivity {
                     case R.id.seleccionar_nada:
                         mChapterAdapter.clearSelection();
                         return true;
+                    case R.id.select_from:
+                        mChapterAdapter.selectFrom(selection.keyAt(0));
+                        return true;
+                    case R.id.select_to:
+                        mChapterAdapter.selectTo(selection.keyAt(0));
+                        return true;
                     case R.id.download_selection:
                         Chapter[] chapters = mChapterAdapter.getSelectedChapters();
                         for (Chapter c : chapters) {

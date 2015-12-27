@@ -251,7 +251,7 @@ public class R2LReader extends Reader {
                             freeMemory();
                         }
                     }
-                    if(visibility)
+                    if(visibility && segments != null)
                         for(Segment s: segments){
                             s.checkVisibility();
                         }
