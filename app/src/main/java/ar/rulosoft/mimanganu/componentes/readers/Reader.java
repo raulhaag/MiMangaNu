@@ -124,7 +124,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     @Override
     public void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(!drawing){
+        if(!drawing && !animatingSeek){
             drawing = true;
             if (viewReady) {
             lastBestVisible = -1;
@@ -148,7 +148,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             break;
                     }
                 }
-                if (currentPage != lastBestVisible && !animatingSeek) {
+                if (currentPage != lastBestVisible) {
                     setPage(lastBestVisible);
                 }
             }
