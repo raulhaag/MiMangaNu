@@ -133,7 +133,7 @@ public class R2LReader extends Reader {
     @Override
     public void seekPage(int index) {
         absoluteScroll(getPagePosition(index), yScroll);
-        invalidate();
+        generateDrawPool();
     }
 
     @Override
@@ -148,7 +148,7 @@ public class R2LReader extends Reader {
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            invalidate();
+                            generateDrawPool();
                         }
                     });
                 }
@@ -156,7 +156,7 @@ public class R2LReader extends Reader {
             va.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
-                    if (Math.abs(aPage - currentPage) > 1)
+                    if (Math.abs(aPage - currentPage - 1) > 1)
                         animatingSeek = true;
                 }
 
@@ -164,7 +164,7 @@ public class R2LReader extends Reader {
                 public void onAnimationEnd(Animator animation) {
                     animatingSeek = false;
                     currentPage = aPage;
-                    invalidate();
+                    generateDrawPool();
                 }
 
                 @Override
@@ -266,7 +266,7 @@ public class R2LReader extends Reader {
         }
 
         @Override
-        public void draw(Canvas canvas) {
+        public synchronized void draw(Canvas canvas) {
             for (int idx = 0; idx < tp; idx++) {
                 if (segments[idx].segment != null) {
                     segments[idx].mPaint.setAlpha(segments[idx].alpha);
@@ -274,8 +274,9 @@ public class R2LReader extends Reader {
                     m.postTranslate(segments[idx].dx, segments[idx].dy);
                     m.postScale(unification_scale, unification_scale);
                     m.postTranslate(init_visibility - xScroll, -yScroll);
-                    m.postScale(mScaleFactor, mScaleFactor);
-                    canvas.drawBitmap(segments[idx].segment, m, segments[idx].mPaint);
+                    m.postScale(mScaleFactor, mScaleFactor);try {
+                        canvas.drawBitmap(segments[idx].segment, m, segments[idx].mPaint);
+                    }catch (Exception e){}
                 }
             }
         }
@@ -311,6 +312,21 @@ public class R2LReader extends Reader {
                     visibilityChanged();
                 }
                 return visibility;
+            }
+
+            @Override
+            public void draw(Canvas canvas) {
+                if(state == ImagesStates.LOADED) {
+                    mPaint.setAlpha(alpha);
+                    m.reset();
+                    m.postTranslate(dx, dy);
+                    m.postScale(unification_scale, unification_scale);
+                    m.postTranslate(init_visibility - xScroll, -yScroll);
+                    m.postScale(mScaleFactor, mScaleFactor);
+                    try {
+                        canvas.drawBitmap(segment, m, mPaint);
+                    } catch (Exception e) {}
+                }
             }
         }
     }

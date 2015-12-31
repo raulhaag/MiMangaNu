@@ -97,7 +97,7 @@
             android:key="download_threads"
             android:summary="@string/cantidad_descargas_subtitle"
             android:title="@string/cantidad_descargas_title"
-            app:val_max="5"
+            app:val_max="8"
             app:val_min="1" />
         <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="2"
@@ -105,7 +105,7 @@
             android:key="error_tolerancia"
             android:summary="@string/cantidad_errores_subtitle"
             android:title="@string/cantidad_errores_title"
-            app:val_max="9"
+            app:val_max="10"
             app:val_min="0" />
         <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="3"
@@ -113,7 +113,7 @@
             android:key="reintentos"
             android:summary="@string/cantidad_reintentos_subtitle"
             android:title="@string/cantidad_reintentos_title"
-            app:val_max="5"
+            app:val_max="10"
             app:val_min="0" />
     </PreferenceCategory>
 

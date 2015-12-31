@@ -55,7 +55,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     int screenHeight, screenWidth;
     int screenHeightSS, screenWidthSS; // Sub scaled
     Handler mHandler;
-    boolean drawing = false, waiting = false;
+    ArrayList<Page.Segment> toDraw = new ArrayList<>();
+    boolean drawing = false, preparing = false;
 
     float ppi;
 
@@ -112,60 +113,77 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         screenWidthSS = screenWidth;
         screenHeightSS = screenHeight;
         if (pages != null) {
-                    calculateParticularScale();
-                    calculateVisibilities();
-                    Reader.this.postInvalidateDelayed(100);
-                    layoutReady = true;
-                }
-
+            calculateParticularScale();
+            calculateVisibilities();
+            layoutReady = true;
+            generateDrawPool();
+        }
         super.onLayout(changed, left, top, right, bottom);
+    }
+
+    public void generateDrawPool() {
+        if (!preparing) {
+            preparing = true;
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    ArrayList<Page.Segment> _segments = new ArrayList<Page.Segment>();
+                    if (viewReady) {
+                        lastBestVisible = -1;
+                        iniVisibility = false;
+                        endVisibility = false;
+                        lastPageBestPercent = 0f;
+                        if (pages != null) {
+                            for (Page page : pages) {
+                                if (!page.error && !animatingSeek) {
+                                    if (page.isVisible()) {
+                                        iniVisibility = true;
+                                        _segments.addAll(page.getVisibleSegments());
+                                        if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                            lastPageBestPercent = page.getVisiblePercent();
+                                            lastBestVisible = pages.indexOf(page);
+                                        }
+                                    } else {
+                                        if (iniVisibility) endVisibility = true;
+                                    }
+                                    if (iniVisibility && endVisibility)
+                                        break;
+                                }
+                            }
+                            if (currentPage != lastBestVisible) {
+                                setPage(lastBestVisible);
+                            }
+                        }
+                    } else if (pagesLoaded) {
+                        if (mViewReadyListener != null)
+                            mViewReadyListener.onViewReady();
+                        viewReady = true;
+                        preparing = false;
+                        postInvalidate();
+
+                    }
+                    toDraw = _segments;
+                    drawing = true;
+                    postInvalidate();
+                }
+            }).start();
+        }
     }
 
     @Override
     public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        if(!drawing && !animatingSeek){
-            drawing = true;
-            if (viewReady) {
-            lastBestVisible = -1;
-            iniVisibility = false;
-            endVisibility = false;
-            lastPageBestPercent = 0f;
-            if (pages != null) {
-                for (Page page : pages) {
-                    if (!page.error) {
-                        if (page.isVisible()) {
-                            iniVisibility = true;
-                            page.draw(canvas);
-                            if (page.getVisiblePercent() >= lastPageBestPercent) {
-                                lastPageBestPercent = page.getVisiblePercent();
-                                lastBestVisible = pages.indexOf(page);
-                            }
-                        } else {
-                            if (iniVisibility) endVisibility = true;
-                        }
-                        if (iniVisibility && endVisibility)
-                            break;
-                    }
+        if (drawing) {
+            if (toDraw.size() > 0)
+                for (Page.Segment s : toDraw) {
+                    s.draw(canvas);
                 }
-                if (currentPage != lastBestVisible) {
-                    setPage(lastBestVisible);
-                }
-            }
-        } else if (pagesLoaded) {
-            if (mViewReadyListener != null)
-                mViewReadyListener.onViewReady();
-            viewReady = true;
-        }
             drawing = false;
-            if(waiting){
-                waiting = false;
-                postInvalidate();
+            preparing = false;
+        } else {
+            if (!preparing) {
+                generateDrawPool();
             }
-        }else{
-            waiting = true;
         }
-
     }
 
 
@@ -177,7 +195,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         if (layoutReady) {
             calculateParticularScale();
             calculateVisibilities();
-            postInvalidate();
+            generateDrawPool();
         }
     }
 
@@ -186,7 +204,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         calculateParticularScale(page);
         pages.set(idx, page);
         calculateVisibilities();
-        postInvalidate();
+        generateDrawPool();
     }
 
     public void reloadImage(int idx) {
@@ -194,7 +212,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         pages.set(idx, page);
         calculateParticularScale(pages.get(idx));
         calculateVisibilities();
-        postInvalidate();
+        generateDrawPool();
     }
 
     public Page initValues(String path) {
@@ -262,6 +280,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         mScaleDetector.onTouchEvent(ev);
         if (!mScaleDetector.isInProgress())
             mGestureDetector.onTouchEvent(ev);
+        generateDrawPool();
         return true;
     }
 
@@ -270,7 +289,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         distanceX = (distanceX * mScrollSensitive / mScaleFactor);
         distanceY = (distanceY * mScrollSensitive / mScaleFactor);
         relativeScroll(distanceX, distanceY);
-        invalidate();
+        generateDrawPool();
         return true;
     }
 
@@ -301,7 +320,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 if ((Math.abs(velocity_Y) > min_velocity || Math.abs(velocity_X) > min_velocity) && !stopAnimationsOnTouch) {
                     mHandler.postDelayed(this, timeLapse);
                 }
-                invalidate();
+                generateDrawPool();
             }
         });
         return false;
@@ -368,7 +387,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 nPy = initial_y_scroll + (final_y * aP);
                 mScaleFactor = nScale;
                 absoluteScroll(nPx, nPy);
-                invalidate();
+                generateDrawPool();
             }
         });
         va.start();
@@ -469,15 +488,25 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
 
         public void freeMemory() {
-            if(segments != null)
-            for (Segment s : segments) {
-                s.freeMemory();
-            }
+            if (segments != null)
+                for (Segment s : segments) {
+                    s.freeMemory();
+                }
+        }
+
+        public ArrayList<Segment> getVisibleSegments() {
+            ArrayList<Segment> _segments = new ArrayList<>();
+            if (segments != null)
+                for (Segment s : segments) {
+                    if (s.isVisible()) {
+                        _segments.add(s);
+                    }
+                }
+            return _segments;
         }
 
         public synchronized void showOnLoad(final Segment segment) {
-            postInvalidate();
-               /* mHandler.post(new Runnable() {
+                mHandler.post(new Runnable() {
                     @Override
                     public void run() {
                         if (Page.this.isVisible()) {
@@ -487,7 +516,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                 @Override
                                 public void onAnimationUpdate(ValueAnimator valueAnimator) {
                                     segment.alpha = (int) valueAnimator.getAnimatedValue();
-                                    postInvalidate();
+                                    generateDrawPool();
                                 }
                             });
                             va.addListener(new Animator.AnimatorListener() {
@@ -498,7 +527,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
                                 @Override
                                 public void onAnimationEnd(Animator animator) {
-                                    invalidate();
+                                    generateDrawPool();
                                 }
 
                                 @Override
@@ -514,7 +543,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             va.start();
                         }
                     }
-                });/*/
+                });
         }
 
         public abstract class Segment {
@@ -539,6 +568,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
             public abstract boolean checkVisibility();
 
+            public abstract void draw(Canvas canvas);
+
             public void visibilityChanged() {
                 visible = !visible;
                 if (visible) {
@@ -555,6 +586,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     state = ImagesStates.RECYCLED;
                     segment.recycle();
                     segment = null;
+                    alpha = 0;
                 }
                 state = ImagesStates.NULL;
             }
@@ -616,7 +648,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 relativeScroll(0, 0);
             }
             mScaleFactor = nScale;
-            invalidate();
+            generateDrawPool();
             return true;
         }
 
