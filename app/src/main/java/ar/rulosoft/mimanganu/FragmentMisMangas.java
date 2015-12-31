@@ -139,14 +139,14 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     @Override
     public void onResume() {
-        setListManga();
+        setListManga(false);
         // ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         int[] colors = ((ActivityMisMangas) getActivity()).colors;
         str.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
     }
 
-    public void setListManga() {
+    public void setListManga(boolean force) {
         ArrayList<Manga> mangaList = new ArrayList<>();
 
         /**
@@ -194,10 +194,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             default:
                 break;
         }
-        adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
-        //  adapter.setMangaClickListener(FragmentMisMangas.this);
-        //adapter.setOnCreateContextMenuListener(FragmentMisMangas.this);
-        grid.setAdapter(adapter);
+        if (adapter == null || mangaList.size() > adapter.getCount() || force) {
+            adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
+            grid.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -279,7 +279,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         protected void onPostExecute(Integer result) {
             try {
                 getActivity().setTitle(mTitle);
-                setListManga();
+                setListManga(true);
             } catch (Exception e) {
                 e.printStackTrace();
             }

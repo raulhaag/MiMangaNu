@@ -133,7 +133,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                                 FragmentMisMangas.MODE_HIDE_READ : FragmentMisMangas.MODE_SHOW_ALL
                 ).apply();
                 if (fragmentMisMangas != null)
-                    fragmentMisMangas.setListManga();
+                    fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.action_configurar: {
@@ -143,49 +143,49 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
             case R.id.sort_last_read: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 0).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_last_read_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 1).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_name: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 2).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_name_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 3).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_author: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 4).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_author_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 5).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_finished: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 6).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
             case R.id.sort_finished_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 7).apply();
-                fragmentMisMangas.setListManga();
+                fragmentMisMangas.setListManga(true);
                 break;
             }
         }

@@ -135,20 +135,19 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                         lastPageBestPercent = 0f;
                         if (pages != null) {
                             for (Page page : pages) {
-                                if (!page.error && !animatingSeek) {
-                                    if (page.isVisible()) {
-                                        iniVisibility = true;
+                                if (page.isVisible()) {
+                                    iniVisibility = true;
+                                    if (!page.error)
                                         _segments.addAll(page.getVisibleSegments());
-                                        if (page.getVisiblePercent() >= lastPageBestPercent) {
-                                            lastPageBestPercent = page.getVisiblePercent();
-                                            lastBestVisible = pages.indexOf(page);
-                                        }
-                                    } else {
-                                        if (iniVisibility) endVisibility = true;
+                                    if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                        lastPageBestPercent = page.getVisiblePercent();
+                                        lastBestVisible = pages.indexOf(page);
                                     }
-                                    if (iniVisibility && endVisibility)
-                                        break;
+                                } else {
+                                    if (iniVisibility) endVisibility = true;
                                 }
+                                if (iniVisibility && endVisibility)
+                                    break;
                             }
                             if (currentPage != lastBestVisible) {
                                 setPage(lastBestVisible);
@@ -167,7 +166,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     postInvalidate();
                 }
             }).start();
-        }else{
+        } else {
             waiting = true;
         }
     }
@@ -187,7 +186,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 }
             drawing = false;
             preparing = false;
-            if(waiting){
+            if (waiting) {
                 waiting = false;
                 generateDrawPool();
             }
@@ -518,44 +517,44 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         }
 
         public synchronized void showOnLoad(final Segment segment) {
-                mHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (Page.this.isVisible()) {
-                            ValueAnimator va = ValueAnimator.ofInt(0, 255);
-                            va.setDuration(300);
-                            va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                                @Override
-                                public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                                    segment.alpha = (int) valueAnimator.getAnimatedValue();
-                                    generateDrawPool();
-                                }
-                            });
-                            va.addListener(new Animator.AnimatorListener() {
-                                @Override
-                                public void onAnimationStart(Animator animator) {
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (Page.this.isVisible()) {
+                        ValueAnimator va = ValueAnimator.ofInt(0, 255);
+                        va.setDuration(300);
+                        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                            @Override
+                            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                                segment.alpha = (int) valueAnimator.getAnimatedValue();
+                                generateDrawPool();
+                            }
+                        });
+                        va.addListener(new Animator.AnimatorListener() {
+                            @Override
+                            public void onAnimationStart(Animator animator) {
 
-                                }
+                            }
 
-                                @Override
-                                public void onAnimationEnd(Animator animator) {
-                                    generateDrawPool();
-                                }
+                            @Override
+                            public void onAnimationEnd(Animator animator) {
+                                generateDrawPool();
+                            }
 
-                                @Override
-                                public void onAnimationCancel(Animator animator) {
+                            @Override
+                            public void onAnimationCancel(Animator animator) {
 
-                                }
+                            }
 
-                                @Override
-                                public void onAnimationRepeat(Animator animator) {
+                            @Override
+                            public void onAnimationRepeat(Animator animator) {
 
-                                }
-                            });
-                            va.start();
-                        }
+                            }
+                        });
+                        va.start();
                     }
-                });
+                }
+            });
         }
 
         public abstract class Segment {
@@ -583,11 +582,13 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             public abstract void draw(Canvas canvas);
 
             public void visibilityChanged() {
-                visible = !visible;
-                if (visible) {
-                    loadBitmap();
-                } else {
-                    freeMemory();
+                if (!animatingSeek) {
+                    visible = !visible;
+                    if (visible) {
+                        loadBitmap();
+                    } else {
+                        freeMemory();
+                    }
                 }
             }
 
