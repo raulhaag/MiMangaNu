@@ -156,4 +156,6 @@
     <string name="download_remain_confirmation">Noch nicht geladene Kapiteln downloaden?</string>
     <string name="download_unread_confirmation">Ungelesene Kapiteln herunterladen?</string>
     <string name="mar_and_di">Als gelesen markieren und löschen Bilder</string>
+    <string name="select_end">Wählen Sie bis zum Ende</string>
+    <string name="select_begin">Wählen Sie von Anfang an</string>
 </resources>

@@ -158,5 +158,7 @@
     <string name="download_remain_confirmation">¿Quieres descargar los capitulos aun no descargados?</string>
     <string name="download_unread_confirmation">¿Quieres descargar los capitulos aun no leidos?</string>
     <string name="mar_and_di">Marcar como leido y borrar imagenes</string>
+    <string name="select_end">Selecionar hasta el final</string>
+    <string name="select_begin">Seleccionar desde el inicio</string>
 
 </resources>

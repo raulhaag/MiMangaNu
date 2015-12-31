@@ -194,7 +194,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             default:
                 break;
         }
-        if (adapter == null || mangaList.size() > adapter.getCount() || force) {
+        if (adapter == null ||sort_val < 2|| mangaList.size() > adapter.getCount() || force) {
             adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
             grid.setAdapter(adapter);
         }

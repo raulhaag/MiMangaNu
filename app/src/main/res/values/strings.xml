@@ -160,4 +160,6 @@
     <string name="download_remain_confirmation">Do you want to download the chapters not yet downloaded?</string>
     <string name="download_unread_confirmation">Do you want to download the chapters unread?</string>
     <string name="mar_and_di">Mark as read and delete images</string>
+    <string name="select_begin">Select from the beginning</string>
+    <string name="select_end">Select until the end</string>
 </resources>

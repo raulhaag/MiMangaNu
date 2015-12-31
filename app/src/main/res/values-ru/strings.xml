@@ -156,4 +156,6 @@
     <string name="download_remain_confirmation">Вы хотите, чтобы загрузить главы еще не скачал?</string>
     <string name="download_unread_confirmation">Вы хотите, чтобы загрузить главы непрочитанных?</string>
     <string name="mar_and_di">Отметить как читать и удалять изображения</string>
+    <string name="select_end">Выберите до конца</string>
+    <string name="select_begin">Выберите с начала</string>
 </resources>
