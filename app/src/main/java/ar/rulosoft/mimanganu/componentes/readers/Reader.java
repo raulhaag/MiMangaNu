@@ -56,7 +56,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     int screenHeightSS, screenWidthSS; // Sub scaled
     Handler mHandler;
     ArrayList<Page.Segment> toDraw = new ArrayList<>();
-    boolean drawing = false, preparing = false;
+    boolean drawing = false, preparing = false, waiting = false;
 
     float ppi;
 
@@ -167,7 +167,15 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     postInvalidate();
                 }
             }).start();
+        }else{
+            waiting = true;
         }
+    }
+
+    @Override
+    public void invalidate() {
+        generateDrawPool();
+        super.invalidate();
     }
 
     @Override
@@ -179,6 +187,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 }
             drawing = false;
             preparing = false;
+            if(waiting){
+                waiting = false;
+                generateDrawPool();
+            }
         } else {
             if (!preparing) {
                 generateDrawPool();

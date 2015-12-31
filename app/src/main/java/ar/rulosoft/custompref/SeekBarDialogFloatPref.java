@@ -24,6 +24,7 @@ import android.preference.DialogPreference;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -37,6 +38,8 @@ public class SeekBarDialogFloatPref extends DialogPreference {
     private int mMax;
     private int mType;
 
+    private float dpiScale;
+
     private int mValue = 0;
 
     private String mSummary;
@@ -45,6 +48,8 @@ public class SeekBarDialogFloatPref extends DialogPreference {
         super(context, attrs);
 
         setDialogLayoutResource(R.layout.dialog_seekbar_pref);
+
+        dpiScale = getContext().getResources().getDisplayMetrics().density;
 
         TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
@@ -110,12 +115,21 @@ public class SeekBarDialogFloatPref extends DialogPreference {
     }
 
     @Override
-    protected void onBindDialogView(@NonNull View view) {
+    protected View onCreateDialogView() {
+        LinearLayout mLayout = new LinearLayout(getContext());
+        mLayout.setOrientation(LinearLayout.VERTICAL);
 
-        mMessageValue = (TextView) view.findViewById(R.id.dialogText);
-        mMessageValue.setText(setMessage(mSummary, mValue + mMin));
+        int padding = 15;
 
-        mSeekBar = (SeekBar) view.findViewById(R.id.dialogSeekBar);
+        mMessageValue = new TextView(getContext());
+        mMessageValue.setTextSize(9 * dpiScale);
+        mMessageValue.setText(String.format(mSummary, mValue));
+        mMessageValue.setPadding(
+                (int) (padding * dpiScale), (int) (padding * dpiScale),
+                (int) (padding * dpiScale), 0);
+        mLayout.addView(mMessageValue);
+
+        mSeekBar = new SeekBar(getContext());
         mSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -132,8 +146,12 @@ public class SeekBarDialogFloatPref extends DialogPreference {
         });
         mSeekBar.setMax(mMax - mMin);
         mSeekBar.setProgress(mValue - mMin);
+        mSeekBar.setPadding(
+                (int) (padding * dpiScale * 2), (int) (padding * dpiScale),
+                (int) (padding * dpiScale * 2), (int) (padding * dpiScale / 2));
+        mLayout.addView(mSeekBar);
 
-        super.onBindDialogView(view);
+        return mLayout;
     }
 
     @Override
