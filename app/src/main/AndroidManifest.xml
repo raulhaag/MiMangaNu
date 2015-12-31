@@ -43,7 +43,7 @@
             android:name=".ActivityServerFilteredNavigation"
             android:label="@string/title_activity_server_visual_navegacion" />
         <activity
-            android:name=".ActivityResultadoDeBusqueda"
+            android:name=".ActivitySearchResults"
             android:label="@string/title_activity_activity_resultado_de_busqueda" />
         <activity
             android:name=".ActivityLicenseView"

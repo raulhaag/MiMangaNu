@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.AdapterView;
@@ -23,7 +24,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityResultadoDeBusqueda extends AppCompatActivity {
+public class ActivitySearchResults extends AppCompatActivity {
     public static final String TERMINO = "termino_busqueda";
     private String termino = "";
     private int serverId;
@@ -53,16 +54,32 @@ public class ActivityResultadoDeBusqueda extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        new PerformSearchTask().execute();
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        if (mActBar != null) {
+            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            mActBar.setDisplayHomeAsUpEnabled(true);
+        }
+        new PerformSearchTask().execute();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(colors[0]);
             window.setStatusBarColor(colors[4]);
         }
     }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                onBackPressed();
+                return true;
+            }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {
         public String error = "";
@@ -90,14 +107,14 @@ public class ActivityResultadoDeBusqueda extends AppCompatActivity {
             if (error.length() < 2) {
                 if (result != null && !result.isEmpty() && lista != null) {
                     lista.setAdapter(new ArrayAdapter<>(
-                            ActivityResultadoDeBusqueda.this, android.R.layout.simple_list_item_1, result
+                            ActivitySearchResults.this, android.R.layout.simple_list_item_1, result
                     ));
                 } else if (result == null || result.isEmpty()) {
-                    Toast.makeText(ActivityResultadoDeBusqueda.this,
+                    Toast.makeText(ActivitySearchResults.this,
                             getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
                 }
             } else {
-                Toast.makeText(ActivityResultadoDeBusqueda.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(ActivitySearchResults.this, error, Toast.LENGTH_LONG).show();
             }
             super.onPostExecute(result);
         }

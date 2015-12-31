@@ -175,8 +175,8 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
             @Override
             public boolean onQueryTextSubmit(String st) {
                 Intent intent = new Intent(ActivityServerFilteredNavigation.this,
-                        ActivityResultadoDeBusqueda.class);
-                intent.putExtra(ActivityResultadoDeBusqueda.TERMINO, st);
+                        ActivitySearchResults.class);
+                intent.putExtra(ActivitySearchResults.TERMINO, st);
                 intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
                 startActivity(intent);
                 return true;
