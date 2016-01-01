@@ -56,9 +56,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     int screenHeightSS, screenWidthSS; // Sub scaled
     Handler mHandler;
     ArrayList<Page.Segment> toDraw = new ArrayList<>();
-    boolean drawing = false, preparing = false;
+    boolean drawing = false, preparing = false, waiting = false;
 
     float ppi;
+
 
     public Reader(Context context) {
         super(context);
@@ -177,6 +178,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     @Override
     public void onDraw(Canvas canvas) {
+        waiting = false;
         if (drawing) {
             if (toDraw.size() > 0)
                 for (Page.Segment s : toDraw) {
@@ -184,6 +186,15 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 }
             preparing = false;
             drawing = false;
+            if (waiting) {
+                waiting = false;
+                generateDrawPool();
+            }
+        } else {
+            if (preparing)
+                waiting = true;
+            else
+                generateDrawPool();
         }
     }
 
