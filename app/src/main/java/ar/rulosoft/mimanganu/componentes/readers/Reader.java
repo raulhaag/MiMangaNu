@@ -159,8 +159,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             mViewReadyListener.onViewReady();
                         viewReady = true;
                         preparing = false;
-                        postInvalidate();
-
+                        generateDrawPool();
                     }
                     toDraw = _segments;
                     drawing = true;
@@ -184,6 +183,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 for (Page.Segment s : toDraw) {
                     s.draw(canvas);
                 }
+            else
+                waiting = true;
             preparing = false;
             drawing = false;
             if (waiting) {
