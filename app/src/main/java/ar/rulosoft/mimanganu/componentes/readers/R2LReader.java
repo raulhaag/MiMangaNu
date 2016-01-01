@@ -317,8 +317,8 @@ public class R2LReader extends Reader {
             @Override
             public void draw(Canvas canvas) {
                 if(state == ImagesStates.LOADED) {
-                    mPaint.setAlpha(alpha);
                     m.reset();
+                    mPaint.setAlpha(alpha);
                     m.postTranslate(dx, dy);
                     m.postScale(unification_scale, unification_scale);
                     m.postTranslate(init_visibility - xScroll, -yScroll);

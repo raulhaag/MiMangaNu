@@ -56,7 +56,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     int screenHeightSS, screenWidthSS; // Sub scaled
     Handler mHandler;
     ArrayList<Page.Segment> toDraw = new ArrayList<>();
-    boolean drawing = false, preparing = false, waiting = false;
+    boolean drawing = false, preparing = false;
 
     float ppi;
 
@@ -166,8 +166,6 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     postInvalidate();
                 }
             }).start();
-        } else {
-            waiting = true;
         }
     }
 
@@ -184,16 +182,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 for (Page.Segment s : toDraw) {
                     s.draw(canvas);
                 }
-            drawing = false;
             preparing = false;
-            if (waiting) {
-                waiting = false;
-                generateDrawPool();
-            }
-        } else {
-            if (!preparing) {
-                generateDrawPool();
-            }
+            drawing = false;
         }
     }
 
@@ -254,10 +244,14 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         if (pageChangeListener != null)
             pageChangeListener.onPageChanged(page);
         currentPage = page;
+        generateDrawPool();
     }
 
     public boolean isLastPageVisible() {
-        return pages.get(pages.size() - 1).isVisible();
+        if (pages == null)
+            return false;
+        else
+            return pages.get(pages.size() - 1).isVisible();
     }
 
     public void setScrollSensitive(float mScrollSensitive) {
@@ -612,6 +606,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             try {
                                 if (state == ImagesStates.NULL) {
                                     state = ImagesStates.LOADING;
+                                    alpha = 0;
                                     BitmapFactory.Options options = new BitmapFactory.Options();
                                     options.inPreferredConfig = Bitmap.Config.RGB_565;
                                     if (tp == 1) {

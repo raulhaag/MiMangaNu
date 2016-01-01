@@ -367,7 +367,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
             Database.updateChapter(ActivityReader.this, mChapter);
         } else
             Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
-        DownloadPoolService.detachListener(mChapter.getId());
+            DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
 
