@@ -300,14 +300,13 @@ public class R2LReader extends Reader {
         public class HSegment extends Segment{
             @Override
             public boolean checkVisibility() {
-                float visibleLeft= xScroll;
+                float visibleLeft = xScroll * mScaleFactor;
                 float visibleRight = visibleLeft + screenWidth;
-                float _init_visibility = (init_visibility + dx * unification_scale) ;
+                float _init_visibility = init_visibility + dx * unification_scale;
                 float _end_visibility = _init_visibility + pw * unification_scale;
-
-                boolean visibility = (visibleLeft <= _init_visibility && _init_visibility <= visibleRight) ||
-                        (visibleLeft <= _end_visibility && _end_visibility  <= visibleRight) ||
-                        (visibleLeft > _init_visibility && _end_visibility  > visibleRight);
+                boolean visibility = (visibleLeft <= _init_visibility * mScaleFactor && _init_visibility * mScaleFactor <= visibleRight) ||
+                        (visibleLeft <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleRight) ||
+                        (_init_visibility * mScaleFactor < visibleLeft && _end_visibility * mScaleFactor >= visibleRight);
                 if(visible != visibility){
                     visibilityChanged();
                 }

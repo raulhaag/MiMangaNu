@@ -290,15 +290,14 @@ public class VerticalReader extends Reader {
         public class VSegment extends Segment {
             @Override
             public boolean checkVisibility() {
-                float visibleTop = yScroll;
+                float visibleTop = yScroll * mScaleFactor;
                 float visibleBottom = visibleTop + screenHeight;
-                float _init_visibility = (init_visibility + dy * unification_scale);
+                float _init_visibility = init_visibility + dy * unification_scale;
                 float _end_visibility = _init_visibility + ph * unification_scale;
-
-                boolean visibility = (visibleTop <= _init_visibility && _init_visibility <= visibleBottom) ||
-                        (visibleTop <= _end_visibility && _end_visibility <= visibleBottom) ||
-                        (visibleTop > _init_visibility && _end_visibility > visibleBottom);
-                if (visible != visibility) {
+                boolean visibility = (visibleTop <= _init_visibility * mScaleFactor && _init_visibility * mScaleFactor <= visibleBottom) ||
+                        (visibleTop <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleBottom) ||
+                        (_init_visibility * mScaleFactor < visibleTop && _end_visibility * mScaleFactor >= visibleBottom);
+                if(visible != visibility){
                     visibilityChanged();
                 }
                 return visibility;
