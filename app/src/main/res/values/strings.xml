@@ -151,7 +151,7 @@
     <string name="read_next">You want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes 1.42\n\t*Added MangaEdenIT, Manga-Tube and MyMangaIo \n\t*Added support to a new kind of server\n\t*Added ZoomOut to new readers \n\t*oOthers fix</string>
+    <string name="update_message">Changes 1.43\n\t*Improve reader.\n\t*Big amount of little fixes</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>

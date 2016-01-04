@@ -45,7 +45,7 @@ import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, Reader.OnTapListener, ChapterDownload.OnErrorListener, Reader.OnViewReadyListener, Reader.OnEndFlingListener {
+public class ActivityReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 
     // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -72,6 +72,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     private TextView mSeekerPage, mScrollSensitiveText;
     private MenuItem keepOnMenuItem, screenRotationMenuItem;
     private Button mButtonMinus, mButtonPlus;
+
     private boolean controlVisible = false;
 
     @Override
@@ -367,7 +368,7 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
             Database.updateChapter(ActivityReader.this, mChapter);
         } else
             Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
-            DownloadPoolService.detachListener(mChapter.getId());
+        DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
 
@@ -502,7 +503,6 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     @Override
     public void onViewReady() {
         mReader.seekPage(mChapter.getPagesRead() - 1);
-        mReader.generateDrawPool();
     }
 
     @Override

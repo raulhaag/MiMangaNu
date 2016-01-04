@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.componentes.readers;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -57,6 +58,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     Handler mHandler;
     ArrayList<Page.Segment> toDraw = new ArrayList<>();
     boolean drawing = false, preparing = false, waiting = false;
+    boolean downloading = false;
 
     float ppi;
 
@@ -138,8 +140,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             for (Page page : pages) {
                                 if (page.isVisible()) {
                                     iniVisibility = true;
-                                    if (!page.error)
-                                        _segments.addAll(page.getVisibleSegments());
+                                    //if (!page.error)
+                                    _segments.addAll(page.getVisibleSegments());
                                     if (page.getVisiblePercent() >= lastPageBestPercent) {
                                         lastPageBestPercent = page.getVisiblePercent();
                                         lastBestVisible = pages.indexOf(page);
@@ -163,7 +165,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                     }
                     toDraw = _segments;
                     drawing = true;
-                    postInvalidate();
+                    mHandler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            invalidate();
+                        }
+                    });
                 }
             }).start();
         }
@@ -247,7 +254,19 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             }
             dimension.initValues();
         } else {
-            dimension.error = true;
+            try {
+                dimension.error = true;
+                InputStream inputStream = getBitmapFromAsset("broke.png");
+                BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
+                bitmapOptions.inJustDecodeBounds = true;
+                BitmapFactory.decodeStream(inputStream, null, bitmapOptions);
+                dimension.original_width = bitmapOptions.outWidth;
+                dimension.original_height = bitmapOptions.outHeight;
+                inputStream.close();
+            } catch (IOException e) {
+                //Nothing to do
+            }
+            dimension.initValues();
         }
         return dimension;
     }
@@ -316,10 +335,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         stopAnimationOnHorizontalOver = false;
         stopAnimationOnVerticalOver = false;
         mHandler.post(new Runnable() {
-            final int fps = 60;
+            final int fps = 50;
             final float deceleration_rate = 0.90f;
             final int timeLapse = 1000 / fps;
-            final float min_velocity = 250;
+            final float min_velocity = 500;
             float velocity_Y = velocityY * mScrollSensitive;
             float velocity_X = velocityX * mScrollSensitive;
 
@@ -436,9 +455,19 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
      */
     public abstract float getPagePosition(int page);
 
+    private InputStream getBitmapFromAsset(String strName) {
+        AssetManager assetManager = getContext().getAssets();
+        InputStream istr = null;
+        try {
+            istr = assetManager.open(strName);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return istr;
+    }
+
 
     public enum ImagesStates {NULL, RECYCLED, ERROR, LOADING, LOADED}
-
 
     public interface OnPageChangeListener {
         void onPageChanged(int page);
@@ -621,19 +650,38 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                     alpha = 0;
                                     BitmapFactory.Options options = new BitmapFactory.Options();
                                     options.inPreferredConfig = Bitmap.Config.RGB_565;
-                                    if (tp == 1) {
-                                        segment = BitmapFactory.decodeFile(path, options);
-                                    } else {
-                                        try {
-                                            int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
-                                            if (right > original_width)
-                                                right = (int) original_width;
-                                            if (bottom > original_height)
-                                                bottom = (int) original_height;
-                                            segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
+                                    if (!error) {
+                                        if (tp == 1) {
+                                            segment = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();;
+                                        } else {
+                                            try {
+                                                int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
+                                                if (right > original_width)
+                                                    right = (int) original_width;
+                                                if (bottom > original_height)
+                                                    bottom = (int) original_height;
+                                                segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
                                         }
+                                    } else {
+                                        InputStream inputStream = getBitmapFromAsset("broke.png");
+                                        if (tp == 1) {
+                                            segment = BitmapFactory.decodeStream(inputStream,null,options);
+                                        } else {
+                                            try {
+                                                int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
+                                                if (right > original_width)
+                                                    right = (int) original_width;
+                                                if (bottom > original_height)
+                                                    bottom = (int) original_height;
+                                                segment = BitmapDecoder.from(inputStream).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }
+                                        inputStream.close();
                                     }
                                     if (segment != null) {
                                         state = ImagesStates.LOADED;

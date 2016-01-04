@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message"> Cambios 1.42\n\t* Agregado MangaEdenIT, Manga-Tube y MyMangaIo\n\t* Agregado soporte nuevo tipo de servidores (como los de mangaeden)\n\t* Agregado zoom out a los nuevos lectores\n\t* otros fixs</string>
+    <string name="update_message"> Cambios 1.43\n\t* Mejorado el lector \n\t*Muchos otros fixes y pedidos en gitHub</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>

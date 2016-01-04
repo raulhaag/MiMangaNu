@@ -6,9 +6,10 @@
     tools:context="ar.rulosoft.mimanganu.ActivityLector">
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true" />
 
@@ -16,8 +17,7 @@
         android:id="@+id/reader_placeholder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:overScrollMode="never" />
+        android:layout_alignParentTop="true" />
 
     <RelativeLayout
         android:id="@+id/controls"
