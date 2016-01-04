@@ -7,7 +7,6 @@ import android.preference.PreferenceManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
@@ -33,7 +32,7 @@ public class FileCache {
             int buffer_size = 1024;
             try {
                 byte[] bytes = new byte[buffer_size];
-                for (;;) {
+                for (; ; ) {
                     int count = is.read(bytes, 0, buffer_size);
                     if (count == -1)
                         break;
@@ -52,6 +51,30 @@ public class FileCache {
         //I identify images by hashcode. Not a perfect solution, good for the demo.
         String filename = String.valueOf(url.hashCode());
         return new File(cacheDir, filename);
+    }
+
+    /**
+     * Calculate size of folder recursively.
+     *
+     * @param folder your directory to check
+     * @return totalSize
+     */
+    public long dirSize(File folder) {
+        if (folder.exists()) {
+            long totalSize = 0;
+            File[] fileList = folder.listFiles();
+            for (File aFileList : fileList) {
+                if (aFileList.isDirectory()) {
+                    // It's a folder, then recursively dive into it
+                    totalSize += dirSize(aFileList);
+                } else {
+                    // Sum file size in byte
+                    totalSize += aFileList.length();
+                }
+            }
+            return totalSize;
+        }
+        return 0;
     }
 
     public void clear() {
