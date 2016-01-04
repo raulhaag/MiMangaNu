@@ -28,11 +28,11 @@ Downloads
 Changelog
 ---------
 
- Cambios 1.43
+Cambios 1.43
 * Mejorias en el nuevo lector
 * Muchos fixes pedidos en gitHub
 
- Cambios 1.42
+Cambios 1.42
 * Agregado MangaEdenIT, Manga-Tube y MyMangaIo
 * Agregado soporte nuevo tipo de servidores (como los de mangaeden)
 * Agregado zoom out a los nuevos lectores
