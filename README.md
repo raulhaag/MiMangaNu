@@ -28,7 +28,6 @@ Downloads
 Changelog
 ---------
 
-
  Cambios 1.43
 * Mejorias en el nuevo lector
 * Muchos fixes pedidos en gitHub
