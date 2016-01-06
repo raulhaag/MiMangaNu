@@ -198,7 +198,7 @@ public class ActivitySettings extends AppCompatActivity {
                 prefStoreStat.setSummary(
                         String.format("%.2f", (l[0] - l[1] - l[2]) / (1024.0 * 1024.0)) + " MB");
                 prefCacheStat.setSummary(
-                        String.format("%.2f", l[2] / (1024.0 * 1024.0)) + " MB");
+                        String.format("%.2f", l[1] / (1024.0 * 1024.0)) + " MB");
 
                 super.onPostExecute(l);
             }
