@@ -22,8 +22,6 @@ import com.fedorvlasov.lazylist.FileCache;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.LinkedList;
-import java.util.List;
 
 import ar.rulosoft.custompref.SeekBarDialogPref;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
