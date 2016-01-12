@@ -22,6 +22,8 @@ import com.fedorvlasov.lazylist.FileCache;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 
 import ar.rulosoft.custompref.SeekBarDialogPref;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
@@ -177,28 +179,27 @@ public class ActivitySettings extends AppCompatActivity {
             prefLicense.setIntent(new Intent(getActivity(), ActivityLicenseView.class));
         }
 
-        public class calcStorage extends AsyncTask<String, Void, Long[]> {
+        public class calcStorage extends AsyncTask<String, Void, Long> {
             @Override
-            protected Long[] doInBackground(String... strings) {
+            protected Long doInBackground(String... strings) {
                 mFileStorage = new FileCache(getActivity().getApplicationContext());
-                long store_total = mFileStorage.dirSize(new File(strings[0]));
-                long store_cache = mFileStorage.dirSize(new File(strings[0], "cache"));
-                long store_dbs = mFileStorage.dirSize(new File(strings[0], "dbs"));
 
-                return new Long[]{store_total, store_cache, store_dbs};
+                long store_total = 0;
+                File[] listStore = new File(strings[0]).listFiles();
+                for (final File oneFold : listStore) {
+                    if (oneFold.getName().equals("cache") || oneFold.getName().equals("dbs"))
+                        continue;
+                    store_total += mFileStorage.dirSize(oneFold);
+                }
+                return store_total;
             }
 
             @Override
-            protected void onPostExecute(Long[] l) {
+            protected void onPostExecute(Long l) {
                 Preference prefStoreStat =
                         getPreferenceManager().findPreference("stat_storage");
-                Preference prefCacheStat =
-                        getPreferenceManager().findPreference("stat_cache");
-
                 prefStoreStat.setSummary(
-                        String.format("%.2f", (l[0] - l[1] - l[2]) / (1024.0 * 1024.0)) + " MB");
-                prefCacheStat.setSummary(
-                        String.format("%.2f", l[1] / (1024.0 * 1024.0)) + " MB");
+                        String.format("%.2f", l / (1024.0 * 1024.0)) + " MB");
 
                 super.onPostExecute(l);
             }

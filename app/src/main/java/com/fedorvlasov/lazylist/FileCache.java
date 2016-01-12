@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FileCache {
     private File cacheDir;
@@ -22,8 +24,9 @@ public class FileCache {
             cacheDir = new File(dir, "cache");
         else
             cacheDir = context.getCacheDir();
-        if (!cacheDir.exists())
-            cacheDir.mkdirs();
+        if (!cacheDir.exists()) {
+            boolean created = cacheDir.mkdirs();
+        }
     }
 
     public static void writeFile(InputStream is, File f) {
@@ -54,35 +57,41 @@ public class FileCache {
     }
 
     /**
-     * Calculate size of folder recursively.
+     * Calculate size of folder.
      *
      * @param folder your directory to check
      * @return totalSize
      */
-    public long dirSize(File folder) {
-        if (folder.exists()) {
-            long totalSize = 0;
-            File[] fileList = folder.listFiles();
-            for (File aFileList : fileList) {
-                if (aFileList.isDirectory()) {
-                    // It's a folder, then recursively dive into it
-                    totalSize += dirSize(aFileList);
-                } else {
-                    // Sum file size in byte
-                    totalSize += aFileList.length();
-                }
+    public long dirSize(final File folder) {
+        if (folder == null || !folder.exists())
+            return 0;
+        if (!folder.isDirectory())
+            return folder.length();
+        final List<File> dirs = new LinkedList<>();
+        dirs.add(folder);
+        long result = 0;
+        while (!dirs.isEmpty()) {
+            final File dir = dirs.remove(0);
+            if (!dir.exists())
+                continue;
+            final File[] listFiles = dir.listFiles();
+            if (listFiles == null || listFiles.length == 0)
+                continue;
+            for (final File child : listFiles) {
+                result += child.length();
+                if (child.isDirectory())
+                    dirs.add(child);
             }
-            return totalSize;
         }
-        return 0;
+        return result;
     }
 
-    public void clear() {
+    public void clearCache() {
         File[] files = cacheDir.listFiles();
         if (files == null)
             return;
-        for (File f : files)
-            f.delete();
+        for (File f : files) {
+            boolean deleted = f.delete();
+        }
     }
-
 }

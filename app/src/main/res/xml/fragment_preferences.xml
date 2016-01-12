@@ -148,11 +148,7 @@
         <Preference
             android:key="stat_storage"
             android:summary="..."
-            android:title="Used storage" />
-        <Preference
-            android:key="stat_cache"
-            android:summary="..."
-            android:title="Used cache" />
+            android:title="Storage size used by mangas" />
         <Preference
             android:key="license_view"
             android:summary="@string/license_sub"
