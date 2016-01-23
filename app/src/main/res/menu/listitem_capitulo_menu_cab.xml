@@ -14,12 +14,12 @@
     <item
         android:id="@+id/select_from"
         android:icon="@drawable/ic_action_select_from"
-        android:title=""
+        android:title="@string/select_end"
         app:showAsAction="always" />
     <item
         android:id="@+id/select_to"
         android:icon="@drawable/ic_action_select_to"
-        android:title=""
+        android:title="@string/select_begin"
         app:showAsAction="always" />
     <item
         android:id="@+id/mark_as_read"

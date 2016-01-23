@@ -26,17 +26,9 @@ public class VerticalReader extends Reader {
     @Override
     public void calculateParticularScale() {
         for (Page dimension : pages) {
-            if (!dimension.error) {
                 dimension.unification_scale = (screenWidth / dimension.original_width);
                 dimension.scaled_width = screenWidth;
                 dimension.scaled_height = dimension.original_height * dimension.unification_scale;
-            } else {
-                dimension.original_width = screenWidth;
-                dimension.original_height = screenHeight;
-                dimension.unification_scale = 1;
-                dimension.scaled_width = screenWidth;
-                dimension.scaled_height = screenHeight;
-            }
         }
     }
 

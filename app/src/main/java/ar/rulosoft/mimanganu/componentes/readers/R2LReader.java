@@ -88,11 +88,10 @@ public class R2LReader extends Reader {
                 dimension.scaled_width = dimension.original_width * dimension.unification_scale;
                 dimension.scaled_height = screenHeight;
             } else {
-                dimension.original_width = screenWidth;
-                dimension.original_height = screenHeight;
-                dimension.unification_scale = 1;
+                dimension.unification_scale = (screenWidth / dimension.original_width);
                 dimension.scaled_width = screenWidth;
-                dimension.scaled_height = screenHeight;
+                dimension.scaled_height = screenHeight * dimension.unification_scale;
+
             }
         }
     }
