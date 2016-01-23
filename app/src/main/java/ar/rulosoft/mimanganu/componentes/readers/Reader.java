@@ -97,9 +97,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     public abstract void seekPage(int index);
 
     public void freeMemory() {
-        for (Page p : pages) {
-            p.freeMemory();
-        }
+        if (pages != null)
+            for (Page p : pages) {
+                p.freeMemory();
+            }
     }
 
     public void init(Context context) {
@@ -652,7 +653,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                     options.inPreferredConfig = Bitmap.Config.RGB_565;
                                     if (!error) {
                                         if (tp == 1) {
-                                            segment = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();;
+                                            segment = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                            ;
                                         } else {
                                             try {
                                                 int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
@@ -668,7 +670,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                     } else {
                                         InputStream inputStream = getBitmapFromAsset("broke.png");
                                         if (tp == 1) {
-                                            segment = BitmapFactory.decodeStream(inputStream,null,options);
+                                            segment = BitmapFactory.decodeStream(inputStream, null, options);
                                         } else {
                                             try {
                                                 int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
