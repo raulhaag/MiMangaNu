@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,9 +13,12 @@ import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.Window;
+
+import com.fedorvlasov.lazylist.FileCache;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,14 +34,14 @@ public class ActivitySettings extends AppCompatActivity {
     private boolean darkTheme;
 
     public void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        darkTheme = prefs.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new PreferencesFragment()).commit();
-        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
-        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        int[] colors = ThemeColors.getColors(prefs, getApplicationContext());
+        ActionBar mActBar = getSupportActionBar();
         if (mActBar != null) {
             mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
             mActBar.setDisplayHomeAsUpEnabled(true);
@@ -63,6 +67,8 @@ public class ActivitySettings extends AppCompatActivity {
     }
 
     public static class PreferencesFragment extends PreferenceFragment {
+        private SharedPreferences prefs;
+        private FileCache mFileStorage;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -70,21 +76,37 @@ public class ActivitySettings extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.fragment_preferences);
 
-            /** This enables to hide finished mangas, just a toggle */
+            /** Once, create necessary Data */
+            prefs = PreferenceManager
+                    .getDefaultSharedPreferences(getActivity().getApplicationContext());
+            final String current_filepath = prefs.getString("directorio",
+                    Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+
+            /** This enables to hide downloaded images from gallery, just a toggle */
             final SwitchPreference cBoxPref =
                     (SwitchPreference) getPreferenceManager().findPreference("mostrar_en_galeria");
             cBoxPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    boolean valor = (Boolean) newValue;
-                    File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
-                            "/MiMangaNu/", ".nomedia");
-                    if (valor) if (f.exists()) f.delete();
-                    else if (!f.exists()) try {
-                        f.createNewFile();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    boolean have_noMedia = (Boolean) newValue;
+
+                    if (android.os.Environment.getExternalStorageState()
+                            .equals(android.os.Environment.MEDIA_MOUNTED)) {
+                        File mimaFolder = new File(current_filepath, ".nomedia");
+
+                        if (have_noMedia) {
+                            try {
+                                mimaFolder.createNewFile();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            if (mimaFolder.exists()) {
+                                mimaFolder.delete();
+                            }
+                        }
                     }
+
                     return true;
                 }
             });
@@ -145,12 +167,40 @@ public class ActivitySettings extends AppCompatActivity {
             });
 
             /** This.. sets the Version Number, that's all */
-            Preference prefAbout =
-                    getPreferenceManager().findPreference("about_text");
+            final Preference prefAbout = getPreferenceManager().findPreference("about_text");
             prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 
-            Preference prefLicense = getPreferenceManager().findPreference("license_view");
+            /** This will check how much storage is taken by the mangas */
+            new calcStorage().execute(current_filepath);
+
+            final Preference prefLicense = getPreferenceManager().findPreference("license_view");
             prefLicense.setIntent(new Intent(getActivity(), ActivityLicenseView.class));
+        }
+
+        public class calcStorage extends AsyncTask<String, Void, Long> {
+            @Override
+            protected Long doInBackground(String... strings) {
+                mFileStorage = new FileCache(getActivity().getApplicationContext());
+
+                long store_total = 0;
+                File[] listStore = new File(strings[0]).listFiles();
+                for (final File oneFold : listStore) {
+                    if (oneFold.getName().equals("cache") || oneFold.getName().equals("dbs"))
+                        continue;
+                    store_total += mFileStorage.dirSize(oneFold);
+                }
+                return store_total;
+            }
+
+            @Override
+            protected void onPostExecute(Long l) {
+                Preference prefStoreStat =
+                        getPreferenceManager().findPreference("stat_storage");
+                prefStoreStat.setSummary(
+                        String.format("%.2f", l / (1024.0 * 1024.0)) + " MB");
+
+                super.onPostExecute(l);
+            }
         }
 
     }

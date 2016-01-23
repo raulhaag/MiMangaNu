@@ -7,9 +7,10 @@ import android.preference.PreferenceManager;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.LinkedList;
+import java.util.List;
 
 public class FileCache {
     private File cacheDir;
@@ -23,8 +24,9 @@ public class FileCache {
             cacheDir = new File(dir, "cache");
         else
             cacheDir = context.getCacheDir();
-        if (!cacheDir.exists())
-            cacheDir.mkdirs();
+        if (!cacheDir.exists()) {
+            boolean created = cacheDir.mkdirs();
+        }
     }
 
     public static void writeFile(InputStream is, File f) {
@@ -33,7 +35,7 @@ public class FileCache {
             int buffer_size = 1024;
             try {
                 byte[] bytes = new byte[buffer_size];
-                for (;;) {
+                for (; ; ) {
                     int count = is.read(bytes, 0, buffer_size);
                     if (count == -1)
                         break;
@@ -54,12 +56,42 @@ public class FileCache {
         return new File(cacheDir, filename);
     }
 
-    public void clear() {
+    /**
+     * Calculate size of folder.
+     *
+     * @param folder your directory to check
+     * @return totalSize
+     */
+    public long dirSize(final File folder) {
+        if (folder == null || !folder.exists())
+            return 0;
+        if (!folder.isDirectory())
+            return folder.length();
+        final List<File> dirs = new LinkedList<>();
+        dirs.add(folder);
+        long result = 0;
+        while (!dirs.isEmpty()) {
+            final File dir = dirs.remove(0);
+            if (!dir.exists())
+                continue;
+            final File[] listFiles = dir.listFiles();
+            if (listFiles == null || listFiles.length == 0)
+                continue;
+            for (final File child : listFiles) {
+                result += child.length();
+                if (child.isDirectory())
+                    dirs.add(child);
+            }
+        }
+        return result;
+    }
+
+    public void clearCache() {
         File[] files = cacheDir.listFiles();
         if (files == null)
             return;
-        for (File f : files)
-            f.delete();
+        for (File f : files) {
+            boolean deleted = f.delete();
+        }
     }
-
 }
