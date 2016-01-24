@@ -75,7 +75,10 @@ public class ActivityManga extends AppCompatActivity {
         mImageLoader = new ImageLoader(this);
         int[] colors = ThemeColors.getColors(pm, getApplicationContext());
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+        if (mActBar != null) {
+            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            mActBar.setDisplayHomeAsUpEnabled(true);
+        }
         mSwipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -287,6 +290,9 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.action_descargar_restantes: {
                 AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
                 dlgAlert.setMessage(getString(R.string.download_remain_confirmation));
