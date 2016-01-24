@@ -5,6 +5,7 @@
         <item>@string/encola</item>
         <item>@string/descargando</item>
         <item>@string/descargado</item>
+        <item>@string/paused</item>
         <item>@string/error</item>
     </string-array>
     <string-array name="ordenes_array">

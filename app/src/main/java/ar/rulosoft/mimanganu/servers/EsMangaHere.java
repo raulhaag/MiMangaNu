@@ -22,7 +22,7 @@ public class EsMangaHere extends ServerBase {
     private static final String PATRON_CAPS_VIS = "<img src=\"(.+?)\" alt=\"(.+?)\".+?<a href=\"(.+?)\"";
 
     private static final String PATRON_LAST = ">(\\d+)</option>[^<]+?</select>";
-    private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
+    private static final String PATRON_IMAGEN = "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp).*?)\"";
 
     private static String[] categorias = {
             "Todo", "Acción", "Aventura", "Comedia", "Doujinshi", "Drama", "Ecchi", "Fantasía",

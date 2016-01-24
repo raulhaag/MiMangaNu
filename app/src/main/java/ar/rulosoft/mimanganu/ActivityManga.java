@@ -224,13 +224,13 @@ public class ActivityManga extends AppCompatActivity {
 
         mManga = Database.getFullManga(getApplicationContext(), mMangaId);
         setTitle(mManga.getTitle());
-        cargarCapitulos(mManga.getChapters());
+        loadChapters(mManga.getChapters());
         Database.updateMangaRead(this, mManga.getId());
         Database.updateNewMangas(ActivityManga.this, mManga, -100);
-        cargarDatos(mManga);
+        loadInfo(mManga);
     }
 
-    public void cargarDatos(Manga manga) {
+    public void loadInfo(Manga manga) {
         if (mInfo != null && manga != null) {
             String infoExtra = "";
             if (manga.isFinished()) {
@@ -257,7 +257,7 @@ public class ActivityManga extends AppCompatActivity {
         }
     }
 
-    public void cargarCapitulos(ArrayList<Chapter> chapters) {
+    public void loadChapters(ArrayList<Chapter> chapters) {
         int fvi = 0;
         if (mChapterAdapter != null) fvi = mListView.getFirstVisiblePosition();
         mChapterAdapter = new ChapterAdapter(this, chapters);
@@ -317,13 +317,13 @@ public class ActivityManga extends AppCompatActivity {
             case R.id.action_marcar_todo_leido: {
                 Database.markAllChapters(ActivityManga.this, this.mMangaId, true);
                 mManga = Database.getFullManga(getApplicationContext(), this.mMangaId);
-                cargarCapitulos(mManga.getChapters());
+                loadChapters(mManga.getChapters());
                 break;
             }
             case R.id.action_marcar_todo_no_leido: {
                 Database.markAllChapters(ActivityManga.this, this.mMangaId, false);
                 mManga = Database.getFullManga(getApplicationContext(), this.mMangaId);
-                cargarCapitulos(mManga.getChapters());
+                loadChapters(mManga.getChapters());
                 break;
             }
             case R.id.action_sentido: {

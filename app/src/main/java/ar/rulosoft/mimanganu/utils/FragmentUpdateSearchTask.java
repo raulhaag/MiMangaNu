@@ -98,8 +98,8 @@ public class FragmentUpdateSearchTask extends Fragment {
         protected void onPostExecute(Integer result) {
             Manga manga = Database.getFullManga(activity, mangaId);
             if (activity != null) {
-                activity.cargarCapitulos(manga.getChapters());
-                activity.cargarDatos(manga);
+                activity.loadChapters(manga.getChapters());
+                activity.loadInfo(manga);
                 activity.mSwipeRefreshLayout.setRefreshing(false);
                 activity.setTitle(orgMsg);
                 if (result > 0) {

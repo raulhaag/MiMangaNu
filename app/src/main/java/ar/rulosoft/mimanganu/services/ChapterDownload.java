@@ -131,7 +131,7 @@ public class ChapterDownload implements StateChange {
     }
 
     public enum DownloadStatus {
-        QUEUED, DOWNLOADING, DOWNLOADED, ERROR
+        QUEUED, DOWNLOADING, DOWNLOADED, PAUSED, ERROR
     }
 
     public interface OnErrorListener {

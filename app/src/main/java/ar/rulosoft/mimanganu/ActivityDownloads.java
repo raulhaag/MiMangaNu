@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ListView;
@@ -20,7 +21,7 @@ public class ActivityDownloads extends AppCompatActivity {
     public boolean darkTheme;
     private ListView list;
     private ShowDownloadsTask sh;
-    private DownloadAdapter adap;
+    private DownloadAdapter downloadAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,10 +47,31 @@ public class ActivityDownloads extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home: {
+            case android.R.id.home:
                 onBackPressed();
                 return true;
-            }
+            case R.id.remove_downloaded:
+                sh.stop();
+                DownloadPoolService.removeDownloaded();
+                downloadAdapter = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
+                list.setAdapter(downloadAdapter);
+                sh = new ShowDownloadsTask();
+                sh.execute();
+                break;
+            case R.id.pause_downloads:
+                DownloadPoolService.pauseDownload();
+                break;
+            case R.id.retry_errors:
+                DownloadPoolService.retryError(ActivityDownloads.this);
+                break;
+            case R.id.resume_downloads:
+                DownloadPoolService.resumeDownloads(ActivityDownloads.this);
+                break;
+            case R.id.remove_all:
+                DownloadPoolService.removeAll();
+                downloadAdapter = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
+                list.setAdapter(downloadAdapter);
+                break;
             default:
                 break;
         }
@@ -59,8 +81,8 @@ public class ActivityDownloads extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        adap = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
-        list.setAdapter(adap);
+        downloadAdapter = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
+        list.setAdapter(downloadAdapter);
         sh = new ShowDownloadsTask();
         sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -71,6 +93,13 @@ public class ActivityDownloads extends AppCompatActivity {
         super.onPause();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_downloads, menu);
+        return true;
+    }
+
+
     private class ShowDownloadsTask extends AsyncTask<Void, Void, Void> {
         boolean _continue = true;
 
@@ -79,9 +108,10 @@ public class ActivityDownloads extends AppCompatActivity {
             try {
                 Thread.sleep(1000);//time to init big adapters =\_(-.-)_/=
             while (_continue) {
-
-                    adap.updateAll(DownloadPoolService.chapterDownloads);
+                if(downloadAdapter != null) {
+                    downloadAdapter.updateAll(DownloadPoolService.chapterDownloads);
                     publishProgress();
+                }
                     Thread.sleep(1000);
             }
             } catch (InterruptedException e) {
@@ -95,7 +125,7 @@ public class ActivityDownloads extends AppCompatActivity {
             ActivityDownloads.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    adap.notifyDataSetChanged();
+                    downloadAdapter.notifyDataSetChanged();
                 }
             });
             super.onProgressUpdate(values);
@@ -104,6 +134,5 @@ public class ActivityDownloads extends AppCompatActivity {
         public void stop() {
             _continue = false;
         }
-
     }
 }

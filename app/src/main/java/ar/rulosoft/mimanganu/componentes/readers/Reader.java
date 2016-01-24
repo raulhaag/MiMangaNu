@@ -692,7 +692,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                         state = ImagesStates.NULL;
                                     }
                                 }
-                            } catch (Exception e) {
+                            } catch (Exception|OutOfMemoryError e) {
                                 e.printStackTrace();
                             }
                         }

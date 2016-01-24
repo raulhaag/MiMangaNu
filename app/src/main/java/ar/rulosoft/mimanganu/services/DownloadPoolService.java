@@ -75,21 +75,25 @@ public class DownloadPoolService extends Service implements StateChange {
                 }
             }
             initValues(activity);
-            if (!intentPending && actual == null) {
-                intentPending = true;
-                activity.startService(new Intent(activity, DownloadPoolService.class));
-            }
         }
     }
 
     private static void initValues(Context context) {
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        int descargas = Integer.parseInt(pm.getString("download_threads", "2"));
-        int tolerancia = Integer.parseInt(pm.getString("error_tolerancia", "5"));
-        int reintentos = Integer.parseInt(pm.getString("reintentos", "4"));
-        ChapterDownload.MAX_ERRORS = tolerancia;
-        SingleDownload.RETRY = reintentos;
-        DownloadPoolService.SLOTS = descargas;
+        int download_threads = Integer.parseInt(pm.getString("download_threads", "2"));
+        int tolerance = Integer.parseInt(pm.getString("error_tolerancia", "5"));
+        int retry = Integer.parseInt(pm.getString("reintentos", "4"));
+        ChapterDownload.MAX_ERRORS = tolerance;
+        SingleDownload.RETRY = retry;
+        DownloadPoolService.SLOTS = download_threads;
+        startService(context);
+    }
+
+    public static void startService(Context context){
+        if (!intentPending && actual == null) {
+            intentPending = true;
+            context.startService(new Intent(context, DownloadPoolService.class));
+        }
     }
 
     private static boolean isNewDownload(int cid) {
@@ -103,7 +107,7 @@ public class DownloadPoolService extends Service implements StateChange {
         return result;
     }
 
-    public static boolean quitarDescarga(int cid, Context c) {
+    public static boolean removeDownload(int cid, Context c) {
         boolean result = true;
         for (ChapterDownload dc : chapterDownloads) {
             if (dc.chapter.getId() == cid) {
@@ -163,6 +167,60 @@ public class DownloadPoolService extends Service implements StateChange {
         downloadListener = nDownloadListener;
     }
 
+    public static void forceStop(int mangaId) {
+        for (ChapterDownload cd : chapterDownloads) {
+            if (cd.getChapter().getMangaID() == mangaId) {
+                cd.status = DownloadStatus.ERROR;
+            }
+        }
+    }
+
+    public static void pauseDownload() {
+        for (ChapterDownload cd : chapterDownloads) {
+            if (cd.status != DownloadStatus.ERROR && cd.status != DownloadStatus.DOWNLOADED) {
+                cd.status = DownloadStatus.PAUSED;
+            }
+        }
+    }
+
+    public static void retryError(Context context) {
+        for (ChapterDownload cd : chapterDownloads) {
+            if (cd.status == DownloadStatus.ERROR) {
+                cd.status = DownloadStatus.QUEUED;
+            }
+        }
+        startService(context);
+    }
+
+    public static void resumeDownloads(Context context){
+        for (ChapterDownload cd : chapterDownloads) {
+            if (cd.status == DownloadStatus.PAUSED) {
+                cd.status = DownloadStatus.QUEUED;
+            }
+        }
+        startService(context);
+    }
+
+    public static void removeDownloaded() {
+        ArrayList<ChapterDownload> toRemove = new ArrayList<>();
+        for (ChapterDownload dc : chapterDownloads) {
+            if (dc.status == DownloadStatus.DOWNLOADED) {
+                toRemove.add(dc);
+            }
+        }
+        chapterDownloads.removeAll(toRemove);
+    }
+
+    public static void removeAll() {
+        ArrayList<ChapterDownload> toRemove = new ArrayList<>();
+        for (ChapterDownload dc : chapterDownloads) {
+            if (dc.status != DownloadStatus.DOWNLOADING) {
+                toRemove.add(dc);
+            }
+        }
+        chapterDownloads.removeAll(toRemove);
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
@@ -207,18 +265,16 @@ public class DownloadPoolService extends Service implements StateChange {
                 slots--;
                 ChapterDownload dc = null;
                 int sig = 1;
-                for (ChapterDownload d : chapterDownloads) {
+                int idx = 0;
+                while (idx < chapterDownloads.size()) {
+                    ChapterDownload d = chapterDownloads.get(idx);
+                    idx++;
                     if (d.chapter.getPages() == 0) {
-                        ServerBase server = null;
-                        if (d.status != DownloadStatus.ERROR)
-                        try {
-                            Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
-                            server = ServerBase.getServer(m.getServerId());
-                        } catch (Exception e) {
-                            d.status = DownloadStatus.ERROR;
-                        }
-                        if (d.status != DownloadStatus.ERROR)
+                        if (d.status != DownloadStatus.ERROR && d.status != DownloadStatus.PAUSED)
                             try {
+                                ServerBase server = null;
+                                Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
+                                server = ServerBase.getServer(m.getServerId());
                                 server.chapterInit(d.chapter);
                                 d.reset();
                             } catch (Exception e) {
@@ -226,7 +282,7 @@ public class DownloadPoolService extends Service implements StateChange {
                             }
                         Database.updateChapter(getApplicationContext(), d.chapter);
                     }
-                    if (d.status != DownloadStatus.ERROR) {
+                    if (d.status != DownloadStatus.ERROR && d.status != DownloadStatus.PAUSED) {
                         sig = d.getNext();
                         if (sig > -1) {
                             dc = d;
@@ -281,13 +337,4 @@ public class DownloadPoolService extends Service implements StateChange {
         actual = null;
         stopSelf();
     }
-
-    public static void forceStop(int mangaId){
-        for (ChapterDownload cd:chapterDownloads){
-            if(cd.getChapter().getMangaID() == mangaId){
-                cd.status = DownloadStatus.ERROR;
-            }
-        }
-    }
-
 }

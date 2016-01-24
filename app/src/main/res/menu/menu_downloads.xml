@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="ar.rulosoft.mimanganu.ActivityLector">
+
+    <item
+        android:icon="@drawable/ic_action_pause"
+        app:showAsAction="always"
+        android:id="@+id/pause_downloads"
+        android:title="@string/pause_all_downloads" />
+    <item
+        android:icon="@drawable/ic_action_play_arrow"
+        app:showAsAction="always"
+        android:id="@+id/resume_downloads"
+        android:title="@string/resume_downloads" />
+
+    <item
+        android:icon="@drawable/ic_action_sync"
+        app:showAsAction="always"
+        android:id="@+id/retry_errors"
+        android:title="@string/retry_errors" />
+
+    <item
+        android:id="@+id/remove_downloaded"
+        android:title="@string/remove_downloaded" />
+
+    <item
+        android:id="@+id/remove_all"
+        android:title="@string/remove_all"/>
+
+</menu>

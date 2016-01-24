@@ -70,7 +70,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
             holder.buttonImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (DownloadPoolService.quitarDescarga(item.chapter.getId(), getContext())) {
+                    if (DownloadPoolService.removeDownload(item.chapter.getId(), getContext())) {
                         remove(item);
                         mActivity.runOnUiThread(new Runnable() {
                             @Override

@@ -37,17 +37,18 @@
     <string name="configuraciones">Settings</string>
     <string name="datosde">Details</string>
     <string name="demaciados_errores">Too many errors (Download suspended) \n This may be caused: \n *  Error connecting \n *  Error on the server side \n *  A bad upload, etc. \nTry later</string>
-    <string name="descargado">(Downloaded)</string>
-    <string name="descargando">(Downloading)</string>
     <string name="descarga_no_leidos">Download unread</string>
     <string name="descargarestantes">Download remaining</string>
     <string name="descargas">Downloads</string>
     <string name="direcctorio_subtitle">For downloads (You need to move the content to the new directory manually, restart the app and sometimes the device)</string>
     <string name="directorio_title">Select directory</string>
     <string name="download_image_again">Download image again</string>
-    <string name="encola">(Queued)</string>
     <string name="en_progreso">Ongoing.</string>
+    <string name="encola">(Queued)</string>
+    <string name="descargado">(Downloaded)</string>
+    <string name="descargando">(Downloading)</string>
     <string name="error">(Error)</string>
+    <string name="paused">(Paused)</string>
     <string name="esconder_de_galeria_subtitle">Hide downloaded images from gallery</string>
     <string name="escondergaleria">Hide from gallery</string>
     <string name="esconder">Hide from gallery</string>
@@ -162,4 +163,9 @@
     <string name="mar_and_di">Mark as read and delete images</string>
     <string name="select_begin">Select from the beginning</string>
     <string name="select_end">Select until the end</string>
+    <string name="remove_downloaded">Remove downloaded</string>
+    <string name="remove_all">Remove all</string>
+    <string name="retry_errors">Retry errors</string>
+    <string name="pause_all_downloads">Pause Downloads</string>
+    <string name="resume_downloads">Resume Downloads</string>
 </resources>
