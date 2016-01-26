@@ -195,7 +195,7 @@ public class VerticalReader extends Reader {
     public float getPagePosition(int page) {
         if (pages != null && pages.size() > 1) {
             if (page < 0) {
-                return pages.get(0).end_visibility;
+                return pages.get(0).init_visibility;
             } else if (page < pages.size()) {
                 if (pages.get(page).scaled_height * mScaleFactor > screenHeight) {
                     return pages.get(page).init_visibility;
@@ -241,25 +241,6 @@ public class VerticalReader extends Reader {
         @Override
         public Segment getNewSegment() {
             return new VSegment();
-        }
-
-        @Override
-        public void draw(Canvas canvas) {
-            for (int idx = 0; idx < tp; idx++) {
-                if (segments[idx].segment != null) {
-                    segments[idx].mPaint.setAlpha(segments[idx].alpha);
-                    m.reset();
-                    m.postTranslate(segments[idx].dx, segments[idx].dy);
-                    m.postScale(unification_scale, unification_scale);
-                    m.postTranslate(-xScroll, init_visibility - yScroll);
-                    m.postScale(mScaleFactor, mScaleFactor);
-                    try {
-                        canvas.drawBitmap(segments[idx].segment, m, segments[idx].mPaint);
-                    } catch (Exception e) {
-                    }
-                    ;
-                }
-            }
         }
 
         @Override

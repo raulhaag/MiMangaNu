@@ -138,20 +138,62 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                         endVisibility = false;
                         lastPageBestPercent = 0f;
                         if (pages != null) {
-                            for (Page page : pages) {
+                            int currentPageIdx = currentPage - 1;
+                            for (int i = currentPageIdx - 1; i >= 0; i--) {//pre
+                                Page page = pages.get(i);
                                 if (page.isVisible()) {
                                     iniVisibility = true;
-                                    //if (!page.error)
                                     _segments.addAll(page.getVisibleSegments());
                                     if (page.getVisiblePercent() >= lastPageBestPercent) {
                                         lastPageBestPercent = page.getVisiblePercent();
                                         lastBestVisible = pages.indexOf(page);
                                     }
                                 } else {
-                                    if (iniVisibility) endVisibility = true;
-                                }
-                                if (iniVisibility && endVisibility)
                                     break;
+                                }
+                            }
+                            {//actual
+                                if (currentPageIdx >= 0 && currentPageIdx < pages.size()) {
+                                    Page page = pages.get(currentPageIdx);
+                                    if (page.isVisible()) {
+                                        iniVisibility = true;
+                                        _segments.addAll(page.getVisibleSegments());
+                                        if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                            lastPageBestPercent = page.getVisiblePercent();
+                                            lastBestVisible = pages.indexOf(page);
+                                        }
+                                    }
+                                }
+                            }
+                            for (int i = currentPageIdx + 1; i < pages.size(); i++) {//next
+                                Page page = pages.get(i);
+                                if (page.isVisible()) {
+                                    iniVisibility = true;
+                                    _segments.addAll(page.getVisibleSegments());
+                                    if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                        lastPageBestPercent = page.getVisiblePercent();
+                                        lastBestVisible = pages.indexOf(page);
+                                    }
+                                } else {
+                                    break;
+                                }
+                            }
+
+                            if (_segments.size() == 0) {//if none in range find...
+                                for (Page page : pages) {
+                                    if (page.isVisible()) {
+                                        iniVisibility = true;
+                                        _segments.addAll(page.getVisibleSegments());
+                                        if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                            lastPageBestPercent = page.getVisiblePercent();
+                                            lastBestVisible = pages.indexOf(page);
+                                        }
+                                    } else {
+                                        if (iniVisibility) endVisibility = true;
+                                    }
+                                    if (iniVisibility && endVisibility)
+                                        break;
+                                }
                             }
                             if (currentPage != lastBestVisible) {
                                 setPage(lastBestVisible);
@@ -513,8 +555,6 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
         public abstract float getVisiblePercent();
 
-        public abstract void draw(Canvas canvas);
-
         public void initValues() {
             vp = (int) (original_height / mTextureMax) + 1;
             hp = (int) (original_width / mTextureMax) + 1;
@@ -552,11 +592,11 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             return _segments;
         }
 
-        public synchronized void showOnLoad(final Segment segment) {
-            mHandler.post(new Runnable() {
-                @Override
-                public void run() {
-                    if (Page.this.isVisible()) {
+        public void showOnLoad(final Segment segment) {
+            if (segment.isVisible()) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
                         ValueAnimator va = ValueAnimator.ofInt(0, 255);
                         va.setDuration(300);
                         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -574,12 +614,14 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
                             @Override
                             public void onAnimationEnd(Animator animator) {
+                                segment.alpha = 255;
                                 generateDrawPool();
                             }
 
                             @Override
                             public void onAnimationCancel(Animator animator) {
-
+                                segment.alpha = 255;
+                                generateDrawPool();
                             }
 
                             @Override
@@ -588,9 +630,13 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                             }
                         });
                         va.start();
+
                     }
-                }
-            });
+                });
+            } else {
+                segment.alpha = 255;
+                generateDrawPool();
+            }
         }
 
         public abstract class Segment {
@@ -692,7 +738,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                         state = ImagesStates.NULL;
                                     }
                                 }
-                            } catch (Exception|OutOfMemoryError e) {
+                            } catch (Exception | OutOfMemoryError e) {
                                 e.printStackTrace();
                             }
                         }

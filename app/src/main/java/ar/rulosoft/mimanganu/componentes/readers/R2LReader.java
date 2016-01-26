@@ -5,6 +5,7 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 
 /**
@@ -218,7 +219,7 @@ public class R2LReader extends Reader {
     public float getPagePosition(int page) {
         if (pages != null && pages.size() > 1) {
             if (page < 0) {
-                return pages.get(0).end_visibility;
+                return pages.get(0).init_visibility;
             } else if (page < pages.size()) {
                 if (pages.get(page).scaled_width * mScaleFactor > screenWidth) {
                     return pages.get(page).init_visibility;
@@ -262,22 +263,6 @@ public class R2LReader extends Reader {
         @Override
         public Segment getNewSegment() {
             return new HSegment();
-        }
-
-        @Override
-        public synchronized void draw(Canvas canvas) {
-            for (int idx = 0; idx < tp; idx++) {
-                if (segments[idx].segment != null) {
-                    segments[idx].mPaint.setAlpha(segments[idx].alpha);
-                    m.reset();
-                    m.postTranslate(segments[idx].dx, segments[idx].dy);
-                    m.postScale(unification_scale, unification_scale);
-                    m.postTranslate(init_visibility - xScroll, -yScroll);
-                    m.postScale(mScaleFactor, mScaleFactor);try {
-                        canvas.drawBitmap(segments[idx].segment, m, segments[idx].mPaint);
-                    }catch (Exception e){}
-                }
-            }
         }
 
         @Override
