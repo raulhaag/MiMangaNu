@@ -203,6 +203,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
 
     @Override
     protected void onResume() {
+        fragmentMisMangas.setActivity(ActivityMisMangas.this);
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
             // re start to apply new theme
             Intent i = getPackageManager()

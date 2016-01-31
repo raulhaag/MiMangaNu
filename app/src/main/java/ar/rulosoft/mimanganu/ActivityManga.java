@@ -479,7 +479,7 @@ public class ActivityManga extends AppCompatActivity {
                 if (pm.getBoolean("test_reader", false)) {
                     intent = new Intent(ActivityManga.this, ActivityReader.class);
                 } else {
-                    intent = new Intent(ActivityManga.this, ActivityLector.class);
+                    intent = new Intent(ActivityManga.this, ActivityPagedReader.class);
                 }
                 intent.putExtra(ActivityManga.CHAPTER_ID, result.getId());
                 ActivityManga.this.startActivity(intent);

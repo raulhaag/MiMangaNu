@@ -5,6 +5,8 @@ import android.animation.Animator.AnimatorListener;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -12,17 +14,16 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -60,17 +61,16 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
 
-public class ActivityLector extends AppCompatActivity
+public class ActivityPagedReader extends AppCompatActivity
         implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
-    // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String ADJUST_KEY = "ajustar_a";
     private static final String MAX_TEXTURE = "max_texture";
     private static int mTextureMax;
     private static DisplayType mScreenFit;
-
+    boolean firedMessage = false;
     private Direction mDirection;
     private InitialPosition iniPosition = InitialPosition.LEFT_UP;
     // These are values, which should be fetched from preference
@@ -79,14 +79,14 @@ public class ActivityLector extends AppCompatActivity
     private int mOrientation; // 0 = free | 1 = landscape | 2 = portrait
     private float mScrollFactor = 1f;
     // These are layout components
-    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private PageAdapter mPageAdapter;
     private UnScrolledViewPager mViewPager;
     private UnScrolledViewPagerVertical mViewPagerV;
     private RelativeLayout mControlsLayout, mScrollSelect;
     private LinearLayout mSeekerLayout;
     private SeekBar mSeekBar;
     private Toolbar mActionBar;
-    private Chapter mChapter;
+    private Chapter mChapter, nextChapter = null;
     private Manga mManga;
     private ServerBase mServerBase;
     private TextView mSeekerPage, mScrollSensitiveText;
@@ -123,17 +123,16 @@ public class ActivityLector extends AppCompatActivity
 
         OnPageChangeListener pageChangeListener = new OnPageChangeListener() {
             int anterior = -1;
+            boolean lastPageChange = false;
 
             @Override
             public void onPageSelected(int arg0) {
-
+                mPageAdapter.setCurrentPage(arg0);
                 iniPosition = (anterior < arg0) ? InitialPosition.LEFT_UP : InitialPosition.LEFT_BOTTOM;
                 anterior = arg0;
-
                 switch (mDirection) {
                     case L2R: {
-                        mChapter.setPagesRead(mChapter.getPages() - arg0 + ((arg0 > 0) ? 1 : 0));
-                        mSeekBar.setProgress(mChapter.getPages() - arg0);
+                        mSeekBar.setProgress(mChapter.getPages() - arg0 - 1);
                         if (arg0 <= 1) {
                             mChapter.setReadStatus(Chapter.READ);
                         } else if (mChapter.getReadStatus() == Chapter.READ) {
@@ -143,7 +142,6 @@ public class ActivityLector extends AppCompatActivity
                     }
                     case R2L:
                     case VERTICAL: {
-                        mChapter.setPagesRead(arg0 + ((arg0 < mChapter.getPages()) ? 1 : 0));
                         mSeekBar.setProgress(arg0);
                         if (arg0 >= mChapter.getPages() - 1) {
                             mChapter.setReadStatus(Chapter.READ);
@@ -153,15 +151,32 @@ public class ActivityLector extends AppCompatActivity
                         break;
                     }
                 }
-                Database.updateChapter(ActivityLector.this, mChapter);
+                mChapter.setPagesRead(mPageAdapter.currentPage + 1);
+                Database.updateChapter(ActivityPagedReader.this, mChapter);
             }
 
             @Override
-            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                if (mPageAdapter != null) {
+                    int lastIdx = mPageAdapter.getCount() - 1;
+                    if (mDirection == Direction.L2R) {
+                        position = lastIdx - position;
+                    }
+                    if (lastPageChange && position == lastIdx && !firedMessage) {
+                        firedMessage = true;
+                        onEndDrag();
+                    }
+                }
             }
 
             @Override
-            public void onPageScrollStateChanged(int arg0) {
+            public void onPageScrollStateChanged(int state) {
+                int lastIdx = mPageAdapter.getCount() - 1;
+                int curItem = mPageAdapter.currentPage;
+                if (curItem == lastIdx && state == 1)
+                    lastPageChange = true;
+                else
+                    lastPageChange = false;
             }
         };
 
@@ -181,7 +196,6 @@ public class ActivityLector extends AppCompatActivity
         mLastPageFrag = new LastPageFragment();
 
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
-        mActionBar.setTitle(mChapter.getTitle());
         mActionBar.setTitleTextColor(Color.WHITE);
 
         mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
@@ -194,7 +208,6 @@ public class ActivityLector extends AppCompatActivity
 
         mSeekBar = (SeekBar) findViewById(R.id.seeker);
         mSeekBar.setOnSeekBarChangeListener(this);
-        mSeekBar.setMax(mChapter.getPages());
         if (mDirection == Direction.L2R) mSeekBar.setRotation(180);
 
         mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
@@ -219,7 +232,7 @@ public class ActivityLector extends AppCompatActivity
         }
 
         mChapter.setReadStatus(Chapter.READING);
-        Database.updateChapter(ActivityLector.this, mChapter);
+        Database.updateChapter(ActivityPagedReader.this, mChapter);
         setSupportActionBar(mActionBar);
         hideSystemUI();
 
@@ -238,19 +251,63 @@ public class ActivityLector extends AppCompatActivity
         mScrollSensitiveText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(ActivityLector.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
+                Toast.makeText(ActivityPagedReader.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
+        loadChapter(mChapter);
+    }
 
+    public void loadChapter(Chapter nChapter) {
+        mChapter = nChapter;
+        setTitle(mChapter.getTitle());
+        if (nChapter.getPages() == 0) {
+            new GetPageTask().execute(nChapter);
+        } else {
+            DownloadPoolService.setDownloadListener(this);
+            mSeekBar.setProgress(0);
+            mChapter.setReadStatus(Chapter.READING);
+            Database.updateChapter(ActivityPagedReader.this, mChapter);
+            mPageAdapter = new PageAdapter();
+            if (mDirection == Direction.VERTICAL)
+                mViewPagerV.setAdapter(mPageAdapter);
+            else mViewPager.setAdapter(mPageAdapter);
+            mActionBar.setTitle(mChapter.getTitle());
+            mSeekBar.setMax(mChapter.getPages() - 1);
+            if (mChapter.getPagesRead() >= 1) {
+                if (mDirection == Direction.R2L)
+                    mViewPager.setCurrentItem(mChapter.getPagesRead() - 1);
+                else if (mDirection == Direction.VERTICAL)
+                    mViewPagerV.setCurrentItem(mChapter.getPagesRead() - 1);
+                else mViewPager.setCurrentItem(
+                            mChapter.getPages() - mChapter.getPagesRead());
+            } else {
+                if (mDirection == Direction.L2R)
+                    mViewPager.setCurrentItem(mChapter.getPages() + 1);
+            }
+            DownloadPoolService.attachListener(this, mChapter.getId());
+
+            boolean next = false;
+            for (int i = 0; i < mManga.getChapters().size(); i++) {
+                if (mManga.getChapters().get(i).getId() == mChapter.getId()) {
+                    if (i > 0) {
+                        next = true;
+                        nextChapter = mManga.getChapters().get(i - 1);
+                        break;
+                    }
+                }
+            }
+            if (!next)
+                nextChapter = null;
+        }
     }
 
     private void modScrollSensitive(float diff) {
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
-            Database.updateMangaScrollSensitive(ActivityLector.this, mManga.getId(), mScrollFactor);
+            Database.updateMangaScrollSensitive(ActivityPagedReader.this, mManga.getId(), mScrollFactor);
             mScrollSensitiveText.setText("" + mScrollFactor);
-            mSectionsPagerAdapter.setPageScroll(mScrollFactor);
+            mPageAdapter.setPageScroll(mScrollFactor);//TODO PageScroll
         }
     }
 
@@ -297,30 +354,8 @@ public class ActivityLector extends AppCompatActivity
         }
     }
 
-    @Override
-    protected void onResume() {
-        mSectionsPagerAdapter =
-                new SectionsPagerAdapter(getSupportFragmentManager());
-        if (mDirection == Direction.VERTICAL)
-            mViewPagerV.setAdapter(mSectionsPagerAdapter);
-        else mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        if (mChapter.getPagesRead() > 1) {
-            if (mDirection == Direction.R2L)
-                mViewPager.setCurrentItem(mChapter.getPagesRead() - 1);
-            else if (mDirection == Direction.VERTICAL)
-                mViewPagerV.setCurrentItem(mChapter.getPagesRead() - 1);
-            else mViewPager.setCurrentItem(
-                        mChapter.getPages() - mChapter.getPagesRead() + 1);
-        } else {
-            if (mDirection == Direction.L2R)
-                mViewPager.setCurrentItem(mChapter.getPages() + 1);
-        }
-        DownloadPoolService.attachListener(this, mChapter.getId());
-        super.onResume();
-    }
-
-    public void setAdapter(SectionsPagerAdapter adapter) {
+    public void setAdapter(PagerAdapter adapter) {
         if (mDirection == Direction.VERTICAL)
             mViewPagerV.setAdapter(adapter);
         else mViewPager.setAdapter(adapter);
@@ -340,12 +375,13 @@ public class ActivityLector extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Database.updateChapterPage(ActivityLector.this, mChapter.getId(), mChapter.getPagesRead());
+        Database.updateChapterPage(ActivityPagedReader.this, mChapter.getId(), mChapter.getPagesRead());
     }
 
     @Override
     protected void onPause() {
-        Database.updateChapterPage(ActivityLector.this, mChapter.getId(), mChapter.getPagesRead());
+        mChapter.setPagesRead(mPageAdapter.currentPage + 1);
+        Database.updateChapterPage(ActivityPagedReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
@@ -361,10 +397,10 @@ public class ActivityLector extends AppCompatActivity
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mOrientation == 1) {
-            ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            ActivityPagedReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
         } else if (mOrientation == 2) {
-            ActivityLector.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            ActivityPagedReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
         }
         updateIcon(mScreenFit, false);
@@ -379,7 +415,7 @@ public class ActivityLector extends AppCompatActivity
                 SharedPreferences.Editor editor = pm.edit();
                 editor.putString(ADJUST_KEY, mScreenFit.toString());
                 editor.apply();
-                mSectionsPagerAdapter.actualizarDisplayTipe();
+                mPageAdapter.updateDisplayType();
                 updateIcon(mScreenFit, true);
                 return true;
             }
@@ -434,12 +470,8 @@ public class ActivityLector extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Fragment fragment =
-                        mSectionsPagerAdapter.getIfOnMemory(page);
-                if (fragment != null &&
-                        !((PageFragment) fragment).imageLoaded) {
-                    ((PageFragment) fragment).setImage();
-                }
+                if (mChapter.getId() == cid)
+                    mPageAdapter.pageDownloaded(page);
             }
         });
     }
@@ -457,6 +489,46 @@ public class ActivityLector extends AppCompatActivity
         mSeekerPage.setVisibility(SeekBar.VISIBLE);
     }
 
+    public void onEndDrag() {
+        if (nextChapter != null) {
+            new AlertDialog.Builder(ActivityPagedReader.this)
+                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                    .setMessage(R.string.read_next)
+                    .setIcon(R.drawable.ic_launcher)
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            firedMessage = false;
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            mChapter.setReadStatus(Chapter.READ);
+                            mChapter.setPagesRead(mChapter.getPages());
+                            Database.updateChapter(ActivityPagedReader.this, mChapter);
+                            loadChapter(nextChapter);
+                            firedMessage = false;
+                        }
+                    })
+                    .show();
+        } else {
+            new AlertDialog.Builder(ActivityPagedReader.this)
+                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                    .setMessage(R.string.last_chapter)
+                    .setIcon(R.drawable.ic_launcher)
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            firedMessage = false;
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
+        }
+    }
+
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         // This is happening, if you lift your finger off the bar
@@ -465,7 +537,7 @@ public class ActivityLector extends AppCompatActivity
             if (mDirection == Direction.R2L || mDirection == Direction.VERTICAL)
                 setCurrentItem(seekBar.getProgress());
             else {
-                setCurrentItem(mChapter.getPages() - seekBar.getProgress());
+                setCurrentItem(mChapter.getPages() - seekBar.getProgress() - 1);
             }
         } catch (Exception e) {
             // sometimes gets a null, just in case, don't stop the app
@@ -542,16 +614,16 @@ public class ActivityLector extends AppCompatActivity
     @Override
     public void onRightTap() {
         int act = getCurrentItem();
-        if (act < mSectionsPagerAdapter.getCount()) setCurrentItem(++act);
+        if (act < mPageAdapter.getCount()) setCurrentItem(++act);
     }
 
     @Override
     public void onError(final Chapter chapter) {
-        ActivityLector.this.runOnUiThread(new Runnable() {
+        ActivityPagedReader.this.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    new AlertDialog.Builder(ActivityLector.this)
+                    new AlertDialog.Builder(ActivityPagedReader.this)
                             .setTitle(chapter.getTitle() + " " + getString(R.string.error))
                             .setMessage(getString(R.string.demaciados_errores))
                             .setIcon(R.drawable.ic_launcher)
@@ -564,165 +636,10 @@ public class ActivityLector extends AppCompatActivity
         });
     }
 
-    public static class PageFragment extends Fragment {
-
-        private static final String RUTA = "ruta";
-        public ImageViewTouch visor;
-        public ActivityLector activity;
-        ProgressBar cargando;
-        TapListener mTapListener;
-        Runnable r = null;
-        boolean imageLoaded = false;
-        private String ruta = null;
-        private int index;
-
-        public PageFragment() {
-        }
-
-        public static PageFragment newInstance(String ruta, ActivityLector activity, int index) {
-            PageFragment fragment = new PageFragment();
-            Bundle args = new Bundle();
-            args.putString(RUTA, ruta);
-            fragment.activity = activity;
-            fragment.setArguments(args);
-            fragment.setRetainInstance(false);
-            fragment.index = index;
-            return fragment;
-        }
-
-        public void setTapListener(TapListener nTapListener) {
-            mTapListener = nTapListener;
-        }
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_activity_lector_pagina, container, false);
-            visor = (ImageViewTouch) rootView.findViewById(R.id.visor);
-
-            if (r != null) new Thread(r).start();
-            else visor.setDisplayType(mScreenFit);
-            visor.setTapListener(mTapListener);
-            visor.setScaleEnabled(false);
-
-            cargando = (ProgressBar) rootView.findViewById(R.id.cargando);
-            cargando.bringToFront();
-            if (getArguments() != null)
-                ruta = getArguments().getString(RUTA);
-            visor.setScrollFactor(activity.mScrollFactor);
-            return rootView;
-        }
-
-        public void setDisplayType(final DisplayType displayType) {
-            if (visor != null) {
-                visor.setDisplayType(displayType);
-            } else {
-                r = new Runnable() {
-                    @Override
-                    public void run() {
-                        visor.setDisplayType(displayType);
-                        r = null;
-                    }
-                };
-            }
-        }
-
-        @Override
-        public void onResume() {
-            try {
-                visor = (ImageViewTouch) getView().findViewById(R.id.visor);
-            } catch (NullPointerException n) {
-                // ignore null pointer exception
-            }
-            if (visor == null) cargando.setVisibility(ProgressBar.VISIBLE);
-            else if (ruta != null) setImage();
-            super.onResume();
-        }
-
-        @Override
-        public void onPause() {
-            try {
-                ((BitmapDrawable) visor.getDrawable()).getBitmap().recycle();
-            } catch (Exception e) {
-                // Do nothing?
-            }
-            visor.setImageBitmap(null);
-            imageLoaded = false;
-            super.onPause();
-        }
-
-        public boolean canScroll(int dx) {
-            return visor == null || visor.canScroll(dx);
-        }
-
-        public boolean canScrollV(int dx) {
-            return visor == null || visor.canScrollV(dx);
-        }
-
-        public void setImage() {
-            if (!imageLoaded && visor != null)
-                new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-
-        public void setImage(String ruta) {
-            this.ruta = ruta;
-            setImage();
-        }
-
-        public class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
-
-            @Override
-            protected void onPreExecute() {
-                if (cargando != null)
-                    cargando.setVisibility(ProgressBar.VISIBLE);
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap;
-                BitmapFactory.Options opts = new BitmapFactory.Options();
-                opts.inPreferredConfig = Config.RGB_565;
-                bitmap = BitmapFactory.decodeFile(ruta, opts);
-                return bitmap;
-            }
-
-            @Override
-            protected void onPostExecute(Bitmap result) {
-                if (result != null && visor != null) {
-                    imageLoaded = true;
-                    visor.setScaleEnabled(true);
-                    if (activity.mDirection == Direction.VERTICAL)
-                        visor.setInitialPosition(activity.iniPosition);
-                    else visor.setInitialPosition(InitialPosition.LEFT_UP);
-                    if ((result.getHeight() > mTextureMax ||
-                            result.getWidth() > mTextureMax) &&
-                            Build.VERSION.SDK_INT >= 11) {
-                        visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
-                    }
-                    visor.setAlpha(0f);
-                    visor.setImageBitmap(result);
-                    if (activity != null && index == activity.getCurrentItem()) {
-                        ObjectAnimator.ofFloat(visor, "alpha", 1f).setDuration(500).start();
-                    } else {
-                        visor.setAlpha(1f);
-                    }
-
-                    cargando.setVisibility(ProgressBar.INVISIBLE);
-                } else if (ruta != null) {
-                    File f = new File(ruta);
-                    if (f.exists()) {
-                        f.delete();
-                    }
-                }
-                super.onPostExecute(result);
-            }
-        }
-    }
-
     public static class LastPageFragment extends Fragment { //need to be static
         Button btnNext, btnPrev;
         Chapter chNext = null, chPrev = null;
-        ActivityLector l;
+        ActivityPagedReader l;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -734,7 +651,7 @@ public class ActivityLector extends AppCompatActivity
 
         @Override
         public void onActivityCreated(Bundle savedInstanceState) {
-            l = (ActivityLector) getActivity();
+            l = (ActivityPagedReader) getActivity();
             int cid = l.mChapter.getId();
             ArrayList<Chapter> caps = l.mManga.getChapters();
             for (int i = 0; i < caps.size(); i++) {
@@ -814,7 +731,7 @@ public class ActivityLector extends AppCompatActivity
                     Database.updateChapter(getActivity(), result);
                     DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                     Intent intent =
-                            new Intent(getActivity(), ActivityLector.class);
+                            new Intent(getActivity(), ActivityPagedReader.class);
                     intent.putExtra(ActivityManga.CHAPTER_ID, result.getId());
                     getActivity().startActivity(intent);
                     Database.updateChapter(l, l.mChapter);
@@ -825,110 +742,249 @@ public class ActivityLector extends AppCompatActivity
         }
     }
 
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public class Page extends RelativeLayout {
+        public ImageViewTouch visor;
+        public ActivityPagedReader activity = ActivityPagedReader.this;
+        ProgressBar loading;
+        Runnable r = null;
+        boolean imageLoaded = false;
+        int index = 0;
+        private String path = null;
 
-        ArrayList<PageFragment> fragments = new ArrayList<>(6);
-        int[] pos = {-1, -1, -1, -1, -1, -1};
-        int idx = 0;
-        FragmentManager fm = null;
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-            this.fm = fm;
-            int i = pos.length;
-            while (--i >= 0) fragments.add(new PageFragment());
+        public Page(Context context) {
+            super(context);
+            init();
         }
 
-        private int getNextPos() {
-            int np = idx % pos.length;
-            idx++;
-            return np;
+        public Page(Context context, AttributeSet attrs) {
+            super(context, attrs);
+            init();
         }
 
-        @Override
-        public Fragment getItem(int position) {
-            Fragment rsta;
-            if (mDirection == Direction.R2L || mDirection == Direction.VERTICAL)
-                if (position == mChapter.getPages())
-                    rsta = mLastPageFrag;
-                else {
-                    rsta = getFragmentIn(position);
-                }
-            else {
-                if (position == 0) rsta = mLastPageFrag;
-                else {
-                    int pos = (mChapter.getPages() - position);
-                    rsta = getFragmentIn(pos);
-                }
-            }
-            return rsta;
+        public Page(Context context, AttributeSet attrs, int defStyleAttr) {
+            super(context, attrs, defStyleAttr);
+            init();
         }
 
-        public Fragment getFragmentIn(int position) {
-            PageFragment f = null;
-            for (int i = 0; i < pos.length; i++) {
-                if (pos[i] == position) {
-                    f = fragments.get(i);
-                    break;
+        public void init() {
+            String infService = Context.LAYOUT_INFLATER_SERVICE;
+            LayoutInflater li =
+                    (LayoutInflater) getContext().getSystemService(infService);
+            li.inflate(R.layout.fragment_activity_lector_pagina, this, true);
+            visor = (ImageViewTouch) findViewById(R.id.visor);
+            visor.setDisplayType(mScreenFit);
+            visor.setTapListener(ActivityPagedReader.this);
+            visor.setScaleEnabled(false);
+            loading = (ProgressBar) findViewById(R.id.cargando);
+            loading.bringToFront();
+            visor.setScrollFactor(activity.mScrollFactor);
+        }
+
+        public void unloadImage() {
+            visor.setImageBitmap(null);
+            imageLoaded = false;
+        }
+
+        public void setImage() {
+            if (!imageLoaded && visor != null)
+                new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+
+        public void setImage(String ruta) {
+            this.path = ruta;
+            setImage();
+        }
+
+        public boolean canScroll(int dx) {
+            return visor == null || visor.canScroll(dx);
+        }
+
+        public boolean canScrollV(int dx) {
+            return visor == null || visor.canScrollV(dx);
+        }
+
+        public class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
+
+            @Override
+            protected void onPreExecute() {
+                if (loading != null)
+                    loading.setVisibility(ProgressBar.VISIBLE);
+                super.onPreExecute();
+            }
+
+            @Override
+            protected Bitmap doInBackground(Void... params) {
+                Bitmap bitmap;
+                BitmapFactory.Options opts = new BitmapFactory.Options();
+                opts.inPreferredConfig = Config.RGB_565;
+                bitmap = BitmapFactory.decodeFile(path, opts);
+                return bitmap;
+            }
+
+            @Override
+            protected void onPostExecute(Bitmap result) {
+                if (result != null && visor != null) {
+                    imageLoaded = true;
+                    visor.setScaleEnabled(true);
+                    if (activity.mDirection == Direction.VERTICAL)
+                        visor.setInitialPosition(activity.iniPosition);
+                    else visor.setInitialPosition(InitialPosition.LEFT_UP);
+                    if ((result.getHeight() > mTextureMax ||
+                            result.getWidth() > mTextureMax) &&
+                            Build.VERSION.SDK_INT >= 11) {
+                        visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+                    }
+                    visor.setAlpha(0f);
+                    visor.setImageBitmap(result);
+                    if (activity != null && index == activity.getCurrentItem()) {
+                        ObjectAnimator.ofFloat(visor, "alpha", 1f).setDuration(500).start();
+                    } else {
+                        visor.setAlpha(1f);
+                    }
+
+                    loading.setVisibility(ProgressBar.INVISIBLE);
+                } else if (path != null) {
+                    File f = new File(path);
+                    if (f.exists()) {
+                        f.delete();
+                    }
+                }
+                super.onPostExecute(result);
+            }
+        }
+    }
+
+    public class PageAdapter extends PagerAdapter {
+
+        int currentPage = 0;
+        Page[] pages = new Page[mChapter.getPages()];
+
+
+        public Page getCurrentPage() {
+            return pages[currentPage];
+        }
+
+        public void setCurrentPage(int currentPage) {
+            if (mDirection == Direction.L2R)
+                currentPage = mChapter.getPages() - 1 - currentPage;
+            this.currentPage = currentPage;
+            for (int i = 0; i < pages.length; i++) {
+                if (pages[i] != null) {
+                    if (Math.abs(i - currentPage) <= 1 && !pages[i].imageLoaded) {
+                        pages[i].setImage();
+                    } else if (Math.abs(i - currentPage) > 1 && pages[i].imageLoaded) {
+                        pages[i].unloadImage();
+                    }
                 }
             }
-            if (f == null) {
-                String ruta = DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter,
-                        getApplicationContext()) + "/" + (position + 1) + ".jpg";
-                int idx;
-                do {
-                    idx = getNextPos();
-                    if (pos[idx] == -1) break;
-                } while (pos[idx] + 1 > getCurrentItem() && pos[idx] - 1 < getCurrentItem());
-                pos[idx] = position;
-                Fragment old = fragments.get(idx);
-                fm.beginTransaction().remove(old).commit();
-                // old = null;
-                fragments.set(idx, PageFragment.newInstance(ruta, ActivityLector.this, position));
-                f = fragments.get(idx);
-                f.setTapListener(ActivityLector.this);
-            }
-            return f;
+        }
+
+        public Page getPage(int position) {
+            return pages[position];
         }
 
         @Override
         public int getCount() {
-            return mChapter.getPages() + 1;
+            return mChapter.getPages();
         }
 
-        public void actualizarDisplayTipe() {
-            for (PageFragment iterable_element : fragments) {
-                if (iterable_element != null) {
-                    iterable_element.setDisplayType(mScreenFit);
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            if (mDirection == Direction.L2R)
+                position = mChapter.getPages() - 1 - position;
+            Page page = pages[position];
+            if (pages[position] != null) {
+                container.addView(page, 0);
+            } else {
+                Context context = ActivityPagedReader.this;
+                page = new Page(context);
+                page.setImage(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter,
+                        getApplicationContext()) + "/" + (position + 1) + ".jpg");
+                container.addView(page, 0);
+                page.index = position;
+                pages[position] = page;
+            }
+            return page;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView((Page) object);
+        }
+
+        public void updateDisplayType() {
+            for (int i = 0; i < pages.length; i++) {
+                if (pages[i] != null) {
+                    pages[i].visor.setDisplayType(mScreenFit);
                 }
             }
         }
 
-        public Fragment getCurrentFragment() {
-            return getSupportFragmentManager().findFragmentByTag(
-                    "android:switcher:" + R.id.pager + ":" + getCurrentItem());
-        }
-
-        public Fragment getIfOnMemory(int idx) {
-            Fragment fragment = null;
-            for (int i = 0; i < pos.length; i++) {
-                if (pos[i] == idx) {
-                    fragment = fragments.get(i);
-                    break;
+        public void setPageScroll(float pageScroll) {
+            for (int i = 0; i < pages.length; i++) {
+                if (pages[i] != null) {
+                    pages[i].visor.setScrollFactor(pageScroll);
                 }
             }
-            return fragment;
         }
 
-        public void setPageScroll(float nScroll) {
-            for (PageFragment pageFragment : fragments) {
-                if (pageFragment.visor != null)
-                    pageFragment.visor.setScrollFactor(nScroll);
+        public void pageDownloaded(int page) {
+            if (pages[page] != null && currentPage == page) {
+                pages[page].setImage();
             }
+        }
+    }
+
+    public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
+        ProgressDialog asyncDialog = new ProgressDialog(ActivityPagedReader.this);
+        String error;
+
+        @Override
+        protected void onPreExecute() {
+            asyncDialog.setMessage(getResources().getString(R.string.iniciando));
+            asyncDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Chapter doInBackground(Chapter... arg0) {
+            Chapter c = arg0[0];
+            ServerBase s = ServerBase.getServer(ActivityPagedReader.this.mManga.getServerId());
+            try {
+                if (c.getPages() < 1) s.chapterInit(c);
+            } catch (Exception e) {
+                if (e.getMessage() != null)
+                    error = e.getMessage();
+                else
+                    error = e.getLocalizedMessage();
+            }
+            if (c.getPages() < 1) {
+                error = getString(R.string.error);
+            }
+            return c;
+        }
+
+        @Override
+        protected void onPostExecute(Chapter result) {
+            try {
+                asyncDialog.dismiss();
+            } catch (Exception e) {
+                // ignore error
+            }
+            if (error != null && error.length() > 1) {
+                Toast.makeText(ActivityPagedReader.this, error, Toast.LENGTH_LONG).show();
+            } else {
+                Database.updateChapter(ActivityPagedReader.this, result);
+                DownloadPoolService.addChapterDownloadPool(ActivityPagedReader.this, result, true);
+                DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
+                loadChapter(result);
+            }
+            super.onPostExecute(result);
         }
     }
 }

@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout str;
     private NewSearchTask newSearch;
+    private Activity activity;
 
 
     public static void deleteRecursive(File fileOrDirectory) {
@@ -155,7 +157,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
          *
          * feel free to add more sort type */
         int sort_val = PreferenceManager.getDefaultSharedPreferences(
-                getActivity()).getInt("manga_view_sort_by", 0);
+                activity).getInt("manga_view_sort_by", 0);
 
         String sort_by;
         boolean sort_ord = sort_val % 2 == 0;
@@ -205,6 +207,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         Intent intent = new Intent(getActivity(), ActivityManga.class);
         intent.putExtra(ActivityMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
+    }
+
+    public void setActivity(Activity activity) {
+        this.activity = activity;
     }
 
     public class NewSearchTask extends AsyncTask<Void, String, Integer> {
