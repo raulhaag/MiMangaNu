@@ -158,4 +158,12 @@
     <string name="mar_and_di">Marquer comme lu et supprimer les images</string>
     <string name="select_begin">Sélectionner depuis le début</string>    
     <string name="select_end">Sélectionner jusqu\'à la fin</string>
+    <string name="continuous_reader">Lecteur continue</string>
+    <string name="paged_reader">Lecteur paginée</string>
+    <string name="pause_all_downloads">Pause téléchargements</string>
+    <string name="paused">(Pause)</string>
+    <string name="remove_all">Enlever tout</string>
+    <string name="remove_downloaded">Retirer téléchargé</string>
+    <string name="resume_downloads">Reprendre les téléchargements</string>
+    <string name="retry_errors">Réessayez erreurs</string>
 </resources>

@@ -109,10 +109,10 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public static boolean removeDownload(int cid, Context c) {
         boolean result = true;
-        for (ChapterDownload dc : chapterDownloads) {
-            if (dc.chapter.getId() == cid) {
-                if (dc.status.ordinal() != DownloadStatus.DOWNLOADING.ordinal()) {
-                    chapterDownloads.remove(dc);
+        for (int i = 0; i < chapterDownloads.size(); i++) {
+            if (chapterDownloads.get(i).chapter.getId() == cid) {
+                if (chapterDownloads.get(i).status.ordinal() != DownloadStatus.DOWNLOADING.ordinal()) {
+                    chapterDownloads.remove(chapterDownloads.get(i));
                 } else {
                     Toast.makeText(c, R.string.quitar_descarga, Toast.LENGTH_LONG).show();
                     result = false;
@@ -184,18 +184,18 @@ public class DownloadPoolService extends Service implements StateChange {
     }
 
     public static void retryError(Context context) {
-        for (ChapterDownload cd : chapterDownloads) {
-            if (cd.status == DownloadStatus.ERROR) {
-                cd.status = DownloadStatus.QUEUED;
+        for (int i = 0; i < chapterDownloads.size(); i++) {
+            if (chapterDownloads.get(i).status == DownloadStatus.ERROR) {
+                chapterDownloads.set(i, new ChapterDownload(chapterDownloads.get(i).chapter));
             }
         }
         startService(context);
     }
 
     public static void resumeDownloads(Context context){
-        for (ChapterDownload cd : chapterDownloads) {
-            if (cd.status == DownloadStatus.PAUSED) {
-                cd.status = DownloadStatus.QUEUED;
+        for (int i = 0; i < chapterDownloads.size(); i++) {
+            if (chapterDownloads.get(i).status == DownloadStatus.PAUSED) {
+                chapterDownloads.get(i).status = DownloadStatus.QUEUED;
             }
         }
         startService(context);
@@ -203,9 +203,9 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public static void removeDownloaded() {
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
-        for (ChapterDownload dc : chapterDownloads) {
-            if (dc.status == DownloadStatus.DOWNLOADED) {
-                toRemove.add(dc);
+        for (int i = 0; i < chapterDownloads.size();i++) {
+            if (chapterDownloads.get(i).status == DownloadStatus.DOWNLOADED) {
+                toRemove.add(chapterDownloads.get(i));
             }
         }
         chapterDownloads.removeAll(toRemove);
@@ -213,9 +213,9 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public static void removeAll() {
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
-        for (ChapterDownload dc : chapterDownloads) {
-            if (dc.status != DownloadStatus.DOWNLOADING) {
-                toRemove.add(dc);
+        for (int i = 0; i < chapterDownloads.size();i++) {
+            if (chapterDownloads.get(i).status != DownloadStatus.DOWNLOADING) {
+                toRemove.add(chapterDownloads.get(i));
             }
         }
         chapterDownloads.removeAll(toRemove);
@@ -258,9 +258,9 @@ public class DownloadPoolService extends Service implements StateChange {
     private void initPool() {
         Manga manga = null;
         ServerBase s = null;
-        String ruta = "";
+        String path = "";
         int lcid = -1;
-        while (!chapterDownloads.isEmpty()) {
+        while (hasDownloadsPending()) {
             if (slots > 0) {
                 slots--;
                 ChapterDownload dc = null;
@@ -301,12 +301,12 @@ public class DownloadPoolService extends Service implements StateChange {
                     }
                     if (lcid != dc.chapter.getId()) {
                         lcid = dc.chapter.getId();
-                        ruta = generateBasePath(s, manga, dc.chapter, getApplicationContext());
-                        new File(ruta).mkdirs();
+                        path = generateBasePath(s, manga, dc.chapter, getApplicationContext());
+                        new File(path).mkdirs();
                     }
                     try {
                         String origen = s.getImageFrom(dc.chapter, sig);
-                        String destino = ruta + "/" + sig + ".jpg";
+                        String destino = path + "/" + sig + ".jpg";
                         SingleDownload des =
                                 new SingleDownload(origen, destino, sig - 1, dc.chapter.getId());
                         des.setChangeListener(dc);
@@ -336,5 +336,14 @@ public class DownloadPoolService extends Service implements StateChange {
         }
         actual = null;
         stopSelf();
+    }
+
+    public boolean hasDownloadsPending(){
+        for(int i = 0; i < chapterDownloads.size();i++){
+            if(chapterDownloads.get(i).status == DownloadStatus.DOWNLOADING || chapterDownloads.get(i).status == DownloadStatus.QUEUED){
+                return true;
+            }
+        }
+        return false;
     }
 }

@@ -158,4 +158,12 @@
     <string name="mar_and_di">Отметить как читать и удалять изображения</string>
     <string name="select_end">Выберите до конца</string>
     <string name="select_begin">Выберите с начала</string>
+    <string name="continuous_reader"> Непрерывная читатель</string>
+    <string name="paged_reader">По стр чтения</string>
+    <string name="pause_all_downloads">Пауза Загрузки</string>
+    <string name="paused">(Приостановлено)</string>
+    <string name="remove_all">Убрать все</string>
+    <string name="remove_downloaded">Удалить загруженных</string>
+    <string name="resume_downloads">Резюме скачивали</string>
+    <string name="retry_errors">Повторите ошибки</string>
 </resources>

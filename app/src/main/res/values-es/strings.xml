@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message"> Cambios 1.43\n\t* Mejorado el lector \n\t*Muchos otros fixes y pedidos en gitHub</string>
+    <string name="update_message">Cambios 1.44\n\t*Mejorado los lectores.\n\t*Agregada la opcion tipo de lector por manga.\n\t*Agregados controles a las descargas\n\t*Y arreglados un par de errores</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>
@@ -160,5 +160,13 @@
     <string name="mar_and_di">Marcar como leido y borrar imagenes</string>
     <string name="select_end">Selecionar hasta el final</string>
     <string name="select_begin">Seleccionar desde el inicio</string>
+    <string name="continuous_reader">Lector continuo</string>
+    <string name="paged_reader">Lector paginado</string>
+    <string name="pause_all_downloads">Pausar descargas</string>
+    <string name="paused">(Pausada)</string>
+    <string name="remove_all">Quitar todos</string>
+    <string name="remove_downloaded">Quitar descargados</string>
+    <string name="resume_downloads">Resumir las rescarga</string>
+    <string name="retry_errors">Reintentar erroneas</string>
 
 </resources>

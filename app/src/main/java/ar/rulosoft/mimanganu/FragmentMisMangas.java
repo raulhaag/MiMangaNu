@@ -42,7 +42,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout str;
     private NewSearchTask newSearch;
-    private Activity activity;
+    private boolean attached = false, waiting = false, waitingForce;
 
 
     public static void deleteRecursive(File fileOrDirectory) {
@@ -149,56 +149,60 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     }
 
     public void setListManga(boolean force) {
-        ArrayList<Manga> mangaList = new ArrayList<>();
+        if(attached) {
+            ArrayList<Manga> mangaList = new ArrayList<>();
+            /**
+             * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
+             *                  all odd numbers are asc, even numbers are desc
+             *
+             * feel free to add more sort type */
+            int sort_val = PreferenceManager.getDefaultSharedPreferences(
+                    getActivity()).getInt("manga_view_sort_by", 0);
 
-        /**
-         * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
-         *                  all odd numbers are asc, even numbers are desc
-         *
-         * feel free to add more sort type */
-        int sort_val = PreferenceManager.getDefaultSharedPreferences(
-                activity).getInt("manga_view_sort_by", 0);
-
-        String sort_by;
-        boolean sort_ord = sort_val % 2 == 0;
-        switch (sort_val) {
-            case 2:
-            case 3:
-                sort_by = Database.COL_NAME;
-                break;
-            case 4:
-            case 5:
-                sort_by = Database.COL_AUTHOR;
-                break;
-            case 7:
-            case 6:
-                sort_by = Database.COL_SEARCH;
-                sort_ord = !sort_ord;
-                break;
-            case 0:
-            case 1:
-            default:
-                sort_by = Database.COL_LAST_READ;
-                sort_ord = !sort_ord;
-        }
-        int value = PreferenceManager.getDefaultSharedPreferences(
-                getActivity()).getInt(SELECT_MODE, MODE_SHOW_ALL);
-        switch (value) {
-            case MODE_SHOW_ALL:
-                mangaList = Database.getMangas(getActivity(), sort_by, sort_ord);
-                break;
-            case MODE_HIDE_READ:
-                mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
-                        "SELECT manga_id " +
-                        "FROM capitulos " +
-                        "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
-                break;
-            default:
-                break;
-        }
-        if (adapter == null ||sort_val < 2|| mangaList.size() > adapter.getCount() || force) {
-            adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
-            grid.setAdapter(adapter);
+            String sort_by;
+            boolean sort_ord = sort_val % 2 == 0;
+            switch (sort_val) {
+                case 2:
+                case 3:
+                    sort_by = Database.COL_NAME;
+                    break;
+                case 4:
+                case 5:
+                    sort_by = Database.COL_AUTHOR;
+                    break;
+                case 7:
+                case 6:
+                    sort_by = Database.COL_SEARCH;
+                    sort_ord = !sort_ord;
+                    break;
+                case 0:
+                case 1:
+                default:
+                    sort_by = Database.COL_LAST_READ;
+                    sort_ord = !sort_ord;
+            }
+            int value = PreferenceManager.getDefaultSharedPreferences(
+                    getActivity()).getInt(SELECT_MODE, MODE_SHOW_ALL);
+            switch (value) {
+                case MODE_SHOW_ALL:
+                    mangaList = Database.getMangas(getActivity(), sort_by, sort_ord);
+                    break;
+                case MODE_HIDE_READ:
+                    mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                            "SELECT manga_id " +
+                            "FROM capitulos " +
+                            "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
+                    break;
+                default:
+                    break;
+            }
+            if (adapter == null || sort_val < 2 || mangaList.size() > adapter.getCount() || force) {
+                adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
+                grid.setAdapter(adapter);
+            }
+        }else{
+            waiting = true;
+            waitingForce = force;
         }
     }
 
@@ -207,10 +211,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         Intent intent = new Intent(getActivity(), ActivityManga.class);
         intent.putExtra(ActivityMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
-    }
-
-    public void setActivity(Activity activity) {
-        this.activity = activity;
     }
 
     public class NewSearchTask extends AsyncTask<Void, String, Integer> {
@@ -292,5 +292,21 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             str.setRefreshing(false);
             search = false;
         }
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        attached = true;
+        if(waiting){
+            setListManga(waitingForce);
+            waiting = false;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        attached = false;
     }
 }

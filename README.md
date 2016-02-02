@@ -28,6 +28,13 @@ Downloads
 Changelog
 ---------
 
+
+Cambios 1.44
+* Mejorados los dos lectores
+* Agregado selector de tipo de lector por manga
+* Agregados controles a las descargas
+* Y un par de bug fixed
+
 Cambios 1.43
 * Mejorias en el nuevo lector
 * Muchos fixes pedidos en gitHub

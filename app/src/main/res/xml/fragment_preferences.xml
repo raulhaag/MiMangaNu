@@ -5,14 +5,6 @@
     android:layout_height="match_parent"
     android:key="first_preferencescreen">
 
-    <PreferenceCategory android:title="Test">
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="test_reader"
-            android:summary="Test new Readers"
-            android:title="New Readers (preview)" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/opciones_mm">
         <SwitchPreference
             android:defaultValue="true"
@@ -54,6 +46,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_lec">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="reader_type"
+            android:summary="On paged reader, off continuous reader"
+            android:title="Default reader" />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="@string/sentido_lectura"

@@ -152,7 +152,7 @@
     <string name="read_next">You want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes 1.43\n\t*Improve reader.\n\t*Big amount of little fixes</string>
+    <string name="update_message">Changes 1.44\n\t*Improve readers.\n\t*Added reader type option for each manga.\n\t*Added download controls\n\t*And a couple bugs fixed</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
@@ -166,6 +166,8 @@
     <string name="remove_downloaded">Remove downloaded</string>
     <string name="remove_all">Remove all</string>
     <string name="retry_errors">Retry errors</string>
-    <string name="pause_all_downloads">Pause Downloads</string>
+    <string name="pause_all_downloads">Pause downloads</string>
     <string name="resume_downloads">Resume Downloads</string>
+    <string name="continuous_reader">Continuous reader</string>
+    <string name="paged_reader">Paged reader</string>
 </resources>

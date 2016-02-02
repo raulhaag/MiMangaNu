@@ -50,8 +50,8 @@ public class ActivityManga extends AppCompatActivity {
     private SharedPreferences pm;
     private ImageLoader mImageLoader;
     private ListView mListView;
-    private MenuItem mMenuItem;
-    private int mMangaId;
+    private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
+    private int mMangaId, readerType;
     private boolean darkTheme;
     private Menu menu;
 
@@ -69,6 +69,11 @@ public class ActivityManga extends AppCompatActivity {
         if (mMangaId == -1) {
             onBackPressed();
             finish();
+        }
+        mManga = Database.getFullManga(getApplicationContext(), mMangaId);
+        readerType = pm.getBoolean("reader_type", true)?1:2;
+        if(mManga.getReaderType() != 0){
+            readerType = mManga.getReaderType();
         }
         mListView = (ListView) findViewById(R.id.lista);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.str);
@@ -225,7 +230,6 @@ public class ActivityManga extends AppCompatActivity {
             }
         });
 
-        mManga = Database.getFullManga(getApplicationContext(), mMangaId);
         setTitle(mManga.getTitle());
         loadChapters(mManga.getChapters());
         Database.updateMangaRead(this, mManga.getId());
@@ -333,7 +337,6 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.action_sentido: {
-                // TODO check database
                 int readDirection;
                 if (mManga.getReadingDirection() != -1) {
                     readDirection = mManga.getReadingDirection();
@@ -342,19 +345,33 @@ public class ActivityManga extends AppCompatActivity {
                             pm.getString(DIRECTION, "" + Direction.L2R.ordinal()));
                 }
                 if (readDirection == Direction.R2L.ordinal()) {
-                    mMenuItem.setIcon(R.drawable.ic_action_inverso);
+                    mMenuItemReaderSense.setIcon(R.drawable.ic_action_inverso);
                     this.mDirection = Direction.L2R;
                 } else if (readDirection == Direction.L2R.ordinal()) {
-                    mMenuItem.setIcon(R.drawable.ic_action_verical);
+                    mMenuItemReaderSense.setIcon(R.drawable.ic_action_verical);
                     this.mDirection = Direction.VERTICAL;
                 } else {
-                    mMenuItem.setIcon(R.drawable.ic_action_clasico);
+                    mMenuItemReaderSense.setIcon(R.drawable.ic_action_clasico);
                     this.mDirection = Direction.R2L;
                 }
                 mManga.setReadingDirection(this.mDirection.ordinal());
                 Database.updadeReadOrder(ActivityManga.this, this.mDirection.ordinal(), mManga.getId());
                 break;
             }
+            case R.id.action_reader:
+                if(mManga.getReaderType() == 1){
+                    mManga.setReaderType(2);
+                    readerType = 2;
+                    mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
+                    mMenuItemReaderType.setTitle(R.string.continuous_reader);
+                }else{
+                    mManga.setReaderType(1);
+                    readerType = 1;
+                    mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
+                    mMenuItemReaderType.setTitle(R.string.paged_reader);
+                }
+                Database.updateManga(ActivityManga.this,mManga,false);
+                break;
             case R.id.descargas: {
                 Intent intent = new Intent(this, ActivityDownloads.class);
                 startActivity(intent);
@@ -402,7 +419,8 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.view_chapter, menu);
-        mMenuItem = menu.findItem(R.id.action_sentido);
+        mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
+        mMenuItemReaderType = menu.findItem(R.id.action_reader);
         int readDirection;
         if (mManga.getReadingDirection() != -1) {
             readDirection = mManga.getReadingDirection();
@@ -412,14 +430,23 @@ public class ActivityManga extends AppCompatActivity {
 
         if (readDirection == Direction.R2L.ordinal()) {
             this.mDirection = Direction.R2L;
-            mMenuItem.setIcon(R.drawable.ic_action_clasico);
+            mMenuItemReaderSense.setIcon(R.drawable.ic_action_clasico);
         } else if (readDirection == Direction.L2R.ordinal()) {
             this.mDirection = Direction.L2R;
-            mMenuItem.setIcon(R.drawable.ic_action_inverso);
+            mMenuItemReaderSense.setIcon(R.drawable.ic_action_inverso);
         } else {
             this.mDirection = Direction.VERTICAL;
-            mMenuItem.setIcon(R.drawable.ic_action_verical);
+            mMenuItemReaderSense.setIcon(R.drawable.ic_action_verical);
         }
+
+        if(readerType == 2){
+            mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
+            mMenuItemReaderType.setTitle(R.string.continuous_reader);
+        }else{
+            mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
+            mMenuItemReaderType.setTitle(R.string.paged_reader);
+        }
+
         this.menu = menu;
         return true;
     }
@@ -476,7 +503,7 @@ public class ActivityManga extends AppCompatActivity {
                 int first = mListView.getFirstVisiblePosition();
                 Database.updateMangaLastIndex(ActivityManga.this, mManga.getId(), first);
                 Intent intent;
-                if (pm.getBoolean("test_reader", false)) {
+                if (readerType == 2) {
                     intent = new Intent(ActivityManga.this, ActivityReader.class);
                 } else {
                     intent = new Intent(ActivityManga.this, ActivityPagedReader.class);

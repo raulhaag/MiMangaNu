@@ -158,4 +158,12 @@
     <string name="mar_and_di">Als gelesen markieren und löschen Bilder</string>
     <string name="select_end">Wählen Sie bis zum Ende</string>
     <string name="select_begin">Wählen Sie von Anfang an</string>
+    <string name="continuous_reader">Kontinuierliche lesegerät</string>
+    <string name="paged_reader">Paged Reader</string>
+    <string name="pause_all_downloads">Pause-Downloads</string>
+    <string name="paused">( Angehalten)</string>
+    <string name="remove_all">Alles entfernen</string>
+    <string name="remove_downloaded">Heruntergeladen entfernen</string>
+    <string name="resume_downloads">Lebenslauf-Downloads</string>
+    <string name="retry_errors">Retry Fehler</string>
 </resources>

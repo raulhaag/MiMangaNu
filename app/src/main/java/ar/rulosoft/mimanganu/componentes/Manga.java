@@ -10,6 +10,7 @@ public class Manga {
     private int news;
     private int lastIndex;
     private int readingDirection = -1;
+    private int readerType;//0, default, 1 paged, 2 continuous
 
     private String title;
     private String synopsis;
@@ -179,5 +180,13 @@ public class Manga {
 
     public void setGenre(String genre) {
         this.genre = genre;
+    }
+
+    public int getReaderType(){
+        return readerType;
+    }
+
+    public void setReaderType(int readerType) {
+        this.readerType = readerType;
     }
 }

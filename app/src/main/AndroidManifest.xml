@@ -35,7 +35,7 @@
             android:name=".ActivityDetails"
             android:label="@string/title_activity_activity_detalles" />
         <activity
-            android:name=".ActivityLector"
+            android:name=".ActivityPagedReader"
             android:label="@string/title_activity_activity_lector"
             android:largeHeap="true"
             android:theme="@style/AppTheme.Light.NoActionbar" />

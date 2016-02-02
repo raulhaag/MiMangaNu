@@ -361,14 +361,17 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
 
     @Override
     protected void onPause() {
-        Database.updateChapter(ActivityReader.this, mChapter);
-        if (mReader.isLastPageVisible()) {
-            mChapter.setPagesRead(mChapter.getPages());
-            mChapter.setReadStatus(Chapter.READ);
+        try {
             Database.updateChapter(ActivityReader.this, mChapter);
-        } else
-            Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
-        DownloadPoolService.detachListener(mChapter.getId());
+            if (mReader.isLastPageVisible()) {
+                mChapter.setPagesRead(mChapter.getPages());
+                mChapter.setReadStatus(Chapter.READ);
+                Database.updateChapter(ActivityReader.this, mChapter);
+            } else
+                Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
+                DownloadPoolService.detachListener(mChapter.getId());
+        }catch (Exception e){
+        }
         super.onPause();
     }
 

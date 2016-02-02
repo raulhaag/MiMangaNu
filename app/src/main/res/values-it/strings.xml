@@ -159,4 +159,12 @@
     <string name="mar_and_di">Segna come immagini leggere e cancellare</string>
     <string name="select_end">Selezionare fino alla fine</string>
     <string name="select_begin">Selezionare dall\'inizio</string>
+    <string name="continuous_reader">Lettore continua</string>
+    <string name="paged_reader">Lettore di paging</string>
+    <string name="pause_all_downloads">Pausa download</string>
+    <string name="paused">(In pausa)</string>
+    <string name="remove_all">Rimuovi tutto</string>
+    <string name="remove_downloaded">Rimuovere scaricato</string>
+    <string name="resume_downloads">Riprendere i download</string>
+    <string name="retry_errors">Riprova errori</string>
 </resources>
