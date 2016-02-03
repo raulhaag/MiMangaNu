@@ -85,19 +85,16 @@ public class SubManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
             String data;
             data = getNavWithHeader().get(this.getPagesNumber(c, page));
-            data = getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);
-            c.setExtra(data.substring(0, data.length() - 4));
-        }
-        return c.getExtra() + page + ".jpg";
+            data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, null);
+        return data;
     }
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String data = getNavWithHeader().get(c.getPath());
-        c.setPages(Integer.parseInt(getFirstMatch("<option value=\"(\\d+)\">\\d+</option></select>", data, "No se pudo obtener la cantidad de páginas")));
+        c.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "No se pudo obtener la cantidad de páginas")));
         if (c.getExtra() == null || c.getExtra().length() < 2) {
             data = getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);
             c.setExtra(data.substring(0, data.length() - 4));
