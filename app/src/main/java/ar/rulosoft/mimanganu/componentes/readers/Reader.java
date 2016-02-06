@@ -139,61 +139,69 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                         lastPageBestPercent = 0f;
                         if (pages != null) {
                             int currentPageIdx = currentPage - 1;
-                            for (int i = currentPageIdx - 1; i >= 0; i--) {//pre
-                                Page page = pages.get(i);
-                                if (page.isVisible()) {
-                                    iniVisibility = true;
-                                    _segments.addAll(page.getVisibleSegments());
-                                    if (page.getVisiblePercent() >= lastPageBestPercent) {
-                                        lastPageBestPercent = page.getVisiblePercent();
-                                        lastBestVisible = pages.indexOf(page);
-                                    }
-                                } else {
-                                    break;
-                                }
-                            }
-                            {//actual
-                                if (currentPageIdx >= 0 && currentPageIdx < pages.size()) {
-                                    Page page = pages.get(currentPageIdx);
-                                    if (page.isVisible()) {
-                                        iniVisibility = true;
-                                        _segments.addAll(page.getVisibleSegments());
-                                        if (page.getVisiblePercent() >= lastPageBestPercent) {
-                                            lastPageBestPercent = page.getVisiblePercent();
-                                            lastBestVisible = pages.indexOf(page);
+                            boolean tested = false;
+                            while (!tested) {
+                                tested = true;
+                                try {
+                                    for (int i = currentPageIdx - 1; i >= 0; i--) {//pre
+                                        Page page = pages.get(i);
+                                        if (page.isVisible()) {
+                                            iniVisibility = true;
+                                            _segments.addAll(page.getVisibleSegments());
+                                            if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                                lastPageBestPercent = page.getVisiblePercent();
+                                                lastBestVisible = pages.indexOf(page);
+                                            }
+                                        } else {
+                                            break;
                                         }
                                     }
-                                }
-                            }
-                            for (int i = currentPageIdx + 1; i < pages.size(); i++) {//next
-                                Page page = pages.get(i);
-                                if (page.isVisible()) {
-                                    iniVisibility = true;
-                                    _segments.addAll(page.getVisibleSegments());
-                                    if (page.getVisiblePercent() >= lastPageBestPercent) {
-                                        lastPageBestPercent = page.getVisiblePercent();
-                                        lastBestVisible = pages.indexOf(page);
+                                    {//actual
+                                        if (currentPageIdx >= 0 && currentPageIdx < pages.size()) {
+                                            Page page = pages.get(currentPageIdx);
+                                            if (page.isVisible()) {
+                                                iniVisibility = true;
+                                                _segments.addAll(page.getVisibleSegments());
+                                                if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                                    lastPageBestPercent = page.getVisiblePercent();
+                                                    lastBestVisible = pages.indexOf(page);
+                                                }
+                                            }
+                                        }
                                     }
-                                } else {
-                                    break;
-                                }
-                            }
+                                    for (int i = currentPageIdx + 1; i < pages.size(); i++) {//next
+                                        Page page = pages.get(i);
+                                        if (page.isVisible()) {
+                                            iniVisibility = true;
+                                            _segments.addAll(page.getVisibleSegments());
+                                            if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                                lastPageBestPercent = page.getVisiblePercent();
+                                                lastBestVisible = pages.indexOf(page);
+                                            }
+                                        } else {
+                                            break;
+                                        }
+                                    }
 
-                            if (_segments.size() == 0) {//if none in range find...
-                                for (Page page : pages) {
-                                    if (page.isVisible()) {
-                                        iniVisibility = true;
-                                        _segments.addAll(page.getVisibleSegments());
-                                        if (page.getVisiblePercent() >= lastPageBestPercent) {
-                                            lastPageBestPercent = page.getVisiblePercent();
-                                            lastBestVisible = pages.indexOf(page);
+                                    if (_segments.size() == 0) {//if none in range find...
+                                        for (int i = 0; i < pages.size(); i++) {
+                                            Page page = pages.get(i);
+                                            if (page.isVisible()) {
+                                                iniVisibility = true;
+                                                _segments.addAll(page.getVisibleSegments());
+                                                if (page.getVisiblePercent() >= lastPageBestPercent) {
+                                                    lastPageBestPercent = page.getVisiblePercent();
+                                                    lastBestVisible = pages.indexOf(page);
+                                                }
+                                            } else {
+                                                if (iniVisibility) endVisibility = true;
+                                            }
+                                            if (iniVisibility && endVisibility)
+                                                break;
                                         }
-                                    } else {
-                                        if (iniVisibility) endVisibility = true;
                                     }
-                                    if (iniVisibility && endVisibility)
-                                        break;
-                                }
+                                } catch (Exception e) {tested = false;}//catch errors caused for array concurrent modify
+
                             }
                             if (currentPage != lastBestVisible) {
                                 setPage(lastBestVisible);

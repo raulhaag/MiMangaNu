@@ -308,7 +308,7 @@ public class DownloadPoolService extends Service implements StateChange {
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = path + "/" + sig + ".jpg";
                         SingleDownload des =
-                                new SingleDownload(origen, destino, sig - 1, dc.chapter.getId());
+                                new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc.chapter.getPath());
                         des.setChangeListener(dc);
                         dc.setChagesListener(this);
                         new Thread(des).start();

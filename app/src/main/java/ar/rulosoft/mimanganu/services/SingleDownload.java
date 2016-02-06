@@ -2,6 +2,8 @@ package ar.rulosoft.mimanganu.services;
 
 import android.util.Log;
 import ar.rulosoft.navegadores.Navegador;
+import ar.rulosoft.navegadores.RefererInterceptor;
+
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -18,13 +20,15 @@ public class SingleDownload implements Runnable {
     int index, cid;
     Status status = Status.QUEUED;
     private int retry = RETRY;
+    public String referer;
 
-    public SingleDownload(String fromURL, String toFile, int index, int cid) {
+    public SingleDownload(String fromURL, String toFile, int index, int cid,String referer) {
         super();
         this.fromURL = fromURL;
         this.toFile = toFile;
         this.index = index;
         this.cid = cid;
+        this.referer = referer;
     }
 
     public int getIndex() {
@@ -53,6 +57,7 @@ public class SingleDownload implements Runnable {
                     OkHttpClient client = initAndGetNavegador().getHttpClient();
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
                     client.setReadTimeout(3, TimeUnit.SECONDS);
+                    client.networkInterceptors().add(new RefererInterceptor(referer));
                     Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
                     if(!response.isSuccessful()) {
                         if (response.code() == 404) {

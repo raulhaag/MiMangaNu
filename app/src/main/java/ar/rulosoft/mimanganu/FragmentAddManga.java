@@ -50,25 +50,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
-        adapter = new ServerRecAdapter(new ServerBase[]{
-                new HeavenMangaCom(),
-                new SubManga(),
-                new EsNineMangaCom(),
-                new EsMangaHere(),
-                new TusMangasOnlineCom(),
-                new MangaPanda(),
-                new MangaHere(),
-                new MangaFox(),
-                new MangaReader(),
-                new KissManga(),
-                new RuNineMangaCom(),
-                new LectureEnLigne(),
-                new MyMangaIo(),
-                new ItNineMangaCom(),
-                new MangaEdenIt(),
-                new DeNineMangaCom(),
-                new Manga_Tube()
-        });
+        adapter = new ServerRecAdapter(ServerBase.getServers());
         lista_server.setAdapter(adapter);
         adapter.setOnServerClickListener(FragmentAddManga.this);
         super.onActivityCreated(savedInstanceState);

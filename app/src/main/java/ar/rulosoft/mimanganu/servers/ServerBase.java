@@ -32,6 +32,7 @@ public abstract class ServerBase {
     public static final int MANGATUBE = 18;
     public static final int MANGAEDENIT = 19;
     public static final int MYMANGAIO = 20;
+    public static final int RAWSENMANGA = 21;
 
     public boolean hayMas = true;
     private String serverName;
@@ -98,6 +99,9 @@ public abstract class ServerBase {
                 break;
             case MYMANGAIO:
                 s = new MyMangaIo();
+                break;
+            case RAWSENMANGA:
+                s = new RawSenManga();
                 break;
             default:
                 break;
@@ -305,6 +309,29 @@ public abstract class ServerBase {
 
     public FilteredType getFilteredType(){
         return FilteredType.VISUAL;
+    }
+
+    public static ServerBase[] getServers(){
+        return (new ServerBase[]{
+                new HeavenMangaCom(),
+                new SubManga(),
+                new EsNineMangaCom(),
+                new EsMangaHere(),
+                new TusMangasOnlineCom(),
+                new MangaPanda(),
+                new MangaHere(),
+                new MangaFox(),
+                new MangaReader(),
+                new KissManga(),
+                new RuNineMangaCom(),
+                new LectureEnLigne(),
+                new MyMangaIo(),
+                new ItNineMangaCom(),
+                new MangaEdenIt(),
+                new DeNineMangaCom(),
+                new Manga_Tube(),
+                new RawSenManga()
+        });
     }
 
 }
