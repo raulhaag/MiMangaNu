@@ -79,8 +79,11 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reader);
-
-        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID));
+        int chapterId = getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID);
+        if (savedInstanceState != null) {
+            chapterId = savedInstanceState.getInt(ActivityManga.CHAPTER_ID);
+        }
+        mChapter = Database.getChapter(this, chapterId);
         mManga = Database.getFullManga(this, mChapter.getMangaID());
 
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -373,6 +376,12 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
         }catch (Exception e){
         }
         super.onPause();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(ActivityManga.CHAPTER_ID, mChapter.getId());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override

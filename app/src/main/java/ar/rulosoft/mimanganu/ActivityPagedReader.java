@@ -107,7 +107,12 @@ public class ActivityPagedReader extends AppCompatActivity
         mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
 
-        mChapter = Database.getChapter(this, getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID));
+        int chapterId = getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID);
+        if (savedInstanceState != null) {
+            chapterId = savedInstanceState.getInt(ActivityManga.CHAPTER_ID);
+        }
+        mChapter = Database.getChapter(this, chapterId);
+
         mManga = Database.getFullManga(this, mChapter.getMangaID());
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
@@ -374,8 +379,9 @@ public class ActivityPagedReader extends AppCompatActivity
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        Database.updateChapterPage(ActivityPagedReader.this, mChapter.getId(), mChapter.getPagesRead());
+    protected void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putInt(ActivityManga.CHAPTER_ID, mChapter.getId());
+        super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
@@ -385,6 +391,8 @@ public class ActivityPagedReader extends AppCompatActivity
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
