@@ -24,6 +24,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -64,6 +65,7 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition
 public class ActivityPagedReader extends AppCompatActivity
         implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
 
+    private static final String TAG = "ActivityPagedReader";
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String ADJUST_KEY = "ajustar_a";
@@ -178,10 +180,7 @@ public class ActivityPagedReader extends AppCompatActivity
             public void onPageScrollStateChanged(int state) {
                 int lastIdx = mPageAdapter.getCount() - 1;
                 int curItem = mPageAdapter.currentPage;
-                if (curItem == lastIdx && state == 1)
-                    lastPageChange = true;
-                else
-                    lastPageChange = false;
+                lastPageChange = curItem == lastIdx && state == 1;
             }
         };
 
@@ -391,7 +390,6 @@ public class ActivityPagedReader extends AppCompatActivity
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
-
 
 
     @Override
@@ -926,17 +924,17 @@ public class ActivityPagedReader extends AppCompatActivity
         }
 
         public void updateDisplayType() {
-            for (int i = 0; i < pages.length; i++) {
-                if (pages[i] != null) {
-                    pages[i].visor.setDisplayType(mScreenFit);
+            for (Page page : pages) {
+                if (page != null) {
+                    page.visor.setDisplayType(mScreenFit);
                 }
             }
         }
 
         public void setPageScroll(float pageScroll) {
-            for (int i = 0; i < pages.length; i++) {
-                if (pages[i] != null) {
-                    pages[i].visor.setScrollFactor(pageScroll);
+            for (Page page : pages) {
+                if (page != null) {
+                    page.visor.setScrollFactor(pageScroll);
                 }
             }
         }

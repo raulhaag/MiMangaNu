@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -18,6 +19,7 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 
 public class ActivityDownloads extends AppCompatActivity {
+    private static final String TAG = "ActivityDownloads";
     public boolean darkTheme;
     private ListView list;
     private ShowDownloadsTask sh;
@@ -106,16 +108,16 @@ public class ActivityDownloads extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Thread.sleep(1000);//time to init big adapters =\_(-.-)_/=
-            while (_continue) {
-                if(downloadAdapter != null) {
-                    downloadAdapter.updateAll(DownloadPoolService.chapterDownloads);
-                    publishProgress();
+                Thread.sleep(500); //time to init big adapters =\_(-.-)_/=
+                while (_continue) {
+                    if (downloadAdapter != null) {
+                        downloadAdapter.updateAll(DownloadPoolService.chapterDownloads);
+                        publishProgress();
+                    }
+                    Thread.sleep(500);
                 }
-                    Thread.sleep(1000);
-            }
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.i(TAG, "DownloadTask interrupt", e);
             }
             return null;
         }
