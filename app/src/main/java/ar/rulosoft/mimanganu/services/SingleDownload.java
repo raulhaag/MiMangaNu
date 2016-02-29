@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    public static Navegador NAVEGADOR = null;
+    public  Navegador NAVEGADOR = null;
     private String fromURL;
     private String toFile;
     private StateChange changeListener = null;
@@ -37,10 +37,6 @@ public class SingleDownload implements Runnable {
         return index;
     }
 
-    public static Navegador initAndGetNavegador() {
-        if (NAVEGADOR == null) NAVEGADOR = new Navegador();
-        return NAVEGADOR;
-    }
 
     @Override
     public void run() {
@@ -56,7 +52,7 @@ public class SingleDownload implements Runnable {
                 OutputStream output;
                 long contentLenght;
                 try {
-                    OkHttpClient client = initAndGetNavegador().getHttpClient();
+                    OkHttpClient client = new Navegador().getHttpClient();
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
                     client.setReadTimeout(3, TimeUnit.SECONDS);
                     client.networkInterceptors().add(new RefererInterceptor(referer));
