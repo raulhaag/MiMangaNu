@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -45,6 +46,7 @@ public class ActivityManga extends AppCompatActivity {
     public SwipeRefreshLayout mSwipeRefreshLayout;
     public Manga mManga;
     private Direction mDirection;
+    private static final String TAG = "ActivityManga";
 
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
@@ -71,8 +73,8 @@ public class ActivityManga extends AppCompatActivity {
             finish();
         }
         mManga = Database.getFullManga(getApplicationContext(), mMangaId);
-        readerType = pm.getBoolean("reader_type", true)?1:2;
-        if(mManga.getReaderType() != 0){
+        readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
+        if (mManga.getReaderType() != 0) {
             readerType = mManga.getReaderType();
         }
         mListView = (ListView) findViewById(R.id.lista);
@@ -170,7 +172,7 @@ public class ActivityManga extends AppCompatActivity {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "Download add pool error", e);
                             }
                         }
                         break;
@@ -310,7 +312,7 @@ public class ActivityManga extends AppCompatActivity {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "Download add pool error", e);
                             }
                         }
                     }
@@ -359,18 +361,18 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.action_reader:
-                if(mManga.getReaderType() == 1){
+                if (mManga.getReaderType() == 1) {
                     mManga.setReaderType(2);
                     readerType = 2;
                     mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
                     mMenuItemReaderType.setTitle(R.string.continuous_reader);
-                }else{
+                } else {
                     mManga.setReaderType(1);
                     readerType = 1;
                     mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
                     mMenuItemReaderType.setTitle(R.string.paged_reader);
                 }
-                Database.updateManga(ActivityManga.this,mManga,false);
+                Database.updateManga(ActivityManga.this, mManga, false);
                 break;
             case R.id.descargas: {
                 Intent intent = new Intent(this, ActivityDownloads.class);
@@ -391,7 +393,7 @@ public class ActivityManga extends AppCompatActivity {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "Download add pool error", e);
                             }
                         }
                     }
@@ -412,7 +414,7 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        ArrayList<Chapter> chapters = Database.getChapters(getApplicationContext(),mMangaId);
+        ArrayList<Chapter> chapters = Database.getChapters(getApplicationContext(), mMangaId);
         mChapterAdapter.replaceData(chapters);
     }
 
@@ -439,10 +441,10 @@ public class ActivityManga extends AppCompatActivity {
             mMenuItemReaderSense.setIcon(R.drawable.ic_action_verical);
         }
 
-        if(readerType == 2){
+        if (readerType == 2) {
             mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
             mMenuItemReaderType.setTitle(R.string.continuous_reader);
-        }else{
+        } else {
             mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
             mMenuItemReaderType.setTitle(R.string.paged_reader);
         }
@@ -455,7 +457,6 @@ public class ActivityManga extends AppCompatActivity {
         L2R, R2L, VERTICAL
     }
 
-
     private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncdialog = new ProgressDialog(ActivityManga.this);
         String error = "";
@@ -466,7 +467,7 @@ public class ActivityManga extends AppCompatActivity {
                 asyncdialog.setMessage(getResources().getString(R.string.iniciando));
                 asyncdialog.show();
             } catch (Exception e) {
-                //prevent dialog error
+                Log.e(TAG, "Exception", e);
             }
         }
 
@@ -478,7 +479,7 @@ public class ActivityManga extends AppCompatActivity {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {
                 error = e.getMessage();
-                e.printStackTrace();
+                Log.e(TAG, "ChapterInit error", e);
             } finally {
                 publishProgress();
             }
