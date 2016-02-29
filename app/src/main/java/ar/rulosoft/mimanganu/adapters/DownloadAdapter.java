@@ -115,14 +115,15 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
 
     @Override
     public void onStatusChanged(int idx, ChapterDownload cd) {
-
-        downloads.set(idx, cd);
-        mActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                notifyDataSetChanged();
-            }
-        });
+        if(idx >= 0) {
+            downloads.set(idx, cd);
+            mActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    notifyDataSetChanged();
+                }
+            });
+        }
     }
 
     @Override
