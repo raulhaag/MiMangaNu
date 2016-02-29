@@ -73,12 +73,11 @@ public class KissManga extends ServerBase {
         Matcher m = p.matcher(source);
         if (m.find()) {
             searchList = new ArrayList<>();
-            boolean status = getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9;
+            boolean status = getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", m.group(), "Ongoing").length() == 9;
             searchList.add(new Manga(KISSMANGA, m.group(2), m.group(1), status));
         } else {
             searchList = getMangasSource(source);
         }
-
         return searchList;
     }
 
@@ -108,6 +107,8 @@ public class KissManga extends ServerBase {
 
         //genre
         m.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().trim()));
+
+        m.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
 
         // Chapter
         Pattern p = Pattern.compile(PATTERN_CHAPTER);
