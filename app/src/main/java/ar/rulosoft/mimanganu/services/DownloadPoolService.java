@@ -33,10 +33,9 @@ public class DownloadPoolService extends Service implements StateChange {
     public static int SLOTS = 2;
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
+    public static DownloadsChangesListener mDownloadsChangesListener;
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
-    public static DownloadsChangesListener mDownloadsChangesListener;
-
 
     static {
         Arrays.sort(illegalChars);
@@ -369,8 +368,8 @@ public class DownloadPoolService extends Service implements StateChange {
                     try {
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = path + "/" + sig + ".jpg";
-                        SingleDownload des =
-                                new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc, dc.chapter.getPath());
+                        SingleDownload des;
+                        des = new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc, s.needRefererForImages());
                         des.setChangeListener(dc);
                         dc.setChagesListener(this);
                         new Thread(des).start();

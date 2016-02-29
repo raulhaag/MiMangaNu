@@ -299,6 +299,10 @@ public abstract class ServerBase {
         }
     }
 
+    public boolean needRefererForImages(){
+        return true;
+    }
+
     public boolean hasFilteredNavigation() {
         return true;
     }

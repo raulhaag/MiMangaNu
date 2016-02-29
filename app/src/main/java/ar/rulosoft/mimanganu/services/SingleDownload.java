@@ -1,29 +1,35 @@
 package ar.rulosoft.mimanganu.services;
 
 import android.util.Log;
-import ar.rulosoft.navegadores.Navegador;
-import ar.rulosoft.navegadores.RefererInterceptor;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
+
+import ar.rulosoft.navegadores.Navegador;
+import ar.rulosoft.navegadores.RefererInterceptor;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    public  Navegador NAVEGADOR = null;
-    private String fromURL;
-    private String toFile;
-    private StateChange changeListener = null;
+    public Navegador NAVEGADOR = null;
+    public boolean referer;
     int index, cid;
     ChapterDownload cd;
     Status status = Status.QUEUED;
+    private String fromURL;
+    private String toFile;
+    private StateChange changeListener = null;
     private int retry = RETRY;
-    public String referer;
 
-    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd,String referer) {
+    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
         super();
         this.fromURL = fromURL;
         this.toFile = toFile;
@@ -55,9 +61,10 @@ public class SingleDownload implements Runnable {
                     OkHttpClient client = new Navegador().getHttpClient();
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
                     client.setReadTimeout(3, TimeUnit.SECONDS);
-                    client.networkInterceptors().add(new RefererInterceptor(referer));
+                    if (referer)
+                        client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
                     Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
-                    if(!response.isSuccessful()) {
+                    if (!response.isSuccessful()) {
                         if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);
                         } else {

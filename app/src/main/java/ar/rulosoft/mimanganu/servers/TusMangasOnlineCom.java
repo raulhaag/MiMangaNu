@@ -214,4 +214,8 @@ public class TusMangasOnlineCom extends ServerBase {
         return false;
     }
 
+    @Override
+    public boolean needRefererForImages() {
+        return false;//give 403 error
+    }
 }
