@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -32,6 +33,7 @@ public class ActivityDetails extends AppCompatActivity {
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
 
+    private static final String TAG = "ActivityDetails";
     private ImageLoader imageLoader;
     private ControlInfo data;
     private SwipeRefreshLayout str;
@@ -187,6 +189,7 @@ public class ActivityDetails extends AppCompatActivity {
                 s.loadChapters(m, false);
             } catch (Exception e) {
                 error = e.getMessage();
+                Log.e(TAG, "Chapter load error", e);
             }
             total = params[0].getChapters().size();
             int mid = Database.addManga(getBaseContext(), params[0]);
@@ -212,7 +215,6 @@ public class ActivityDetails extends AppCompatActivity {
                     }
                 }
             });
-
         }
 
         @Override
@@ -222,11 +224,7 @@ public class ActivityDetails extends AppCompatActivity {
             if (error != null && error.length() > 2) {
                 Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
             }
-            try {
-                onBackPressed();
-            } catch (Exception e) {
-                // Catch nothing.
-            }
+            onBackPressed();
             super.onPostExecute(result);
         }
     }

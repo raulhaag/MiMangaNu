@@ -4,6 +4,7 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 
 public class RefererInterceptor implements Interceptor {
 
@@ -16,7 +17,7 @@ public class RefererInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         return chain.proceed(chain.request().newBuilder()
-                .header("Referer", referer)
+                .header("Referer", URLEncoder.encode(referer, "UTF-8"))
                 .build());
     }
 

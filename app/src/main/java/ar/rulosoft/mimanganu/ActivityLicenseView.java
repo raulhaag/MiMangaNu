@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
@@ -20,8 +21,10 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 import static android.R.color.black;
 
 public class ActivityLicenseView extends AppCompatActivity {
+
     private TextView lic;
     private boolean darkTheme;
+    private static final String TAG = "ActivityLicenseView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +94,7 @@ public class ActivityLicenseView extends AppCompatActivity {
             is.close();
             lic.setText(licenseStr);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            Log.e(TAG, "Error while loading license", e);
         }
     }
 }
