@@ -924,17 +924,17 @@ public class ActivityPagedReader extends AppCompatActivity
         }
 
         public void updateDisplayType() {
-            for (Page page : pages) {
-                if (page != null) {
-                    page.visor.setDisplayType(mScreenFit);
+            for (int i = 0; i < pages.length; i++) {
+                if (pages[i] != null) {
+                    pages[i].visor.setDisplayType(mScreenFit);
                 }
             }
         }
 
         public void setPageScroll(float pageScroll) {
-            for (Page page : pages) {
-                if (page != null) {
-                    page.visor.setScrollFactor(pageScroll);
+            for (int i = 0; i < pages.length; i++) {
+                if (pages[i] != null) {
+                    pages[i].visor.setScrollFactor(pageScroll);
                 }
             }
         }
