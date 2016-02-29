@@ -35,7 +35,7 @@ public class DownloadPoolService extends Service implements StateChange {
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
-    private static DownloadsChangesListener mDownloadsChangesListener;
+    public static DownloadsChangesListener mDownloadsChangesListener;
 
 
     static {

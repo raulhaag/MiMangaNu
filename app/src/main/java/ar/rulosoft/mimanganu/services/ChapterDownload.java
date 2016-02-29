@@ -60,6 +60,9 @@ public class ChapterDownload implements StateChange {
                     if (errorListener != null) {
                         errorListener.onError(chapter);
                     }
+                    if(DownloadPoolService.mDownloadsChangesListener != null){
+                        DownloadPoolService.mDownloadsChangesListener.onStatusChanged(DownloadPoolService.chapterDownloads.indexOf(this),this);
+                    }
                     break;
                 }
             }
