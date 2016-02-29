@@ -12,16 +12,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.services.DownloadsChangesListener;
 
-public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
+public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements DownloadsChangesListener {
 
     private static String[] states;
     private static int listItem = R.layout.listitem_descarga;
     private ArrayList<ChapterDownload> downloads = new ArrayList<>();
+    private HashMap<Integer, ChapterDownload> toReplace;
     private LayoutInflater li;
     private boolean darkTheme;
     private AppCompatActivity mActivity;
@@ -32,6 +35,8 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mActivity = activity;
         this.darkTheme = darkTheme;
+        downloads = DownloadPoolService.chapterDownloads;
+        DownloadPoolService.setDownloadsChangesListener(this);
     }
 
     @Override
@@ -90,25 +95,65 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> {
         downloads.remove(object);
     }
 
-    public synchronized void updateAll(ArrayList<ChapterDownload> mDescargas) {
-        if (mDescargas != null) {
-            for (int i = 0; i < mDescargas.size(); i++) {
-                boolean isNew = true;
-                ChapterDownload toCompare = mDescargas.get(i);
-                for (int j = 0; j < getCount(); j++) {
-                    if (getItem(j).getChapter().getId() == toCompare.getChapter().getId()) {
-                        isNew = false;
-                        ChapterDownload item = getItem(j);
-                        item.setProgress(toCompare.getProgress());
-                        item.status = toCompare.status;
-                    }
-                }
-                if (isNew) {
-                    downloads.add(toCompare);
-                }
-            }
-        }
+    public void updateAll(ArrayList<ChapterDownload>mDescargas) {
+        downloads = mDescargas;
+    }
+    public void onPause(){
+        DownloadPoolService.setDownloadsChangesListener(null);
+    }
 
+    @Override
+    public void onProgressChanged(int idx, ChapterDownload cd) {
+        downloads.set(idx,cd);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onStatusChanged(int idx, ChapterDownload cd) {
+
+        downloads.set(idx, cd);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onChapterAdded(boolean atStart, ChapterDownload cd) {
+        if(atStart){
+            downloads.add(0,cd);
+        }else{
+            downloads.add(cd);
+        }
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
+    }
+
+    @Override
+    public void onChapterRemoved(int idx) {
+        downloads.remove(idx);
+    }
+
+    @Override
+    public void onChaptersRemoved(ArrayList<ChapterDownload> toRemove) {
+        downloads.removeAll(toRemove);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public static class ViewHolder {

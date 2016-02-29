@@ -18,17 +18,19 @@ public class SingleDownload implements Runnable {
     private String toFile;
     private StateChange changeListener = null;
     int index, cid;
+    ChapterDownload cd;
     Status status = Status.QUEUED;
     private int retry = RETRY;
     public String referer;
 
-    public SingleDownload(String fromURL, String toFile, int index, int cid,String referer) {
+    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd,String referer) {
         super();
         this.fromURL = fromURL;
         this.toFile = toFile;
         this.index = index;
         this.cid = cid;
         this.referer = referer;
+        this.cd = cd;
     }
 
     public int getIndex() {

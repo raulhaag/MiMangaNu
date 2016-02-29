@@ -35,6 +35,7 @@ public class DownloadPoolService extends Service implements StateChange {
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
+    private static DownloadsChangesListener mDownloadsChangesListener;
 
 
     static {
@@ -47,18 +48,27 @@ public class DownloadPoolService extends Service implements StateChange {
         if (!chapter.isDownloaded()) {
             if (isNewDownload(chapter.getId())) {
                 ChapterDownload dc = new ChapterDownload(chapter);
-                if (lectura)
+                if (mDownloadsChangesListener != null) {
+                    mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                }
+                if (lectura) {
                     chapterDownloads.add(0, dc);
-                else
+                } else {
                     chapterDownloads.add(dc);
+                }
             } else {
-                for (ChapterDownload dc : chapterDownloads) {
+                for (int i = 0; i < chapterDownloads.size(); i++) {
+                    ChapterDownload dc = chapterDownloads.get(i);
                     if (dc.chapter.getId() == chapter.getId()) {
                         if (dc.status == DownloadStatus.ERROR) {
                             dc.chapter.deleteImages(activity);
                             chapterDownloads.remove(dc);
                             dc = null;
                             ChapterDownload ndc = new ChapterDownload(chapter);
+                            if (mDownloadsChangesListener != null) {
+                                mDownloadsChangesListener.onChapterRemoved(i);
+                                mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                            }
                             if (lectura) {
                                 chapterDownloads.add(0, ndc);
                             } else {
@@ -67,6 +77,10 @@ public class DownloadPoolService extends Service implements StateChange {
                         } else {
                             if (lectura) {
                                 chapterDownloads.remove(dc);
+                                if (mDownloadsChangesListener != null) {
+                                    mDownloadsChangesListener.onChapterRemoved(i);
+                                    mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                                }
                                 chapterDownloads.add(0, dc);
                             }
                         }
@@ -74,6 +88,7 @@ public class DownloadPoolService extends Service implements StateChange {
                     }
                 }
             }
+
             initValues(activity);
         }
     }
@@ -89,7 +104,7 @@ public class DownloadPoolService extends Service implements StateChange {
         startService(context);
     }
 
-    public static void startService(Context context){
+    public static void startService(Context context) {
         if (!intentPending && actual == null) {
             intentPending = true;
             context.startService(new Intent(context, DownloadPoolService.class));
@@ -113,6 +128,9 @@ public class DownloadPoolService extends Service implements StateChange {
             if (chapterDownloads.get(i).chapter.getId() == cid) {
                 if (chapterDownloads.get(i).status.ordinal() != DownloadStatus.DOWNLOADING.ordinal()) {
                     chapterDownloads.remove(chapterDownloads.get(i));
+                    if (mDownloadsChangesListener != null) {
+                        mDownloadsChangesListener.onChapterRemoved(i);
+                    }
                 } else {
                     Toast.makeText(c, R.string.quitar_descarga, Toast.LENGTH_LONG).show();
                     result = false;
@@ -176,26 +194,57 @@ public class DownloadPoolService extends Service implements StateChange {
     }
 
     public static void pauseDownload() {
-        for (ChapterDownload cd : chapterDownloads) {
-            if (cd.status != DownloadStatus.ERROR && cd.status != DownloadStatus.DOWNLOADED) {
-                cd.status = DownloadStatus.PAUSED;
+        if (mDownloadsChangesListener != null)
+            for (int i = 0; i < chapterDownloads.size(); i++) {
+                ChapterDownload cd = chapterDownloads.get(i);
+                if (cd.status != DownloadStatus.ERROR && cd.status != DownloadStatus.DOWNLOADED) {
+                    cd.status = DownloadStatus.PAUSED;
+                    mDownloadsChangesListener.onStatusChanged(i, cd);
+                }
+            }
+        else {
+            for (int i = 0; i < chapterDownloads.size(); i++) {
+                ChapterDownload cd = chapterDownloads.get(i);
+                if (cd.status != DownloadStatus.ERROR && cd.status != DownloadStatus.DOWNLOADED) {
+                    cd.status = DownloadStatus.PAUSED;
+                }
             }
         }
     }
 
     public static void retryError(Context context) {
-        for (int i = 0; i < chapterDownloads.size(); i++) {
-            if (chapterDownloads.get(i).status == DownloadStatus.ERROR) {
-                chapterDownloads.set(i, new ChapterDownload(chapterDownloads.get(i).chapter));
+        if (mDownloadsChangesListener != null) {
+            for (int i = 0; i < chapterDownloads.size(); i++) {
+                ChapterDownload cd = chapterDownloads.get(i);
+                if (cd.status == DownloadStatus.ERROR) {
+                    chapterDownloads.set(i, new ChapterDownload(chapterDownloads.get(i).chapter));
+                    mDownloadsChangesListener.onStatusChanged(i, chapterDownloads.get(i));
+                }
+            }
+        } else {
+            for (int i = 0; i < chapterDownloads.size(); i++) {
+                ChapterDownload cd = chapterDownloads.get(i);
+                if (cd.status == DownloadStatus.ERROR) {
+                    chapterDownloads.set(i, new ChapterDownload(chapterDownloads.get(i).chapter));
+                }
             }
         }
         startService(context);
     }
 
-    public static void resumeDownloads(Context context){
-        for (int i = 0; i < chapterDownloads.size(); i++) {
-            if (chapterDownloads.get(i).status == DownloadStatus.PAUSED) {
-                chapterDownloads.get(i).status = DownloadStatus.QUEUED;
+    public static void resumeDownloads(Context context) {
+        if (mDownloadsChangesListener != null) {
+            for (int i = 0; i < chapterDownloads.size(); i++) {
+                if (chapterDownloads.get(i).status == DownloadStatus.PAUSED) {
+                    chapterDownloads.get(i).status = DownloadStatus.QUEUED;
+                    mDownloadsChangesListener.onStatusChanged(i, chapterDownloads.get(i));
+                }
+            }
+        } else {
+            for (int i = 0; i < chapterDownloads.size(); i++) {
+                if (chapterDownloads.get(i).status == DownloadStatus.PAUSED) {
+                    chapterDownloads.get(i).status = DownloadStatus.QUEUED;
+                }
             }
         }
         startService(context);
@@ -203,22 +252,32 @@ public class DownloadPoolService extends Service implements StateChange {
 
     public static void removeDownloaded() {
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
-        for (int i = 0; i < chapterDownloads.size();i++) {
+        for (int i = 0; i < chapterDownloads.size(); i++) {
             if (chapterDownloads.get(i).status == DownloadStatus.DOWNLOADED) {
                 toRemove.add(chapterDownloads.get(i));
             }
         }
         chapterDownloads.removeAll(toRemove);
+        if (mDownloadsChangesListener != null) {
+            mDownloadsChangesListener.onChaptersRemoved(toRemove);
+        }
     }
 
     public static void removeAll() {
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
-        for (int i = 0; i < chapterDownloads.size();i++) {
+        for (int i = 0; i < chapterDownloads.size(); i++) {
             if (chapterDownloads.get(i).status != DownloadStatus.DOWNLOADING) {
                 toRemove.add(chapterDownloads.get(i));
             }
         }
         chapterDownloads.removeAll(toRemove);
+        if (mDownloadsChangesListener != null) {
+            mDownloadsChangesListener.onChaptersRemoved(toRemove);
+        }
+    }
+
+    public static void setDownloadsChangesListener(DownloadsChangesListener mDownloadsChangesListener) {
+        DownloadPoolService.mDownloadsChangesListener = mDownloadsChangesListener;
     }
 
     @Override
@@ -252,6 +311,9 @@ public class DownloadPoolService extends Service implements StateChange {
         }
         if (downloadListener != null) {
             downloadListener.onImageDownloaded(singleDownload.cid, singleDownload.index);
+        }
+        if (mDownloadsChangesListener != null) {
+            mDownloadsChangesListener.onStatusChanged(chapterDownloads.indexOf(singleDownload.cd), singleDownload.cd);
         }
     }
 
@@ -308,7 +370,7 @@ public class DownloadPoolService extends Service implements StateChange {
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = path + "/" + sig + ".jpg";
                         SingleDownload des =
-                                new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc.chapter.getPath());
+                                new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc, dc.chapter.getPath());
                         des.setChangeListener(dc);
                         dc.setChagesListener(this);
                         new Thread(des).start();
@@ -338,9 +400,9 @@ public class DownloadPoolService extends Service implements StateChange {
         stopSelf();
     }
 
-    public boolean hasDownloadsPending(){
-        for(int i = 0; i < chapterDownloads.size();i++){
-            if(chapterDownloads.get(i).status == DownloadStatus.DOWNLOADING || chapterDownloads.get(i).status == DownloadStatus.QUEUED){
+    public boolean hasDownloadsPending() {
+        for (int i = 0; i < chapterDownloads.size(); i++) {
+            if (chapterDownloads.get(i).status == DownloadStatus.DOWNLOADING || chapterDownloads.get(i).status == DownloadStatus.QUEUED) {
                 return true;
             }
         }

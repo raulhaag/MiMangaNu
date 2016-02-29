@@ -12,6 +12,8 @@ import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ListView;
 
+import java.util.HashMap;
+
 import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -20,7 +22,7 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 public class ActivityDownloads extends AppCompatActivity {
     public boolean darkTheme;
     private ListView list;
-    private ShowDownloadsTask sh;
+//    private ShowDownloadsTask sh;
     private DownloadAdapter downloadAdapter;
 
     @Override
@@ -51,12 +53,9 @@ public class ActivityDownloads extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.remove_downloaded:
-                sh.stop();
                 DownloadPoolService.removeDownloaded();
                 downloadAdapter = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
                 list.setAdapter(downloadAdapter);
-                sh = new ShowDownloadsTask();
-                sh.execute();
                 break;
             case R.id.pause_downloads:
                 DownloadPoolService.pauseDownload();
@@ -83,13 +82,11 @@ public class ActivityDownloads extends AppCompatActivity {
         super.onResume();
         downloadAdapter = new DownloadAdapter(ActivityDownloads.this, ActivityDownloads.this, darkTheme);
         list.setAdapter(downloadAdapter);
-        sh = new ShowDownloadsTask();
-        sh.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
     public void onPause() {
-        sh.stop();
+        downloadAdapter.onPause();
         super.onPause();
     }
 
@@ -97,42 +94,5 @@ public class ActivityDownloads extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_downloads, menu);
         return true;
-    }
-
-
-    private class ShowDownloadsTask extends AsyncTask<Void, Void, Void> {
-        boolean _continue = true;
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                Thread.sleep(1000);//time to init big adapters =\_(-.-)_/=
-            while (_continue) {
-                if(downloadAdapter != null) {
-                    downloadAdapter.updateAll(DownloadPoolService.chapterDownloads);
-                    publishProgress();
-                }
-                    Thread.sleep(1000);
-            }
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            ActivityDownloads.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    downloadAdapter.notifyDataSetChanged();
-                }
-            });
-            super.onProgressUpdate(values);
-        }
-
-        public void stop() {
-            _continue = false;
-        }
     }
 }
