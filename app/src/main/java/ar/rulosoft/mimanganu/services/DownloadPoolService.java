@@ -126,7 +126,7 @@ public class DownloadPoolService extends Service implements StateChange {
         for (int i = 0; i < chapterDownloads.size(); i++) {
             if (chapterDownloads.get(i).chapter.getId() == cid) {
                 if (chapterDownloads.get(i).status.ordinal() != DownloadStatus.DOWNLOADING.ordinal()) {
-                    chapterDownloads.remove(chapterDownloads.get(i));
+                    chapterDownloads.remove(i);
                     if (mDownloadsChangesListener != null) {
                         mDownloadsChangesListener.onChapterRemoved(i);
                     }

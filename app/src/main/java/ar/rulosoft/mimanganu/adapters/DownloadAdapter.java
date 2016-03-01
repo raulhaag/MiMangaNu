@@ -75,36 +75,20 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
             holder.buttonImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (DownloadPoolService.removeDownload(item.chapter.getId(), getContext())) {
-                        remove(item);
-                        mActivity.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                DownloadAdapter.this.notifyDataSetChanged();
-                            }
-                        });
-                    }
+                    DownloadPoolService.removeDownload(item.chapter.getId(),mActivity);
                 }
             });
         }
         return convertView;
     }
 
-    @Override
-    public void remove(ChapterDownload object) {
-        downloads.remove(object);
-    }
-
-    public void updateAll(ArrayList<ChapterDownload>mDescargas) {
-        downloads = mDescargas;
-    }
-    public void onPause(){
+    public void onPause() {
         DownloadPoolService.setDownloadsChangesListener(null);
     }
 
     @Override
     public void onProgressChanged(int idx, ChapterDownload cd) {
-        downloads.set(idx,cd);
+        downloads.set(idx, cd);
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -115,7 +99,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
 
     @Override
     public void onStatusChanged(int idx, ChapterDownload cd) {
-        if(idx >= 0) {
+        if (idx >= 0) {
             downloads.set(idx, cd);
             mActivity.runOnUiThread(new Runnable() {
                 @Override
@@ -128,9 +112,9 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
 
     @Override
     public void onChapterAdded(boolean atStart, ChapterDownload cd) {
-        if(atStart){
-            downloads.add(0,cd);
-        }else{
+        if (atStart) {
+            downloads.add(0, cd);
+        } else {
             downloads.add(cd);
         }
         mActivity.runOnUiThread(new Runnable() {
@@ -143,7 +127,13 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
 
     @Override
     public void onChapterRemoved(int idx) {
-        downloads.remove(idx);
+//        downloads.remove(idx);
+        mActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+            }
+        });
     }
 
     @Override

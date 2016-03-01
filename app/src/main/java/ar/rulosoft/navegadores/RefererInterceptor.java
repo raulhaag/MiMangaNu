@@ -17,7 +17,7 @@ public class RefererInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         return chain.proceed(chain.request().newBuilder()
-                .header("Referer", URLEncoder.encode(referer, "UTF-8"))
+                .header("Referer", referer) //url encodes don't work with well on referers
                 .build());
     }
 

@@ -28,6 +28,10 @@ Downloads
 Changelog
 ---------
 
+Cambios 1.45
+* Agregado senmanga raw
+* Muchos pequeños fixes
+* Mejorado el administrador de descargas
 
 Cambios 1.44
 * Mejorados los dos lectores
