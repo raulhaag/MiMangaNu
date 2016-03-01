@@ -11,6 +11,22 @@ android {
         versionCode 44
         versionName "1.44"
     }
+
+    signingConfigs {
+        release {
+            storeFile file("../mimanganu.jks")
+            storePassword 'mimanganu'
+            keyAlias 'mimanganu'
+            keyPassword 'mimanganu'
+        }
+        debug {
+            storeFile file("../mimanganu.jks")
+            storePassword 'mimanganu'
+            keyAlias 'mimanganu'
+            keyPassword 'mimanganu'
+        }
+    }
+
     buildTypes {
         release {
             lintOptions {
@@ -18,6 +34,11 @@ android {
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug {
+            debuggable true
+            signingConfig signingConfigs.debug
         }
     }
     compileOptions.encoding = 'UTF-8'
