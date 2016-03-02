@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.services;
 
+import android.net.Uri;
 import android.util.Log;
 
 import com.squareup.okhttp.OkHttpClient;
@@ -19,8 +20,8 @@ import ar.rulosoft.navegadores.RefererInterceptor;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    public Navegador NAVEGADOR = null;
-    public boolean referer;
+    //public Navegador NAVEGADOR = null;
+    public boolean reference;
     int index, cid;
     ChapterDownload cd;
     Status status = Status.QUEUED;
@@ -29,13 +30,13 @@ public class SingleDownload implements Runnable {
     private StateChange changeListener = null;
     private int retry = RETRY;
 
-    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
+    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean reference) {
         super();
         this.fromURL = fromURL;
         this.toFile = toFile;
         this.index = index;
         this.cid = cid;
-        this.referer = referer;
+        this.reference = reference;
         this.cd = cd;
     }
 
@@ -56,14 +57,16 @@ public class SingleDownload implements Runnable {
             if (o.length() == 0) {
                 InputStream input;
                 OutputStream output;
-                long contentLenght;
+                long contentLength;
                 try {
                     OkHttpClient client = new Navegador().getHttpClient();
-                    if (referer)
-                        client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
+                    if (reference)
+                        client.networkInterceptors().add(
+                                new RefererInterceptor(Uri.encode(cd.chapter.getPath())));
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
                     client.setReadTimeout(3, TimeUnit.SECONDS);
-                    Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
+                    Response response = client.newCall(
+                            new Request.Builder().url(fromURL).build()).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);
@@ -76,7 +79,7 @@ public class SingleDownload implements Runnable {
                         ot.renameTo(o);
                         break;
                     }
-                    contentLenght = response.body().contentLength();
+                    contentLength = response.body().contentLength();
                     input = response.body().byteStream();
                     output = new FileOutputStream(ot);
                 } catch (FileNotFoundException e) {
@@ -105,8 +108,8 @@ public class SingleDownload implements Runnable {
                 } finally {
                     boolean flagedOk = false;
                     if (status != Status.RETRY) {
-                        if (contentLenght > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLenght +
+                        if (contentLength > ot.length()) {
+                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLength +
                                     " size =" + o.length() + " on =" + o.getPath());
                             ot.delete();
                             retry--;
