@@ -208,32 +208,36 @@ public abstract class ServerBase {
             returnValue = simpleList.size();
         }
 
-        boolean cambios = false;
+        boolean changes = false;
         if (!mangaDb.getAuthor().equals(manga.getAuthor()) &&
                 manga.getAuthor().length() > 2) {
             mangaDb.setAuthor(manga.getAuthor());
-            cambios = true;
+            changes = true;
         }
 
         if (!mangaDb.getImages().equals(manga.getImages()) &&
                 manga.getImages().length() > 2) {
             mangaDb.setImages(manga.getImages());
-            cambios = true;
+            changes = true;
         }
 
         if (!mangaDb.getSynopsis().equals(manga.getSynopsis()) &&
                 manga.getSynopsis().length() > 2) {
             mangaDb.setSynopsis(manga.getSynopsis());
-            cambios = true;
+            changes = true;
         }
 
         if (!mangaDb.getGenre().equals(manga.getGenre()) &&
                 manga.getGenre().length() > 2) {
             mangaDb.setGenre(manga.getGenre());
-            cambios = true;
+            changes = true;
+        }
+        if (mangaDb.isFinished() != manga.isFinished() ) {
+            mangaDb.setFinished(manga.isFinished());
+            changes = true;
         }
 
-        if (cambios) Database.updateManga(context, mangaDb, false);
+        if (changes) Database.updateManga(context, mangaDb, false);
 
         return returnValue;
     }
