@@ -4,30 +4,27 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
-import java.net.URLEncoder;
 
 public class RefererInterceptor implements Interceptor {
 
-    private String referer;
+    private String reference;
 
-    public RefererInterceptor(String referer) {
-        this.referer = referer;
+    public RefererInterceptor(String reference) {
+        this.reference = reference;
     }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
         return chain.proceed(chain.request().newBuilder()
-                .header("Referer", referer) //url encodes don't work with well on referers
+                .header("Referer", reference)
                 .build());
     }
 
-    public String getReferer() {
-        return referer;
+    public String getReference() {
+        return reference;
     }
 
-    public void setReferer(String referer) {
-        this.referer = referer;
+    public void setReference(String reference) {
+        this.reference = reference;
     }
-
-
 }
