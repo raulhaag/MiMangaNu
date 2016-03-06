@@ -720,7 +720,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                                 if (bottom > original_height)
                                                     bottom = (int) original_height;
                                                 segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
-                                                if(segments == null){
+                                                if(segment == null){
                                                     segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
                                                 }
                                             } catch (Exception e) {
