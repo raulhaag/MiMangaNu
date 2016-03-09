@@ -22,7 +22,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload.DownloadStatus;
 import ar.rulosoft.mimanganu.services.SingleDownload.Status;
 
-public class DownloadPoolService extends Service implements StateChange {
+public class DownloadPoolService extends Service implements StateChangeListener {
 
     private final static int[] illegalChars = {
             34, 60, 62, 124,

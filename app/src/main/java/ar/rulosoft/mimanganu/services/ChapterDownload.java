@@ -4,12 +4,12 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.services.SingleDownload.Status;
 
-public class ChapterDownload implements StateChange {
+public class ChapterDownload implements StateChangeListener {
     public static int MAX_ERRORS = 5;
     public DownloadStatus status;
     public Chapter chapter;
     private OnErrorListener errorListener = null;
-    private StateChange chagesListener = null;
+    private StateChangeListener chagesListener = null;
     private Status[] pagesStatus;
     private int progress = 0;
 
@@ -99,7 +99,7 @@ public class ChapterDownload implements StateChange {
         this.chapter = chapter;
     }
 
-    public void setChagesListener(StateChange chagesListener) {
+    public void setChagesListener(StateChangeListener chagesListener) {
         this.chagesListener = chagesListener;
     }
 

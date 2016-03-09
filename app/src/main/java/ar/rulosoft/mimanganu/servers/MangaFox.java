@@ -127,7 +127,7 @@ public class MangaFox extends ServerBase {
         String data;
         data = new Navegador().get(c.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        c.setPages(Integer.parseInt(paginas));
+        c.setPages(Integer.parseInt(paginas)-1);//last page is for comments
     }
 
     @Override

@@ -22,12 +22,12 @@ public class SingleDownload implements Runnable {
     public static int RETRY = 3;
     //public Navegador NAVEGADOR = null;
     public boolean reference;
+    public Status status = Status.QUEUED;
     int index, cid;
     ChapterDownload cd;
-    Status status = Status.QUEUED;
     private String fromURL;
     private String toFile;
-    private StateChange changeListener = null;
+    private StateChangeListener changeListener = null;
     private int retry = RETRY;
 
     public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean reference) {
@@ -61,12 +61,10 @@ public class SingleDownload implements Runnable {
                 try {
                     OkHttpClient client = new Navegador().getHttpClient();
                     if (reference)
-                        client.networkInterceptors().add(
-                                new RefererInterceptor(Uri.encode(cd.chapter.getPath())));
+                        client.networkInterceptors().add(new RefererInterceptor(Uri.encode(cd.chapter.getPath())));
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
                     client.setReadTimeout(3, TimeUnit.SECONDS);
-                    Response response = client.newCall(
-                            new Request.Builder().url(fromURL).build()).execute();
+                    Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);
@@ -109,8 +107,7 @@ public class SingleDownload implements Runnable {
                     boolean flagedOk = false;
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLength +
-                                    " size =" + o.length() + " on =" + o.getPath());
+                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLength + " size =" + o.length() + " on =" + o.getPath());
                             ot.delete();
                             retry--;
                             changeStatus(Status.RETRY);
@@ -130,7 +127,7 @@ public class SingleDownload implements Runnable {
                                 writeErrorImage(ot);
                                 ot.renameTo(o);
                             }
-                            Log.i("MIMANGA DOWNLOAD", "download ok =" + o.getPath());
+                            //  Log.i("MIMANGA DOWNLOAD", "download ok =" + o.getPath());
                             changeStatus(Status.DOWNLOAD_OK);
                         }
                     } catch (IOException e) {
@@ -165,11 +162,11 @@ public class SingleDownload implements Runnable {
         }
     }
 
-    public void setChangeListener(StateChange changeListener) {
+    public void setChangeListener(StateChangeListener changeListener) {
         this.changeListener = changeListener;
     }
 
-    enum Status {
+    public enum Status {
         QUEUED, INIT, DOWNLOADING, RETRY, POSTPONED, DOWNLOAD_OK, ERROR_CONNECTION,
         ERROR_404, ERROR_TIMEOUT, ERROR_ON_UPLOAD, ERROR_INVALID_URL, ERROR_WRITING_FILE,
         ERROR_OPENING_FILE

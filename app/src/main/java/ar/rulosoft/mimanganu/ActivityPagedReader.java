@@ -7,7 +7,6 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
@@ -18,13 +17,11 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -44,7 +41,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.ActivityManga.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -53,9 +49,12 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPager;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.ChapterDownload.OnErrorListener;
 import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
@@ -93,7 +92,6 @@ public class ActivityPagedReader extends AppCompatActivity
     private ServerBase mServerBase;
     private TextView mSeekerPage, mScrollSensitiveText;
     private MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
-    private LastPageFragment mLastPageFrag;
     private Button mButtonMinus, mButtonPlus;
 
     private boolean controlVisible = false;
@@ -197,7 +195,6 @@ public class ActivityPagedReader extends AppCompatActivity
         mServerBase = ServerBase.getServer(mManga.getServerId());
         if (DownloadPoolService.actual != null)
             DownloadPoolService.setDownloadListener(this);
-        mLastPageFrag = new LastPageFragment();
 
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
         mActionBar.setTitleTextColor(Color.WHITE);
@@ -311,7 +308,7 @@ public class ActivityPagedReader extends AppCompatActivity
             mScrollFactor += diff;
             Database.updateMangaScrollSensitive(ActivityPagedReader.this, mManga.getId(), mScrollFactor);
             mScrollSensitiveText.setText("" + mScrollFactor);
-            mPageAdapter.setPageScroll(mScrollFactor);//TODO PageScroll
+            mPageAdapter.setPageScroll(mScrollFactor);
         }
     }
 
@@ -394,7 +391,7 @@ public class ActivityPagedReader extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.view_reader, menu);
+        getMenuInflater().inflate(R.menu.menu_paged_reader, menu);
         displayMenu = menu.findItem(R.id.action_ajustar);
         keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
         screenRotationMenuItem = menu.findItem(R.id.action_orientation);
@@ -467,6 +464,8 @@ public class ActivityPagedReader extends AppCompatActivity
                 editor.putInt(ORIENTATION, mOrientation);
                 editor.apply();
             }
+            case R.id.re_download_image:
+                mPageAdapter.getCurrentPage().reDownloadImage();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -642,113 +641,7 @@ public class ActivityPagedReader extends AppCompatActivity
         });
     }
 
-    public static class LastPageFragment extends Fragment { //need to be static
-        Button btnNext, btnPrev;
-        Chapter chNext = null, chPrev = null;
-        ActivityPagedReader l;
-
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View rView = inflater.inflate(R.layout.fragment_pagina_final, container, false);
-            btnNext = (Button) rView.findViewById(R.id.button_next);
-            btnPrev = (Button) rView.findViewById(R.id.button_previous);
-            return rView;
-        }
-
-        @Override
-        public void onActivityCreated(Bundle savedInstanceState) {
-            l = (ActivityPagedReader) getActivity();
-            int cid = l.mChapter.getId();
-            ArrayList<Chapter> caps = l.mManga.getChapters();
-            for (int i = 0; i < caps.size(); i++) {
-                if (caps.get(i).getId() == cid) {
-                    if (i > 0) {
-                        chNext = caps.get(i - 1);
-                    }
-                    if (i < caps.size() - 1) {
-                        chPrev = caps.get(i + 1);
-                    }
-                }
-            }
-
-            if (chNext == null) {
-                btnNext.setVisibility(Button.GONE);
-            } else {
-                btnNext.setText(getString(R.string.next) + "\n\n" + chNext.getTitle());
-                btnNext.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new GetPageTask().execute(chNext);
-                    }
-                });
-            }
-
-            if (chPrev == null) {
-                btnPrev.setVisibility(Button.GONE);
-            } else {
-                btnPrev.setText(getString(R.string.previous) + "\n\n" + chPrev.getTitle());
-                btnPrev.setOnClickListener(new OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new GetPageTask().execute(chPrev);
-                    }
-                });
-            }
-
-            super.onActivityCreated(savedInstanceState);
-        }
-
-        public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
-            ProgressDialog asyncDialog = new ProgressDialog(getActivity());
-            String error = "";
-
-            @Override
-            protected void onPreExecute() {
-                asyncDialog.setMessage(getResources().getString(R.string.iniciando));
-                asyncDialog.show();
-                super.onPreExecute();
-            }
-
-            @Override
-            protected Chapter doInBackground(Chapter... arg0) {
-                Chapter c = arg0[0];
-                ServerBase s = ServerBase.getServer(l.mManga.getServerId());
-                try {
-                    if (c.getPages() < 1) s.chapterInit(c);
-                } catch (Exception e) {
-                    error = e.getMessage();
-                }
-                if (c.getPages() < 1) {
-                    error = getString(R.string.error);
-                }
-                return c;
-            }
-
-            @Override
-            protected void onPostExecute(Chapter result) {
-                try {
-                    asyncDialog.dismiss();
-                } catch (Exception e) {
-                    // ignore error
-                }
-                if (error.length() > 1) {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-                } else {
-                    Database.updateChapter(getActivity(), result);
-                    DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
-                    Intent intent =
-                            new Intent(getActivity(), ActivityPagedReader.class);
-                    intent.putExtra(ActivityManga.CHAPTER_ID, result.getId());
-                    getActivity().startActivity(intent);
-                    Database.updateChapter(l, l.mChapter);
-                    l.finish();
-                }
-                super.onPostExecute(result);
-            }
-        }
-    }
-
-    public class Page extends RelativeLayout {
+    public class Page extends RelativeLayout implements StateChangeListener {
         public ImageViewTouch visor;
         public ActivityPagedReader activity = ActivityPagedReader.this;
         ProgressBar loading;
@@ -787,7 +680,8 @@ public class ActivityPagedReader extends AppCompatActivity
         }
 
         public void unloadImage() {
-            visor.setImageBitmap(null);
+            if (visor != null)
+                visor.setImageBitmap(null);
             imageLoaded = false;
         }
 
@@ -809,6 +703,21 @@ public class ActivityPagedReader extends AppCompatActivity
             return visor == null || visor.canScrollV(dx);
         }
 
+        @Override
+        public void onChange(SingleDownload singleDownload) {
+            if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
+                setImage();
+            } else {
+                if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
+                    Toast.makeText(ActivityPagedReader.this, "Error downloadind the image", Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+
+        public void reDownloadImage() {
+            new ReDownloadImage().execute();
+        }
+
         public class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
 
             @Override
@@ -820,10 +729,21 @@ public class ActivityPagedReader extends AppCompatActivity
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                Bitmap bitmap;
+                boolean notLoaded = true;
+                Bitmap bitmap = null;
                 BitmapFactory.Options opts = new BitmapFactory.Options();
                 opts.inPreferredConfig = Config.RGB_565;
-                bitmap = BitmapFactory.decodeFile(path, opts);
+                while (notLoaded) {
+                    try {
+                        bitmap = BitmapFactory.decodeFile(path, opts);
+                        notLoaded = false;
+                    } catch (OutOfMemoryError oom) {
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e) {
+                        }//time to free memory
+                    }
+                }
                 return bitmap;
             }
 
@@ -847,15 +767,35 @@ public class ActivityPagedReader extends AppCompatActivity
                     } else {
                         visor.setAlpha(1f);
                     }
-
                     loading.setVisibility(ProgressBar.INVISIBLE);
-                } else if (path != null) {
-                    File f = new File(path);
-                    if (f.exists()) {
-                        f.delete();
-                    }
                 }
                 super.onPostExecute(result);
+            }
+        }
+
+        public class ReDownloadImage extends AsyncTask<Void, Void, Void> {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+                if (loading != null)
+                    loading.setVisibility(ProgressBar.VISIBLE);
+                unloadImage();
+            }
+
+            @Override
+            protected Void doInBackground(Void... params) {
+                File f = new File(path);
+                if (f.exists()) {
+                    f.delete();
+                }
+                try {
+                    SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, index + 1), path, 0, 0, new ChapterDownload(mChapter), true);
+                    s.setChangeListener(Page.this);
+                    new Thread(s).start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
             }
         }
     }

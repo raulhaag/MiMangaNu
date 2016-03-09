@@ -1,5 +1,5 @@
 package ar.rulosoft.mimanganu.services;
 
-interface StateChange {
+public interface StateChangeListener {
     void onChange(SingleDownload singleDownload);
 }

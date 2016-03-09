@@ -361,16 +361,16 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.action_reader:
-                if (mManga.getReaderType() == 1) {
-                    mManga.setReaderType(2);
-                    readerType = 2;
-                    mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
-                    mMenuItemReaderType.setTitle(R.string.continuous_reader);
-                } else {
+                if (mManga.getReaderType() == 2) {
                     mManga.setReaderType(1);
                     readerType = 1;
                     mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
                     mMenuItemReaderType.setTitle(R.string.paged_reader);
+                } else {
+                    mManga.setReaderType(2);
+                    readerType = 2;
+                    mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
+                    mMenuItemReaderType.setTitle(R.string.continuous_reader);
                 }
                 Database.updateManga(ActivityManga.this, mManga, false);
                 break;

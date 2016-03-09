@@ -200,7 +200,9 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                                 break;
                                         }
                                     }
-                                } catch (Exception e) {tested = false;}//catch errors caused for array concurrent modify
+                                } catch (Exception e) {
+                                    tested = false;
+                                }//catch errors caused for array concurrent modify
 
                             }
                             if (currentPage != lastBestVisible) {
@@ -279,11 +281,13 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     }
 
     public void reloadImage(int idx) {
-        Page page = initValues(pages.get(idx).path);
-        pages.set(idx, page);
-        calculateParticularScale(pages.get(idx));
-        calculateVisibilities();
-        generateDrawPool();
+        if (pages != null) {
+            Page page = initValues(pages.get(idx).path);
+            pages.set(idx, page);
+            calculateParticularScale(pages.get(idx));
+            calculateVisibilities();
+            generateDrawPool();
+        }
     }
 
     public Page initValues(String path) {
@@ -708,7 +712,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                     if (!error) {
                                         if (tp == 1) {
                                             segment = BitmapDecoder.from(path).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
-                                            if(segments == null){
+                                            if (segments == null) {
                                                 segment = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
                                             }
 
@@ -720,7 +724,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                                 if (bottom > original_height)
                                                     bottom = (int) original_height;
                                                 segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
-                                                if(segment == null){
+                                                if (segment == null) {
                                                     segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
                                                 }
                                             } catch (Exception e) {
