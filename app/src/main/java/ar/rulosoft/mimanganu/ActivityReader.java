@@ -576,7 +576,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     public void reDownloadCurrentImage(){
         ReDownloadImage r = new ReDownloadImage();
-        r.execute();
+        r.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
@@ -629,7 +629,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     public class ReDownloadImage extends AsyncTask<Void, Void, Void> {
         int idx;
         String path;
-
+        String error = "";
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -650,9 +650,20 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 s.setChangeListener(ActivityReader.this);
                 new Thread(s).start();
             } catch (Exception e) {
-                e.printStackTrace();
+                error = e.getMessage();
+                if(error == null){
+                    error = "null";
+                }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            if(error.length() > 3){
+                Toast.makeText(ActivityReader.this,error,Toast.LENGTH_LONG).show();
+            }
         }
     }
 

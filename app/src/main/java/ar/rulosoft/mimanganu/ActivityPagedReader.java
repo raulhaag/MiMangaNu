@@ -690,8 +690,8 @@ public class ActivityPagedReader extends AppCompatActivity
                 new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
-        public void setImage(String ruta) {
-            this.path = ruta;
+        public void setImage(String path) {
+            this.path = path;
             setImage();
         }
 
@@ -779,6 +779,7 @@ public class ActivityPagedReader extends AppCompatActivity
         }
 
         public class ReDownloadImage extends AsyncTask<Void, Void, Void> {
+            String error = "";
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -797,10 +798,21 @@ public class ActivityPagedReader extends AppCompatActivity
                     SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, index + 1), path, 0, 0, new ChapterDownload(mChapter), true);
                     s.setChangeListener(Page.this);
                     new Thread(s).start();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                }catch(Exception e) {
+                    error = e.getMessage();
+                    if(error == null){
+                        error = "null";
+                    }
                 }
                 return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                if(error.length() > 3){
+                    Toast.makeText(ActivityPagedReader.this,error,Toast.LENGTH_LONG).show();
+                }
             }
         }
     }
