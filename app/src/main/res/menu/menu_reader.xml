@@ -22,16 +22,10 @@
         android:title="@string/rotation"
         app:showAsAction="always" />
 
-    <!--    <item
-          android:icon="@drawable/ic_action_overflow"
-          android:title="@string/mas"
-          android:orderInCategory="100"
-          app:showAsAction="always">
-          <menu>
-              <item
-                  android:id="@+id/redownload_image"
-                  android:title="@string/download_image_again" />
-          </menu>
-      </item>
--->
+    <item
+        android:id="@+id/re_download_image"
+        android:icon="@drawable/ic_action_image_reload"
+        android:orderInCategory="100"
+        android:title="@string/download_image_again"
+        app:showAsAction="always" />
 </menu>

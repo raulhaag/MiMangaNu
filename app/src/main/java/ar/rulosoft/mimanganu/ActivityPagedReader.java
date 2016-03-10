@@ -709,7 +709,12 @@ public class ActivityPagedReader extends AppCompatActivity
                 setImage();
             } else {
                 if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
-                    Toast.makeText(ActivityPagedReader.this, "Error downloadind the image", Toast.LENGTH_LONG).show();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(ActivityPagedReader.this, R.string.error_dowloading_image, Toast.LENGTH_LONG).show();
+                        }
+                    });
                 }
             }
         }
@@ -739,9 +744,9 @@ public class ActivityPagedReader extends AppCompatActivity
                         notLoaded = false;
                     } catch (OutOfMemoryError oom) {
                         try {
-                            Thread.sleep(3000);
+                            Thread.sleep(3000);//time to free memory
                         } catch (InterruptedException e) {
-                        }//time to free memory
+                        }
                     }
                 }
                 return bitmap;

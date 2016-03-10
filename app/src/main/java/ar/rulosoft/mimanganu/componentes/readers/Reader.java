@@ -103,6 +103,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             }
     }
 
+    public Page getPage(int page){
+        return pages.get(page - 1);
+    }
+
     public void init(Context context) {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
@@ -282,10 +286,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public void reloadImage(int idx) {
         if (pages != null) {
+            int iniPage = getCurrentPage() - 1;
             Page page = initValues(pages.get(idx).path);
             pages.set(idx, page);
             calculateParticularScale(pages.get(idx));
             calculateVisibilities();
+            seekPage(iniPage);
             generateDrawPool();
         }
     }
@@ -544,7 +550,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         void onEndFling();
     }
 
-    protected abstract class Page {
+    public abstract class Page {
 
         String path;
         float original_width;
@@ -585,6 +591,9 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             initialized = true;
         }
 
+        public String getPath(){
+            return path;
+        }
 
         public void freeMemory() {
             if (segments != null)

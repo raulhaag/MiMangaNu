@@ -24,11 +24,13 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.ActivityManga.Direction;
@@ -43,9 +45,11 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityReader extends AppCompatActivity implements DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
+public class ActivityReader extends AppCompatActivity implements StateChangeListener,DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 
     // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -352,6 +356,9 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
                 setReader();
                 break;
             }
+            case R.id.re_download_image:
+                reDownloadCurrentImage();
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -545,6 +552,33 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
         }
     }
 
+    @Override
+    public void onChange(final SingleDownload singleDownload) {
+        if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
+            mReader.reloadImage(singleDownload.getIndex() - 1);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mReader.invalidate();
+                }
+            });
+        } else {
+            if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ActivityReader.this, R.string.error_dowloading_image, Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
+    }
+
+    public void reDownloadCurrentImage(){
+        ReDownloadImage r = new ReDownloadImage();
+        r.execute();
+    }
+
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncDialog = new ProgressDialog(ActivityReader.this);
         String error;
@@ -589,6 +623,36 @@ public class ActivityReader extends AppCompatActivity implements DownloadListene
                 loadChapter(result);
             }
             super.onPostExecute(result);
+        }
+    }
+
+    public class ReDownloadImage extends AsyncTask<Void, Void, Void> {
+        int idx;
+        String path;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            idx = mReader.getCurrentPage();
+            mReader.getPage(idx).freeMemory();
+            path = mReader.getPage(idx).getPath();
+            File f = new File(path);
+            if (f.exists()) {
+                f.delete();
+            }
+            mReader.reloadImage(idx - 1);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, idx), path, idx, mChapter.getId(), new ChapterDownload(mChapter), true);
+                s.setChangeListener(ActivityReader.this);
+                new Thread(s).start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
         }
     }
 
