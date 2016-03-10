@@ -171,4 +171,5 @@
     <string name="continuous_reader">Continuous reader</string>
     <string name="paged_reader">Paged reader</string>
     <string name="error_dowloading_image">Error downloading the image</string>
+    <string name="used_space">Storage size used by mangas</string>
 </resources>

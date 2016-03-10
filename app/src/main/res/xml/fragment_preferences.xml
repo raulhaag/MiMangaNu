@@ -145,7 +145,7 @@
         <Preference
             android:key="stat_storage"
             android:summary="..."
-            android:title="Storage size used by mangas" />
+            android:title="@string/used_space" />
         <Preference
             android:key="license_view"
             android:summary="@string/license_sub"
