@@ -531,7 +531,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             LayoutInflater inflater = getLayoutInflater();
             pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             boolean imagesDelete = pm.getBoolean("delete_images", false);
-            View v = inflater.inflate(R.layout.next_chapter_message, null);
+            View v = inflater.inflate(R.layout.dialog_next_chapter, null);
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
             new AlertDialog.Builder(ActivityReader.this)
