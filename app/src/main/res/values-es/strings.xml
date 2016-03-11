@@ -168,7 +168,7 @@
     <string name="remove_downloaded">Quitar descargados</string>
     <string name="resume_downloads">Resumir las rescarga</string>
     <string name="retry_errors">Reintentar erroneas</string>
-    <string name="error_dowloading_image">Error descargando imagen</string>
+    <string name="error_downloading_image">Error descargando imagen</string>
     <string name="used_space">Espacio usado por tus mangas</string>
 
 </resources>

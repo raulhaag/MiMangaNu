@@ -170,6 +170,7 @@
     <string name="resume_downloads">Resume Downloads</string>
     <string name="continuous_reader">Continuous reader</string>
     <string name="paged_reader">Paged reader</string>
-    <string name="error_dowloading_image">Error downloading the image</string>
+    <string name="error_downloading_image">Error downloading the image</string>
     <string name="used_space">Storage size used by mangas</string>
+    <string name="delete_on_chapter_change">Delete images?</string>
 </resources>

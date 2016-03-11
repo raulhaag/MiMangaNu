@@ -15,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,9 +23,9 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -527,18 +528,31 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public void onEndFling() {
         if (nextChapter != null) {
+            LayoutInflater inflater = getLayoutInflater();
+            pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            boolean imagesDelete = pm.getBoolean("delete_images", false);
+            View v = inflater.inflate(R.layout.next_chapter_message, null);
+            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+            checkBox.setChecked(imagesDelete);
             new AlertDialog.Builder(ActivityReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
-                    .setMessage(R.string.read_next)
+                    .setView(v)
                     .setIcon(R.drawable.ic_launcher)
                     .setNegativeButton(getString(android.R.string.no), null)
                     .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            boolean del_images = checkBox.isChecked();
+                            if (pm != null)
+                                pm.edit().putBoolean("delete_images", del_images).commit();
                             mChapter.setReadStatus(Chapter.READ);
                             mChapter.setPagesRead(mChapter.getPages());
                             Database.updateChapter(ActivityReader.this, mChapter);
+                            Chapter pChapter = mChapter;
                             loadChapter(nextChapter);
+                            if (del_images) {
+                                pChapter.freeSpace(ActivityReader.this);
+                            }
                         }
                     })
                     .show();
@@ -567,7 +581,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ActivityReader.this, R.string.error_dowloading_image, Toast.LENGTH_LONG).show();
+                        Toast.makeText(ActivityReader.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
                     }
                 });
             }

@@ -32,6 +32,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -496,9 +497,15 @@ public class ActivityPagedReader extends AppCompatActivity
 
     public void onEndDrag() {
         if (nextChapter != null) {
+            LayoutInflater inflater = getLayoutInflater();
+            pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+            boolean imagesDelete = pm.getBoolean("delete_images", false);
+            View v = inflater.inflate(R.layout.next_chapter_message, null);
+            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+            checkBox.setChecked(imagesDelete);
             new AlertDialog.Builder(ActivityPagedReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
-                    .setMessage(R.string.read_next)
+                    .setView(v)
                     .setIcon(R.drawable.ic_launcher)
                     .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
                         @Override
@@ -510,10 +517,17 @@ public class ActivityPagedReader extends AppCompatActivity
                     .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            boolean del_images = checkBox.isChecked();
+                            if (pm != null)
+                                pm.edit().putBoolean("delete_images", del_images).commit();
                             mChapter.setReadStatus(Chapter.READ);
                             mChapter.setPagesRead(mChapter.getPages());
                             Database.updateChapter(ActivityPagedReader.this, mChapter);
+                            Chapter pChapter = mChapter;
                             loadChapter(nextChapter);
+                            if (del_images) {
+                                pChapter.freeSpace(ActivityPagedReader.this);
+                            }
                             firedMessage = false;
                         }
                     })
@@ -712,7 +726,7 @@ public class ActivityPagedReader extends AppCompatActivity
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(ActivityPagedReader.this, R.string.error_dowloading_image, Toast.LENGTH_LONG).show();
+                            Toast.makeText(ActivityPagedReader.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
                         }
                     });
                 }
@@ -780,6 +794,7 @@ public class ActivityPagedReader extends AppCompatActivity
 
         public class ReDownloadImage extends AsyncTask<Void, Void, Void> {
             String error = "";
+
             @Override
             protected void onPreExecute() {
                 super.onPreExecute();
@@ -798,9 +813,9 @@ public class ActivityPagedReader extends AppCompatActivity
                     SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, index + 1), path, 0, 0, new ChapterDownload(mChapter), true);
                     s.setChangeListener(Page.this);
                     new Thread(s).start();
-                }catch(Exception e) {
+                } catch (Exception e) {
                     error = e.getMessage();
-                    if(error == null){
+                    if (error == null) {
                         error = "null";
                     }
                 }
@@ -810,8 +825,8 @@ public class ActivityPagedReader extends AppCompatActivity
             @Override
             protected void onPostExecute(Void aVoid) {
                 super.onPostExecute(aVoid);
-                if(error.length() > 3){
-                    Toast.makeText(ActivityPagedReader.this,error,Toast.LENGTH_LONG).show();
+                if (error.length() > 3) {
+                    Toast.makeText(ActivityPagedReader.this, error, Toast.LENGTH_LONG).show();
                 }
             }
         }
