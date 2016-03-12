@@ -22,7 +22,6 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 public class MangasRecAdapter extends MangaRecAdapterBase {
     protected ImageLoader imageLoader;
 
-
     public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
         super(lista,context,darkTheme);
         imageLoader = new ImageLoader(context);

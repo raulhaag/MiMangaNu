@@ -109,7 +109,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 convertView.setBackgroundColor(Color.TRANSPARENT);
             }
             if (item.getPages() > 0) {
-                holder.textViewPages.setText(item.getPagesRead() + "/" + item.getPages());
+                holder.textViewPages.setText(String.format("%d/%d", item.getPagesRead(), item.getPages()));
             } else {
                 holder.textViewPages.setText("");
             }
