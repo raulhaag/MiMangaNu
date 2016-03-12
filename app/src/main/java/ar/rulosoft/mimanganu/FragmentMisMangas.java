@@ -53,7 +53,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     private UpdateListTask newUpdate;
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
-    private int mNotifyID = 1;
+    private int mNotifyID = 1246502;
 
     public static void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -243,6 +243,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             mBuilder.setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle(getResources().getString(R.string.buscandonuevo))
                     .setContentText("")
+                    .setAutoCancel(true)
                     .setOngoing(true);
             mBuilder.setProgress(100, 0, false);
             mNotifyManager.notify(mNotifyID, mBuilder.build());
@@ -310,20 +311,28 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            String mMessage = (result > 0) ?
-                    String.format(getResources().getString(R.string.mgs_update_found), result) :
-                    getResources().getString(R.string.msg_update_no_new);
-            mBuilder.setContentTitle(getResources().getString(R.string.update_complete))
-                    .setProgress(0, 0, false)
-                    .setOngoing(false)
-                    .setContentText(mMessage);
-            mNotifyManager.notify(mNotifyID, mBuilder.build());
             Context mContent = getActivity();
-            if (mContent != null)
-                Toast.makeText(mContent, getResources().getString(R.string.update_complete),
+            if (mContent != null) {
+                if (result > 0) {
+                    mBuilder.setContentTitle(
+                            mContent.getResources()
+                                    .getString(R.string.update_complete))
+                            .setProgress(0, 0, false)
+                            .setOngoing(false)
+                            .setContentText(String.format(mContent.getResources()
+                                    .getString(R.string.mgs_update_found), result));
+                    mNotifyManager.notify(mNotifyID, mBuilder.build());
+                    setListManga(true);
+                } else {
+                    mNotifyManager.cancel(mNotifyID);
+                }
+                Toast.makeText(mContent, mContent.getResources()
+                                .getString(R.string.update_complete),
                         Toast.LENGTH_LONG).show();
-            setListManga(true);
-            swipeReLayout.setRefreshing(false);
+                swipeReLayout.setRefreshing(false);
+            } else {
+                mNotifyManager.cancel(mNotifyID);
+            }
         }
     }
 

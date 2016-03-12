@@ -168,5 +168,4 @@
     <string name="retry_errors">Retry Fehler</string>
     <string name="update_complete">Update abgeschlossen</string>
     <string name="mgs_update_found">Neue Kapitel wurden gefunden (%s)</string>
-    <string name="msg_update_no_new">Kein neues Kapitel wurde gefunden</string>
 </resources>
