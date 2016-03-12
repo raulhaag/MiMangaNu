@@ -241,15 +241,15 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             super.onPreExecute();
             // Displays the progress bar for the first time.
             mBuilder.setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle("Searching for updates")
+                    .setContentTitle(getResources().getString(R.string.buscandonuevo))
                     .setContentText("")
                     .setOngoing(true);
             mBuilder.setProgress(100, 0, false);
             mNotifyManager.notify(mNotifyID, mBuilder.build());
-
             Context mContent = getActivity();
             if (mContent != null)
-                Toast.makeText(mContent, "Searching for updates", Toast.LENGTH_LONG).show();
+                Toast.makeText(mContent, getResources().getString(R.string.buscandonuevo),
+                        Toast.LENGTH_LONG).show();
         }
 
         @Override
@@ -259,7 +259,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             mBuilder.setContentText(numNow + "/" + mList.size() + " - " +
                     mList.get(values[0]).getTitle());
             mNotifyManager.notify(mNotifyID, mBuilder.build());
-
             super.onProgressUpdate(values);
         }
 
@@ -311,19 +310,21 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            mBuilder.setContentTitle("Update complete")
+            String mMessage = (result > 0) ?
+                    String.format(getResources().getString(R.string.mgs_update_found), result) :
+                    getResources().getString(R.string.msg_update_no_new);
+            mBuilder.setContentTitle(getResources().getString(R.string.update_complete))
                     .setProgress(0, 0, false)
                     .setOngoing(false)
-                    .setContentText(((result == 0) ? "No" : "0") + " new chapters were found");
+                    .setContentText(mMessage);
             mNotifyManager.notify(mNotifyID, mBuilder.build());
             Context mContent = getActivity();
             if (mContent != null)
-                Toast.makeText(mContent, "Update finished", Toast.LENGTH_LONG).show();
-
+                Toast.makeText(mContent, getResources().getString(R.string.update_complete),
+                        Toast.LENGTH_LONG).show();
             setListManga(true);
             swipeReLayout.setRefreshing(false);
         }
-
     }
 
     @Override

@@ -161,9 +161,12 @@
     <string name="continuous_reader">Kontinuierliche lesegerät</string>
     <string name="paged_reader">Paged Reader</string>
     <string name="pause_all_downloads">Pause-Downloads</string>
-    <string name="paused">( Angehalten)</string>
+    <string name="paused">(Angehalten)</string>
     <string name="remove_all">Alles entfernen</string>
     <string name="remove_downloaded">Heruntergeladen entfernen</string>
     <string name="resume_downloads">Lebenslauf-Downloads</string>
     <string name="retry_errors">Retry Fehler</string>
+    <string name="update_complete">Update abgeschlossen</string>
+    <string name="mgs_update_found">Neue Kapitel wurden gefunden (%s)</string>
+    <string name="msg_update_no_new">Kein neues Kapitel wurde gefunden</string>
 </resources>

@@ -173,4 +173,7 @@
     <string name="error_downloading_image">Error downloading the image</string>
     <string name="used_space">Storage size used by mangas</string>
     <string name="delete_on_chapter_change">Delete images?</string>
+    <string name="update_complete">Update complete</string>
+    <string name="mgs_update_found">New chapters were found (%s)</string>
+    <string name="msg_update_no_new">No new chapter was found</string>
 </resources>
