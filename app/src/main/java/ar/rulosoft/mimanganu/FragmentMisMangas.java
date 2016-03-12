@@ -23,6 +23,7 @@ import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -227,30 +228,36 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     }
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
-        final ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
-        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity())
+        final ArrayList<Manga> mList = Database.getMangasForUpdates(getActivity());
+        int threads = Integer.parseInt(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
                 .getString("update_threads_manual", "2"));
+        int ticket = threads;
         int result = 0;
-        int ticket = 2;
+        int numNow = 0;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             // Displays the progress bar for the first time.
             mBuilder.setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle("Update list is in progress")
-                    .setContentText("progressing...")
+                    .setContentTitle("Searching for updates")
+                    .setContentText("")
                     .setOngoing(true);
             mBuilder.setProgress(100, 0, false);
             mNotifyManager.notify(mNotifyID, mBuilder.build());
+
+            Context mContent = getActivity();
+            if (mContent != null)
+                Toast.makeText(mContent, "Searching for updates", Toast.LENGTH_LONG).show();
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             // Update progress
-            mBuilder.setProgress(mangas.size(), values[0], false);
-            mBuilder.setContentText((values[0] + 1) + "/" + mangas.size() + " - " +
-                    mangas.get(values[0]).getTitle());
+            mBuilder.setProgress(mList.size(), ++numNow, false);
+            mBuilder.setContentText(numNow + "/" + mList.size() + " - " +
+                    mList.get(values[0]).getTitle());
             mNotifyManager.notify(mNotifyID, mBuilder.build());
 
             super.onProgressUpdate(values);
@@ -260,12 +267,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         protected Integer doInBackground(Void... params) {
             ticket = threads;
             // Starting searching for new chapters
-            for (int idx = 0; idx < mangas.size(); idx++) {
+            for (int idx = 0; idx < mList.size(); idx++) {
                 final int idxNow = idx;
                 // If there is no ticket, sleep for 1 second and ask again
                 while (ticket < 1) {
                     try {
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         Log.e(TAG, "Update sleep failure", e);
                     }
@@ -275,7 +282,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Manga mManga = mangas.get(idxNow);
+                        Manga mManga = mList.get(idxNow);
                         ServerBase servBase = ServerBase.getServer(mManga.getServerId());
                         publishProgress(idxNow);
                         try {
@@ -293,7 +300,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             // After finishing the loop, wait for all threads to finish their task before ending
             while (ticket < threads) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     Log.e(TAG, "After sleep failure", e);
                 }
@@ -305,96 +312,18 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             mBuilder.setContentTitle("Update complete")
-                    .setContentText(result + " new chapters were found")
                     .setProgress(0, 0, false)
-                    .setOngoing(false);
+                    .setOngoing(false)
+                    .setContentText(((result == 0) ? "No" : "0") + " new chapters were found");
             mNotifyManager.notify(mNotifyID, mBuilder.build());
+            Context mContent = getActivity();
+            if (mContent != null)
+                Toast.makeText(mContent, "Update finished", Toast.LENGTH_LONG).show();
 
             setListManga(true);
             swipeReLayout.setRefreshing(false);
         }
 
-    }
-
-    public class NewSearchTask extends AsyncTask<Void, String, Integer> {
-        final ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
-        String mMessage;
-        String mTitle;
-        int result = 0;
-        int keys = 2;
-        int threads;
-
-        @Override
-        protected void onPreExecute() {
-            search = true;
-            mMessage = getActivity().getResources().getString(R.string.buscandonuevo);
-            mTitle = getActivity().getTitle().toString();
-            getActivity().setTitle(mMessage);
-            super.onPreExecute();
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            final String s = values[0];
-            mMessage = s;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getActivity().setTitle(s);
-                }
-            });
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
-            keys = threads;
-            for (int i = 0; i < mangas.size(); i++) {
-                final int j = i;
-                while (keys == 0)
-                    try {
-                        Thread.sleep(1000);
-                    } catch (Exception e) {
-                    }
-                keys--;
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Manga manga = mangas.get(j);
-                        ServerBase s = ServerBase.getServer(manga.getServerId());
-                        try {
-                            publishProgress("(" + (j + 1) + "/" + mangas.size() + ") " + manga.getTitle());
-                            s.loadChapters(manga, false);
-                            int diff = s.searchForNewChapters(manga.getId(), getActivity());
-                            result += diff;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        } finally {
-                            keys++;
-                        }
-                    }
-                }).start();
-            }
-            while (keys < threads)
-                try {
-                    Thread.sleep(1000);
-                } catch (Exception e) {
-                }
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            try {
-                getActivity().setTitle(mTitle);
-                setListManga(true);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            swipeReLayout.setRefreshing(false);
-            search = false;
-        }
     }
 
     @Override
