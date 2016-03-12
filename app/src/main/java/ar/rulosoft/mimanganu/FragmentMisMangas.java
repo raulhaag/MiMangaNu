@@ -1,13 +1,17 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
@@ -32,6 +36,8 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
+    private static final String TAG = "FragmentMisManga";
+
     public static final String SELECT_MODE = "selector_modo";
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
@@ -40,10 +46,13 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     private GridView grid;
     private MisMangasAdapter adapter;
-    private SwipeRefreshLayout str;
-    private NewSearchTask newSearch;
+    private SwipeRefreshLayout swipeReLayout;
     private boolean attached = false, waiting = false, waitingForce;
 
+    private UpdateListTask newUpdate;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private int mNotifyID = 1;
 
     public static void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -56,13 +65,17 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rView = inflater.inflate(R.layout.fragment_mis_mangas, container, false);
         grid = (GridView) rView.findViewById(R.id.grilla_mis_mangas);
-        str = (SwipeRefreshLayout) rView.findViewById(R.id.str);
-        str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeReLayout = (SwipeRefreshLayout) rView.findViewById(R.id.str);
+        swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (newSearch == null || newSearch.getStatus() == AsyncTask.Status.FINISHED) {
-                    newSearch = new NewSearchTask();
-                    newSearch.execute();
+                if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
+                    mNotifyManager = (NotificationManager)
+                            getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    mBuilder = new NotificationCompat.Builder(getActivity());
+
+                    newUpdate = new UpdateListTask();
+                    newUpdate.execute();
                 }
             }
         });
@@ -84,11 +97,11 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         else if (columnas > 6)
             columnas = 6;
         grid.setNumColumns(columnas);
-        if (newSearch != null && newSearch.getStatus() == AsyncTask.Status.RUNNING) {
-            str.post(new Runnable() {
+        if (newUpdate != null && newUpdate.getStatus() == AsyncTask.Status.RUNNING) {
+            swipeReLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    str.setRefreshing(true);
+                    swipeReLayout.setRefreshing(true);
                 }
             });
         }
@@ -144,12 +157,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         setListManga(false);
         // ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         int[] colors = ((ActivityMisMangas) getActivity()).colors;
-        str.setColorSchemeColors(colors[0], colors[1]);
+        swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
     }
 
     public void setListManga(boolean force) {
-        if(attached) {
+        if (attached) {
             ArrayList<Manga> mangaList = new ArrayList<>();
             /**
              * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
@@ -200,7 +213,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
                 grid.setAdapter(adapter);
             }
-        }else{
+        } else {
             waiting = true;
             waitingForce = force;
         }
@@ -211,6 +224,96 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         Intent intent = new Intent(getActivity(), ActivityManga.class);
         intent.putExtra(ActivityMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
+    }
+
+    public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
+        final ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
+        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity())
+                .getString("update_threads_manual", "2"));
+        int result = 0;
+        int ticket = 2;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            // Displays the progress bar for the first time.
+            mBuilder.setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle("Update list is in progress")
+                    .setContentText("progressing...")
+                    .setOngoing(true);
+            mBuilder.setProgress(100, 0, false);
+            mNotifyManager.notify(mNotifyID, mBuilder.build());
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            // Update progress
+            mBuilder.setProgress(mangas.size(), values[0], false);
+            mBuilder.setContentText((values[0] + 1) + "/" + mangas.size() + " - " +
+                    mangas.get(values[0]).getTitle());
+            mNotifyManager.notify(mNotifyID, mBuilder.build());
+
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            ticket = threads;
+            // Starting searching for new chapters
+            for (int idx = 0; idx < mangas.size(); idx++) {
+                final int idxNow = idx;
+                // If there is no ticket, sleep for 1 second and ask again
+                while (ticket < 1) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "Update sleep failure", e);
+                    }
+                }
+                ticket--;
+                // If ticked were passed, create new request
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Manga mManga = mangas.get(idxNow);
+                        ServerBase servBase = ServerBase.getServer(mManga.getServerId());
+                        publishProgress(idxNow);
+                        try {
+                            servBase.loadChapters(mManga, false);
+                            int diff = servBase.searchForNewChapters(mManga.getId(), getActivity());
+                            result += diff;
+                        } catch (Exception e) {
+                            Log.e(TAG, "Update server failure", e);
+                        } finally {
+                            ticket++;
+                        }
+                    }
+                }).start();
+            }
+            // After finishing the loop, wait for all threads to finish their task before ending
+            while (ticket < threads) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "After sleep failure", e);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            mBuilder.setContentTitle("Update complete")
+                    .setContentText(result + " new chapters were found")
+                    .setProgress(0, 0, false)
+                    .setOngoing(false);
+            mNotifyManager.notify(mNotifyID, mBuilder.build());
+
+            setListManga(true);
+            swipeReLayout.setRefreshing(false);
+        }
+
     }
 
     public class NewSearchTask extends AsyncTask<Void, String, Integer> {
@@ -261,7 +364,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                         Manga manga = mangas.get(j);
                         ServerBase s = ServerBase.getServer(manga.getServerId());
                         try {
-                            publishProgress("(" + (j + 1) + "/" + mangas.size() + ")" + manga.getTitle());
+                            publishProgress("(" + (j + 1) + "/" + mangas.size() + ") " + manga.getTitle());
                             s.loadChapters(manga, false);
                             int diff = s.searchForNewChapters(manga.getId(), getActivity());
                             result += diff;
@@ -289,7 +392,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            str.setRefreshing(false);
+            swipeReLayout.setRefreshing(false);
             search = false;
         }
     }
@@ -298,7 +401,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         attached = true;
-        if(waiting){
+        if (waiting) {
             setListManga(waitingForce);
             waiting = false;
         }
