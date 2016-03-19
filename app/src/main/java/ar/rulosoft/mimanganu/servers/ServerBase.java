@@ -327,7 +327,6 @@ public abstract class ServerBase {
                 new SubManga(),
                 new EsNineMangaCom(),
                 new EsMangaHere(),
-                new TusMangasOnlineCom(),
                 new MangaPanda(),
                 new MangaHere(),
                 new MangaFox(),
