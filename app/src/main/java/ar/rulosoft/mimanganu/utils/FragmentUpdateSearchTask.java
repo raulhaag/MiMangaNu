@@ -13,6 +13,8 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 /**
+ * This Class checks for new updates.
+ *
  * Created by Raul
  */
 public class FragmentUpdateSearchTask extends Fragment {
@@ -43,7 +45,7 @@ public class FragmentUpdateSearchTask extends Fragment {
         }
     }
 
-    public void iniciaTarea(Manga manga, ActivityManga activity) {
+    public void updateList(Manga manga, ActivityManga activity) {
         if (searchForNewsChapters == null || searchForNewsChapters.getStatus() == AsyncTask.Status.FINISHED) {
             searchForNewsChapters = new SearchForNewsChapters().setActivity(activity);
             searchForNewsChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);

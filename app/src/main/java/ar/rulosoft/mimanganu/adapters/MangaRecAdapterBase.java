@@ -11,6 +11,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 
 /**
  * Created by Raul on 30/11/2015.
+ *
  */
 public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     protected ArrayList<Manga> mangas;

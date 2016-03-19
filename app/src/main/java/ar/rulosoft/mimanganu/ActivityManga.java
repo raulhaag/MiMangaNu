@@ -111,7 +111,7 @@ public class ActivityManga extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mUpdateSearchTask.iniciaTarea(mManga, ActivityManga.this);
+                mUpdateSearchTask.updateList(mManga, ActivityManga.this);
             }
         });
         mListView.setDivider(new ColorDrawable(colors[0]));

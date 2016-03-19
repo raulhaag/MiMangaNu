@@ -1,13 +1,17 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.Activity;
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Display;
@@ -19,6 +23,7 @@ import android.view.View.OnCreateContextMenuListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -32,6 +37,8 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
 public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
+    private static final String TAG = "FragmentMisManga";
+
     public static final String SELECT_MODE = "selector_modo";
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
@@ -40,10 +47,13 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     private GridView grid;
     private MisMangasAdapter adapter;
-    private SwipeRefreshLayout str;
-    private NewSearchTask newSearch;
+    private SwipeRefreshLayout swipeReLayout;
     private boolean attached = false, waiting = false, waitingForce;
 
+    private UpdateListTask newUpdate;
+    private NotificationManager mNotifyManager;
+    private NotificationCompat.Builder mBuilder;
+    private int mNotifyID = 1246502;
 
     public static void deleteRecursive(File fileOrDirectory) {
         if (fileOrDirectory.isDirectory())
@@ -56,13 +66,17 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rView = inflater.inflate(R.layout.fragment_mis_mangas, container, false);
         grid = (GridView) rView.findViewById(R.id.grilla_mis_mangas);
-        str = (SwipeRefreshLayout) rView.findViewById(R.id.str);
-        str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeReLayout = (SwipeRefreshLayout) rView.findViewById(R.id.str);
+        swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (newSearch == null || newSearch.getStatus() == AsyncTask.Status.FINISHED) {
-                    newSearch = new NewSearchTask();
-                    newSearch.execute();
+                if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
+                    mNotifyManager = (NotificationManager)
+                            getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                    mBuilder = new NotificationCompat.Builder(getActivity());
+
+                    newUpdate = new UpdateListTask();
+                    newUpdate.execute();
                 }
             }
         });
@@ -84,11 +98,11 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         else if (columnas > 6)
             columnas = 6;
         grid.setNumColumns(columnas);
-        if (newSearch != null && newSearch.getStatus() == AsyncTask.Status.RUNNING) {
-            str.post(new Runnable() {
+        if (newUpdate != null && newUpdate.getStatus() == AsyncTask.Status.RUNNING) {
+            swipeReLayout.post(new Runnable() {
                 @Override
                 public void run() {
-                    str.setRefreshing(true);
+                    swipeReLayout.setRefreshing(true);
                 }
             });
         }
@@ -144,12 +158,12 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         setListManga(false);
         // ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         int[] colors = ((ActivityMisMangas) getActivity()).colors;
-        str.setColorSchemeColors(colors[0], colors[1]);
+        swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
     }
 
     public void setListManga(boolean force) {
-        if(attached) {
+        if (attached) {
             ArrayList<Manga> mangaList = new ArrayList<>();
             /**
              * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
@@ -200,7 +214,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                 adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
                 grid.setAdapter(adapter);
             }
-        }else{
+        } else {
             waiting = true;
             waitingForce = force;
         }
@@ -213,84 +227,112 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         getActivity().startActivity(intent);
     }
 
-    public class NewSearchTask extends AsyncTask<Void, String, Integer> {
-        final ArrayList<Manga> mangas = Database.getMangasForUpdates(getActivity());
-        String mMessage;
-        String mTitle;
+    public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
+        final ArrayList<Manga> mList = Database.getMangasForUpdates(getActivity());
+        int threads = Integer.parseInt(PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getString("update_threads_manual", "2"));
+        int ticket = threads;
         int result = 0;
-        int keys = 2;
-        int threads;
+        int numNow = 0;
 
         @Override
         protected void onPreExecute() {
-            search = true;
-            mMessage = getActivity().getResources().getString(R.string.buscandonuevo);
-            mTitle = getActivity().getTitle().toString();
-            getActivity().setTitle(mMessage);
             super.onPreExecute();
+            // Displays the progress bar for the first time.
+            mBuilder.setSmallIcon(R.drawable.ic_launcher)
+                    .setContentTitle(getResources().getString(R.string.buscandonuevo))
+                    .setContentText("")
+                    .setAutoCancel(true)
+                    .setOngoing(true);
+            mBuilder.setProgress(100, 0, false);
+            mNotifyManager.notify(mNotifyID, mBuilder.build());
+            Context mContent = getActivity();
+            if (mContent != null)
+                Toast.makeText(mContent, getResources().getString(R.string.buscandonuevo),
+                        Toast.LENGTH_LONG).show();
         }
 
         @Override
-        protected void onProgressUpdate(String... values) {
-            final String s = values[0];
-            mMessage = s;
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getActivity().setTitle(s);
-                }
-            });
+        protected void onProgressUpdate(Integer... values) {
+            // Update progress
+            mBuilder.setProgress(mList.size(), ++numNow, false);
+            mBuilder.setContentText(numNow + "/" + mList.size() + " - " +
+                    mList.get(values[0]).getTitle());
+            mNotifyManager.notify(mNotifyID, mBuilder.build());
             super.onProgressUpdate(values);
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
-            threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
-            keys = threads;
-            for (int i = 0; i < mangas.size(); i++) {
-                final int j = i;
-                while (keys == 0)
+            ticket = threads;
+            // Starting searching for new chapters
+            for (int idx = 0; idx < mList.size(); idx++) {
+                final int idxNow = idx;
+                // If there is no ticket, sleep for 1 second and ask again
+                while (ticket < 1) {
                     try {
                         Thread.sleep(1000);
-                    } catch (Exception e) {
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "Update sleep failure", e);
                     }
-                keys--;
+                }
+                ticket--;
+                // If ticked were passed, create new request
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Manga manga = mangas.get(j);
-                        ServerBase s = ServerBase.getServer(manga.getServerId());
+                        Manga mManga = mList.get(idxNow);
+                        ServerBase servBase = ServerBase.getServer(mManga.getServerId());
+                        publishProgress(idxNow);
                         try {
-                            publishProgress("(" + (j + 1) + "/" + mangas.size() + ")" + manga.getTitle());
-                            s.loadChapters(manga, false);
-                            int diff = s.searchForNewChapters(manga.getId(), getActivity());
+                            servBase.loadChapters(mManga, false);
+                            int diff = servBase.searchForNewChapters(mManga.getId(), getActivity());
                             result += diff;
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Log.e(TAG, "Update server failure", e);
                         } finally {
-                            keys++;
+                            ticket++;
                         }
                     }
                 }).start();
             }
-            while (keys < threads)
+            // After finishing the loop, wait for all threads to finish their task before ending
+            while (ticket < threads) {
                 try {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                } catch (InterruptedException e) {
+                    Log.e(TAG, "After sleep failure", e);
                 }
+            }
             return result;
         }
 
         @Override
         protected void onPostExecute(Integer result) {
-            try {
-                getActivity().setTitle(mTitle);
-                setListManga(true);
-            } catch (Exception e) {
-                e.printStackTrace();
+            super.onPostExecute(result);
+            Context mContent = getActivity();
+            if (mContent != null) {
+                if (result > 0) {
+                    mBuilder.setContentTitle(
+                            mContent.getResources()
+                                    .getString(R.string.update_complete))
+                            .setProgress(0, 0, false)
+                            .setOngoing(false)
+                            .setContentText(String.format(mContent.getResources()
+                                    .getString(R.string.mgs_update_found), result));
+                    mNotifyManager.notify(mNotifyID, mBuilder.build());
+                    setListManga(true);
+                } else {
+                    mNotifyManager.cancel(mNotifyID);
+                }
+                Toast.makeText(mContent, mContent.getResources()
+                                .getString(R.string.update_complete),
+                        Toast.LENGTH_LONG).show();
+                swipeReLayout.setRefreshing(false);
+            } else {
+                mNotifyManager.cancel(mNotifyID);
             }
-            str.setRefreshing(false);
-            search = false;
         }
     }
 
@@ -298,7 +340,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         attached = true;
-        if(waiting){
+        if (waiting) {
             setListManga(waitingForce);
             waiting = false;
         }
