@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -12,7 +13,8 @@ import java.util.regex.Pattern;
 
 public abstract class ServerBase {
 
-    public enum FilteredType {VISUAL,TEXT};
+    public enum FilteredType {VISUAL, TEXT}
+
     public static final int MANGAPANDA = 1;
     public static final int ESMANGAHERE = 3;
     public static final int MANGAHERE = 4;
@@ -232,7 +234,7 @@ public abstract class ServerBase {
             mangaDb.setGenre(manga.getGenre());
             changes = true;
         }
-        if (mangaDb.isFinished() != manga.isFinished() ) {
+        if (mangaDb.isFinished() != manga.isFinished()) {
             mangaDb.setFinished(manga.isFinished());
             changes = true;
         }
@@ -303,7 +305,7 @@ public abstract class ServerBase {
         }
     }
 
-    public boolean needRefererForImages(){
+    public boolean needRefererForImages() {
         return true;
     }
 
@@ -315,11 +317,11 @@ public abstract class ServerBase {
         return new Navegador();
     }
 
-    public FilteredType getFilteredType(){
+    public FilteredType getFilteredType() {
         return FilteredType.VISUAL;
     }
 
-    public static ServerBase[] getServers(){
+    public static ServerBase[] getServers() {
         return (new ServerBase[]{
                 new HeavenMangaCom(),
                 new SubManga(),

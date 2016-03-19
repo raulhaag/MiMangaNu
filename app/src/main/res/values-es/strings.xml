@@ -170,5 +170,6 @@
     <string name="retry_errors">Reintentar erroneas</string>
     <string name="error_downloading_image">Error descargando imagen</string>
     <string name="used_space">Espacio usado por tus mangas</string>
+    <string name="update_complete">Búsqueda completa</string>
 
 </resources>

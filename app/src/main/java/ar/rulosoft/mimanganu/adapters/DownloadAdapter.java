@@ -24,7 +24,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
     private static String[] states;
     private static int listItem = R.layout.listitem_descarga;
     private ArrayList<ChapterDownload> downloads = new ArrayList<>();
-    private HashMap<Integer, ChapterDownload> toReplace;
+    //private HashMap<Integer, ChapterDownload> toReplace;
     private LayoutInflater li;
     private boolean darkTheme;
     private AppCompatActivity mActivity;
@@ -75,7 +75,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
             holder.buttonImageView.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    DownloadPoolService.removeDownload(item.chapter.getId(),mActivity);
+                    DownloadPoolService.removeDownload(item.chapter.getId(), mActivity);
                 }
             });
         }

@@ -19,6 +19,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 
 /**
  * Created by Raul on 30/11/2015.
+ *
  */
 public class MangasRecAdapterText extends MangaRecAdapterBase {
 
