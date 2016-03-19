@@ -476,7 +476,7 @@ public class ActivityPagedReader extends AppCompatActivity
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (mChapter.getId() == cid)
+                if (mChapter.getId() == cid && mPageAdapter != null)
                     mPageAdapter.pageDownloaded(page);
             }
         });
@@ -496,10 +496,10 @@ public class ActivityPagedReader extends AppCompatActivity
     }
 
     public void onEndDrag() {
+        LayoutInflater inflater = getLayoutInflater();
+        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean imagesDelete = pm.getBoolean("delete_images", false);
         if (nextChapter != null) {
-            LayoutInflater inflater = getLayoutInflater();
-            pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            boolean imagesDelete = pm.getBoolean("delete_images", false);
             View v = inflater.inflate(R.layout.dialog_next_chapter, null);
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
@@ -533,15 +533,33 @@ public class ActivityPagedReader extends AppCompatActivity
                     })
                     .show();
         } else {
+            View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
+            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+            checkBox.setChecked(imagesDelete);
             new AlertDialog.Builder(ActivityPagedReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
-                    .setMessage(R.string.last_chapter)
+                    .setView(v)
                     .setIcon(R.drawable.ic_launcher)
-                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             firedMessage = false;
                             dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            boolean del_images = checkBox.isChecked();
+                            if (pm != null)
+                                pm.edit().putBoolean("delete_images", del_images).commit();
+                            mViewPager.setAdapter(null);
+                            if (del_images) {
+                                mChapter.freeSpace(ActivityPagedReader.this);
+                            }
+                            firedMessage = false;
+                            dialog.dismiss();
+                            onBackPressed();
                         }
                     })
                     .show();

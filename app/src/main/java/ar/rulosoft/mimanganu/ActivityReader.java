@@ -527,10 +527,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     @Override
     public void onEndFling() {
+        LayoutInflater inflater = getLayoutInflater();
+        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean imagesDelete = pm.getBoolean("delete_images", false);
         if (nextChapter != null) {
-            LayoutInflater inflater = getLayoutInflater();
-            pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-            boolean imagesDelete = pm.getBoolean("delete_images", false);
             View v = inflater.inflate(R.layout.dialog_next_chapter, null);
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
@@ -557,11 +557,32 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     })
                     .show();
         } else {
+            View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
+            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+            checkBox.setChecked(imagesDelete);
             new AlertDialog.Builder(ActivityReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
-                    .setMessage(R.string.last_chapter)
+                    .setView(v)
                     .setIcon(R.drawable.ic_launcher)
-                    .setPositiveButton(getString(android.R.string.ok), null)
+                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            boolean del_images = checkBox.isChecked();
+                            if (pm != null)
+                                pm.edit().putBoolean("delete_images", del_images).commit();
+                            if (del_images) {
+                                mChapter.freeSpace(ActivityReader.this);
+                            }
+                            dialog.dismiss();
+                            onBackPressed();
+                        }
+                    })
                     .show();
         }
     }
