@@ -141,7 +141,7 @@ public class EsMangaHere extends ServerBase {
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(2), m.group(3), false);
-            manga.setImages(m.group(1));
+            manga.setImages(m.group(1).replace("thumb_",""));
             mangas.add(manga);
         }
         hayMas = !mangas.isEmpty();
