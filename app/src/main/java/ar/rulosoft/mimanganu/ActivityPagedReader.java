@@ -665,6 +665,14 @@ public class ActivityPagedReader extends AppCompatActivity
                             .setMessage(getString(R.string.demaciados_errores))
                             .setIcon(R.drawable.ic_launcher)
                             .setNeutralButton(getString(android.R.string.ok), null)
+                            .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    DownloadPoolService.retryError(getApplicationContext(), mChapter.getId());
+                                    dialog.dismiss();
+                                    DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
+                                }
+                            })
                             .show();
                 } catch (Exception e) {
                     // lost references fixed con detachListener

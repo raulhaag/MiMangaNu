@@ -171,5 +171,9 @@
     <string name="error_downloading_image">Error descargando imagen</string>
     <string name="used_space">Espacio usado por tus mangas</string>
     <string name="update_complete">Búsqueda completa</string>
+    <string name="retry">Reintentar</string>
+    <string name="mgs_update_found">Nuevos capitulos encotrados (%s)</string>
+    <string name="delete_on_chapter_change">¿Borrar imagenes?</string>
+    <string name="close">Cerrar</string>
 
 </resources>
