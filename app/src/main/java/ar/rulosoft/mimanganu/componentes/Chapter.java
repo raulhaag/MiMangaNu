@@ -4,12 +4,13 @@ import android.content.Context;
 import android.text.Html;
 
 import java.io.File;
+import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.FragmentMisMangas;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
-public class Chapter {
+public class Chapter{
 
     public static final int NEW = -1;
     public static final int UNREAD = 0;
@@ -136,8 +137,8 @@ public class Chapter {
     }
 
     private void deleteImages(Context context, Manga manga, ServerBase s) {
-        String ruta = DownloadPoolService.generateBasePath(s, manga, this, context);
-        FragmentMisMangas.deleteRecursive(new File(ruta));
+        String path = DownloadPoolService.generateBasePath(s, manga, this, context);
+        FragmentMisMangas.deleteRecursive(new File(path));
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
@@ -174,5 +175,60 @@ public class Chapter {
 
     public void addChapterFirst(Manga manga) {
         manga.getChapters().add(0, this);
+    }
+
+    public static class Comparators{
+        private static final String FLOAT_PATTERN = " ([.,0123456789]+)";
+        private static final String STRING_END_PATTERN = "[^\\d]\\.";
+        public static Comparator<Chapter> NUMBERS_DSC = new Comparator<Chapter>() {
+            @Override
+            public int compare(Chapter c1, Chapter c2) {
+                try {
+                    String str1 = c1.getTitle().replaceAll(STRING_END_PATTERN, " ");
+                    String str2 = c2.getTitle().replaceAll(STRING_END_PATTERN, " ");
+                    str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
+                    str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
+                    Float f1 = Float.parseFloat(str1);
+                    Float f2 = Float.parseFloat(str2);
+                    return  (int)Math.floor(f2-f1);
+                } catch (Exception e) {
+                    return  0;
+                }
+            }
+        };
+        public static Comparator<Chapter> NUMBERS_ASC = new Comparator<Chapter>() {
+            @Override
+            public int compare(Chapter c1, Chapter c2) {
+                try {
+                    String str1 = c1.getTitle().replaceAll(STRING_END_PATTERN, " ");
+                    String str2 = c2.getTitle().replaceAll(STRING_END_PATTERN, " ");
+                    str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
+                    str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
+                    Float f1 = Float.parseFloat(str1);
+                    Float f2 = Float.parseFloat(str2);
+                    return  (int)Math.floor(f1-f2);
+                } catch (Exception e) {
+                    return  0;
+                }
+            }
+        };
+        public static Comparator<Chapter> TITLE_DSC = new Comparator<Chapter>() {
+            @Override
+            public int compare(Chapter c1, Chapter c2) {
+                return c1.getTitle().compareTo(c2.getTitle());
+            }
+        };
+        public static Comparator<Chapter> TITLE_ASC = new Comparator<Chapter>() {
+            @Override
+            public int compare(Chapter c1, Chapter c2) {
+                return c2.getTitle().compareTo(c1.getTitle());
+            }
+        };
+        public static Comparator<Chapter> DATABASE_ADDED = new Comparator<Chapter>() {
+            @Override
+            public int compare(Chapter c1, Chapter c2) {
+                return (c2.getId() - c1.getId());
+            }
+        };
     }
 }

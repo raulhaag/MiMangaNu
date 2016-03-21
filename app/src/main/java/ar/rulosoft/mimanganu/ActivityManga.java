@@ -29,6 +29,7 @@ import com.fedorvlasov.lazylist.ImageLoader;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import ar.rulosoft.mimanganu.adapters.ChapterAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -42,8 +43,9 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityManga extends AppCompatActivity {
     public static final String DIRECTION = "direcciondelectura";
+    public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
-    public SwipeRefreshLayout mSwipeRefreshLayout;
+        public SwipeRefreshLayout mSwipeRefreshLayout;
     public Manga mManga;
     private Direction mDirection;
     private static final String TAG = "ActivityManga";
@@ -54,6 +56,7 @@ public class ActivityManga extends AppCompatActivity {
     private ListView mListView;
     private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
     private int mMangaId, readerType;
+    private int chapters_order; // 0 = db | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc
     private boolean darkTheme;
     private Menu menu;
 
@@ -237,6 +240,7 @@ public class ActivityManga extends AppCompatActivity {
         Database.updateMangaRead(this, mManga.getId());
         Database.updateNewMangas(ActivityManga.this, mManga, -100);
         loadInfo(mManga);
+        chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
     }
 
     public void loadInfo(Manga manga) {
@@ -407,6 +411,30 @@ public class ActivityManga extends AppCompatActivity {
                 dlgAlert.create().show();
                 break;
             }
+            case R.id.sort_title_asc:
+                pm.edit().putInt(CHAPTERS_ORDER,4).commit();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
+                break;
+
+            case R.id.sort_number:
+                pm.edit().putInt(CHAPTERS_ORDER,1).commit();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DSC);
+                break;
+
+            case R.id.sort_title:
+                pm.edit().putInt(CHAPTERS_ORDER,3).commit();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DSC);
+                break;
+
+            case R.id.sort_number_asc:
+                pm.edit().putInt(CHAPTERS_ORDER,2).commit();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
+                break;
+
+            case R.id.sort_added_db:
+                pm.edit().putInt(CHAPTERS_ORDER,0).commit();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED);
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -415,12 +443,26 @@ public class ActivityManga extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ArrayList<Chapter> chapters = Database.getChapters(getApplicationContext(), mMangaId);
+        switch (chapters_order){
+            case 1:
+                Collections.sort(chapters,Chapter.Comparators.NUMBERS_DSC);
+                break;
+            case 2:
+                Collections.sort(chapters,Chapter.Comparators.NUMBERS_ASC);
+                break;
+            case 3:
+                Collections.sort(chapters,Chapter.Comparators.TITLE_DSC);
+                break;
+            case 4:
+                Collections.sort(chapters,Chapter.Comparators.TITLE_ASC);
+                break;
+        }
         mChapterAdapter.replaceData(chapters);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.view_chapter, menu);
+        getMenuInflater().inflate(R.menu.menu_manga, menu);
         mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
         mMenuItemReaderType = menu.findItem(R.id.action_reader);
         int readDirection;

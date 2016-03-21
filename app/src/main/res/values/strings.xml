@@ -62,7 +62,7 @@
     <string name="keep_on">Keep screen on</string>
     <string name="l2r">Left to Right</string>
     <string name="licencia">Licence</string>
-    <string name="listaen">List of Mangas from</string>
+    <string name="listaen">Mangas from</string>
     <string name="lock_on_landscape">Screen locked on landscape mode</string>
     <string name="lock_on_portrait">Screen locked on portrait mode</string>
     <string name="macartodoleido">Mark all as read</string>
@@ -177,4 +177,7 @@
     <string name="mgs_update_found">New chapters were found (%s)</string>
     <string name="close">Close</string>
     <string name="retry">Retry</string>
+    <string name="sort_added_db">Sort as added on db</string>
+    <string name="sort_number">Sort by chapter number</string>
+    <string name="sort_number_asc">Sort by chapter number ASC</string>
 </resources>

@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -17,21 +19,16 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnLastItem;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnMangaClick;
+import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapterText;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -41,15 +38,16 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
 
     private boolean mStart = true;
     private ServerBase sBase;
-    private Spinner genres;
-    private Spinner order;
     private RecyclerView grid;
     private ProgressBar loading;
     private MangaRecAdapterBase mAdapter;
-    private boolean neuvaTarea = false;
-    private int pagina = 1;
-    private MenuItem buscar;
+    private boolean newTask = false;
+    private int page = 1;
+    private MenuItem search;
     private boolean darkTheme;
+    private int filter = 0;
+    private int order = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,20 +72,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
         }
 
         grid = (RecyclerView) findViewById(R.id.grilla);
-        genres = (Spinner) findViewById(R.id.generos);
-        order = (Spinner) findViewById(R.id.ordenar_por);
         loading = (ProgressBar) findViewById(R.id.cargando);
-        if (sBase.getCategories() != null)
-            genres.setAdapter(new ArrayAdapter<>(
-                    this, android.R.layout.simple_dropdown_item_1line, sBase.getCategories()));
-        else
-            genres.setVisibility(Spinner.INVISIBLE);
-
-        if (sBase.getOrders() != null)
-            order.setAdapter(new ArrayAdapter<>(
-                    this, android.R.layout.simple_dropdown_item_1line, sBase.getOrders()));
-        else
-            order.setVisibility(Spinner.INVISIBLE);
 
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -95,62 +80,20 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
         float density = getResources().getDisplayMetrics().density;
         float dpWidth = outMetrics.widthPixels / density;
         int columnas = (int) (dpWidth / 150);
-        if(sBase.getFilteredType() == ServerBase.FilteredType.TEXT)
+        if (sBase.getFilteredType() == ServerBase.FilteredType.TEXT)
             columnas = 1;
         else if (columnas == 0)
             columnas = 2;
         else if (columnas > 6)
             columnas = 6;
         grid.setLayoutManager(new GridLayoutManager(ActivityServerFilteredNavigation.this, columnas));
-        order.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!loading.isShown()) {
-                    mAdapter = null;
-                    pagina = 1;
-                    mStart = true;
-                    sBase.hayMas = true;
-                    new LoadLastTask().execute(pagina);
-                } else {
-                    neuvaTarea = true;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        genres.setOnItemSelectedListener(new OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (!loading.isShown()) {
-                    mAdapter = null;
-                    pagina = 1;
-                    mStart = true;
-                    sBase.hayMas = true;
-                    new LoadLastTask().execute(pagina);
-                } else {
-                    neuvaTarea = true;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
-            }
-        });
-
-        new LoadLastTask().execute(pagina);
+        new LoadLastTask().execute(page);
     }
 
     @Override
     public void onRequestedLastItem() {
         if (sBase.hayMas && !loading.isShown() && !mStart)
-            new LoadLastTask().execute(pagina);
+            new LoadLastTask().execute(page);
     }
 
     @Override
@@ -165,11 +108,11 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.manga_server_visual, menu);
-        buscar = menu.findItem(R.id.action_search);
+        search = menu.findItem(R.id.action_search);
         MenuItem vcl = menu.findItem(R.id.ver_como_lista);
         if (!sBase.hasList())
             vcl.setVisible(false);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(buscar);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
             @Override
@@ -196,6 +139,48 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
             Intent intent = new Intent(this, ActivityServerMangaList.class);
             intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
             startActivity(intent);
+        } else if (item.getItemId() == R.id.filter) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ActivityServerFilteredNavigation.this);
+            builder.setTitle(R.string.filtrar)
+                    .setItems(sBase.getCategories(), new
+                            DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (!loading.isShown()) {
+                                        filter = which;
+                                        mAdapter = null;
+                                        page = 1;
+                                        mStart = true;
+                                        sBase.hayMas = true;
+                                        new LoadLastTask().execute(page);
+                                    } else {
+                                        newTask = true;
+                                    }
+                                }
+                            });
+
+            builder.create().show();
+        }else if (item.getItemId() == R.id.sort) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(ActivityServerFilteredNavigation.this);
+            builder.setTitle(R.string.filtrar)
+                    .setItems(sBase.getOrders(), new
+                            DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (!loading.isShown()) {
+                                        order = which;
+                                        mAdapter = null;
+                                        page = 1;
+                                        mStart = true;
+                                        sBase.hayMas = true;
+                                        new LoadLastTask().execute(page);
+                                    } else {
+                                        newTask = true;
+                                    }
+                                }
+                            });
+
+            builder.create().show();
         }
         return super.onOptionsItemSelected(item);
     }
@@ -214,8 +199,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
             try {
-                mangas = sBase.getMangasFiltered(
-                        genres.getSelectedItemPosition(), order.getSelectedItemPosition(), params[0]);
+                mangas = sBase.getMangasFiltered(filter, order, params[0]);
             } catch (Exception e) {
                 error = e.getMessage();
             }
@@ -228,13 +212,13 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
                 Toast.makeText(ActivityServerFilteredNavigation.this,
                         "Error: " + error, Toast.LENGTH_SHORT).show();
             } else {
-                pagina++;
+                page++;
                 if (result != null && result.size() != 0 && grid != null) {
                     if (mAdapter == null) {
-                        if(sBase.getFilteredType() == ServerBase.FilteredType.VISUAL){
-                        mAdapter = new MangasRecAdapter(result,
-                                ActivityServerFilteredNavigation.this, darkTheme);}
-                        else {
+                        if (sBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
+                            mAdapter = new MangasRecAdapter(result,
+                                    ActivityServerFilteredNavigation.this, darkTheme);
+                        } else {
                             mAdapter = new MangasRecAdapterText(result,
                                     ActivityServerFilteredNavigation.this, darkTheme);
                         }
@@ -246,13 +230,13 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
                     }
                 }
                 mStart = false;
-                if (neuvaTarea) {
+                if (newTask) {
                     mAdapter = null;
-                    pagina = 1;
+                    page = 1;
                     mStart = true;
                     sBase.hayMas = true;
-                    new LoadLastTask().execute(pagina);
-                    neuvaTarea = false;
+                    new LoadLastTask().execute(page);
+                    newTask = false;
                 }
             }
             loading.setVisibility(ProgressBar.INVISIBLE);

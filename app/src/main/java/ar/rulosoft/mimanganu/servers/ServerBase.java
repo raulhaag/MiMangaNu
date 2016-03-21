@@ -276,7 +276,7 @@ public abstract class ServerBase {
         this.serverName = serverName;
     }
 
-    public String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
+    public static String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
         if (m.find()) {

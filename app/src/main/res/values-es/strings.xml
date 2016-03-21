@@ -20,9 +20,9 @@
     <string name="agregadodescarga">Manga agregado a descargas</string>
     <string name="mismangas">Mis Mangas</string>
     <string name="masmangas">Mas Mangas</string>
-    <string name="buscandonuevo">Buscando Nuevos Mangas de </string>
+    <string name="buscandonuevo">Buscando Nuevos Mangas</string>
     <string name="busquedanores">La Búsqueda no produjo resultados</string>
-    <string name="listaen">Listado de Mangas en </string>
+    <string name="listaen">Mangas en</string>
     <string name="buscarupdates">Buscar Actualizaciones</string>
     <string name="nobuscarupdate">No Buscar Actulizaciones</string>
     <string name="licencia">Licencia</string>

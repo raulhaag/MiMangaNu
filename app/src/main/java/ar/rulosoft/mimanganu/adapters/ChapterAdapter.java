@@ -17,6 +17,8 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.ActivityManga;
 import ar.rulosoft.mimanganu.FragmentMisMangas;
@@ -212,6 +214,11 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     public void addAll(Chapter... items) {
         //chapters.addAll(items);
         //("Not Supported yet");
+    }
+
+    public void sort_chapters(Comparator<Chapter> comparator){
+        Collections.sort(chapters,comparator);
+        notifyDataSetChanged();
     }
 
     @Override

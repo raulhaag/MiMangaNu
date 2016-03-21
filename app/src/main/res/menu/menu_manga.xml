@@ -5,8 +5,8 @@
     <item
         android:id="@+id/action_reader"
         android:icon="@drawable/ic_action_paged"
-        android:orderInCategory="100"
         android:title="@string/paged_reader"
+        android:orderInCategory="100"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_sentido"
@@ -19,7 +19,36 @@
         android:id="@+id/descargas"
         android:icon="@drawable/ic_action_downloads"
         android:title="@string/descargas"
+        android:orderInCategory="100"
+
         app:showAsAction="always" />
+    <item
+        android:id="@+id/sort_chapters"
+        android:orderInCategory="100"
+
+        android:icon="@drawable/ic_action_sort"
+        android:title="@string/sort"
+        app:showAsAction="always">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sort_number"
+                    android:title="@string/sort_number" />
+                <item
+                    android:id="@+id/sort_number_asc"
+                    android:title="@string/sort_number_asc" />
+                <item
+                    android:id="@+id/sort_title"
+                    android:title="@string/sort_title" />
+                <item
+                    android:id="@+id/sort_title_asc"
+                    android:title="@string/sort_title_asc" />
+                <item
+                    android:id="@+id/sort_added_db"
+                    android:title="@string/sort_added_db" />
+            </group>
+        </menu>
+    </item>
 
     <item
         android:id="@+id/submenu"
