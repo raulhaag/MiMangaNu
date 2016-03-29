@@ -124,7 +124,7 @@ public class L2RReader extends R2LReader {
                     return (pages.get(page).end_visibility - (screenWidth / mScaleFactor)) - add;
                 }
             } else {
-                return pages.get(pages.size() - 1).end_visibility;
+                return pages.get(pages.size() - 1).end_visibility - (screenWidth / mScaleFactor);
             }
         } else {
             return 0;
