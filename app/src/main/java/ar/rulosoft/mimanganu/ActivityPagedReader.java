@@ -668,7 +668,7 @@ public class ActivityPagedReader extends AppCompatActivity
                             .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    DownloadPoolService.retryError(getApplicationContext(), mChapter.getId());
+                                    DownloadPoolService.retryError(getApplicationContext(), mChapter);
                                     dialog.dismiss();
                                     DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
                                 }
