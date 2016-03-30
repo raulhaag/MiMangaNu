@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -514,7 +515,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    DownloadPoolService.retryError(getApplicationContext(),mChapter);
+                                    DownloadPoolService.retryError(getApplicationContext(),mChapter, ActivityReader.this);
                                     dialog.dismiss();
                                     DownloadPoolService.setDownloadListener(ActivityReader.this);
                                 }

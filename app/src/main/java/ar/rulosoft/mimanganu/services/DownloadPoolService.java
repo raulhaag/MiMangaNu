@@ -231,15 +231,16 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         startService(context);
     }
 
-    public static void retryError(Context context , Chapter cid) {
+    public static void retryError(Context context , Chapter cid, ChapterDownload.OnErrorListener errorListener) {
 
             for (int i = 0; i < chapterDownloads.size(); i++) {
                 ChapterDownload cd = chapterDownloads.get(i);
                 if (cd.status == DownloadStatus.ERROR && cd.getChapter().getId() == cid.getId()) {
-                    chapterDownloads.set(i, new ChapterDownload(cid));
+                    ChapterDownload ncd = new ChapterDownload(cid);
+                    ncd.setErrorListener(errorListener);
+                    chapterDownloads.set(i, ncd);
                 }
             }
-
         startService(context);
     }
 
