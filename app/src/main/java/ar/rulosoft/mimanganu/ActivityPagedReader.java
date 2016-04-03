@@ -91,7 +91,7 @@ public class ActivityPagedReader extends AppCompatActivity
     private Chapter mChapter, nextChapter = null;
     private Manga mManga;
     private ServerBase mServerBase;
-    private TextView mSeekerPage, mScrollSensitiveText;
+    private TextView mCurrentPage, mSeekerPage, mScrollSensitiveText;
     private MenuItem displayMenu, keepOnMenuItem, screenRotationMenuItem;
     private Button mButtonMinus, mButtonPlus;
 
@@ -157,6 +157,7 @@ public class ActivityPagedReader extends AppCompatActivity
                         break;
                     }
                 }
+                mCurrentPage.setText(String.format("%s/%s", mSeekBar.getProgress() + 1, mChapter.getPages()));
                 mChapter.setPagesRead(mPageAdapter.currentPage + 1);
                 Database.updateChapter(ActivityPagedReader.this, mChapter);
             }
@@ -204,13 +205,18 @@ public class ActivityPagedReader extends AppCompatActivity
         mControlsLayout.setAlpha(0f);
         mControlsLayout.setVisibility(View.GONE);
 
-        mSeekerPage = (TextView) findViewById(R.id.page);
+        mSeekerPage = (TextView) findViewById(R.id.gotoPage);
         mSeekerPage.setAlpha(.9f);
-        mSeekerPage.setTextColor(Color.WHITE);
 
         mSeekBar = (SeekBar) findViewById(R.id.seeker);
         mSeekBar.setOnSeekBarChangeListener(this);
-        if (mDirection == Direction.L2R) mSeekBar.setRotation(180);
+        if (mDirection == Direction.L2R) {
+            mCurrentPage = (TextView) findViewById(R.id.pageLeft);
+            mSeekBar.setRotation(180);
+        } else
+            mCurrentPage = (TextView) findViewById(R.id.pageRight);
+        mCurrentPage.setText(String.format("%s/%s", mSeekBar.getProgress() + 1, mChapter.getPages()));
+        mCurrentPage.setVisibility(View.VISIBLE);
 
         mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
 
@@ -218,7 +224,7 @@ public class ActivityPagedReader extends AppCompatActivity
         mButtonMinus = (Button) findViewById(R.id.minus);
         mButtonPlus = (Button) findViewById(R.id.plus);
         mScrollSensitiveText = (TextView) findViewById(R.id.scroll_level);
-        mScrollSensitiveText.setText("" + mScrollFactor);
+        mScrollSensitiveText.setText(String.valueOf(mScrollFactor));
 
         int reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setBackgroundColor(reader_bg);
@@ -308,7 +314,7 @@ public class ActivityPagedReader extends AppCompatActivity
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
             Database.updateMangaScrollSensitive(ActivityPagedReader.this, mManga.getId(), mScrollFactor);
-            mScrollSensitiveText.setText("" + mScrollFactor);
+            mScrollSensitiveText.setText(String.valueOf(mScrollFactor));
             mPageAdapter.setPageScroll(mScrollFactor);
         }
     }
@@ -388,7 +394,6 @@ public class ActivityPagedReader extends AppCompatActivity
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -485,14 +490,15 @@ public class ActivityPagedReader extends AppCompatActivity
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         // This is happening, if you swipe left and right on the bar
-        if (mSeekerPage != null) mSeekerPage.setText("" + (progress + 1));
+        if (mSeekerPage != null)
+            mSeekerPage.setText(String.format("%s", progress + 1));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         // This is happening, if you touch on the bar (no swipe)
-        mSeekerPage.setText("" + (seekBar.getProgress() + 1));
         mSeekerPage.setVisibility(SeekBar.VISIBLE);
+        mSeekerPage.setText(String.format("%s", seekBar.getProgress() + 1));
     }
 
     public void onEndDrag() {
@@ -570,12 +576,12 @@ public class ActivityPagedReader extends AppCompatActivity
     public void onStopTrackingTouch(SeekBar seekBar) {
         // This is happening, if you lift your finger off the bar
         try {
-            mSeekerPage.setVisibility(SeekBar.INVISIBLE);
             if (mDirection == Direction.R2L || mDirection == Direction.VERTICAL)
                 setCurrentItem(seekBar.getProgress());
             else {
                 setCurrentItem(mChapter.getPages() - seekBar.getProgress() - 1);
             }
+            mSeekerPage.setVisibility(SeekBar.INVISIBLE);
         } catch (Exception e) {
             // sometimes gets a null, just in case, don't stop the app
         }
@@ -668,7 +674,7 @@ public class ActivityPagedReader extends AppCompatActivity
                             .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    DownloadPoolService.retryError(getApplicationContext(), mChapter,ActivityPagedReader.this);
+                                    DownloadPoolService.retryError(getApplicationContext(), mChapter, ActivityPagedReader.this);
                                     dialog.dismiss();
                                     DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
                                 }
@@ -786,6 +792,7 @@ public class ActivityPagedReader extends AppCompatActivity
                         try {
                             Thread.sleep(3000);//time to free memory
                         } catch (InterruptedException e) {
+                            // Nothing
                         }
                     }
                 }

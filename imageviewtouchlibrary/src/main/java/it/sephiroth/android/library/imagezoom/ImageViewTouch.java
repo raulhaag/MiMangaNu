@@ -23,11 +23,12 @@ public class ImageViewTouch extends ImageViewTouchBase {
     protected float mScaleFactor;
     protected OnGestureListener mGestureListener;
     protected OnScaleGestureListener mScaleListener;
-    protected boolean mDoubleTapEnabled = true;
     protected boolean mScaleEnabled = true;
-    protected boolean mScrollEnabled = true;
-    private OnImageViewTouchDoubleTapListener mDoubleTapListener;
-    private OnImageViewTouchSingleTapListener mSingleTapListener;
+    protected boolean mScaleModeAuto = true;
+    //protected boolean mDoubleTapEnabled = true;
+    //protected boolean mScrollEnabled = true;
+    //private OnImageViewTouchDoubleTapListener mDoubleTapListener;
+    //private OnImageViewTouchSingleTapListener mSingleTapListener;
     private TapListener mTapListener;
 
     public ImageViewTouch(Context context) {
@@ -53,6 +54,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         mGestureDetector = new GestureDetector(getContext(), mGestureListener, null, true);
     }
 
+    /*
     public void setDoubleTapListener(OnImageViewTouchDoubleTapListener listener) {
         mDoubleTapListener = listener;
     }
@@ -60,6 +62,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
     public void setSingleTapListener(OnImageViewTouchSingleTapListener listener) {
         mSingleTapListener = listener;
     }
+    */
 
     public void setTapListener(TapListener nTapListener) {
         mTapListener = nTapListener;
@@ -69,6 +72,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         mScaleEnabled = value;
     }
 
+    /*
     public void setScrollEnabled(boolean value) {
         mScrollEnabled = value;
     }
@@ -80,6 +84,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
     public void setDoubleTapEnabled(boolean value) {
         mDoubleTapEnabled = value;
     }
+    */
 
     protected OnGestureListener getGestureListener() {
         return new GestureListener();
@@ -115,18 +120,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
     @Override
     protected void onZoomAnimationCompleted(float scale) {
         if (scale < getMinScale()) zoomTo(getMinScale(), 50);
-    }
-
-    protected float onDoubleTapPost(float scale) {
-        float defScale = getDefaultScale(mScaleType);
-        if (scale <= 1.8f * defScale) {
-            return 2f * defScale;
-        } else if (scale <= 2.8f * defScale) {
-            return 3f * defScale;
-        } else {
-            return defScale;
-        }
-        // Still don't know what mDoubleTapDirection is, but it seems to be useless
     }
 
     public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -221,6 +214,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         return bitmapScrollRectDelta > SCROLL_DELTA_THRESHOLD;
     }
 
+    /*
     public void scrollToOrigin() {
         RectF bitmapRect = getBitmapRect();
         scrollBy(-bitmapRect.right, -bitmapRect.top);
@@ -234,6 +228,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
     public interface OnImageViewTouchSingleTapListener {
         void onSingleTapConfirmed();
     }
+    */
 
     public interface TapListener {
         void onCenterTap();
@@ -262,23 +257,33 @@ public class ImageViewTouch extends ImageViewTouchBase {
                 }
             }
 
-            if (null != mSingleTapListener) mSingleTapListener.onSingleTapConfirmed();
+            //if (null != mSingleTapListener) mSingleTapListener.onSingleTapConfirmed();
             return ImageViewTouch.this.onSingleTapConfirmed(e);
         }
 
+        protected float onDoubleTapPost(float scale) {
+            float defScale = getDefaultScale(mScaleType);
+            if (scale <= 1.7f * defScale) {
+                return 1.8f * defScale;
+            } else if (scale <= 2.7f * defScale) {
+                return 2.8f * defScale;
+            } else {
+                return defScale;
+            }
+        }
+
         @Override
-        public boolean onDoubleTap(MotionEvent e) {
-            if (mDoubleTapEnabled) {
-                mUserScaled = true;
-                float targetScale = Math.min(getMaxScale(),
-                        Math.max(onDoubleTapPost(getScale()), getMinScale()));
+        public boolean onDoubleTapEvent(MotionEvent e) {
+
+            if (mScaleModeAuto && e.getAction() == MotionEvent.ACTION_UP)
+            {
+                float targetScale = Math.min(getMaxScale(), Math.max(onDoubleTapPost(getScale()), getMinScale()));
                 zoomTo(targetScale, e.getX(), e.getY(), DEFAULT_ANIMATION_DURATION);
                 invalidate();
             }
+            mScaleModeAuto = true;
 
-            if (null != mDoubleTapListener) mDoubleTapListener.onDoubleTap();
-
-            return super.onDoubleTap(e);
+            return super.onDoubleTapEvent(e);
         }
 
         @Override
@@ -294,7 +299,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 
-            if (!mScrollEnabled) return false;
+            //if (!mScrollEnabled) return false;
             if (e1 == null || e2 == null) return false;
             if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
             if (mScaleDetector.isInProgress()) return false;
@@ -305,7 +310,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 
-            if (!mScrollEnabled) return false;
+            //if (!mScrollEnabled) return false;
             if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
             if (mScaleDetector.isInProgress()) return false;
             if (getScale() == 1f) return false;
@@ -334,6 +339,8 @@ public class ImageViewTouch extends ImageViewTouchBase {
             float targetScale = getScale() * detector.getScaleFactor();
 
             if (mScaleEnabled) {
+                mScaleModeAuto = false;
+
                 if (mScaled && span != 0) {
                     mUserScaled = true;
                     targetScale = Math.min(getMaxScale(), Math.max(targetScale, getMinScale() - 0.1f));
