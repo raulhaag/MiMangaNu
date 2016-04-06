@@ -58,7 +58,7 @@ public class TuMangaOnline extends ServerBase {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 JSONObject object = jsonArray.getJSONObject(i);
-                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + object.getString("nombre"), mid +
+                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), mid +
                         "/" + object.getString("numCapitulo") + "/" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "|" +
                         object.getJSONArray("subidas").getJSONObject(0).getString("imagenes"));
                 result.add(c);
@@ -72,7 +72,7 @@ public class TuMangaOnline extends ServerBase {
     @Override
     public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
         JSONObject object = new JSONObject(getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + m.getPath()));
-        m.setImages("http://img1.tumangaonline.com/" + object.getString("imageUrl"));//.replaceAll("\\\\",""));
+        m.setImages("http://img1.tumangaonline.com/" + object.getString("imageUrl"));
         m.setSynopsis(object.getJSONObject("info").getString("sinopsis"));
         if (object.getJSONArray("autores").length() != 0) {
             m.setAuthor(object.getJSONArray("autores").getJSONObject(0).getString("autor"));
