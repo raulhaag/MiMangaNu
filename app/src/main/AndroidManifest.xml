@@ -38,7 +38,7 @@
             android:name=".ActivityPagedReader"
             android:label="@string/title_activity_activity_lector"
             android:largeHeap="true"
-            android:theme="@style/AppTheme.Light.NoActionbar" />
+            android:theme="@style/AppTheme.Dark.NoActionbar" />
         <activity
             android:name=".ActivityServerFilteredNavigation"
             android:label="@string/title_activity_server_visual_navegacion" />
@@ -75,7 +75,7 @@
             android:name=".ActivityReader"
             android:label="@string/title_activity_vertical_reader"
             android:largeHeap="true"
-            android:theme="@style/AppTheme.Light.NoActionbar" />
+            android:theme="@style/AppTheme.Dark.NoActionbar" />
     </application>
 
 </manifest>

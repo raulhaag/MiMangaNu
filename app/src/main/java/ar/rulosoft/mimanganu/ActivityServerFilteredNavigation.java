@@ -64,6 +64,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
             mActBar.setTitle(getResources()
                     .getString(R.string.listaen) + " " + sBase.getServerName());
             mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            mActBar.setDisplayHomeAsUpEnabled(true);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -135,7 +136,10 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.ver_como_lista) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        } else if (item.getItemId() == R.id.ver_como_lista) {
             Intent intent = new Intent(this, ActivityServerMangaList.class);
             intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
             startActivity(intent);
@@ -160,7 +164,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
                             });
 
             builder.create().show();
-        }else if (item.getItemId() == R.id.sort) {
+        } else if (item.getItemId() == R.id.sort) {
             AlertDialog.Builder builder = new AlertDialog.Builder(ActivityServerFilteredNavigation.this);
             builder.setTitle(R.string.filtrar)
                     .setItems(sBase.getOrders(), new

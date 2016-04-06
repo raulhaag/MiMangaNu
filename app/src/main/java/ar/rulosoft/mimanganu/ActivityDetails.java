@@ -13,6 +13,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -56,8 +57,10 @@ public class ActivityDetails extends AppCompatActivity {
         str.setColorSchemeColors(colors[0], colors[1]);
 
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
-
+        if (mActBar != null) {
+            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
+            mActBar.setDisplayHomeAsUpEnabled(true);
+        }
         button_add = (FloatingActionButton) findViewById(R.id.button_add);
         button_add.setOnClickListener(new OnClickListener() {
             @Override
@@ -170,6 +173,17 @@ public class ActivityDetails extends AppCompatActivity {
             str.setRefreshing(false);
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
         ProgressDialog adding = new ProgressDialog(ActivityDetails.this);

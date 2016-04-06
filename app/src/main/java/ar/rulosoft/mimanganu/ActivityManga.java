@@ -45,11 +45,10 @@ public class ActivityManga extends AppCompatActivity {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
-        public SwipeRefreshLayout mSwipeRefreshLayout;
+    private static final String TAG = "ActivityManga";
+    public SwipeRefreshLayout mSwipeRefreshLayout;
     public Manga mManga;
     private Direction mDirection;
-    private static final String TAG = "ActivityManga";
-
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
     private ImageLoader mImageLoader;
@@ -412,27 +411,27 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.sort_title_asc:
-                pm.edit().putInt(CHAPTERS_ORDER,4).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 4).commit();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
                 break;
 
             case R.id.sort_number:
-                pm.edit().putInt(CHAPTERS_ORDER,1).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 1).commit();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DSC);
                 break;
 
             case R.id.sort_title:
-                pm.edit().putInt(CHAPTERS_ORDER,3).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 3).commit();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DSC);
                 break;
 
             case R.id.sort_number_asc:
-                pm.edit().putInt(CHAPTERS_ORDER,2).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 2).commit();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
                 break;
 
             case R.id.sort_added_db:
-                pm.edit().putInt(CHAPTERS_ORDER,0).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 0).commit();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED);
                 break;
         }
@@ -443,18 +442,18 @@ public class ActivityManga extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         ArrayList<Chapter> chapters = Database.getChapters(getApplicationContext(), mMangaId);
-        switch (chapters_order){
+        switch (chapters_order) {
             case 1:
-                Collections.sort(chapters,Chapter.Comparators.NUMBERS_DSC);
+                Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
                 break;
             case 2:
-                Collections.sort(chapters,Chapter.Comparators.NUMBERS_ASC);
+                Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
                 break;
             case 3:
-                Collections.sort(chapters,Chapter.Comparators.TITLE_DSC);
+                Collections.sort(chapters, Chapter.Comparators.TITLE_DSC);
                 break;
             case 4:
-                Collections.sort(chapters,Chapter.Comparators.TITLE_ASC);
+                Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
                 break;
         }
         mChapterAdapter.replaceData(chapters);

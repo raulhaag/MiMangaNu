@@ -35,6 +35,8 @@ public abstract class ServerBase {
     public static final int MANGAEDENIT = 19;
     public static final int MYMANGAIO = 20;
     public static final int RAWSENMANGA = 21;
+    public static final int TUMANGAONLINE = 22;
+
 
     public boolean hayMas = true;
     private String serverName;
@@ -80,6 +82,9 @@ public abstract class ServerBase {
                 break;
             case ITNINEMANGA:
                 s = new ItNineMangaCom();
+                break;
+            case TUMANGAONLINE:
+                s = new TuMangaOnline();
                 break;
             case TUSMANGAS:
                 s = new TusMangasOnlineCom();
@@ -323,6 +328,7 @@ public abstract class ServerBase {
 
     public static ServerBase[] getServers() {
         return (new ServerBase[]{
+                new TuMangaOnline(),
                 new HeavenMangaCom(),
                 new SubManga(),
                 new EsNineMangaCom(),

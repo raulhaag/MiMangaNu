@@ -242,6 +242,7 @@ public class ActivityPagedReader extends AppCompatActivity
         mChapter.setReadStatus(Chapter.READING);
         Database.updateChapter(ActivityPagedReader.this, mChapter);
         setSupportActionBar(mActionBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hideSystemUI();
 
         mButtonMinus.setOnClickListener(new OnClickListener() {
@@ -419,6 +420,9 @@ public class ActivityPagedReader extends AppCompatActivity
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.action_ajustar: {
                 mScreenFit = mScreenFit.getNext();
                 SharedPreferences.Editor editor = pm.edit();

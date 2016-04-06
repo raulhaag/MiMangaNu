@@ -113,6 +113,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
         mActionBar.setTitleTextColor(Color.WHITE);
 
+
         mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
         mControlsLayout.setAlpha(0f);
         mControlsLayout.setVisibility(View.GONE);
@@ -143,6 +144,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
 
         setSupportActionBar(mActionBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hideSystemUI();
 
         mButtonMinus.setOnClickListener(new View.OnClickListener() {
@@ -300,6 +302,9 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
             case R.id.action_keep_screen_on: {
                 if (!mKeepOn) {
                     keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
