@@ -139,9 +139,9 @@
     <string name="sort_title">Titel</string>
     <string name="sort_author">Autor</string>
     <string name="sort_recent">Zuletzt gelesen</string>
-    <string name="sort_author_asc">Autor (z-a)</string>
-    <string name="sort_recent_asc">Zuletzt gelesen (älteste)</string>
-    <string name="sort_title_asc">Titel (z-a)</string>
+    <string name="sort_author_desc">Autor (z-a)</string>
+    <string name="sort_recent_desc">Zuletzt gelesen (älteste)</string>
+    <string name="sort_title_desc">Titel (z-a)</string>
     <string name="more_options">Mehr Optionen</string>
     <string name="color_reader">Reader Farbe</string>
     <string name="color_reader_sub">Die Farbe im Reader Modus</string>
@@ -168,7 +168,12 @@
     <string name="retry_errors">Retry Fehler</string>
     <string name="update_complete">Update abgeschlossen</string>
     <string name="mgs_update_found">Neue Kapitel wurden gefunden (%s)</string>
-    <string name="delete_comfirm">Sind Sie sicher, dass diese Kapitel zu löschen?</string>
+    <string name="delete_comfirm">Wollen Sie wirklich das Kapitel löschen?</string>
     <string name="close">schließen</string>
     <string name="retry">wiederholen</string>
+    <string name="delete_on_chapter_change">Bilder löschen?</string>
+    <string name="error_downloading_image">Fehler beim Laden des Bildes</string>
+    <string name="sort_added_db">Zuletzt hinzugefügt</string>
+    <string name="sort_number">Kapitelnummer (0-9)</string>
+    <string name="sort_number_asc">Kapitelnummer </string>
 </resources>

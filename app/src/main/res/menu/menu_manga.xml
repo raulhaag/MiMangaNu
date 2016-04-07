@@ -42,7 +42,7 @@
                     android:title="@string/sort_title" />
                 <item
                     android:id="@+id/sort_title_asc"
-                    android:title="@string/sort_title_asc" />
+                    android:title="@string/sort_title_desc" />
                 <item
                     android:id="@+id/sort_added_db"
                     android:title="@string/sort_added_db" />

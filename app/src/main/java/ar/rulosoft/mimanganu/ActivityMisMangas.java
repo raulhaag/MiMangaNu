@@ -100,9 +100,9 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
 
         /** Set sort mode */
         int sortList[] = {
-                R.id.sort_last_read, R.id.sort_last_read_asc,
-                R.id.sort_name, R.id.sort_name_asc,
-                R.id.sort_author, R.id.sort_author_asc,
+                R.id.sort_last_read, R.id.sort_last_read_desc,
+                R.id.sort_name, R.id.sort_name_desc,
+                R.id.sort_author, R.id.sort_author_desc,
                 R.id.sort_finished, R.id.sort_finished_asc
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
@@ -146,7 +146,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                 fragmentMisMangas.setListManga(true);
                 break;
             }
-            case R.id.sort_last_read_asc: {
+            case R.id.sort_last_read_desc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 1).apply();
                 fragmentMisMangas.setListManga(true);
@@ -158,7 +158,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                 fragmentMisMangas.setListManga(true);
                 break;
             }
-            case R.id.sort_name_asc: {
+            case R.id.sort_name_desc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 3).apply();
                 fragmentMisMangas.setListManga(true);
@@ -170,7 +170,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
                 fragmentMisMangas.setListManga(true);
                 break;
             }
-            case R.id.sort_author_asc: {
+            case R.id.sort_author_desc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 5).apply();
                 fragmentMisMangas.setListManga(true);
