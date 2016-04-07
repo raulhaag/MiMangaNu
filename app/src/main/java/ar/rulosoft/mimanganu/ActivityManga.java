@@ -152,14 +152,14 @@ public class ActivityManga extends AppCompatActivity {
             @Override
             public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
 
-                SparseBooleanArray selection = mChapterAdapter.getSelection();
-                ServerBase s = ServerBase.getServer(mManga.getServerId());
+                final SparseBooleanArray selection = mChapterAdapter.getSelection();
+                final ServerBase s = ServerBase.getServer(mManga.getServerId());
 
                 switch (item.getItemId()) {
-                    case R.id.seleccionar_todo:
+                    case R.id.select_all:
                         mChapterAdapter.selectAll();
                         return true;
-                    case R.id.seleccionar_nada:
+                    case R.id.unselect:
                         mChapterAdapter.clearSelection();
                         return true;
                     case R.id.select_from:
@@ -185,23 +185,38 @@ public class ActivityManga extends AppCompatActivity {
                             c.freeSpace(ActivityManga.this, mManga, s);
                         }
                         break;
-                    case R.id.borrar_imagenes:
+                    case R.id.delete_images:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.freeSpace(ActivityManga.this, mManga, s);
                         }
                         break;
-                    case R.id.borrar:
-                        int[] selected = new int[selection.size()];
-                        for (int j = 0; j < selection.size(); j++) {
-                            selected[j] = selection.keyAt(j);
-                        }
-                        Arrays.sort(selected);
-                        for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.delete(ActivityManga.this, mManga, s);
-                            mChapterAdapter.remove(c);
-                        }
+                    case R.id.delete_chapter:
+                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(ActivityManga.this);
+                        dlgAlert.setMessage(getString(R.string.delete_comfirm));
+                        dlgAlert.setTitle(R.string.app_name);
+                        dlgAlert.setCancelable(true);
+                        dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                int[] selected = new int[selection.size()];
+                                for (int j = 0; j < selection.size(); j++) {
+                                    selected[j] = selection.keyAt(j);
+                                }
+                                Arrays.sort(selected);
+                                for (int i = selection.size() - 1; i >= 0; i--) {
+                                    Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
+                                    c.delete(ActivityManga.this, mManga, s);
+                                    mChapterAdapter.remove(c);
+                                }
+                            }
+                        });
+                        dlgAlert.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        dlgAlert.create().show();
                         break;
                     case R.id.reset:
                         for (int i = 0; i < selection.size(); i++) {
@@ -302,7 +317,7 @@ public class ActivityManga extends AppCompatActivity {
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            case R.id.action_descargar_restantes: {
+            case R.id.action_download_reamains: {
                 AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
                 dlgAlert.setMessage(getString(R.string.download_remain_confirmation));
                 dlgAlert.setTitle(R.string.descargarestantes);
@@ -329,13 +344,13 @@ public class ActivityManga extends AppCompatActivity {
                 dlgAlert.create().show();
                 break;
             }
-            case R.id.action_marcar_todo_leido: {
+            case R.id.action_check_as_read: {
                 Database.markAllChapters(ActivityManga.this, this.mMangaId, true);
                 mManga = Database.getFullManga(getApplicationContext(), this.mMangaId);
                 loadChapters(mManga.getChapters());
                 break;
             }
-            case R.id.action_marcar_todo_no_leido: {
+            case R.id.action_uncheck_as_read: {
                 Database.markAllChapters(ActivityManga.this, this.mMangaId, false);
                 mManga = Database.getFullManga(getApplicationContext(), this.mMangaId);
                 loadChapters(mManga.getChapters());
@@ -346,8 +361,7 @@ public class ActivityManga extends AppCompatActivity {
                 if (mManga.getReadingDirection() != -1) {
                     readDirection = mManga.getReadingDirection();
                 } else {
-                    readDirection = Integer.parseInt(
-                            pm.getString(DIRECTION, "" + Direction.L2R.ordinal()));
+                    readDirection = Integer.parseInt(pm.getString(DIRECTION, "" + Direction.L2R.ordinal()));
                 }
                 if (readDirection == Direction.R2L.ordinal()) {
                     mMenuItemReaderSense.setIcon(R.drawable.ic_action_inverso);

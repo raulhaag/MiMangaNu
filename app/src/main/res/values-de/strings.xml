@@ -168,4 +168,7 @@
     <string name="retry_errors">Retry Fehler</string>
     <string name="update_complete">Update abgeschlossen</string>
     <string name="mgs_update_found">Neue Kapitel wurden gefunden (%s)</string>
+    <string name="delete_comfirm">Sind Sie sicher, dass diese Kapitel zu löschen?</string>
+    <string name="close">schließen</string>
+    <string name="retry">wiederholen</string>
 </resources>

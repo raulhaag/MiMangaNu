@@ -175,5 +175,9 @@
     <string name="mgs_update_found">Nuevos capitulos encotrados (%s)</string>
     <string name="delete_on_chapter_change">¿Borrar imagenes?</string>
     <string name="close">Cerrar</string>
+    <string name="sort_added_db">Ordenar por indice de db</string>
+    <string name="sort_number">Ordenar por número de capítulo</string>
+    <string name="sort_number_asc">Ordenar por número de capítulo ASC</string>
+    <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
 
 </resources>

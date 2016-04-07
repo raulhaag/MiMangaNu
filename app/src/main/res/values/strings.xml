@@ -180,4 +180,5 @@
     <string name="sort_added_db">Sort as added on db</string>
     <string name="sort_number">Sort by chapter number</string>
     <string name="sort_number_asc">Sort by chapter number ASC</string>
+    <string name="delete_comfirm">Are you sure to delete these chapters?</string>
 </resources>

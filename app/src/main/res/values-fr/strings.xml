@@ -167,4 +167,7 @@
     <string name="resume_downloads">Reprendre les téléchargements</string>
     <string name="retry_errors">Réessayez erreurs</string>
     <string name="update_complete">Mise à jour terminée</string>
+    <string name="delete_comfirm">Etes-vous sûr de supprimer ces chapitres?</string>
+    <string name="close">Fermer</string>
+    <string name="retry">refaire</string>
 </resources>

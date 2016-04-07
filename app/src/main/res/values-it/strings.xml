@@ -168,4 +168,7 @@
     <string name="resume_downloads">Riprendere gli scaricamenti</string>
     <string name="retry_errors">Riprova errori</string>
     <string name="update_complete">Aggiornamento completo</string>
+    <string name="delete_comfirm">Sei sicuro di voler eliminare questi capitoli?</string>
+    <string name="close">vicino</string>
+    <string name="retry">Riprova</string>
 </resources>

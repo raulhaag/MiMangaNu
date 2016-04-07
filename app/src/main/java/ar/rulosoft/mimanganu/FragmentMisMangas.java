@@ -134,7 +134,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         Manga m = (Manga) grid.getAdapter().getItem(info.position);
-        if (item.getItemId() == R.id.borrar) {
+        if (item.getItemId() == R.id.delete) {
             DownloadPoolService.forceStop(m.getId());
             ServerBase s = ServerBase.getServer(m.getServerId());
             String path = DownloadPoolService.generateBasePath(s, m, getActivity());
