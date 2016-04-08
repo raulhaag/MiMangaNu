@@ -73,7 +73,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
         }
 
         grid = (RecyclerView) findViewById(R.id.grilla);
-        loading = (ProgressBar) findViewById(R.id.cargando);
+        loading = (ProgressBar) findViewById(R.id.loading);
 
         Display display = getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();

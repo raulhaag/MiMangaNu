@@ -3,7 +3,7 @@
     android:id="@+id/pager"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="ar.rulosoft.mimanganu.ActivityCapitulos">
+    tools:context="ar.rulosoft.mimanganu.ActivityManga">
 
     <android.support.v4.view.PagerTabStrip
         android:id="@+id/pager_strip"

@@ -724,7 +724,7 @@ public class ActivityPagedReader extends AppCompatActivity
             visor.setDisplayType(mScreenFit);
             visor.setTapListener(ActivityPagedReader.this);
             visor.setScaleEnabled(false);
-            loading = (ProgressBar) findViewById(R.id.cargando);
+            loading = (ProgressBar) findViewById(R.id.loading);
             loading.bringToFront();
             visor.setScrollFactor(activity.mScrollFactor);
         }

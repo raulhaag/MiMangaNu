@@ -42,12 +42,11 @@ public class ActivityDetails extends AppCompatActivity {
     private ServerBase s;
     private Manga m;
     private FloatingActionButton button_add;
-    private boolean darkTheme;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
+        boolean darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalles);

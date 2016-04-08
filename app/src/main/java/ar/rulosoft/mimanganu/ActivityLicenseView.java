@@ -23,13 +23,12 @@ import static android.R.color.black;
 public class ActivityLicenseView extends AppCompatActivity {
 
     private TextView lic;
-    private boolean darkTheme;
     private static final String TAG = "ActivityLicenseView";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
+        boolean darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         lic = new TextView(getBaseContext());

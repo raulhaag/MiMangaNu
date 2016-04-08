@@ -56,7 +56,6 @@ public class ActivityManga extends AppCompatActivity {
     private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
     private int mMangaId, readerType;
     private int chapters_order; // 0 = db | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc
-    private boolean darkTheme;
     private Menu menu;
 
     private FragmentUpdateSearchTask mUpdateSearchTask;
@@ -65,7 +64,7 @@ public class ActivityManga extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
+        boolean darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);

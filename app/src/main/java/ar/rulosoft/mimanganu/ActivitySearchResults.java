@@ -41,8 +41,8 @@ public class ActivitySearchResults extends AppCompatActivity {
         setContentView(R.layout.activity_activity_resultado_de_busqueda);
         serverId = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
         termino = getIntent().getExtras().getString(TERMINO);
-        lista = (ListView) findViewById(R.id.resultados);
-        cargando = (ProgressBar) findViewById(R.id.cargando);
+        lista = (ListView) findViewById(R.id.result);
+        cargando = (ProgressBar) findViewById(R.id.loading);
         lista.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

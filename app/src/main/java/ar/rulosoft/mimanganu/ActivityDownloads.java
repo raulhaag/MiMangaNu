@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -11,8 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ListView;
-
-import java.util.HashMap;
 
 import ar.rulosoft.mimanganu.adapters.DownloadAdapter;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
