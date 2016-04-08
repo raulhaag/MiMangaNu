@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.services.ChapterDownload;

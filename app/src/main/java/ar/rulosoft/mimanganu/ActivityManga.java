@@ -425,27 +425,27 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.sort_title_asc:
-                pm.edit().putInt(CHAPTERS_ORDER, 4).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 4).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
                 break;
 
             case R.id.sort_number:
-                pm.edit().putInt(CHAPTERS_ORDER, 1).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 1).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DSC);
                 break;
 
             case R.id.sort_title:
-                pm.edit().putInt(CHAPTERS_ORDER, 3).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 3).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DSC);
                 break;
 
             case R.id.sort_number_asc:
-                pm.edit().putInt(CHAPTERS_ORDER, 2).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 2).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
                 break;
 
             case R.id.sort_added_db:
-                pm.edit().putInt(CHAPTERS_ORDER, 0).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED);
                 break;
         }

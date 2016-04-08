@@ -1362,7 +1362,6 @@ public class VerticalViewPager extends ViewGroup {
                 ItemInfo ii;
                 if (!lp.isDecor && (ii = infoForChild(child)) != null) {
                     int toff = (int) (childHeight * ii.offset);
-                    int childLeft = paddingLeft;
                     int childTop = paddingTop + toff;
                     if (lp.needsMeasure) {
                         // This was added during layout and needs measurement.
@@ -1377,10 +1376,10 @@ public class VerticalViewPager extends ViewGroup {
                         child.measure(widthSpec, heightSpec);
                     }
                     if (DEBUG) Log.v(TAG, "Positioning #" + i + " " + child + " f=" + ii.object
-                            + ":" + childLeft + "," + childTop + " " + child.getMeasuredWidth()
+                            + ":" + paddingLeft + "," + childTop + " " + child.getMeasuredWidth()
                             + "x" + child.getMeasuredHeight());
-                    child.layout(childLeft, childTop,
-                            childLeft + child.getMeasuredWidth(),
+                    child.layout(paddingLeft, childTop,
+                            paddingLeft + child.getMeasuredWidth(),
                             childTop + child.getMeasuredHeight());
                 }
             }
@@ -1823,8 +1822,7 @@ public class VerticalViewPager extends ViewGroup {
                 break;
             case MotionEventCompat.ACTION_POINTER_DOWN: {
                 final int index = MotionEventCompat.getActionIndex(ev);
-                final float y = MotionEventCompat.getY(ev, index);
-                mLastMotionY = y;
+                mLastMotionY = MotionEventCompat.getY(ev, index);
                 mActivePointerId = MotionEventCompat.getPointerId(ev, index);
                 break;
             }

@@ -83,7 +83,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 while (keys == 0)
                     try {
                         Thread.sleep(1000);
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 keys--;
                 new Thread(new Runnable() {
@@ -110,7 +110,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             while (keys < params[0])
                 try {
                     Thread.sleep(1000);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
             return null;
         }

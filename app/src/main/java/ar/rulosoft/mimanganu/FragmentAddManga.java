@@ -12,24 +12,7 @@ import android.view.ViewGroup;
 
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter.OnServerClickListener;
-import ar.rulosoft.mimanganu.servers.DeNineMangaCom;
-import ar.rulosoft.mimanganu.servers.EsMangaHere;
-import ar.rulosoft.mimanganu.servers.EsNineMangaCom;
-import ar.rulosoft.mimanganu.servers.HeavenMangaCom;
-import ar.rulosoft.mimanganu.servers.ItNineMangaCom;
-import ar.rulosoft.mimanganu.servers.KissManga;
-import ar.rulosoft.mimanganu.servers.LectureEnLigne;
-import ar.rulosoft.mimanganu.servers.MangaEdenIt;
-import ar.rulosoft.mimanganu.servers.MangaFox;
-import ar.rulosoft.mimanganu.servers.MangaHere;
-import ar.rulosoft.mimanganu.servers.MangaPanda;
-import ar.rulosoft.mimanganu.servers.MangaReader;
-import ar.rulosoft.mimanganu.servers.Manga_Tube;
-import ar.rulosoft.mimanganu.servers.MyMangaIo;
-import ar.rulosoft.mimanganu.servers.RuNineMangaCom;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.servers.SubManga;
-import ar.rulosoft.mimanganu.servers.TusMangasOnlineCom;
 
 public class FragmentAddManga extends Fragment implements OnServerClickListener {
     private RecyclerView lista_server;

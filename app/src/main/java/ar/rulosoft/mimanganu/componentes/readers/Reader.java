@@ -310,8 +310,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 dimension.original_width = bitmapOptions.outWidth;
                 dimension.original_height = bitmapOptions.outHeight;
                 inputStream.close();
-            } catch (IOException e) {
-                //Nothing to do
+            } catch (IOException ignored) {
             }
             dimension.initValues();
         } else {
@@ -324,8 +323,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 dimension.original_width = bitmapOptions.outWidth;
                 dimension.original_height = bitmapOptions.outHeight;
                 inputStream.close();
-            } catch (IOException e) {
-                //Nothing to do
+            } catch (IOException ignored) {
             }
             dimension.initValues();
         }

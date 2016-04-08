@@ -17,8 +17,7 @@ public class UnScrolledViewPagerVertical extends VerticalViewPager {
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
         try {
             return ((ActivityPagedReader.PageAdapter) getAdapter()).getCurrentPage().canScrollV(dx);
-        } catch (Exception e) {
-            //is last page nothing to do
+        } catch (Exception ignored) {
         }
         return super.canScroll(v, checkV, dx, x, y);
     }

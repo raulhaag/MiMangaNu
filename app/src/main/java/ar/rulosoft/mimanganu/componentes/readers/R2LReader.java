@@ -5,11 +5,11 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 /**
  * Created by Raul on 25/10/2015.
+ *
  */
 public class R2LReader extends Reader {
 
@@ -308,7 +308,7 @@ public class R2LReader extends Reader {
                     m.postScale(mScaleFactor, mScaleFactor);
                     try {
                         canvas.drawBitmap(segment, m, mPaint);
-                    } catch (Exception e) {}
+                    } catch (Exception ignored) {}
                 }
             }
         }
