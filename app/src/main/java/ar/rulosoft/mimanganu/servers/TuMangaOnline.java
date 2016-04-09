@@ -58,7 +58,8 @@ public class TuMangaOnline extends ServerBase {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 JSONObject object = jsonArray.getJSONObject(i);
-                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), mid +
+                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), getServerID()+ "_" + mid + "_" + object.getString("numCapitulo"));
+                c.setExtra(mid +
                         "/" + object.getString("numCapitulo") + "/" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "|" +
                         object.getJSONArray("subidas").getJSONObject(0).getString("imagenes"));
                 result.add(0,c);
@@ -99,20 +100,20 @@ public class TuMangaOnline extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter c, int page) throws Exception {
-        String[] d1 = c.getPath().split("\\|");
+        String[] d1 = c.getExtra().split("\\|");
         return "http://img1.tumangaonline.com/subidas/" + d1[page];
     }
 
     @Override
     public void chapterInit(Chapter c) throws Exception {
-        String[] d1 = c.getPath().split("\\|");
+        String[] d1 = c.getExtra().split("\\|");
         String[] d2 = (d1[1].replace("[", "").replace("]", "").replaceAll("\"", "")).split(",");
         c.setPages(d2.length);
         String images = "";
         for (String d : d2) {
             images = images + "|" + d1[0] + "/" + d;
         }
-        c.setPath(images);
+        c.setExtra(images);
     }
 
     @Override

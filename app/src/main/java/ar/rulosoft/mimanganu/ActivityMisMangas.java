@@ -243,10 +243,6 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         }
     }
 
-//    public interface OnFinishTask {
-//        void onFinish();
-//    }
-
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         List<Fragment> fragments;

@@ -48,6 +48,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_CAP_STATE = "estado";
     public static final String COL_CAP_DOWNLOADED = "descargado";
     public static final String COL_CAP_ID = "id";
+    public static final String COL_CAP_EXTRA = "extra";
     // Database creation sql statement
     private static final String DATABASE_MANGA_CREATE = "create table " +
             TABLE_MANGA + "(" +
@@ -75,11 +76,12 @@ public class Database extends SQLiteOpenHelper {
             COL_CAP_ID_MANGA + " int," +
             COL_CAP_STATE + " int DEFAULT 0," +
             COL_CAP_PAG_READ + " int DEFAULT 1, " +
-            COL_CAP_DOWNLOADED + " int DEFAULT 0);";
+            COL_CAP_DOWNLOADED + " int DEFAULT 0, "+
+            COL_CAP_EXTRA + " text);";
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 12;
+    private static int database_version = 13;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -189,6 +191,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_PAGES, cap.getPages());
         cv.put(COL_CAP_STATE, cap.getReadStatus());
         cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
+        cv.put(COL_CAP_EXTRA,cap.getExtra());
         getDatabase(c).insert(TABLE_CHAPTERS, null, cv);
     }
 
@@ -199,6 +202,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_PAGES, cap.getPages());
         cv.put(COL_CAP_STATE, cap.getReadStatus());
         cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
+        cv.put(COL_CAP_EXTRA,cap.getExtra());
         getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + cap.getId(), null);
     }
 
@@ -292,7 +296,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = getDatabase(c).query(
                 TABLE_CHAPTERS,
                 new String[]{
-                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH,
+                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
                         COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
                 }, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condicion,
                 null, null, null, COL_CAP_ID + (asc ? " ASC" : " DESC")
@@ -305,6 +309,7 @@ public class Database extends SQLiteOpenHelper {
             int colPageRead = cursor.getColumnIndex(COL_CAP_PAG_READ);
             int colState = cursor.getColumnIndex(COL_CAP_STATE);
             int colDownloaded = cursor.getColumnIndex(COL_CAP_DOWNLOADED);
+            int colExtra = cursor.getColumnIndex(COL_CAP_EXTRA);
             do {
                 Chapter cap = new Chapter(cursor.getString(colTitle), cursor.getString(colWeb));
                 cap.setPages(cursor.getInt(colPages));
@@ -313,6 +318,7 @@ public class Database extends SQLiteOpenHelper {
                 cap.setReadStatus(cursor.getInt(colState));
                 cap.setPagesRead(cursor.getInt(colPageRead));
                 cap.setDownloaded((cursor.getInt(colDownloaded) == 1));
+                cap.setExtra(cursor.getString(colExtra));
                 chapters.add(cap);
             } while (cursor.moveToNext());
         }
@@ -325,7 +331,7 @@ public class Database extends SQLiteOpenHelper {
         Cursor cursor = getDatabase(c).query(
                 TABLE_CHAPTERS,
                 new String[]{
-                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH,
+                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
                         COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
                 }, COL_CAP_ID + "=" + capId, null, null, null, null);
         if (cursor.moveToFirst()) {
@@ -337,6 +343,7 @@ public class Database extends SQLiteOpenHelper {
             int colPageRead = cursor.getColumnIndex(COL_CAP_PAG_READ);
             int colState = cursor.getColumnIndex(COL_CAP_STATE);
             int colDownloaded = cursor.getColumnIndex(COL_CAP_DOWNLOADED);
+            int colExtra = cursor.getColumnIndex(COL_CAP_EXTRA);
 
             cap = new Chapter(cursor.getString(colTitle), cursor.getString(colWeb));
             cap.setPages(cursor.getInt(colPages));
@@ -345,6 +352,7 @@ public class Database extends SQLiteOpenHelper {
             cap.setReadStatus(cursor.getInt(colState));
             cap.setPagesRead(cursor.getInt(colPageRead));
             cap.setDownloaded((cursor.getInt(colDownloaded) == 1));
+            cap.setExtra(cursor.getString(colExtra));
         }
         cursor.close();
         return cap;
@@ -474,6 +482,9 @@ public class Database extends SQLiteOpenHelper {
         }
         if(oldVersion < 12){
             db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_READER + " INTEGER DEFAULT 0");
+        }
+        if(oldVersion < 13){
+            db.execSQL("ALTER TABLE " + TABLE_CHAPTERS + " ADD COLUMN " + COL_CAP_EXTRA + " TEXT");
         }
     }
 
