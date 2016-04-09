@@ -40,7 +40,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
         View rView = inflater.inflate(R.layout.fragment_add_manga, container, false);
         lista_server = (RecyclerView) rView.findViewById(R.id.lista_de_servers);
         lista_server.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if (((ActivityMisMangas) getActivity()).darkTheme) {
+        if (((MainActivity) getActivity()).darkTheme) {
             ((CardView) rView.findViewById(R.id.cardview_server_container))
                     .setCardBackgroundColor(getResources()
                             .getColor(R.color.background_floating_material_dark));

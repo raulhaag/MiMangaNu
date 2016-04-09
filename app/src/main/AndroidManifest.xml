@@ -4,7 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
@@ -19,7 +19,7 @@
             before it turns dark.
         -->
         <activity
-            android:name=".ActivityMisMangas"
+            android:name=".MainActivity"
             android:configChanges="orientation"
             android:label="@string/app_name">
             <intent-filter>
@@ -76,6 +76,7 @@
             android:label="@string/title_activity_vertical_reader"
             android:largeHeap="true"
             android:theme="@style/AppTheme.Dark.NoActionbar" />
+        <activity android:name=".ActivityMisMangas"></activity>
     </application>
 
 </manifest>

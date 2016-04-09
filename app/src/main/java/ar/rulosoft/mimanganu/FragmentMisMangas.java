@@ -34,6 +34,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.FragmentPMisMangas;
 
 public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
@@ -86,7 +87,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setRetainInstance(true);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
@@ -157,7 +157,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     public void onResume() {
         setListManga(false);
         // ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
-        int[] colors = ((ActivityMisMangas) getActivity()).colors;
+        int[] colors = ((MainActivity) getActivity()).colors;
         swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();
     }
@@ -211,7 +211,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
                     break;
             }
             if (adapter == null || sort_val < 2 || mangaList.size() > adapter.getCount() || force) {
-                adapter = new MisMangasAdapter(getActivity(), mangaList, ((ActivityMisMangas) getActivity()).darkTheme);
+                adapter = new MisMangasAdapter(getActivity(), mangaList, ((MainActivity) getActivity()).darkTheme);
                 grid.setAdapter(adapter);
             }
         } else {
@@ -223,7 +223,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onMangaClick(Manga manga) {
         Intent intent = new Intent(getActivity(), ActivityManga.class);
-        intent.putExtra(ActivityMisMangas.MANGA_ID, manga.getId());
+        intent.putExtra(FragmentPMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
     }
 
