@@ -46,7 +46,7 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
             Bundle b = new Bundle();
             b.putInt(FragmentMainMisMangas.SERVER_ID,server.getServerID());
             fragment.setArguments(b);
-            ((MainActivity) getActivity()).replaceFragment(fragment);
+            ((MainActivity) getActivity()).replaceFragment(fragment,"FilteredNavegation");
             //intent = new Intent(getActivity(), FragmentServerFilteredNavigation.class);
         }else
             intent = new Intent(getActivity(), ActivityServerMangaList.class);

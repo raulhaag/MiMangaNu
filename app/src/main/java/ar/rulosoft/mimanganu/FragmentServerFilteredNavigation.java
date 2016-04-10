@@ -127,7 +127,7 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
         bundle.putString(FragmentDetails.PATH, manga.getPath());
         FragmentDetails fragmentDetails = new FragmentDetails();
         fragmentDetails.setArguments(bundle);
-        ((MainActivity)getActivity()).replaceFragment(fragmentDetails);
+        ((MainActivity)getActivity()).replaceFragment(fragmentDetails,"FragmentDetails");
     }
 
     @Override
