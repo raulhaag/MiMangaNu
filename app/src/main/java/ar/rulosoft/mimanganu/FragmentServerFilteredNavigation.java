@@ -1,24 +1,30 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -34,8 +40,9 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerFilteredNavigation extends AppCompatActivity implements OnLastItem, OnMangaClick {
+public class FragmentServerFilteredNavigation extends Fragment implements OnLastItem, OnMangaClick {
 
+    int serverID;
     private boolean mStart = true;
     private ServerBase sBase;
     private RecyclerView grid;
@@ -44,38 +51,53 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
     private boolean newTask = false;
     private int page = 1;
     private MenuItem search;
-    private boolean darkTheme;
     private int filter = 0;
     private int order = 0;
+    private MainActivity activity;
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        setRetainInstance(true);
+        serverID  = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
+        return inflater.inflate(R.layout.activity_server_visual_navegacion, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
-        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = (MainActivity) activity;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_server_visual_navegacion);
-        int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
-        sBase = ServerBase.getServer(id);
-        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
-        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        sBase = ServerBase.getServer(serverID);
+        int[] colors = ThemeColors.getColors(pm, getActivity());
+        ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setTitle(getResources()
                     .getString(R.string.listaen) + " " + sBase.getServerName());
-            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
+            Window window = getActivity().getWindow();
             window.setNavigationBarColor(colors[0]);
             window.setStatusBarColor(colors[4]);
         }
 
-        grid = (RecyclerView) findViewById(R.id.grilla);
-        loading = (ProgressBar) findViewById(R.id.loading);
+        grid = (RecyclerView) getView().findViewById(R.id.grilla);
+        loading = (ProgressBar) getView().findViewById(R.id.loading);
 
-        Display display = getWindowManager().getDefaultDisplay();
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
         float density = getResources().getDisplayMetrics().density;
@@ -87,7 +109,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
             columnas = 2;
         else if (columnas > 6)
             columnas = 6;
-        grid.setLayoutManager(new GridLayoutManager(ActivityServerFilteredNavigation.this, columnas));
+        grid.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
         new LoadLastTask().execute(page);
     }
 
@@ -99,16 +121,18 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
 
     @Override
     public void onMangaClick(Manga manga) {
-        Intent intent = new Intent(getApplication(), ActivityDetails.class);
-        intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
-        intent.putExtra(ActivityDetails.TITLE, manga.getTitle());
-        intent.putExtra(ActivityDetails.PATH, manga.getPath());
-        startActivity(intent);
+        Bundle bundle = new Bundle();
+        bundle.putInt(FragmentMainMisMangas.SERVER_ID, sBase.getServerID());
+        bundle.putString(FragmentDetails.TITLE, manga.getTitle());
+        bundle.putString(FragmentDetails.PATH, manga.getPath());
+        FragmentDetails fragmentDetails = new FragmentDetails();
+        fragmentDetails.setArguments(bundle);
+        ((MainActivity)getActivity()).replaceFragment(fragmentDetails);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.manga_server_visual, menu);
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.manga_server_visual, menu);
         search = menu.findItem(R.id.action_search);
         MenuItem vcl = menu.findItem(R.id.ver_como_lista);
         if (!sBase.hasList())
@@ -118,10 +142,9 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
 
             @Override
             public boolean onQueryTextSubmit(String st) {
-                Intent intent = new Intent(ActivityServerFilteredNavigation.this,
-                        ActivitySearchResults.class);
+                Intent intent = new Intent(getActivity(), ActivitySearchResults.class);
                 intent.putExtra(ActivitySearchResults.TERMINO, st);
-                intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
+                intent.putExtra(FragmentMainMisMangas.SERVER_ID, sBase.getServerID());
                 startActivity(intent);
                 return true;
             }
@@ -131,20 +154,19 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
                 return false;
             }
         });
-        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            onBackPressed();
+            getActivity().onBackPressed();
             return true;
         } else if (item.getItemId() == R.id.ver_como_lista) {
-            Intent intent = new Intent(this, ActivityServerMangaList.class);
-            intent.putExtra(ActivityMisMangas.SERVER_ID, sBase.getServerID());
+            Intent intent = new Intent(getActivity(), ActivityServerMangaList.class);
+            intent.putExtra(FragmentMainMisMangas.SERVER_ID, sBase.getServerID());
             startActivity(intent);
         } else if (item.getItemId() == R.id.filter) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(ActivityServerFilteredNavigation.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.filtrar)
                     .setItems(sBase.getCategories(), new
                             DialogInterface.OnClickListener() {
@@ -165,7 +187,7 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
 
             builder.create().show();
         } else if (item.getItemId() == R.id.sort) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(ActivityServerFilteredNavigation.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.filtrar)
                     .setItems(sBase.getOrders(), new
                             DialogInterface.OnClickListener() {
@@ -213,21 +235,19 @@ public class ActivityServerFilteredNavigation extends AppCompatActivity implemen
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityServerFilteredNavigation.this,
+                Toast.makeText(getActivity(),
                         "Error: " + error, Toast.LENGTH_SHORT).show();
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {
                     if (mAdapter == null) {
                         if (sBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
-                            mAdapter = new MangasRecAdapter(result,
-                                    ActivityServerFilteredNavigation.this, darkTheme);
+                            mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity)getActivity()).darkTheme);
                         } else {
-                            mAdapter = new MangasRecAdapterText(result,
-                                    ActivityServerFilteredNavigation.this, darkTheme);
+                            mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity)getActivity()).darkTheme);
                         }
-                        mAdapter.setLastItemListener(ActivityServerFilteredNavigation.this);
-                        mAdapter.setMangaClickListener(ActivityServerFilteredNavigation.this);
+                        mAdapter.setLastItemListener(FragmentServerFilteredNavigation.this);
+                        mAdapter.setMangaClickListener(FragmentServerFilteredNavigation.this);
                         grid.setAdapter(mAdapter);
                     } else {
                         mAdapter.addAll(result);

@@ -44,7 +44,7 @@ public class ActivityServerMangaList extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_server_lista_de_mangas);
-        int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
+        int id = getIntent().getExtras().getInt(FragmentMainMisMangas.SERVER_ID);
         s = ServerBase.getServer(id);
         android.support.v7.app.ActionBar mActBar = getSupportActionBar();
         if (mActBar != null)
@@ -66,10 +66,10 @@ public class ActivityServerMangaList extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Manga m = (Manga) list.getAdapter().getItem(position);
-                Intent intent = new Intent(getApplication(), ActivityDetails.class);
-                intent.putExtra(ActivityMisMangas.SERVER_ID, s.getServerID());
-                intent.putExtra(ActivityDetails.TITLE, m.getTitle());
-                intent.putExtra(ActivityDetails.PATH, m.getPath());
+                Intent intent = new Intent(getApplication(), FragmentDetails.class);
+                intent.putExtra(FragmentMainMisMangas.SERVER_ID, s.getServerID());
+                intent.putExtra(FragmentDetails.TITLE, m.getTitle());
+                intent.putExtra(FragmentDetails.PATH, m.getPath());
                 startActivity(intent);
             }
         });

@@ -31,8 +31,6 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ActivityMisMangas extends AppCompatActivity implements OnClickListener {
 
-    public static final String SERVER_ID = "server_id";
-    public static final String MANGA_ID = "manga_id";
     public int[] colors;
     FloatingActionButton button_add;
     boolean darkTheme;

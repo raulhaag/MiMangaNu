@@ -31,17 +31,12 @@
         <activity
             android:name=".ActivityServerMangaList"
             android:label="@string/title_activity_server_listade_mangas" />
-        <activity
-            android:name=".ActivityDetails"
-            android:label="@string/title_activity_activity_detalles" />
+
         <activity
             android:name=".ActivityPagedReader"
             android:label="@string/title_activity_activity_lector"
             android:largeHeap="true"
             android:theme="@style/AppTheme.Dark.NoActionbar" />
-        <activity
-            android:name=".ActivityServerFilteredNavigation"
-            android:label="@string/title_activity_server_visual_navegacion" />
         <activity
             android:name=".ActivitySearchResults"
             android:label="@string/title_activity_activity_resultado_de_busqueda" />

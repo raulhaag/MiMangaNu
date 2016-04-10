@@ -34,7 +34,6 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
-import ar.rulosoft.mimanganu.utils.FragmentPMisMangas;
 
 public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
@@ -110,7 +109,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ActivityManga.class);
-                intent.putExtra(ActivityMisMangas.MANGA_ID, adapter.getItem(position).getId());
+                intent.putExtra(FragmentMainMisMangas.MANGA_ID, adapter.getItem(position).getId());
                 getActivity().startActivity(intent);
             }
         });
@@ -223,7 +222,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onMangaClick(Manga manga) {
         Intent intent = new Intent(getActivity(), ActivityManga.class);
-        intent.putExtra(FragmentPMisMangas.MANGA_ID, manga.getId());
+        intent.putExtra(FragmentMainMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
     }
 

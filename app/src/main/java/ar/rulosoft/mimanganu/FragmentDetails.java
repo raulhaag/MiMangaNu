@@ -2,20 +2,21 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.app.ActionBar;
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
@@ -27,40 +28,41 @@ import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityDetails extends AppCompatActivity {
+public class FragmentDetails extends Fragment {
 
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
 
-    private static final String TAG = "ActivityDetails";
+    private static final String TAG = "FragmentDetails";
+    String title, path;
+    int id;
     private ImageLoader imageLoader;
     private ControlInfo data;
     private SwipeRefreshLayout str;
-
     private ServerBase s;
     private Manga m;
     private FloatingActionButton button_add;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean darkTheme = pm.getBoolean("dark_theme", false);
-        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detalles);
-        data = (ControlInfo) findViewById(R.id.datos);
-        str = (SwipeRefreshLayout) findViewById(R.id.str);
-        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
-        str.setColorSchemeColors(colors[0], colors[1]);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        title = getArguments().getString(TITLE);
+        path = getArguments().getString(PATH);
+        id = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
+        return inflater.inflate(R.layout.activity_detalles, container, false);
+    }
 
-        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+    @Override
+    public void onStart() {
+        super.onStart();
+        data = (ControlInfo) getView().findViewById(R.id.datos);
+        str = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+        ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
-            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
-        button_add = (FloatingActionButton) findViewById(R.id.button_add);
+        button_add = (FloatingActionButton) getView().findViewById(R.id.button_add);
         button_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,23 +77,23 @@ public class ActivityDetails extends AppCompatActivity {
                 set.start();
             }
         });
-        button_add.setColorNormal(colors[1]);
-        button_add.setColorPressed(colors[3]);
-        button_add.setColorRipple(colors[0]);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[4]);
+        if (getActivity() != null) {
+            button_add.setColorNormal(((MainActivity) getActivity()).colors[1]);
+            button_add.setColorPressed(((MainActivity) getActivity()).colors[3]);
+            button_add.setColorRipple(((MainActivity) getActivity()).colors[0]);
+            str.setColorSchemeColors(((MainActivity) getActivity()).colors[0], ((MainActivity) getActivity()).colors[1]);
+            data.setColor(((MainActivity) getActivity()).darkTheme, ((MainActivity) getActivity()).colors[0]);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Window window = getActivity().getWindow();
+                window.setNavigationBarColor(((MainActivity) getActivity()).colors[0]);
+                window.setStatusBarColor(((MainActivity) getActivity()).colors[4]);
+            }
+            ((MainActivity)getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
         button_add.attachToScrollView(data);
-        data.setColor(darkTheme, colors[0]);
-        String title = getIntent().getExtras().getString(TITLE);
-        getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + title);
-        String path = getIntent().getExtras().getString(PATH);
-        int id = getIntent().getExtras().getInt(ActivityMisMangas.SERVER_ID);
         m = new Manga(id, title, path, false);
         s = ServerBase.getServer(id);
-        imageLoader = new ImageLoader(this.getApplicationContext());
+        imageLoader = new ImageLoader(this.getActivity());
         str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -105,6 +107,16 @@ public class ActivityDetails extends AppCompatActivity {
             }
         });
         new LoadDetailsTask().execute();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                getActivity().onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
@@ -151,7 +163,7 @@ public class ActivityDetails extends AppCompatActivity {
                 }
                 imageLoader.displayImg(m.getImages(), data);
                 if (error != null && error.length() > 2) {
-                    Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 } else {
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 0.0f, 1.0f);
@@ -167,25 +179,14 @@ public class ActivityDetails extends AppCompatActivity {
                     set.start();
                 }
             } else {
-                Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
             str.setRefreshing(false);
         }
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
-        ProgressDialog adding = new ProgressDialog(ActivityDetails.this);
+        ProgressDialog adding = new ProgressDialog(getActivity());
         String error = ".";
         int total = 0;
 
@@ -205,14 +206,14 @@ public class ActivityDetails extends AppCompatActivity {
                 Log.e(TAG, "Chapter load error", e);
             }
             total = params[0].getChapters().size();
-            int mid = Database.addManga(getBaseContext(), params[0]);
+            int mid = Database.addManga(getActivity(), params[0]);
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < params[0].getChapters().size(); i++) {
                 if (System.currentTimeMillis() - initTime > 500) {
                     publishProgress(i);
                     initTime = System.currentTimeMillis();
                 }
-                Database.addChapter(ActivityDetails.this, params[0].getChapter(i), mid);
+                Database.addChapter(getActivity(), params[0].getChapter(i), mid);
             }
             return null;
         }
@@ -220,7 +221,7 @@ public class ActivityDetails extends AppCompatActivity {
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     if (adding != null) {
@@ -233,11 +234,11 @@ public class ActivityDetails extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void result) {
             adding.dismiss();
-            Toast.makeText(ActivityDetails.this, getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
             if (error != null && error.length() > 2) {
-                Toast.makeText(ActivityDetails.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
-            onBackPressed();
+            getActivity().onBackPressed();
             super.onPostExecute(result);
         }
     }

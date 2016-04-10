@@ -5,11 +5,10 @@
     android:layout_height="match_parent"
     tools:context="ar.rulosoft.mimanganu.MainActivity">
 
-    <fragment
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="ar.rulosoft.mimanganu.utils.FragmentPMisMangas"
-        android:id="@+id/fragment"
+        android:id="@+id/fragment_container"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true" />
 </RelativeLayout>

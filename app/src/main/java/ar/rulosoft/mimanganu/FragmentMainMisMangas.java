@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.utils;
+package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
 import android.content.Intent;
@@ -33,7 +33,7 @@ import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 /**
  * Created by Raul on 09/04/2016.
  */
-public class FragmentPMisMangas extends Fragment implements View.OnClickListener {
+public class FragmentMainMisMangas extends Fragment implements View.OnClickListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";

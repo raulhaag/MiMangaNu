@@ -68,7 +68,7 @@ public class ActivityManga extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_manga);
-        mMangaId = getIntent().getExtras().getInt(ActivityMisMangas.MANGA_ID, -1);
+        mMangaId = getIntent().getExtras().getInt(FragmentMainMisMangas.MANGA_ID, -1);
         if (mMangaId == -1) {
             onBackPressed();
             finish();

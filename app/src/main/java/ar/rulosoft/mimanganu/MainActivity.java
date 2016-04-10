@@ -1,18 +1,15 @@
 package ar.rulosoft.mimanganu;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
-import android.support.v4.view.ViewPager;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
 import android.view.Window;
-
-import com.melnykov.fab.FloatingActionButton;
 
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
@@ -28,7 +25,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
+        if(savedInstanceState == null) {
+            FragmentMainMisMangas fmm = new FragmentMainMisMangas();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
+        }
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        Bundle bundle = new Bundle();
+        super.onSaveInstanceState(bundle, outPersistentState);
     }
 
     @Override
@@ -51,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
             window.setStatusBarColor(colors[4]);
         }
         super.onResume();
+    }
+
+    public void replaceFragment(Fragment fragment){
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container,fragment).addToBackStack(null).commit();
     }
 
 

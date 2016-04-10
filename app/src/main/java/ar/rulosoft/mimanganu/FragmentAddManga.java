@@ -12,24 +12,7 @@ import android.view.ViewGroup;
 
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter.OnServerClickListener;
-import ar.rulosoft.mimanganu.servers.DeNineMangaCom;
-import ar.rulosoft.mimanganu.servers.EsMangaHere;
-import ar.rulosoft.mimanganu.servers.EsNineMangaCom;
-import ar.rulosoft.mimanganu.servers.HeavenMangaCom;
-import ar.rulosoft.mimanganu.servers.ItNineMangaCom;
-import ar.rulosoft.mimanganu.servers.KissManga;
-import ar.rulosoft.mimanganu.servers.LectureEnLigne;
-import ar.rulosoft.mimanganu.servers.MangaEdenIt;
-import ar.rulosoft.mimanganu.servers.MangaFox;
-import ar.rulosoft.mimanganu.servers.MangaHere;
-import ar.rulosoft.mimanganu.servers.MangaPanda;
-import ar.rulosoft.mimanganu.servers.MangaReader;
-import ar.rulosoft.mimanganu.servers.Manga_Tube;
-import ar.rulosoft.mimanganu.servers.MyMangaIo;
-import ar.rulosoft.mimanganu.servers.RuNineMangaCom;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.servers.SubManga;
-import ar.rulosoft.mimanganu.servers.TusMangasOnlineCom;
 
 public class FragmentAddManga extends Fragment implements OnServerClickListener {
     private RecyclerView lista_server;
@@ -37,33 +20,37 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rView = inflater.inflate(R.layout.fragment_add_manga, container, false);
-        lista_server = (RecyclerView) rView.findViewById(R.id.lista_de_servers);
-        lista_server.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if (((MainActivity) getActivity()).darkTheme) {
-            ((CardView) rView.findViewById(R.id.cardview_server_container))
-                    .setCardBackgroundColor(getResources()
-                            .getColor(R.color.background_floating_material_dark));
-        }
-        return rView;
+        return inflater.inflate(R.layout.fragment_add_manga, container, false);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onStart() {
+        super.onStart();
+        lista_server = (RecyclerView) getView().findViewById(R.id.lista_de_servers);
+        lista_server.setLayoutManager(new LinearLayoutManager(getActivity()));
+        if (((MainActivity) getActivity()).darkTheme) {
+            ((CardView) getView().findViewById(R.id.cardview_server_container))
+                    .setCardBackgroundColor(getResources()
+                            .getColor(R.color.background_floating_material_dark));
+        }
         adapter = new ServerRecAdapter(ServerBase.getServers());
         lista_server.setAdapter(adapter);
         adapter.setOnServerClickListener(FragmentAddManga.this);
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onServerClick(ServerBase server) {
         Intent intent;
-        if (server.hasFilteredNavigation())
-            intent = new Intent(getActivity(), ActivityServerFilteredNavigation.class);
-        else
+        if (server.hasFilteredNavigation()) {
+            FragmentServerFilteredNavigation fragment = new FragmentServerFilteredNavigation();
+            Bundle b = new Bundle();
+            b.putInt(FragmentMainMisMangas.SERVER_ID,server.getServerID());
+            fragment.setArguments(b);
+            ((MainActivity) getActivity()).replaceFragment(fragment);
+            //intent = new Intent(getActivity(), FragmentServerFilteredNavigation.class);
+        }else
             intent = new Intent(getActivity(), ActivityServerMangaList.class);
-        intent.putExtra(ActivityMisMangas.SERVER_ID, server.getServerID());
-        getActivity().startActivity(intent);
+        //intent.putExtra(FragmentMainMisMangas.SERVER_ID, server.getServerID());
+        //getActivity().startActivity(intent);
     }
 }
