@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.widget.Toast;
 
-import ar.rulosoft.mimanganu.ActivityManga;
+import ar.rulosoft.mimanganu.FragmentManga;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -23,18 +23,17 @@ public class FragmentUpdateSearchTask extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setRetainInstance(true);
     }
 
     public AsyncTask.Status getStatus() {
         return (searchForNewsChapters != null ? searchForNewsChapters.getStatus() : AsyncTask.Status.FINISHED);
     }
-
+/*
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (searchForNewsChapters != null)
-            searchForNewsChapters.setActivity((ActivityManga) activity);
+            searchForNewsChapters.setActivity((FragmentManga) activity);
     }
 
     @Override
@@ -44,8 +43,8 @@ public class FragmentUpdateSearchTask extends Fragment {
             searchForNewsChapters.setActivity(null);
         }
     }
-
-    public void updateList(Manga manga, ActivityManga activity) {
+/*/
+    public void updateList(Manga manga, FragmentManga activity) {
         if (searchForNewsChapters == null || searchForNewsChapters.getStatus() == AsyncTask.Status.FINISHED) {
             searchForNewsChapters = new SearchForNewsChapters().setActivity(activity);
             searchForNewsChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
@@ -56,13 +55,13 @@ public class FragmentUpdateSearchTask extends Fragment {
     public static class SearchForNewsChapters extends AsyncTask<Manga, Void, Integer> {
         static boolean running = false;
         static SearchForNewsChapters actual = null;
-        ActivityManga activity;
+        FragmentManga activity;
         int mangaId = 0;
         String msg;
         String orgMsg;
         String errorMsg;
 
-        public SearchForNewsChapters setActivity(final ActivityManga activity) {
+        public SearchForNewsChapters setActivity(final FragmentManga activity) {
             this.activity = activity;
             return this;
         }
@@ -72,19 +71,19 @@ public class FragmentUpdateSearchTask extends Fragment {
             running = true;
             actual = this;
             msg = activity.getResources().getString(R.string.buscandonuevo);
-            orgMsg = activity.getTitle().toString();
-            activity.setTitle(msg + " " + orgMsg);
+            orgMsg = activity.getActivity().getTitle().toString();
+            activity.getActivity().setTitle(msg + " " + orgMsg);
             super.onPreExecute();
         }
 
         @Override
         protected Integer doInBackground(Manga... params) {
             int result = 0;
-            Database.removeOrphanedChapters(activity);
+            Database.removeOrphanedChapters(activity.getActivity());
             ServerBase s = ServerBase.getServer(params[0].getServerId());
             mangaId = params[0].getId();
             try {
-                int diff = s.searchForNewChapters(params[0].getId(), activity);
+                int diff = s.searchForNewChapters(params[0].getId(), activity.getActivity());
                 result += diff;
             } catch (Exception e) {
                 if (e.getMessage() != null) {
@@ -98,16 +97,16 @@ public class FragmentUpdateSearchTask extends Fragment {
 
         @Override
         protected void onPostExecute(Integer result) {
-            Manga manga = Database.getFullManga(activity, mangaId);
+            Manga manga = Database.getFullManga(activity.getActivity(), mangaId);
             if (activity != null) {
                 activity.loadChapters(manga.getChapters());
                 activity.loadInfo(manga);
                 activity.mSwipeRefreshLayout.setRefreshing(false);
-                activity.setTitle(orgMsg);
+                activity.getActivity().setTitle(orgMsg);
                 if (result > 0) {
-                    Toast.makeText(activity, result + activity.getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity.getActivity(), result + activity.getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
                 } else if (errorMsg != null && errorMsg.length() > 2) {
-                    Toast.makeText(activity, errorMsg, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity.getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
                 }
                 running = false;
                 actual = null;

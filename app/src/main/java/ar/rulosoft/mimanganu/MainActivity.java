@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
 
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
     public int[] colors;
     boolean darkTheme;
     private SharedPreferences pm;
+    public ActionBar mActBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         colors = ThemeColors.getColors(pm, getApplicationContext());
-        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
+        mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();

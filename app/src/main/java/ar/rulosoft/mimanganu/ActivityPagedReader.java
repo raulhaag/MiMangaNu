@@ -43,7 +43,7 @@ import android.widget.Toast;
 
 import java.io.File;
 
-import ar.rulosoft.mimanganu.ActivityManga.Direction;
+import ar.rulosoft.mimanganu.FragmentManga.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -108,9 +108,9 @@ public class ActivityPagedReader extends AppCompatActivity
         mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
 
-        int chapterId = getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID);
+        int chapterId = getIntent().getExtras().getInt(FragmentManga.CHAPTER_ID);
         if (savedInstanceState != null) {
-            chapterId = savedInstanceState.getInt(ActivityManga.CHAPTER_ID);
+            chapterId = savedInstanceState.getInt(FragmentManga.CHAPTER_ID);
         }
         mChapter = Database.getChapter(this, chapterId);
 
@@ -122,7 +122,7 @@ public class ActivityPagedReader extends AppCompatActivity
         if (mManga.getReadingDirection() != -1) {
             mDirection = Direction.values()[mManga.getReadingDirection()];
         } else {
-            mDirection = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECTION, "" + Direction.R2L.ordinal()))];
+            mDirection = Direction.values()[Integer.parseInt(pm.getString(FragmentManga.DIRECTION, "" + Direction.R2L.ordinal()))];
         }
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -384,7 +384,7 @@ public class ActivityPagedReader extends AppCompatActivity
 
     @Override
     protected void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(ActivityManga.CHAPTER_ID, mChapter.getId());
+        savedInstanceState.putInt(FragmentManga.CHAPTER_ID, mChapter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
 

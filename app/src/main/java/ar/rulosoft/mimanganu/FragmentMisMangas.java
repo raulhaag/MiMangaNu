@@ -66,7 +66,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setRetainInstance(true);
     }
 
     @Override
@@ -115,9 +114,15 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getActivity(), ActivityManga.class);
+                /*/
+                Intent intent = new Intent(getActivity(), FragmentManga.class);
                 intent.putExtra(FragmentMainMisMangas.MANGA_ID, adapter.getItem(position).getId());
-                getActivity().startActivity(intent);
+                getActivity().startActivity(intent);/*/
+                Bundle bundle = new Bundle();
+                bundle.putInt(FragmentMainMisMangas.MANGA_ID, adapter.getItem(position).getId());
+                FragmentManga fm = new FragmentManga();
+                fm.setArguments(bundle);
+                ((MainActivity)getActivity()).replaceFragment(fm,"FragmentManga");
             }
         });
         registerForContextMenu(grid);
@@ -228,7 +233,7 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     @Override
     public void onMangaClick(Manga manga) {
-        Intent intent = new Intent(getActivity(), ActivityManga.class);
+        Intent intent = new Intent(getActivity(), FragmentManga.class);
         intent.putExtra(FragmentMainMisMangas.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
     }

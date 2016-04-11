@@ -53,21 +53,11 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
     private MenuItem search;
     private int filter = 0;
     private int order = 0;
-    private MainActivity activity;
-
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        setHasOptionsMenu(true);
-        setRetainInstance(true);
-        serverID  = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
-        return inflater.inflate(R.layout.activity_server_visual_navegacion, container, false);
-    }
+    private int firstVisibleItem;
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        this.activity = (MainActivity) activity;
     }
 
     @Override
@@ -76,11 +66,18 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
         setRetainInstance(true);
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        serverID = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
+        return inflater.inflate(R.layout.activity_server_visual_navegacion, container, false);
+    }
+
     @Override
     public void onStart() {
         super.onStart();
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        sBase = ServerBase.getServer(serverID);
         int[] colors = ThemeColors.getColors(pm, getActivity());
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
@@ -94,6 +91,8 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
             window.setStatusBarColor(colors[4]);
         }
 
+
+        sBase = ServerBase.getServer(serverID);
         grid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
 
@@ -110,13 +109,31 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
         else if (columnas > 6)
             columnas = 6;
         grid.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
-        new LoadLastTask().execute(page);
+        if (mAdapter != null) {
+            grid.setAdapter(mAdapter);
+            grid.getLayoutManager().scrollToPosition(firstVisibleItem);
+            loading.setVisibility(View.INVISIBLE);
+        } else {
+            new LoadLastTask().execute(page);
+        }
     }
 
     @Override
     public void onRequestedLastItem() {
         if (sBase.hayMas && !loading.isShown() && !mStart)
             new LoadLastTask().execute(page);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.listaen) + " " + sBase.getServerName());
+    }
+
+    @Override
+    public void onPause() {
+        firstVisibleItem = ((GridLayoutManager)grid.getLayoutManager()).findFirstVisibleItemPosition();
+        super.onPause();
     }
 
     @Override
@@ -127,7 +144,7 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
         bundle.putString(FragmentDetails.PATH, manga.getPath());
         FragmentDetails fragmentDetails = new FragmentDetails();
         fragmentDetails.setArguments(bundle);
-        ((MainActivity)getActivity()).replaceFragment(fragmentDetails,"FragmentDetails");
+        ((MainActivity) getActivity()).replaceFragment(fragmentDetails, "FragmentDetails");
     }
 
     @Override
@@ -242,9 +259,9 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
                 if (result != null && result.size() != 0 && grid != null) {
                     if (mAdapter == null) {
                         if (sBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
-                            mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity)getActivity()).darkTheme);
+                            mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
                         } else {
-                            mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity)getActivity()).darkTheme);
+                            mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
                         }
                         mAdapter.setLastItemListener(FragmentServerFilteredNavigation.this);
                         mAdapter.setMangaClickListener(FragmentServerFilteredNavigation.this);

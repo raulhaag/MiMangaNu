@@ -53,7 +53,7 @@
             android:name=".ActivityDownloads"
             android:label="@string/descargas" />
         <activity
-            android:name=".ActivityManga"
+            android:name=".FragmentManga"
             android:label="@string/title_activity_activity_manga" />
 
         <receiver android:name=".services.AlarmReceiver">

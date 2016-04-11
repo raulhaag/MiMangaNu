@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -35,7 +34,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.ActivityManga.Direction;
+import ar.rulosoft.mimanganu.FragmentManga.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -85,9 +84,9 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reader);
-        int chapterId = getIntent().getExtras().getInt(ActivityManga.CHAPTER_ID);
+        int chapterId = getIntent().getExtras().getInt(FragmentManga.CHAPTER_ID);
         if (savedInstanceState != null) {
-            chapterId = savedInstanceState.getInt(ActivityManga.CHAPTER_ID);
+            chapterId = savedInstanceState.getInt(FragmentManga.CHAPTER_ID);
         }
         mChapter = Database.getChapter(this, chapterId);
         mManga = Database.getFullManga(this, mChapter.getMangaID());
@@ -100,7 +99,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (mManga.getReadingDirection() != -1) {
             direction = Direction.values()[mManga.getReadingDirection()];
         } else {
-            direction = Direction.values()[Integer.parseInt(pm.getString(ActivityManga.DIRECTION, "" + Direction.R2L.ordinal()))];
+            direction = Direction.values()[Integer.parseInt(pm.getString(FragmentManga.DIRECTION, "" + Direction.R2L.ordinal()))];
         }
 
         if (mManga.getScrollSensitive() > 0) {
@@ -394,7 +393,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putInt(ActivityManga.CHAPTER_ID, mChapter.getId());
+        savedInstanceState.putInt(FragmentManga.CHAPTER_ID, mChapter.getId());
         super.onSaveInstanceState(savedInstanceState);
     }
 

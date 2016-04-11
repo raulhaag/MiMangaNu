@@ -10,15 +10,17 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.SparseBooleanArray;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
@@ -41,11 +43,11 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.FragmentUpdateSearchTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityManga extends AppCompatActivity {
+public class FragmentManga extends Fragment {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
-    private static final String TAG = "ActivityManga";
+    private static final String TAG = "FragmentManga";
     public SwipeRefreshLayout mSwipeRefreshLayout;
     public Manga mManga;
     private Direction mDirection;
@@ -61,44 +63,45 @@ public class ActivityManga extends AppCompatActivity {
     private FragmentUpdateSearchTask mUpdateSearchTask;
     private ControlInfoNoScroll mInfo;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        pm = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean darkTheme = pm.getBoolean("dark_theme", false);
-        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        mMangaId = getArguments().getInt(FragmentMainMisMangas.MANGA_ID, -1);
+        return inflater.inflate(R.layout.activity_manga,container,false);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manga);
-        mMangaId = getIntent().getExtras().getInt(FragmentMainMisMangas.MANGA_ID, -1);
         if (mMangaId == -1) {
-            onBackPressed();
-            finish();
+            getActivity().onBackPressed();
         }
-        mManga = Database.getFullManga(getApplicationContext(), mMangaId);
+        mManga = Database.getFullManga(getActivity(), mMangaId);
         readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
         if (mManga.getReaderType() != 0) {
             readerType = mManga.getReaderType();
         }
-        mListView = (ListView) findViewById(R.id.lista);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.str);
-        mImageLoader = new ImageLoader(this);
-        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
-        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null) {
-            mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
-            mActBar.setDisplayHomeAsUpEnabled(true);
+        mListView = (ListView) getView().findViewById(R.id.lista);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+        mImageLoader = new ImageLoader(getActivity());
+        int[] colors = ThemeColors.getColors(pm, getActivity());
+        if (((MainActivity)getActivity()).mActBar != null) {
+            ((MainActivity)getActivity()).mActBar.setDisplayHomeAsUpEnabled(true);
         }
         mSwipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
+            Window window = getActivity().getWindow();
             window.setNavigationBarColor(colors[0]);
             window.setStatusBarColor(colors[4]);
         }
         if (savedInstanceState == null) {
             mUpdateSearchTask = new FragmentUpdateSearchTask();
-            getSupportFragmentManager().beginTransaction()
+            getChildFragmentManager().beginTransaction()
                     .add(mUpdateSearchTask, "BUSCAR_NUEVOS").commit();
         } else {
-            mUpdateSearchTask = (FragmentUpdateSearchTask) getSupportFragmentManager()
+            mUpdateSearchTask = (FragmentUpdateSearchTask) getChildFragmentManager()
                     .findFragmentByTag("BUSCAR_NUEVOS");
             if (mUpdateSearchTask.getStatus() == AsyncTask.Status.RUNNING) {
                 mSwipeRefreshLayout.post(new Runnable() {
@@ -112,15 +115,15 @@ public class ActivityManga extends AppCompatActivity {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mUpdateSearchTask.updateList(mManga, ActivityManga.this);
+                mUpdateSearchTask.updateList(mManga, FragmentManga.this);
             }
         });
         mListView.setDivider(new ColorDrawable(colors[0]));
         mListView.setDividerHeight(1);
-        mInfo = new ControlInfoNoScroll(ActivityManga.this);
+        mInfo = new ControlInfoNoScroll(getActivity());
         mListView.addHeaderView(mInfo);
-        mInfo.setColor(darkTheme, colors[0]);
-        ChapterAdapter.setColor(darkTheme, colors[1], colors[0]);
+        mInfo.setColor(((MainActivity)(getActivity())).darkTheme, colors[0]);
+        ChapterAdapter.setColor(((MainActivity)(getActivity())).darkTheme, colors[1], colors[0]);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -143,7 +146,7 @@ public class ActivityManga extends AppCompatActivity {
 
             @Override
             public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
-                MenuInflater inflater = getMenuInflater();
+                MenuInflater inflater = getActivity().getMenuInflater();
                 inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
                 return true;
             }
@@ -171,7 +174,7 @@ public class ActivityManga extends AppCompatActivity {
                         Chapter[] chapters = mChapterAdapter.getSelectedChapters();
                         for (Chapter c : chapters) {
                             try {
-                                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
                             } catch (Exception e) {
                                 Log.e(TAG, "Download add pool error", e);
                             }
@@ -180,18 +183,18 @@ public class ActivityManga extends AppCompatActivity {
                     case R.id.mar_and_di:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.markRead(ActivityManga.this, true);
-                            c.freeSpace(ActivityManga.this, mManga, s);
+                            c.markRead(getActivity(), true);
+                            c.freeSpace(getActivity(), mManga, s);
                         }
                         break;
                     case R.id.delete_images:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.freeSpace(ActivityManga.this, mManga, s);
+                            c.freeSpace(getActivity(), mManga, s);
                         }
                         break;
                     case R.id.delete_chapter:
-                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(ActivityManga.this);
+                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
                         dlgAlert.setMessage(getString(R.string.delete_comfirm));
                         dlgAlert.setTitle(R.string.app_name);
                         dlgAlert.setCancelable(true);
@@ -204,7 +207,7 @@ public class ActivityManga extends AppCompatActivity {
                                 Arrays.sort(selected);
                                 for (int i = selection.size() - 1; i >= 0; i--) {
                                     Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                                    c.delete(ActivityManga.this, mManga, s);
+                                    c.delete(getActivity(), mManga, s);
                                     mChapterAdapter.remove(c);
                                 }
                             }
@@ -220,19 +223,19 @@ public class ActivityManga extends AppCompatActivity {
                     case R.id.reset:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.reset(ActivityManga.this, mManga, s);
+                            c.reset(getActivity(), mManga, s);
                         }
                         break;
                     case R.id.mark_as_read:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.markRead(ActivityManga.this, true);
+                            c.markRead(getActivity(), true);
                         }
                         break;
                     case R.id.mark_unread:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.markRead(ActivityManga.this, false);
+                            c.markRead(getActivity(), false);
                         }
                         break;
                 }
@@ -248,10 +251,10 @@ public class ActivityManga extends AppCompatActivity {
             }
         });
 
-        setTitle(mManga.getTitle());
+        getActivity().setTitle(mManga.getTitle());
         loadChapters(mManga.getChapters());
-        Database.updateMangaRead(this, mManga.getId());
-        Database.updateNewMangas(ActivityManga.this, mManga, -100);
+        Database.updateMangaRead(getActivity(), mManga.getId());
+        Database.updateNewMangas(getActivity(), mManga, -100);
         loadInfo(mManga);
         chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
     }
@@ -286,7 +289,7 @@ public class ActivityManga extends AppCompatActivity {
     public void loadChapters(ArrayList<Chapter> chapters) {
         int fvi = 0;
         if (mChapterAdapter != null) fvi = mListView.getFirstVisiblePosition();
-        mChapterAdapter = new ChapterAdapter(this, chapters);
+        mChapterAdapter = new ChapterAdapter(getActivity(), chapters,this);
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
             mListView.setSelection(mManga.getLastIndex());
@@ -295,12 +298,13 @@ public class ActivityManga extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         int first = mListView.getFirstVisiblePosition();
-        Database.updateMangaLastIndex(this, mManga.getId(), first);
+        Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
         super.onPause();
     }
-
+    //TODO
+    /*
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -308,26 +312,26 @@ public class ActivityManga extends AppCompatActivity {
             return true;
         } else
             return super.onKeyUp(keyCode, event);
-    }
+    }/**/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                getActivity().onBackPressed();
                 return true;
             case R.id.action_download_reamains: {
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
                 dlgAlert.setMessage(getString(R.string.download_remain_confirmation));
                 dlgAlert.setTitle(R.string.descargarestantes);
                 dlgAlert.setCancelable(true);
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ArrayList<Chapter> chapters =
-                                Database.getChapters(ActivityManga.this, mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
+                                Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
                         for (Chapter c : chapters) {
                             try {
-                                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
                             } catch (Exception e) {
                                 Log.e(TAG, "Download add pool error", e);
                             }
@@ -344,14 +348,14 @@ public class ActivityManga extends AppCompatActivity {
                 break;
             }
             case R.id.action_check_as_read: {
-                Database.markAllChapters(ActivityManga.this, this.mMangaId, true);
-                mManga = Database.getFullManga(getApplicationContext(), this.mMangaId);
+                Database.markAllChapters(getActivity(), this.mMangaId, true);
+                mManga = Database.getFullManga(getActivity(), this.mMangaId);
                 loadChapters(mManga.getChapters());
                 break;
             }
             case R.id.action_uncheck_as_read: {
-                Database.markAllChapters(ActivityManga.this, this.mMangaId, false);
-                mManga = Database.getFullManga(getApplicationContext(), this.mMangaId);
+                Database.markAllChapters(getActivity(), this.mMangaId, false);
+                mManga = Database.getFullManga(getActivity(), this.mMangaId);
                 loadChapters(mManga.getChapters());
                 break;
             }
@@ -373,7 +377,7 @@ public class ActivityManga extends AppCompatActivity {
                     this.mDirection = Direction.R2L;
                 }
                 mManga.setReadingDirection(this.mDirection.ordinal());
-                Database.updadeReadOrder(ActivityManga.this, this.mDirection.ordinal(), mManga.getId());
+                Database.updadeReadOrder(getActivity(), this.mDirection.ordinal(), mManga.getId());
                 break;
             }
             case R.id.action_reader:
@@ -388,26 +392,26 @@ public class ActivityManga extends AppCompatActivity {
                     mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
                     mMenuItemReaderType.setTitle(R.string.continuous_reader);
                 }
-                Database.updateManga(ActivityManga.this, mManga, false);
+                Database.updateManga(getActivity(), mManga, false);
                 break;
             case R.id.descargas: {
-                Intent intent = new Intent(this, ActivityDownloads.class);
+                Intent intent = new Intent(getActivity(), ActivityDownloads.class);
                 startActivity(intent);
                 break;
             }
             case R.id.action_descargar_no_leidos: {
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
                 dlgAlert.setMessage(getString(R.string.download_unread_confirmation));
                 dlgAlert.setTitle(R.string.descarga_no_leidos);
                 dlgAlert.setCancelable(true);
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ArrayList<Chapter> chapters =
-                                Database.getChapters(ActivityManga.this, ActivityManga.this.mMangaId,
+                                Database.getChapters(getActivity(), FragmentManga.this.mMangaId,
                                         Database.COL_CAP_STATE + " < 1", true);
                         for (Chapter c : chapters) {
                             try {
-                                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, c, false);
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
                             } catch (Exception e) {
                                 Log.e(TAG, "Download add pool error", e);
                             }
@@ -452,9 +456,9 @@ public class ActivityManga extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
-        ArrayList<Chapter> chapters = Database.getChapters(getApplicationContext(), mMangaId);
+        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId);
         switch (chapters_order) {
             case 1:
                 Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
@@ -473,8 +477,8 @@ public class ActivityManga extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_manga, menu);
+    public void  onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_manga, menu);
         mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
         mMenuItemReaderType = menu.findItem(R.id.action_reader);
         int readDirection;
@@ -504,7 +508,6 @@ public class ActivityManga extends AppCompatActivity {
         }
 
         this.menu = menu;
-        return true;
     }
 
     public enum Direction {
@@ -512,7 +515,7 @@ public class ActivityManga extends AppCompatActivity {
     }
 
     private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncdialog = new ProgressDialog(ActivityManga.this);
+        ProgressDialog asyncdialog = new ProgressDialog(getActivity());
         String error = "";
 
         @Override
@@ -550,21 +553,21 @@ public class ActivityManga extends AppCompatActivity {
         @Override
         protected void onPostExecute(Chapter result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityManga.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             } else {
                 asyncdialog.dismiss();
-                Database.updateChapter(ActivityManga.this, result);
-                DownloadPoolService.addChapterDownloadPool(ActivityManga.this, result, true);
+                Database.updateChapter(getActivity(), result);
+                DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                 int first = mListView.getFirstVisiblePosition();
-                Database.updateMangaLastIndex(ActivityManga.this, mManga.getId(), first);
+                Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
                 Intent intent;
                 if (readerType == 2) {
-                    intent = new Intent(ActivityManga.this, ActivityReader.class);
+                    intent = new Intent(getActivity(), ActivityReader.class);
                 } else {
-                    intent = new Intent(ActivityManga.this, ActivityPagedReader.class);
+                    intent = new Intent(getActivity(), ActivityPagedReader.class);
                 }
-                intent.putExtra(ActivityManga.CHAPTER_ID, result.getId());
-                ActivityManga.this.startActivity(intent);
+                intent.putExtra(FragmentManga.CHAPTER_ID, result.getId());
+                FragmentManga.this.startActivity(intent);
             }
             super.onPostExecute(result);
         }

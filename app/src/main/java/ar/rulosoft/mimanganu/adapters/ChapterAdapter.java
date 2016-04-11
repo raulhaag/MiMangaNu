@@ -20,7 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ar.rulosoft.mimanganu.ActivityManga;
+import ar.rulosoft.mimanganu.FragmentManga;
 import ar.rulosoft.mimanganu.FragmentMisMangas;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -40,14 +40,16 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     private static int listItem = R.layout.listitem_capitulo;
     private SparseBooleanArray selected = new SparseBooleanArray();
-    private ActivityManga activity;
+    private Activity activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
+    FragmentManga fm;
 
-    public ChapterAdapter(Activity context, ArrayList<Chapter> items) {
+    public ChapterAdapter(Activity context, ArrayList<Chapter> items, FragmentManga fm) {
         super(context, listItem);
-        activity = (ActivityManga) context;
+        this.activity = context;
+        this.fm = fm;
         this.chapters = items;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -123,7 +125,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 public void onClick(final View v) {
                     Chapter c = (Chapter) v.getTag();
                     if (c.isDownloaded()) {
-                        Manga m = activity.mManga;
+                        Manga m = fm.mManga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
                         String ruta = DownloadPoolService.generateBasePath(s, m, c, activity);
                         FragmentMisMangas.deleteRecursive(new File(ruta));
