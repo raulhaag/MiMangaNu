@@ -114,10 +114,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                /*/
-                Intent intent = new Intent(getActivity(), FragmentManga.class);
-                intent.putExtra(FragmentMainMisMangas.MANGA_ID, adapter.getItem(position).getId());
-                getActivity().startActivity(intent);/*/
                 Bundle bundle = new Bundle();
                 bundle.putInt(FragmentMainMisMangas.MANGA_ID, adapter.getItem(position).getId());
                 FragmentManga fm = new FragmentManga();
@@ -167,7 +163,6 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
     @Override
     public void onResume() {
         setListManga(false);
-        // ((ActivityMisMangas) getActivity()).button_add.attachToRecyclerView(grilla);
         int[] colors = ((MainActivity) getActivity()).colors;
         swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
         super.onResume();

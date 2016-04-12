@@ -50,6 +50,7 @@ public class FragmentDetails extends Fragment {
         title = getArguments().getString(TITLE);
         path = getArguments().getString(PATH);
         id = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
+        setHasOptionsMenu(true);
         return inflater.inflate(R.layout.activity_detalles, container, false);
     }
 
@@ -94,7 +95,7 @@ public class FragmentDetails extends Fragment {
                 window.setNavigationBarColor(((MainActivity) getActivity()).colors[0]);
                 window.setStatusBarColor(((MainActivity) getActivity()).colors[4]);
             }
-            ((MainActivity)getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.datosde) + " " + title);
+            ((MainActivity)getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
         button_add.attachToScrollView(data);
         m = new Manga(id, title, path, false);
@@ -113,6 +114,12 @@ public class FragmentDetails extends Fragment {
             }
         });
         new LoadDetailsTask().execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity)getActivity()).enableHomeButton(true);
     }
 
     @Override

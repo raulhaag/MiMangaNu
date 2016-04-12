@@ -87,9 +87,6 @@ public class FragmentManga extends Fragment {
         mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         mImageLoader = new ImageLoader(getActivity());
         int[] colors = ThemeColors.getColors(pm, getActivity());
-        if (((MainActivity)getActivity()).mActBar != null) {
-            ((MainActivity)getActivity()).mActBar.setDisplayHomeAsUpEnabled(true);
-        }
         mSwipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getActivity().getWindow();
@@ -473,6 +470,7 @@ public class FragmentManga extends Fragment {
                 Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
                 break;
         }
+        ((MainActivity)getActivity()).enableHomeButton(true);
         mChapterAdapter.replaceData(chapters);
     }
 

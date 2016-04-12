@@ -127,7 +127,8 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).getSupportActionBar().setTitle(getResources().getString(R.string.listaen) + " " + sBase.getServerName());
+        ((MainActivity)getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + sBase.getServerName());
+        ((MainActivity)getActivity()).enableHomeButton(true);
     }
 
     @Override

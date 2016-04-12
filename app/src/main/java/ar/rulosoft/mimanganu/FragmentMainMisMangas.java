@@ -75,6 +75,8 @@ public class FragmentMainMisMangas extends Fragment implements View.OnClickListe
         super.onResume();
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setPageTransformer(false, new MoreMangasPageTransformer());
+        ((MainActivity)getActivity()).enableHomeButton(false);
+        ((MainActivity)getActivity()).setTitle(getString(R.string.app_name));
     }
 
     @Override
