@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,7 +40,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class FragmentServerFilteredNavigation extends Fragment implements OnLastItem, OnMangaClick {
+public class ServerFilteredNavigationFragment extends Fragment implements OnLastItem, OnMangaClick {
 
     int serverID;
     private boolean mStart = true;
@@ -70,13 +70,13 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        serverID = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
+        serverID = getArguments().getInt(MainFragment.SERVER_ID);
         return inflater.inflate(R.layout.activity_server_visual_navegacion, container, false);
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
+    public void onActivityCreated(Bundle savedState) {
+        super.onActivityCreated(savedState);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         int[] colors = ThemeColors.getColors(pm, getActivity());
         ActionBar mActBar = getActivity().getActionBar();
@@ -127,25 +127,25 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + sBase.getServerName());
-        ((MainActivity)getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + sBase.getServerName());
+        ((MainActivity) getActivity()).enableHomeButton(true);
     }
 
     @Override
     public void onPause() {
-        firstVisibleItem = ((GridLayoutManager)grid.getLayoutManager()).findFirstVisibleItemPosition();
+        firstVisibleItem = ((GridLayoutManager) grid.getLayoutManager()).findFirstVisibleItemPosition();
         super.onPause();
     }
 
     @Override
     public void onMangaClick(Manga manga) {
         Bundle bundle = new Bundle();
-        bundle.putInt(FragmentMainMisMangas.SERVER_ID, sBase.getServerID());
-        bundle.putString(FragmentDetails.TITLE, manga.getTitle());
-        bundle.putString(FragmentDetails.PATH, manga.getPath());
-        FragmentDetails fragmentDetails = new FragmentDetails();
-        fragmentDetails.setArguments(bundle);
-        ((MainActivity) getActivity()).replaceFragment(fragmentDetails, "FragmentDetails");
+        bundle.putInt(MainFragment.SERVER_ID, sBase.getServerID());
+        bundle.putString(DetailsFragment.TITLE, manga.getTitle());
+        bundle.putString(DetailsFragment.PATH, manga.getPath());
+        DetailsFragment detailsFragment = new DetailsFragment();
+        detailsFragment.setArguments(bundle);
+        ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");
     }
 
     @Override
@@ -162,7 +162,7 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
             public boolean onQueryTextSubmit(String st) {
                 Intent intent = new Intent(getActivity(), ActivitySearchResults.class);
                 intent.putExtra(ActivitySearchResults.TERMINO, st);
-                intent.putExtra(FragmentMainMisMangas.SERVER_ID, sBase.getServerID());
+                intent.putExtra(MainFragment.SERVER_ID, sBase.getServerID());
                 startActivity(intent);
                 return true;
             }
@@ -180,9 +180,11 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
             getActivity().onBackPressed();
             return true;
         } else if (item.getItemId() == R.id.ver_como_lista) {
-            Intent intent = new Intent(getActivity(), ActivityServerMangaList.class);
-            intent.putExtra(FragmentMainMisMangas.SERVER_ID, sBase.getServerID());
-            startActivity(intent);
+            ServerListFragment fragment = new ServerListFragment();
+            Bundle b = new Bundle();
+            b.putInt(MainFragment.SERVER_ID, sBase.getServerID());
+            fragment.setArguments(b);
+            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
         } else if (item.getItemId() == R.id.filter) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.filtrar)
@@ -264,8 +266,8 @@ public class FragmentServerFilteredNavigation extends Fragment implements OnLast
                         } else {
                             mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
                         }
-                        mAdapter.setLastItemListener(FragmentServerFilteredNavigation.this);
-                        mAdapter.setMangaClickListener(FragmentServerFilteredNavigation.this);
+                        mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);
+                        mAdapter.setMangaClickListener(ServerFilteredNavigationFragment.this);
                         grid.setAdapter(mAdapter);
                     } else {
                         mAdapter.addAll(result);

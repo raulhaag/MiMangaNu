@@ -29,10 +29,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ActivityServerMangaList"
-            android:label="@string/title_activity_server_listade_mangas" />
-
-        <activity
             android:name=".ActivityPagedReader"
             android:label="@string/title_activity_activity_lector"
             android:largeHeap="true"
@@ -43,19 +39,7 @@
         <activity
             android:name=".ActivityLicenseView"
             android:label="@string/licencia" />
-        <activity
-            android:name=".ActivitySettings"
-            android:label="@string/configuraciones" />
-
         <service android:name=".services.DownloadPoolService" />
-
-        <activity
-            android:name=".ActivityDownloads"
-            android:label="@string/descargas" />
-        <activity
-            android:name=".FragmentManga"
-            android:label="@string/title_activity_activity_manga" />
-
         <receiver android:name=".services.AlarmReceiver">
             <action android:name="ar.rulosoft.CHECK_UPDATES" />
         </receiver>

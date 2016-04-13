@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.AlertDialog;
+import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -11,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
@@ -43,11 +43,11 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.FragmentUpdateSearchTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class FragmentManga extends Fragment {
+public class MangaFragment extends Fragment {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
-    private static final String TAG = "FragmentManga";
+    private static final String TAG = "MangaFragment";
     public SwipeRefreshLayout mSwipeRefreshLayout;
     public Manga mManga;
     private Direction mDirection;
@@ -67,7 +67,7 @@ public class FragmentManga extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        mMangaId = getArguments().getInt(FragmentMainMisMangas.MANGA_ID, -1);
+        mMangaId = getArguments().getInt(MainFragment.MANGA_ID, -1);
         return inflater.inflate(R.layout.activity_manga,container,false);
     }
 
@@ -95,11 +95,9 @@ public class FragmentManga extends Fragment {
         }
         if (savedInstanceState == null) {
             mUpdateSearchTask = new FragmentUpdateSearchTask();
-            getChildFragmentManager().beginTransaction()
-                    .add(mUpdateSearchTask, "BUSCAR_NUEVOS").commit();
+            getChildFragmentManager().beginTransaction().add(mUpdateSearchTask, "BUSCAR_NUEVOS").commit();
         } else {
-            mUpdateSearchTask = (FragmentUpdateSearchTask) getChildFragmentManager()
-                    .findFragmentByTag("BUSCAR_NUEVOS");
+            mUpdateSearchTask = (FragmentUpdateSearchTask) getChildFragmentManager().findFragmentByTag("BUSCAR_NUEVOS");
             if (mUpdateSearchTask.getStatus() == AsyncTask.Status.RUNNING) {
                 mSwipeRefreshLayout.post(new Runnable() {
                     @Override
@@ -112,7 +110,7 @@ public class FragmentManga extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mUpdateSearchTask.updateList(mManga, FragmentManga.this);
+                mUpdateSearchTask.updateList(mManga, MangaFragment.this);
             }
         });
         mListView.setDivider(new ColorDrawable(colors[0]));
@@ -391,9 +389,8 @@ public class FragmentManga extends Fragment {
                 }
                 Database.updateManga(getActivity(), mManga, false);
                 break;
-            case R.id.descargas: {
-                Intent intent = new Intent(getActivity(), ActivityDownloads.class);
-                startActivity(intent);
+            case R.id.action_view_download: {
+                ((MainActivity)getActivity()).replaceFragment(new DownloadsFragment(),"DownloadFragment");
                 break;
             }
             case R.id.action_descargar_no_leidos: {
@@ -404,7 +401,7 @@ public class FragmentManga extends Fragment {
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ArrayList<Chapter> chapters =
-                                Database.getChapters(getActivity(), FragmentManga.this.mMangaId,
+                                Database.getChapters(getActivity(), MangaFragment.this.mMangaId,
                                         Database.COL_CAP_STATE + " < 1", true);
                         for (Chapter c : chapters) {
                             try {
@@ -471,6 +468,7 @@ public class FragmentManga extends Fragment {
                 break;
         }
         ((MainActivity)getActivity()).enableHomeButton(true);
+        ((MainActivity)getActivity()).setTitle(mManga.getTitle());
         mChapterAdapter.replaceData(chapters);
     }
 
@@ -564,8 +562,8 @@ public class FragmentManga extends Fragment {
                 } else {
                     intent = new Intent(getActivity(), ActivityPagedReader.class);
                 }
-                intent.putExtra(FragmentManga.CHAPTER_ID, result.getId());
-                FragmentManga.this.startActivity(intent);
+                intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
+                MangaFragment.this.startActivity(intent);
             }
             super.onPostExecute(result);
         }

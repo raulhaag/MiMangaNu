@@ -14,8 +14,8 @@ import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter.OnServerClickListener;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
-public class FragmentAddManga extends Fragment implements OnServerClickListener {
-    private RecyclerView lista_server;
+public class AddMangaFragment extends Fragment implements OnServerClickListener {
+    private RecyclerView server_list;
     private ServerRecAdapter adapter;
 
     @Override
@@ -26,31 +26,33 @@ public class FragmentAddManga extends Fragment implements OnServerClickListener 
     @Override
     public void onStart() {
         super.onStart();
-        lista_server = (RecyclerView) getView().findViewById(R.id.lista_de_servers);
-        lista_server.setLayoutManager(new LinearLayoutManager(getActivity()));
+        server_list = (RecyclerView) getView().findViewById(R.id.lista_de_servers);
+        server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (((MainActivity) getActivity()).darkTheme) {
             ((CardView) getView().findViewById(R.id.cardview_server_container))
                     .setCardBackgroundColor(getResources()
                             .getColor(R.color.background_floating_material_dark));
         }
         adapter = new ServerRecAdapter(ServerBase.getServers());
-        lista_server.setAdapter(adapter);
-        adapter.setOnServerClickListener(FragmentAddManga.this);
+        server_list.setAdapter(adapter);
+        adapter.setOnServerClickListener(AddMangaFragment.this);
     }
 
     @Override
     public void onServerClick(ServerBase server) {
-        Intent intent;
         if (server.hasFilteredNavigation()) {
-            FragmentServerFilteredNavigation fragment = new FragmentServerFilteredNavigation();
+            ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
             Bundle b = new Bundle();
-            b.putInt(FragmentMainMisMangas.SERVER_ID,server.getServerID());
+            b.putInt(MainFragment.SERVER_ID, server.getServerID());
             fragment.setArguments(b);
-            ((MainActivity) getActivity()).replaceFragment(fragment,"FilteredNavegation");
-            //intent = new Intent(getActivity(), FragmentServerFilteredNavigation.class);
-        }else
-            intent = new Intent(getActivity(), ActivityServerMangaList.class);
-        //intent.putExtra(FragmentMainMisMangas.SERVER_ID, server.getServerID());
-        //getActivity().startActivity(intent);
+            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
+        } else {
+            ServerListFragment fragment = new ServerListFragment();
+            Bundle b = new Bundle();
+            b.putInt(MainFragment.SERVER_ID, server.getServerID());
+            fragment.setArguments(b);
+            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
+        }
+
     }
 }

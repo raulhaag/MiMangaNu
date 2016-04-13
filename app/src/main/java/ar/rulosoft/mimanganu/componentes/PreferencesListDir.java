@@ -44,8 +44,7 @@ public class PreferencesListDir extends DialogPreference {
         dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
 
         ArrayList<String> dirList = dirList(actual);
-        ArrayAdapter<String> adap =
-                new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
+        ArrayAdapter<String> adap = new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
         dirs_path.setText(actual);
         dirs.setAdapter(adap);
         dirs.setOnItemClickListener(new OnItemClickListener() {

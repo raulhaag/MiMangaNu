@@ -1,7 +1,7 @@
 package ar.rulosoft.mimanganu.adapters;
 
+import android.app.Activity;
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -12,7 +12,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
@@ -24,12 +23,11 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
     private static String[] states;
     private static int listItem = R.layout.listitem_descarga;
     private ArrayList<ChapterDownload> downloads = new ArrayList<>();
-    //private HashMap<Integer, ChapterDownload> toReplace;
     private LayoutInflater li;
     private boolean darkTheme;
-    private AppCompatActivity mActivity;
+    private Activity mActivity;
 
-    public DownloadAdapter(Context context, AppCompatActivity activity, boolean darkTheme) {
+    public DownloadAdapter(Context context, Activity activity, boolean darkTheme) {
         super(context, listItem);
         states = context.getResources().getStringArray(R.array.estados_descarga);
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -127,7 +125,6 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
 
     @Override
     public void onChapterRemoved(int idx) {
-//        downloads.remove(idx);
         mActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {

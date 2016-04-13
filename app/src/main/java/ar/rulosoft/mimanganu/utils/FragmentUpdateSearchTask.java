@@ -1,12 +1,10 @@
 package ar.rulosoft.mimanganu.utils;
 
-import android.app.Activity;
+import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.widget.Toast;
-
-import ar.rulosoft.mimanganu.FragmentManga;
+import ar.rulosoft.mimanganu.MangaFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -33,7 +31,7 @@ public class FragmentUpdateSearchTask extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         if (searchForNewsChapters != null)
-            searchForNewsChapters.setActivity((FragmentManga) activity);
+            searchForNewsChapters.setActivity((Fragment ,Manga) activity);
     }
 
     @Override
@@ -44,7 +42,7 @@ public class FragmentUpdateSearchTask extends Fragment {
         }
     }
 /*/
-    public void updateList(Manga manga, FragmentManga activity) {
+    public void updateList(Manga manga, MangaFragment activity) {
         if (searchForNewsChapters == null || searchForNewsChapters.getStatus() == AsyncTask.Status.FINISHED) {
             searchForNewsChapters = new SearchForNewsChapters().setActivity(activity);
             searchForNewsChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
@@ -55,13 +53,13 @@ public class FragmentUpdateSearchTask extends Fragment {
     public static class SearchForNewsChapters extends AsyncTask<Manga, Void, Integer> {
         static boolean running = false;
         static SearchForNewsChapters actual = null;
-        FragmentManga activity;
+        MangaFragment activity;
         int mangaId = 0;
         String msg;
         String orgMsg;
         String errorMsg;
 
-        public SearchForNewsChapters setActivity(final FragmentManga activity) {
+        public SearchForNewsChapters setActivity(final MangaFragment activity) {
             this.activity = activity;
             return this;
         }

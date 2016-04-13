@@ -39,7 +39,7 @@ public class ActivitySearchResults extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_activity_resultado_de_busqueda);
-        serverId = getIntent().getExtras().getInt(FragmentMainMisMangas.SERVER_ID);
+        serverId = getIntent().getExtras().getInt(MainFragment.SERVER_ID);
         termino = getIntent().getExtras().getString(TERMINO);
         lista = (ListView) findViewById(R.id.result);
         cargando = (ProgressBar) findViewById(R.id.loading);
@@ -47,10 +47,10 @@ public class ActivitySearchResults extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Manga m = (Manga) lista.getAdapter().getItem(position);
-                Intent intent = new Intent(getApplication(), FragmentDetails.class);
-                intent.putExtra(FragmentMainMisMangas.SERVER_ID, serverId);
-                intent.putExtra(FragmentDetails.TITLE, m.getTitle());
-                intent.putExtra(FragmentDetails.PATH, m.getPath());
+                Intent intent = new Intent(getApplication(), DetailsFragment.class);
+                intent.putExtra(MainFragment.SERVER_ID, serverId);
+                intent.putExtra(DetailsFragment.TITLE, m.getTitle());
+                intent.putExtra(DetailsFragment.PATH, m.getPath());
                 startActivity(intent);
             }
         });

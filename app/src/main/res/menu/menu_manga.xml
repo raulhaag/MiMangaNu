@@ -16,7 +16,7 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/descargas"
+        android:id="@+id/action_view_download"
         android:icon="@drawable/ic_action_downloads"
         android:title="@string/descargas"
         android:orderInCategory="100"

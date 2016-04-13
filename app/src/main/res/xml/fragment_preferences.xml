@@ -27,7 +27,7 @@
             android:key="update_sound"
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
-        <ar.rulosoft.custompref.SeekBarDialogPref
+ <!--       <ar.rulosoft.custompref.SeekBarDialogPref
             android:defaultValue="1"
             android:dialogTitle="@string/update_thread_background_title"
             android:key="update_threads_background"
@@ -42,7 +42,7 @@
             android:summary="@string/update_threads_manual_summary"
             android:title="@string/update_thread_manual_title"
             app:val_max="7"
-            app:val_min="1" />
+            app:val_min="1" />-->
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_lec">
@@ -67,13 +67,13 @@
             android:key="ajustar_a"
             android:summary="%s"
             android:title="@string/ajuste_imagen" />
-        <ar.rulosoft.custompref.SeekBarDialogFloatPref
+ <!--       <ar.rulosoft.custompref.SeekBarDialogFloatPref
             android:defaultValue="1"
             android:dialogTitle="@string/scroll_speed"
             android:key="scroll_speed"
             android:summary="%sx"
             android:title="@string/scroll_speed"
-            app:val_type="1" />
+            app:val_type="1" />-->
         <ListPreference
             android:defaultValue="2048"
             android:entries="@array/max_texture_support_acceleration"
@@ -88,33 +88,33 @@
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
             android:title="@string/directorio_title" />
-        <ar.rulosoft.custompref.SeekBarDialogPref
-            android:defaultValue="2"
-            android:dialogTitle="@string/cantidad_descargas_title"
-            android:key="download_threads"
-            android:summary="@string/cantidad_descargas_subtitle"
-            android:title="@string/cantidad_descargas_title"
-            app:val_max="8"
-            app:val_min="1" />
-        <ar.rulosoft.custompref.SeekBarDialogPref
-            android:defaultValue="2"
-            android:dialogTitle="@string/cantidad_errores_title"
-            android:key="error_tolerancia"
-            android:summary="@string/cantidad_errores_subtitle"
-            android:title="@string/cantidad_errores_title"
-            app:val_max="10"
-            app:val_min="0" />
-        <ar.rulosoft.custompref.SeekBarDialogPref
-            android:defaultValue="3"
-            android:dialogTitle="@string/cantidad_reintentos_title"
-            android:key="reintentos"
-            android:summary="@string/cantidad_reintentos_subtitle"
-            android:title="@string/cantidad_reintentos_title"
-            app:val_max="10"
-            app:val_min="0" />
-    </PreferenceCategory>
+    <!--        <ar.rulosoft.custompref.SeekBarDialogPref
+                android:defaultValue="2"
+                android:dialogTitle="@string/cantidad_descargas_title"
+                android:key="download_threads"
+                android:summary="@string/cantidad_descargas_subtitle"
+                android:title="@string/cantidad_descargas_title"
+                app:val_max="8"
+                app:val_min="1" />
+            <ar.rulosoft.custompref.SeekBarDialogPref
+                android:defaultValue="2"
+                android:dialogTitle="@string/cantidad_errores_title"
+                android:key="error_tolerancia"
+                android:summary="@string/cantidad_errores_subtitle"
+                android:title="@string/cantidad_errores_title"
+                app:val_max="10"
+                app:val_min="0" />
+            <ar.rulosoft.custompref.SeekBarDialogPref
+                android:defaultValue="3"
+                android:dialogTitle="@string/cantidad_reintentos_title"
+                android:key="reintentos"
+                android:summary="@string/cantidad_reintentos_subtitle"
+                android:title="@string/cantidad_reintentos_title"
+                app:val_max="10"
+                app:val_min="0" />-->
+        </PreferenceCategory>
 
-    <!-- Finally, replaced by a much lighter color picker -->
+        <!-- Finally, replaced by a much lighter color picker -->
     <PreferenceCategory android:title="@string/ui_settings">
         <SwitchPreference
             android:defaultValue="false"

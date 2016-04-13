@@ -1,16 +1,13 @@
 package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
-import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,24 +20,19 @@ import com.melnykov.fab.FloatingActionButton;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.rulosoft.mimanganu.ActivityDownloads;
-import ar.rulosoft.mimanganu.ActivitySettings;
-import ar.rulosoft.mimanganu.FragmentAddManga;
-import ar.rulosoft.mimanganu.FragmentMisMangas;
-import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 
 /**
  * Created by Raul on 09/04/2016.
  */
-public class FragmentMainMisMangas extends Fragment implements View.OnClickListener {
+public class MainFragment extends Fragment implements View.OnClickListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     Menu menu;
     private SectionsPagerAdapter mSectionsPagerAdapter;
-    private FragmentMisMangas fragmentMisMangas;
-    private FragmentAddManga fragmentAddManga;
+    private MisMangasFragment misMangasFragment;
+    private AddMangaFragment addMangaFragment;
     private ViewPager mViewPager;
     FloatingActionButton button_add;
     private SharedPreferences pm;
@@ -56,13 +48,13 @@ public class FragmentMainMisMangas extends Fragment implements View.OnClickListe
     public void onStart() {
         super.onStart();
         mSectionsPagerAdapter = new SectionsPagerAdapter(getChildFragmentManager());
-        fragmentAddManga = new FragmentAddManga();
-        fragmentMisMangas = new FragmentMisMangas();
+        addMangaFragment = new AddMangaFragment();
+        misMangasFragment = new MisMangasFragment();
 
-        fragmentAddManga.setRetainInstance(true);
-        fragmentMisMangas.setRetainInstance(true);
-        mSectionsPagerAdapter.add(fragmentMisMangas);
-        mSectionsPagerAdapter.add(fragmentAddManga);
+        addMangaFragment.setRetainInstance(true);
+        misMangasFragment.setRetainInstance(true);
+        mSectionsPagerAdapter.add(misMangasFragment);
+        mSectionsPagerAdapter.add(addMangaFragment);
 
         mViewPager = (ViewPager) getView().findViewById(R.id.pager);
         button_add = (FloatingActionButton) getView().findViewById(R.id.button_add);
@@ -101,7 +93,7 @@ public class FragmentMainMisMangas extends Fragment implements View.OnClickListe
         inflater.inflate(R.menu.view_mismangas, menu);
 
         /** Set hide/unhide checkbox */
-        boolean checkedRead = pm.getInt(FragmentMisMangas.SELECT_MODE, FragmentMisMangas.MODE_SHOW_ALL) > 0;
+        boolean checkedRead = pm.getInt(MisMangasFragment.SELECT_MODE, MisMangasFragment.MODE_SHOW_ALL) > 0;
         menu.findItem(R.id.action_hide_read).setChecked(checkedRead);
 
         /** Set sort mode */
@@ -118,70 +110,70 @@ public class FragmentMainMisMangas extends Fragment implements View.OnClickListe
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.descargas: {
-                startActivity(new Intent(getActivity(), ActivityDownloads.class));
+            case R.id.action_view_download: {
+                ((MainActivity)getActivity()).replaceFragment(new DownloadsFragment(),"DownloadFragment");
                 break;
             }
             case R.id.action_hide_read: {
                 item.setChecked(!item.isChecked());
-                pm.edit().putInt(FragmentMisMangas.SELECT_MODE,
+                pm.edit().putInt(MisMangasFragment.SELECT_MODE,
                         item.isChecked() ?
-                                FragmentMisMangas.MODE_HIDE_READ : FragmentMisMangas.MODE_SHOW_ALL
+                                MisMangasFragment.MODE_HIDE_READ : MisMangasFragment.MODE_SHOW_ALL
                 ).apply();
-                if (fragmentMisMangas != null)
-                    fragmentMisMangas.setListManga(true);
+                if (misMangasFragment != null)
+                    misMangasFragment.setListManga(true);
                 break;
             }
-            case R.id.action_configurar: {
-                startActivity(new Intent(getActivity(), ActivitySettings.class));
+            case R.id.action_settings: {
+                //TODO((MainActivity)getActivity()).replaceFragment(new PreferencesFragment(),"PreferencesFragment");
                 break;
             }
             case R.id.sort_last_read: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 0).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_last_read_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 1).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_name: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 2).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_name_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 3).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_author: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 4).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_author_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 5).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_finished: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 6).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
             case R.id.sort_finished_asc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 7).apply();
-                fragmentMisMangas.setListManga(true);
+                misMangasFragment.setListManga(true);
                 break;
             }
         }
@@ -192,19 +184,19 @@ public class FragmentMainMisMangas extends Fragment implements View.OnClickListe
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        List<Fragment> fragments;
+        List<android.support.v4.app.Fragment> fragments;
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        public SectionsPagerAdapter(android.support.v4.app.FragmentManager fm) {
             super(fm);
             this.fragments = new ArrayList<>();
         }
 
-        public void add(Fragment f) {
+        public void add(android.support.v4.app.Fragment f) {
             fragments.add(f);
         }
 
         @Override
-        public Fragment getItem(int position) {
+        public android.support.v4.app.Fragment getItem(int position) {
             return fragments.get(position);
         }
 

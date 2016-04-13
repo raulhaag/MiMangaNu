@@ -6,7 +6,7 @@ import android.text.Html;
 import java.io.File;
 import java.util.Comparator;
 
-import ar.rulosoft.mimanganu.FragmentMisMangas;
+import ar.rulosoft.mimanganu.MisMangasFragment;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
@@ -139,12 +139,12 @@ public class Chapter{
 
     private void deleteImages(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        FragmentMisMangas.deleteRecursive(new File(path));
+        MisMangasFragment.deleteRecursive(new File(path));
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        FragmentMisMangas.deleteRecursive(new File(path));
+        MisMangasFragment.deleteRecursive(new File(path));
         setPages(0);
         setDownloaded(false);
         setPagesRead(0);

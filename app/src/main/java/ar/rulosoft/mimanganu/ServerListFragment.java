@@ -1,20 +1,18 @@
 package ar.rulosoft.mimanganu;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.drawable.ColorDrawable;
+import android.support.v4.app.Fragment;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -26,66 +24,71 @@ import java.util.List;
 import ar.rulosoft.mimanganu.adapters.MangaAdapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityServerMangaList extends AppCompatActivity {
+public class ServerListFragment extends Fragment {
 
+    int id = -1;
     private ServerBase s;
     private ListView list;
     private ProgressBar loading;
     private MangaAdapter adapter;
-    private MenuItem search;
-    private boolean darkTheme;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
+        setRetainInstance(true);
+        return inflater.inflate(R.layout.activity_server_lista_de_mangas, container, false);
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(this);
-        darkTheme = pm.getBoolean("dark_theme", false);
-        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_server_lista_de_mangas);
-        int id = getIntent().getExtras().getInt(FragmentMainMisMangas.SERVER_ID);
+    public void onActivityCreated(Bundle savedState) {
+        super.onStart();
+        if (id == -1)
+            id = getArguments().getInt(MainFragment.SERVER_ID);
         s = ServerBase.getServer(id);
-        android.support.v7.app.ActionBar mActBar = getSupportActionBar();
-        if (mActBar != null)
-            mActBar.setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
-
-        list = (ListView) findViewById(R.id.lista_de_mangas);
-        loading = (ProgressBar) findViewById(R.id.loading);
-        int[] colors = ThemeColors.getColors(pm, getApplicationContext());
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(colors[0]));
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[4]);
+        list = (ListView) getView().findViewById(R.id.lista_de_mangas);
+        loading = (ProgressBar) getView().findViewById(R.id.loading);
+        if (adapter == null) {
+            new LoadMangasTask().execute();
+        } else {
+            list.setAdapter(adapter);
+            loading.setVisibility(View.INVISIBLE);
         }
-        new LoadMangasTask().execute();
-
         list.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Manga m = (Manga) list.getAdapter().getItem(position);
-                Intent intent = new Intent(getApplication(), FragmentDetails.class);
-                intent.putExtra(FragmentMainMisMangas.SERVER_ID, s.getServerID());
-                intent.putExtra(FragmentDetails.TITLE, m.getTitle());
-                intent.putExtra(FragmentDetails.PATH, m.getPath());
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putInt(MainFragment.SERVER_ID, s.getServerID());
+                bundle.putString(DetailsFragment.TITLE, m.getTitle());
+                bundle.putString(DetailsFragment.PATH, m.getPath());
+                DetailsFragment detailsFragment = new DetailsFragment();
+                detailsFragment.setArguments(bundle);
+                ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");
             }
         });
-
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.manga_server, menu);
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+        ((MainActivity)getActivity()).enableHomeButton(true);
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.manga_server, menu);
+        MenuItem search;
         search = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
             @Override
             public boolean onQueryTextSubmit(String s) {
-                // TODO Auto-generated method stub
                 return false;
             }
 
@@ -96,7 +99,6 @@ public class ActivityServerMangaList extends AppCompatActivity {
                 return false;
             }
         });
-        return true;
     }
 
     private class LoadMangasTask extends AsyncTask<Void, Void, List<Manga>> {
@@ -126,11 +128,11 @@ public class ActivityServerMangaList extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Manga> result) {
             if (list != null && result != null && !result.isEmpty()) {
-                adapter = new MangaAdapter(getApplicationContext(), result, darkTheme);
+                adapter = new MangaAdapter(getActivity(), result, ((MainActivity) getActivity()).darkTheme);
                 list.setAdapter(adapter);
             }
             if (error != null && error.length() > 2) {
-                Toast.makeText(getApplicationContext(), "Error: " + error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Error: " + error, Toast.LENGTH_LONG).show();
             }
             loading.setVisibility(ProgressBar.INVISIBLE);
         }

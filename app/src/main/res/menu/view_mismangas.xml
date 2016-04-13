@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.MisMangas">
     <item
-        android:id="@+id/descargas"
+        android:id="@+id/action_view_download"
         android:icon="@drawable/ic_action_downloads"
         android:title="@string/descargas"
         app:showAsAction="always" />
@@ -51,7 +51,7 @@
                 </menu>
             </item>
             <item
-                android:id="@+id/action_configurar"
+                android:id="@+id/action_settings"
                 android:title="@string/configuraciones" />
         </menu>
     </item>

@@ -36,7 +36,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 
-public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
+public class MisMangasFragment extends Fragment implements OnMangaClick, OnCreateContextMenuListener {
 
     private static final String TAG = "FragmentMisManga";
 
@@ -115,10 +115,10 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
-                bundle.putInt(FragmentMainMisMangas.MANGA_ID, adapter.getItem(position).getId());
-                FragmentManga fm = new FragmentManga();
+                bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
+                MangaFragment fm = new MangaFragment();
                 fm.setArguments(bundle);
-                ((MainActivity)getActivity()).replaceFragment(fm,"FragmentManga");
+                ((MainActivity)getActivity()).replaceFragment(fm,"MangaFragment");
             }
         });
         registerForContextMenu(grid);
@@ -228,8 +228,8 @@ public class FragmentMisMangas extends Fragment implements OnMangaClick, OnCreat
 
     @Override
     public void onMangaClick(Manga manga) {
-        Intent intent = new Intent(getActivity(), FragmentManga.class);
-        intent.putExtra(FragmentMainMisMangas.MANGA_ID, manga.getId());
+        Intent intent = new Intent(getActivity(), MangaFragment.class);
+        intent.putExtra(MainFragment.MANGA_ID, manga.getId());
         getActivity().startActivity(intent);
     }
 

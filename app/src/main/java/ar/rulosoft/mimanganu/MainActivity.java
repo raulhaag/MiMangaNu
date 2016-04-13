@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.support.v4.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -7,7 +8,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Window;
@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
         if(savedInstanceState == null) {
-            FragmentMainMisMangas fmm = new FragmentMainMisMangas();
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
+            MainFragment fmm = new MainFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container , fmm).commit();
         }
     }
 
@@ -74,8 +74,23 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void replaceFragment(Fragment fragment , String name){
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container,fragment).addToBackStack(name).commit();
+        getSupportFragmentManager().beginTransaction()/*.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)/*/.replace(R.id.fragment_container,fragment).addToBackStack(name).commit();
     }
 
+    @Override
+    public void onBackPressed() {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 
+    public interface onBackListener{
+        void onBackPressed();
+    }
+
+    public interface onKeyListener{
+        boolean onKeyPressed();
+    }
 }

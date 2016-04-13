@@ -3,12 +3,12 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -29,12 +29,12 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
-public class FragmentDetails extends Fragment {
+public class DetailsFragment extends Fragment {
 
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
 
-    private static final String TAG = "FragmentDetails";
+    private static final String TAG = "DetailFragment";
     String title, path;
     int id;
     private ImageLoader imageLoader;
@@ -49,7 +49,7 @@ public class FragmentDetails extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         title = getArguments().getString(TITLE);
         path = getArguments().getString(PATH);
-        id = getArguments().getInt(FragmentMainMisMangas.SERVER_ID);
+        id = getArguments().getInt(MainFragment.SERVER_ID);
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.activity_detalles, container, false);
     }
