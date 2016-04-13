@@ -37,7 +37,6 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
     Menu menu;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private MisMangasFragment misMangasFragment;
-    private AddMangaFragment addMangaFragment;
     private ViewPager mViewPager;
     private SharedPreferences pm;
 
@@ -51,13 +50,10 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         setContentView(R.layout.activity_mis_mangas);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        addMangaFragment = new AddMangaFragment();
         misMangasFragment = new MisMangasFragment();
 
-        addMangaFragment.setRetainInstance(true);
         misMangasFragment.setRetainInstance(true);
         mSectionsPagerAdapter.add(misMangasFragment);
-        mSectionsPagerAdapter.add(addMangaFragment);
 
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);

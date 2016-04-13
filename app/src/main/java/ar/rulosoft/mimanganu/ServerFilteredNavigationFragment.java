@@ -56,11 +56,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private int firstVisibleItem;
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-    }
-
-    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
@@ -255,8 +250,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(getActivity(),
-                        "Error: " + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "Error: " + error, Toast.LENGTH_SHORT).show();
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {
