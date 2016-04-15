@@ -85,10 +85,10 @@
         </android.support.v7.preference.PreferenceCategory>
 
         <PreferenceCategory android:title="@string/opciones_descarga">
-                 <!--<ar.rulosoft.mimanganu.componentes.PrferencesListDir
+                 <ar.rulosoft.custompref.PreferencesListDir
                      android:key="directorio"
                      android:summary="@string/direcctorio_subtitle"
-                     android:title="@string/directorio_title" />-->
+                     android:title="@string/directorio_title" />
                  <ar.rulosoft.custompref.SeekBarCustomPreference
                      android:defaultValue="2"
                      android:dialogTitle="@string/cantidad_descargas_title"

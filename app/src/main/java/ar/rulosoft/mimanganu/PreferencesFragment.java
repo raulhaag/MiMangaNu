@@ -6,13 +6,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.view.MenuItem;
-import android.widget.BaseAdapter;
-import android.widget.ListView;
 
 import com.fedorvlasov.lazylist.FileCache;
 
 import ar.rulosoft.custompref.ColorListDialogFragment;
 import ar.rulosoft.custompref.ColorListDialogPref;
+import ar.rulosoft.custompref.PreferenceListDirFragment;
+import ar.rulosoft.custompref.PreferencesListDir;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
@@ -28,11 +28,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.fragment_preferences);
-        ColorListDialogPref primaryColor =  (ColorListDialogPref) getPreferenceManager().findPreference("primario");
+        ColorListDialogPref primaryColor = (ColorListDialogPref) getPreferenceManager().findPreference("primario");
         primaryColor.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                ((MainActivity)getActivity()).setColorToBars();
+                ((MainActivity) getActivity()).setColorToBars();
                 return false;
             }
         });
@@ -41,12 +41,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).enableHomeButton(true);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if(item.getItemId() == android.R.id.home)
+        if (item.getItemId() == android.R.id.home)
             getActivity().onBackPressed();
         return super.onOptionsItemSelected(item);
     }
@@ -54,10 +54,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onDisplayPreferenceDialog(Preference preference) {
         DialogFragment fragment;
-        if (preference instanceof ColorListDialogPref) {
+        if (preference instanceof PreferencesListDir) {
+            fragment = PreferenceListDirFragment.newInstance(preference);
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+        } else if (preference instanceof ColorListDialogPref) {
             fragment = ColorListDialogFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
-            fragment.show(getFragmentManager(),"android.support.v7.preference.PreferenceFragment.DIALOG");
-        } else super.onDisplayPreferenceDialog(preference);    }
+            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+        } else super.onDisplayPreferenceDialog(preference);
+    }
 }
 
