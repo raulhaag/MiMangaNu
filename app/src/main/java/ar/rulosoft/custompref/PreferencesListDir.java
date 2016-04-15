@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.componentes;
+package ar.rulosoft.custompref;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;

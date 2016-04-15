@@ -85,7 +85,7 @@
         </android.support.v7.preference.PreferenceCategory>
 
         <PreferenceCategory android:title="@string/opciones_descarga">
-                 <!--<ar.rulosoft.mimanganu.componentes.PreferencesListDir
+                 <!--<ar.rulosoft.mimanganu.componentes.PrferencesListDir
                      android:key="directorio"
                      android:summary="@string/direcctorio_subtitle"
                      android:title="@string/directorio_title" />-->
@@ -121,6 +121,21 @@
             android:defaultValue="false"
             android:key="dark_theme"
             android:title="@string/theme_title" />
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="-14003522"
+            android:key="primario"
+            android:summary="@string/color_primario_sub"
+            android:title="@string/color_primario" />
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="-14774017"
+            android:key="secundario"
+            android:summary="@string/color_secundario_sub"
+            android:title="@string/color_secundario" />
+        <ar.rulosoft.custompref.ColorListDialogPref
+            android:defaultValue="-15725560"
+            android:key="reader_bg_col"
+            android:summary="@string/color_reader_sub"
+            android:title="@string/color_reader" />
     </android.support.v7.preference.PreferenceCategory>
 
 </android.support.v7.preference.PreferenceScreen>
