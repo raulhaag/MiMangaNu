@@ -75,7 +75,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        return inflater.inflate(R.layout.activity_mis_mangas, container, false);
+        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override

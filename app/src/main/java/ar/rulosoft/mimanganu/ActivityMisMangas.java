@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,7 +46,7 @@ public class ActivityMisMangas extends AppCompatActivity implements OnClickListe
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
-        setContentView(R.layout.activity_mis_mangas);
+        setContentView(R.layout.fragment_main);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         misMangasFragment = new MisMangasFragment();

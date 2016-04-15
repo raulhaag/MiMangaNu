@@ -20,7 +20,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class MisMangasAdapter extends ArrayAdapter<Manga> {
 
-    private static int resource = R.layout.tapa_manga;
+    private static int resource = R.layout.control_tapa_manga;
     Activity c;
     private ImageLoader imageLoader;
     private boolean darkTheme = false;

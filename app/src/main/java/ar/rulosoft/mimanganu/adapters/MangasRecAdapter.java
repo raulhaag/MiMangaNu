@@ -57,7 +57,7 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int pos) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tapa_manga, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.control_tapa_manga, viewGroup, false);
         ViewCompat.setElevation(v, 5f);
         if (onCreateContextMenuListener != null)
             v.setOnCreateContextMenuListener(onCreateContextMenuListener);
