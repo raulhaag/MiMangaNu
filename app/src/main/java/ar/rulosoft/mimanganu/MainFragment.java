@@ -150,7 +150,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 setListManga(true);
             }
             case R.id.action_settings: {
-                //TODO((MainActivity)getActivity()).replaceFragment(new PreferencesFragment(),"PreferencesFragment");
+                ((MainActivity)getActivity()).replaceFragment(new PreferencesFragment(),"PreferencesFragment");
                 break;
             }
             case R.id.sort_last_read: {

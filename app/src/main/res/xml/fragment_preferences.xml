@@ -1,155 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:key="first_preferencescreen">
 
-    <PreferenceCategory android:title="@string/opciones_mm">
-        <SwitchPreference
+    <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_mm">
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/update_settings_title">
-        <ListPreference
-            android:defaultValue="0"
-            android:dialogTitle="@string/update_title"
-            android:entries="@array/periodo"
-            android:entryValues="@array/periodo_val"
-            android:key="update_interval"
-            android:summary="%s"
-            android:title="@string/update_title" />
-        <SwitchPreference
-            android:defaultValue="false"
-            android:key="update_sound"
-            android:summary="@string/notification_sound_subtitle"
-            android:title="@string/notification_sound_title" />
- <!--       <ar.rulosoft.custompref.SeekBarDialogPref
-            android:defaultValue="1"
-            android:dialogTitle="@string/update_thread_background_title"
-            android:key="update_threads_background"
-            android:summary="@string/update_threads_background_summary"
-            android:title="@string/update_thread_background_title"
-            app:val_max="7"
-            app:val_min="1" />
-        <ar.rulosoft.custompref.SeekBarDialogPref
-            android:defaultValue="2"
-            android:dialogTitle="@string/update_thread_manual_title"
-            android:key="update_threads_manual"
-            android:summary="@string/update_threads_manual_summary"
-            android:title="@string/update_thread_manual_title"
-            app:val_max="7"
-            app:val_min="1" />-->
-    </PreferenceCategory>
+      <android.support.v7.preference.PreferenceCategory android:title="@string/update_settings_title">
+            <android.support.v7.preference.ListPreference
+                android:defaultValue="0"
+                android:dialogTitle="@string/update_title"
+                android:entries="@array/periodo"
+                android:entryValues="@array/periodo_val"
+                android:key="update_interval"
+                android:summary="%s"
+                android:title="@string/update_title" />
+            <android.support.v7.preference.SwitchPreferenceCompat
+                android:defaultValue="false"
+                android:key="update_sound"
+                android:summary="@string/notification_sound_subtitle"
+                android:title="@string/notification_sound_title" />
+            <ar.rulosoft.custompref.SeekBarPreference
+                       android:defaultValue="1"
+                       android:dialogTitle="@string/update_thread_background_title"
+                       android:key="update_threads_background"
+                       android:summary="@string/update_threads_background_summary"
+                       android:title="@string/update_thread_background_title"
+                       app:val_max="7"
+                       app:val_min="1" />
+            <ar.rulosoft.custompref.SeekBarPreference
+                       android:defaultValue="2"
+                       android:dialogTitle="@string/update_thread_manual_title"
+                       android:key="update_threads_manual"
+                       android:summary="@string/update_threads_manual_summary"
+                       android:title="@string/update_thread_manual_title"
+                       app:val_max="7"
+                       app:val_min="1" />
+        </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/opciones_lec">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="reader_type"
-            android:summary="On paged reader, off continuous reader"
-            android:title="Default reader" />
-        <ListPreference
-            android:defaultValue="0"
-            android:dialogTitle="@string/sentido_lectura"
-            android:entries="@array/sentido_lectura"
-            android:entryValues="@array/sentido_lectura_val"
-            android:key="direcciondelectura"
-            android:summary="%s"
-            android:title="@string/sentido_lectura" />
-        <ListPreference
-            android:defaultValue="FIT_TO_WIDTH"
-            android:dialogTitle="@string/ajuste_imagen"
-            android:entries="@array/ajustar_a"
-            android:entryValues="@array/ajustar_valores"
-            android:key="ajustar_a"
-            android:summary="%s"
-            android:title="@string/ajuste_imagen" />
- <!--       <ar.rulosoft.custompref.SeekBarDialogFloatPref
-            android:defaultValue="1"
-            android:dialogTitle="@string/scroll_speed"
-            android:key="scroll_speed"
-            android:summary="%sx"
-            android:title="@string/scroll_speed"
-            app:val_type="1" />-->
-        <ListPreference
-            android:defaultValue="2048"
-            android:entries="@array/max_texture_support_acceleration"
-            android:entryValues="@array/max_texture_support_acceleration"
-            android:key="max_texture"
-            android:summary="@string/max_texture_subtitle"
-            android:title="@string/max_texture_title" />
-    </PreferenceCategory>
+        <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_lec">
+            <android.support.v7.preference.SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="reader_type"
+                android:summary="On paged reader, off continuous reader"
+                android:title="Default reader" />
+            <android.support.v7.preference.ListPreference
+                android:defaultValue="0"
+                android:dialogTitle="@string/sentido_lectura"
+                android:entries="@array/sentido_lectura"
+                android:entryValues="@array/sentido_lectura_val"
+                android:key="direcciondelectura"
+                android:summary="%s"
+                android:title="@string/sentido_lectura" />
+            <android.support.v7.preference.ListPreference
+                android:defaultValue="FIT_TO_WIDTH"
+                android:dialogTitle="@string/ajuste_imagen"
+                android:entries="@array/ajustar_a"
+                android:entryValues="@array/ajustar_valores"
+                android:key="ajustar_a"
+                android:summary="%s"
+                android:title="@string/ajuste_imagen" />
+                   <ar.rulosoft.custompref.SeekBarPreferenceFloat
+                       android:defaultValue="1"
+                       android:dialogTitle="@string/scroll_speed"
+                       android:key="scroll_speed"
+                       android:summary="%sx"
+                       android:title="@string/scroll_speed"
+                       app:val_type="1"
+                       app:val_step="0.5"/>
+            <android.support.v7.preference.ListPreference
+                android:defaultValue="2048"
+                android:entries="@array/max_texture_support_acceleration"
+                android:entryValues="@array/max_texture_support_acceleration"
+                android:key="max_texture"
+                android:summary="@string/max_texture_subtitle"
+                android:title="@string/max_texture_title" />
+        </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/opciones_descarga">
-        <ar.rulosoft.mimanganu.componentes.PreferencesListDir
-            android:key="directorio"
-            android:summary="@string/direcctorio_subtitle"
-            android:title="@string/directorio_title" />
-    <!--        <ar.rulosoft.custompref.SeekBarDialogPref
-                android:defaultValue="2"
-                android:dialogTitle="@string/cantidad_descargas_title"
-                android:key="download_threads"
-                android:summary="@string/cantidad_descargas_subtitle"
-                android:title="@string/cantidad_descargas_title"
-                app:val_max="8"
-                app:val_min="1" />
-            <ar.rulosoft.custompref.SeekBarDialogPref
-                android:defaultValue="2"
-                android:dialogTitle="@string/cantidad_errores_title"
-                android:key="error_tolerancia"
-                android:summary="@string/cantidad_errores_subtitle"
-                android:title="@string/cantidad_errores_title"
-                app:val_max="10"
-                app:val_min="0" />
-            <ar.rulosoft.custompref.SeekBarDialogPref
-                android:defaultValue="3"
-                android:dialogTitle="@string/cantidad_reintentos_title"
-                android:key="reintentos"
-                android:summary="@string/cantidad_reintentos_subtitle"
-                android:title="@string/cantidad_reintentos_title"
-                app:val_max="10"
-                app:val_min="0" />-->
+        <PreferenceCategory android:title="@string/opciones_descarga">
+                 <!--<ar.rulosoft.mimanganu.componentes.PreferencesListDir
+                     android:key="directorio"
+                     android:summary="@string/direcctorio_subtitle"
+                     android:title="@string/directorio_title" />-->
+                 <ar.rulosoft.custompref.SeekBarPreference
+                     android:defaultValue="2"
+                     android:dialogTitle="@string/cantidad_descargas_title"
+                     android:key="download_threads"
+                     android:summary="@string/cantidad_descargas_subtitle"
+                     android:title="@string/cantidad_descargas_title"
+                     app:val_max="8"
+                     app:val_min="1" />
+                 <ar.rulosoft.custompref.SeekBarPreference
+                     android:defaultValue="2"
+                     android:dialogTitle="@string/cantidad_errores_title"
+                     android:key="error_tolerancia"
+                     android:summary="@string/cantidad_errores_subtitle"
+                     android:title="@string/cantidad_errores_title"
+                     app:val_max="10"
+                     app:val_min="0" />
+                 <ar.rulosoft.custompref.SeekBarPreference
+                     android:defaultValue="3"
+                     android:dialogTitle="@string/cantidad_reintentos_title"
+                     android:key="reintentos"
+                     android:summary="@string/cantidad_reintentos_subtitle"
+                     android:title="@string/cantidad_reintentos_title"
+                     app:val_max="10"
+                     app:val_min="0" />
         </PreferenceCategory>
 
-        <!-- Finally, replaced by a much lighter color picker -->
-    <PreferenceCategory android:title="@string/ui_settings">
-        <SwitchPreference
+    <!-- Finally, replaced by a much lighter color picker -->
+    <android.support.v7.preference.PreferenceCategory android:title="@string/ui_settings">
+        <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="dark_theme"
             android:title="@string/theme_title" />
-        <ar.rulosoft.custompref.ColorListDialogPref
-            android:defaultValue="-14003522"
-            android:key="primario"
-            android:summary="@string/color_primario_sub"
-            android:title="@string/color_primario" />
-        <ar.rulosoft.custompref.ColorListDialogPref
-            android:defaultValue="-14774017"
-            android:key="secundario"
-            android:summary="@string/color_secundario_sub"
-            android:title="@string/color_secundario" />
-        <ar.rulosoft.custompref.ColorListDialogPref
-            android:defaultValue="-15725560"
-            android:key="reader_bg_col"
-            android:summary="@string/color_reader_sub"
-            android:title="@string/color_reader" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/about">
-        <Preference
-            android:key="about_text"
-            android:summary="%s"
-            android:title="@string/app_name" />
-        <Preference
-            android:key="stat_storage"
-            android:summary="..."
-            android:title="@string/used_space" />
-        <Preference
-            android:key="license_view"
-            android:summary="@string/license_sub"
-            android:title="@string/licencia" />
-    </PreferenceCategory>
-
-</PreferenceScreen>
+</android.support.v7.preference.PreferenceScreen>

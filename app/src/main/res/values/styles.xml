@@ -3,10 +3,12 @@
     <!--<style name="AppTheme_miLight" parent="Base.Theme.AppCompat">-->
     <style name="AppTheme_miLight" parent="AppBaseTheme">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="AppTheme_miDark" parent="AppBaseThemeDark">
         <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="AppTheme.Light.NoActionbar" parent="Theme.AppCompat.Light.NoActionBar">
@@ -17,6 +19,7 @@
         -->
         <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
         <!--<item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionbar" parent="Theme.AppCompat.NoActionBar">
@@ -27,6 +30,7 @@
         -->
         <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
         <!--<item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>-->
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
 </resources>
