@@ -25,10 +25,8 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 
 import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import android.widget.ListView;
 
 import ar.rulosoft.mimanganu.R;
 
@@ -38,7 +36,6 @@ public class ColorListDialogPref extends DialogPreference {
     private String[] mColorNameList;
     private ShapeDrawable mShapeDraw;
 
-    private ListView mListView;
     private String mSummary;
     private int mValue;
 
@@ -57,7 +54,6 @@ public class ColorListDialogPref extends DialogPreference {
 
         /** Disable buttons, we choose color by clicking on it either way */
         super.setPositiveButtonText(null);
-
         mSummary = (String) super.getSummary();
     }
 
@@ -97,10 +93,10 @@ public class ColorListDialogPref extends DialogPreference {
 
     public void setIconChange() {
         /** Create Shape and ImageView, set color and push it into the icon, fast and small */
-        mShapeDraw.getPaint().setColor(mValue);
+   /*     mShapeDraw.getPaint().setColor(mValue);
         ImageView myColorDraw = new ImageView(mContext);
         myColorDraw.setImageDrawable(mShapeDraw);
-        super.setIcon(myColorDraw.getDrawable());
+        super.setIcon(myColorDraw.getDrawable());/  can't update color on change  */
     }
 
     @Override
@@ -138,8 +134,7 @@ public class ColorListDialogPref extends DialogPreference {
         return super.persistInt(value);
     }
 
-    @Override
-    public void notifyChanged() {
+    public void _notifyChanged() {
         super.notifyChanged();
     }
 }

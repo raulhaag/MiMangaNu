@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setColorToBars() {
+        colors = ThemeColors.getColors(pm, getApplicationContext());
         mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

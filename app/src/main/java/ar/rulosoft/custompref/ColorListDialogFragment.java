@@ -58,7 +58,6 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
                 mValue = Color.parseColor(mColorCodeList[position]);
                 parent.persistInt(mValue);
                 parent.setIconChange();
-                parent.notifyChanged();
                 onDialogClosed(true);
                 getDialog().dismiss();
             }
@@ -76,7 +75,7 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
             Integer pushValue = mValue;
            if (parent.callChangeListener(pushValue)) {
                parent.persistInt(pushValue);
-               parent.notifyChanged();
+               parent._notifyChanged();
             }
         }
     //super.onDialogClosed(positiveResult);
