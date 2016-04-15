@@ -34,7 +34,7 @@ import android.widget.TextView;
 import ar.rulosoft.mimanganu.R;
 
 public class ArrayAdapterColor extends ArrayAdapter<String> {
-    private ColorListDialogPref mParent;
+    private ColorListDialogFragment mParent;
     private String[] mColorCodeList;
     private String[] mColorNameList;
 
@@ -48,7 +48,7 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         public ImageView image;
     }
 
-    public ArrayAdapterColor(ColorListDialogPref parent, int resource, int defValue) {
+    public ArrayAdapterColor(ColorListDialogFragment parent, int resource, int defValue) {
         super(parent.getContext(), resource, parent.getCodeList());
         mParent = parent;
         mDefValue = defValue;

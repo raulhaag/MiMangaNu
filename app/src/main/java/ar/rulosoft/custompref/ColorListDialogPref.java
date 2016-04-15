@@ -18,17 +18,15 @@ package ar.rulosoft.custompref;
  * Created by Johndeep on 22.08.15.
  */
 
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-import android.preference.DialogPreference;
-import android.support.annotation.NonNull;
+
+import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 
@@ -75,13 +73,7 @@ public class ColorListDialogPref extends DialogPreference {
         this(context, null);
     }
 
-    public String[] getCodeList() {
-        return mColorCodeList;
-    }
 
-    public String[] getNameList() {
-        return mColorNameList;
-    }
 
     @Override
     public CharSequence getSummary() {
@@ -103,43 +95,7 @@ public class ColorListDialogPref extends DialogPreference {
         }
     }
 
-    @Override
-    protected View onCreateDialogView() {
-        mListView = new ListView(getContext());
-        return (mListView);
-    }
-
-    @Override
-    protected void onBindDialogView(@NonNull View view) {
-        super.onBindDialogView(view);
-        ArrayAdapter<String> color_adapter = new ArrayAdapterColor(this,
-                R.layout.listitem_color, mValue);
-        mListView.setAdapter(color_adapter);
-
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                mValue = Color.parseColor(mColorCodeList[position]);
-                onDialogClosed(true);
-                setIconChange();
-                getDialog().dismiss();
-            }
-        });
-    }
-
-    @Override
-    protected void onDialogClosed(boolean positiveResult) {
-        super.onDialogClosed(positiveResult);
-        if (positiveResult) {
-            Integer pushValue = mValue;
-            if (callChangeListener(pushValue)) {
-                persistInt(pushValue);
-                notifyChanged();
-            }
-        }
-    }
-
-    private void setIconChange() {
+    public void setIconChange() {
         /** Create Shape and ImageView, set color and push it into the icon, fast and small */
         mShapeDraw.getPaint().setColor(mValue);
         ImageView myColorDraw = new ImageView(mContext);
@@ -166,5 +122,24 @@ public class ColorListDialogPref extends DialogPreference {
         }
         mValue = getValue;
         setIconChange();
+    }
+
+    public String[] getCodeList() {
+        return mColorCodeList;
+    }
+
+    public String[] getNameList() {
+        return mColorNameList;
+    }
+
+    @Override
+    public boolean persistInt(int value) {
+        mValue = value;
+        return super.persistInt(value);
+    }
+
+    @Override
+    public void notifyChanged() {
+        super.notifyChanged();
     }
 }

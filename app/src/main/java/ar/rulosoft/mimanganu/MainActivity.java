@@ -51,8 +51,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
             System.exit(0);
         }
-
         colors = ThemeColors.getColors(pm, getApplicationContext());
+        super.onResume();
+    }
+
+    public void setColorToBars() {
         mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -60,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
             window.setNavigationBarColor(colors[0]);
             window.setStatusBarColor(colors[4]);
         }
-        super.onResume();
     }
 
     public void setTitle(String title) {

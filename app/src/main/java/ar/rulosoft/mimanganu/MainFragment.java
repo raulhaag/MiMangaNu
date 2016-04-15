@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.animation.ObjectAnimator;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,6 +44,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Utilities;
 
 /**
@@ -93,9 +95,23 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         super.onResume();
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setPageTransformer(false, new MoreMangasPageTransformer());
-        ((MainActivity) getActivity()).enableHomeButton(false);
-        ((MainActivity) getActivity()).setTitle(getString(R.string.app_name));
-        ((MainActivity)getActivity()).backListener = this;
+        MainActivity activity = (MainActivity) getActivity();
+        activity.colors = ThemeColors.getColors(pm, getActivity());
+        activity.setColorToBars();
+        if (activity.darkTheme != pm.getBoolean("dark_theme", false)) {
+            // re start to apply new theme
+            Intent i = getActivity().getPackageManager()
+                    .getLaunchIntentForPackage(getActivity().getPackageName());
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+            System.exit(0);
+        }
+        activity.enableHomeButton(false);
+        activity.setTitle(getString(R.string.app_name));
+        activity.backListener = this;
+        button_add.setColorNormal(activity.colors[1]);
+        button_add.setColorPressed(activity.colors[3]);
+        button_add.setColorRipple(activity.colors[0]);
     }
 
     @Override
