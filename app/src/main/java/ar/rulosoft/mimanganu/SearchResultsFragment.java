@@ -1,0 +1,111 @@
+package ar.rulosoft.mimanganu;
+
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+
+import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.servers.ServerBase;
+
+public class SearchResultsFragment extends Fragment {
+    public static final String TERM = "termino_busqueda";
+    private String search_term = "";
+    private int serverId;
+    private ProgressBar loading;
+    private ListView list;
+    private boolean darkTheme;
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        setRetainInstance(true);
+        setHasOptionsMenu(true);
+        return inflater.inflate(R.layout.activity_activity_resultado_de_busqueda,container,false);
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedState) {
+        super.onStart();
+        serverId = getArguments().getInt(MainFragment.SERVER_ID);
+        search_term = getArguments().getString(TERM);
+        list = (ListView) getView().findViewById(R.id.result);
+        loading = (ProgressBar) getView().findViewById(R.id.loading);
+        list.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Manga m = (Manga) list.getAdapter().getItem(position);
+                Bundle bundle = new Bundle();
+                bundle.putInt(MainFragment.SERVER_ID, serverId);
+                bundle.putString(DetailsFragment.TITLE, m.getTitle());
+                bundle.putString(DetailsFragment.PATH, m.getPath());
+                DetailsFragment detailsFragment = new DetailsFragment();
+                detailsFragment.setArguments(bundle);
+                ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");
+            }
+        });
+        new PerformSearchTask().execute();
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home: {
+                getActivity().onBackPressed();
+                return true;
+            }
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+
+    public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {
+        public String error = "";
+
+        @Override
+        protected void onPreExecute() {
+            loading.setVisibility(ProgressBar.VISIBLE);
+        }
+
+        @Override
+        protected ArrayList<Manga> doInBackground(Void... params) {
+            ArrayList<Manga> mangas = new ArrayList<>();
+            ServerBase s = ServerBase.getServer(serverId);
+            try {
+                mangas = s.search(search_term);
+            } catch (Exception e) {
+                error = e.getMessage();
+            }
+            return mangas;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Manga> result) {
+            loading.setVisibility(ProgressBar.INVISIBLE);
+            if (error.length() < 2) {
+                if (result != null && !result.isEmpty() && list != null) {
+                    list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, result
+                    ));
+                } else if (result == null || result.isEmpty()) {
+                    Toast.makeText(getActivity(),getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+            }
+            super.onPostExecute(result);
+        }
+    }
+}

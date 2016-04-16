@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void replaceFragment(Fragment fragment, String name) {
         backListener = null;
-        getSupportFragmentManager().beginTransaction()/*.setCustomAnimations(R.anim.fade_in, R.anim.fade_out)/*/.replace(R.id.fragment_container, fragment).addToBackStack(name).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container, fragment).addToBackStack(name).commit();
     }
 
     @Override

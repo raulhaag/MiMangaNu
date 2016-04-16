@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
@@ -155,10 +154,12 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
             @Override
             public boolean onQueryTextSubmit(String st) {
-                Intent intent = new Intent(getActivity(), ActivitySearchResults.class);
-                intent.putExtra(ActivitySearchResults.TERMINO, st);
-                intent.putExtra(MainFragment.SERVER_ID, sBase.getServerID());
-                startActivity(intent);
+                Bundle bundle = new Bundle();
+                bundle.putInt(MainFragment.SERVER_ID, sBase.getServerID());
+                bundle.putString(SearchResultsFragment.TERM, st);
+                SearchResultsFragment detailsFragment = new SearchResultsFragment();
+                detailsFragment.setArguments(bundle);
+                ((MainActivity) getActivity()).replaceFragment(detailsFragment, "SearchFragment");
                 return true;
             }
 
