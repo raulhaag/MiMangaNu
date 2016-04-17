@@ -1,27 +1,26 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -40,16 +39,16 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
-import ar.rulosoft.mimanganu.utils.FragmentUpdateSearchTask;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class MangaFragment extends Fragment {
+public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
     private static final String TAG = "MangaFragment";
     public SwipeRefreshLayout mSwipeRefreshLayout;
     public Manga mManga;
+    SearchForNewsChapters searchTask = new SearchForNewsChapters();
     private Direction mDirection;
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
@@ -59,26 +58,25 @@ public class MangaFragment extends Fragment {
     private int mMangaId, readerType;
     private int chapters_order; // 0 = db | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc
     private Menu menu;
-
-    private FragmentUpdateSearchTask mUpdateSearchTask;
     private ControlInfoNoScroll mInfo;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+        setRetainInstance(true);
         mMangaId = getArguments().getInt(MainFragment.MANGA_ID, -1);
-        return inflater.inflate(R.layout.activity_manga,container,false);
+        return inflater.inflate(R.layout.activity_manga, container, false);
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
+    public void onActivityCreated(final Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         super.onCreate(savedInstanceState);
         if (mMangaId == -1) {
             getActivity().onBackPressed();
         }
-        mManga = Database.getFullManga(getActivity(), mMangaId);
+        mManga = Database.getManga(getActivity(), mMangaId);
         readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
         if (mManga.getReaderType() != 0) {
             readerType = mManga.getReaderType();
@@ -88,17 +86,8 @@ public class MangaFragment extends Fragment {
         mImageLoader = new ImageLoader(getActivity());
         int[] colors = ThemeColors.getColors(pm, getActivity());
         mSwipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getActivity().getWindow();
-            window.setNavigationBarColor(colors[0]);
-            window.setStatusBarColor(colors[4]);
-        }
-        if (savedInstanceState == null) {
-            mUpdateSearchTask = new FragmentUpdateSearchTask();
-            getChildFragmentManager().beginTransaction().add(mUpdateSearchTask, "BUSCAR_NUEVOS").commit();
-        } else {
-            mUpdateSearchTask = (FragmentUpdateSearchTask) getChildFragmentManager().findFragmentByTag("BUSCAR_NUEVOS");
-            if (mUpdateSearchTask.getStatus() == AsyncTask.Status.RUNNING) {
+        if (savedInstanceState != null) {
+            if (searchTask.getStatus() == AsyncTask.Status.RUNNING) {
                 mSwipeRefreshLayout.post(new Runnable() {
                     @Override
                     public void run() {
@@ -110,15 +99,18 @@ public class MangaFragment extends Fragment {
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mUpdateSearchTask.updateList(mManga, MangaFragment.this);
+                if ((searchTask.getStatus() != AsyncTask.Status.RUNNING)) {
+                    searchTask = new SearchForNewsChapters();
+                    searchTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                }
             }
         });
         mListView.setDivider(new ColorDrawable(colors[0]));
         mListView.setDividerHeight(1);
         mInfo = new ControlInfoNoScroll(getActivity());
         mListView.addHeaderView(mInfo);
-        mInfo.setColor(((MainActivity)(getActivity())).darkTheme, colors[0]);
-        ChapterAdapter.setColor(((MainActivity)(getActivity())).darkTheme, colors[1], colors[0]);
+        mInfo.setColor(((MainActivity) (getActivity())).darkTheme, colors[0]);
+        ChapterAdapter.setColor(((MainActivity) (getActivity())).darkTheme, colors[1], colors[0]);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -147,11 +139,11 @@ public class MangaFragment extends Fragment {
             }
 
             @Override
-            public boolean onActionItemClicked(android.view.ActionMode mode, MenuItem item) {
+            public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
 
                 final SparseBooleanArray selection = mChapterAdapter.getSelection();
                 final ServerBase s = ServerBase.getServer(mManga.getServerId());
-
+                boolean finish = true;
                 switch (item.getItemId()) {
                     case R.id.select_all:
                         mChapterAdapter.selectAll();
@@ -189,12 +181,14 @@ public class MangaFragment extends Fragment {
                         }
                         break;
                     case R.id.delete_chapter:
+                        finish = false;
                         AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
                         dlgAlert.setMessage(getString(R.string.delete_comfirm));
                         dlgAlert.setTitle(R.string.app_name);
                         dlgAlert.setCancelable(true);
                         dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
+                                SparseBooleanArray selection = mChapterAdapter.getSelection();
                                 int[] selected = new int[selection.size()];
                                 for (int j = 0; j < selection.size(); j++) {
                                     selected[j] = selection.keyAt(j);
@@ -204,6 +198,7 @@ public class MangaFragment extends Fragment {
                                     Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                                     c.delete(getActivity(), mManga, s);
                                     mChapterAdapter.remove(c);
+                                    mode.finish();
                                 }
                             }
                         });
@@ -235,7 +230,8 @@ public class MangaFragment extends Fragment {
                         break;
                 }
                 mChapterAdapter.notifyDataSetChanged();
-                mode.finish();
+                if (finish)
+                    mode.finish();
                 return false;
             }
 
@@ -247,7 +243,6 @@ public class MangaFragment extends Fragment {
         });
 
         getActivity().setTitle(mManga.getTitle());
-        loadChapters(mManga.getChapters());
         Database.updateMangaRead(getActivity(), mManga.getId());
         Database.updateNewMangas(getActivity(), mManga, -100);
         loadInfo(mManga);
@@ -261,8 +256,7 @@ public class MangaFragment extends Fragment {
                 infoExtra = infoExtra +
                         getResources().getString(R.string.finalizado);
             } else {
-                infoExtra = infoExtra +
-                        getResources().getString(R.string.en_progreso);
+                infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
             }
             mInfo.setStatus(infoExtra);
             mInfo.setSynopsis(manga.getSynopsis());
@@ -283,8 +277,12 @@ public class MangaFragment extends Fragment {
 
     public void loadChapters(ArrayList<Chapter> chapters) {
         int fvi = 0;
-        if (mChapterAdapter != null) fvi = mListView.getFirstVisiblePosition();
-        mChapterAdapter = new ChapterAdapter(getActivity(), chapters,this);
+        if (mChapterAdapter != null) {
+            fvi = mListView.getFirstVisiblePosition();
+            mChapterAdapter.replaceData(chapters);
+        } else {
+            mChapterAdapter = new ChapterAdapter(getActivity(), chapters, this);
+        }
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
             mListView.setSelection(mManga.getLastIndex());
@@ -298,16 +296,15 @@ public class MangaFragment extends Fragment {
         Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
         super.onPause();
     }
-    //TODO
-    /*
+
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             menu.performIdentifierAction(R.id.submenu, 0);
             return true;
-        } else
-            return super.onKeyUp(keyCode, event);
-    }/**/
+        }
+        return false;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -390,7 +387,7 @@ public class MangaFragment extends Fragment {
                 Database.updateManga(getActivity(), mManga, false);
                 break;
             case R.id.action_view_download: {
-                ((MainActivity)getActivity()).replaceFragment(new DownloadsFragment(),"DownloadFragment");
+                ((MainActivity) getActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
                 break;
             }
             case R.id.action_descargar_no_leidos: {
@@ -401,8 +398,7 @@ public class MangaFragment extends Fragment {
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         ArrayList<Chapter> chapters =
-                                Database.getChapters(getActivity(), MangaFragment.this.mMangaId,
-                                        Database.COL_CAP_STATE + " < 1", true);
+                                Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " < 1", true);
                         for (Chapter c : chapters) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
@@ -467,13 +463,13 @@ public class MangaFragment extends Fragment {
                 Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
                 break;
         }
-        ((MainActivity)getActivity()).enableHomeButton(true);
-        ((MainActivity)getActivity()).setTitle(mManga.getTitle());
-        mChapterAdapter.replaceData(chapters);
+        ((MainActivity) getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).setTitle(mManga.getTitle());
+        loadChapters(chapters);
     }
 
     @Override
-    public void  onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_manga, menu);
         mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
         mMenuItemReaderType = menu.findItem(R.id.action_reader);
@@ -568,4 +564,62 @@ public class MangaFragment extends Fragment {
             super.onPostExecute(result);
         }
     }
+
+    public class SearchForNewsChapters extends AsyncTask<Void, Void, Integer> {
+        boolean running = false;
+        SearchForNewsChapters actual = null;
+        int mangaId = 0;
+        String msg;
+        String orgMsg;
+        String errorMsg;
+
+        public SearchForNewsChapters setActivity(final MangaFragment activity) {
+            return this;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            running = true;
+            actual = this;
+            msg = getResources().getString(R.string.buscandonuevo);
+            orgMsg = getActivity().getTitle().toString();
+            getActivity().setTitle(msg + " " + orgMsg);
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void[] params) {
+            int result = 0;
+            ServerBase s = ServerBase.getServer(mManga.getServerId());
+            mangaId = mManga.getId();
+            try {
+                int diff = s.searchForNewChapters(mManga.getId(), getActivity());
+                result += diff;
+            } catch (Exception e) {
+                if (e.getMessage() != null) {
+                    errorMsg = getResources().getString(R.string.error) + ":" + e.getMessage();
+                } else {
+                    errorMsg = getResources().getString(R.string.error);
+                }
+            }
+            return result;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            Manga manga = Database.getFullManga(getActivity(), mangaId);
+            loadChapters(manga.getChapters());
+            loadInfo(manga);
+            mSwipeRefreshLayout.setRefreshing(false);
+            getActivity().setTitle(orgMsg);
+            if (result > 0) {
+                Toast.makeText(getActivity(), result + getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
+            } else if (errorMsg != null && errorMsg.length() > 2) {
+                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+            }
+            running = false;
+            actual = null;
+        }
+    }
+
 }

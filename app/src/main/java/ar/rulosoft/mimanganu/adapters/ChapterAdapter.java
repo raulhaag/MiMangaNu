@@ -205,6 +205,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     @Override
     public void remove(Chapter object) {
         chapters.remove(object);
+        notifyDataSetChanged();
     }
 
     @Override

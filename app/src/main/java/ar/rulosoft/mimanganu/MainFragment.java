@@ -22,6 +22,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -50,7 +51,7 @@ import ar.rulosoft.mimanganu.utils.Utilities;
 /**
  * Created by Raul on 09/04/2016.
  */
-public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener {
+public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -84,9 +85,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public void onStart() {
         super.onStart();
         mSectionsPagerAdapter = new SectionsPagerAdapter();
-        mViewPager = (ViewPager) getView().findViewById(R.id.pager);
-        button_add = (FloatingActionButton) getView().findViewById(R.id.button_add);
-        button_add.setOnClickListener(this);
+        if (getView() != null) {
+            mViewPager = (ViewPager) getView().findViewById(R.id.pager);
+            button_add = (FloatingActionButton) getView().findViewById(R.id.button_add);
+            button_add.setOnClickListener(this);
+        }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
 
@@ -109,6 +112,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.enableHomeButton(false);
         activity.setTitle(getString(R.string.app_name));
         activity.backListener = this;
+        activity.keyUpListener = this;
         button_add.setColorNormal(activity.colors[1]);
         button_add.setColorPressed(activity.colors[3]);
         button_add.setColorRipple(activity.colors[0]);
@@ -166,7 +170,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 setListManga(true);
             }
             case R.id.action_settings: {
-                ((MainActivity)getActivity()).replaceFragment(new PreferencesFragment(),"PreferencesFragment");
+                ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");
                 break;
             }
             case R.id.sort_last_read: {
@@ -226,10 +230,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
         RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if (((MainActivity) getActivity()).darkTheme) {
-            ((CardView) viewGroup.findViewById(R.id.cardview_server_container))
-                    .setCardBackgroundColor(ContextCompat.getColor(getActivity(), R.color.background_floating_material_dark));
-        }
         ServerRecAdapter adapter = new ServerRecAdapter(ServerBase.getServers());
         server_list.setAdapter(adapter);
         adapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
@@ -401,7 +401,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public boolean onBackPressed() {
-        if(mViewPager.getCurrentItem() == 1){
+        if (mViewPager.getCurrentItem() == 1) {
             mViewPager.setCurrentItem(0);
             return true;
         }
@@ -424,7 +424,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            ViewGroup viewGroup = null;
+            ViewGroup viewGroup;
             if (pages[position] == null)
                 if (position == 0) {
                     viewGroup = getMMView(container);
@@ -451,7 +451,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         public boolean isViewFromObject(View view, Object object) {
-            return view == ((ViewGroup) object);
+            return view == object;
         }
 
         //deprecated but error if not found
@@ -459,6 +459,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         public void destroyItem(View container, int position, Object object) {
             destroyItem((ViewGroup) container, position, object);
         }
+    }
+
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            menu.performIdentifierAction(R.id.submenu, 0);
+            return true;
+        }
+        return false;
     }
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {

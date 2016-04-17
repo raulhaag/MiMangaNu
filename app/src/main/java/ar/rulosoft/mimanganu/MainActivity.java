@@ -10,6 +10,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
 import android.view.Window;
 
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -19,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     public ActionBar mActBar;
     boolean darkTheme;
     OnBackListener backListener;
+    OnKeyUpListener keyUpListener;
     private SharedPreferences pm;
 
     @Override
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        super.onResume();
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
             // re start to apply new theme
             Intent i = getPackageManager()
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             System.exit(0);
         }
         colors = ThemeColors.getColors(pm, getApplicationContext());
-        super.onResume();
+        setColorToBars();
     }
 
     public void setColorToBars() {
@@ -69,18 +72,21 @@ public class MainActivity extends AppCompatActivity {
     public void setTitle(String title) {
         if (mActBar == null)
             mActBar = getSupportActionBar();
-        mActBar.setTitle(title);
+        if (mActBar != null)
+            mActBar.setTitle(title);
     }
 
     public void enableHomeButton(boolean enable) {
         if (mActBar == null)
             mActBar = getSupportActionBar();
-        mActBar.setDisplayHomeAsUpEnabled(enable);
+        if (mActBar != null)
+            mActBar.setDisplayHomeAsUpEnabled(enable);
     }
 
-    public void replaceFragment(Fragment fragment, String name) {
+    public void replaceFragment(Fragment fragment, String tag) {
         backListener = null;
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container, fragment).addToBackStack(name).commit();
+        keyUpListener = null;
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container, fragment).addToBackStack(tag).commit();
     }
 
     @Override
@@ -99,11 +105,19 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyUpListener != null)
+            if (!keyUpListener.onKeyUp(keyCode, event))
+                return super.onKeyUp(keyCode, event);
+        return super.onKeyUp(keyCode, event);
+    }
+
     public interface OnBackListener {
         boolean onBackPressed();
     }
 
-    public interface OnKeyListener {
-        boolean onKeyPressed();
+    public interface OnKeyUpListener {
+        boolean onKeyUp(int keyCode, KeyEvent event);
     }
 }
