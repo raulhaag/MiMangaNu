@@ -18,29 +18,29 @@ package ar.rulosoft.custompref;
  * Created by Johndeep on 22.08.15.
  */
 
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
-
 import android.support.v7.preference.DialogPreference;
+import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 
 import ar.rulosoft.mimanganu.R;
 
 public class ColorListDialogPref extends DialogPreference {
+    ImageView colorBox;
     private Context mContext = getContext();
     private String[] mColorCodeList;
     private String[] mColorNameList;
     private ShapeDrawable mShapeDraw;
-
     private String mSummary;
     private int mValue;
 
     public ColorListDialogPref(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs);
+        setLayoutResource(R.layout.preference_color_chose_widget);
 
         /** Get and prepare list of colors */
         mColorCodeList = mContext.getResources().getStringArray(R.array.color_codes);
@@ -70,7 +70,6 @@ public class ColorListDialogPref extends DialogPreference {
     }
 
 
-
     @Override
     public CharSequence getSummary() {
         final Integer entry = mValue;
@@ -91,12 +90,19 @@ public class ColorListDialogPref extends DialogPreference {
         }
     }
 
+    @Override
+    public void onBindViewHolder(PreferenceViewHolder holder) {
+        super.onBindViewHolder(holder);
+        colorBox = (ImageView) holder.findViewById(R.id.color_icon);
+        setIconChange();
+    }
+
     public void setIconChange() {
-        /** Create Shape and ImageView, set color and push it into the icon, fast and small */
-   /*     mShapeDraw.getPaint().setColor(mValue);
-        ImageView myColorDraw = new ImageView(mContext);
-        myColorDraw.setImageDrawable(mShapeDraw);
-        super.setIcon(myColorDraw.getDrawable());/  can't update color on change  */
+        mShapeDraw.getPaint().setColor(mValue);
+        if (colorBox != null) {
+            colorBox.setImageDrawable(null);
+            colorBox.setImageDrawable(mShapeDraw);
+        }
     }
 
     @Override

@@ -152,7 +152,7 @@
     <string name="read_next">You want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes 1.45\n\t*Added senmanga raw\n\t* A lot of minor fixes to improve stability/performance\n\t* Improve download manager</string>
+    <string name="update_message">Changes 1.46\n\t*New TMO version\n\t*Improve performance\n\t*Settings rewrite\n\t* A really huge quantity of general improves\n\t* Updated to last SDK version.</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>

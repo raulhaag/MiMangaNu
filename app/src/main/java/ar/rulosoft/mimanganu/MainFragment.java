@@ -11,11 +11,9 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -49,8 +47,9 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Utilities;
 
 /**
- * Created by Raul on 09/04/2016.
+ * Created by Raul
  */
+
 public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener {
 
     public static final String SERVER_ID = "server_id";
@@ -145,9 +144,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         /** Set sort mode */
         int sortList[] = {
-                R.id.sort_last_read, R.id.sort_last_read_asc,
-                R.id.sort_name, R.id.sort_name_asc,
-                R.id.sort_author, R.id.sort_author_asc,
+                R.id.sort_last_read, R.id.sort_last_read_desc,
+                R.id.sort_name, R.id.sort_name_desc,
+                R.id.sort_author, R.id.sort_author_desc,
                 R.id.sort_finished, R.id.sort_finished_asc
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
@@ -177,7 +176,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 setListManga(true);
                 break;
             }
-            case R.id.sort_last_read_asc: {
+            case R.id.sort_last_read_desc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 1).apply();
                 setListManga(true);
@@ -189,7 +188,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 setListManga(true);
                 break;
             }
-            case R.id.sort_name_asc: {
+            case R.id.sort_name_desc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 3).apply();
                 setListManga(true);
@@ -201,7 +200,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 setListManga(true);
                 break;
             }
-            case R.id.sort_author_asc: {
+            case R.id.sort_author_desc: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 5).apply();
                 setListManga(true);
@@ -470,9 +469,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
         final ArrayList<Manga> mList = Database.getMangasForUpdates(getActivity());
-        int threads = Integer.parseInt(PreferenceManager
-                .getDefaultSharedPreferences(getActivity())
-                .getString("update_threads_manual", "2"));
+        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
         int ticket = threads;
         int result = 0;
         int numNow = 0;

@@ -2,6 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginLeft="16sp"
+    android:layout_marginRight="16sp"
     android:background="?android:attr/selectableItemBackground"
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
@@ -11,6 +13,7 @@
         android:id="@+android:id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:singleLine="false"
         android:text="Title"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
@@ -18,6 +21,7 @@
         android:id="@android:id/summary"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:singleLine="false"
         android:text="Subtitle" />
 
     <SeekBar

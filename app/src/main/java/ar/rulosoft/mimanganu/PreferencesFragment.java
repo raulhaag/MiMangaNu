@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -12,9 +11,6 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.fedorvlasov.lazylist.FileCache;
 
@@ -149,7 +145,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         prefLicense.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                ((MainActivity)getActivity()).replaceFragment(new LicenseFragment(),"licence_fragment");
+                ((MainActivity) getActivity()).replaceFragment(new LicenseFragment(), "licence_fragment");
                 return false;
             }
         });
@@ -160,6 +156,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).setTitle(getString(R.string.action_settings));
     }
 
     @Override

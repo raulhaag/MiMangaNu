@@ -27,6 +27,11 @@ Downloads
 
 Changelog
 ---------
+Cambios 1.46
+* Nueva versión TMO
+* Mejorar el rendimiento
+* Preferences reescritas \n\t* realmente una enorme cantidad mejoras pequeñas
+* Actualizado a la ultima version del SDK
 
 Cambios 1.45
 * Agregado senmanga raw

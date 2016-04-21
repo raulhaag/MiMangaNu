@@ -47,8 +47,10 @@ public class TuMangaOnline extends ServerBase {
         int last_page = object.getInt("last_page");
         result.addAll(0,getChaptersJsonArray(object.getJSONArray("data"), m.getPath()));
         for (int i = 2; i <= last_page; i++) {
-            object = new JSONObject(getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + m.getPath() + "/capitulos?page=" + i + "&tomo=-1"));
-            result.addAll(0,getChaptersJsonArray(object.getJSONArray("data"), m.getPath()));
+            try {
+                object = new JSONObject(getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + m.getPath() + "/capitulos?page=" + i + "&tomo=-1"));
+                result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), m.getPath()));
+            }catch (Exception ignore){}
         }
         m.setChapters(result);
     }

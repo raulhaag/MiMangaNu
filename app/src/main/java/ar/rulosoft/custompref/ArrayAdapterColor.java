@@ -69,7 +69,7 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
             // configure view holder
             ViewHolder viewHolder = new ViewHolder();
             viewHolder.object = (LinearLayout) rowView.findViewById(R.id.colorObject);
-            viewHolder.image = (ImageView) rowView.findViewById(R.id.colorIcon);
+            viewHolder.image = (ImageView) rowView.findViewById(R.id.color_icon);
             viewHolder.text = (TextView) rowView.findViewById(R.id.colorText);
             rowView.setTag(viewHolder);
         }

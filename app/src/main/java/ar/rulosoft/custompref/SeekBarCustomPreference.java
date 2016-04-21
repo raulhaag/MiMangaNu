@@ -42,7 +42,7 @@ public class SeekBarCustomPreference extends DialogPreference {
         mFC = -mMin;
         a.recycle();
         mSummary = (String) super.getSummary();
-        setLayoutResource(R.layout.preference_seekbar_layout);
+        setLayoutResource(R.layout.preference_seekbar_widget_layout);
     }
 
 
