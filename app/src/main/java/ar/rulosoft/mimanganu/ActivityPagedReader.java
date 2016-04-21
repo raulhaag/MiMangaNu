@@ -795,8 +795,7 @@ public class ActivityPagedReader extends AppCompatActivity
                     } catch (OutOfMemoryError oom) {
                         try {
                             Thread.sleep(3000);//time to free memory
-                        } catch (InterruptedException e) {
-                            // Nothing
+                        } catch (InterruptedException ignored) {
                         }
                     }
                 }

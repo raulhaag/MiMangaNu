@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"></LinearLayout>
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
-
-        android:paddingTop="24dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical|center"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp"
         android:text="@string/read_next"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:gravity="center_vertical|center" />
+        android:textAppearance="?android:attr/textAppearanceLarge" />
 
     <CheckBox
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp"
-        android:paddingRight="24dp"
-        android:paddingLeft="0dp"
+        android:id="@+id/delete_images_oc"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/delete_on_chapter_change"
-        android:id="@+id/delete_images_oc"
         android:layout_gravity="center_horizontal|right"
-        android:checked="false" />
+        android:checked="false"
+        android:paddingBottom="24dp"
+        android:paddingLeft="0dp"
+        android:paddingRight="24dp"
+        android:paddingTop="24dp"
+        android:text="@string/delete_on_chapter_change" />
 
 </LinearLayout>

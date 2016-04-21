@@ -142,9 +142,9 @@
     <string name="sort_recent">Recently read</string>
     <string name="sort_title">Title</string>
     <string name="sort_author">Author</string>
-    <string name="sort_recent_asc">Recently read (oldest)</string>
-    <string name="sort_title_asc">Title (desc.)</string>
-    <string name="sort_author_asc">Author (desc.)</string>
+    <string name="sort_recent_desc">Recently read (oldest)</string>
+    <string name="sort_title_desc">Title (z-a)</string>
+    <string name="sort_author_desc">Author (z–a)</string>
     <string name="more_options">More options</string>
     <string name="color_reader">Reader Color</string>
     <string name="color_reader_sub">The color in the reader mode</string>
@@ -178,7 +178,7 @@
     <string name="close">Close</string>
     <string name="retry">Retry</string>
     <string name="sort_added_db">Sort as added on db</string>
-    <string name="sort_number">Sort by chapter number</string>
-    <string name="sort_number_asc">Sort by chapter number ASC</string>
+    <string name="sort_number">Sort by chapter number (9–0)</string>
+    <string name="sort_number_asc">Sort by chapter number </string>
     <string name="delete_comfirm">Are you sure to delete these chapters?</string>
 </resources>

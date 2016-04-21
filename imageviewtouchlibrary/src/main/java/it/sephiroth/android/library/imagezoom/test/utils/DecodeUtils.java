@@ -144,8 +144,7 @@ public class DecodeUtils {
             h = bitmapW;
         }
 
-        final int sampleSize = (int) Math.ceil(Math.max(w / maxW, h / maxH));
-        return sampleSize;
+        return (int) Math.ceil(Math.max(w / maxW, h / maxH));
     }
 
     /**

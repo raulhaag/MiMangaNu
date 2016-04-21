@@ -130,13 +130,13 @@
     <string name="vertical">Вертикально</string>
     <string name="scroll_speed">скорость прокрутки</string>
     <string name="theme_title">Используйте темно тему</string>
-    <string name="sort_title_asc">Заголовок по убыванию</string>
+    <string name="sort_title_desc">Заголовок по убыванию</string>
     <string name="sort_title">название</string>
     <string name="sort">порядок</string>
-    <string name="sort_recent_asc">Не недавно прочитал</string>
+    <string name="sort_recent_desc">Не недавно прочитал</string>
     <string name="sort_recent">Недавно прочитал</string>
     <string name="sort_author">автор</string>
-    <string name="sort_author_asc">Автор по убыванию</string>
+    <string name="sort_author_desc">Автор по убыванию</string>
     <string name="more_options">Больше вариантов </string>
     <string name="about">насчет</string>
     <string name="apachelic">Apache Лицензия</string>

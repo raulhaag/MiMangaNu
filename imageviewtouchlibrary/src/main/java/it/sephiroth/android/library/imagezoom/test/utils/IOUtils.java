@@ -25,7 +25,7 @@ public class IOUtils {
         if (c == null) return;
         try {
             c.close();
-        } catch (final Throwable t) {
+        } catch (final Throwable ignored) {
         }
     }
 
@@ -33,7 +33,7 @@ public class IOUtils {
         if (c == null) return;
         try {
             c.close();
-        } catch (final Throwable t) {
+        } catch (final Throwable ignored) {
         }
     }
 
@@ -41,7 +41,7 @@ public class IOUtils {
         if (cursor == null) return;
         try {
             if (cursor != null) cursor.close();
-        } catch (Throwable t) {
+        } catch (Throwable ignored) {
         }
     }
 

@@ -50,7 +50,7 @@ import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
-public class ActivityReader extends AppCompatActivity implements StateChangeListener,DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
+public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener {
 
     // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
@@ -385,8 +385,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 Database.updateChapter(ActivityReader.this, mChapter);
             } else
                 Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
-                DownloadPoolService.detachListener(mChapter.getId());
-        }catch (Exception e){
+            DownloadPoolService.detachListener(mChapter.getId());
+        } catch (Exception ignored) {
         }
         super.onPause();
     }
@@ -519,7 +519,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    DownloadPoolService.retryError(getApplicationContext(),mChapter, ActivityReader.this);
+                                    DownloadPoolService.retryError(getApplicationContext(), mChapter, ActivityReader.this);
                                     dialog.dismiss();
                                     DownloadPoolService.setDownloadListener(ActivityReader.this);
                                 }
@@ -622,7 +622,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
     }
 
-    public void reDownloadCurrentImage(){
+    public void reDownloadCurrentImage() {
         ReDownloadImage r = new ReDownloadImage();
         r.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -678,6 +678,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         int idx;
         String path;
         String error = "";
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -699,7 +700,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 new Thread(s).start();
             } catch (Exception e) {
                 error = e.getMessage();
-                if(error == null){
+                if (error == null) {
                     error = "null";
                 }
             }
@@ -709,8 +710,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if(error.length() > 3){
-                Toast.makeText(ActivityReader.this,error,Toast.LENGTH_LONG).show();
+            if (error.length() > 3) {
+                Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
             }
         }
     }

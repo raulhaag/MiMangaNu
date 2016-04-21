@@ -27,20 +27,20 @@
                             android:id="@+id/sort_last_read"
                             android:title="@string/sort_recent" />
                         <item
-                            android:id="@+id/sort_last_read_asc"
-                            android:title="@string/sort_recent_asc" />
+                            android:id="@+id/sort_last_read_desc"
+                            android:title="@string/sort_recent_desc" />
                         <item
                             android:id="@+id/sort_name"
                             android:title="@string/sort_title" />
                         <item
-                            android:id="@+id/sort_name_asc"
-                            android:title="@string/sort_title_asc" />
+                            android:id="@+id/sort_name_desc"
+                            android:title="@string/sort_title_desc" />
                         <item
                             android:id="@+id/sort_author"
                             android:title="@string/sort_author" />
                         <item
-                            android:id="@+id/sort_author_asc"
-                            android:title="@string/sort_author_asc" />
+                            android:id="@+id/sort_author_desc"
+                            android:title="@string/sort_author_desc" />
                         <item
                             android:id="@+id/sort_finished"
                             android:title="@string/finalizado" />

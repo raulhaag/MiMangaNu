@@ -100,11 +100,11 @@
     <string name="stay_awake_off">Non tenere lo schermo acceso</string>
     <string name="stay_awake_on">Tieni lo schermo acceso</string>
     <string name="sort_title">Titolo</string>
-    <string name="sort_title_asc">Titolo (z-a)</string>
-    <string name="sort_recent_asc">Non letto di recente</string>
+    <string name="sort_title_desc">Titolo (z-a)</string>
+    <string name="sort_recent_desc">Non letto di recente</string>
     <string name="sort_recent">Letto di recente</string>
     <string name="sort_author">Autore </string>
-    <string name="sort_author_asc">Autore (z-a)</string>
+    <string name="sort_author_desc">Autore (z-a)</string>
     <string name="notification_sound_subtitle">Quando vengono trovati nuovi manga.</string>
     <string name="notification_sound_title">Notifica sonora</string>
     <string name="nodisponible">N/D</string>

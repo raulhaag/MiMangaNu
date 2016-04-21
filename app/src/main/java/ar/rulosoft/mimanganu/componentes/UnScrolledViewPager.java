@@ -17,8 +17,7 @@ public class UnScrolledViewPager extends ViewPager {
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
         try {
             return  ((PageAdapter) getAdapter()).getCurrentPage().canScroll(dx);
-        } catch (Exception e) {
-            //is last page nothing to do
+        } catch (Exception ignored) {
         }
         return super.canScroll(v, checkV, dx, x, y);
     }

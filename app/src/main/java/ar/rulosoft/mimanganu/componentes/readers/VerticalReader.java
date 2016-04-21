@@ -287,7 +287,7 @@ public class VerticalReader extends Reader {
                     m.postScale(mScaleFactor, mScaleFactor);
                     try {
                         canvas.drawBitmap(segment, m, mPaint);
-                    } catch (Exception e) {}
+                    } catch (Exception ignored) {}
                 }
             }
         }
