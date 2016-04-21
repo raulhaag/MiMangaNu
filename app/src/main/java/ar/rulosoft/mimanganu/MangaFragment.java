@@ -246,7 +246,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         getActivity().setTitle(mManga.getTitle());
         Database.updateMangaRead(getActivity(), mManga.getId());
-        Database.updateNewMangas(getActivity(), mManga, -100);
         loadInfo(mManga);
         chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
     }
@@ -450,24 +449,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     @Override
     public void onResume() {
         super.onResume();
-        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId);
-        switch (chapters_order) {
-            case 1:
-                Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
-                break;
-            case 2:
-                Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
-                break;
-            case 3:
-                Collections.sort(chapters, Chapter.Comparators.TITLE_DSC);
-                break;
-            case 4:
-                Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
-                break;
-        }
         ((MainActivity) getActivity()).enableHomeButton(true);
         ((MainActivity) getActivity()).setTitle(mManga.getTitle());
-        loadChapters(chapters);
+        new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -620,4 +604,31 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
+    public class ChapterLoader extends AsyncTask<Void, Void, Void> {
+        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId);
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            switch (chapters_order) {
+                case 1:
+                    Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
+                    break;
+                case 2:
+                    Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
+                    break;
+                case 3:
+                    Collections.sort(chapters, Chapter.Comparators.TITLE_DSC);
+                    break;
+                case 4:
+                    Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
+                    break;
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            loadChapters(chapters);
+        }
+    }
 }

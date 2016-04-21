@@ -140,7 +140,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         inflater.inflate(R.menu.view_mismangas, menu);
 
         /** Set hide/unhide checkbox */
-        boolean checkedRead = pm.getInt(MisMangasFragment.SELECT_MODE, MisMangasFragment.MODE_SHOW_ALL) > 0;
+        boolean checkedRead = pm.getInt(SELECT_MODE, MODE_SHOW_ALL) > 0;
         menu.findItem(R.id.action_hide_read).setChecked(checkedRead);
 
         /** Set sort mode */
@@ -163,9 +163,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
             case R.id.action_hide_read: {
                 item.setChecked(!item.isChecked());
-                pm.edit().putInt(MisMangasFragment.SELECT_MODE,
-                        item.isChecked() ?
-                                MisMangasFragment.MODE_HIDE_READ : MisMangasFragment.MODE_SHOW_ALL
+                pm.edit().putInt(SELECT_MODE,item.isChecked() ? MODE_HIDE_READ : MODE_SHOW_ALL
                 ).apply();
                 setListManga(true);
             }
