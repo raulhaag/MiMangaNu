@@ -185,11 +185,11 @@ public class ActivityPagedReader extends AppCompatActivity
         };
 
         if (mDirection == Direction.VERTICAL) {
-            setContentView(R.layout.activity_lector_v);
+            setContentView(R.layout.activity_paged_reader_v);
             mViewPagerV = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
             mViewPagerV.setOnPageChangeListener(pageChangeListener);
         } else {
-            setContentView(R.layout.activity_lector);
+            setContentView(R.layout.activity_paged_reader);
             mViewPager = (UnScrolledViewPager) findViewById(R.id.pager);
             mViewPager.addOnPageChangeListener(pageChangeListener);
         }
@@ -719,7 +719,7 @@ public class ActivityPagedReader extends AppCompatActivity
             String infService = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater li =
                     (LayoutInflater) getContext().getSystemService(infService);
-            li.inflate(R.layout.fragment_activity_lector_pagina, this, true);
+            li.inflate(R.layout.view_reader_page, this, true);
             visor = (ImageViewTouch) findViewById(R.id.visor);
             visor.setDisplayType(mScreenFit);
             visor.setTapListener(ActivityPagedReader.this);

@@ -14,7 +14,7 @@ import android.support.v4.app.NotificationCompat;
 
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.ActivityMisMangas;
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -154,7 +154,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 if (sound) {
                     builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
                 }
-                Intent notificationIntent = new Intent(context, ActivityMisMangas.class);
+                Intent notificationIntent = new Intent(context, MainActivity.class);
                 PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent,
                         PendingIntent.FLAG_UPDATE_CURRENT);
                 builder.setContentIntent(contentIntent);

@@ -4,7 +4,6 @@ import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -65,7 +64,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         serverID = getArguments().getInt(MainFragment.SERVER_ID);
-        return inflater.inflate(R.layout.activity_server_visual_navegacion, container, false);
+        return inflater.inflate(R.layout.fragment_server_visual_list, container, false);
     }
 
     @Override

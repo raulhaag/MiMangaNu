@@ -51,7 +51,7 @@ public class DetailsFragment extends Fragment {
         path = getArguments().getString(PATH);
         id = getArguments().getInt(MainFragment.SERVER_ID);
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.activity_detalles, container, false);
+        return inflater.inflate(R.layout.fragment_details, container, false);
     }
 
     @Override

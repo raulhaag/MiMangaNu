@@ -49,7 +49,6 @@
             android:label="@string/title_activity_vertical_reader"
             android:largeHeap="true"
             android:theme="@style/AppTheme.Dark.NoActionbar" />
-        <activity android:name=".ActivityMisMangas"></activity>
     </application>
 
 </manifest>

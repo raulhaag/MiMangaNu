@@ -33,7 +33,7 @@ public class SearchResultsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.activity_activity_resultado_de_busqueda,container,false);
+        return inflater.inflate(R.layout.fragment_search_result,container,false);
     }
 
     @Override

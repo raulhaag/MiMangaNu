@@ -38,7 +38,7 @@ public class ServerListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        return inflater.inflate(R.layout.activity_server_lista_de_mangas, container, false);
+        return inflater.inflate(R.layout.frament_server_plain_list, container, false);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class DownloadsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.activity_descargas,container,false);
+        return inflater.inflate(R.layout.fragment_downloads,container,false);
     }
 
     @Override

@@ -81,8 +81,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         if (mManga.getReaderType() != 0) {
             readerType = mManga.getReaderType();
         }
-        mListView = (ListView) getView().findViewById(R.id.lista);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+        if (getView() != null) {
+            mListView = (ListView) getView().findViewById(R.id.lista);
+            mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+        }
         mImageLoader = new ImageLoader(getActivity());
         int[] colors = ThemeColors.getColors(pm, getActivity());
         mSwipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
@@ -418,27 +420,27 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 break;
             }
             case R.id.sort_title_asc:
-                pm.edit().putInt(CHAPTERS_ORDER, 4).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 4).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
                 break;
 
             case R.id.sort_number:
-                pm.edit().putInt(CHAPTERS_ORDER, 1).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 1).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DSC);
                 break;
 
             case R.id.sort_title:
-                pm.edit().putInt(CHAPTERS_ORDER, 3).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 3).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DSC);
                 break;
 
             case R.id.sort_number_asc:
-                pm.edit().putInt(CHAPTERS_ORDER, 2).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 2).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
                 break;
 
             case R.id.sort_added_db:
-                pm.edit().putInt(CHAPTERS_ORDER, 0).commit();
+                pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED);
                 break;
         }
@@ -572,10 +574,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         String msg;
         String orgMsg;
         String errorMsg;
-
-        public SearchForNewsChapters setActivity(final MangaFragment activity) {
-            return this;
-        }
 
         @Override
         protected void onPreExecute() {
