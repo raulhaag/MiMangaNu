@@ -342,14 +342,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             case R.id.action_check_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, true);
-                mManga = Database.getFullManga(getActivity(), this.mMangaId);
-                loadChapters(mManga.getChapters());
+                new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.action_uncheck_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, false);
-                mManga = Database.getFullManga(getActivity(), this.mMangaId);
-                loadChapters(mManga.getChapters());
+                new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.action_sentido: {
@@ -589,9 +587,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onPostExecute(Integer result) {
-            Manga manga = Database.getFullManga(getActivity(), mangaId);
-            loadChapters(manga.getChapters());
+            Manga manga = Database.getManga(getActivity(), mangaId);
             loadInfo(manga);
+            new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             mSwipeRefreshLayout.setRefreshing(false);
             getActivity().setTitle(orgMsg);
             if (result > 0) {
@@ -605,10 +603,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     public class ChapterLoader extends AsyncTask<Void, Void, Void> {
-        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId);
+        ArrayList<Chapter> chapters;
 
         @Override
         protected Void doInBackground(Void... params) {
+            chapters = Database.getChapters(getActivity(), mMangaId);
             switch (chapters_order) {
                 case 1:
                     Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);

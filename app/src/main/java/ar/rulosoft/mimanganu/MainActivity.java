@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        PreferenceManager.setDefaultValues(this, R.xml.fragment_preferences, false);
         if (savedInstanceState == null) {
             MainFragment fmm = new MainFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
