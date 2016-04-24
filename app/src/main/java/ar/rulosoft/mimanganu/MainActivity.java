@@ -1,19 +1,24 @@
 package ar.rulosoft.mimanganu;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
 import android.view.Window;
+import android.widget.Toast;
 
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
@@ -32,29 +37,73 @@ public class MainActivity extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (savedInstanceState == null) {
-            MainFragment fmm = new MainFragment();
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
+        if (isPrivileged()) {
+            if (savedInstanceState == null) {
+                MainFragment fmm = new MainFragment();
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
+            }
+            final boolean show_dialog = pm.getBoolean("show_updates", true);
+            if (show_dialog) {//! o no segun la version 1.41 sin !
+                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+                dlgAlert.setMessage(getString(R.string.update_message));
+                dlgAlert.setTitle(R.string.app_name);
+                dlgAlert.setCancelable(true);
+                dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        pm.edit().putBoolean("show_updates", false).apply(); //false 1.36
+                    }
+                });
+                dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dlgAlert.create().show();
+            }
+        } else {
+            requestPrivilege();
+            setContentView(R.layout.activity_main_no_permision);
         }
+    }
 
-        final boolean show_dialog = pm.getBoolean("show_updates", true);
-        if (show_dialog) {//! o no segun la version 1.41 sin !
-            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-            dlgAlert.setMessage(getString(R.string.update_message));
-            dlgAlert.setTitle(R.string.app_name);
-            dlgAlert.setCancelable(true);
-            dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    pm.edit().putBoolean("show_updates", false).apply(); //false 1.36
+    private boolean isPrivileged() {
+        boolean tmp;
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            tmp = false;
+        } else {
+            tmp = true;
+        }
+        return tmp;
+    }
+
+    private void requestPrivilege() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(this.getApplicationContext(), "Storage Permission is required to run MiMangaNu.", Toast.LENGTH_LONG).show();
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        } else {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case 1:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    Intent i = getPackageManager().getLaunchIntentForPackage(getPackageName());
+                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(i);
+                    System.exit(0);
+                } else {
+                    // Permission Denied
+                    Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT)
+                            .show();
                 }
-            });
-            dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            dlgAlert.create().show();
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
