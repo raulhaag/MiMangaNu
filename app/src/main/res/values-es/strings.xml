@@ -124,7 +124,7 @@
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
     <string name="update_news">Novedades</string>
-    <string name="update_message">Cambios 1.46 \n\t* Nueva versión TMO \n\t* Mejorar el rendimiento \n\t* Preferences reescritas \n\t* realmente una enorme cantidad mejoras pequeñas \n\t* Actualizado a la ultima version del SDK.</string>
+    <string name="update_message">Cambios 1.47 \n\t* bug fixes</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="hello_world">Hola mundo</string>
     <string name="ui_settings">Configuración de UI</string>
