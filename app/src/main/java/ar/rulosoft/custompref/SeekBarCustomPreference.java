@@ -15,11 +15,10 @@ import ar.rulosoft.mimanganu.R;
  */
 public class SeekBarCustomPreference extends DialogPreference {
 
-    private int mFC;
-    private int mMin;
-    private int mMax;
-    private int mValue;
-    private String mSummary;
+    public int mMin;
+    public int mMax;
+    public int mValue;
+    public String mSummary;
     private TextView textSummary;
 
     public SeekBarCustomPreference(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -39,10 +38,8 @@ public class SeekBarCustomPreference extends DialogPreference {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
-        mFC = -mMin;
         a.recycle();
         mSummary = (String) super.getSummary();
-        setLayoutResource(R.layout.preference_seekbar_widget_layout);
     }
 
 
@@ -67,31 +64,28 @@ public class SeekBarCustomPreference extends DialogPreference {
         mValue = Integer.parseInt(getValue);
     }
 
+    public void _persistString(String value){
+        persistString(value);
+        notifyChanged();
+    }
+
     @Override
-    public void onBindViewHolder(PreferenceViewHolder holder) {
-        super.onBindViewHolder(holder);
-        SeekBar seekBar = (SeekBar) holder.findViewById(R.id.seekbar);
-        textSummary = (TextView) holder.findViewById(android.R.id.summary);
-        textSummary.setText(String.format(mSummary, mValue));
-        seekBar.setMax(mMax + mFC);
-        seekBar.setProgress(mValue + mFC);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mValue = progress - mFC;
-                textSummary.setText(String.format(mSummary, mValue));
-            }
+    public CharSequence getSummary() {
+        final Integer entry = mValue;
+        if (mSummary == null) {
+            return super.getSummary();
+        } else {
+            return String.format(mSummary, entry);
+        }
+    }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                persistString("" + mValue);
-                notifyChanged();
-            }
-        });
-        holder.itemView.setClickable(false);
+    @Override
+    public void setSummary(CharSequence summary) {
+        super.setSummary(summary);
+        if (summary == null && mSummary != null) {
+            mSummary = null;
+        } else if (summary != null && !summary.equals(mSummary)) {
+            mSummary = summary.toString();
+        }
     }
 }

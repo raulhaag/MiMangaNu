@@ -165,6 +165,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 pm.edit().putInt(SELECT_MODE,item.isChecked() ? MODE_HIDE_READ : MODE_SHOW_ALL
                 ).apply();
                 setListManga(true);
+                break;
             }
             case R.id.action_settings: {
                 ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");

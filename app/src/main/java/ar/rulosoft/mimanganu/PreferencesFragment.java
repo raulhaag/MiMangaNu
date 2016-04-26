@@ -22,10 +22,12 @@ import ar.rulosoft.custompref.ColorListDialogPref;
 import ar.rulosoft.custompref.PreferenceListDirFragment;
 import ar.rulosoft.custompref.PreferencesListDir;
 import ar.rulosoft.custompref.SeekBarCustomPreference;
+import ar.rulosoft.custompref.SeekbarPreferenceFragment;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
+import android.support.v7.preference.Preference;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
@@ -175,6 +177,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
         } else if (preference instanceof ColorListDialogPref) {
             fragment = ColorListDialogFragment.newInstance(preference);
+            fragment.setTargetFragment(this, 0);
+            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+        } else if (preference instanceof SeekBarCustomPreference) {
+            fragment = SeekbarPreferenceFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
         } else super.onDisplayPreferenceDialog(preference);

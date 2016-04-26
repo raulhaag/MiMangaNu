@@ -2,31 +2,22 @@ package ar.rulosoft.custompref;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceDialogFragmentCompat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import ar.rulosoft.mimanganu.R;
 
-/**
- * Created by Raul on 15/04/2016.
- */
 public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
-    private Context mContext = getContext();
     private String[] mColorCodeList;
     private String[] mColorNameList;
 
     private ListView mListView;
-    private String mSummary;
     private int mValue;
 
 
@@ -78,7 +69,6 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
                parent._notifyChanged();
             }
         }
-    //super.onDialogClosed(positiveResult);
     }
 
     public String[] getCodeList() {
