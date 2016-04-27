@@ -61,7 +61,7 @@ public class SingleDownload implements Runnable {
                 try {
                     OkHttpClient client = new Navegador().getHttpClient();
                     if (reference)
-                        client.networkInterceptors().add(new RefererInterceptor(Uri.encode(cd.chapter.getPath())));
+                        client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
                     client.setReadTimeout(3, TimeUnit.SECONDS);
                     Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
