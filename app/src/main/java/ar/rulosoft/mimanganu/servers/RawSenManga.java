@@ -70,7 +70,7 @@ public class RawSenManga extends ServerBase {
             manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, "n/a")).toString());
             manga.setGenre(Html.fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "n/a")).toString());
             manga.setFinished(data2.contains("Complete"));
-            Pattern p = Pattern.compile("<td><a href=\"(\\/.+?)\" title=\"(.+?)\"");
+            Pattern p = Pattern.compile("<td><a href=\"(/.+?)\" title=\"(.+?)\"");
             Matcher m = p.matcher(data);
             while (m.find()) {
                 Chapter mc = new Chapter(m.group(2).trim(), HOST + m.group(1));
@@ -95,7 +95,7 @@ public class RawSenManga extends ServerBase {
     public String getImageFrom(Chapter c, int page) throws Exception {
         if (c.getExtra() == null) {
             String data = getNavWithHeader().get(c.getPath());
-            c.setExtra(getFirstMatch("(raw-viewer.php\\?series=.+?page=)", data, "can't get image base"));
+            c.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
         }
         return HOST + c.getExtra() + page;
     }
@@ -103,9 +103,9 @@ public class RawSenManga extends ServerBase {
     @Override
     public void chapterInit(Chapter c) throws Exception {
         String data = getNavWithHeader().get(c.getPath());
-        String number = getFirstMatch(" of (\\d+)", data, "Can't retrieve page quantity");
+        String number = getFirstMatch("</select> of (\\d+)", data, "Can't retrieve page quantity");
         c.setPages(Integer.parseInt(number));
-        c.setExtra(getFirstMatch("(raw-viewer.php\\?series=.+?page=)", data, "can't get image base"));
+        c.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
     }
 
     @Override

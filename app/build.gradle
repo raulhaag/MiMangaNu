@@ -57,5 +57,4 @@ dependencies {
     compile 'rapid.decoder:png-decoder:0.3.0'
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.android.support:preference-v7:23.+'
-    compile 'com.pavelsikun:material-seekbar-preference:0.12.1+'
 }
