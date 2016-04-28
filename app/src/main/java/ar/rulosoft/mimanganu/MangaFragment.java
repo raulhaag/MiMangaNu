@@ -251,7 +251,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     public void loadInfo(Manga manga) {
-        if (mInfo != null && manga != null) {
+        if (mInfo != null && manga != null && isAdded()) {
             String infoExtra = "";
             if (manga.isFinished()) {
                 infoExtra = infoExtra +
@@ -591,9 +591,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             loadInfo(manga);
             new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             mSwipeRefreshLayout.setRefreshing(false);
-            getActivity().setTitle(orgMsg);
+            if(isAdded()) {
+                getActivity().setTitle(orgMsg);
+            }
             if (result > 0) {
-                Toast.makeText(getActivity(), result + getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), result + " " + getString(R.string.new_chapters_found), Toast.LENGTH_SHORT).show();
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
             }
