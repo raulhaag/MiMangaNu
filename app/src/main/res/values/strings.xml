@@ -19,15 +19,15 @@
     <string name="app_name">Mi Manga Nu</string>
     <string name="autor">Author</string>
     <string name="borrado_imagenes">Images deleted</string>
-    <string name="borrarcap">Delete chapter</string>
+    <string name="borrarcap">Remove chapter</string>
     <string name="borrar">Delete</string>
     <string name="borrar_imagenes">Delete images to free space</string>
     <string name="buscandonuevo">Searching for updates </string>
     <string name="buscarnuevos">Search for updates</string>
     <string name="buscarupdates">Search for updates</string>
     <string name="busquedanores">The search returned no results</string>
-    <string name="cantidad_descargas_subtitle">Number of download threads: %s</string>
-    <string name="cantidad_descargas_title">Download slot</string>
+    <string name="cantidad_descargas_subtitle">Amount of Images downloaded concurrently: %s</string>
+    <string name="cantidad_descargas_title">Download threads</string>
     <string name="cantidad_reintentos_subtitle">Retries to get an image after encountering an error: %s</string>
     <string name="cantidad_reintentos_title">Maximum retries per image</string>
     <string name="capitulos">Chapters</string>
@@ -76,12 +76,12 @@
     <string name="mejor_ajuste">Best fit</string>
     <string name="mismangas">My Mangas</string>
     <string name="mitlic">MIT Licence and Thanks</string>
-    <string name="new_manga_found">New manga found.</string>
+    <string name="new_manga_found">New manga found</string>
     <string name="new_mangas_found">New mangas found</string>
     <string name="nobuscarupdate">Don\'t search for updates</string>
     <string name="nodisponible">N/A</string>
     <string name="no_scale">Original size</string>
-    <string name="notification_sound_subtitle">On new manga founds.</string>
+    <string name="notification_sound_subtitle">When new manga are found</string>
     <string name="notification_sound_title">Play sound</string>
     <string name="no_update">Don\'t check for updates</string>
     <string name="opciones_caps">Chapters settings</string>
@@ -114,7 +114,7 @@
     <string name="title_activity_activity_lector">Reader</string>
     <string name="title_activity_activity_manga">ActivityManga</string>
     <string name="title_activity_activity_resultado_de_busqueda">Search result</string>
-    <string name="title_activity_preference">Preferencies</string>
+    <string name="title_activity_preference">Preferences</string>
     <string name="title_activity_server_listade_mangas">List of Manga</string>
     <string name="title_activity_server_visual_navegacion">Mangas in</string>
     <string name="unwritable_folder">Unwritable folder.</string>
@@ -132,7 +132,7 @@
     <string name="title_activity_text_view">TextViewActivity</string>
     <string name="download_selection">Download selection</string>
     <string name="cantidad_errores_title">Error toleration per chapter</string>
-    <string name="license_sub">Tap to see license and thanks</string>
+    <string name="license_sub">Tap to see licence and thanks</string>
     <string name="color_primario_sub">Main coloring, like for titlebar etc.</string>
     <string name="color_secundario_sub">Secondary coloring, for more variety</string>
     <string name="about">About</string>
@@ -149,7 +149,7 @@
     <string name="color_reader">Reader Color</string>
     <string name="color_reader_sub">The color in the reader mode</string>
     <string name="title_activity_vertical_reader">Reader</string>
-    <string name="read_next">You want to open the next chapter?</string>
+    <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
     <string name="update_message">Changes 1.47\n\t*bug fixes.</string>
@@ -158,8 +158,8 @@
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
     <string name="update_thread_manual_title">Update threads (Manual)</string>
     <string name="update_threads_manual_summary">Amount of update threads for manual search: %s</string>
-    <string name="download_remain_confirmation">Do you want to download the chapters not yet downloaded?</string>
-    <string name="download_unread_confirmation">Do you want to download the chapters unread?</string>
+    <string name="download_remain_confirmation">Do you want to download all chapters that are not yet downloaded?</string>
+    <string name="download_unread_confirmation">Do you want to download all unread chapters?</string>
     <string name="mar_and_di">Mark as read and delete images</string>
     <string name="select_begin">Select from the beginning</string>
     <string name="select_end">Select until the end</string>
@@ -180,5 +180,5 @@
     <string name="sort_added_db">Sort as added on db</string>
     <string name="sort_number">Sort by chapter number (9–0)</string>
     <string name="sort_number_asc">Sort by chapter number </string>
-    <string name="delete_comfirm">Are you sure to delete these chapters?</string>
+    <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
 </resources>
