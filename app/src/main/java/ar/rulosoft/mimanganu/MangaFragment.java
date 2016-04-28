@@ -593,7 +593,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             mSwipeRefreshLayout.setRefreshing(false);
             getActivity().setTitle(orgMsg);
             if (result > 0) {
-                Toast.makeText(getActivity(), result + getString(R.string.State_New) + " manga(s)", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), result + " " + getString(R.string.new_chapters_found), Toast.LENGTH_SHORT).show();
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
             }

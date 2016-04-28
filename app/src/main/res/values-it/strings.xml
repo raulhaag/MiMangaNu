@@ -171,4 +171,5 @@
     <string name="delete_comfirm">Sei sicuro di voler eliminare questi capitoli?</string>
     <string name="close">vicino</string>
     <string name="retry">Riprova</string>
+    <string name="new_chapters_found">nuovi capitoli trovati</string>
 </resources>
