@@ -27,6 +27,13 @@ Downloads
 
 Changelog
 ---------
+Cambios 1.48
+* Más bug fixes.
+* Fixed senmanga y mymangaio.
+
+Cambios 1.47
+* Bug fixes.
+
 Cambios 1.46
 * Nueva versión TMO
 * Mejorar el rendimiento
