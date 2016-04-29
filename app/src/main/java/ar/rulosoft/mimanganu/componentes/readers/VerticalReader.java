@@ -95,7 +95,6 @@ public class VerticalReader extends Reader {
             xScroll = (screenWidthSS - screenWidth) / 2;
             stopAnimationOnHorizontalOver = true;
         }
-
     }
 
     @Override

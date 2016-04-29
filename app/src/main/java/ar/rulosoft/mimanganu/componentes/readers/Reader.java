@@ -103,7 +103,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             }
     }
 
-    public Page getPage(int page){
+    public Page getPage(int page) {
         return pages.get(page - 1);
     }
 
@@ -291,7 +291,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             pages.set(idx, page);
             calculateParticularScale(pages.get(idx));
             calculateVisibilities();
-            seekPage(iniPage);
+            if (iniPage > idx)
+                seekPage(iniPage);
             generateDrawPool();
         }
     }
@@ -589,7 +590,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             initialized = true;
         }
 
-        public String getPath(){
+        public String getPath() {
             return path;
         }
 
