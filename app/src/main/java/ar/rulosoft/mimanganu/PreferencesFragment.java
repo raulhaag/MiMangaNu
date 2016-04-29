@@ -5,14 +5,17 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.preference.ListPreference;
+import android.support.v4.app.Fragment;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
+import android.support.v7.preference.XpPreferenceFragment;
 import android.view.MenuItem;
 
 import com.fedorvlasov.lazylist.FileCache;
+
+import net.xpece.android.support.preference.ListPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,15 +25,15 @@ import ar.rulosoft.custompref.ColorListDialogPref;
 import ar.rulosoft.custompref.PreferenceListDirFragment;
 import ar.rulosoft.custompref.PreferencesListDir;
 import ar.rulosoft.custompref.SeekBarCustomPreference;
+import ar.rulosoft.custompref.SeekBarPreference2;
 import ar.rulosoft.custompref.SeekbarPreferenceFragment;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
-import android.support.v7.preference.Preference;
 
 
-public class PreferencesFragment extends PreferenceFragmentCompat {
+public class PreferencesFragment extends XpPreferenceFragment implements PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
     private SharedPreferences prefs;
     private FileCache mFileStorage;
 
@@ -41,7 +44,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onCreatePreferences(Bundle bundle, String s) {
+    public Fragment getCallbackFragment() {
+        return this;
+    }
+
+    @Override
+    public void onCreatePreferences2(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.fragment_preferences);
         ColorListDialogPref primaryColor = (ColorListDialogPref) getPreferenceManager().findPreference("primario");
         primaryColor.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -86,11 +94,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** This sets the download threads (parallel downloads) */
-        final SeekBarCustomPreference listPreferenceDT = (SeekBarCustomPreference) getPreferenceManager().findPreference("download_threads");
+        final SeekBarPreference2 listPreferenceDT = (SeekBarPreference2) getPreferenceManager().findPreference("download_threads");
         listPreferenceDT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int threads = Integer.parseInt((String) newValue);
+                int threads = (int) newValue;
                 int antes = DownloadPoolService.SLOTS;
                 DownloadPoolService.SLOTS = threads;
                 if (DownloadPoolService.actual != null)
@@ -100,22 +108,21 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** This sets the maximum number of errors to tolerate */
-        final SeekBarCustomPreference listPrefET = (SeekBarCustomPreference) getPreferenceManager().findPreference("error_tolerancia");
+        final SeekBarPreference2 listPrefET = (SeekBarPreference2) getPreferenceManager().findPreference("error_tolerancia");
         listPrefET.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                ChapterDownload.MAX_ERRORS =
-                        Integer.parseInt((String) newValue);
+                ChapterDownload.MAX_ERRORS = (int) newValue;
                 return true;
             }
         });
 
         /** This sets the number of retries to fetch images */
-        SeekBarCustomPreference listPrefRT = (SeekBarCustomPreference) getPreferenceManager().findPreference("reintentos");
+        SeekBarPreference2 listPrefRT = (SeekBarPreference2) getPreferenceManager().findPreference("reintentos");
         listPrefRT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                SingleDownload.RETRY = Integer.parseInt((String) newValue);
+                SingleDownload.RETRY = (int) newValue;
                 return true;
             }
         });
@@ -168,22 +175,26 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         return super.onOptionsItemSelected(item);
     }
 
+
     @Override
-    public void onDisplayPreferenceDialog(Preference preference) {
+    public boolean onPreferenceDisplayDialog(PreferenceFragmentCompat preferenceFragmentCompat, Preference preference) {
         DialogFragment fragment;
         if (preference instanceof PreferencesListDir) {
             fragment = PreferenceListDirFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+            return true;
         } else if (preference instanceof ColorListDialogPref) {
             fragment = ColorListDialogFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
+            return true;
         } else if (preference instanceof SeekBarCustomPreference) {
             fragment = SeekbarPreferenceFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
-        } else super.onDisplayPreferenceDialog(preference);
+            return true;
+        } else return false;
     }
 
     public class calcStorage extends AsyncTask<String, Void, Long> {

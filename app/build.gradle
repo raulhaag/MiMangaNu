@@ -57,4 +57,5 @@ dependencies {
     compile 'rapid.decoder:png-decoder:0.3.0'
     compile 'com.squareup.okhttp:okhttp:2.6.0'
     compile 'com.android.support:preference-v7:23.+'
+    compile 'net.xpece.android:support-preference:0.8.0'
 }
