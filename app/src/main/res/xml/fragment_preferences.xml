@@ -21,9 +21,7 @@
             android:entryValues="@array/periodo_val"
             android:key="update_interval"
             android:summary="%s"
-            android:title="@string/update_title"
-            app:asp_iconPaddingEnabled="false"
-            app:asp_menuMode="simple_menu" />
+            android:title="@string/update_title"/>
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_sound"
@@ -35,16 +33,16 @@
             android:key="update_threads_background"
             android:summary="@string/update_threads_background_summary"
             android:title="@string/update_thread_background_title"
-            android:max="7"
-            app:asp_min="1" />
+            app:val_max="7"
+            app:val_min="1" />
         <ar.rulosoft.custompref.SeekBarPreference2
             android:defaultValue="2"
             android:dialogTitle="@string/update_thread_manual_title"
             android:key="update_threads_manual"
             android:summary="@string/update_threads_manual_summary"
             android:title="@string/update_thread_manual_title"
-            android:max="7"
-            app:asp_min="1" />
+            app:val_max="7"
+            app:val_min="1" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_lec">
@@ -97,24 +95,24 @@
             android:key="download_threads"
             android:summary="@string/cantidad_descargas_subtitle"
             android:title="@string/cantidad_descargas_title"
-            android:max="8"
-            app:asp_min="1" />
+            app:val_max="8"
+            app:val_min="1" />
         <ar.rulosoft.custompref.SeekBarPreference2
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_errores_title"
             android:key="error_tolerancia"
             android:summary="@string/cantidad_errores_subtitle"
             android:title="@string/cantidad_errores_title"
-            android:max="10"
-            app:asp_min="0" />
+            app:val_max="10"
+            app:val_min="0" />
         <ar.rulosoft.custompref.SeekBarPreference2
             android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
             android:key="reintentos"
             android:summary="@string/cantidad_reintentos_subtitle"
             android:title="@string/cantidad_reintentos_title"
-            android:max="10"
-            app:asp_min="0" />
+            app:val_max="10"
+            app:val_min="0" />
     </PreferenceCategory>
 
     <!-- Finally, replaced by a much lighter color picker -->

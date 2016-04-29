@@ -56,7 +56,7 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
     }
 
     public SeekBarPreference2(Context context, AttributeSet attrs, int defStyleAttr) {
-        this(context, attrs, defStyleAttr, R.style.Preference_Material_SeekBarPreference);
+        this(context, attrs, defStyleAttr, 0);
     }
 
     public SeekBarPreference2(Context context, AttributeSet attrs) {
@@ -68,10 +68,9 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
     }
 
     private void init(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.SeekBarPreference, defStyleAttr, defStyleRes);
-        setMax(a.getInt(R.styleable.SeekBarPreference_android_max, mPreferredMax));
-        setMin(a.getInt(R.styleable.SeekBarPreference_asp_min, mPreferredMin));
-        setInfo(a.getText(R.styleable.SeekBarPreference_asp_info));
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
+        setMax(a.getInt(R.styleable.CustomDialogPref_val_max, mPreferredMax));
+        setMin(a.getInt(R.styleable.CustomDialogPref_val_min, mPreferredMin));
         a.recycle();
         setLayoutResource(R.layout.preference_seekbar_widget_layout);
     }

@@ -6,16 +6,15 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
-import android.support.v7.preference.XpPreferenceFragment;
 import android.view.MenuItem;
 
 import com.fedorvlasov.lazylist.FileCache;
 
-import net.xpece.android.support.preference.ListPreference;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,7 +32,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 
 
-public class PreferencesFragment extends XpPreferenceFragment implements PreferenceFragmentCompat.OnPreferenceDisplayDialogCallback {
+public class PreferencesFragment extends PreferenceFragmentCompat {
     private SharedPreferences prefs;
     private FileCache mFileStorage;
 
@@ -49,7 +48,7 @@ public class PreferencesFragment extends XpPreferenceFragment implements Prefere
     }
 
     @Override
-    public void onCreatePreferences2(Bundle bundle, String s) {
+    public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.fragment_preferences);
         ColorListDialogPref primaryColor = (ColorListDialogPref) getPreferenceManager().findPreference("primario");
         primaryColor.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -175,26 +174,22 @@ public class PreferencesFragment extends XpPreferenceFragment implements Prefere
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
-    public boolean onPreferenceDisplayDialog(PreferenceFragmentCompat preferenceFragmentCompat, Preference preference) {
+    public final void onDisplayPreferenceDialog(Preference preference) {
         DialogFragment fragment;
         if (preference instanceof PreferencesListDir) {
             fragment = PreferenceListDirFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
-            return true;
         } else if (preference instanceof ColorListDialogPref) {
             fragment = ColorListDialogFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
-            return true;
         } else if (preference instanceof SeekBarCustomPreference) {
             fragment = SeekbarPreferenceFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
-            return true;
-        } else return false;
+        } else super.onDisplayPreferenceDialog(preference);
     }
 
     public class calcStorage extends AsyncTask<String, Void, Long> {
