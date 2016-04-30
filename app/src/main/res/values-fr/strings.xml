@@ -171,5 +171,5 @@
     <string name="close">Fermer</string>
     <string name="retry">refaire</string>
     <string name="new_chapters_found">nouveaux chapitres trouvés</string>
-    <string name="permission_denied">Stockage L\'autorisation est requise pour MiMangaNu fonctionnent correctement</string>
+    <string name="storage_permission_denied">Stockage L\'autorisation est requise pour MiMangaNu fonctionnent correctement</string>
 </resources>

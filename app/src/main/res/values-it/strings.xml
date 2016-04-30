@@ -172,5 +172,5 @@
     <string name="close">vicino</string>
     <string name="retry">Riprova</string>
     <string name="new_chapters_found">nuovi capitoli trovati</string>
-    <string name="permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
+    <string name="storage_permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
 </resources>

@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     restartApp();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, getString(R.string.storage_permission_denied), Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

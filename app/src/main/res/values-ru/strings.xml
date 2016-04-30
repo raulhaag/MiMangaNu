@@ -171,5 +171,5 @@
     <string name="close">близко</string>
     <string name="retry">Повторить попытку</string>
     <string name="new_chapters_found">найдены новые главы</string>
-    <string name="permission_denied">Разрешение хранения требуется для MiMangaNu для правильной работы</string>
+    <string name="storage_permission_denied">Разрешение хранения требуется для MiMangaNu для правильной работы</string>
 </resources>

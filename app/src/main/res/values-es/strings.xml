@@ -180,5 +180,5 @@
     <string name="sort_number_asc">Ordenar por número de capítulo ASC</string>
     <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
     <string name="new_chapters_found">nuevos capítulos encontrados</string>
-    <string name="permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
+    <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
 </resources>

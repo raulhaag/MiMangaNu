@@ -182,5 +182,5 @@
     <string name="sort_number_asc">Sort by chapter number </string>
     <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
     <string name="new_chapters_found">New chapter(s) found</string>
-    <string name="permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
+    <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
 </resources>
