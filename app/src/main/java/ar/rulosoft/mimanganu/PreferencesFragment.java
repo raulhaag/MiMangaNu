@@ -158,6 +158,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+
+
+
     }
 
     @Override
@@ -195,7 +198,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     public class calcStorage extends AsyncTask<String, Void, Long> {
         @Override
         protected Long doInBackground(String... strings) {
-            mFileStorage = new FileCache(getActivity().getApplicationContext());
+            mFileStorage = new FileCache();
 
             long store_total = 0;
             File[] listStore = new File(strings[0]).listFiles();

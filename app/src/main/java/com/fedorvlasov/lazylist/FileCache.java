@@ -29,6 +29,12 @@ public class FileCache {
         }
     }
 
+    public FileCache() {
+        //default constructor, in case when we only need to access one method from
+        //the FileCache object like is the case in the doInBackground method from CalcStorage class
+        //in the PreferencesFragment
+    }
+
     public static void writeFile(InputStream is, File f) {
         try {
             OutputStream os = new FileOutputStream(f);

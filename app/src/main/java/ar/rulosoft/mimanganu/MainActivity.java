@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
     private SharedPreferences pm;
+    private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,39 +38,43 @@ public class MainActivity extends AppCompatActivity {
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        if (isPrivileged()) {
+        if (isStoragePermissionGiven()) {
             if (savedInstanceState == null) {
                 MainFragment fmm = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
             }
-            final boolean show_dialog = pm.getBoolean("show_updates", false);
-            if (!show_dialog) {//! o no segun la version 1.41 sin !
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
-                dlgAlert.setMessage(getString(R.string.update_message));
-                dlgAlert.setTitle(R.string.app_name);
-                dlgAlert.setCancelable(true);
-                dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        pm.edit().putBoolean("show_updates", true).apply(); //false 1.36
-                    }
-                });
-                dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dlgAlert.create().show();
-            }
+            showUpdateDialog();
         } else {
-            requestPrivilege();
+            requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
     }
 
-    private boolean isPrivileged() {
+    private void showUpdateDialog(){
+        final boolean show_dialog = pm.getBoolean("show_updates", true);
+        if (show_dialog) {//! o no segun la version 1.41 sin !
+            AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
+            dlgAlert.setMessage(getString(R.string.update_message));
+            dlgAlert.setTitle(R.string.app_name);
+            dlgAlert.setCancelable(true);
+            dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    pm.edit().putBoolean("show_updates", false).apply(); //false 1.36
+                }
+            });
+            dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dlgAlert.create().show();
+        }
+    }
+
+    private boolean isStoragePermissionGiven() {
         boolean tmp;
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
             tmp = false;
         } else {
             tmp = true;
@@ -77,29 +82,25 @@ public class MainActivity extends AppCompatActivity {
         return tmp;
     }
 
-    private void requestPrivilege() {
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(this.getApplicationContext(), "Storage Permission is required to run MiMangaNu.", Toast.LENGTH_LONG).show();
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        } else {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        }
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE);
+    }
+
+    private void restartApp(){
+        startActivity(getPackageManager().getLaunchIntentForPackage(getPackageName()).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+        System.exit(0);
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
-            case 1:
+            case WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    Intent i = getPackageManager().getLaunchIntentForPackage(getPackageName());
-                    i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(i);
-                    System.exit(0);
+                    restartApp();
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, "Permission Denied", Toast.LENGTH_SHORT)
-                            .show();
+                    Toast.makeText(MainActivity.this, getString(R.string.storage_permission_denied), Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -117,12 +118,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
-            // re start to apply new theme
-            Intent i = getPackageManager()
-                    .getLaunchIntentForPackage(getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-            System.exit(0);
+            restartApp();
         }
         colors = ThemeColors.getColors(pm, getApplicationContext());
         setColorToBars();
