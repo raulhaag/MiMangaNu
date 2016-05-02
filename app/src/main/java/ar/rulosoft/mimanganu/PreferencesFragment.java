@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -12,9 +13,9 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.FileCache;
-
 
 import java.io.File;
 import java.io.IOException;
@@ -158,9 +159,50 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+        setFirstRunDefaults();
+    }
 
+    private void setFirstRunDefaults() {
+        final String PREFS_NAME = "fragment_preferences";
+        final String PREF_VERSION_CODE_KEY = "version_code";
+        final int DOESNT_EXIST = -1;
 
+        // Get current version code
+        int currentVersionCode = 0;
+        try {
+            currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
+        } catch (android.content.pm.PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return;
+        }
+        // Get saved version code
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
 
+        // Check for first run or upgrade
+        if (currentVersionCode == savedVersionCode) {
+            // This is just a normal run
+            return;
+        } else if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode)  {
+            // This is a new install or upgrade
+
+            //set number of manual search threads = number of cores
+            int manualSearchThreadsMax = 8, manualSearchThreads;
+            if (Runtime.getRuntime().availableProcessors() <= manualSearchThreadsMax) {
+                manualSearchThreads = Runtime.getRuntime().availableProcessors();
+            } else {
+                manualSearchThreads = manualSearchThreadsMax;
+            }
+            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+            SharedPreferences.Editor editor = preferences.edit();
+            editor.putString("update_threads_manual", "" + manualSearchThreads);
+            editor.apply();
+
+            final SeekBarPreference2 listPreferenceMT = (SeekBarPreference2) getPreferenceManager().findPreference("update_threads_manual");
+            listPreferenceMT.setProgress(manualSearchThreads);
+        }
+        // Update the shared preferences with the current version code
+        prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
     }
 
     @Override
