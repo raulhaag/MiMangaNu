@@ -38,6 +38,23 @@ import java.util.WeakHashMap;
 
 import ar.rulosoft.mimanganu.R;
 
+/*
+ * Copyright (C) 2011 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * https://github.com/consp1racy/android-support-preference/blob/master/library/src/main/java/net/xpece/android/support/preference/SeekBarPreference.java
+ */
+
 public class SeekBarPreference2 extends Preference implements OnSeekBarChangeListener, View.OnKeyListener {
 
     // A filthy hack so we can update info text while dragging seek bar thumb.
@@ -248,6 +265,8 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser && !mTrackingTouch) {
             syncProgress(seekBar);
+            int persist= progress + mPreferredMin;
+            persistString("" + persist);
         }
         if (mOnSeekBarChangeListener != null) {
             mOnSeekBarChangeListener.onProgressChanged(seekBar, progress + mPreferredMin, fromUser);
