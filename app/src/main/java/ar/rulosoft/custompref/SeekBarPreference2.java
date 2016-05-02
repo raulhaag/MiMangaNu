@@ -59,6 +59,7 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
 
     // A filthy hack so we can update info text while dragging seek bar thumb.
     private static final WeakHashMap<TextView, SeekBarPreference2> mInfoViews = new WeakHashMap<>();
+    private static final WeakHashMap<String, SeekBarPreference2> mKeys = new WeakHashMap<>();
     private int mProgress;
     private int mPreferredMin = 0;
     private int mPreferredMax = 100;
@@ -111,6 +112,7 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
         if (info != null) {
             mInfoViews.put(info, this);
             bindInfo(info);
+            mKeys.put(getKey(), this);
         }
     }
 
@@ -265,8 +267,6 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         if (fromUser && !mTrackingTouch) {
             syncProgress(seekBar);
-            int persist= progress + mPreferredMin;
-            persistString("" + persist);
         }
         if (mOnSeekBarChangeListener != null) {
             mOnSeekBarChangeListener.onProgressChanged(seekBar, progress + mPreferredMin, fromUser);
@@ -275,6 +275,15 @@ public class SeekBarPreference2 extends Preference implements OnSeekBarChangeLis
             TextView tv = getTV();
             if (tv != null) {
                 tv.setText(String.format(super.getSummary().toString(), progress + mPreferredMin));
+                for (Map.Entry<String, SeekBarPreference2> entry : mKeys.entrySet()) {
+                    String k = entry.getKey();
+                    SeekBarPreference2 pref = entry.getValue();
+                    if (pref == this) {
+                        setKey(k);
+                        int persist = progress + mPreferredMin;
+                        persistString("" + persist);
+                    }
+                }
             }
         }
     }
