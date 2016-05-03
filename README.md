@@ -6,7 +6,7 @@
 
 *FR - Lecteur de manga en ligne / hors ligne, gratuit et open source.
 
-*DE - MiMangaNu ist ein Manga Lese App. Man kann damit Manga Online und Offline lesen. Es ist Frei und open source.
+*DE - MiMangaNu ist ein App um Manga zu lesen. Man kann damit Manga Online und Offline lesen. Es ist kostenlos und quelloffen.
 
 *IT - Manga lettore online / offline, gratuito e open source.
 
