@@ -56,7 +56,7 @@
     <string name="max_texture_subtitle">Tamaño de texturas, que se utilizará (0 para desactivar la aceleración de hardware)\n%s</string>
     <string name="opciones_descarga">Opciones de descarga</string>
     <string name="cantidad_descargas_title">Descargas simultaneas</string>
-    <string name="cantidad_descargas_subtitle">Cantidad de hilos: %s</string>
+    <string name="cantidad_descargas_subtitle">Cantidad de imágenes descargadas simultáneamente: %s</string>
     <string name="cantidad_errores_title">Tolerancia de error por capítulo</string>
     <string name="cantidad_errores_subtitle">Número tolerado de errores por capítulo: %s</string>
     <string name="cantidad_reintentos_title">Reintentos máximos por imagen</string>
@@ -151,7 +151,6 @@
     <string name="sort_number">Ordenar por número de capítulo</string>
     <string name="sort_number_asc">Ordenar por número de capítulo ASC</string>
     <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
-    <string name="new_chapters_found">nuevos capítulos encontrados</string>
     <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
     <string name="no_new_updates_found">No se encontró nuevo capítulo :(</string>
 </resources>

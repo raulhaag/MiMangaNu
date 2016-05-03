@@ -53,7 +53,7 @@
     <string name="max_texture_subtitle">Taille de texture, qui sera utilisé (0 pour désactiver l\'accélération)\n%s</string>
     <string name="opciones_descarga">"Paramètres de téléchargement"</string>
     <string name="cantidad_descargas_title">Téléchargements simultanés</string>
-    <string name="cantidad_descargas_subtitle">Nombre de téléchargements simultanés : %s</string>
+    <string name="cantidad_descargas_subtitle">Montant des images téléchargées en même temps: %s</string>
     <string name="cantidad_errores_title">Tolérance d\'erreur par chapitre</string>
     <string name="cantidad_errores_subtitle">Nombre d\'erreurs tolérées par chapitre : %s</string>
     <string name="cantidad_reintentos_title">Tentatives maximum par image</string>
@@ -142,7 +142,6 @@
     <string name="delete_comfirm">Etes-vous sûr de supprimer ces chapitres?</string>
     <string name="close">Fermer</string>
     <string name="retry">refaire</string>
-    <string name="new_chapters_found">nouveaux chapitres trouvés</string>
     <string name="storage_permission_denied">Stockage L\'autorisation est requise pour MiMangaNu fonctionnent correctement</string>
     <string name="no_new_updates_found">Aucun nouveau chapitre trouvé :(</string>
 </resources>

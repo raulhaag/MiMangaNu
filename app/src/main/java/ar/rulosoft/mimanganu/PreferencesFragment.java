@@ -13,7 +13,6 @@ import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.FileCache;
 
@@ -183,26 +182,32 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         if (currentVersionCode == savedVersionCode) {
             // This is just a normal run
             return;
-        } else if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode)  {
+        } else if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
             // This is a new install or upgrade
 
-            //set number of manual search threads = number of cores
-            int manualSearchThreadsMax = 8, manualSearchThreads;
-            if (Runtime.getRuntime().availableProcessors() <= manualSearchThreadsMax) {
-                manualSearchThreads = Runtime.getRuntime().availableProcessors();
-            } else {
-                manualSearchThreads = manualSearchThreadsMax;
-            }
-            SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-            SharedPreferences.Editor editor = preferences.edit();
-            editor.putString("update_threads_manual", "" + manualSearchThreads);
-            editor.apply();
+            // set number of manual search threads = number of cores
+            setNumberOfThreadsToBeEqualToNumberOfCores(8, "update_threads_manual");
 
-            final SeekBarPreference2 listPreferenceMT = (SeekBarPreference2) getPreferenceManager().findPreference("update_threads_manual");
-            listPreferenceMT.setProgress(manualSearchThreads);
+            // set number of download threads = number of cores
+            setNumberOfThreadsToBeEqualToNumberOfCores(8, "download_threads");
         }
         // Update the shared preferences with the current version code
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
+    }
+
+    private void setNumberOfThreadsToBeEqualToNumberOfCores(int threadsMax, String preference) {
+        int threads;
+        if (Runtime.getRuntime().availableProcessors() <= threadsMax) {
+            threads = Runtime.getRuntime().availableProcessors();
+        } else {
+            threads = threadsMax;
+        }
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString(preference, "" + threads).apply();
+
+        final SeekBarPreference2 tmpSeekbar = (SeekBarPreference2) getPreferenceManager().findPreference(preference);
+        tmpSeekbar.setProgress(threads);
     }
 
     @Override

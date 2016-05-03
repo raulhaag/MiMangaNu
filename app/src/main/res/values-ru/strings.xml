@@ -23,7 +23,7 @@
     <string name="buscandonuevo">Поиск обновлений</string>
     <string name="buscarupdates">Искать обновления</string>
     <string name="busquedanores">Ничего не найдено</string>
-    <string name="cantidad_descargas_subtitle">Число скачиваемых глав: %s</string>
+    <string name="cantidad_descargas_subtitle">Количество изображений, загруженных одновременно: %s</string>
     <string name="cantidad_descargas_title">Слот скачивания</string>
     <string name="cantidad_errores_subtitle">допустимое число ошибок для главы: %s</string>
     <string name="cantidad_errores_title">Допустимое число ошибок</string>
@@ -142,7 +142,6 @@
     <string name="delete_comfirm">Вы уверены, чтобы удалить эти разделы?</string>
     <string name="close">близко</string>
     <string name="retry">Повторить попытку</string>
-    <string name="new_chapters_found">найдены новые главы</string>
     <string name="storage_permission_denied">Разрешение хранения требуется для MiMangaNu для правильной работы</string>
     <string name="no_new_updates_found">Ни одна новая глава не найдено :(</string>
 </resources>
