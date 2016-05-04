@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.49:\n\t*Even more bug fixes.\n\t*set number of manual search threads = cpu cores at first run</string>
+    <string name="update_message">Changes in v1.49:\n\t*Even more bug fixes.\n\t*set number of manual search threads and download threads = cpu cores at first run</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
