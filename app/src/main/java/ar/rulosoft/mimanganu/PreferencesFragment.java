@@ -186,10 +186,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             // This is a new install or upgrade
 
             // set number of manual search threads = number of cores
-            setNumberOfThreadsToBeEqualToNumberOfCores(8, "update_threads_manual");
+            setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_manual");
 
             // set number of download threads = number of cores
-            setNumberOfThreadsToBeEqualToNumberOfCores(8, "download_threads");
+            setNumberOfThreadsToBeEqualToNumberOfCores(4, "download_threads");
         }
         // Update the shared preferences with the current version code
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
