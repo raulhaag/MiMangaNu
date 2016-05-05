@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
+import it.sephiroth.android.library.imagezoom.graphics.FastBitmapDrawable;
 
 public class ActivityPagedReader extends AppCompatActivity
         implements DownloadListener, OnSeekBarChangeListener, TapListener, OnErrorListener {
@@ -730,8 +732,11 @@ public class ActivityPagedReader extends AppCompatActivity
         }
 
         public void unloadImage() {
-            if (visor != null)
+            if (visor != null) {
+                ((FastBitmapDrawable) visor.getDrawable()).getBitmap().recycle();
+                visor.setImageDrawable(null);
                 visor.setImageBitmap(null);
+            }
             imageLoaded = false;
         }
 
@@ -887,7 +892,7 @@ public class ActivityPagedReader extends AppCompatActivity
                     if (Math.abs(i - currentPage) <= 1 && !pages[i].imageLoaded) {
                         pages[i].setImage();
                     } else if (Math.abs(i - currentPage) > 1 && pages[i].imageLoaded) {
-                        pages[i].unloadImage();
+                        pages[i] = null;
                     }
                 }
             }
