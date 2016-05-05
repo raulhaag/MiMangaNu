@@ -148,7 +148,6 @@
     <string name="sort_number">Kapitelnummer (9&#8211;0)</string>
     <string name="sort_number_asc">Kapitelnummer</string>
     <string name="delete_comfirm">Wollen Sie wirklich das Kapitel löschen?</string>
-    <string name="new_chapters_found">Neue(s) Kapitel gefunden</string>
     <string name="storage_permission_denied">MiMangaNu benötigt zugriff auf den Speicher um korrekt funktionieren zu können</string>
     <string name="no_new_updates_found">Keine neuen Kapitel gefunden :(</string>
 </resources>

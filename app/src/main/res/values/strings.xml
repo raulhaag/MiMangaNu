@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes 1.48\n\t*More bug fixes.\n\t* Fixed senmanga and mymangaio.</string>
+    <string name="update_message">Changes in v1.49:\n\t*Even more bug fixes.\n\t*set number of manual search threads and download threads = cpu cores at first run</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
@@ -151,7 +151,6 @@
     <string name="sort_number">Sort by chapter number (9–0)</string>
     <string name="sort_number_asc">Sort by chapter number </string>
     <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
-    <string name="new_chapters_found">New chapter(s) found</string>
     <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
     <string name="no_new_updates_found">No new chapters found :(</string>
 </resources>

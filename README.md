@@ -1,10 +1,16 @@
 ﻿MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
 =========
-*ESP - Lector de Manga online / offline, gratuito y de código abierto.
+*ES - Lector de Manga online / offline, gratuito y de código abierto.
 
-*ENG - Manga reader online / offline, free and open source.
+*EN - Manga reader online / offline, free and open source.
 
 *FR - Lecteur de manga en ligne / hors ligne, gratuit et open source.
+
+*DE - Eine App um Manga zu lesen. Man kann damit Manga online und offline lesen. Es ist kostenlos und quelloffen.
+
+*IT - Manga lettore online / offline, gratuito e open source.
+
+*RU - В России Манга читает вас. Попробуйте MiMangaNu прямо сейчас.
 
 Screenshots
 ----------
@@ -230,7 +236,7 @@ The MIT License (MIT)
 
 Thanks to sephiroth74 for the library ImageViewTouch, thest1 for LazyList and castorflex for VerticalViewPager.
 
-Contribuciones de Dostoi, TheSniperFan, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
+Contribuciones de Dostoi, TheSniperFan, xtj-9182, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
 
 Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.
 

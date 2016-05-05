@@ -33,7 +33,7 @@
             android:key="update_threads_background"
             android:summary="@string/update_threads_background_summary"
             android:title="@string/update_thread_background_title"
-            app:val_max="7"
+            app:val_max="8"
             app:val_min="1" />
         <ar.rulosoft.custompref.SeekBarPreference2
             android:defaultValue="2"
@@ -41,7 +41,7 @@
             android:key="update_threads_manual"
             android:summary="@string/update_threads_manual_summary"
             android:title="@string/update_thread_manual_title"
-            app:val_max="7"
+            app:val_max="8"
             app:val_min="1" />
     </android.support.v7.preference.PreferenceCategory>
 

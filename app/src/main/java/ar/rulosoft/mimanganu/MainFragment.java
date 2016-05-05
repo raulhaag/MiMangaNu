@@ -562,7 +562,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                     .getString(R.string.mgs_update_found), result));
                     mNotifyManager.notify(mNotifyID, mBuilder.build());
                     setListManga(true);
-                    Toast.makeText(mContent, mContent.getResources().getString(R.string.mgs_update_found,result),Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContent, mContent.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
                 } else {
                     mNotifyManager.cancel(mNotifyID);
                     Toast.makeText(mContent, mContent.getResources().getString(R.string.no_new_updates_found),Toast.LENGTH_LONG).show();

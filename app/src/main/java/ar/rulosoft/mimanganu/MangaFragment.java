@@ -595,7 +595,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 getActivity().setTitle(orgMsg);
             }
             if (result > 0) {
-                Toast.makeText(getActivity(), result + " " + getString(R.string.new_chapters_found), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.mgs_update_found, result), Toast.LENGTH_SHORT).show();
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
             }

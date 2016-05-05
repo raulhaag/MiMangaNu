@@ -56,7 +56,7 @@
     <string name="max_texture_subtitle">Dimensione della texture che sarà utilizzata (0 per disattivare l\'accelerazione hardware)\n%s</string>
     <string name="opciones_descarga">"Impostazioni di download"</string>
     <string name="cantidad_descargas_title">Download simultanei</string>
-    <string name="cantidad_descargas_subtitle">Numero di thread di scaricamento: %s</string>
+    <string name="cantidad_descargas_subtitle">Quantità di immagini scaricate contemporaneamente: %s</string>
     <string name="cantidad_errores_title">Tolleranza degli errori per capitolo</string>
     <string name="cantidad_errores_subtitle">Il numero tollerato di errori per capitolo: %s</string>
     <string name="cantidad_reintentos_title">Numero massimo di tentativi per immagine</string>
@@ -143,7 +143,6 @@
     <string name="delete_comfirm">Sei sicuro di voler eliminare questi capitoli?</string>
     <string name="close">vicino</string>
     <string name="retry">Riprova</string>
-    <string name="new_chapters_found">nuovi capitoli trovati</string>
     <string name="storage_permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
     <string name="no_new_updates_found">Nessun nuovo capitolo trovato :(</string>
 </resources>
