@@ -20,8 +20,9 @@ package ar.rulosoft.custompref;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
+//import android.graphics.drawable.ShapeDrawable;
+//import android.graphics.drawable.shapes.OvalShape;
+//import android.graphics.drawable.shapes.RectShape;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
@@ -34,7 +35,7 @@ public class ColorListDialogPref extends DialogPreference {
     private Context mContext = getContext();
     private String[] mColorCodeList;
     private String[] mColorNameList;
-    private ShapeDrawable mShapeDraw;
+    //private ShapeDrawable mShapeDraw;
     private String mSummary;
     private int mValue;
 
@@ -47,10 +48,10 @@ public class ColorListDialogPref extends DialogPreference {
         mColorNameList = mContext.getResources().getStringArray(R.array.color_names);
 
         /** Create simple filled circle shape */
-        float dpiScale = mContext.getResources().getDisplayMetrics().density;
-        mShapeDraw = new ShapeDrawable(new OvalShape());
-        mShapeDraw.setIntrinsicHeight((int) (36 * dpiScale));
-        mShapeDraw.setIntrinsicWidth((int) (36 * dpiScale));
+        //float dpiScale = mContext.getResources().getDisplayMetrics().density;
+        //mShapeDraw = new ShapeDrawable(new RectShape());
+        //mShapeDraw.setIntrinsicHeight((int) (36 * dpiScale));
+        //mShapeDraw.setIntrinsicWidth((int) (24 * dpiScale));
 
         /** Disable buttons, we choose color by clicking on it either way */
         super.setPositiveButtonText(null);
@@ -98,10 +99,10 @@ public class ColorListDialogPref extends DialogPreference {
     }
 
     public void setIconChange() {
-        mShapeDraw.getPaint().setColor(mValue);
+        //mShapeDraw.getPaint().setColor(mValue);
         if (colorBox != null) {
-            colorBox.setImageDrawable(null);
-            colorBox.setImageDrawable(mShapeDraw);
+            //colorBox.setImageDrawable(mShapeDraw);
+            colorBox.setBackgroundColor(mValue);
         }
     }
 

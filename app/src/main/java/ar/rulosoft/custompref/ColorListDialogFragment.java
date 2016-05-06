@@ -20,7 +20,6 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
     private ListView mListView;
     private int mValue;
 
-
     private ColorListDialogPref parent;
 
     public static ColorListDialogFragment newInstance(Preference preference) {
@@ -41,6 +40,7 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
     @Override
     public void onStart() {
         super.onStart();
+
         ArrayAdapter<String> color_adapter = new ArrayAdapterColor(this, R.layout.listitem_color, mValue);
         mListView.setAdapter(color_adapter);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -62,11 +62,11 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
 
     @Override
     public void onDialogClosed(boolean positiveResult) {
-         if(positiveResult) {
+        if (positiveResult) {
             Integer pushValue = mValue;
-           if (parent.callChangeListener(pushValue)) {
-               parent.persistInt(pushValue);
-               parent._notifyChanged();
+            if (parent.callChangeListener(pushValue)) {
+                parent.persistInt(pushValue);
+                parent._notifyChanged();
             }
         }
     }
@@ -84,5 +84,6 @@ public class ColorListDialogFragment extends PreferenceDialogFragmentCompat {
         mColorCodeList = parent.getCodeList();
         mColorNameList = parent.getNameList();
     }
+
 
 }
