@@ -115,7 +115,6 @@
             app:val_min="0" />
     </PreferenceCategory>
 
-    <!-- Finally, replaced by a much lighter color picker -->
     <android.support.v7.preference.PreferenceCategory android:title="@string/ui_settings">
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
@@ -137,6 +136,7 @@
             android:summary="@string/color_reader_sub"
             android:title="@string/color_reader" />
     </android.support.v7.preference.PreferenceCategory>
+
     <android.support.v7.preference.PreferenceCategory android:title="@string/about">
         <android.support.v7.preference.Preference
             android:key="about_text"

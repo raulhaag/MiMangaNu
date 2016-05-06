@@ -167,7 +167,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         final int DOESNT_EXIST = -1;
 
         // Get current version code
-        int currentVersionCode = 0;
+        int currentVersionCode;
         try {
             currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
         } catch (android.content.pm.PackageManager.NameNotFoundException e) {
@@ -260,7 +260,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         @Override
         protected void onPostExecute(Long l) {
             Preference prefStoreStat = getPreferenceManager().findPreference("stat_storage");
-            prefStoreStat.setSummary(String.format("%.2f", l / (1024.0 * 1024.0)) + " MB");
+
+            double cSize = l / (1024.0 * 1024.0);
+            if (cSize > 1024.0)
+                prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
+            else
+                prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
+
             super.onPostExecute(l);
         }
     }
