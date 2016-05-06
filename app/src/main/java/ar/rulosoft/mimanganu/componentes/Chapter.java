@@ -172,6 +172,9 @@ public class Chapter{
     public void markRead(Context c, boolean read) {
         Database.markChapter(c, getId(), read);
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
+        if(!read){
+            setPagesRead(0);
+        }
     }
 
     public void addChapterFirst(Manga manga) {
