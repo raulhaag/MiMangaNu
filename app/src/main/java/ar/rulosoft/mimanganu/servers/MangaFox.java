@@ -145,7 +145,7 @@ public class MangaFox extends ServerBase {
             }
             mangas.add(manga);
         }
-        hayMas = !mangas.isEmpty();
+        hasMore = !mangas.isEmpty();
         return mangas;
     }
 

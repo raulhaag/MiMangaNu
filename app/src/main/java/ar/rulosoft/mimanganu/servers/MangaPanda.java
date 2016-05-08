@@ -171,7 +171,7 @@ public class MangaPanda extends ServerBase {
             manga.setImages(m.group(1));
             mangas.add(manga);
         }
-        hayMas = !mangas.isEmpty();
+        hasMore = !mangas.isEmpty();
         return mangas;
     }
 

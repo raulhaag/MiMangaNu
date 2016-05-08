@@ -36,84 +36,87 @@ public abstract class ServerBase {
     public static final int MYMANGAIO = 20;
     public static final int RAWSENMANGA = 21;
     public static final int TUMANGAONLINE = 22;
+    public static final int MANGAEDEN = 24;
 
-
-    public boolean hayMas = true;
+    public boolean hasMore = true;
     private String serverName;
     private int icon;
     private int flag;
     private int serverID;
 
     public static ServerBase getServer(int id) {
-        ServerBase s = null;
+        ServerBase serverBase = null;
         switch (id) {
             case MANGAPANDA:
-                s = new MangaPanda();
+                serverBase = new MangaPanda();
                 break;
             case ESMANGAHERE:
-                s = new EsMangaHere();
+                serverBase = new EsMangaHere();
                 break;
             case MANGAHERE:
-                s = new MangaHere();
+                serverBase = new MangaHere();
                 break;
             case MANGAFOX:
-                s = new MangaFox();
+                serverBase = new MangaFox();
                 break;
             case SUBMANGA:
-                s = new SubManga();
+                serverBase = new SubManga();
                 break;
             case ESMANGA:
-                s = new EsMangaCom();
+                serverBase = new EsMangaCom();
                 break;
             case HEAVENMANGACOM:
-                s = new HeavenMangaCom();
+                serverBase = new HeavenMangaCom();
                 break;
             case MANGAREADER:
-                s = new MangaReader();
+                serverBase = new MangaReader();
                 break;
             case ESNINEMANGA:
-                s = new EsNineMangaCom();
+                serverBase = new EsNineMangaCom();
                 break;
             case LECTUREENLIGNE:
-                s = new LectureEnLigne();
+                serverBase = new LectureEnLigne();
                 break;
             case KISSMANGA:
-                s = new KissManga();
+                serverBase = new KissManga();
                 break;
             case ITNINEMANGA:
-                s = new ItNineMangaCom();
+                serverBase = new ItNineMangaCom();
                 break;
             case TUMANGAONLINE:
-                s = new TuMangaOnline();
+                serverBase = new TuMangaOnline();
                 break;
             case TUSMANGAS:
-                s = new TusMangasOnlineCom();
+                serverBase = new TusMangasOnlineCom();
                 break;
             case STARKANACOM:
-                s = new StarkanaCom();
+                serverBase = new StarkanaCom();
                 break;
             case DENINEMANGA:
-                s = new DeNineMangaCom();
+                serverBase = new DeNineMangaCom();
                 break;
             case RUNINEMANGA:
-                s = new RuNineMangaCom();
+                serverBase = new RuNineMangaCom();
                 break;
             case MANGATUBE:
-                s = new Manga_Tube();
+                serverBase = new Manga_Tube();
                 break;
             case MANGAEDENIT:
-                s = new MangaEdenIt();
+                serverBase = new MangaEdenIt();
                 break;
             case MYMANGAIO:
-                s = new MyMangaIo();
+                serverBase = new MyMangaIo();
                 break;
             case RAWSENMANGA:
-                s = new RawSenManga();
+                serverBase = new RawSenManga();
+                break;
+            case MANGAEDEN:
+                serverBase = new MangaEden();
                 break;
             default:
                 break;
         }
-        return s;
+        return serverBase;
     }
 
     // server
@@ -338,6 +341,7 @@ public abstract class ServerBase {
                 new MangaFox(),
                 new MangaReader(),
                 new KissManga(),
+                new MangaEden(),
                 new RuNineMangaCom(),
                 new LectureEnLigne(),
                 new MyMangaIo(),
