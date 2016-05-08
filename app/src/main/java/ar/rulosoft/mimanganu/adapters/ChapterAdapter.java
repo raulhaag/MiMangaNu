@@ -28,7 +28,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.mimanganu.utils.Utilities;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private static int COLOR_READ = Color.parseColor("#b2b2b2");
@@ -128,7 +128,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         Manga m = fm.mManga;
                         ServerBase s = ServerBase.getServer(m.getServerId());
                         String ruta = DownloadPoolService.generateBasePath(s, m, c, activity);
-                        Utilities.deleteRecursive(new File(ruta));
+                        Util.getInstance().deleteRecursive(new File(ruta));
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();

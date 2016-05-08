@@ -4,13 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.LinkedList;
-import java.util.List;
 
 public class FileCache {
     private File cacheDir;
@@ -30,9 +29,7 @@ public class FileCache {
     }
 
     public FileCache() {
-        //default constructor, in case when we only need to access one method from
-        //the FileCache object like is the case in the doInBackground method from CalcStorage class
-        //in the PreferencesFragment
+        //default constructor, in case when we only need to access one method from a FileCache object
     }
 
     public static void writeFile(InputStream is, File f) {
@@ -62,42 +59,13 @@ public class FileCache {
         return new File(cacheDir, filename);
     }
 
-    /**
-     * Calculate size of folder.
-     *
-     * @param folder your directory to check
-     * @return totalSize
-     */
-    public long dirSize(final File folder) {
-        if (folder == null || !folder.exists())
-            return 0;
-        if (!folder.isDirectory())
-            return folder.length();
-        final List<File> dirs = new LinkedList<>();
-        dirs.add(folder);
-        long result = 0;
-        while (!dirs.isEmpty()) {
-            final File dir = dirs.remove(0);
-            if (!dir.exists())
-                continue;
-            final File[] listFiles = dir.listFiles();
-            if (listFiles == null || listFiles.length == 0)
-                continue;
-            for (final File child : listFiles) {
-                result += child.length();
-                if (child.isDirectory())
-                    dirs.add(child);
-            }
-        }
-        return result;
-    }
-
     public void clearCache() {
         File[] files = cacheDir.listFiles();
         if (files == null)
             return;
         for (File f : files) {
-            boolean deleted = f.delete();
+            Log.d("FileCache: ","deleting: "+f.getAbsolutePath());
+            f.delete();
         }
     }
 }
