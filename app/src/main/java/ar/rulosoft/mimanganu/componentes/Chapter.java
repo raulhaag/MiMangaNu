@@ -174,6 +174,7 @@ public class Chapter{
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
         if(!read){
             setPagesRead(0);
+            Database.updateChapterPlusDownload(c, this);
         }
     }
 
