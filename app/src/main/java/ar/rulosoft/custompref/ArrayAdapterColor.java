@@ -20,9 +20,6 @@ package ar.rulosoft.custompref;
 
 import android.app.Activity;
 import android.graphics.Color;
-import android.graphics.drawable.ShapeDrawable;
-import android.graphics.drawable.shapes.OvalShape;
-import android.os.Build.VERSION;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,12 +38,6 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
     private int mResource;
     private int mDefValue;
     private float dpiScale;
-
-    static class ViewHolder {
-        public LinearLayout object;
-        public TextView text;
-        public ImageView image;
-    }
 
     public ArrayAdapterColor(ColorListDialogFragment parent, int resource, int defValue) {
         super(parent.getContext(), resource, parent.getCodeList());
@@ -79,27 +70,20 @@ public class ArrayAdapterColor extends ArrayAdapter<String> {
         holder.text.setText(mColorNameList[position]);
 
         // Some funky stuff, want to see it? Activate following lines!
-//        int weakColor = Color.argb(30,
-//                Color.red(Color.parseColor(mColorCodeList[position])),
-//                Color.green(Color.parseColor(mColorCodeList[position])),
-//                Color.blue(Color.parseColor(mColorCodeList[position])));
-//        holder.object.setBackgroundColor(weakColor);
+        //int weakColor = Color.argb(30,
+        //       Color.red(Color.parseColor(mColorCodeList[position])),
+        //        Color.green(Color.parseColor(mColorCodeList[position])),
+        //        Color.blue(Color.parseColor(mColorCodeList[position])));
+        //holder.object.setBackgroundColor(weakColor);
 
-        ShapeDrawable mShapeDraw = new ShapeDrawable(new OvalShape());
-        mShapeDraw.setIntrinsicHeight((int) (36 * dpiScale));
-        mShapeDraw.setIntrinsicWidth((int) (36 * dpiScale));
-        mShapeDraw.getPaint().setColor(Color.parseColor(mColorCodeList[position]));
 
-        if (VERSION.SDK_INT > 16)
-            holder.image.setBackground(mShapeDraw);
-        else
-            holder.image.setBackgroundDrawable(mShapeDraw);
-
-        if (mDefValue == Color.parseColor(mColorCodeList[position]))
-            holder.image.setImageResource(R.drawable.ic_check);
-        else
-            holder.image.setImageResource(0);
-
+        holder.image.setBackgroundColor(Color.parseColor(mColorCodeList[position]));
         return rowView;
+    }
+
+    static class ViewHolder {
+        public LinearLayout object;
+        public TextView text;
+        public ImageView image;
     }
 }

@@ -13,8 +13,8 @@
 
     <ImageView
         android:id="@+id/color_icon"
-        android:layout_width="24dp"
-        android:layout_height="match_parent"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_marginEnd="@dimen/dialog_margin_space"
         android:layout_marginRight="@dimen/dialog_margin_space" />
 

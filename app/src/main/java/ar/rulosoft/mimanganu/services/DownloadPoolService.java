@@ -87,7 +87,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                     }
                 }
             }
-
             initValues(activity);
         }
     }

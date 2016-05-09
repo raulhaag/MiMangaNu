@@ -4,14 +4,17 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:orientation="horizontal"
-    android:padding="10dp">
+    android:padding="10dp"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin">
 
     <ImageView
         android:id="@+id/color_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="4dp" />
+        android:layout_marginEnd="@dimen/dialog_margin_space"
+        android:layout_marginRight="@dimen/dialog_margin_space" />
 
     <TextView
         android:id="@+id/colorText"
