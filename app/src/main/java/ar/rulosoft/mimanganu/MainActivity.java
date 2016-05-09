@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
@@ -21,6 +20,7 @@ import android.view.Window;
 import android.widget.Toast;
 
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class MainActivity extends AppCompatActivity {
     public int[] colors;
@@ -86,18 +86,13 @@ public class MainActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE);
     }
 
-    private void restartApp(){
-        startActivity(getPackageManager().getLaunchIntentForPackage(getPackageName()).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-        System.exit(0);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission Granted
-                    restartApp();
+                    Util.getInstance().restartApp(getApplicationContext());
                 } else {
                     // Permission Denied
                     Toast.makeText(MainActivity.this, getString(R.string.storage_permission_denied), Toast.LENGTH_SHORT).show();
@@ -118,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
-            restartApp();
+            Util.getInstance().restartApp(getApplicationContext());
         }
         colors = ThemeColors.getColors(pm, getApplicationContext());
         setColorToBars();

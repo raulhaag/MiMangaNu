@@ -346,8 +346,16 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 break;
             }
             case R.id.action_uncheck_as_read: {
-                Database.markAllChapters(getActivity(), this.mMangaId, false);
-                new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                //Database.markAllChapters(getActivity(), this.mMangaId, false);
+                //new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+                mChapterAdapter.selectAll();
+                SparseBooleanArray selection = mChapterAdapter.getSelection();
+                for (int i = selection.size() - 1; i >= 0; i--) {
+                    Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
+                    c.markRead(getActivity(), false);
+                }
+                mChapterAdapter.clearSelection();
                 break;
             }
             case R.id.action_sentido: {

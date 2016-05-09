@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.animation.ObjectAnimator;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,7 +43,7 @@ import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.mimanganu.utils.Utilities;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by Raul
@@ -70,7 +69,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private int mNotifyID = 1246502;
-
 
     @Nullable
     @Override
@@ -101,12 +99,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.colors = ThemeColors.getColors(pm, getActivity());
         activity.setColorToBars();
         if (activity.darkTheme != pm.getBoolean("dark_theme", false)) {
-            // re start to apply new theme
-            Intent i = getActivity().getPackageManager()
-                    .getLaunchIntentForPackage(getActivity().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-            System.exit(0);
+            Util.getInstance().restartApp(getContext());
         }
         activity.enableHomeButton(false);
         activity.setTitle(getString(R.string.app_name));
@@ -329,7 +322,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             DownloadPoolService.forceStop(m.getId());
             ServerBase s = ServerBase.getServer(m.getServerId());
             String path = DownloadPoolService.generateBasePath(s, m, getActivity());
-            Utilities.deleteRecursive(new File(path));
+            Util.getInstance().deleteRecursive(new File(path));
             Database.deleteManga(getActivity(), m.getId());
             adapter.remove(m);
         } else if (item.getItemId() == R.id.noupdate) {

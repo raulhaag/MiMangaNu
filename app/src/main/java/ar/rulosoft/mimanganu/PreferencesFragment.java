@@ -14,8 +14,6 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
 
-import com.fedorvlasov.lazylist.FileCache;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -30,11 +28,11 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.utils.Util;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
     private SharedPreferences prefs;
-    private FileCache mFileStorage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -245,14 +243,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     public class calcStorage extends AsyncTask<String, Void, Long> {
         @Override
         protected Long doInBackground(String... strings) {
-            mFileStorage = new FileCache();
-
             long store_total = 0;
             File[] listStore = new File(strings[0]).listFiles();
             for (final File oneFold : listStore) {
                 if (oneFold.getName().equals("cache") || oneFold.getName().equals("dbs"))
                     continue;
-                store_total += mFileStorage.dirSize(oneFold);
+                store_total += Util.getInstance().dirSize(oneFold);
             }
             return store_total;
         }

@@ -134,7 +134,7 @@ public class MangaHere extends ServerBase {
             manga.setImages(m.group(1).replace("thumb_",""));
             mangas.add(manga);
         }
-        hayMas = !mangas.isEmpty();
+        hasMore = !mangas.isEmpty();
         return mangas;
     }
 

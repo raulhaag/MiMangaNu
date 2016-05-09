@@ -12,34 +12,36 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
 /**
- * Created by Raul on 03/12/2015.
+ * Created by jtx on 07.05.2016.
  */
-public class MangaEdenIt extends ServerBase {
+public class MangaEden extends ServerBase {
 
     public static String HOST = "http://www.mangaeden.com/";
 
     private static String[] genre = new String[]{
-            "Tutto","Avventura","Azione","Bara","Commedia","Demenziale",
-            "Dounshinji","Drama","Ecchi","Fantasy","Harem","Hentai",
-            "Horror","Josei","Magico","Mecha","Misteri","Musica",
-            "Psicologico","Raccolta","Romantico","Sci-Fi","Scolastico","Seinen",
-            "Sentimentale","Shota","Shoujo","Shounen","Sovrannaturale","Splatter",
-            "Sportivo","Storico","Vita Quotidiana","Yaoi","Yuri"
+            "Everything","Action", "Adult",
+            "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi", "Fantasy",
+            "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Martial Arts",
+            "Mature", "Mecha", "Mystery", "One Shot", "Psychological", "Romance",
+            "School Life", "Sci-fi", "Seinen", "Shoujo", "Shounen", "Slice of Life",
+            "Smut", "Sports", "Supernatural", "Tragedy", "Webtoons", "Yaoi",
+            "Yuri"
     };
     private static String[] genreV = new String[]{
-            "", "4e70ea8cc092255ef70073d3","4e70ea8cc092255ef70073c3","4e70ea90c092255ef70074b7","4e70ea8cc092255ef70073d0","4e70ea8fc092255ef7007475",
-            "4e70ea93c092255ef70074e4","4e70ea8cc092255ef70073f9","4e70ea8cc092255ef70073cd","4e70ea8cc092255ef70073c4","4e70ea8cc092255ef70073d1","4e70ea90c092255ef700749a",
-            "4e70ea8cc092255ef70073ce","4e70ea90c092255ef70074bd","4e70ea93c092255ef700751b","4e70ea8cc092255ef70073ef","4e70ea8dc092255ef700740a","4e70ea8fc092255ef7007456",
-            "4e70ea8ec092255ef7007439","4e70ea90c092255ef70074ae","4e70ea8cc092255ef70073c5","4e70ea8cc092255ef70073e4","4e70ea8cc092255ef70073e5","4e70ea8cc092255ef70073ea",
-            "4e70ea8dc092255ef7007432","4e70ea90c092255ef70074b8","4e70ea8dc092255ef7007421","4e70ea8cc092255ef70073c6","4e70ea8cc092255ef70073c7","4e70ea99c092255ef70075a3",
-            "4e70ea8dc092255ef7007426","4e70ea8cc092255ef70073f4","4e70ea8ec092255ef700743f","4e70ea8cc092255ef70073de","4e70ea9ac092255ef70075d1"
+            "", "4e70e91bc092255ef70016f8", "4e70e92fc092255ef7001b94",
+            "4e70e918c092255ef700168e", "4e70e918c092255ef7001675", "4e70e928c092255ef7001a0a", "4e70e918c092255ef7001693", "4e70e91ec092255ef700175e", "4e70e918c092255ef7001676",
+            "4e70e921c092255ef700184b", "4e70e91fc092255ef7001783", "4e70e91ac092255ef70016d8", "4e70e919c092255ef70016a8", "4e70e920c092255ef70017de", "4e70e923c092255ef70018d0",
+            "4e70e91bc092255ef7001705", "4e70e922c092255ef7001877", "4e70e918c092255ef7001681", "4e70e91dc092255ef7001747", "4e70e919c092255ef70016a9", "4e70e918c092255ef7001677",
+            "4e70e918c092255ef7001688", "4e70e91bc092255ef7001706", "4e70e918c092255ef700168b", "4e70e918c092255ef7001667", "4e70e918c092255ef700166f", "4e70e918c092255ef700167e",
+            "4e70e922c092255ef700185a", "4e70e91dc092255ef700172e", "4e70e918c092255ef700166a", "4e70e918c092255ef7001672", "4e70ea70c092255ef7006d9c", "4e70e91ac092255ef70016e5",
+            "4e70e92ac092255ef7001a57"
     };
 
-    public MangaEdenIt() {
-        this.setFlag(R.drawable.flag_it);
+    public MangaEden() {
+        this.setFlag(R.drawable.flag_eng);
         this.setIcon(R.drawable.mangaeden);
-        this.setServerName("MangaEdenIt");
-        setServerID(ServerBase.MANGAEDENIT);
+        this.setServerName("MangaEden");
+        setServerID(ServerBase.MANGAEDEN);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class MangaEdenIt extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavWithHeader().get("http://www.mangaeden.com/it/it-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
+        String source = getNavWithHeader().get("http://www.mangaeden.com/en/en-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
         return getMangasFromSource(source);
     }
 
@@ -69,17 +71,17 @@ public class MangaEdenIt extends ServerBase {
         m.setImages(image);
         // Summary
         String summary = getFirstMatchDefault("mangaDescription\">(.+?)</h",
-                source, "Senza sinossi").replaceAll("<.+?>", "");
+                source, "no synopsis").replaceAll("<.+?>", "");
         m.setSynopsis(Html.fromHtml(summary).toString());
-        // Stato
-        m.setFinished(getFirstMatchDefault("Stato</h(.+?)<h", source, "").contains("Completato"));
-        // Autor
-        m.setAuthor(Html.fromHtml(getFirstMatchDefault("Autore</h4>(.+?)<h4>", source, "")).toString().trim().replaceAll("\n", ""));
-        // Genere
-        m.setGenre((Html.fromHtml(getFirstMatchDefault("Genere</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
+        // Status
+        m.setFinished(getFirstMatchDefault("Status</h(.+?)<h", source, "").contains("Completed"));
+        // Author
+        m.setAuthor(Html.fromHtml(getFirstMatchDefault("Author</h4>(.+?)<h4>", source, "")).toString().trim().replaceAll("\n", ""));
+        // Genres
+        m.setGenre((Html.fromHtml(getFirstMatchDefault("Genres</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
         // Chapters
         Pattern p = Pattern.compile(
-                "<tr.+?href=\"(/it/it-manga/.+?)\".+?>(.+?)</a");
+                "<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -128,7 +130,7 @@ public class MangaEdenIt extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categories, int order, int pageNumber) throws Exception {
-        String web = HOST + "it/it-directory/" + "?page=" + pageNumber;
+        String web = HOST + "en/en-directory/" + "?page=" + pageNumber;
         if(categories > 0){
             web = web + "&categoriesInc=" + genreV[categories];
         }
@@ -137,11 +139,11 @@ public class MangaEdenIt extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("<tr><td><a href=\"/it/it-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("<tr><td><a href=\"/en/en-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), HOST + "it/it-manga/" +  m.group(1), m.group(2).contains("close"));
+            Manga manga = new Manga(getServerID(), m.group(3), HOST + "en/en-manga/" +  m.group(1), m.group(2).contains("close"));
             mangas.add(manga);
         }
         return mangas;
@@ -154,7 +156,7 @@ public class MangaEdenIt extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{"Popularite"};
+        return new String[]{"Popular"};
     }
 
     @Override

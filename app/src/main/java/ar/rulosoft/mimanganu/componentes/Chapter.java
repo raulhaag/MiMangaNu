@@ -8,7 +8,7 @@ import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
-import ar.rulosoft.mimanganu.utils.Utilities;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class Chapter{
 
@@ -139,12 +139,12 @@ public class Chapter{
 
     private void deleteImages(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        Utilities.deleteRecursive(new File(path));
+        Util.getInstance().deleteRecursive(new File(path));
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        Utilities.deleteRecursive(new File(path));
+        Util.getInstance().deleteRecursive(new File(path));
         setPages(0);
         setDownloaded(false);
         setPagesRead(0);
@@ -174,6 +174,7 @@ public class Chapter{
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
         if(!read){
             setPagesRead(0);
+            Database.updateChapterPlusDownload(c, this);
         }
     }
 
