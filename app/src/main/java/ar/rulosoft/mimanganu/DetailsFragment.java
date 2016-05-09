@@ -69,7 +69,7 @@ public class DetailsFragment extends Fragment {
         if (mActBar != null) {
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
-        button_add = (FloatingActionButton) getView().findViewById(R.id.button_add);
+        button_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
         button_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -151,48 +151,50 @@ public class DetailsFragment extends Fragment {
         @Override
         protected void onPostExecute(Void v) {
             String infoExtra = "";
-            if (error == null || error.length() < 2) {
-                if (m.isFinished()) {
-                    infoExtra = infoExtra + getResources().getString(R.string.finalizado);
+            if(isAdded()) {
+                if (error == null || error.length() < 2) {
+                    if (m.isFinished()) {
+                        infoExtra = infoExtra + getResources().getString(R.string.finalizado);
+                    } else {
+                        infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
+                    }
+                    data.setStatus(infoExtra);
+                    data.setServer(s.getServerName());
+                    if (m.getAuthor() != null && m.getAuthor().length() > 1) {
+                        data.setAuthor(m.getAuthor());
+                    } else {
+                        data.setAuthor(getResources().getString(R.string.nodisponible));
+                    }
+                    if (m.getGenre() != null && m.getGenre().length() > 1) {
+                        data.setGenre(m.getGenre());
+                    } else {
+                        data.setGenre(getResources().getString(R.string.nodisponible));
+                    }
+                    if (m.getSynopsis() != null && m.getSynopsis().length() > 1) {
+                        data.setSynopsis(m.getSynopsis());
+                    } else {
+                        data.setSynopsis(getResources().getString(R.string.nodisponible));
+                    }
+                    imageLoader.displayImg(m.getImages(), data);
+                    if (error != null && error.length() > 2) {
+                        Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                    } else {
+                        AnimatorSet set = new AnimatorSet();
+                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 0.0f, 1.0f);
+                        anim1.setDuration(0);
+                        float y = button_add.getY();
+                        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(button_add, "y", displayMetrics.heightPixels);
+                        anim2.setDuration(0);
+                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(button_add, "y", y);
+                        anim3.setInterpolator(new AccelerateDecelerateInterpolator());
+                        anim3.setDuration(500);
+                        set.playSequentially(anim2, anim1, anim3);
+                        set.start();
+                    }
                 } else {
-                    infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
-                }
-                data.setStatus(infoExtra);
-                data.setServer(s.getServerName());
-                if (m.getAuthor() != null && m.getAuthor().length() > 1) {
-                    data.setAuthor(m.getAuthor());
-                } else {
-                    data.setAuthor(getResources().getString(R.string.nodisponible));
-                }
-                if (m.getGenre() != null && m.getGenre().length() > 1) {
-                    data.setGenre(m.getGenre());
-                } else {
-                    data.setGenre(getResources().getString(R.string.nodisponible));
-                }
-                if (m.getSynopsis() != null && m.getSynopsis().length() > 1) {
-                    data.setSynopsis(m.getSynopsis());
-                } else {
-                    data.setSynopsis(getResources().getString(R.string.nodisponible));
-                }
-                imageLoader.displayImg(m.getImages(), data);
-                if (error != null && error.length() > 2) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-                } else {
-                    AnimatorSet set = new AnimatorSet();
-                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 0.0f, 1.0f);
-                    anim1.setDuration(0);
-                    float y = button_add.getY();
-                    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(button_add, "y", displayMetrics.heightPixels);
-                    anim2.setDuration(0);
-                    ObjectAnimator anim3 = ObjectAnimator.ofFloat(button_add, "y", y);
-                    anim3.setInterpolator(new AccelerateDecelerateInterpolator());
-                    anim3.setDuration(500);
-                    set.playSequentially(anim2, anim1, anim3);
-                    set.start();
                 }
-            } else {
-                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
             str.setRefreshing(false);
         }
