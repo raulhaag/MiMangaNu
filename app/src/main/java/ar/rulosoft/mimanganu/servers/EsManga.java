@@ -10,7 +10,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
-public class EsMangaCom extends ServerBase {
+public class EsManga extends ServerBase {
 
     private static String[] generos = new String[]{
             "Todos", "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
@@ -29,8 +29,8 @@ public class EsMangaCom extends ServerBase {
             "/genero/vida-cotidiana", "/genero/yuri"
     };
 
-    public EsMangaCom() {
-        this.setFlag(R.drawable.flag_esp);
+    public EsManga() {
+        this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.esmanga);
         this.setServerName("EsManga");
         setServerID(ServerBase.ESMANGA);
@@ -48,7 +48,7 @@ public class EsMangaCom extends ServerBase {
         Pattern p = Pattern.compile("<li>[^<]+<article>[\\S\\s]+?<h2><a href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            mangas.add(new Manga(ESMANGA, m.group(2), m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(2), m.group(1), false));
         }
         return mangas;
     }
@@ -60,51 +60,51 @@ public class EsMangaCom extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         Navegador nav = new Navegador();
-        String source = nav.get(m.getPath());
-        //sinopsis
-        m.setSynopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s",
+        String source = nav.get(manga.getPath());
+        // sinopsis
+        manga.setSynopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s",
                 source, "Sin Sinopsis").replaceAll("<.+?>", ""));
-        //imagen
-        m.setImages(getFirstMatchDefault("(http://esmanga.com/img/mangas/.+?)\"", source, ""));
-        //status
-        m.setFinished(getFirstMatchDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
+        // imagen
+        manga.setImages(getFirstMatchDefault("(http://esmanga.com/img/mangas/.+?)\"", source, ""));
+        // status
+        manga.setFinished(getFirstMatchDefault("<b>Estado:(.+?)</span>", source, "").contains("Finalizado"));
         // capitulos
         ArrayList<Chapter> chapters = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(http://esmanga.com/[^\"]+/c\\d+)\">(.+?)</a><");
-        Matcher ma = p.matcher(source);
-        while (ma.find()) {
-            chapters.add(0, new Chapter(ma.group(2).trim(), ma.group(1)));
+        Matcher matcher = p.matcher(source);
+        while (matcher.find()) {
+            chapters.add(0, new Chapter(matcher.group(2).trim(), matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath() + "/" + page;
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath() + "/" + page;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         Navegador nav = new Navegador();
-        String source = nav.get(this.getPagesNumber(c, page));
+        String source = nav.get(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+\\d.(jpg|png|bmp))", source, "Error en plugin (obtener imager)");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         Navegador nav = new Navegador();
-        String source = nav.get(c.getPath());
+        String source = nav.get(chapter.getPath());
         String textNum = getFirstMatch("option value=\"(\\d+)[^=]+</option></select>",
                 source, "Error en plugin (obtener p�ginas)");
-        c.setPages(Integer.parseInt(textNum));
+        chapter.setPages(Integer.parseInt(textNum));
     }
 
     @Override
@@ -116,11 +116,11 @@ public class EsMangaCom extends ServerBase {
     private ArrayList<Manga> getMangasWeb(String web) throws Exception {
         String source = new Navegador().get(web);
         Pattern p = Pattern.compile("src=\"([^\"]+)\".+?<a href=\"(http://esmanga.com/manga/.+?)\">(.+?)<");
-        Matcher m = p.matcher(source);
+        Matcher matcher = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
-        while (m.find()) {
-            Manga manga = new Manga(ESMANGA, m.group(3), m.group(2), false);
-            manga.setImages(m.group(1));
+        while (matcher.find()) {
+            Manga manga = new Manga(getServerID(), matcher.group(3), matcher.group(2), false);
+            manga.setImages(matcher.group(1));
             mangas.add(0, manga);
         }
         return mangas;

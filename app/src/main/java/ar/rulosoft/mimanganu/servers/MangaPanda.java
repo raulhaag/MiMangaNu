@@ -45,9 +45,9 @@ public class MangaPanda extends ServerBase {
     };
 
     public MangaPanda() {
-        this.setFlag(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangapanda_icon);
-        this.setServerName("Mangapanda.com");
+        this.setServerName("Mangapanda");
         setServerID(ServerBase.MANGAPANDA);
     }
 
@@ -127,25 +127,25 @@ public class MangaPanda extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        page = (page > c.getPages()) ? 1 : page;
-        return c.getPath() + "/" + page;
+    public String getPagesNumber(Chapter chapter, int page) {
+        page = (page > chapter.getPages()) ? 1 : page;
+        return chapter.getPath() + "/" + page;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(c, page));
+        data = new Navegador().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data, "Error: Could not get the link to the image");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(c.getPath());
+        data = new Navegador().get(chapter.getPath());
         String pages =
                 getFirstMatch("of (\\d+)</div>", data, "Error: Could not get the number of pages");
-        c.setPages(Integer.parseInt(pages));
+        chapter.setPages(Integer.parseInt(pages));
     }
 
     @Override

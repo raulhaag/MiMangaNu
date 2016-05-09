@@ -47,20 +47,20 @@ public class Manga_Tube extends ServerBase {
 
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(m.getPath() + "?waring=1");
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(manga.getPath() + "?waring=1");
         // Front
-        m.setImages(getFirstMatchDefault("p=\"image\" content=\"(.+?)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("p=\"image\" content=\"(.+?)\"", source, ""));
         // Summary
         String summary = getFirstMatchDefault("ion\" content=\"(.+?)\"",
                 source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
-        m.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
+        manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
 
         // Chapter
         Pattern p = Pattern.compile(
@@ -70,20 +70,20 @@ public class Manga_Tube extends ServerBase {
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
+    public String getPagesNumber(Chapter chapter, int page) {
         return null;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().get(c.getPath());
+            String source = getNavWithHeader().get(chapter.getPath());
 
             Pattern p = Pattern.compile(",\"url\":\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -91,17 +91,17 @@ public class Manga_Tube extends ServerBase {
             while (m.find()) {
                 images = images + "|" + m.group(1);
             }
-            c.setExtra(images.replaceAll("\\\\",""));
+            chapter.setExtra(images.replaceAll("\\\\",""));
         }
-        return c.getExtra().split("\\|")[page];
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().get(c.getPath());
+            String source = getNavWithHeader().get(chapter.getPath());
 
             Pattern p = Pattern.compile(",\"url\":\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -110,9 +110,9 @@ public class Manga_Tube extends ServerBase {
                 pages++;
                 images = images + "|" + m.group(1);
             }
-            c.setExtra(images.replaceAll("\\\\",""));
+            chapter.setExtra(images.replaceAll("\\\\",""));
         }
-        c.setPages(pages);
+        chapter.setPages(pages);
     }
 
     @Override

@@ -67,7 +67,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
 
     public TusMangasOnlineCom() {
-        this.setFlag(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.tumangaonline_icon);
         this.setServerName("TusMangasOnline");
         setServerID(ServerBase.TUSMANGAS);
@@ -86,26 +86,26 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(m.getPath(), TIMEOUT);
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(manga.getPath(), TIMEOUT);
         // sinopsis
         String sinopsis = getFirstMatchDefault("(<p itemprop=\"description\".+?</p></div>)",
                 source, "Sin sinopsis");
-        m.setSynopsis(Html.fromHtml(sinopsis).toString());
+        manga.setSynopsis(Html.fromHtml(sinopsis).toString());
         // portada
-        m.setImages(getFirstMatchDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
         // estado
-        m.setFinished(!(getFirstMatchDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
+        manga.setFinished(!(getFirstMatchDefault("<td><strong>Estado:(.+?)</td>", source, "").contains("En Curso")));
         // autor
-        m.setAuthor(getFirstMatchDefault("5&amp;filter=.+?>(.+?)<", source, ""));
+        manga.setAuthor(getFirstMatchDefault("5&amp;filter=.+?>(.+?)<", source, ""));
         // genero
-        m.setGenre(Html.fromHtml(getFirstMatchDefault("<tr><td><strong>G&eacute;neros(.+?)</tr>", source, "")).toString());
+        manga.setGenre(Html.fromHtml(getFirstMatchDefault("<tr><td><strong>G&eacute;neros(.+?)</tr>", source, "")).toString());
         // capitulos
         ArrayList<Chapter> caps = new ArrayList<>();
         Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)</a");
@@ -117,21 +117,21 @@ public class TusMangasOnlineCom extends ServerBase {
                             ma.group(1) + "&idCapitulo=" + ma.group(2));
             caps.add(0, c);
         }
-        m.setChapters(caps);
+        manga.setChapters(caps);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
+    public String getPagesNumber(Chapter chapter, int page) {
         return null;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null || c.getExtra().length() < 2 || !c.getExtra().contains("|")) {
-            if (c.getExtra() == null || c.getExtra().length() < 2) {
-                getExtraWeb(c);
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2 || !chapter.getExtra().contains("|")) {
+            if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
+                getExtraWeb(chapter);
             }
-            String source = getNavWithHeader().get(c.getExtra(), TIMEOUT);
+            String source = getNavWithHeader().get(chapter.getExtra(), TIMEOUT);
             Pattern p = Pattern.compile(
                     "<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
@@ -149,9 +149,9 @@ public class TusMangasOnlineCom extends ServerBase {
             for (String s : strip) {
                 imagenes = imagenes + "|" + imgBase + s;
             }
-            c.setExtra(imagenes);
+            chapter.setExtra(imagenes);
         }
-        String[] imagenes = c.getExtra().split("\\|");
+        String[] imagenes = chapter.getExtra().split("\\|");
         return imagenes[page];
     }
 
@@ -168,15 +168,15 @@ public class TusMangasOnlineCom extends ServerBase {
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        if (!(c.getExtra() != null && c.getExtra().length() > 1)) {
-            getExtraWeb(c);
+    public void chapterInit(Chapter chapter) throws Exception {
+        if (!(chapter.getExtra() != null && chapter.getExtra().length() > 1)) {
+            getExtraWeb(chapter);
         }
-        String source = getNavWithHeader().get(c.getExtra());
+        String source = getNavWithHeader().get(chapter.getExtra());
         String paginas = getFirstMatch(
                 "<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">",
                 source, "Error al iniciar Capítulo");
-        c.setPages(Integer.parseInt(paginas));
+        chapter.setPages(Integer.parseInt(paginas));
     }
 
     @Override

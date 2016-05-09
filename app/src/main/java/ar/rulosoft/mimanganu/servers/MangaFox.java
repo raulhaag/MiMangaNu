@@ -39,7 +39,7 @@ public class MangaFox extends ServerBase {
     private static String[] ordenM = {"", "?az", "?rating", "?latest"};
 
     public MangaFox() {
-        this.setFlag(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangafox_icon);
         this.setServerName("MangaFox");
         setServerID(ServerBase.MANGAFOX);
@@ -98,36 +98,36 @@ public class MangaFox extends ServerBase {
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters().isEmpty() || forceReload)
-            loadChapters(m, forceReload);
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload)
+            loadChapters(manga, forceReload);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        if (page > c.getPages()) {
+    public String getPagesNumber(Chapter chapter, int page) {
+        if (page > chapter.getPages()) {
             page = 1;
         }
-        if (c.getPath().endsWith("html") && c.getPath().indexOf("/") > 0) {
-            c.setPath(c.getPath().substring(0, c.getPath().lastIndexOf("/") + 1));
+        if (chapter.getPath().endsWith("html") && chapter.getPath().indexOf("/") > 0) {
+            chapter.setPath(chapter.getPath().substring(0, chapter.getPath().lastIndexOf("/") + 1));
         }
-        return c.getPath() + page + ".html";
+        return chapter.getPath() + page + ".html";
 
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(c, page));
+        data = new Navegador().get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(c.getPath());
+        data = new Navegador().get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        c.setPages(Integer.parseInt(paginas)-1);//last page is for comments
+        chapter.setPages(Integer.parseInt(paginas)-1);//last page is for comments
     }
 
     @Override

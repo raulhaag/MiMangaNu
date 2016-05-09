@@ -11,7 +11,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
-public class DeNineMangaCom extends ServerBase {
+public class DeNineManga extends ServerBase {
     private static String HOST = "http://de.ninemanga.com";
 
     // As you can guess, "V" is missing, but this is the fault of the website, somehow
@@ -31,9 +31,9 @@ public class DeNineMangaCom extends ServerBase {
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
 
-    public DeNineMangaCom() {
+    public DeNineManga() {
         this.setFlag(R.drawable.flag_de);
-        this.setIcon(R.drawable.esninemanga);
+        this.setIcon(R.drawable.ninemanga);
         this.setServerName("DeNineManga");
         setServerID(ServerBase.DENINEMANGA);
     }
@@ -51,31 +51,31 @@ public class DeNineMangaCom extends ServerBase {
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(DENINEMANGA, m.group(2), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(m.getPath() + "?waring=1");
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(manga.getPath() + "?waring=1");
         // Front
-        m.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
-        m.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
+        manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
         // Status
-        m.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
+        manga.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
         // Author
-        m.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
+        manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
         // Chapter
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
@@ -84,47 +84,47 @@ public class DeNineMangaCom extends ServerBase {
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath().replace(".html", "-" + page + ".html");
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath().replace(".html", "-" + page + ".html");
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null)
-            setExtra(c);
-        String[] images = c.getExtra().split("\\|");
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null)
+            setExtra(chapter);
+        String[] images = chapter.getExtra().split("\\|");
         return images[page];
     }
 
-    private void setExtra(Chapter c) throws Exception {
+    private void setExtra(Chapter chapter) throws Exception {
         String source = getNavWithHeader().get(
-                c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
+                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
         String images = "";
         while (m.find()) {
             images = images + "|" + m.group(1);
         }
-        c.setExtra(images);
+        chapter.setExtra(images);
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String source = getNavWithHeader().get(c.getPath());
+    public void chapterInit(Chapter chapter) throws Exception {
+        String source = getNavWithHeader().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Es versäumt, die Anzahl der Seiten zu bekommen");
-        c.setPages(Integer.parseInt(nop));
+        chapter.setPages(Integer.parseInt(nop));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
         String source = getNavWithHeader().get(
-                HOST + DeNineMangaCom.order[order] +
+                HOST + DeNineManga.order[order] +
                         genreV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
@@ -135,7 +135,7 @@ public class DeNineMangaCom extends ServerBase {
                 "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(DENINEMANGA, m.group(3), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(1), false);
             manga.setImages(m.group(2));
             mangas.add(manga);
         }

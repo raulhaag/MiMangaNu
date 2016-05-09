@@ -80,32 +80,32 @@ public class RawSenManga extends ServerBase {
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters().isEmpty() || forceReload)
-            loadChapters(m, forceReload);
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload)
+            loadChapters(manga, forceReload);
     }
 
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
+    public String getPagesNumber(Chapter chapter, int page) {
         return null;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null) {
-            String data = getNavWithHeader().get(c.getPath());
-            c.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null) {
+            String data = getNavWithHeader().get(chapter.getPath());
+            chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
         }
-        return HOST + c.getExtra() + page;
+        return HOST + chapter.getExtra() + page;
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String data = getNavWithHeader().get(c.getPath());
+    public void chapterInit(Chapter chapter) throws Exception {
+        String data = getNavWithHeader().get(chapter.getPath());
         String number = getFirstMatch("</select> of (\\d+)", data, "Can't retrieve page quantity");
-        c.setPages(Integer.parseInt(number));
-        c.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
+        chapter.setPages(Integer.parseInt(number));
+        chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
     }
 
     @Override

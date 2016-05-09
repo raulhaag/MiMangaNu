@@ -54,29 +54,29 @@ public class MangaEdenIt extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(m.getPath());
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(manga.getPath());
         // Front
         String image = getFirstMatchDefault("<div class=\"mangaImage2\"><img src=\"(.+?)\"", source, "");
         if(image.length() > 2)
             image = "http:" + image;
-        m.setImages(image);
+        manga.setImages(image);
         // Summary
         String summary = getFirstMatchDefault("mangaDescription\">(.+?)</h",
                 source, "Senza sinossi").replaceAll("<.+?>", "");
-        m.setSynopsis(Html.fromHtml(summary).toString());
+        manga.setSynopsis(Html.fromHtml(summary).toString());
         // Stato
-        m.setFinished(getFirstMatchDefault("Stato</h(.+?)<h", source, "").contains("Completato"));
+        manga.setFinished(getFirstMatchDefault("Stato</h(.+?)<h", source, "").contains("Completato"));
         // Autor
-        m.setAuthor(Html.fromHtml(getFirstMatchDefault("Autore</h4>(.+?)<h4>", source, "")).toString().trim().replaceAll("\n", ""));
+        manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Autore</h4>(.+?)<h4>", source, "")).toString().trim().replaceAll("\n", ""));
         // Genere
-        m.setGenre((Html.fromHtml(getFirstMatchDefault("Genere</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
+        manga.setGenre((Html.fromHtml(getFirstMatchDefault("Genere</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
         // Chapters
         Pattern p = Pattern.compile(
                 "<tr.+?href=\"(/it/it-manga/.+?)\".+?>(.+?)</a");
@@ -85,35 +85,35 @@ public class MangaEdenIt extends ServerBase {
         while (matcher.find()) {
             chapters.add(0, new Chapter(Html.fromHtml(matcher.group(2)).toString(), HOST + matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
+    public String getPagesNumber(Chapter chapter, int page) {
         return null;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
-            String source = getNavWithHeader().get(c.getPath());
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
+            String source = getNavWithHeader().get(chapter.getPath());
             Pattern p = Pattern.compile("fs\":\\s*\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
             while (m.find()) {
                 images = images + "|" + "http:" + m.group(1);
             }
-            c.setExtra(images);
+            chapter.setExtra(images);
         }
-        return c.getExtra().split("\\|")[page];
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().get(c.getPath());
+            String source = getNavWithHeader().get(chapter.getPath());
             Pattern p = Pattern.compile("fs\":\\s*\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -121,9 +121,9 @@ public class MangaEdenIt extends ServerBase {
                 pages++;
                 images = images + "|" + "http:" + m.group(1);
             }
-            c.setExtra(images);
+            chapter.setExtra(images);
         }
-        c.setPages(pages);
+        chapter.setPages(pages);
     }
 
     @Override

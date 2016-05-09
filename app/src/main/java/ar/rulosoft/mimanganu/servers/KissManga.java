@@ -44,7 +44,7 @@ public class KissManga extends ServerBase {
     };
 
     public KissManga() {
-        this.setFlag(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.kissmanga_icon);
         this.setServerName("KissManga");
         setServerID(ServerBase.KISSMANGA);
@@ -82,33 +82,33 @@ public class KissManga extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 ||
-                forceReload) loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 ||
+                forceReload) loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(IP, m.getPath(), HOST);
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(IP, manga.getPath(), HOST);
 
         // Summary
-        m.setSynopsis(Html.fromHtml(getFirstMatchDefault(
+        manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 "Without" + " synopsis.")).toString());
         // Title
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
         if (pictures != null) {
-            m.setImages("http://" + IP + pictures.replace("http://kissmanga.com", "") + "|" + HOST);
+            manga.setImages("http://" + IP + pictures.replace("http://kissmanga.com", "") + "|" + HOST);
         }
 
         // Author
-        m.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
+        manga.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
 
         //genre
-        m.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().trim()));
+        manga.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().trim()));
 
-        m.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
+        manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
 
         // Chapter
         Pattern p = Pattern.compile(PATTERN_CHAPTER);
@@ -117,19 +117,19 @@ public class KissManga extends ServerBase {
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(2).replace(" Read Online", ""), matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath();
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath();
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().post(IP, c.getPath(), HOST);
+            String source = getNavWithHeader().post(IP, chapter.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -137,18 +137,18 @@ public class KissManga extends ServerBase {
             while (m.find()) {
                 images = images + "|" + m.group(1);
             }
-            c.setExtra(images);
+            chapter.setExtra(images);
         }
 
-        return c.getExtra().split("\\|")[page];
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().get(IP, c.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = getNavWithHeader().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -157,9 +157,9 @@ public class KissManga extends ServerBase {
                 pages++;
                 images = images + "|" + m.group(1);
             }
-            c.setExtra(images);
+            chapter.setExtra(images);
         }
-        c.setPages(pages);
+        chapter.setPages(pages);
     }
 
     @Override

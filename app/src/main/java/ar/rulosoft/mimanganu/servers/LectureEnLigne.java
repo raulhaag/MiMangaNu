@@ -69,21 +69,21 @@ public class LectureEnLigne extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath().replaceAll("\\d+\\.h", page + ".h");
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath().replaceAll("\\d+\\.h", page + ".h");
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        String data = new Navegador().get(this.getPagesNumber(c, page));
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        String data = new Navegador().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("<img id='image' src='(.+?)'", data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String data = new Navegador().get(c.getPath());
+    public void chapterInit(Chapter chapter) throws Exception {
+        String data = new Navegador().get(chapter.getPath());
         String paginas = getFirstMatch("<select class=\"pages\">.+?(\\d+)</option>[\\s]*</select>", data, "Error: no se pudo obtener el numero de paginas");
-        c.setPages(Integer.parseInt(paginas));
+        chapter.setPages(Integer.parseInt(paginas));
     }
 
     @Override

@@ -48,7 +48,7 @@ public class EsMangaHere extends ServerBase {
     };
 
     public EsMangaHere() {
-        this.setFlag(R.drawable.flag_esp);
+        this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.mangahere_icon);
         this.setServerName("EsMangaHere");
         setServerID(ServerBase.ESMANGAHERE);
@@ -59,9 +59,9 @@ public class EsMangaHere extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = new Navegador().get("http://es.mangahere.co/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            mangas.add(new Manga(ServerBase.ESMANGAHERE, m.group(1), m.group(2), false));
+        Matcher matcher = p.matcher(data);
+        while (matcher.find()) {
+            mangas.add(new Manga(getServerID(), matcher.group(1), matcher.group(2), false));
         }
         return mangas;
     }
@@ -70,7 +70,7 @@ public class EsMangaHere extends ServerBase {
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
-            Matcher m;
+            Matcher matcher;
             String data = new Navegador().get((manga.getPath()));
 
             // portada
@@ -93,43 +93,43 @@ public class EsMangaHere extends ServerBase {
             // capitulos
             data = getFirstMatch(PATRON_SEG_CAP, data, "Error al obtener lista de capítulos");
             p = Pattern.compile(PATTERN_CAPITULOS);
-            m = p.matcher(data);
+            matcher = p.matcher(data);
 
-            while (m.find()) {
-                Chapter mc = new Chapter(m.group(2).trim(), "http://es.mangahere.co" + m.group(1));
-                mc.addChapterFirst(manga);
+            while (matcher.find()) {
+                Chapter chapter = new Chapter(matcher.group(2).trim(), "http://es.mangahere.co" + matcher.group(1));
+                chapter.addChapterFirst(manga);
             }
         }
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters().isEmpty() || forceReload)
-            loadChapters(m, forceReload);
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload)
+            loadChapters(manga, forceReload);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        if (page > c.getPages()) {
+    public String getPagesNumber(Chapter chapter, int page) {
+        if (page > chapter.getPages()) {
             page = 1;
         }
-        return c.getPath() + page + ".html";
+        return chapter.getPath() + page + ".html";
 
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(c, page));
+        data = new Navegador().get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(c.getPath());
+        data = new Navegador().get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        c.setPages(Integer.parseInt(paginas));
+        chapter.setPages(Integer.parseInt(paginas));
     }
 
     @Override
@@ -138,10 +138,10 @@ public class EsMangaHere extends ServerBase {
         String web = "http://es.mangahere.co/" + categoriasV[categorie] + pageNumber + ".htm" + ordenM[order];
         String data = new Navegador().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), m.group(3), false);
-            manga.setImages(m.group(1).replace("thumb_",""));
+        Matcher matcher = p.matcher(data);
+        while (matcher.find()) {
+            Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(3), false);
+            manga.setImages(matcher.group(1).replace("thumb_",""));
             mangas.add(manga);
         }
         hasMore = !mangas.isEmpty();
@@ -169,9 +169,9 @@ public class EsMangaHere extends ServerBase {
         Navegador nav = new Navegador();
         String data = nav.get("http://es.mangahere.co/site/search?name=" + term);
         Pattern p = Pattern.compile("<dt>		<a href=\"(http://es.mangahere.co/manga/.+?)\".+?'>(.+?)<");
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(2).trim(), m.group(1), false));
+        Matcher matcher = p.matcher(data);
+        while (matcher.find()) {
+            mangas.add(new Manga(getServerID(), matcher.group(2).trim(), matcher.group(1), false));
         }
         return mangas;
     }
