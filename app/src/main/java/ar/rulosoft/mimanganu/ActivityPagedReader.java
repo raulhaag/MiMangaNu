@@ -392,7 +392,9 @@ public class ActivityPagedReader extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        mChapter.setPagesRead(mPageAdapter.currentPage + 1);
+        if(mPageAdapter != null) {
+            mChapter.setPagesRead(mPageAdapter.currentPage + 1);
+        }
         Database.updateChapterPage(ActivityPagedReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
