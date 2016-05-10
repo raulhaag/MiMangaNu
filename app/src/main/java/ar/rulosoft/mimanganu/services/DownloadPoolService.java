@@ -92,14 +92,16 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private static void initValues(Context context) {
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        int download_threads = Integer.parseInt(pm.getString("download_threads", "2"));
-        int tolerance = Integer.parseInt(pm.getString("error_tolerancia", "5"));
-        int retry = Integer.parseInt(pm.getString("reintentos", "4"));
-        ChapterDownload.MAX_ERRORS = tolerance;
-        SingleDownload.RETRY = retry;
-        DownloadPoolService.SLOTS = download_threads;
-        startService(context);
+        if(context != null) {
+            SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+            int download_threads = Integer.parseInt(pm.getString("download_threads", "2"));
+            int tolerance = Integer.parseInt(pm.getString("error_tolerancia", "5"));
+            int retry = Integer.parseInt(pm.getString("reintentos", "4"));
+            ChapterDownload.MAX_ERRORS = tolerance;
+            SingleDownload.RETRY = retry;
+            DownloadPoolService.SLOTS = download_threads;
+            startService(context);
+        }
     }
 
     public static void startService(Context context) {
