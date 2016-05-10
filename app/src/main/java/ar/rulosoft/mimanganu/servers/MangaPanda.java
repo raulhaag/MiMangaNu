@@ -47,7 +47,7 @@ public class MangaPanda extends ServerBase {
     public MangaPanda() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangapanda_icon);
-        this.setServerName("Mangapanda");
+        this.setServerName("Mangapanda.com");
         setServerID(ServerBase.MANGAPANDA);
     }
 

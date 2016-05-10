@@ -15,7 +15,7 @@ public class MangaReader extends MangaPanda {
     public MangaReader() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangareader);
-        this.setServerName("Mangareader");
+        this.setServerName("Mangareader.net");
         setServerID(ServerBase.MANGAREADER);
 
         SetHost("http://www.mangareader.net");
