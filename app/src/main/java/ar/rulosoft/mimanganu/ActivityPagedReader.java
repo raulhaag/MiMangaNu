@@ -735,7 +735,8 @@ public class ActivityPagedReader extends AppCompatActivity
 
         public void unloadImage() {
             if (visor != null) {
-                ((FastBitmapDrawable) visor.getDrawable()).getBitmap().recycle();
+                if (visor.getDrawable() != null)
+                    ((FastBitmapDrawable) visor.getDrawable()).getBitmap().recycle();
                 visor.setImageDrawable(null);
                 visor.setImageBitmap(null);
             }
