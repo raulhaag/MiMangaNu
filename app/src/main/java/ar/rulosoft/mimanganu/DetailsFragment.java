@@ -39,9 +39,9 @@ public class DetailsFragment extends Fragment {
     int id;
     private ImageLoader imageLoader;
     private ControlInfo data;
-    private SwipeRefreshLayout str;
-    private ServerBase s;
-    private Manga m;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private ServerBase serverBase;
+    private Manga manga;
     private FloatingActionButton button_add;
 
     @Nullable
@@ -64,7 +64,7 @@ public class DetailsFragment extends Fragment {
     public void onStart() {
         super.onStart();
         data = (ControlInfo) getView().findViewById(R.id.datos);
-        str = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+        swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setDisplayHomeAsUpEnabled(true);
@@ -73,7 +73,7 @@ public class DetailsFragment extends Fragment {
         button_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AddMangaTask().execute(m);
+                new AddMangaTask().execute(manga);
                 AnimatorSet set = new AnimatorSet();
                 ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 1.0f, 0.0f);
                 anim1.setDuration(0);
@@ -88,7 +88,7 @@ public class DetailsFragment extends Fragment {
             button_add.setColorNormal(((MainActivity) getActivity()).colors[1]);
             button_add.setColorPressed(((MainActivity) getActivity()).colors[3]);
             button_add.setColorRipple(((MainActivity) getActivity()).colors[0]);
-            str.setColorSchemeColors(((MainActivity) getActivity()).colors[0], ((MainActivity) getActivity()).colors[1]);
+            swipeRefreshLayout.setColorSchemeColors(((MainActivity) getActivity()).colors[0], ((MainActivity) getActivity()).colors[1]);
             data.setColor(((MainActivity) getActivity()).darkTheme, ((MainActivity) getActivity()).colors[0]);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Window window = getActivity().getWindow();
@@ -98,19 +98,19 @@ public class DetailsFragment extends Fragment {
             ((MainActivity)getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
         button_add.attachToScrollView(data);
-        m = new Manga(id, title, path, false);
-        s = ServerBase.getServer(id);
+        manga = new Manga(id, title, path, false);
+        serverBase = ServerBase.getServer(id);
         imageLoader = new ImageLoader(this.getActivity());
-        str.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 new LoadDetailsTask().execute();
             }
         });
-        str.post(new Runnable() {
+        swipeRefreshLayout.post(new Runnable() {
             @Override
             public void run() {
-                str.setRefreshing(true);
+                swipeRefreshLayout.setRefreshing(true);
             }
         });
         new LoadDetailsTask().execute();
@@ -138,7 +138,7 @@ public class DetailsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                s.loadMangaInformation(m, true);
+                serverBase.loadMangaInformation(manga, true);
             } catch (Exception e) {
                 if (e.getMessage() != null)
                     error = e.getMessage();
@@ -153,29 +153,29 @@ public class DetailsFragment extends Fragment {
             String infoExtra = "";
             if(isAdded()) {
                 if (error == null || error.length() < 2) {
-                    if (m.isFinished()) {
+                    if (manga.isFinished()) {
                         infoExtra = infoExtra + getResources().getString(R.string.finalizado);
                     } else {
                         infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                     }
                     data.setStatus(infoExtra);
-                    data.setServer(s.getServerName());
-                    if (m.getAuthor() != null && m.getAuthor().length() > 1) {
-                        data.setAuthor(m.getAuthor());
+                    data.setServer(serverBase.getServerName());
+                    if (manga.getAuthor() != null && manga.getAuthor().length() > 1) {
+                        data.setAuthor(manga.getAuthor());
                     } else {
                         data.setAuthor(getResources().getString(R.string.nodisponible));
                     }
-                    if (m.getGenre() != null && m.getGenre().length() > 1) {
-                        data.setGenre(m.getGenre());
+                    if (manga.getGenre() != null && manga.getGenre().length() > 1) {
+                        data.setGenre(manga.getGenre());
                     } else {
                         data.setGenre(getResources().getString(R.string.nodisponible));
                     }
-                    if (m.getSynopsis() != null && m.getSynopsis().length() > 1) {
-                        data.setSynopsis(m.getSynopsis());
+                    if (manga.getSynopsis() != null && manga.getSynopsis().length() > 1) {
+                        data.setSynopsis(manga.getSynopsis());
                     } else {
                         data.setSynopsis(getResources().getString(R.string.nodisponible));
                     }
-                    imageLoader.displayImg(m.getImages(), data);
+                    imageLoader.displayImg(manga.getImages(), data);
                     if (error != null && error.length() > 2) {
                         Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                     } else {
@@ -196,7 +196,7 @@ public class DetailsFragment extends Fragment {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
             }
-            str.setRefreshing(false);
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -215,7 +215,7 @@ public class DetailsFragment extends Fragment {
         @Override
         protected Void doInBackground(Manga... params) {
             try {
-                s.loadChapters(m, false);
+                serverBase.loadChapters(manga, false);
             } catch (Exception e) {
                 error = e.getMessage();
                 Log.e(TAG, "Chapter load error", e);
