@@ -31,7 +31,7 @@
     <string name="color_secundario">Secondary Color</string>
     <string name="configuraciones">Settings</string>
     <string name="datosde">Details</string>
-    <string name="demaciados_errores">Too many errors (Download suspended) \n This may be caused: \n *  Error connecting \n *  Error on the server side \n *  A bad upload, etc. \nTry later</string>
+    <string name="demaciados_errores">Too many errors (Download suspended) \n This may be caused by: \n *  A connection error \n *  An error on the server side \n *  A bad upload, etc. \nTry again later</string>
     <string name="descarga_no_leidos">Download unread</string>
     <string name="descargarestantes">Download remaining</string>
     <string name="descargas">Downloads</string>
