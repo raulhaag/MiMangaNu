@@ -36,6 +36,7 @@ public abstract class ServerBase {
     public static final int MYMANGAIO = 20;
     public static final int RAWSENMANGA = 21;
     public static final int TUMANGAONLINE = 22;
+    public static final int NINEMANGA = 23;
     public static final int MANGAEDEN = 24;
 
     public boolean hasMore = true;
@@ -63,16 +64,16 @@ public abstract class ServerBase {
                 serverBase = new SubManga();
                 break;
             case ESMANGA:
-                serverBase = new EsMangaCom();
+                serverBase = new EsManga();
                 break;
             case HEAVENMANGACOM:
-                serverBase = new HeavenMangaCom();
+                serverBase = new HeavenManga();
                 break;
             case MANGAREADER:
                 serverBase = new MangaReader();
                 break;
             case ESNINEMANGA:
-                serverBase = new EsNineMangaCom();
+                serverBase = new EsNineManga();
                 break;
             case LECTUREENLIGNE:
                 serverBase = new LectureEnLigne();
@@ -81,7 +82,7 @@ public abstract class ServerBase {
                 serverBase = new KissManga();
                 break;
             case ITNINEMANGA:
-                serverBase = new ItNineMangaCom();
+                serverBase = new ItNineManga();
                 break;
             case TUMANGAONLINE:
                 serverBase = new TuMangaOnline();
@@ -93,10 +94,10 @@ public abstract class ServerBase {
                 serverBase = new StarkanaCom();
                 break;
             case DENINEMANGA:
-                serverBase = new DeNineMangaCom();
+                serverBase = new DeNineManga();
                 break;
             case RUNINEMANGA:
-                serverBase = new RuNineMangaCom();
+                serverBase = new RuNineManga();
                 break;
             case MANGATUBE:
                 serverBase = new Manga_Tube();
@@ -113,6 +114,9 @@ public abstract class ServerBase {
             case MANGAEDEN:
                 serverBase = new MangaEden();
                 break;
+            case NINEMANGA:
+                serverBase = new NineManga();
+                break;
             default:
                 break;
         }
@@ -125,16 +129,16 @@ public abstract class ServerBase {
     public abstract ArrayList<Manga> search(String term) throws Exception;
 
     // chapter
-    public abstract void loadChapters(Manga m, boolean forceReload) throws Exception;
+    public abstract void loadChapters(Manga manga, boolean forceReload) throws Exception;
 
-    public abstract void loadMangaInformation(Manga m, boolean forceReload) throws Exception;
+    public abstract void loadMangaInformation(Manga manga, boolean forceReload) throws Exception;
 
     // manga
-    public abstract String getPagesNumber(Chapter c, int page);
+    public abstract String getPagesNumber(Chapter chapter, int page);
 
-    public abstract String getImageFrom(Chapter c, int page) throws Exception;
+    public abstract String getImageFrom(Chapter chapter, int page) throws Exception;
 
-    public abstract void chapterInit(Chapter c) throws Exception;
+    public abstract void chapterInit(Chapter chapter) throws Exception;
 
     // server visual
     public abstract ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception;
@@ -332,22 +336,23 @@ public abstract class ServerBase {
     public static ServerBase[] getServers() {
         return (new ServerBase[]{
                 new TuMangaOnline(),
-                new HeavenMangaCom(),
+                new HeavenManga(),
                 new SubManga(),
-                new EsNineMangaCom(),
+                new EsNineManga(),
                 new EsMangaHere(),
                 new MangaPanda(),
+                new MangaReader(),
                 new MangaHere(),
                 new MangaFox(),
-                new MangaReader(),
                 new KissManga(),
                 new MangaEden(),
-                new RuNineMangaCom(),
+                new NineManga(),
+                new RuNineManga(),
                 new LectureEnLigne(),
                 new MyMangaIo(),
-                new ItNineMangaCom(),
+                new ItNineManga(),
                 new MangaEdenIt(),
-                new DeNineMangaCom(),
+                new DeNineManga(),
                 new Manga_Tube(),
                 new RawSenManga()
         });

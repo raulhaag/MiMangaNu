@@ -17,7 +17,7 @@ public class SubManga extends ServerBase {
         setServerID(SUBMANGA);
         setIcon(R.drawable.submanga_icon);
         this.setServerName("SubManga");
-        setFlag(R.drawable.flag_esp);
+        setFlag(R.drawable.flag_es);
     }
 
     @Override
@@ -79,25 +79,25 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath() + "/" + page;
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath() + "/" + page;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
             String data;
-            data = getNavWithHeader().get(this.getPagesNumber(c, page));
+            data = getNavWithHeader().get(this.getPagesNumber(chapter, page));
             data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, null);
         return data;
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String data = getNavWithHeader().get(c.getPath());
-        c.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "No se pudo obtener la cantidad de páginas")));
-        if (c.getExtra() == null || c.getExtra().length() < 2) {
+    public void chapterInit(Chapter chapter) throws Exception {
+        String data = getNavWithHeader().get(chapter.getPath());
+        chapter.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "No se pudo obtener la cantidad de páginas")));
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
             data = getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);
-            c.setExtra(data.substring(0, data.length() - 4));
+            chapter.setExtra(data.substring(0, data.length() - 4));
         }
     }
 

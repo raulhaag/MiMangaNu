@@ -14,7 +14,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 /**
  * Created by Raul on 29/11/2015.
  */
-public class RuNineMangaCom extends ServerBase {
+public class RuNineManga extends ServerBase {
     public static String HOST = "http://ru.ninemanga.com";
     private static String[] genre = new String[]{
             "арт","боевик","боевыеискусства","вампиры","гарем","гендернаяинтрига","героическоефэнтези","детектив","дзёсэй","додзинси","драма","игра","история","кодомо","комедия","махо-сёдзё","меха","мистика","научнаяфантастика","повседневность","постапокалиптика","приключения","психология","романтика","самурайскийбоевик","сверхъестественное","сёдзё","сёдзё-ай","сёнэн","сёнэн-ай","спорт","сэйнэн","трагедия","триллер","ужасы","фантастика","фэнтези","школа","этти","юри"
@@ -35,9 +35,9 @@ public class RuNineMangaCom extends ServerBase {
             ,"/category/%D1%84%D1%8D%D0%BD%D1%82%D0%B5%D0%B7%D0%B8_.html","/category/%D1%88%D0%BA%D0%BE%D0%BB%D0%B0_.html","/category/%D1%8D%D1%82%D1%82%D0%B8_.html","/category/%D1%8E%D1%80%D0%B8_.html"
     };
 
-    public RuNineMangaCom() {
+    public RuNineManga() {
         this.setFlag(R.drawable.flag_ru);
-        this.setIcon(R.drawable.esninemanga);
+        this.setIcon(R.drawable.ninemanga);
         this.setServerName("RuNineManga");
         setServerID(ServerBase.RUNINEMANGA);
     }
@@ -62,26 +62,26 @@ public class RuNineMangaCom extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(m.getPath() + "?waring=1");
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(manga.getPath() + "?waring=1");
         // Front
-        m.setImages(getFirstMatchDefault("<img itemprop=\"image\".+?src=\"(.+?)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("<img itemprop=\"image\".+?src=\"(.+?)\"", source, ""));
         // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, "нет синопсис").replaceAll("<.+?>", "");
-        m.setSynopsis(Html.fromHtml(summary.replaceFirst("резюме:", "")).toString());
+        manga.setSynopsis(Html.fromHtml(summary.replaceFirst("резюме:", "")).toString());
         // Status
-        m.setFinished(false);//not supported by server
+        manga.setFinished(false);//not supported by server
         // Author
-        m.setAuthor(getFirstMatchDefault("itemprop=\"author\".+?>(.+?)<", source, ""));
+        manga.setAuthor(getFirstMatchDefault("itemprop=\"author\".+?>(.+?)<", source, ""));
         //Genre
-        m.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
+        manga.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // Chapter
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
@@ -90,19 +90,19 @@ public class RuNineMangaCom extends ServerBase {
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath().replace(".html", "-" + page + ".html");
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath().replace(".html", "-" + page + ".html");
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null)
-            setExtra(c);
-        String[] images = c.getExtra().split("\\|");
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null)
+            setExtra(chapter);
+        String[] images = chapter.getExtra().split("\\|");
         return images[page];
     }
 
@@ -119,12 +119,12 @@ public class RuNineMangaCom extends ServerBase {
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String source = getNavWithHeader().get(c.getPath());
+    public void chapterInit(Chapter chapter) throws Exception {
+        String source = getNavWithHeader().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Не удалось получить количество страниц");
-        c.setPages(Integer.parseInt(nop));
+        chapter.setPages(Integer.parseInt(nop));
     }
 
     @Override

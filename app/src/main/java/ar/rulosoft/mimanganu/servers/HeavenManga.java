@@ -12,7 +12,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
-public class HeavenMangaCom extends ServerBase {
+public class HeavenManga extends ServerBase {
 
     private static String[] generos = new String[]{
             "Todo", "Accion", "Adulto", "Aventura", "Artes Marciales",
@@ -70,8 +70,8 @@ public class HeavenMangaCom extends ServerBase {
             "v.html", "w.html", "x.html", "y.html", "z.html"
     };
 
-    public HeavenMangaCom() {
-        this.setFlag(R.drawable.flag_esp);
+    public HeavenManga() {
+        this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.heavenmanga);
         this.setServerName("HeavenManga");
         setServerID(ServerBase.HEAVENMANGACOM);
@@ -97,26 +97,26 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = new Navegador().get(m.getPath());
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = new Navegador().get(manga.getPath());
         // portada
         String portada = getFirstMatchDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, "");
-        m.setImages(portada);
+        manga.setImages(portada);
 
         // sinopsis
         String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, "Sin sinopsis");
-        m.setSynopsis(sinopsis.replaceAll("<.+?>", ""));
+        manga.setSynopsis(sinopsis.replaceAll("<.+?>", ""));
 
-        //estado no soportado
+        // estado no soportado
 
-        //genero
-        m.setGenre((Html.fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
+        // genero
+        manga.setGenre((Html.fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
 
         // capitulos
         Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"");
@@ -126,7 +126,7 @@ public class HeavenMangaCom extends ServerBase {
             chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
         }
         if (chapters.size() > 0)
-            m.setChapters(chapters);
+            manga.setChapters(chapters);
         else
             throw new Exception("Error al cargar capitulos");
 
@@ -134,36 +134,36 @@ public class HeavenMangaCom extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        if (c.getExtra() == null)
+    public String getPagesNumber(Chapter chapter, int page) {
+        if (chapter.getExtra() == null)
             try {
-                setExtra(c);
+                setExtra(chapter);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        return c.getExtra().substring(0, c.getExtra().lastIndexOf("/") + 1) + page;
+        return chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/") + 1) + page;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        String source = new Navegador().get(getPagesNumber(c, page));
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        String source = new Navegador().get(getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+)\" border=\"1\" id=\"p\">", source, "Error al obtener imagen");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        if (c.getExtra() == null)
-            setExtra(c);
-        String source = new Navegador().get(c.getExtra());
+    public void chapterInit(Chapter chapter) throws Exception {
+        if (chapter.getExtra() == null)
+            setExtra(chapter);
+        String source = new Navegador().get(chapter.getExtra());
         String nop = getFirstMatch("(\\d+)</option></select>", source, "Error al cargar paginas");
-        c.setPages(Integer.parseInt(nop));
+        chapter.setPages(Integer.parseInt(nop));
     }
 
-    private void setExtra(Chapter c) throws Exception {
-        String source = new Navegador().get(c.getPath());
+    private void setExtra(Chapter chapter) throws Exception {
+        String source = new Navegador().get(chapter.getPath());
         String web = getFirstMatch("<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>",
                 source, "Error al obtener página");
-        c.setExtra(web);
+        chapter.setExtra(web);
     }
 
     @Override
@@ -186,10 +186,10 @@ public class HeavenMangaCom extends ServerBase {
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<article class=\"rel\"><a href=\"(http://heavenmanga.com/.+?)\"><header>(.+?)<.+?src=\"(.+?)\"");
-        Matcher m = p.matcher(source);
-        while (m.find()) {
-            Manga manga = new Manga(HEAVENMANGACOM, m.group(2), m.group(1), false);
-            manga.setImages(m.group(3));
+        Matcher matcher = p.matcher(source);
+        while (matcher.find()) {
+            Manga manga = new Manga(HEAVENMANGACOM, matcher.group(2), matcher.group(1), false);
+            manga.setImages(matcher.group(3));
             mangas.add(manga);
         }
         return mangas;

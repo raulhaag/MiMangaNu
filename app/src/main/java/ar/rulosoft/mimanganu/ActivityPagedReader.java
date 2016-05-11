@@ -392,7 +392,9 @@ public class ActivityPagedReader extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        mChapter.setPagesRead(mPageAdapter.currentPage + 1);
+        if(mPageAdapter != null) {
+            mChapter.setPagesRead(mPageAdapter.currentPage + 1);
+        }
         Database.updateChapterPage(ActivityPagedReader.this, mChapter.getId(), mChapter.getPagesRead());
         DownloadPoolService.detachListener(mChapter.getId());
         super.onPause();
@@ -733,7 +735,8 @@ public class ActivityPagedReader extends AppCompatActivity
 
         public void unloadImage() {
             if (visor != null) {
-                ((FastBitmapDrawable) visor.getDrawable()).getBitmap().recycle();
+                if (visor.getDrawable() != null)
+                    ((FastBitmapDrawable) visor.getDrawable()).getBitmap().recycle();
                 visor.setImageDrawable(null);
                 visor.setImageBitmap(null);
             }

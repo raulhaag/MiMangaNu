@@ -58,7 +58,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
     Menu menu;
-    FloatingActionButton button_add;
+    FloatingActionButton floatingActionButton_add;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private SharedPreferences pm;
@@ -84,8 +84,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         mSectionsPagerAdapter = new SectionsPagerAdapter();
         if (getView() != null) {
             mViewPager = (ViewPager) getView().findViewById(R.id.pager);
-            button_add = (FloatingActionButton) getView().findViewById(R.id.button_add);
-            button_add.setOnClickListener(this);
+            floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
+            floatingActionButton_add.setOnClickListener(this);
         }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
     }
@@ -105,9 +105,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.setTitle(getString(R.string.app_name));
         activity.backListener = this;
         activity.keyUpListener = this;
-        button_add.setColorNormal(activity.colors[1]);
-        button_add.setColorPressed(activity.colors[3]);
-        button_add.setColorRipple(activity.colors[0]);
+        floatingActionButton_add.setColorNormal(activity.colors[1]);
+        floatingActionButton_add.setColorPressed(activity.colors[3]);
+        floatingActionButton_add.setColorRipple(activity.colors[0]);
     }
 
     @Override
@@ -393,6 +393,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onBackPressed() {
         if (mViewPager.getCurrentItem() == 1) {
+            ObjectAnimator anim =
+                    ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
+            anim.setDuration(200);
+            anim.start();
             mViewPager.setCurrentItem(0);
             return true;
         }

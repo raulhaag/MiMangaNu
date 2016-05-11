@@ -10,6 +10,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
+@Deprecated
 public class StarkanaCom extends ServerBase {
 
     private static String[] generos = new String[]{
@@ -41,7 +42,7 @@ public class StarkanaCom extends ServerBase {
     };
 
     public StarkanaCom() {
-        this.setFlag(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.rip);
         this.setServerName("Starkana");
         setServerID(ServerBase.STARKANACOM);
@@ -74,22 +75,22 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 ||
-                forceReload) loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 ||
+                forceReload) loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = new Navegador().get(m.getPath());
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = new Navegador().get(manga.getPath());
         // Title
         String portada = getFirstMatchDefault("<img class=\"a_img\" src=\"(.+?)\"", source, "");
-        m.setImages(portada);
+        manga.setImages(portada);
         // Summary
         String sinopsis = getFirstMatchDefault("<b>Summary:.+?<div>(.+?)<", source, "Without synopsis");
-        m.setSynopsis(sinopsis);
+        manga.setSynopsis(sinopsis);
         // Status
-        m.setFinished(source.contains("<b>Completed</b></span>"));
+        manga.setFinished(source.contains("<b>Completed</b></span>"));
         // Chapter
         Pattern p = Pattern.compile("<a class=\"download-link\" href=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
@@ -98,18 +99,18 @@ public class StarkanaCom extends ServerBase {
             chapters.add(0, new Chapter(matcher.group(2).replaceAll("<.+?>", ""),
                     "http://starkana.com" + matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath() + "/" + page;
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath() + "/" + page;
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null) setExtra(c);
-        String[] imagenes = c.getExtra().split("\\|");
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null) setExtra(chapter);
+        String[] imagenes = chapter.getExtra().split("\\|");
         return imagenes[page];
     }
 
@@ -125,9 +126,9 @@ public class StarkanaCom extends ServerBase {
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String source = new Navegador().get(c.getPath());
-        c.setPages(Integer.parseInt(getFirstMatch("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
+    public void chapterInit(Chapter chapter) throws Exception {
+        String source = new Navegador().get(chapter.getPath());
+        chapter.setPages(Integer.parseInt(getFirstMatch("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
     }
 
     @Override

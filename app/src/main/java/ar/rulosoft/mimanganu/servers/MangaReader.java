@@ -13,7 +13,7 @@ public class MangaReader extends MangaPanda {
      * Previously, this code was the same as MangaPanda either way..
      */
     public MangaReader() {
-        this.setFlag(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangareader);
         this.setServerName("Mangareader.net");
         setServerID(ServerBase.MANGAREADER);

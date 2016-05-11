@@ -15,9 +15,21 @@ public class RefererInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        return chain.proceed(chain.request().newBuilder()
-                .header("Referer", reference)
-                .build());
+        Response response;
+        try {
+            //try to set referer, if it contains special characters this will fail
+            response = chain.proceed(chain.request().newBuilder()
+                    .header("Referer", reference)
+                    .build());
+            //Log.d("RefererIn: ","ref: "+reference);
+        } catch (IllegalArgumentException e) {
+            //referer contained special characters so set no referer
+            response = chain.proceed(chain.request().newBuilder()
+                    .header("Referer", "")
+                    .build());
+            //Log.d("RefererIn: ","ref: "+"");
+        }
+        return response;
     }
 
     public String getReference() {

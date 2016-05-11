@@ -47,7 +47,7 @@ public class MangaHere extends ServerBase {
     };
 
     public MangaHere() {
-        this.setFlag(R.drawable.flag_eng);
+        this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangahere_icon);
         this.setServerName("MangaHere");
         setServerID(ServerBase.MANGAHERE);
@@ -91,34 +91,34 @@ public class MangaHere extends ServerBase {
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters().isEmpty() || forceReload)
-            loadChapters(m, forceReload);
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload)
+            loadChapters(manga, forceReload);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        if (page > c.getPages()) {
+    public String getPagesNumber(Chapter chapter, int page) {
+        if (page > chapter.getPages()) {
             page = 1;
         }
-        return c.getPath() + page + ".html";
+        return chapter.getPath() + page + ".html";
 
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(c, page));
+        data = new Navegador().get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: Could not get the link to the image");
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(c.getPath());
+        data = new Navegador().get(chapter.getPath());
         String paginas =
                 getFirstMatch(PATRON_LAST, data, "Error: Could not get the number of pages");
-        c.setPages(Integer.parseInt(paginas));
+        chapter.setPages(Integer.parseInt(paginas));
     }
 
     @Override

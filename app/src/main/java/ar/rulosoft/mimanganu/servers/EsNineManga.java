@@ -11,7 +11,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
-public class EsNineMangaCom extends ServerBase {
+public class EsNineManga extends ServerBase {
     private static String HOST = "http://es.ninemanga.com";
     private static String[] generos = new String[]{
             "Todo", "Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura",
@@ -43,9 +43,9 @@ public class EsNineMangaCom extends ServerBase {
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
 
-    public EsNineMangaCom() {
-        this.setFlag(R.drawable.flag_esp);
-        this.setIcon(R.drawable.esninemanga);
+    public EsNineManga() {
+        this.setFlag(R.drawable.flag_es);
+        this.setIcon(R.drawable.ninemanga);
         this.setServerName("EsNineManga");
         setServerID(ServerBase.ESNINEMANGA);
     }
@@ -70,26 +70,26 @@ public class EsNineMangaCom extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga m, boolean forceReload) throws Exception {
-        if (m.getChapters() == null || m.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(m, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga m, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(m.getPath() + "?waring=1");
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        String source = getNavWithHeader().get(manga.getPath() + "?waring=1");
         // portada
-        m.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // sinopsis
         String sinopsis = getFirstMatchDefault("<p itemprop=\"description\">(.+?)&nbsp;Show less",
                 source, "Sin sinopsis").replaceAll("<.+?>", "");
-        m.setSynopsis(Html.fromHtml(sinopsis).toString());
+        manga.setSynopsis(Html.fromHtml(sinopsis).toString());
         // estado
-        m.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
+        manga.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
         // autor
-        m.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
-        //generos
-        m.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
+        manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
+        // generos
+        manga.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // capitulos
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
@@ -98,47 +98,47 @@ public class EsNineMangaCom extends ServerBase {
         while (matcher.find()) {
             chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
         }
-        m.setChapters(chapters);
+        manga.setChapters(chapters);
     }
 
     @Override
-    public String getPagesNumber(Chapter c, int page) {
-        return c.getPath().replace(".html", "-" + page + ".html");
+    public String getPagesNumber(Chapter chapter, int page) {
+        return chapter.getPath().replace(".html", "-" + page + ".html");
     }
 
     @Override
-    public String getImageFrom(Chapter c, int page) throws Exception {
-        if (c.getExtra() == null)
-            setExtra(c);
-        String[] imagenes = c.getExtra().split("\\|");
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (chapter.getExtra() == null)
+            setExtra(chapter);
+        String[] imagenes = chapter.getExtra().split("\\|");
         return imagenes[page];
     }
 
-    private void setExtra(Chapter c) throws Exception {
+    private void setExtra(Chapter chapter) throws Exception {
         String source = getNavWithHeader().get(
-                c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
+                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
         String imagenes = "";
         while (m.find()) {
             imagenes = imagenes + "|" + m.group(1);
         }
-        c.setExtra(imagenes);
+        chapter.setExtra(imagenes);
     }
 
     @Override
-    public void chapterInit(Chapter c) throws Exception {
-        String source = getNavWithHeader().get(c.getPath());
+    public void chapterInit(Chapter chapter) throws Exception {
+        String source = getNavWithHeader().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Error al obtener el n�mero de p�ginas");
-        c.setPages(Integer.parseInt(nop));
+        chapter.setPages(Integer.parseInt(nop));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         String source = getNavWithHeader().get(
-                HOST + EsNineMangaCom.order[order] +
+                HOST + EsNineManga.order[order] +
                         generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
@@ -147,10 +147,10 @@ public class EsNineMangaCom extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile(
                 "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
-        Matcher m = p.matcher(source);
-        while (m.find()) {
-            Manga manga = new Manga(ESNINEMANGA, m.group(3), HOST + m.group(1), false);
-            manga.setImages(m.group(2));
+        Matcher matcher = p.matcher(source);
+        while (matcher.find()) {
+            Manga manga = new Manga(ESNINEMANGA, matcher.group(3), HOST + matcher.group(1), false);
+            manga.setImages(matcher.group(2));
             mangas.add(manga);
         }
         return mangas;
