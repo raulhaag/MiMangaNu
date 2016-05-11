@@ -236,24 +236,28 @@ public class DetailsFragment extends Fragment {
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (adding != null) {
-                        adding.setMessage(getResources().getString(R.string.agregando) + " " + values[0] + "/" + total);
+            if (isAdded()) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adding != null) {
+                            adding.setMessage(getResources().getString(R.string.agregando) + " " + values[0] + "/" + total);
+                        }
                     }
-                }
-            });
+                });
+            }
         }
 
         @Override
         protected void onPostExecute(Void result) {
             adding.dismiss();
-            Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-            if (error != null && error.length() > 2) {
-                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+            if(isAdded()) {
+                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+                if (error != null && error.length() > 2) {
+                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                }
+                getActivity().onBackPressed();
             }
-            getActivity().onBackPressed();
             super.onPostExecute(result);
         }
     }
