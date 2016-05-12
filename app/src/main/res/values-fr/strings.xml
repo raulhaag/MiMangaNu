@@ -5,11 +5,11 @@
     <string name="action_ajustar_a">Ajuster</string>
     <string name="descargas">Téléchargements</string>
     <string name="datosde">Détails</string>
-    <string name="agregando">Ajout de la base de données</string>
+    <string name="adding_to_db">Ajout de la base de données</string>
     <string name="agregado">Manga ajouté</string>
     <string name="iniciando">Chargement des pages</string>
     <string name="agregadodescarga">Manga ajouté au téléchargement</string>
-    <string name="buscandonuevo">Recherche de mises à jour</string>
+    <string name="searching_for_updates">Recherche de mises à jour</string>
     <string name="busquedanores">La recherche n\'a donné aucun résultat</string>
     <string name="listaen">Liste des mangas de</string>
     <string name="buscarupdates">Rechercher des mises à jour</string>

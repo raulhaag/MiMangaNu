@@ -477,7 +477,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             super.onPreExecute();
             // Displays the progress bar for the first time.
             mBuilder.setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle(getResources().getString(R.string.buscandonuevo))
+                    .setContentTitle(getResources().getString(R.string.searching_for_updates))
                     .setContentText("")
                     .setAutoCancel(true)
                     .setOngoing(true);
@@ -485,7 +485,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             mNotifyManager.notify(mNotifyID, mBuilder.build());
             Context mContent = getActivity();
             if (mContent != null)
-                Toast.makeText(mContent, getResources().getString(R.string.buscandonuevo),
+                Toast.makeText(mContent, getResources().getString(R.string.searching_for_updates),
                         Toast.LENGTH_LONG).show();
         }
 

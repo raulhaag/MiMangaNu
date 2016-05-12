@@ -2,6 +2,8 @@ package ar.rulosoft.mimanganu.utils;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -60,6 +62,12 @@ public class Util {
             }
         }
         return result;
+    }
+
+    public boolean isWifiConnected(Context context) {
+        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return mNetworkInfo.isConnected();
     }
 
 }

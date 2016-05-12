@@ -9,7 +9,7 @@
     <string name="action_settings">Settings</string>
     <string name="agregadodescarga">Manga added to downloads</string>
     <string name="agregado">Manga added</string>
-    <string name="agregando">Adding to database</string>
+    <string name="adding_to_db">Adding to database</string>
     <string name="ajuste_alto">Fit to height</string>
     <string name="ajuste_ancho">Fit to width</string>
     <string name="ajuste_imagen">Image fit by default</string>
@@ -20,7 +20,7 @@
     <string name="borrarcap">Remove chapter</string>
     <string name="borrar">Delete</string>
     <string name="borrar_imagenes">Delete images to free space</string>
-    <string name="buscandonuevo">Searching for updates </string>
+    <string name="searching_for_updates">Searching for updates </string>
     <string name="buscarupdates">Search for updates</string>
     <string name="busquedanores">The search returned no results</string>
     <string name="cantidad_descargas_subtitle">Amount of Images downloaded concurrently: %s</string>

@@ -11,7 +11,7 @@
     <string name="action_settings">Настройки</string>
     <string name="agregado">Манга добавлена</string>
     <string name="agregadodescarga">Манга добавлена к скачиванию</string>
-    <string name="agregando">Добавление в базу</string>
+    <string name="adding_to_db">Добавление в базу</string>
     <string name="ajuste_alto">Растянуть по высоте</string>
     <string name="ajuste_ancho">Растянуть по ширине</string>
     <string name="ajuste_imagen">Стандартный размер рисунков</string>
@@ -20,7 +20,7 @@
     <string name="borrar">Удалить</string>
     <string name="borrar_imagenes">Удалить все рисунки</string>
     <string name="borrarcap">Удалить главу</string>
-    <string name="buscandonuevo">Поиск обновлений</string>
+    <string name="searching_for_updates">Поиск обновлений</string>
     <string name="buscarupdates">Искать обновления</string>
     <string name="busquedanores">Ничего не найдено</string>
     <string name="cantidad_descargas_subtitle">Количество изображений, загруженных одновременно: %s</string>

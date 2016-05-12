@@ -64,10 +64,10 @@
                 android:id="@+id/action_descargar_no_leidos"
                 android:title="@string/descarga_no_leidos" />
             <item
-                android:id="@+id/action_uncheck_as_read"
+                android:id="@+id/mark_all_as_unread"
                 android:title="@string/macartodonoleido" />
             <item
-                android:id="@+id/action_check_as_read"
+                android:id="@+id/mark_all_as_read"
                 android:title="@string/macartodoleido" />
         </menu>
     </item>

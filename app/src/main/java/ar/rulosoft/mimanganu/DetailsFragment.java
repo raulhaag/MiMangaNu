@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.database.sqlite.SQLiteConstraintException;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -207,7 +208,7 @@ public class DetailsFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            adding.setMessage(getResources().getString(R.string.agregando));
+            adding.setMessage(getResources().getString(R.string.adding_to_db));
             adding.show();
             super.onPreExecute();
         }
@@ -228,7 +229,12 @@ public class DetailsFragment extends Fragment {
                     publishProgress(i);
                     initTime = System.currentTimeMillis();
                 }
-                Database.addChapter(getActivity(), params[0].getChapter(i), mid);
+                try {
+                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
+                } catch(SQLiteConstraintException e){
+                    Database.removeOrphanedChapters(getActivity().getApplicationContext());
+                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
+                }
             }
             return null;
         }
@@ -241,7 +247,7 @@ public class DetailsFragment extends Fragment {
                     @Override
                     public void run() {
                         if (adding != null) {
-                            adding.setMessage(getResources().getString(R.string.agregando) + " " + values[0] + "/" + total);
+                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
                         }
                     }
                 });

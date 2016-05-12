@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteConstraintException;
 
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -208,10 +209,15 @@ public abstract class ServerBase {
                 }
                 // simpleList = manga.getChapters();
             }
-            for (Chapter c : simpleList) {
-                c.setMangaID(mangaDb.getId());
-                c.setReadStatus(Chapter.NEW);
-                Database.addChapter(context, c, mangaDb.getId());
+            for (Chapter chapter : simpleList) {
+                chapter.setMangaID(mangaDb.getId());
+                chapter.setReadStatus(Chapter.NEW);
+                try {
+                    Database.addChapter(context, chapter, mangaDb.getId());
+                } catch(SQLiteConstraintException e){
+                    Database.removeOrphanedChapters(context);
+                    Database.addChapter(context, chapter, mangaDb.getId());
+                }
             }
 
             if (simpleList.size() > 0) {
