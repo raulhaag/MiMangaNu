@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -22,7 +23,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.ImageLoader;
-import com.melnykov.fab.FloatingActionButton;
 
 import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -85,9 +85,7 @@ public class DetailsFragment extends Fragment {
             }
         });
         if (getActivity() != null) {
-            button_add.setColorNormal(((MainActivity) getActivity()).colors[1]);
-            button_add.setColorPressed(((MainActivity) getActivity()).colors[3]);
-            button_add.setColorRipple(((MainActivity) getActivity()).colors[0]);
+            button_add.setBackgroundColor(((MainActivity) getActivity()).colors[1]);
             swipeRefreshLayout.setColorSchemeColors(((MainActivity) getActivity()).colors[0], ((MainActivity) getActivity()).colors[1]);
             data.setColor(((MainActivity) getActivity()).darkTheme, ((MainActivity) getActivity()).colors[0]);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -97,7 +95,6 @@ public class DetailsFragment extends Fragment {
             }
             ((MainActivity)getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
-        button_add.attachToScrollView(data);
         manga = new Manga(id, title, path, false);
         serverBase = ServerBase.getServer(id);
         imageLoader = new ImageLoader(this.getActivity());

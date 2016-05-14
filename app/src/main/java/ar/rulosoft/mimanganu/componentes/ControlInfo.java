@@ -6,9 +6,8 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
-
-import com.melnykov.fab.ObservableScrollView;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -17,7 +16,7 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
  * Series information.
  * Created by Raul on 03/05/2015.
  */
-public class ControlInfo extends ObservableScrollView implements Imaginable {
+public class ControlInfo extends ScrollView implements Imaginable {
     private View s1;
     private View s2;
     private View s3;
@@ -71,6 +70,7 @@ public class ControlInfo extends ObservableScrollView implements Imaginable {
         image = (ImageView) findViewById(R.id.imagen);
     }
 
+    @SuppressWarnings("ResourceAsColor")//lint error
     public void setColor(boolean dark_theme, int color) {
         int mColor = dark_theme ? ThemeColors.brightenColor(color, 150) : color;
         b1.setBackgroundColor(color);
@@ -98,7 +98,7 @@ public class ControlInfo extends ObservableScrollView implements Imaginable {
     }
 
     public void setSynopsis(String synopsis) {
-        this.synopsis.setText(synopsis);
+        this.synopsis.setText(synopsis + "\n\n\n\n\n\n\n");
     }
 
     public void setGenre(String genre) {
