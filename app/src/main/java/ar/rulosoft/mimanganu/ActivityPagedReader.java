@@ -50,6 +50,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPager;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
+import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.ChapterDownload.OnErrorListener;
@@ -925,8 +926,13 @@ public class ActivityPagedReader extends AppCompatActivity
             } else {
                 Context context = ActivityPagedReader.this;
                 page = new Page(context);
-                page.setImage(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter,
-                        getApplicationContext()) + "/" + (position + 1) + ".jpg");
+                if(!(mServerBase instanceof FromFolder)) {
+                    page.setImage(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (position + 1) + ".jpg");
+                }else{
+                    try {
+                        page.setImage(mServerBase.getImageFrom(mChapter,position));
+                    } catch (Exception ignore) {}
+                }
                 container.addView(page, 0);
                 page.index = position;
                 pages[position] = page;

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by Raul on 15/04/2016.
@@ -47,7 +48,7 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
         actual = pm.getString(parent.getKey(), Environment.getExternalStorageDirectory().getPath() + "/");
         dirs = (ListView) view.findViewById(R.id.dirList);
         dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
-        ArrayList<String> dirList = dirList(actual);
+        ArrayList<String> dirList = Util.dirList(actual);
         context = getActivity();
         ArrayAdapter<String> adap = new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
         dirs_path.setText(actual);
@@ -62,7 +63,7 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
                     actual = actual.substring(0, actual.lastIndexOf("/"));
                     actual = actual.substring(0, actual.lastIndexOf("/") + 1);
                 }
-                ArrayList<String> dirList = dirList(actual);
+                ArrayList<String> dirList = Util.dirList(actual);
                 ArrayAdapter<String> adap =
                         new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
                 dirs_path.setText(actual);
@@ -113,22 +114,6 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
             }
         });
         super.onPrepareDialogBuilder(builder);
-    }
-
-    private ArrayList<String> dirList(String directory) {
-        ArrayList<String> list = new ArrayList<>();
-        if (directory.length() != 1) {
-            list.add("..");
-        }
-        File dir = new File(directory);
-        if (dir.listFiles() != null) {
-            for (File child : dir.listFiles()) {
-                if (child.isDirectory()) {
-                    list.add(child.getName());
-                }
-            }
-        }
-        return list;
     }
 
     public PreferencesListDir getParent() {

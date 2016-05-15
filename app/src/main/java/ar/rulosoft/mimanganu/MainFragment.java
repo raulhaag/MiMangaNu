@@ -38,7 +38,9 @@ import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
+import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -58,6 +60,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private static final String TAG = "MainFragment";
     Menu menu;
     FloatingActionButton floatingActionButton_add;
+    boolean is_server_list_open = false;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private SharedPreferences pm;
@@ -68,7 +71,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private int mNotifyID = 1246502;
-    boolean is_server_list_open = false;
 
     @Nullable
     @Override
@@ -86,8 +88,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             mViewPager = (ViewPager) getView().findViewById(R.id.pager);
             floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
-            if(is_server_list_open){
-                ObjectAnimator anim =   ObjectAnimator.ofFloat(floatingActionButton_add, "rotation", 360.0f, 315.0f);
+            if (is_server_list_open) {
+                ObjectAnimator anim = ObjectAnimator.ofFloat(floatingActionButton_add, "rotation", 360.0f, 315.0f);
                 anim.setDuration(0);
                 anim.start();
             }
@@ -165,7 +167,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
             case R.id.action_hide_read: {
                 item.setChecked(!item.isChecked());
-                pm.edit().putInt(SELECT_MODE,item.isChecked() ? MODE_HIDE_READ : MODE_SHOW_ALL
+                pm.edit().putInt(SELECT_MODE, item.isChecked() ? MODE_HIDE_READ : MODE_SHOW_ALL
                 ).apply();
                 setListManga(true);
                 break;
@@ -234,23 +236,31 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         ServerRecAdapter adapter = new ServerRecAdapter(ServerBase.getServers());
         server_list.setAdapter(adapter);
         adapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
-            @Override
-            public void onServerClick(ServerBase server) {
-                if (server.hasFilteredNavigation()) {
-                    ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
-                    Bundle b = new Bundle();
-                    b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                    fragment.setArguments(b);
-                    ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
-                } else {
-                    ServerListFragment fragment = new ServerListFragment();
-                    Bundle b = new Bundle();
-                    b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                    fragment.setArguments(b);
-                    ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
-                }
-            }
-        });
+                                             @Override
+                                             public void onServerClick(ServerBase server) {
+                                                 if (!(server instanceof FromFolder)) {
+                                                     if (server.hasFilteredNavigation()) {
+                                                         ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
+                                                         Bundle b = new Bundle();
+                                                         b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                                                         fragment.setArguments(b);
+                                                         ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
+                                                     } else {
+                                                         ServerListFragment fragment = new ServerListFragment();
+                                                         Bundle b = new Bundle();
+                                                         b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                                                         fragment.setArguments(b);
+                                                         ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
+                                                     }
+                                                 } else {
+                                                     MangaFolderSelect dialog = new MangaFolderSelect();
+                                                     dialog.setMainFragment(MainFragment.this);
+                                                     dialog.show(getChildFragmentManager(), "fragment_find_folder");
+
+                                                     Log.e("from file","selected");
+                                                 }
+                                             }
+                                         });
         return viewGroup;
     }
 
@@ -413,6 +423,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         return false;
     }
 
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            menu.performIdentifierAction(R.id.submenu, 0);
+            return true;
+        }
+        return false;
+    }
+
     public class SectionsPagerAdapter extends PagerAdapter {
         ViewGroup[] pages;
 
@@ -464,15 +483,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         public void destroyItem(View container, int position, Object object) {
             destroyItem((ViewGroup) container, position, object);
         }
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            menu.performIdentifierAction(R.id.submenu, 0);
-            return true;
-        }
-        return false;
     }
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
@@ -572,7 +582,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Toast.makeText(mContent, mContent.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
                 } else {
                     mNotifyManager.cancel(mNotifyID);
-                    Toast.makeText(mContent, mContent.getResources().getString(R.string.no_new_updates_found),Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContent, mContent.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
                 }
                 swipeReLayout.setRefreshing(false);
             } else {
