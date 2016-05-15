@@ -22,12 +22,12 @@
         android:title="@string/select_begin"
         app:showAsAction="always" />
     <item
-        android:id="@+id/mark_as_read"
+        android:id="@+id/mark_selected_as_read"
         android:icon="@drawable/ic_action_read"
         android:title="@string/marcarleido"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/mark_unread"
+        android:id="@+id/mark_selected_as_unread"
         android:icon="@drawable/ic_action_unread"
         android:title="@string/markSelectedUnread"
         app:showAsAction="ifRoom" />

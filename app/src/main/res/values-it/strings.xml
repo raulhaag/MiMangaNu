@@ -6,11 +6,11 @@
     <string name="action_ajustar_a">Adatta</string>
     <string name="descargas">Scaricati</string>
     <string name="datosde">Dettagli</string>
-    <string name="agregando">Sto aggiungendo al database</string>
+    <string name="adding_to_db">Sto aggiungendo al database</string>
     <string name="agregado">Manga aggiunto</string>
     <string name="iniciando">Caricamento numero delle pagine</string>
     <string name="agregadodescarga">Manga aggiunto agli scaricati</string>
-    <string name="buscandonuevo">Ricerca aggiornamenti</string>
+    <string name="searching_for_updates">Ricerca aggiornamenti</string>
     <string name="busquedanores">La ricerca non ha generato risultati</string>
     <string name="listaen">Lista dei Manga da</string>
     <string name="buscarupdates">Cerca aggiornamenti</string>

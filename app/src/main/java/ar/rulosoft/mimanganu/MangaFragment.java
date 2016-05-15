@@ -218,13 +218,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                             c.reset(getActivity(), mManga, s);
                         }
                         break;
-                    case R.id.mark_as_read:
+                    case R.id.mark_selected_as_read:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.markRead(getActivity(), true);
                         }
                         break;
-                    case R.id.mark_unread:
+                    case R.id.mark_selected_as_unread:
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
                             c.markRead(getActivity(), false);
@@ -340,22 +340,14 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 dlgAlert.create().show();
                 break;
             }
-            case R.id.action_check_as_read: {
+            case R.id.mark_all_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, true);
-                new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
-            case R.id.action_uncheck_as_read: {
-                //Database.markAllChapters(getActivity(), this.mMangaId, false);
-                //new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-                mChapterAdapter.selectAll();
-                SparseBooleanArray selection = mChapterAdapter.getSelection();
-                for (int i = selection.size() - 1; i >= 0; i--) {
-                    Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                    c.markRead(getActivity(), false);
-                }
-                mChapterAdapter.clearSelection();
+            case R.id.mark_all_as_unread: {
+                Database.markAllChapters(getActivity(), this.mMangaId, false);
+                new MarkAllAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.action_sentido: {
@@ -457,7 +449,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         super.onResume();
         ((MainActivity) getActivity()).enableHomeButton(true);
         ((MainActivity) getActivity()).setTitle(mManga.getTitle());
-        new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     @Override
@@ -571,7 +563,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected void onPreExecute() {
             running = true;
             actual = this;
-            msg = getResources().getString(R.string.buscandonuevo);
+            msg = getResources().getString(R.string.searching_for_updates);
             orgMsg = getActivity().getTitle().toString();
             getActivity().setTitle(msg + " " + orgMsg);
             super.onPreExecute();
@@ -599,7 +591,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected void onPostExecute(Integer result) {
             Manga manga = Database.getManga(getActivity(), mangaId);
             loadInfo(manga);
-            new ChapterLoader().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             mSwipeRefreshLayout.setRefreshing(false);
             if(isAdded()) {
                 getActivity().setTitle(orgMsg);
@@ -614,7 +606,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    public class ChapterLoader extends AsyncTask<Void, Void, Void> {
+    public class SortAndLoadChapters extends AsyncTask<Void, Void, Void> {
         ArrayList<Chapter> chapters;
 
         @Override
@@ -640,6 +632,25 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onPostExecute(Void aVoid) {
             loadChapters(chapters);
+        }
+    }
+
+    private class MarkAllAsUnread extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (int i = 0; i < mChapterAdapter.getCount(); i++) {
+                if (mChapterAdapter.getItem(i).getPagesRead() > 0) {
+                    Chapter c = mChapterAdapter.getItem(i);
+                    c.markRead(getActivity(), false);
+                    publishProgress(i);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 }

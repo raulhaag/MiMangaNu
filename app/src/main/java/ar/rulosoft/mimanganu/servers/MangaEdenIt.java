@@ -38,7 +38,7 @@ public class MangaEdenIt extends ServerBase {
     public MangaEdenIt() {
         this.setFlag(R.drawable.flag_it);
         this.setIcon(R.drawable.mangaeden);
-        this.setServerName("MangaEdenIt");
+        this.setServerName("MangaEdentIt");
         setServerID(ServerBase.MANGAEDENIT);
     }
 

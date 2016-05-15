@@ -6,7 +6,7 @@
     <string name="action_settings">Einstellungen</string>
     <string name="agregado">Manga hinzugefügt</string>
     <string name="agregadodescarga">Manga zu Downloads hinzugefügt</string>
-    <string name="agregando">Füge zur Datenbank hinzu</string>
+    <string name="adding_to_db">Füge zur Datenbank hinzu</string>
     <string name="ajuste_alto">An Höhe anpassen</string>
     <string name="ajuste_ancho">An Breite anpassen</string>
     <string name="ajuste_imagen">Standard Bild-Anpassung</string>
@@ -16,7 +16,7 @@
     <string name="borrar">Löschen</string>
     <string name="borrar_imagenes">Lösche Bilder</string>
     <string name="borrarcap">Lösche Kapitel</string>
-    <string name="buscandonuevo">Suche nach Updates</string>
+    <string name="searching_for_updates">Suche nach Updates</string>
     <string name="buscarupdates">Updates suchen</string>
     <string name="busquedanores">Suche ergab keine Treffer</string>
     <string name="cantidad_descargas_subtitle">Anzahl an gleichzeitig laufenden Bilder Downloads: %s</string>
