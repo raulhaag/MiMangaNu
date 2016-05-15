@@ -192,6 +192,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_PAGES, cap.getPages());
         cv.put(COL_CAP_STATE, cap.getReadStatus());
         cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
+        cv.put(COL_CAP_DOWNLOADED, cap.isDownloaded());
         cv.put(COL_CAP_EXTRA,cap.getExtra());
         getDatabase(c).insert(TABLE_CHAPTERS, null, cv);
     }

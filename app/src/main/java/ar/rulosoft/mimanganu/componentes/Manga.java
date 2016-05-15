@@ -13,11 +13,11 @@ public class Manga {
     private int readerType;//0, default, 1 paged, 2 continuous
 
     private String title;
-    private String synopsis;
-    private String images;
+    private String synopsis = "";
+    private String images = "";
     private String path;
-    private String author;
-    private String genre;
+    private String author = "";
+    private String genre = "";
 
     private boolean finished;
     private ArrayList<Chapter> chapters = new ArrayList<>();

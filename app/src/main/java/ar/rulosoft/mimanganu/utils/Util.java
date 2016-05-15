@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -60,6 +61,42 @@ public class Util {
             }
         }
         return result;
+    }
+
+    public static ArrayList<String> dirList(String directory) {
+        ArrayList<String> list = new ArrayList<>();
+        if (directory.length() != 1) {
+            list.add("..");
+        }
+        File dir = new File(directory);
+        if (dir.listFiles() != null) {
+            for (File child : dir.listFiles()) {
+                if (child.isDirectory()) {
+                    list.add(child.getName());
+                }
+            }
+        }
+        return list;
+    }
+
+    public static ArrayList<String> imageList(String directory) {
+        ArrayList<String> list = new ArrayList<>();
+        File dir = new File(directory);
+        if (dir.listFiles() != null) {
+            for (File child : dir.listFiles()) {
+                if (!child.isDirectory()) {
+                    if(child.getName().matches(".+?\\.(jpg|bmp|png|jpeg|gif)+"))
+                    list.add(child.getName());
+                }
+            }
+        }
+        return list;
+    }
+
+    public static String getLastStringInPath(String path) {
+        path = path.substring(0,path.length() - 1);
+        int idx = path.lastIndexOf("/");
+        return path.substring(idx + 1);
     }
 
 }

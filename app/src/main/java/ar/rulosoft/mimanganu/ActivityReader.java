@@ -42,6 +42,7 @@ import ar.rulosoft.mimanganu.componentes.readers.L2RReader;
 import ar.rulosoft.mimanganu.componentes.readers.R2LReader;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
 import ar.rulosoft.mimanganu.componentes.readers.VerticalReader;
+import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadListener;
@@ -208,9 +209,18 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             Database.updateChapter(ActivityReader.this, mChapter);
             mReader.reset();
             ArrayList<String> pages = new ArrayList<>();
-            for (int i = 0; i < mChapter.getPages(); i++) {
-                pages.add(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (i + 1) + ".jpg");
+            if (!(mServerBase instanceof FromFolder)) {
+                for (int i = 0; i < mChapter.getPages(); i++) {
+                    pages.add(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (i + 1) + ".jpg");
+                }
+            } else {
+                for (int i = 0; i < mChapter.getPages(); i++) {
+                    try {
+                        pages.add(mServerBase.getImageFrom(mChapter,i));
+                    } catch (Exception ignore) {}
+                }
             }
+
             mReader.setPaths(pages);
             mActionBar.setTitle(mChapter.getTitle());
             mSeekBar.setMax(mChapter.getPages() - 1);
