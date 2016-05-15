@@ -19,7 +19,7 @@ public class FromFolder extends ServerBase {
 
     public FromFolder(){
         this.setFlag(R.drawable.noimage);
-        this.setIcon(R.drawable.noimage);
+        this.setIcon(R.drawable.from_folder);
         this.setServerName("FromFolder");
         setServerID(ServerBase.FROMFOLDER);
     }

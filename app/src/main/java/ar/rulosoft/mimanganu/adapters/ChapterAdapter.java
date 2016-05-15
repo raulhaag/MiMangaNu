@@ -44,13 +44,15 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private ColorStateList defaultColor;
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
+    private boolean can_download;
     MangaFragment fm;
 
-    public ChapterAdapter(Activity context, ArrayList<Chapter> items, MangaFragment fm) {
+    public ChapterAdapter(Activity context, ArrayList<Chapter> items, MangaFragment fm, boolean can_download) {
         super(context, listItem);
         this.activity = context;
         this.fm = fm;
         this.chapters = items;
+        this.can_download = can_download;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -136,8 +138,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         // ((ImageView)
                         // v).setImageResource(R.drawable.ic_bajar);
                     } else {
-                        DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                        Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                        if(can_download) {
+                            DownloadPoolService.addChapterDownloadPool(activity, c, false);
+                            Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             });

@@ -254,7 +254,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                                      }
                                                  } else {
                                                      MangaFolderSelect dialog = new MangaFolderSelect();
-                                                     dialog.show(getChildFragmentManager(), "fragment_edit_name");
+                                                     dialog.setMainFragment(MainFragment.this);
+                                                     dialog.show(getChildFragmentManager(), "fragment_find_folder");
 
                                                      Log.e("from file","selected");
                                                  }

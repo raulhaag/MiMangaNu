@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import ar.rulosoft.custompref.ArrayAdapterDirectory;
 import ar.rulosoft.mimanganu.DetailsFragment;
+import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -39,6 +40,7 @@ public class MangaFolderSelect extends DialogFragment {
     private String actual;
     private ListView dirs;
     private TextView dirs_path;
+    private MainFragment mainFragment;
 
     @NonNull
     @Override
@@ -94,6 +96,14 @@ public class MangaFolderSelect extends DialogFragment {
         });
         builder.setView(view);
         return builder.create();
+    }
+
+    public MainFragment getMainFragment() {
+        return mainFragment;
+    }
+
+    public void setMainFragment(MainFragment mainFragment) {
+        this.mainFragment = mainFragment;
     }
 
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
@@ -152,7 +162,9 @@ public class MangaFolderSelect extends DialogFragment {
                 if (error != null && error.length() > 2) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
-                getActivity().onBackPressed();
+                if(mainFragment != null)
+                    mainFragment.setListManga(true);
+                    getActivity().onBackPressed();
             }
             super.onPostExecute(result);
         }
