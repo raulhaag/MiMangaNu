@@ -22,8 +22,6 @@ import ar.rulosoft.custompref.ColorListDialogPref;
 import ar.rulosoft.custompref.PreferenceListDirFragment;
 import ar.rulosoft.custompref.PreferencesListDir;
 import ar.rulosoft.custompref.SeekBarCustomPreference;
-import ar.rulosoft.custompref.SeekBarPreference2;
-import ar.rulosoft.custompref.SeekbarPreferenceFragment;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -91,7 +89,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** This sets the download threads (parallel downloads) */
-        final SeekBarPreference2 listPreferenceDT = (SeekBarPreference2) getPreferenceManager().findPreference("download_threads");
+        final SeekBarCustomPreference listPreferenceDT = (SeekBarCustomPreference) getPreferenceManager().findPreference("download_threads");
         listPreferenceDT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -105,7 +103,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** This sets the maximum number of errors to tolerate */
-        final SeekBarPreference2 listPrefET = (SeekBarPreference2) getPreferenceManager().findPreference("error_tolerancia");
+        final SeekBarCustomPreference listPrefET = (SeekBarCustomPreference) getPreferenceManager().findPreference("error_tolerancia");
         listPrefET.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -115,7 +113,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** This sets the number of retries to fetch images */
-        SeekBarPreference2 listPrefRT = (SeekBarPreference2) getPreferenceManager().findPreference("reintentos");
+        SeekBarCustomPreference listPrefRT = (SeekBarCustomPreference) getPreferenceManager().findPreference("reintentos");
         listPrefRT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -204,7 +202,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(preference, "" + threads).apply();
 
-        final SeekBarPreference2 tmpSeekbar = (SeekBarPreference2) getPreferenceManager().findPreference(preference);
+        final SeekBarCustomPreference tmpSeekbar = (SeekBarCustomPreference) getPreferenceManager().findPreference(preference);
         tmpSeekbar.setProgress(threads);
     }
 
@@ -231,10 +229,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
         } else if (preference instanceof ColorListDialogPref) {
             fragment = ColorListDialogFragment.newInstance(preference);
-            fragment.setTargetFragment(this, 0);
-            fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
-        } else if (preference instanceof SeekBarCustomPreference) {
-            fragment = SeekbarPreferenceFragment.newInstance(preference);
             fragment.setTargetFragment(this, 0);
             fragment.show(getFragmentManager(), "android.support.v7.preference.PreferenceFragment.DIALOG");
         } else super.onDisplayPreferenceDialog(preference);
