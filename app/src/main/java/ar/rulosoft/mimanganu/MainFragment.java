@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -117,7 +118,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.setTitle(getString(R.string.app_name));
         activity.backListener = this;
         activity.keyUpListener = this;
-        floatingActionButton_add.setBackgroundColor(activity.colors[1]);
+        floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(activity.colors[1]));
     }
 
     @Override
