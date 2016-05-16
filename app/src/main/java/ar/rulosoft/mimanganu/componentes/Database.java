@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.componentes;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -18,6 +17,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class Database extends SQLiteOpenHelper {
 
@@ -462,12 +463,7 @@ public class Database extends SQLiteOpenHelper {
             //move to new path
             copyDbToSd(context);
             db.close();
-            //restart app
-            Intent i = context.getPackageManager()
-                    .getLaunchIntentForPackage(context.getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            context.startActivity(i);
-            System.exit(0);
+            Util.getInstance().restartApp(context);
         } else {
             db.execSQL(DATABASE_MANGA_CREATE);
             db.execSQL(DATABASE_CHAPTERS_CREATE);

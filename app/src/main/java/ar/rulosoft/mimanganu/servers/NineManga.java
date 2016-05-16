@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.text.Html;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
