@@ -150,12 +150,6 @@ public class SingleDownload implements Runnable {
 
     private void writeErrorImage(File ot) throws IOException {
         if (DownloadPoolService.actual != null) {
-            Log.d("SinDown","ot: "+ot.getAbsolutePath());
-            if(ot.exists()){
-                Log.d("SinDown","ot.e: true");
-            } else {
-                Log.d("SinDown","ot.e: false");
-            }
             InputStream ims = DownloadPoolService.actual.getAssets().open("error_image.jpg");
             FileOutputStream output = new FileOutputStream(ot);
             byte[] buffer = new byte[4096];

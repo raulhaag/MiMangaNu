@@ -48,10 +48,6 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
-
-        /*if(!(Thread.getDefaultUncaughtExceptionHandler() instanceof UncaughtExceptionHelper)) {
-            Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionHelper());
-        }*/
     }
 
     private void showUpdateDialog(){

@@ -29,12 +29,12 @@ public class Navegador {
     }
 
     public String get(String web, int timeOut) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
+        OkHttpClient client = httpClient.newBuilder()
                 .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .build();
 
-        Response response = copy.newCall(new Request.Builder().url(web).build()).execute();
+        Response response = client.newCall(new Request.Builder().url(web).build()).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -45,7 +45,7 @@ public class Navegador {
     }
 
     public String get(String ip, String path, String host) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
+        OkHttpClient client = httpClient.newBuilder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .build();
@@ -54,7 +54,7 @@ public class Navegador {
                 .url("http://" + ip + path)
                 .addHeader("Host", host)
                 .build();
-        Response response = copy.newCall(request).execute();
+        Response response = client.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -65,7 +65,7 @@ public class Navegador {
     }
 
     public String post(String web) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
+        OkHttpClient client = httpClient.newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .build();
@@ -74,7 +74,7 @@ public class Navegador {
                 .url(web)
                 .method("POST", getPostParams())
                 .build();
-        Response response = copy.newCall(request).execute();
+        Response response = client.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -85,7 +85,7 @@ public class Navegador {
     }
 
     public String post(String ip, String path, String host) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
+        OkHttpClient client = httpClient.newBuilder()
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .build();
@@ -95,7 +95,7 @@ public class Navegador {
                 .addHeader("Host", host)
                 .method("POST", getPostParams())
                 .build();
-        Response response = copy.newCall(request).execute();
+        Response response = client.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
