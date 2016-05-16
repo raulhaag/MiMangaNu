@@ -98,10 +98,6 @@ public class MangaFolderSelect extends DialogFragment {
         return builder.create();
     }
 
-    public MainFragment getMainFragment() {
-        return mainFragment;
-    }
-
     public void setMainFragment(MainFragment mainFragment) {
         this.mainFragment = mainFragment;
     }
@@ -114,7 +110,7 @@ public class MangaFolderSelect extends DialogFragment {
 
         @Override
         protected void onPreExecute() {
-            adding.setMessage(getResources().getString(R.string.agregando));
+            adding.setMessage(getResources().getString(R.string.adding_to_db));
             adding.show();
             super.onPreExecute();
         }
@@ -147,7 +143,7 @@ public class MangaFolderSelect extends DialogFragment {
                     @Override
                     public void run() {
                         if (adding != null) {
-                            adding.setMessage(getResources().getString(R.string.agregando) + " " + values[0] + "/" + total);
+                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
                         }
                     }
                 });
