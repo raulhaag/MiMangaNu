@@ -39,7 +39,6 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private static int buttonDownload = R.drawable.ic_action_download_light;
 
     private static int listItem = R.layout.listitem_capitulo;
-    MangaFragment fm;
     private SparseBooleanArray selected = new SparseBooleanArray();
     private Activity activity;
     private ColorStateList defaultColor;
@@ -47,10 +46,9 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private ArrayList<Chapter> chapters;
     private boolean can_download;
 
-    public ChapterAdapter(Activity context, ArrayList<Chapter> items, MangaFragment fm, boolean can_download) {
+    public ChapterAdapter(Activity context, ArrayList<Chapter> items, boolean can_download) {
         super(context, listItem);
         this.activity = context;
-        this.fm = fm;
         this.chapters = items;
         this.can_download = can_download;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -127,7 +125,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 public void onClick(final View v) {
                     Chapter c = (Chapter) v.getTag();
                     if (c.isDownloaded()) {
-                        item.delete(getContext());
+                        item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();

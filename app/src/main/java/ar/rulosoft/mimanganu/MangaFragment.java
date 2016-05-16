@@ -285,7 +285,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             fvi = mListView.getFirstVisiblePosition();
             mChapterAdapter.replaceData(chapters);
         } else {
-            mChapterAdapter = new ChapterAdapter(getActivity(), chapters, this,!(mServerBase instanceof FromFolder));
+            mChapterAdapter = new ChapterAdapter(getActivity(), chapters,!(mServerBase instanceof FromFolder));
         }
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
