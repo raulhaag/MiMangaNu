@@ -8,9 +8,10 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import ar.rulosoft.mimanganu.componentes.Imaginable;
 import ar.rulosoft.navegadores.Navegador;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -138,15 +139,17 @@ public class ImageLoader {
                     url = url.substring(0, idx);
                 }
             }
-            OkHttpClient client = initAndGetNavegador().getHttpClient();
-            client.setConnectTimeout(5, TimeUnit.SECONDS);
-            client.setReadTimeout(5, TimeUnit.SECONDS);
+            OkHttpClient client = initAndGetNavegador().getHttpClient().newBuilder()
+                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .readTimeout(5, TimeUnit.SECONDS)
+                    .build();
             Request.Builder builder = new Request.Builder().url(url);
             if (host != null) {
                 builder.addHeader("Host", host);
             }
             Response response = client.newCall(builder.build()).execute();
             FileCache.writeFile(response.body().byteStream(), f);
+            response.body().close();
             return decodeFile(f);
         } catch (Throwable ex) {
             if (ex instanceof OutOfMemoryError)

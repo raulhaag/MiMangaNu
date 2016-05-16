@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.PagerAdapter;
@@ -29,8 +30,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
-
-import com.melnykov.fab.FloatingActionButton;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -69,6 +68,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private NotificationManager mNotifyManager;
     private NotificationCompat.Builder mBuilder;
     private int mNotifyID = 1246502;
+    boolean is_server_list_open = false;
 
     @Nullable
     @Override
@@ -86,8 +86,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             mViewPager = (ViewPager) getView().findViewById(R.id.pager);
             floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
+            if(is_server_list_open){
+                ObjectAnimator anim =   ObjectAnimator.ofFloat(floatingActionButton_add, "rotation", 360.0f, 315.0f);
+                anim.setDuration(0);
+                anim.start();
+            }
         }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
@@ -105,20 +115,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.setTitle(getString(R.string.app_name));
         activity.backListener = this;
         activity.keyUpListener = this;
-        floatingActionButton_add.setColorNormal(activity.colors[1]);
-        floatingActionButton_add.setColorPressed(activity.colors[3]);
-        floatingActionButton_add.setColorRipple(activity.colors[0]);
+        floatingActionButton_add.setBackgroundColor(activity.colors[1]);
     }
 
     @Override
     public void onClick(View v) {
         if (mViewPager.getCurrentItem() == 0) {
+            is_server_list_open = true;
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(v, "rotation", 360.0f, 315.0f);
             anim.setDuration(200);
             anim.start();
             mViewPager.setCurrentItem(1);
         } else {
+            is_server_list_open = false;
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(v, "rotation", 315.0f, 360.0f);
             anim.setDuration(200);

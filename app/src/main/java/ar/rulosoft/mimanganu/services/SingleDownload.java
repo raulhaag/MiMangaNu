@@ -1,11 +1,12 @@
 package ar.rulosoft.mimanganu.services;
 
-import android.net.Uri;
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
+import ar.rulosoft.navegadores.RefererInterceptor;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,11 +17,9 @@ import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.navegadores.Navegador;
-import ar.rulosoft.navegadores.RefererInterceptor;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    //public Navegador NAVEGADOR = null;
     public boolean reference;
     public Status status = Status.QUEUED;
     int index, cid;
@@ -59,11 +58,19 @@ public class SingleDownload implements Runnable {
                 OutputStream output;
                 long contentLength;
                 try {
-                    OkHttpClient client = new Navegador().getHttpClient();
-                    if (reference)
-                        client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
-                    client.setConnectTimeout(3, TimeUnit.SECONDS);
-                    client.setReadTimeout(3, TimeUnit.SECONDS);
+                    OkHttpClient client;
+                    if(reference){
+                        client = new Navegador().getHttpClient().newBuilder()
+                                .connectTimeout(3, TimeUnit.SECONDS)
+                                .readTimeout(3, TimeUnit.SECONDS)
+                                .addNetworkInterceptor(new RefererInterceptor(cd.chapter.getPath()))
+                                .build();
+                    } else {
+                        client = new Navegador().getHttpClient().newBuilder()
+                                .connectTimeout(3, TimeUnit.SECONDS)
+                                .readTimeout(3, TimeUnit.SECONDS)
+                                .build();
+                    }
                     Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
@@ -75,6 +82,7 @@ public class SingleDownload implements Runnable {
                         ot.delete();
                         writeErrorImage(ot);
                         ot.renameTo(o);
+                        response.body().close();
                         break;
                     }
                     contentLength = response.body().contentLength();
@@ -104,22 +112,22 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.ERROR_TIMEOUT);
                     }
                 } finally {
-                    boolean flagedOk = false;
+                    boolean flaggedOk = false;
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content lenght =" + contentLength + " size =" + o.length() + " on =" + o.getPath());
+                            Log.e("MIMANGA DOWNLOAD", "content length =" + contentLength + " size =" + o.length() + " on =" + o.getPath());
                             ot.delete();
                             retry--;
                             changeStatus(Status.RETRY);
                         } else {
-                            flagedOk = true;
+                            flaggedOk = true;
                         }
                     }
                     try {
                         output.flush();
                         output.close();
                         input.close();
-                        if (flagedOk) {
+                        if (flaggedOk) {
                             if (ot.length() > 0) {
                                 ot.renameTo(o);
                             } else {
@@ -142,6 +150,12 @@ public class SingleDownload implements Runnable {
 
     private void writeErrorImage(File ot) throws IOException {
         if (DownloadPoolService.actual != null) {
+            Log.d("SinDown","ot: "+ot.getAbsolutePath());
+            if(ot.exists()){
+                Log.d("SinDown","ot.e: true");
+            } else {
+                Log.d("SinDown","ot.e: false");
+            }
             InputStream ims = DownloadPoolService.actual.getAssets().open("error_image.jpg");
             FileOutputStream output = new FileOutputStream(ot);
             byte[] buffer = new byte[4096];

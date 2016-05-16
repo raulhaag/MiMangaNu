@@ -1,6 +1,6 @@
 package ar.rulosoft.navegadores;
 
-import com.squareup.okhttp.*;
+import okhttp3.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,18 +10,18 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author Raul, nulldev
+ * @author Raul, nulldev, xtj-9182
  */
 public class Navegador {
     OkHttpClient httpClient;
-    UserAgentInterceptor userAgentInterceptor;
-
     private HashMap<String, String> parametros = new HashMap<>();
 
     public Navegador() {
-        httpClient = new OkHttpClient();
-        userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
-        httpClient.networkInterceptors().add(userAgentInterceptor);
+        httpClient = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
     }
 
     public String get(String web) throws Exception {
@@ -29,62 +29,78 @@ public class Navegador {
     }
 
     public String get(String web, int timeOut) throws Exception {
-        httpClient.setConnectTimeout(timeOut, TimeUnit.MILLISECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
-        Response response = httpClient.newCall(new Request.Builder().url(web).build()).execute();
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+
+        Response response = copy.newCall(new Request.Builder().url(web).build()).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            response.body().close();
             return "";
         }
     }
 
     public String get(String ip, String path, String host) throws Exception {
-        httpClient.setConnectTimeout(10, TimeUnit.SECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
                 .addHeader("Host", host)
                 .build();
-        Response response = httpClient.newCall(request).execute();
+        Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            response.body().close();
             return "";
         }
     }
 
     public String post(String web) throws Exception {
-        httpClient.setConnectTimeout(5, TimeUnit.SECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+
         Request request = new Request.Builder()
                 .url(web)
                 .method("POST", getPostParams())
                 .build();
-        Response response = httpClient.newCall(request).execute();
+        Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            response.body().close();
             return "";
         }
     }
 
     public String post(String ip, String path, String host) throws Exception {
-        httpClient.setConnectTimeout(5, TimeUnit.SECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .readTimeout(5, TimeUnit.SECONDS)
+                .build();
+
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
                 .addHeader("Host", host)
                 .method("POST", getPostParams())
                 .build();
-        Response response = httpClient.newCall(request).execute();
+        Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            response.body().close();
             return "";
         }
     }
@@ -94,7 +110,7 @@ public class Navegador {
     }
 
     public RequestBody getPostParams() throws Exception {
-        FormEncodingBuilder builder = new FormEncodingBuilder();
+        FormBody.Builder builder = new FormBody.Builder();
         for (Map.Entry<String, String> entry : parametros.entrySet()) {
             builder.add(entry.getKey(), entry.getValue());
         }
@@ -146,6 +162,7 @@ public class Navegador {
 /**
  * Adds user agent to any client the interceptor is attached to.
  */
+@Deprecated
 class UserAgentInterceptor implements Interceptor {
 
     private String userAgent;

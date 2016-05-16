@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -286,14 +287,18 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public void reloadImage(int idx) {
         if (pages != null) {
-            int iniPage = getCurrentPage() - 1;
-            Page page = initValues(pages.get(idx).path);
-            pages.set(idx, page);
-            calculateParticularScale(pages.get(idx));
-            calculateVisibilities();
-            if (iniPage > idx)
-                seekPage(iniPage);
-            generateDrawPool();
+            Log.d("Reader", "idx: " + idx);
+            Log.d("Reader", "pages.s: " + pages.size());
+            if(idx < pages.size()) {
+                int iniPage = getCurrentPage() - 1;
+                Page page = initValues(pages.get(idx).path);
+                pages.set(idx, page);
+                calculateParticularScale(pages.get(idx));
+                calculateVisibilities();
+                if (iniPage > idx)
+                    seekPage(iniPage);
+                generateDrawPool();
+            }
         }
     }
 

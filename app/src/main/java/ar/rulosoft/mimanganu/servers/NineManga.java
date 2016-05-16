@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.text.Html;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -217,6 +218,11 @@ public class NineManga extends ServerBase {
         Matcher matcher = p.matcher(source);
         while (matcher.find()) {
             Manga manga = new Manga(getServerID(), matcher.group(3), HOST + matcher.group(1), false);
+            /*Log.d("NineManga","source: "+source);
+            Log.d("NineManga","3: "+ matcher.group(3)+" 1: "+matcher.group(1)+" 2: "+matcher.group(2));
+            for (int i=0;i<matcher.groupCount();i++){
+                Log.d("NineManga","i: "+i+" "+matcher.group(i));
+            }*/
             manga.setImages(matcher.group(2));
             mangas.add(manga);
         }

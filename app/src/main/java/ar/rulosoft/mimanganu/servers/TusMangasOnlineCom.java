@@ -12,6 +12,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
 
+@Deprecated
 public class TusMangasOnlineCom extends ServerBase {
 
     private final static int TIMEOUT = 20000;
