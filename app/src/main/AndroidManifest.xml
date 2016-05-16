@@ -20,7 +20,6 @@
             before it turns dark.
 
             MainActivity's launchMode needs to be "standard" for OnActivityResult to work
-            test
         -->
         <activity
             android:name=".MainActivity"
