@@ -6,11 +6,12 @@ import android.text.Html;
 import java.io.File;
 import java.util.Comparator;
 
+import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class Chapter{
+public class Chapter {
 
     public static final int NEW = -1;
     public static final int UNREAD = 0;
@@ -138,7 +139,11 @@ public class Chapter{
     }
 
     private void deleteImages(Context context, Manga manga, ServerBase s) {
-        String path = DownloadPoolService.generateBasePath(s, manga, this, context);
+        String path;
+        if (!(s instanceof FromFolder))
+            path = DownloadPoolService.generateBasePath(s, manga, this, context);
+        else
+            path = getPath();
         Util.getInstance().deleteRecursive(new File(path));
     }
 
@@ -172,7 +177,7 @@ public class Chapter{
     public void markRead(Context c, boolean read) {
         Database.markChapter(c, getId(), read);
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
-        if(!read){
+        if (!read) {
             setPagesRead(0);
             Database.updateChapterPlusDownload(c, this);
         }
@@ -182,7 +187,7 @@ public class Chapter{
         manga.getChapters().add(0, this);
     }
 
-    public static class Comparators{
+    public static class Comparators {
         private static final String FLOAT_PATTERN = "([.,0123456789]+)";
         private static final String STRING_END_PATTERN = "[^\\d]\\.";
         private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].{0,1}\\d+";
@@ -190,21 +195,21 @@ public class Chapter{
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if(c1.volatile_order == -1) {
+                    if (c1.volatile_order == -1) {
                         String str1 = c1.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str1 = str1.replaceAll(STRING_END_PATTERN, " ");
                         str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
                         c1.volatile_order = Float.parseFloat(str1);
                     }
-                    if(c2.volatile_order == -1) {
+                    if (c2.volatile_order == -1) {
                         String str2 = c2.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str2 = str2.replaceAll(STRING_END_PATTERN, " ");
                         str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
                         c2.volatile_order = Float.parseFloat(str2);
                     }
-                    return  (int)Math.floor(c2.volatile_order-c1.volatile_order);
+                    return (int) Math.floor(c2.volatile_order - c1.volatile_order);
                 } catch (Exception e) {
-                    return  0;
+                    return 0;
                 }
             }
         };
@@ -212,21 +217,21 @@ public class Chapter{
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if(c1.volatile_order == -1) {
+                    if (c1.volatile_order == -1) {
                         String str1 = c1.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str1 = str1.replaceAll(STRING_END_PATTERN, " ");
                         str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
                         c1.volatile_order = Float.parseFloat(str1);
                     }
-                    if(c2.volatile_order == -1) {
+                    if (c2.volatile_order == -1) {
                         String str2 = c2.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str2 = str2.replaceAll(STRING_END_PATTERN, " ");
                         str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
                         c2.volatile_order = Float.parseFloat(str2);
                     }
-                    return  (int)Math.floor(c1.volatile_order-c2.volatile_order);
+                    return (int) Math.floor(c1.volatile_order - c2.volatile_order);
                 } catch (Exception e) {
-                    return  0;
+                    return 0;
                 }
             }
         };

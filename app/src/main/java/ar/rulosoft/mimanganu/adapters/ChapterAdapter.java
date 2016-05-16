@@ -44,13 +44,13 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private ColorStateList defaultColor;
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
-    MangaFragment fm;
+    private boolean can_download;
 
-    public ChapterAdapter(Activity context, ArrayList<Chapter> items, MangaFragment fm) {
+    public ChapterAdapter(Activity context, ArrayList<Chapter> items, boolean can_download) {
         super(context, listItem);
         this.activity = context;
-        this.fm = fm;
         this.chapters = items;
+        this.can_download = can_download;
         li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -75,7 +75,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        Chapter item = getItem(position);
+        final Chapter item = getItem(position);
 
         if (item != null) {
             holder.textViewName.setText(item.getTitle());
@@ -125,19 +125,17 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                 public void onClick(final View v) {
                     Chapter c = (Chapter) v.getTag();
                     if (c.isDownloaded()) {
-                        Manga m = fm.mManga;
-                        ServerBase s = ServerBase.getServer(m.getServerId());
-                        String ruta = DownloadPoolService.generateBasePath(s, m, c, activity);
-                        Util.getInstance().deleteRecursive(new File(ruta));
+                        item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
                         Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();
                         notifyDataSetChanged();
-                        // ((ImageView)
-                        // v).setImageResource(R.drawable.ic_bajar);
+                        // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
-                        DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                        Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                        if (can_download) {
+                            DownloadPoolService.addChapterDownloadPool(activity, c, false);
+                            Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             });
@@ -219,8 +217,8 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         //("Not Supported yet");
     }
 
-    public void sort_chapters(Comparator<Chapter> comparator){
-        Collections.sort(chapters,comparator);
+    public void sort_chapters(Comparator<Chapter> comparator) {
+        Collections.sort(chapters, comparator);
         notifyDataSetChanged();
     }
 
@@ -234,7 +232,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         chapters.add(object);
     }
 
-    public void replaceData(ArrayList<Chapter> chapters){
+    public void replaceData(ArrayList<Chapter> chapters) {
         this.chapters = chapters;
         notifyDataSetChanged();
     }

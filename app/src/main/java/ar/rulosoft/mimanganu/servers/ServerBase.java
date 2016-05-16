@@ -40,6 +40,8 @@ public abstract class ServerBase {
     public static final int NINEMANGA = 23;
     public static final int MANGAEDEN = 24;
 
+    public static final int FROMFOLDER = 1001;
+
     public boolean hasMore = true;
     private String serverName;
     private int icon;
@@ -117,6 +119,10 @@ public abstract class ServerBase {
                 break;
             case NINEMANGA:
                 serverBase = new NineManga();
+                break;
+
+            case FROMFOLDER:
+                serverBase = new FromFolder();
                 break;
             default:
                 break;
@@ -360,7 +366,8 @@ public abstract class ServerBase {
                 new MangaEdenIt(),
                 new DeNineManga(),
                 new Manga_Tube(),
-                new RawSenManga()
+                new RawSenManga(),
+                new FromFolder()
         });
     }
 

@@ -9,7 +9,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
-
+@Deprecated
 public class EsManga extends ServerBase {
 
     private static String[] generos = new String[]{

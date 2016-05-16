@@ -37,6 +37,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.ControlInfoNoScroll;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -59,6 +60,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private int chapters_order; // 0 = db | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc
     private Menu menu;
     private ControlInfoNoScroll mInfo;
+    ServerBase mServerBase;
 
     @Nullable
     @Override
@@ -77,6 +79,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             getActivity().onBackPressed();
         }
         mManga = Database.getManga(getActivity(), mMangaId);
+        mServerBase = ServerBase.getServer(mManga.getServerId());
         readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
         if (mManga.getReaderType() != 0) {
             readerType = mManga.getReaderType();
@@ -282,7 +285,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             fvi = mListView.getFirstVisiblePosition();
             mChapterAdapter.replaceData(chapters);
         } else {
-            mChapterAdapter = new ChapterAdapter(getActivity(), chapters, this);
+            mChapterAdapter = new ChapterAdapter(getActivity(), chapters,!(mServerBase instanceof FromFolder));
         }
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
