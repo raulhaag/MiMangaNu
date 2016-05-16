@@ -27,7 +27,7 @@
             android:key="update_sound"
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
-        <ar.rulosoft.custompref.SeekBarPreference2
+        <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="1"
             android:dialogTitle="@string/update_thread_background_title"
             android:key="update_threads_background"
@@ -35,7 +35,7 @@
             android:title="@string/update_thread_background_title"
             app:val_max="8"
             app:val_min="1" />
-        <ar.rulosoft.custompref.SeekBarPreference2
+        <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="2"
             android:dialogTitle="@string/update_thread_manual_title"
             android:key="update_threads_manual"
@@ -89,7 +89,7 @@
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
             android:title="@string/directorio_title" />
-        <ar.rulosoft.custompref.SeekBarPreference2
+        <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_descargas_title"
             android:key="download_threads"
@@ -97,7 +97,7 @@
             android:title="@string/cantidad_descargas_title"
             app:val_max="8"
             app:val_min="1" />
-        <ar.rulosoft.custompref.SeekBarPreference2
+        <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="2"
             android:dialogTitle="@string/cantidad_errores_title"
             android:key="error_tolerancia"
@@ -105,7 +105,7 @@
             android:title="@string/cantidad_errores_title"
             app:val_max="10"
             app:val_min="0" />
-        <ar.rulosoft.custompref.SeekBarPreference2
+        <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="3"
             android:dialogTitle="@string/cantidad_reintentos_title"
             android:key="reintentos"

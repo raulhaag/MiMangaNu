@@ -254,17 +254,19 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {
-                    if (mAdapter == null) {
-                        if (sBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
-                            mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
+                    if(isAdded()) {
+                        if (mAdapter == null) {
+                            if (sBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
+                                mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
+                            } else {
+                                mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
+                            }
+                            mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);
+                            mAdapter.setMangaClickListener(ServerFilteredNavigationFragment.this);
+                            grid.setAdapter(mAdapter);
                         } else {
-                            mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
+                            mAdapter.addAll(result);
                         }
-                        mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);
-                        mAdapter.setMangaClickListener(ServerFilteredNavigationFragment.this);
-                        grid.setAdapter(mAdapter);
-                    } else {
-                        mAdapter.addAll(result);
                     }
                 }
                 mStart = false;

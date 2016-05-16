@@ -104,6 +104,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        if(is_server_list_open)
+            is_server_list_open = false;
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -119,6 +126,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.backListener = this;
         activity.keyUpListener = this;
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(activity.colors[1]));
+        if(!is_server_list_open){
+            ObjectAnimator anim =
+                    ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
+            anim.setDuration(0);
+            anim.start();
+        }
     }
 
     @Override
