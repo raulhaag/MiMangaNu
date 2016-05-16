@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
+import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
 import android.database.sqlite.SQLiteConstraintException;
 import android.support.v4.app.Fragment;
@@ -86,7 +87,7 @@ public class DetailsFragment extends Fragment {
             }
         });
         if (getActivity() != null) {
-            button_add.setBackgroundColor(((MainActivity) getActivity()).colors[1]);
+            button_add.setBackgroundTintList(ColorStateList.valueOf(((MainActivity) getActivity()).colors[1]));
             swipeRefreshLayout.setColorSchemeColors(((MainActivity) getActivity()).colors[0], ((MainActivity) getActivity()).colors[1]);
             data.setColor(((MainActivity) getActivity()).darkTheme, ((MainActivity) getActivity()).colors[0]);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
