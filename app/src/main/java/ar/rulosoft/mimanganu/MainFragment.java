@@ -106,7 +106,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onPause() {
         super.onPause();
-        is_server_list_open = false;
+        if(is_server_list_open)
+            is_server_list_open = false;
     }
 
     @Override
@@ -128,7 +129,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         if(!is_server_list_open){
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
-            anim.setDuration(200);
+            anim.setDuration(0);
             anim.start();
         }
     }
