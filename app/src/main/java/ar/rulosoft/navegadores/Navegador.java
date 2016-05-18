@@ -15,12 +15,15 @@ import java.util.regex.Pattern;
 public class Navegador {
     OkHttpClient httpClient;
     private HashMap<String, String> parametros = new HashMap<>();
+    UserAgentInterceptor userAgentInterceptor;
 
     public Navegador() {
+        userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
         httpClient = new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
+                .addNetworkInterceptor(userAgentInterceptor)
                 .build();
     }
 
@@ -162,7 +165,6 @@ public class Navegador {
 /**
  * Adds user agent to any client the interceptor is attached to.
  */
-@Deprecated
 class UserAgentInterceptor implements Interceptor {
 
     private String userAgent;
