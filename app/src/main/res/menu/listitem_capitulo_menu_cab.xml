@@ -37,7 +37,7 @@
         android:title="@string/download_selection"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/mar_and_di"
+        android:id="@+id/mark_as_read_and_delete_images"
         android:title="@string/mar_and_di"
         app:showAsAction="ifRoom" />
     <item
@@ -46,12 +46,12 @@
         android:title="@string/borrar_imagenes"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/delete_chapter"
+        android:id="@+id/remove_chapter"
         android:icon="@drawable/ic_action_ic_borrar_light"
         android:title="@string/borrarcap"
         app:showAsAction="ifRoom" />
     <item
-        android:id="@+id/reset"
+        android:id="@+id/reset_chapter"
         android:icon="@drawable/ic_action_av_reload"
         android:title="@string/resetcap"
         app:showAsAction="ifRoom" />
