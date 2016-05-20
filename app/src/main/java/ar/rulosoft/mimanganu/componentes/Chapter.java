@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.text.Html;
 
 import java.io.File;
@@ -144,12 +145,33 @@ public class Chapter {
             path = DownloadPoolService.generateBasePath(s, manga, this, context);
         else
             path = getPath();
-        Util.getInstance().deleteRecursive(new File(path));
+        //Util.getInstance().deleteRecursive(new File(path));
+        new DeleteImages(new File(path)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private class DeleteImages extends AsyncTask<Void, Integer, Void> {
+        File fileOrDirectory;
+
+        public DeleteImages(File fileOrDirectory) {
+            super();
+            this.fileOrDirectory = fileOrDirectory;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            Util.getInstance().deleteRecursive(fileOrDirectory);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        Util.getInstance().deleteRecursive(new File(path));
+        //Util.getInstance().deleteRecursive(new File(path));
+        new DeleteImages(new File(path)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         setPages(0);
         setDownloaded(false);
         setPagesRead(0);
@@ -174,12 +196,15 @@ public class Chapter {
         reset(context, manga, s);
     }
 
-    public void markRead(Context c, boolean read) {
-        Database.markChapter(c, getId(), read);
+    public void markRead(Context context, boolean read) {
+        Database.markChapter(context, getId(), read);
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
-        if (!read) {
+        if (read) {
+            setPagesRead(getPages());
+            Database.updateChapterPlusDownload(context, this);
+        } else {
             setPagesRead(0);
-            Database.updateChapterPlusDownload(c, this);
+            Database.updateChapterPlusDownload(context, this);
         }
     }
 
