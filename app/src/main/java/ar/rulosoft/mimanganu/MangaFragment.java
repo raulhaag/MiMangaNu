@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.ImageLoader;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -145,9 +147,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
             @Override
             public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
-
                 final SparseBooleanArray selection = mChapterAdapter.getSelection();
-                final ServerBase s = ServerBase.getServer(mManga.getServerId());
+                final ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
                 boolean finish = true;
                 switch (item.getItemId()) {
                     case R.id.select_all:
@@ -164,28 +165,30 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         return true;
                     case R.id.download_selection:
                         Chapter[] chapters = mChapterAdapter.getSelectedChapters();
-                        for (Chapter c : chapters) {
+                        for (Chapter chapter : chapters) {
                             try {
-                                DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
                             } catch (Exception e) {
                                 Log.e(TAG, "Download add pool error", e);
                             }
                         }
                         break;
-                    case R.id.mar_and_di:
+                    case R.id.mark_as_read_and_delete_images:
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.markRead(getActivity(), true);
-                            c.freeSpace(getActivity(), mManga, s);
+                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                            chapter.markRead(getActivity(), true);
+                            chapter.freeSpace(getActivity(), mManga, serverBase);
                         }
                         break;
                     case R.id.delete_images:
+                        //new DeleteImages(selection, serverBase).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        //old:
                         for (int i = 0; i < selection.size(); i++) {
-                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.freeSpace(getActivity(), mManga, s);
+                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                            chapter.freeSpace(getActivity(), mManga, serverBase);
                         }
                         break;
-                    case R.id.delete_chapter:
+                    case R.id.remove_chapter:
                         finish = false;
                         AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
                         dlgAlert.setMessage(getString(R.string.delete_comfirm));
@@ -200,9 +203,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                                 }
                                 Arrays.sort(selected);
                                 for (int i = selection.size() - 1; i >= 0; i--) {
-                                    Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                                    c.delete(getActivity(), mManga, s);
-                                    mChapterAdapter.remove(c);
+                                    Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                                    chapter.delete(getActivity(), mManga, serverBase);
+                                    mChapterAdapter.remove(chapter);
                                     mode.finish();
                                 }
                             }
@@ -215,22 +218,22 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         });
                         dlgAlert.create().show();
                         break;
-                    case R.id.reset:
+                    case R.id.reset_chapter:
                         for (int i = 0; i < selection.size(); i++) {
-                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.reset(getActivity(), mManga, s);
+                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                            chapter.reset(getActivity(), mManga, serverBase);
                         }
                         break;
                     case R.id.mark_selected_as_read:
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.markRead(getActivity(), true);
+                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                            chapter.markRead(getActivity(), true);
                         }
                         break;
                     case R.id.mark_selected_as_unread:
                         for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter c = mChapterAdapter.getItem(selection.keyAt(i));
-                            c.markRead(getActivity(), false);
+                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                            chapter.markRead(getActivity(), false);
                         }
                         break;
                 }
@@ -614,21 +617,28 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected Void doInBackground(Void... params) {
-            chapters = Database.getChapters(getActivity(), mMangaId);
-            switch (chapters_order) {
-                case 1:
-                    Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
-                    break;
-                case 2:
-                    Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
-                    break;
-                case 3:
-                    Collections.sort(chapters, Chapter.Comparators.TITLE_DSC);
-                    break;
-                case 4:
-                    Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
-                    break;
-            }
+                chapters = Database.getChapters(getActivity(), mMangaId);
+                try {
+                    switch (chapters_order) {
+                        case 1:
+                            Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
+                            break;
+                        case 2:
+                            Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
+                            break;
+                        case 3:
+                            Collections.sort(chapters, Chapter.Comparators.TITLE_DSC);
+                            break;
+                        case 4:
+                            Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
+                            break;
+                    }
+                } catch (Exception e) {
+                    StringWriter sw = new StringWriter();
+                    PrintWriter pw = new PrintWriter(sw);
+                    e.printStackTrace(pw);
+                    Log.d(TAG, sw.toString());
+                }
             return null;
         }
 
@@ -643,8 +653,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
                 if (mChapterAdapter.getItem(i).getPagesRead() > 0) {
-                    Chapter c = mChapterAdapter.getItem(i);
-                    c.markRead(getActivity(), false);
+                    Chapter chapter = mChapterAdapter.getItem(i);
+                    chapter.markRead(getActivity(), false);
                     publishProgress(i);
                 }
             }

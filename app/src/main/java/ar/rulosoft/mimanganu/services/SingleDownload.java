@@ -4,9 +4,9 @@ import android.util.Log;
 
 import ar.rulosoft.navegadores.RefererInterceptor;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -56,22 +56,15 @@ public class SingleDownload implements Runnable {
             if (o.length() == 0) {
                 InputStream input;
                 OutputStream output;
+                Response response;
                 long contentLength;
                 try {
-                    OkHttpClient client;
-                    if(reference){
-                        client = new Navegador().getHttpClient().newBuilder()
-                                .connectTimeout(3, TimeUnit.SECONDS)
-                                .readTimeout(3, TimeUnit.SECONDS)
-                                .addNetworkInterceptor(new RefererInterceptor(cd.chapter.getPath()))
-                                .build();
-                    } else {
-                        client = new Navegador().getHttpClient().newBuilder()
-                                .connectTimeout(3, TimeUnit.SECONDS)
-                                .readTimeout(3, TimeUnit.SECONDS)
-                                .build();
-                    }
-                    Response response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
+                    OkHttpClient client = new Navegador().getHttpClient();;
+                    if (reference)
+                        client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
+                    client.setConnectTimeout(3, TimeUnit.SECONDS);
+                    client.setReadTimeout(3, TimeUnit.SECONDS);
+                    response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);
@@ -82,7 +75,6 @@ public class SingleDownload implements Runnable {
                         ot.delete();
                         writeErrorImage(ot);
                         ot.renameTo(o);
-                        response.body().close();
                         break;
                     }
                     contentLength = response.body().contentLength();
@@ -115,7 +107,7 @@ public class SingleDownload implements Runnable {
                     boolean flaggedOk = false;
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content length =" + contentLength + " size =" + o.length() + " on =" + o.getPath());
+                            Log.e("MIMANGA DOWNLOAD", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
                             ot.delete();
                             retry--;
                             changeStatus(Status.RETRY);
@@ -127,6 +119,7 @@ public class SingleDownload implements Runnable {
                         output.flush();
                         output.close();
                         input.close();
+                        response.body().close();
                         if (flaggedOk) {
                             if (ot.length() > 0) {
                                 ot.renameTo(o);

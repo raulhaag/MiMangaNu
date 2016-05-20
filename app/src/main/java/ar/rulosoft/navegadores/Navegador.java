@@ -1,6 +1,6 @@
 package ar.rulosoft.navegadores;
 
-import okhttp3.*;
+import com.squareup.okhttp.*;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -14,17 +14,13 @@ import java.util.regex.Pattern;
  */
 public class Navegador {
     OkHttpClient httpClient;
-    private HashMap<String, String> parametros = new HashMap<>();
     UserAgentInterceptor userAgentInterceptor;
+    private HashMap<String, String> parametros = new HashMap<>();
 
     public Navegador() {
+        httpClient = new OkHttpClient();
         userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
-        httpClient = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .addNetworkInterceptor(userAgentInterceptor)
-                .build();
+        httpClient.networkInterceptors().add(userAgentInterceptor);
     }
 
     public String get(String web) throws Exception {
@@ -32,12 +28,10 @@ public class Navegador {
     }
 
     public String get(String web, int timeOut) throws Exception {
-        OkHttpClient client = httpClient.newBuilder()
-                .connectTimeout(timeOut, TimeUnit.MILLISECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .build();
+        httpClient.setConnectTimeout(timeOut, TimeUnit.MILLISECONDS);
+        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
 
-        Response response = client.newCall(new Request.Builder().url(web).build()).execute();
+        Response response = httpClient.newCall(new Request.Builder().url(web).build()).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -48,16 +42,14 @@ public class Navegador {
     }
 
     public String get(String ip, String path, String host) throws Exception {
-        OkHttpClient client = httpClient.newBuilder()
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .build();
+        httpClient.setConnectTimeout(10, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
 
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
                 .addHeader("Host", host)
                 .build();
-        Response response = client.newCall(request).execute();
+        Response response = httpClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -68,16 +60,14 @@ public class Navegador {
     }
 
     public String post(String web) throws Exception {
-        OkHttpClient client = httpClient.newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .build();
+        httpClient.setConnectTimeout(5, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
 
         Request request = new Request.Builder()
                 .url(web)
                 .method("POST", getPostParams())
                 .build();
-        Response response = client.newCall(request).execute();
+        Response response = httpClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -88,17 +78,15 @@ public class Navegador {
     }
 
     public String post(String ip, String path, String host) throws Exception {
-        OkHttpClient client = httpClient.newBuilder()
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .build();
+        httpClient.setConnectTimeout(5, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
 
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
                 .addHeader("Host", host)
                 .method("POST", getPostParams())
                 .build();
-        Response response = client.newCall(request).execute();
+        Response response = httpClient.newCall(request).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -113,7 +101,7 @@ public class Navegador {
     }
 
     public RequestBody getPostParams() throws Exception {
-        FormBody.Builder builder = new FormBody.Builder();
+        FormEncodingBuilder builder = new FormEncodingBuilder();
         for (Map.Entry<String, String> entry : parametros.entrySet()) {
             builder.add(entry.getKey(), entry.getValue());
         }

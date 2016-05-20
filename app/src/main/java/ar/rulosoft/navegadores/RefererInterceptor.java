@@ -2,8 +2,8 @@ package ar.rulosoft.navegadores;
 
 import android.util.Log;
 
-import okhttp3.Interceptor;
-import okhttp3.Response;
+import com.squareup.okhttp.Interceptor;
+import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
