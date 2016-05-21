@@ -172,7 +172,7 @@ public class Chapter {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
         //Util.getInstance().deleteRecursive(new File(path));
         new DeleteImages(new File(path)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        setPages(0);
+        //setPages(0); // this breaks "Sexual Hunter Riot" from KissManga no idea why
         setDownloaded(false);
         setPagesRead(0);
         Database.updateChapterPlusDownload(context, this);

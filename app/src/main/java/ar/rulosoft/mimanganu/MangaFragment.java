@@ -181,8 +181,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                         break;
                     case R.id.delete_images:
-                        //new DeleteImages(selection, serverBase).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        //old:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
                             chapter.freeSpace(getActivity(), mManga, serverBase);
