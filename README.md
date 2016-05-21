@@ -33,6 +33,15 @@ Downloads
 
 Changelog
 ---------
+Cambios 1.49
+* Incluso más bug fixes
+* Establecer el número de hilos de búsqueda manual y los hilos de descarga = núcleos de CPU por defecto
+* Fix manejo de memoria en Android 5+
+* Mejorar el diseño en Android 5+
+* Agregado Inglés MangaEden
+* Agregado Inglés NineManga
+* fix MangaTube
+
 Cambios 1.48
 * Más bug fixes.
 * Fixed senmanga y mymangaio.
