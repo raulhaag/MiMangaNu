@@ -1,11 +1,15 @@
 /local.properties
-/.idea
+/.idea/workspace.xml
+/.idea/libraries
 .DS_Store
 /build
 /captures
 
 # Android Studio
 .gradle
+.idea/gradle.xml
+.idea/misc.xml
+.idea/modules.xml
 *.iml
 
 #For Dolphin users
