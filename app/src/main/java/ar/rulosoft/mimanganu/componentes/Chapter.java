@@ -216,18 +216,24 @@ public class Chapter {
         private static final String FLOAT_PATTERN = "([.,0123456789]+)";
         private static final String STRING_END_PATTERN = "[^\\d]\\.";
         private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].{0,1}\\d+";
+        private static String manga_title;
+        public static void setManga_title(String title) {
+            manga_title = title;
+        }
         public static Comparator<Chapter> NUMBERS_DSC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if (c1.volatile_order == -1) {
-                        String str1 = c1.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                    if (c1.volatile_order == -1){
+                        String str1 = c1.getTitle().replace(manga_title,"");
+                        str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str1 = str1.replaceAll(STRING_END_PATTERN, " ");
                         str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
                         c1.volatile_order = Float.parseFloat(str1);
                     }
                     if (c2.volatile_order == -1) {
-                        String str2 = c2.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                        String str2 = c2.getTitle().replace(manga_title,"");
+                        str2 = str2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str2 = str2.replaceAll(STRING_END_PATTERN, " ");
                         str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
                         c2.volatile_order = Float.parseFloat(str2);
@@ -242,14 +248,16 @@ public class Chapter {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if (c1.volatile_order == -1) {
-                        String str1 = c1.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                    if (c1.volatile_order == -1){
+                        String str1 = c1.getTitle().replace(manga_title,"");
+                        str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str1 = str1.replaceAll(STRING_END_PATTERN, " ");
                         str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
                         c1.volatile_order = Float.parseFloat(str1);
                     }
                     if (c2.volatile_order == -1) {
-                        String str2 = c2.getTitle().replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                        String str2 = c2.getTitle().replace(manga_title,"");
+                        str2 = str2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str2 = str2.replaceAll(STRING_END_PATTERN, " ");
                         str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
                         c2.volatile_order = Float.parseFloat(str2);

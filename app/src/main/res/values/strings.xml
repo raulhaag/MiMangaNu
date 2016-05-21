@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.49:\n\t*fix a dozen bugs\n\t*set number of manual search threads and download threads = cpu cores at first run\n\t*fix long existing memory leak on Android 5+\n\t*add memory leak crash resistance for devices with enough RAM\n\t*improve design on Android 5+\n\t*add English MangaEden\n\t*add English NineManga</string>
+    <string name="update_message">Changes in v1.49:\n\t*fix a dozen bugs\n\t*set number of manual search threads and download threads = cpu cores at first run\n\t*fix long existing memory leak on Android 5+\n\t*add memory leak crash resistance for devices with enough RAM\n\t*improve design on Android 5+\n\t*add English MangaEden\n\t*add English NineManga\n\t*Fix Manga-tube server</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>

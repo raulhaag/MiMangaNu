@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.navegadores.Navegador;
 
 /**
  * Created by Raul on 02/12/2015.
@@ -54,11 +55,14 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(manga.getPath() + "?waring=1");
+
+        Navegador nav = getNavWithHeader();
+        nav.addPost("adult","true");
+        String source = nav.post(manga.getPath());
         // Front
-        manga.setImages(getFirstMatchDefault("p=\"image\" content=\"(.+?)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("<img src=\"(http://www.manga-tube.com/content/comics\\/.+?)\"", source, ""));
         // Summary
-        String summary = getFirstMatchDefault("ion\" content=\"(.+?)\"",
+        String summary = getFirstMatchDefault("<li><b>Beschreibung</b>:(.*?)</li>",
                 source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
         manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
 
@@ -76,42 +80,23 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public String getPagesNumber(Chapter chapter, int page) {
-        return null;
+        return chapter.getPath() + "page/"+ page;
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-
-            String source = getNavWithHeader().get(chapter.getPath());
-
-            Pattern p = Pattern.compile(",\"url\":\"(.+?)\"");
-            Matcher m = p.matcher(source);
-            String images = "";
-            while (m.find()) {
-                images = images + "|" + m.group(1);
-            }
-            chapter.setExtra(images.replaceAll("\\\\",""));
-        }
-        return chapter.getExtra().split("\\|")[page];
+        Navegador nav = getNavWithHeader();
+        nav.addPost("adult","true");
+        String source = nav.post(getPagesNumber(chapter,page));
+        return getFirstMatch("<img class=\"open\" src=\"(.+?)\"",source,"Error getting image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        int pages = 0;
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-
-            String source = getNavWithHeader().get(chapter.getPath());
-
-            Pattern p = Pattern.compile(",\"url\":\"(.+?)\"");
-            Matcher m = p.matcher(source);
-            String images = "";
-            while (m.find()) {
-                pages++;
-                images = images + "|" + m.group(1);
-            }
-            chapter.setExtra(images.replaceAll("\\\\",""));
-        }
+        Navegador nav = getNavWithHeader();
+        nav.addPost("adult","true");
+        String source = nav.post(chapter.getPath());
+        int pages = Integer.parseInt(getFirstMatch("<div class=\"tbtitle dropdown_parent dropdown_right\"><div class=\"text\">(\\d+)",source,"Error"));
         chapter.setPages(pages);
     }
 

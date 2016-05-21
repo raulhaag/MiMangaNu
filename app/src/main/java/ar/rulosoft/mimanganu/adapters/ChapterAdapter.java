@@ -218,7 +218,11 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     }
 
     public void sort_chapters(Comparator<Chapter> comparator) {
-        Collections.sort(chapters, comparator);
+        try {
+            Collections.sort(chapters, comparator);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         notifyDataSetChanged();
     }
 

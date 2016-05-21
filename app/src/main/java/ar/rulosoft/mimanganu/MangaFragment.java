@@ -455,6 +455,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         super.onResume();
         ((MainActivity) getActivity()).enableHomeButton(true);
         ((MainActivity) getActivity()).setTitle(mManga.getTitle());
+        Chapter.Comparators.setManga_title(mManga.getTitle());
         new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
