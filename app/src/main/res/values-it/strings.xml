@@ -145,4 +145,5 @@
     <string name="retry">Riprova</string>
     <string name="storage_permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
     <string name="no_new_updates_found">Nessun nuovo capitolo trovato :(</string>
+    <string name="error_while_adding_chapters_to_db">Errore durante l\'aggiunta di capitoli al database</string>
 </resources>

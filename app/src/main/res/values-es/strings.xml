@@ -153,4 +153,5 @@
     <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
     <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
     <string name="no_new_updates_found">No se encontró nuevo capítulo :(</string>
+    <string name="error_while_adding_chapters_to_db">Se produjo un error al agregar capítulos a la base de datos</string>
 </resources>

@@ -203,6 +203,7 @@ public class DetailsFragment extends Fragment {
         ProgressDialog adding = new ProgressDialog(getActivity());
         String error = ".";
         int total = 0;
+        boolean errorWhileAddingChaptersOrManga;
 
         @Override
         protected void onPreExecute() {
@@ -221,18 +222,27 @@ public class DetailsFragment extends Fragment {
             }
             total = params[0].getChapters().size();
             int mid = Database.addManga(getActivity(), params[0]);
-            long initTime = System.currentTimeMillis();
-            for (int i = 0; i < params[0].getChapters().size(); i++) {
-                if (System.currentTimeMillis() - initTime > 500) {
-                    publishProgress(i);
-                    initTime = System.currentTimeMillis();
+            if (mid > -1) {
+                long initTime = System.currentTimeMillis();
+                for (int i = 0; i < params[0].getChapters().size(); i++) {
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(i);
+                        initTime = System.currentTimeMillis();
+                    }
+                    try {
+                        Database.addChapter(getActivity(), params[0].getChapter(i), mid);
+                    } catch (SQLiteConstraintException sqle) {
+                        Database.removeOrphanedChapters(getActivity().getApplicationContext());
+                        try {
+                            Database.addChapter(getActivity(), params[0].getChapter(i), mid);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            errorWhileAddingChaptersOrManga = true;
+                        }
+                    }
                 }
-                try {
-                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
-                } catch(SQLiteConstraintException e){
-                    Database.removeOrphanedChapters(getActivity().getApplicationContext());
-                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
-                }
+            } else {
+                errorWhileAddingChaptersOrManga = true;
             }
             return null;
         }
@@ -256,7 +266,10 @@ public class DetailsFragment extends Fragment {
         protected void onPostExecute(Void result) {
             adding.dismiss();
             if(isAdded()) {
-                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+                if(!errorWhileAddingChaptersOrManga)
+                    Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(getContext(), getString(R.string.error_while_adding_chapters_to_db), Toast.LENGTH_SHORT).show();
                 if (error != null && error.length() > 2) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }

@@ -153,4 +153,5 @@
     <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
     <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
     <string name="no_new_updates_found">No new chapters found :(</string>
+    <string name="error_while_adding_chapters_to_db">Error occurred while adding chapter(s) to database</string>
 </resources>

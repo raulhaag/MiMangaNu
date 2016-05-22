@@ -125,7 +125,14 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static int addManga(Context context, Manga manga) {
-        return (int) getDatabase(context).insert(TABLE_MANGA, null, setMangaCV(manga, true));
+        int tmp = -1;
+        try {
+            tmp = (int) getDatabase(context).insert(TABLE_MANGA, null, setMangaCV(manga, true));
+        } catch (Exception e){
+            e.printStackTrace();
+            //handle Exception in method that calls addManga
+        }
+        return tmp;
     }
 
     /**
