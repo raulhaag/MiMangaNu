@@ -44,8 +44,11 @@
                     android:id="@+id/sort_title_asc"
                     android:title="@string/sort_title_desc" />
                 <item
-                    android:id="@+id/sort_added_db"
-                    android:title="@string/sort_added_db" />
+                    android:id="@+id/sort_as_added_to_db_asc_chapters"
+                    android:title="@string/sort_as_added_to_db_asc" />
+                <item
+                    android:id="@+id/sort_as_added_to_db_desc_chapters"
+                    android:title="@string/sort_as_added_to_db_desc" />
             </group>
         </menu>
     </item>

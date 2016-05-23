@@ -145,4 +145,9 @@
     <string name="storage_permission_denied">Stockage L\'autorisation est requise pour MiMangaNu fonctionnent correctement</string>
     <string name="no_new_updates_found">Aucun nouveau chapitre trouvé :(</string>
     <string name="error_while_adding_chapters_to_db">Une erreur est survenue lors de l\'ajout de chapitres à la base de données</string>
+    <string name="title_activity_vertical_reader">Lecteur</string>
+    <string name="delete_on_chapter_change">Supprimez les images ?</string>
+    <string name="error_downloading_image">Erreur Impossible de télécharger l\'image</string>
+    <string name="mgs_update_found">De nouveaux chapitres ont été trouvés (%s)</string>
+    <string name="used_space">Le stockage utilisé par les mangas</string>
 </resources>

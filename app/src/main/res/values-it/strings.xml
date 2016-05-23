@@ -146,4 +146,9 @@
     <string name="storage_permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
     <string name="no_new_updates_found">Nessun nuovo capitolo trovato :(</string>
     <string name="error_while_adding_chapters_to_db">Errore durante l\'aggiunta di capitoli al database</string>
+    <string name="title_activity_vertical_reader">Lettore</string>
+    <string name="delete_on_chapter_change">Eliminare le immagini ?</string>
+    <string name="error_downloading_image">Errore in grado di scaricare immagine</string>
+    <string name="mgs_update_found">Nuovi capitoli sono stati trovati (%s)</string>
+    <string name="used_space">Archiviazione utilizzato da manga</string>
 </resources>
