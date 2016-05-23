@@ -2,7 +2,9 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
@@ -528,10 +530,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onPreExecute() {
             super.onPreExecute();
             // Displays the progress bar for the first time.
+            PendingIntent pIntent = PendingIntent.getActivity(getContext(), 666, new Intent(getActivity(), MainActivity.class), 0);
             mBuilder.setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle(getResources().getString(R.string.searching_for_updates))
                     .setContentText("")
                     .setAutoCancel(true)
+                    .setContentIntent(pIntent)
                     .setOngoing(true);
             mBuilder.setProgress(100, 0, false);
             mNotifyManager.notify(mNotifyID, mBuilder.build());
