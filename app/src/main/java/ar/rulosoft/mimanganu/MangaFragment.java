@@ -448,6 +448,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             case R.id.sort_as_added_to_db_desc_chapters:
                 pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_DESC);
+                //test
                 break;
 
         }
