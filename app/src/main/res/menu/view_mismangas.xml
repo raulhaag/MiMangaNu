@@ -47,6 +47,12 @@
                         <item
                             android:id="@+id/sort_finished_asc"
                             android:title="@string/en_progreso" />
+                        <item
+                            android:id="@+id/sort_as_added_to_db_asc"
+                            android:title="@string/sort_as_added_to_db_asc" />
+                        <item
+                            android:id="@+id/sort_as_added_to_db_desc"
+                            android:title="@string/sort_as_added_to_db_desc" />
                     </group>
                 </menu>
             </item>

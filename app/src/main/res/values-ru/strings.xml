@@ -144,4 +144,10 @@
     <string name="retry">Повторить попытку</string>
     <string name="storage_permission_denied">Разрешение хранения требуется для MiMangaNu для правильной работы</string>
     <string name="no_new_updates_found">Ни одна новая глава не найдено :(</string>
+    <string name="error_while_adding_chapters_to_db">Произошла ошибка при добавлении главы в базу данных</string>
+    <string name="title_activity_vertical_reader">Чтение</string>
+    <string name="delete_on_chapter_change">Удаление изображений ?</string>
+    <string name="error_downloading_image">Ошибка не удалось загрузить изображение</string>
+    <string name="mgs_update_found">Новые главы были найдены (%s)</string>
+    <string name="used_space">Хранение используется манга</string>
 </resources>

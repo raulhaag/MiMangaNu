@@ -181,8 +181,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                         break;
                     case R.id.delete_images:
-                        //new DeleteImages(selection, serverBase).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        //old:
                         for (int i = 0; i < selection.size(); i++) {
                             Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
                             chapter.freeSpace(getActivity(), mManga, serverBase);
@@ -422,19 +420,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 dlgAlert.create().show();
                 break;
             }
-            case R.id.sort_title_asc:
-                pm.edit().putInt(CHAPTERS_ORDER, 4).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
-                break;
-
             case R.id.sort_number:
                 pm.edit().putInt(CHAPTERS_ORDER, 1).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DSC);
-                break;
-
-            case R.id.sort_title:
-                pm.edit().putInt(CHAPTERS_ORDER, 3).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DSC);
+                mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DESC);
                 break;
 
             case R.id.sort_number_asc:
@@ -442,10 +430,26 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
                 break;
 
-            case R.id.sort_added_db:
-                pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED);
+            case R.id.sort_title:
+                pm.edit().putInt(CHAPTERS_ORDER, 3).apply();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DESC);
                 break;
+
+            case R.id.sort_title_asc:
+                pm.edit().putInt(CHAPTERS_ORDER, 4).apply();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
+                break;
+
+            case R.id.sort_as_added_to_db_asc_chapters:
+                pm.edit().putInt(CHAPTERS_ORDER, 5).apply();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_ASC);
+                break;
+
+            case R.id.sort_as_added_to_db_desc_chapters:
+                pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
+                mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_DESC);
+                break;
+
         }
         return super.onOptionsItemSelected(item);
     }
@@ -622,13 +626,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 try {
                     switch (chapters_order) {
                         case 1:
-                            Collections.sort(chapters, Chapter.Comparators.NUMBERS_DSC);
+                            Collections.sort(chapters, Chapter.Comparators.NUMBERS_DESC);
                             break;
                         case 2:
                             Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
                             break;
                         case 3:
-                            Collections.sort(chapters, Chapter.Comparators.TITLE_DSC);
+                            Collections.sort(chapters, Chapter.Comparators.TITLE_DESC);
                             break;
                         case 4:
                             Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);

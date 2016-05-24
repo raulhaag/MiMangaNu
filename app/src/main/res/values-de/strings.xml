@@ -144,11 +144,14 @@
     <string name="retry">Wiederholen</string>
     <string name="delete_on_chapter_change">Bilder löschen?</string>
     <string name="error_downloading_image">Fehler beim Laden des Bildes</string>
-    <string name="sort_added_db">Zuletzt hinzugefügt</string>
     <string name="sort_number">Kapitelnummer (9&#8211;0)</string>
     <string name="sort_number_asc">Kapitelnummer</string>
     <string name="delete_comfirm">Wollen Sie wirklich das Kapitel löschen?</string>
     <string name="storage_permission_denied">MiMangaNu benötigt die Berechtigung für den Zugriff auf den Speicher, um korrekt funktionieren zu können</string>
     <string name="no_new_updates_found">Keine neuen Kapitel gefunden :(</string>
     <string name="used_space">Speicherbedarf der Mangas</string>
+    <string name="error_while_adding_chapters_to_db">Ein Fehler ist aufgetreten beim hinzufügen von Kaptieln zur Datenbank</string>
+    <string name="sort_as_added_to_db_asc">Wie in DB hinzugefügt (asc)</string>
+    <string name="sort_as_added_to_db_desc">Wie in DB hinzugefügt (desc)</string>
+    <string name="title_activity_vertical_reader">Reader</string>
 </resources>

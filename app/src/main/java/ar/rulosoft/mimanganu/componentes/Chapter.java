@@ -172,7 +172,7 @@ public class Chapter {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
         //Util.getInstance().deleteRecursive(new File(path));
         new DeleteImages(new File(path)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        setPages(0);
+        //setPages(0); // this breaks "Sexual Hunter Riot" from KissManga no idea why
         setDownloaded(false);
         setPagesRead(0);
         Database.updateChapterPlusDownload(context, this);
@@ -220,7 +220,7 @@ public class Chapter {
         public static void setManga_title(String title) {
             manga_title = title;
         }
-        public static Comparator<Chapter> NUMBERS_DSC = new Comparator<Chapter>() {
+        public static Comparator<Chapter> NUMBERS_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
@@ -268,7 +268,7 @@ public class Chapter {
                 }
             }
         };
-        public static Comparator<Chapter> TITLE_DSC = new Comparator<Chapter>() {
+        public static Comparator<Chapter> TITLE_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 return c1.getTitle().compareTo(c2.getTitle());
@@ -280,7 +280,13 @@ public class Chapter {
                 return c2.getTitle().compareTo(c1.getTitle());
             }
         };
-        public static Comparator<Chapter> DATABASE_ADDED = new Comparator<Chapter>() {
+        public static Comparator<Chapter> DATABASE_ADDED_ASC = new Comparator<Chapter>() {
+            @Override
+            public int compare(Chapter c1, Chapter c2) {
+                return (c1.getId() - c2.getId());
+            }
+        };
+        public static Comparator<Chapter> DATABASE_ADDED_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 return (c2.getId() - c1.getId());

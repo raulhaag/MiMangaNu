@@ -10,6 +10,8 @@
 .idea/gradle.xml
 .idea/misc.xml
 .idea/modules.xml
+app/app.iml
+imageviewtouchlibrary/imageviewtouchlibrary.iml
 *.iml
 
 #For Dolphin users

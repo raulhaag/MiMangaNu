@@ -24,10 +24,14 @@ public class Util {
     }
 
     public void deleteRecursive(File fileOrDirectory) {
-        if (fileOrDirectory.isDirectory())
-            for (File child : fileOrDirectory.listFiles())
-                deleteRecursive(child);
-        fileOrDirectory.delete();
+        if(fileOrDirectory != null) {
+            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles().length > 0) {
+                for (File child : fileOrDirectory.listFiles()) {
+                    deleteRecursive(child);
+                }
+            }
+            fileOrDirectory.delete();
+        }
     }
 
     public void restartApp(Context context) {

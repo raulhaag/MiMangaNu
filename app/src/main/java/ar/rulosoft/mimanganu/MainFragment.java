@@ -2,7 +2,9 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
@@ -166,7 +168,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 R.id.sort_last_read, R.id.sort_last_read_desc,
                 R.id.sort_name, R.id.sort_name_desc,
                 R.id.sort_author, R.id.sort_author_desc,
-                R.id.sort_finished, R.id.sort_finished_asc
+                R.id.sort_finished, R.id.sort_finished_asc,
+                R.id.sort_as_added_to_db_asc, R.id.sort_as_added_to_db_desc
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
         this.menu = menu;
@@ -238,6 +241,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 setListManga(true);
                 break;
             }
+            case R.id.sort_as_added_to_db_asc: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 8).apply();
+                setListManga(true);
+                break;
+            }
+            case R.id.sort_as_added_to_db_desc: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 9).apply();
+                setListManga(true);
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -300,9 +315,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 case 5:
                     sort_by = Database.COL_AUTHOR;
                     break;
-                case 7:
                 case 6:
+                case 7:
                     sort_by = Database.COL_SEARCH;
+                    sort_ord = !sort_ord;
+                    break;
+                case 8:
+                case 9:
+                    sort_by = Database.COL_ID;
                     sort_ord = !sort_ord;
                     break;
                 case 0:
@@ -510,10 +530,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onPreExecute() {
             super.onPreExecute();
             // Displays the progress bar for the first time.
+            PendingIntent pIntent = PendingIntent.getActivity(getContext(), 666, new Intent(getActivity(), MainActivity.class), 0);
             mBuilder.setSmallIcon(R.drawable.ic_launcher)
                     .setContentTitle(getResources().getString(R.string.searching_for_updates))
                     .setContentText("")
                     .setAutoCancel(true)
+                    .setContentIntent(pIntent)
                     .setOngoing(true);
             mBuilder.setProgress(100, 0, false);
             mNotifyManager.notify(mNotifyID, mBuilder.build());

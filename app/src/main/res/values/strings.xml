@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.49:\n\t*fix a dozen bugs\n\t*set number of manual search threads and download threads = cpu cores at first run\n\t*fix long existing memory leak on Android 5+\n\t*add memory leak crash resistance for devices with enough RAM\n\t*improve design on Android 5+\n\t*add English MangaEden\n\t*add English NineManga\n\t*Fix Manga-tube server</string>
+    <string name="update_message">Changes in v1.50:\n\t*fix some old bugs\n\t*add some new bugs</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
@@ -140,17 +140,19 @@
     <string name="resume_downloads">Resume Downloads</string>
     <string name="continuous_reader">Continuous reader</string>
     <string name="paged_reader">Paged reader</string>
-    <string name="error_downloading_image">Error downloading the image</string>
+    <string name="error_downloading_image">Error unable to download image</string>
     <string name="used_space">Storage size used by mangas</string>
     <string name="delete_on_chapter_change">Delete images?</string>
     <string name="update_complete">Update complete</string>
     <string name="mgs_update_found">New chapters were found (%s)</string>
     <string name="close">Close</string>
     <string name="retry">Retry</string>
-    <string name="sort_added_db">Sort as added on db</string>
     <string name="sort_number">Sort by chapter number (9–0)</string>
     <string name="sort_number_asc">Sort by chapter number </string>
     <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
     <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
     <string name="no_new_updates_found">No new chapters found :(</string>
+    <string name="error_while_adding_chapters_to_db">Error occurred while adding chapter(s) to database</string>
+    <string name="sort_as_added_to_db_asc">As added to db (asc)</string>
+    <string name="sort_as_added_to_db_desc">As added to db (desc)</string>
 </resources>

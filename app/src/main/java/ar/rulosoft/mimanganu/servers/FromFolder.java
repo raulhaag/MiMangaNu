@@ -1,9 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
-import org.json.JSONArray;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -45,7 +42,7 @@ public class FromFolder extends ServerBase {
             chapter.setDownloaded(true);
             chapters.add(chapter);
         }
-        Collections.sort(chapters,Chapter.Comparators.NUMBERS_DSC);
+        Collections.sort(chapters,Chapter.Comparators.NUMBERS_DESC);
         manga.setChapters(chapters);
     }
 
