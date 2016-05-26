@@ -59,7 +59,7 @@ public class SingleDownload implements Runnable {
                 Response response;
                 long contentLength;
                 try {
-                    OkHttpClient client = new Navegador().getHttpClient();;
+                    OkHttpClient client = new Navegador().getHttpClient();
                     if (reference)
                         client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
                     client.setConnectTimeout(3, TimeUnit.SECONDS);

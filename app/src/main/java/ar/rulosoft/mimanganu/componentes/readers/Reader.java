@@ -295,7 +295,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                 pages.set(idx, page);
                 calculateParticularScale(pages.get(idx));
                 calculateVisibilities();
-                if (iniPage > idx)
+                if (iniPage >= idx)
                     seekPage(iniPage);
                 generateDrawPool();
             }
@@ -731,14 +731,14 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
                                         } else {
                                             try {
-                                                int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
+                                                int right = dx + pw + 2, bottom = dy + ph + 2;
                                                 if (right > original_width)
                                                     right = (int) original_width;
                                                 if (bottom > original_height)
                                                     bottom = (int) original_height;
-                                                segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
+                                                segment = BitmapDecoder.from(path).region(dx, dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
                                                 if (segment == null) {
-                                                    segment = BitmapDecoder.from(path).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                                    segment = BitmapDecoder.from(path).region(dx, dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
                                                 }
                                             } catch (Exception e) {
                                                 e.printStackTrace();
@@ -750,12 +750,12 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
                                             segment = BitmapFactory.decodeStream(inputStream, null, options);
                                         } else {
                                             try {
-                                                int right = (int) (dx + pw + 2), bottom = (int) (dy + ph + 2);
+                                                int right = dx + pw + 2, bottom = dy + ph + 2;
                                                 if (right > original_width)
                                                     right = (int) original_width;
                                                 if (bottom > original_height)
                                                     bottom = (int) original_height;
-                                                segment = BitmapDecoder.from(inputStream).region((int) dx, (int) dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
+                                                segment = BitmapDecoder.from(inputStream).region(dx, dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }

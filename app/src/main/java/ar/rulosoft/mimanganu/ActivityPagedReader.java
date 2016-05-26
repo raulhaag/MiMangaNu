@@ -855,7 +855,7 @@ public class ActivityPagedReader extends AppCompatActivity
                     f.delete();
                 }
                 try {
-                    SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, index + 1), path, 0, 0, new ChapterDownload(mChapter), true);
+                    SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, index + 1), path, 0, 0, new ChapterDownload(mChapter), mServerBase.needRefererForImages());
                     s.setChangeListener(Page.this);
                     new Thread(s).start();
                 } catch (Exception e) {

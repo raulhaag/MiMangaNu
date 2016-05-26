@@ -705,7 +705,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, idx), path, idx, mChapter.getId(), new ChapterDownload(mChapter), true);
+                SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, idx), path, idx, mChapter.getId(), new ChapterDownload(mChapter),mServerBase.needRefererForImages());
                 s.setChangeListener(ActivityReader.this);
                 new Thread(s).start();
             } catch (Exception e) {

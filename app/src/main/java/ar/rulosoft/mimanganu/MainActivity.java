@@ -74,11 +74,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean isStoragePermissionGiven() {
         boolean tmp;
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            tmp = false;
-        } else {
-            tmp = true;
-        }
+        tmp = ContextCompat.checkSelfPermission(this.getApplicationContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
         return tmp;
     }
 
