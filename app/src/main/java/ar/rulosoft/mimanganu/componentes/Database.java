@@ -4,10 +4,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.FileCache;
@@ -18,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class Database extends SQLiteOpenHelper {
@@ -127,10 +130,10 @@ public class Database extends SQLiteOpenHelper {
     public static int addManga(Context context, Manga manga) {
         int tmp = -1;
         try {
-            tmp = (int) getDatabase(context).insert(TABLE_MANGA, null, setMangaCV(manga, true));
+            tmp = (int) getDatabase(context).insertOrThrow(TABLE_MANGA, null, setMangaCV(manga, true));
         } catch (Exception e){
             e.printStackTrace();
-            //handle Exception in method that calls addManga
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, manga.getTitle()));
         }
         return tmp;
     }
@@ -192,17 +195,35 @@ public class Database extends SQLiteOpenHelper {
         getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + m.getId(), null);
     }
 
-    public static void addChapter(Context c, Chapter cap, int mangaId) {
-        ContentValues cv = new ContentValues();
-        cv.put(COL_CAP_ID_MANGA, mangaId);
-        cv.put(COL_CAP_NAME, cap.getTitle());
-        cv.put(COL_CAP_PATH, cap.getPath());
-        cv.put(COL_CAP_PAGES, cap.getPages());
-        cv.put(COL_CAP_STATE, cap.getReadStatus());
-        cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
-        cv.put(COL_CAP_DOWNLOADED, cap.isDownloaded());
-        cv.put(COL_CAP_EXTRA,cap.getExtra());
-        getDatabase(c).insertOrThrow(TABLE_CHAPTERS, null, cv);
+    public static void addChapter(Context context, Chapter chapter, int mangaId) {
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COL_CAP_ID_MANGA, mangaId);
+        contentValues.put(COL_CAP_NAME, chapter.getTitle());
+        contentValues.put(COL_CAP_PATH, chapter.getPath());
+        contentValues.put(COL_CAP_PAGES, chapter.getPages());
+        contentValues.put(COL_CAP_STATE, chapter.getReadStatus());
+        contentValues.put(COL_CAP_PAG_READ, chapter.getPagesRead());
+        contentValues.put(COL_CAP_DOWNLOADED, chapter.isDownloaded());
+        contentValues.put(COL_CAP_EXTRA, chapter.getExtra());
+        try {
+            getDatabase(context).insertOrThrow(TABLE_CHAPTERS, null, contentValues);
+        } catch (SQLiteConstraintException sqlce) {
+            try {
+                removeOrphanedChapters(context);
+                getDatabase(context).insertOrThrow(TABLE_CHAPTERS, null, contentValues);
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.d("Database", "Manga_ID: " + mangaId);
+                Log.d("Database", "Title: " + chapter.getTitle());
+                Log.d("Database", "Path: " + chapter.getPath());
+                Log.d("Database", "Pages: " + chapter.getPages());
+                Log.d("Database", "Pages Read: " + chapter.getPagesRead());
+                Log.d("Database", "Read Status: " + chapter.getReadStatus());
+                Log.d("Database", "isDownloaded: " + chapter.isDownloaded());
+                Log.d("Database", "Extra: " + chapter.getExtra());
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, chapter.getTitle()));
+            }
+        }
     }
 
     public static void updateChapter(Context context, Chapter cap) {

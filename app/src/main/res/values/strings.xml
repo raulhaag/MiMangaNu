@@ -152,7 +152,7 @@
     <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
     <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
     <string name="no_new_updates_found">No new chapters found :(</string>
-    <string name="error_while_adding_chapters_to_db">Error occurred while adding chapter(s) to database</string>
     <string name="sort_as_added_to_db_asc">As added to db (asc)</string>
     <string name="sort_as_added_to_db_desc">As added to db (desc)</string>
+    <string name="error_while_adding_chapter_or_manga_to_db">Error occurred while trying to add \"%s\" to database</string>
 </resources>

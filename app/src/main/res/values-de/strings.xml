@@ -150,8 +150,8 @@
     <string name="storage_permission_denied">MiMangaNu benötigt die Berechtigung für den Zugriff auf den Speicher, um korrekt funktionieren zu können</string>
     <string name="no_new_updates_found">Keine neuen Kapitel gefunden :(</string>
     <string name="used_space">Speicherbedarf der Mangas</string>
-    <string name="error_while_adding_chapters_to_db">Ein Fehler ist aufgetreten beim hinzufügen von Kaptieln zur Datenbank</string>
     <string name="sort_as_added_to_db_asc">Wie in DB hinzugefügt (asc)</string>
     <string name="sort_as_added_to_db_desc">Wie in DB hinzugefügt (desc)</string>
     <string name="title_activity_vertical_reader">Reader</string>
+    <string name="error_while_adding_chapter_or_manga_to_db">Fehler beim hinzufügen von \"%s\" zur Datenbank</string>
 </resources>

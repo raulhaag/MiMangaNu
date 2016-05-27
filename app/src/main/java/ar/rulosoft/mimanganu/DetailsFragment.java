@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.app.ActionBar;
 import android.content.res.ColorStateList;
 import android.support.design.widget.FloatingActionButton;
-import android.database.sqlite.SQLiteConstraintException;
 import android.support.v4.app.Fragment;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -203,7 +202,7 @@ public class DetailsFragment extends Fragment {
         ProgressDialog adding = new ProgressDialog(getActivity());
         String error = ".";
         int total = 0;
-        boolean errorWhileAddingChaptersOrManga;
+        boolean errorWhileAddingManga;
 
         @Override
         protected void onPreExecute() {
@@ -229,20 +228,10 @@ public class DetailsFragment extends Fragment {
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
-                    try {
-                        Database.addChapter(getActivity(), params[0].getChapter(i), mid);
-                    } catch (SQLiteConstraintException sqle) {
-                        Database.removeOrphanedChapters(getActivity().getApplicationContext());
-                        try {
-                            Database.addChapter(getActivity(), params[0].getChapter(i), mid);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            errorWhileAddingChaptersOrManga = true;
-                        }
-                    }
+                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
                 }
             } else {
-                errorWhileAddingChaptersOrManga = true;
+                errorWhileAddingManga = true;
             }
             return null;
         }
@@ -266,10 +255,8 @@ public class DetailsFragment extends Fragment {
         protected void onPostExecute(Void result) {
             adding.dismiss();
             if(isAdded()) {
-                if(!errorWhileAddingChaptersOrManga)
+                if(!errorWhileAddingManga)
                     Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getContext(), getString(R.string.error_while_adding_chapters_to_db), Toast.LENGTH_SHORT).show();
                 if (error != null && error.length() > 2) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
