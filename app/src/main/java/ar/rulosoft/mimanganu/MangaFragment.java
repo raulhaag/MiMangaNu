@@ -8,6 +8,8 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -174,9 +176,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                         break;
                     case R.id.mark_as_read_and_delete_images:
+                        new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         for (int i = selection.size() - 1; i >= 0; i--) {
                             Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                            chapter.markRead(getActivity(), true);
                             chapter.freeSpace(getActivity(), mManga, serverBase);
                         }
                         break;
@@ -223,16 +225,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                         break;
                     case R.id.mark_selected_as_read:
-                        for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                            chapter.markRead(getActivity(), true);
-                        }
+                        new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.mark_selected_as_unread:
-                        for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                            chapter.markRead(getActivity(), false);
-                        }
+                        new MarkSelectedAsUnread(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                 }
                 mChapterAdapter.notifyDataSetChanged();
@@ -346,7 +342,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             case R.id.mark_all_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, true);
-                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new MarkAllAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.mark_all_as_unread: {
@@ -657,10 +653,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
-                if (mChapterAdapter.getItem(i).getPagesRead() > 0) {
+                if (mChapterAdapter.getItem(i).getPages() != 0) {
                     Chapter chapter = mChapterAdapter.getItem(i);
                     chapter.markRead(getActivity(), false);
-                    publishProgress(i);
                 }
             }
             return null;
@@ -671,4 +666,85 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
+
+    private class MarkAllAsRead extends AsyncTask<Void, Integer, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (int i = 0; i < mChapterAdapter.getCount(); i++) {
+                if (mChapterAdapter.getItem(i).getPages() != 0) {
+                    Chapter chapter = mChapterAdapter.getItem(i);
+                    chapter.markRead(getActivity(), true);
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+    }
+
+    private class MarkSelectedAsRead extends AsyncTask<Void, Integer, Void> {
+        int selectionSize = 0;
+
+        public MarkSelectedAsRead(int selectionSize) {
+            super();
+            this.selectionSize = selectionSize;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+                for (int i = 0; i < selectionSize; i++) {
+                    if(mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 1) {
+                        Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                        chapter.markRead(getActivity(), true);
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                mChapterAdapter.notifyDataSetChanged();
+                            }
+                        });
+                    }
+                }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
+
+    private class MarkSelectedAsUnread extends AsyncTask<Void, Integer, Void> {
+        int selectionSize = 0;
+
+        public MarkSelectedAsUnread(int selectionSize) {
+            super();
+            this.selectionSize = selectionSize;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            for (int i = 0; i < selectionSize; i++) {
+                if(mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 0) {
+                    Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter.markRead(getActivity(), false);
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mChapterAdapter.notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+        }
+    }
+
 }
