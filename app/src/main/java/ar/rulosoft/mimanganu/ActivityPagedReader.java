@@ -659,7 +659,7 @@ public class ActivityPagedReader extends AppCompatActivity
         }
     }
 
-    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread,int pagesread){
+    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread) {
         mChapter.setReadStatus(readOrUnread);
         mChapter.setPagesRead(pagesread);
         Database.updateChapter(ActivityPagedReader.this, mChapter);

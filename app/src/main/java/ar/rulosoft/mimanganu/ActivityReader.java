@@ -508,9 +508,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             mReader.goToPage(mReader.getCurrentPage() + 1);
         else
             mReader.goToPage(mReader.getCurrentPage() - 1);
-
-
-
     }
 
     @Override
@@ -554,7 +551,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mReader.seekPage(mChapter.getPagesRead() - 1);
     }
 
-    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread,int pagesread){
+    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread) {
         mChapter.setReadStatus(readOrUnread);
         mChapter.setPagesRead(pagesread);
         Database.updateChapter(ActivityReader.this, mChapter);
@@ -564,7 +561,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public void onBeginFling() {
         // this is the opposite of onEndFling
-        if(previousChapter != null) {
+        if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
             if (seamlessChapterTransition)
                 updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
