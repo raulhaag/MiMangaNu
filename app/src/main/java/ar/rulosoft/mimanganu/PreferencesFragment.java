@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
@@ -84,6 +87,39 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     }
                 }
 
+                return true;
+            }
+        });
+
+        /** Set summary for Reader preference + seamless chapter transitions summary **/
+        // true: Paged Reader; false: Continuous Reader
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        Boolean readType = prefs.getBoolean("reader_type", false);
+        Preference reader_type = getPreferenceManager().findPreference("reader_type");
+        Preference seamlessChapterTransitions = getPreferenceManager().findPreference("seamless_chapter_transitions");
+        if (readType) {
+            reader_type.setSummary("Paged Reader");
+            seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
+        } else {
+            reader_type.setSummary("Continuous Reader");
+            seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
+        }
+        final SwitchPreferenceCompat cBoxPrefA = (SwitchPreferenceCompat) getPreferenceManager().findPreference("reader_type");
+        cBoxPrefA.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Boolean readType = prefs.getBoolean("reader_type", false);
+                Preference reader_type = getPreferenceManager().findPreference("reader_type");
+                Preference seamlessChapterTransitions = getPreferenceManager().findPreference("seamless_chapter_transitions");
+                if (!readType) {
+                    reader_type.setSummary("Paged Reader");
+                    seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
+                }
+                else {
+                    reader_type.setSummary("Continuous Reader");
+                    seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
+                }
                 return true;
             }
         });
@@ -235,6 +271,14 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     public class calcStorage extends AsyncTask<String, Void, Long> {
+        Preference prefStoreStat = getPreferenceManager().findPreference("stat_storage");
+        Preference prefRamUsage = getPreferenceManager().findPreference("ram_usage");
+
+        @Override
+        protected void onPreExecute() {
+            prefRamUsage.setSummary(Debug.getPss() / 1024 + " MB");
+        }
+
         @Override
         protected Long doInBackground(String... strings) {
             long store_total = 0;
@@ -243,20 +287,38 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 if (oneFold.getName().equals("cache") || oneFold.getName().equals("dbs"))
                     continue;
                 store_total += Util.getInstance().dirSize(oneFold);
+
+                final double cSize = store_total / (1024.0 * 1024.0);
+                if (cSize > 1024.0) {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
+                        }
+                    });
+                }
+                else {
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
+                        }
+                    });
+                }
+                publishProgress();
             }
             return store_total;
         }
 
         @Override
         protected void onPostExecute(Long l) {
-            Preference prefStoreStat = getPreferenceManager().findPreference("stat_storage");
-
             double cSize = l / (1024.0 * 1024.0);
             if (cSize > 1024.0)
                 prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
             else
                 prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
-
             super.onPostExecute(l);
         }
     }

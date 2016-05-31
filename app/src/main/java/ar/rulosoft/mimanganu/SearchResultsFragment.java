@@ -98,16 +98,16 @@ public class SearchResultsFragment extends Fragment {
         protected void onPostExecute(ArrayList<Manga> result) {
             if (isAdded()) {
                 loading.setVisibility(ProgressBar.INVISIBLE);
-                if (error.length() < 2) {
-                    if (result != null && !result.isEmpty() && list != null) {
-
-                        list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, result));
-
-                    } else if (result == null || result.isEmpty()) {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
+                if (error != null) {
+                    if (error.length() < 2) {
+                        if (result != null && !result.isEmpty() && list != null) {
+                            list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, result));
+                        } else if (result == null || result.isEmpty()) {
+                            Toast.makeText(getActivity(), getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
+                        }
+                    } else {
+                        Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                     }
-                } else {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
             }
             super.onPostExecute(result);

@@ -226,15 +226,27 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public static void updateChapter(Context context, Chapter cap) {
+    public static void updateChapter(Context context, Chapter chapter) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_CAP_NAME, cap.getTitle());
-        cv.put(COL_CAP_PATH, cap.getPath());
-        cv.put(COL_CAP_PAGES, cap.getPages());
-        cv.put(COL_CAP_STATE, cap.getReadStatus());
-        cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
-        cv.put(COL_CAP_EXTRA,cap.getExtra());
-        getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + cap.getId(), null);
+        cv.put(COL_CAP_NAME, chapter.getTitle());
+        cv.put(COL_CAP_PATH, chapter.getPath());
+        cv.put(COL_CAP_PAGES, chapter.getPages());
+        cv.put(COL_CAP_STATE, chapter.getReadStatus());
+        cv.put(COL_CAP_PAG_READ, chapter.getPagesRead());
+        cv.put(COL_CAP_EXTRA,chapter.getExtra());
+        try {
+            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + chapter.getId(), null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d("Database", "Title: " + chapter.getTitle());
+            Log.d("Database", "Path: " + chapter.getPath());
+            Log.d("Database", "Pages: " + chapter.getPages());
+            Log.d("Database", "Pages Read: " + chapter.getPagesRead());
+            Log.d("Database", "Read Status: " + chapter.getReadStatus());
+            Log.d("Database", "isDownloaded: " + chapter.isDownloaded());
+            Log.d("Database", "Extra: " + chapter.getExtra());
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_updating_chapter_or_manga_in_db, chapter.getTitle()));
+        }
     }
 
     public static ArrayList<Manga> getMangasForUpdates(Context c) {
