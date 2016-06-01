@@ -14,9 +14,9 @@ import ar.rulosoft.navegadores.Navegador;
 public class ReadComicOnline extends ServerBase {
 
     private static final String PATTERN_CHAPTER =
-            "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
+            "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[^>]*>([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
-            "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+            "href=\"(/Comic/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
     public static String IP = "31.192.104.134";
     private static String HOST = "readcomiconline.to";
     private static String[] genre = new String[]{
@@ -46,13 +46,8 @@ public class ReadComicOnline extends ServerBase {
 
         Navegador nav = getNavWithHeader();
 
-        // make use of AdvanceSearch, mor data is then needed
-        nav.addPost("authorArtist", "");
-        nav.addPost("mangaName", term);
-        nav.addPost("status", "");
-        nav.addPost("genres", "");
-
-        String source = nav.post(IP, "/AdvanceSearch", HOST);
+        nav.addPost("keyword", term);
+        String source = nav.post(IP, "/Search/Comic", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
