@@ -55,7 +55,7 @@ public class ReadComicOnline extends ServerBase {
         if (m.find()) {
             searchList = new ArrayList<>();
             boolean status = getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", m.group(), "Ongoing").length() == 9;
-            searchList.add(new Manga(KISSMANGA, m.group(2), m.group(1), status));
+            searchList.add(new Manga(READCOMICONLINE, m.group(2), m.group(1), status));
         } else {
             searchList = getMangasSource(source);
         }
@@ -164,7 +164,7 @@ public class ReadComicOnline extends ServerBase {
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga =
-                    new Manga(KISSMANGA, m.group(3), m.group(2), false);
+                    new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
             if (m.group(1).contains(HOST)) {
                 manga.setImages("http://" + IP + m.group(1).replace("http://" + HOST, "") + "|" + HOST);
             } else {
