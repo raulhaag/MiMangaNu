@@ -30,6 +30,7 @@ public class DownloadsFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        darkTheme = ((MainActivity)getActivity()).darkTheme;
         list = (ListView) getView().findViewById(R.id.action_view_download);
     }
 
