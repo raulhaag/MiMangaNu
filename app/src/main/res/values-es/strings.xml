@@ -152,6 +152,13 @@
     <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
     <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
     <string name="no_new_updates_found">No se encontró nuevo capítulo :(</string>
-    <string name="error_while_adding_chapters_to_db">Se produjo un error al agregar capítulos a la base de datos</string>
     <string name="title_activity_vertical_reader">Lector</string>
+    <string name="error_while_adding_chapter_or_manga_to_db">Se produjo un error al intentar añadir  \"%s\" a la base de datos</string>
+    <string name="error_while_updating_chapter_or_manga_in_db">Error occurred while trying to update \"%s\" in database</string>
+    <string name="seamless_chapter_transitions_title">Seamless Chapter Transitions</string>
+    <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
+    <string name="seamless_chapter_transitions_paged_reader_subtitle">Press left or right on the first or last page of a chapter to load the previous or next chapter.</string>
+    <string name="ram_usage">Memory Usage</string>
+    <string name="sort_as_added_to_db_asc">As added to db (asc)</string>
+    <string name="sort_as_added_to_db_desc">As added to db (desc)</string>
 </resources>

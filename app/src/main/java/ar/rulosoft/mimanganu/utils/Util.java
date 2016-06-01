@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -109,6 +112,16 @@ public class Util {
         path = path.substring(0,path.length() - 1);
         int idx = path.lastIndexOf("/");
         return path.substring(idx + 1);
+    }
+
+    public void toast(final Context context, final String toast) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
 }

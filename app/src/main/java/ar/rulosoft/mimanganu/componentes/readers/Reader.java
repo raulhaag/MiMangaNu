@@ -41,6 +41,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     protected int mTextureMax = 1024;
     protected OnTapListener mTapListener;
     protected OnEndFlingListener mOnEndFlingListener;
+    protected OnBeginFlingListener mOnBeginFlingListener;
     protected OnViewReadyListener mViewReadyListener;
     protected OnPageChangeListener pageChangeListener;
     protected boolean animatingSeek = false;
@@ -287,8 +288,8 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public void reloadImage(int idx) {
         if (pages != null) {
-            Log.d("Reader", "idx: " + idx);
-            Log.d("Reader", "pages.s: " + pages.size());
+            /*Log.d("Reader", "idx: " + idx);
+            Log.d("Reader", "pages.s: " + pages.size());*/
             if(idx < pages.size()) {
                 int iniPage = getCurrentPage() - 1;
                 Page page = initValues(pages.get(idx).path);
@@ -373,6 +374,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public void setOnEndFlingListener(OnEndFlingListener onEndFlingListener) {
         this.mOnEndFlingListener = onEndFlingListener;
+    }
+
+    public void setOnBeginFlingListener(OnBeginFlingListener onBeginFlingListener) {
+        this.mOnBeginFlingListener = onBeginFlingListener;
     }
 
     @Override
@@ -552,6 +557,10 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
 
     public interface OnEndFlingListener {
         void onEndFling();
+    }
+
+    public interface OnBeginFlingListener {
+        void onBeginFling();
     }
 
     public abstract class Page {

@@ -102,8 +102,11 @@ public class L2RReader extends R2LReader {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
+        //Log.d("L2RRe", "" + e1.getX() + " " + e2.getX() + " xS: " + xScroll + " yS: " + yScroll);
         if (mOnEndFlingListener != null && e2.getX() - e1.getX() > 100 && (xScroll == 0)) {
             mOnEndFlingListener.onEndFling();
+        } else if (mOnBeginFlingListener != null && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
+            mOnBeginFlingListener.onBeginFling();
         }
         return super.onFling(e1, e2, velocityX, velocityY);
     }

@@ -64,8 +64,11 @@ public class VerticalReader extends Reader {
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
+        //Log.d("VertRe", "" + e1.getY() + " " + e2.getY() + " xS: " + xScroll + " yS: " + yScroll);
         if (mOnEndFlingListener != null && e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
             mOnEndFlingListener.onEndFling();
+        } else if (mOnBeginFlingListener != null && yScroll < 0.1) {
+            mOnBeginFlingListener.onBeginFling();
         }
         return super.onFling(e1, e2, velocityX, velocityY);
     }

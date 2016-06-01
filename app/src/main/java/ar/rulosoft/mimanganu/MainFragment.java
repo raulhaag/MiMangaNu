@@ -542,7 +542,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             Context mContent = getActivity();
             if (mContent != null)
                 Toast.makeText(mContent, getResources().getString(R.string.searching_for_updates),
-                        Toast.LENGTH_LONG).show();
+                        Toast.LENGTH_SHORT).show();
         }
 
         @Override

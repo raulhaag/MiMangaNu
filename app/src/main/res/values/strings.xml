@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.50:\n\t*fix some old bugs\n\t*add some new bugs</string>
+    <string name="update_message">Changes in v1.50:\n\t*fix some bugs\n\t*make adding chapters / mangas to db more robust\n\t*let mark selected / all as read / unread functions run in the background\n\t*add Seamless chapter transitions</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
@@ -152,7 +152,12 @@
     <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
     <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
     <string name="no_new_updates_found">No new chapters found :(</string>
-    <string name="error_while_adding_chapters_to_db">Error occurred while adding chapter(s) to database</string>
     <string name="sort_as_added_to_db_asc">As added to db (asc)</string>
     <string name="sort_as_added_to_db_desc">As added to db (desc)</string>
+    <string name="error_while_adding_chapter_or_manga_to_db">Error occurred while trying to add \"%s\" to database</string>
+    <string name="error_while_updating_chapter_or_manga_in_db">Error occurred while trying to update \"%s\" in database</string>
+    <string name="ram_usage">Memory usage</string>
+    <string name="seamless_chapter_transitions_title">Seamless chapter transitions</string>
+    <string name="seamless_chapter_transitions_paged_reader_subtitle">Press left or right on the first or last page of a chapter to load the previous or next chapter.</string>
+    <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
 </resources>

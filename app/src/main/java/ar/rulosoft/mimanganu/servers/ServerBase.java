@@ -218,12 +218,7 @@ public abstract class ServerBase {
             for (Chapter chapter : simpleList) {
                 chapter.setMangaID(mangaDb.getId());
                 chapter.setReadStatus(Chapter.NEW);
-                try {
-                    Database.addChapter(context, chapter, mangaDb.getId());
-                } catch(SQLiteConstraintException e){
-                    Database.removeOrphanedChapters(context);
-                    Database.addChapter(context, chapter, mangaDb.getId());
-                }
+                Database.addChapter(context, chapter, mangaDb.getId());
             }
 
             if (simpleList.size() > 0) {
