@@ -313,7 +313,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
-            case R.id.action_download_reamains: {
+            case R.id.action_download_remaining: {
                 AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
                 dlgAlert.setMessage(getString(R.string.download_remain_confirmation));
                 dlgAlert.setTitle(R.string.descargarestantes);
@@ -322,9 +322,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                     public void onClick(DialogInterface dialog, int which) {
                         ArrayList<Chapter> chapters =
                                 Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
-                        for (Chapter c : chapters) {
+                        for (Chapter chapter : chapters) {
                             try {
-                                DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
                             } catch (Exception e) {
                                 Log.e(TAG, "Download add pool error", e);
                             }
@@ -604,9 +604,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 getActivity().setTitle(orgMsg);
             }
             if (result > 0) {
-                Toast.makeText(getActivity(), getString(R.string.mgs_update_found, result), Toast.LENGTH_SHORT).show();
+                if(isAdded())
+                    Toast.makeText(getActivity(), getString(R.string.mgs_update_found, result), Toast.LENGTH_SHORT).show();
             } else if (errorMsg != null && errorMsg.length() > 2) {
-                Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+                if(isAdded())
+                    Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
             }
             running = false;
             actual = null;

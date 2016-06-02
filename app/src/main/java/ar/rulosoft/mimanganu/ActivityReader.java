@@ -246,10 +246,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     if (i > 0) {
                         next = true;
                         nextChapter = mManga.getChapters().get(i - 1);
-                        if (i + 1 < mManga.getChapters().size())
-                            previousChapter = mManga.getChapters().get(i + 1);
-                        break;
                     }
+                    if (i + 1 < mManga.getChapters().size()) {
+                        previousChapter = mManga.getChapters().get(i + 1);
+                    }
+                    break;
                 }
             }
             if (!next)

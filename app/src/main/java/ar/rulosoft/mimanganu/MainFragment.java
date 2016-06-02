@@ -1,10 +1,7 @@
 package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
@@ -13,7 +10,6 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -60,20 +56,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final String SELECT_MODE = "selector_modo";
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
+    public static SharedPreferences pm;
     private static final String TAG = "MainFragment";
     Menu menu;
     FloatingActionButton floatingActionButton_add;
     boolean is_server_list_open = false;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    private SharedPreferences pm;
     private GridView grid;
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
     private UpdateListTask newUpdate;
-    private NotificationManager mNotifyManager;
-    private NotificationCompat.Builder mBuilder;
-    private int mNotifyID = 1246502;
+    private int mNotifyID = 666;
 
     @Nullable
     @Override
@@ -401,11 +395,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             @Override
             public void onRefresh() {
                 if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
-                    mNotifyManager = (NotificationManager)
-                            getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                    mBuilder = new NotificationCompat.Builder(getActivity());
-
-                    newUpdate = new UpdateListTask();
+                    newUpdate = new UpdateListTask(getActivity());
                     newUpdate.execute();
                 }
             }
@@ -434,9 +424,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
-                MangaFragment fm = new MangaFragment();
-                fm.setArguments(bundle);
-                ((MainActivity) getActivity()).replaceFragment(fm, "MangaFragment");
+                MangaFragment mangaFragment = new MangaFragment();
+                mangaFragment.setArguments(bundle);
+                ((MainActivity) getActivity()).replaceFragment(mangaFragment, "MangaFragment");
             }
         });
         registerForContextMenu(grid);
@@ -520,81 +510,78 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
-        final ArrayList<Manga> mList = Database.getMangasForUpdates(getActivity());
+        final ArrayList<Manga> mList = Database.getMangasForUpdates(getContext());
         int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
         int ticket = threads;
         int result = 0;
         int numNow = 0;
+        Context context;
+
+        public UpdateListTask(Context context){
+            this.context = context;
+        }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            // Displays the progress bar for the first time.
-            PendingIntent pIntent = PendingIntent.getActivity(getContext(), 666, new Intent(getActivity(), MainActivity.class), 0);
-            mBuilder.setSmallIcon(R.drawable.ic_launcher)
-                    .setContentTitle(getResources().getString(R.string.searching_for_updates))
-                    .setContentText("")
-                    .setAutoCancel(true)
-                    .setContentIntent(pIntent)
-                    .setOngoing(true);
-            mBuilder.setProgress(100, 0, false);
-            mNotifyManager.notify(mNotifyID, mBuilder.build());
-            Context mContent = getActivity();
-            if (mContent != null)
-                Toast.makeText(mContent, getResources().getString(R.string.searching_for_updates),
-                        Toast.LENGTH_SHORT).show();
+            if (context != null) {
+                Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
+                Toast.makeText(context, getResources().getString(R.string.searching_for_updates), Toast.LENGTH_SHORT).show();
+            }
         }
 
         @Override
         protected void onProgressUpdate(Integer... values) {
             // Update progress
-            mBuilder.setProgress(mList.size(), ++numNow, false);
-            mBuilder.setContentText(numNow + "/" + mList.size() + " - " +
-                    mList.get(values[0]).getTitle());
-            mNotifyManager.notify(mNotifyID, mBuilder.build());
+            if (context != null) {
+                Util.getInstance().changeNotification(mList.size(), ++numNow, mNotifyID, context.getResources().getString(R.string.searching_for_updates), numNow + "/" + mList.size() + " - " +
+                        mList.get(values[0]).getTitle(),true);
+            }
             super.onProgressUpdate(values);
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
-            ticket = threads;
-            // Starting searching for new chapters
-            for (int idx = 0; idx < mList.size(); idx++) {
-                final int idxNow = idx;
-                // If there is no ticket, sleep for 1 second and ask again
-                while (ticket < 1) {
+            if(context != null) {
+                ticket = threads;
+                // Starting searching for new chapters
+                for (int idx = 0; idx < mList.size(); idx++) {
+                    final int idxNow = idx;
+                    // If there is no ticket, sleep for 1 second and ask again
+                    while (ticket < 1) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, "Update sleep failure", e);
+                        }
+                    }
+                    ticket--;
+                    // If ticked were passed, create new request
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Manga mManga = mList.get(idxNow);
+                            ServerBase servBase = ServerBase.getServer(mManga.getServerId());
+                            publishProgress(idxNow);
+                            try {
+                                servBase.loadChapters(mManga, false);
+                                int diff = servBase.searchForNewChapters(mManga.getId(), getActivity());
+                                result += diff;
+                            } catch (Exception e) {
+                                Log.e(TAG, "Update server failure", e);
+                            } finally {
+                                ticket++;
+                            }
+                        }
+                    }).start();
+                }
+                // After finishing the loop, wait for all threads to finish their task before ending
+                while (ticket < threads) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-                        Log.e(TAG, "Update sleep failure", e);
+                        Log.e(TAG, "After sleep failure", e);
                     }
-                }
-                ticket--;
-                // If ticked were passed, create new request
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Manga mManga = mList.get(idxNow);
-                        ServerBase servBase = ServerBase.getServer(mManga.getServerId());
-                        publishProgress(idxNow);
-                        try {
-                            servBase.loadChapters(mManga, false);
-                            int diff = servBase.searchForNewChapters(mManga.getId(), getActivity());
-                            result += diff;
-                        } catch (Exception e) {
-                            Log.e(TAG, "Update server failure", e);
-                        } finally {
-                            ticket++;
-                        }
-                    }
-                }).start();
-            }
-            // After finishing the loop, wait for all threads to finish their task before ending
-            while (ticket < threads) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "After sleep failure", e);
                 }
             }
             return result;
@@ -603,27 +590,20 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            Context mContent = getActivity();
-            if (mContent != null) {
+            if (context != null) {
                 if (result > 0) {
-                    mBuilder.setContentTitle(
-                            mContent.getResources()
-                                    .getString(R.string.update_complete))
-                            .setProgress(0, 0, false)
-                            .setOngoing(false)
-                            .setContentText(String.format(mContent.getResources()
-                                    .getString(R.string.mgs_update_found), result));
-                    mNotifyManager.notify(mNotifyID, mBuilder.build());
+                    Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result),false);
                     setListManga(true);
-                    Toast.makeText(mContent, mContent.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
                 } else {
-                    mNotifyManager.cancel(mNotifyID);
-                    Toast.makeText(mContent, mContent.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
+                    Util.getInstance().cancelNotification(mNotifyID);
+                    Toast.makeText(context, context.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
                 }
                 swipeReLayout.setRefreshing(false);
             } else {
-                mNotifyManager.cancel(mNotifyID);
+                Util.getInstance().cancelNotification(mNotifyID);
             }
         }
     }
 }
+

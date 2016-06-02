@@ -61,7 +61,7 @@
         app:showAsAction="always">
         <menu>
             <item
-                android:id="@+id/action_download_reamains"
+                android:id="@+id/action_download_remaining"
                 android:title="@string/descargarestantes" />
             <item
                 android:id="@+id/action_descargar_no_leidos"

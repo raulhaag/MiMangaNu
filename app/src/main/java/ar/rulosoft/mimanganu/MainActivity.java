@@ -39,10 +39,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
+            int mangaIdFromNotification = getIntent().getIntExtra("manga_id", -1);
+
             if (savedInstanceState == null) {
-                MainFragment fmm = new MainFragment();
-                getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fmm).commit();
+                MainFragment mainFragment = new MainFragment();
+                getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();
             }
+
+            if (mangaIdFromNotification > -1) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
+                MangaFragment mangaFragment = new MangaFragment();
+                mangaFragment.setArguments(bundle);
+                replaceFragment(mangaFragment, "MangaFragment");
+            }
+
             showUpdateDialog();
         } else {
             requestStoragePermission();
