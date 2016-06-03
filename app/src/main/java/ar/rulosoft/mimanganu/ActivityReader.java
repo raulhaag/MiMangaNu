@@ -269,6 +269,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 }
             }
         }
+
     }
 
     private void modScrollSensitive(float diff) {

@@ -315,7 +315,6 @@ public class ActivityPagedReader extends AppCompatActivity
                 nextChapter = null;
         }
 
-
         if (nextChapter != null) {
             if(!nextChapter.isDownloaded()) {
                 if(pm.getBoolean("download_next_chapter_automatically", false)) {
@@ -327,7 +326,6 @@ public class ActivityPagedReader extends AppCompatActivity
                 }
             }
         }
-
 
     }
 
@@ -557,7 +555,6 @@ public class ActivityPagedReader extends AppCompatActivity
                                 mChapter.setPagesRead(mChapter.getPages());
                                 Database.updateChapter(ActivityPagedReader.this, mChapter);
                                 Chapter pChapter = mChapter;
-
                                 loadChapter(nextChapter);
                                 if (del_images) {
                                     pChapter.freeSpace(ActivityPagedReader.this);
