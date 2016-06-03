@@ -22,6 +22,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -313,6 +314,21 @@ public class ActivityPagedReader extends AppCompatActivity
             if (!next)
                 nextChapter = null;
         }
+
+
+        if (nextChapter != null) {
+            if(!nextChapter.isDownloaded()) {
+                if(pm.getBoolean("download_next_chapter_automatically", false)) {
+                    try {
+                        DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                    } catch (Exception e) {
+                        Log.e("ServB", "Download add pool error", e);
+                    }
+                }
+            }
+        }
+
+
     }
 
     private void modScrollSensitive(float diff) {
@@ -541,6 +557,7 @@ public class ActivityPagedReader extends AppCompatActivity
                                 mChapter.setPagesRead(mChapter.getPages());
                                 Database.updateChapter(ActivityPagedReader.this, mChapter);
                                 Chapter pChapter = mChapter;
+
                                 loadChapter(nextChapter);
                                 if (del_images) {
                                     pChapter.freeSpace(ActivityPagedReader.this);

@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -255,6 +256,18 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             }
             if (!next)
                 nextChapter = null;
+        }
+
+        if (nextChapter != null) {
+            if(!nextChapter.isDownloaded()) {
+                if(pm.getBoolean("download_next_chapter_automatically", false)) {
+                    try {
+                        DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                    } catch (Exception e) {
+                        Log.e("ServB", "Download add pool error", e);
+                    }
+                }
+            }
         }
     }
 

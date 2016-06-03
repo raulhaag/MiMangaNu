@@ -162,4 +162,6 @@
     <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="show_notification_per_new_chapter_title">Show fine grained notifications</string>
     <string name="show_notification_per_new_chapter_subtitle">Shows one notification per new chapter</string>
+    <string name="download_next_chapter_automatically_title">Download next chapter</string>
+    <string name="download_next_chapter_automatically_subtitle">Automatically downloads the next chapter</string>
 </resources>
