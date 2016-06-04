@@ -22,6 +22,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -303,15 +304,29 @@ public class ActivityPagedReader extends AppCompatActivity
                     if (i > 0) {
                         next = true;
                         nextChapter = mManga.getChapters().get(i - 1);
-                        if (i + 1 < mManga.getChapters().size())
-                            previousChapter = mManga.getChapters().get(i + 1);
-                        break;
                     }
+                    if (i + 1 < mManga.getChapters().size()) {
+                        previousChapter = mManga.getChapters().get(i + 1);
+                    }
+                    break;
                 }
             }
             if (!next)
                 nextChapter = null;
         }
+
+        if (nextChapter != null) {
+            if(!nextChapter.isDownloaded()) {
+                if(pm.getBoolean("download_next_chapter_automatically", false)) {
+                    try {
+                        DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                    } catch (Exception e) {
+                        Log.e("ServB", "Download add pool error", e);
+                    }
+                }
+            }
+        }
+
     }
 
     private void modScrollSensitive(float diff) {
@@ -681,14 +696,18 @@ public class ActivityPagedReader extends AppCompatActivity
             if (mDirection.equals(Direction.R2L) || mDirection.equals(Direction.VERTICAL)) {
                 if (previousChapter != null) {
                     boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
-                    if (seamlessChapterTransition)
+                    if (seamlessChapterTransition) {
                         updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
+                        setCurrentItem(mChapter.getPagesRead() - 1);
+                    }
                 }
             } else if (mDirection.equals(Direction.L2R)) {
                 if (nextChapter != null) {
                     boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
-                    if (seamlessChapterTransition)
+                    if (seamlessChapterTransition) {
                         updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
+                        setCurrentItem(mChapter.getPagesRead() - 1);
+                    }
                 }
             }
         }
@@ -703,14 +722,18 @@ public class ActivityPagedReader extends AppCompatActivity
             if (mDirection.equals(Direction.R2L) || mDirection.equals(Direction.VERTICAL)) {
                 if (nextChapter != null) {
                     boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
-                    if (seamlessChapterTransition)
+                    if (seamlessChapterTransition) {
                         updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
+                        setCurrentItem(mChapter.getPagesRead() - 1);
+                    }
                 }
             } else if (mDirection.equals(Direction.L2R)) {
                 if (previousChapter != null) {
                     boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
-                    if (seamlessChapterTransition)
+                    if (seamlessChapterTransition) {
                         updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
+                        setCurrentItem(mChapter.getPagesRead() - 1);
+                    }
                 }
             }
         }

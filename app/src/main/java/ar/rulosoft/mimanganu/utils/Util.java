@@ -1,11 +1,16 @@
 package ar.rulosoft.mimanganu.utils;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v7.app.NotificationCompat;
 import android.widget.Toast;
 
 import java.io.File;
@@ -13,8 +18,13 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import ar.rulosoft.mimanganu.MainActivity;
+import ar.rulosoft.mimanganu.R;
+
 public class Util {
     private static Util utilInstance = null;
+    protected static NotificationCompat.Builder builder;
+    protected static NotificationManager notificationManager;
 
     private Util() {
     }
@@ -122,6 +132,56 @@ public class Util {
                 Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    public void createSimpleNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
+        Notification notification;
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder = new NotificationCompat.Builder(context);
+        builder.setOngoing(true).setContentTitle(contentTitle).setContentText(contentText).setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).build(); //setProgress(0, 0, isIndeterminate)
+        notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
+
+        notification = builder.build();
+        if (isPermanent) {
+            notification.flags = Notification.FLAG_ONGOING_EVENT;
+            notification.flags = Notification.FLAG_NO_CLEAR;
+        } else {
+            notification.flags = Notification.FLAG_AUTO_CANCEL;
+        }
+        notificationManager.notify(id, notification);
+    }
+
+    public void createSearchingForUpdatesNotification(Context context, int id) {
+        Notification notification;
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        builder = new NotificationCompat.Builder(context);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).setProgress(100, 0, false).build();
+        else
+            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setProgress(100, 0, false).build();
+        notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
+        notification = builder.build();
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(id, notification);
+    }
+
+    public void changeNotification(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (ongoing)
+                builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+            else
+                builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+        } else {
+            if (ongoing)
+                builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
+            else
+                builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
+        }
+        notificationManager.notify(id, builder.build());
+    }
+
+    public void cancelNotification(int id) {
+        notificationManager.cancel(id);
     }
 
 }

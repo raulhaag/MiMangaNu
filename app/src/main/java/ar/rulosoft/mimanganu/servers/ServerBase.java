@@ -1,11 +1,15 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.database.sqlite.SQLiteConstraintException;
+import android.content.Intent;
+import android.os.AsyncTask;
 
+import ar.rulosoft.mimanganu.MainActivity;
+import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navegador;
 
 import java.util.ArrayList;
@@ -41,7 +45,6 @@ public abstract class ServerBase {
     public static final int MANGAEDEN = 24;
 
     public static final int READCOMICONLINE = 1000;
-
     public static final int FROMFOLDER = 1001;
 
     public boolean hasMore = true;
@@ -230,6 +233,9 @@ public abstract class ServerBase {
                 Database.updateNewMangas(context, mangaDb, diff);
             }
 
+            if(MainFragment.pm.getBoolean("show_notification_per_new_chapter", false))
+                new CreateNotificationsTask(simpleList, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
             returnValue = simpleList.size();
         }
 
@@ -369,6 +375,36 @@ public abstract class ServerBase {
                 new ReadComicOnline(),
                 new FromFolder()
         });
+    }
+
+    public class CreateNotificationsTask extends AsyncTask<Void, Integer, Integer> {
+        private ArrayList<Chapter> simpleList = new ArrayList<>();
+        private Context context;
+
+        public CreateNotificationsTask(ArrayList<Chapter> simpleList, Context context) {
+            this.simpleList.addAll(simpleList);
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            for (int i = 0; i < simpleList.size(); i++) {
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra("manga_id", simpleList.get(i).getMangaID());
+                Util.getInstance().createSimpleNotification(context, false, (int) System.currentTimeMillis(), intent, "New Chapter", "" + simpleList.get(i).getTitle());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+        }
     }
 
 }

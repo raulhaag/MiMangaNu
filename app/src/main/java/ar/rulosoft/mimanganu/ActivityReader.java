@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -246,15 +247,29 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     if (i > 0) {
                         next = true;
                         nextChapter = mManga.getChapters().get(i - 1);
-                        if (i + 1 < mManga.getChapters().size())
-                            previousChapter = mManga.getChapters().get(i + 1);
-                        break;
                     }
+                    if (i + 1 < mManga.getChapters().size()) {
+                        previousChapter = mManga.getChapters().get(i + 1);
+                    }
+                    break;
                 }
             }
             if (!next)
                 nextChapter = null;
         }
+
+        if (nextChapter != null) {
+            if(!nextChapter.isDownloaded()) {
+                if(pm.getBoolean("download_next_chapter_automatically", false)) {
+                    try {
+                        DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                    } catch (Exception e) {
+                        Log.e("ServB", "Download add pool error", e);
+                    }
+                }
+            }
+        }
+
     }
 
     private void modScrollSensitive(float diff) {
