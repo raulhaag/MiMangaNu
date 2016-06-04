@@ -67,7 +67,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
     private UpdateListTask newUpdate;
-    private int mNotifyID = 666;
+    private int mNotifyID = 1246502;
 
     @Nullable
     @Override
@@ -122,7 +122,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.backListener = this;
         activity.keyUpListener = this;
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(activity.colors[1]));
-        if(!is_server_list_open){
+        if(!is_server_list_open && getView() != null){
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
             anim.setDuration(0);
@@ -436,7 +436,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public boolean onBackPressed() {
-        if (mViewPager.getCurrentItem() == 1) {
+        if (mViewPager.getCurrentItem() == 1 && getView() != null) {
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
             anim.setDuration(200);
@@ -503,6 +503,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
 
         //deprecated but error if not found
+        @SuppressWarnings("deprecation")
         @Override
         public void destroyItem(View container, int position, Object object) {
             destroyItem((ViewGroup) container, position, object);
@@ -561,11 +562,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                         @Override
                         public void run() {
                             Manga mManga = mList.get(idxNow);
-                            ServerBase servBase = ServerBase.getServer(mManga.getServerId());
+                            ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
                             publishProgress(idxNow);
                             try {
-                                servBase.loadChapters(mManga, false);
-                                int diff = servBase.searchForNewChapters(mManga.getId(), getActivity());
+                                serverBase.loadChapters(mManga, false);
+                                int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity());
                                 result += diff;
                             } catch (Exception e) {
                                 Log.e(TAG, "Update server failure", e);
@@ -591,7 +592,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             if (context != null) {
-                if (result > 0) {
+                if (result > 0 && !pm.getBoolean("show_notification_per_new_chapter", false)) {
                     Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result),false);
                     setListManga(true);
                     Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.MainFragment;
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -168,8 +169,7 @@ public abstract class ServerBase {
     public int searchForNewChapters(int id, Context context) throws Exception {
         int returnValue = 0;
         Manga mangaDb = Database.getFullManga(context, id);
-        Manga manga =
-                new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
+        Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
         this.loadMangaInformation(manga, true);
         this.loadChapters(manga, false);
@@ -234,7 +234,7 @@ public abstract class ServerBase {
             }
 
             if(MainFragment.pm.getBoolean("show_notification_per_new_chapter", false))
-                new CreateNotificationsTask(simpleList, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new CreateNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             returnValue = simpleList.size();
         }
@@ -380,10 +380,12 @@ public abstract class ServerBase {
     public class CreateNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
         private Context context;
+        private Manga manga;
 
-        public CreateNotificationsTask(ArrayList<Chapter> simpleList, Context context) {
+        public CreateNotificationsTask(ArrayList<Chapter> simpleList,Manga manga, Context context) {
             this.simpleList.addAll(simpleList);
             this.context = context;
+            this.manga = manga;
         }
 
         @Override
@@ -396,7 +398,7 @@ public abstract class ServerBase {
             for (int i = 0; i < simpleList.size(); i++) {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra("manga_id", simpleList.get(i).getMangaID());
-                Util.getInstance().createSimpleNotification(context, false, (int) System.currentTimeMillis(), intent, "New Chapter", "" + simpleList.get(i).getTitle());
+                Util.getInstance().createSimpleNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.new_chapter_of)+ " " + manga.getTitle(), "" + simpleList.get(i).getTitle());
             }
             return null;
         }

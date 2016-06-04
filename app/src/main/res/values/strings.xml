@@ -164,4 +164,5 @@
     <string name="show_notification_per_new_chapter_subtitle">Shows one notification per new chapter</string>
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
     <string name="download_next_chapter_automatically_subtitle">Automatically downloads the next chapter</string>
+    <string name="new_chapter_of">New chapter of </string>
 </resources>

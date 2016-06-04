@@ -161,4 +161,9 @@
     <string name="ram_usage">Memory Usage</string>
     <string name="sort_as_added_to_db_asc">As added to db (asc)</string>
     <string name="sort_as_added_to_db_desc">As added to db (desc)</string>
+    <string name="download_next_chapter_automatically_subtitle">Bajar capítulo siguiente automaticamente</string>
+    <string name="download_next_chapter_automatically_title">Bajar capítulo siguiente</string>
+    <string name="new_chapter_of">Nuevo capítulo de </string>
+    <string name="show_notification_per_new_chapter_subtitle">Mostrar notificacion por capitulo</string>
+    <string name="show_notification_per_new_chapter_title">Notificaciones separadas</string>
 </resources>
