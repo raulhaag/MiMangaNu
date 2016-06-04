@@ -10,10 +10,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -23,9 +21,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.rulosoft.custompref.ArrayAdapterDirectory;
-import ar.rulosoft.mimanganu.DetailsFragment;
 import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.FromFolder;
@@ -46,14 +44,25 @@ public class MangaFolderSelect extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-        AlertDialog.Builder builder =  new  AlertDialog.Builder(getActivity());
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setPositiveButton(getActivity().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String title = Util.getLastStringInPath(actual);
-                Manga manga = new Manga(FromFolder.FROMFOLDER,title,actual,true);
-                manga.setImages("");
-                (new AddMangaTask()).execute(manga);
+                List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                boolean onDb = false;
+                for (Manga m : mangas) {
+                    if (m.getPath().contains(actual)) ;
+                        onDb = true;
+                }
+                if (!onDb) {
+                    Manga manga = new Manga(FromFolder.FROMFOLDER, title, actual, true);
+                    manga.setImages("");
+                    (new AddMangaTask()).execute(manga);
+                }else{
+                    Toast.makeText(getContext(),getContext().getString(R.string.dir_already_on_db),Toast.LENGTH_LONG).show();
+                }
             }
         });
 
@@ -67,7 +76,7 @@ public class MangaFolderSelect extends DialogFragment {
 
         LayoutInflater i = getActivity().getLayoutInflater();
 
-        View view = i.inflate(R.layout.dialog_select_directory,null);
+        View view = i.inflate(R.layout.dialog_select_directory, null);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         actual = pm.getString("directorio", Environment.getExternalStorageDirectory().getPath() + "/MiMangaNu/");
         dirs = (ListView) view.findViewById(R.id.dirList);
@@ -153,14 +162,14 @@ public class MangaFolderSelect extends DialogFragment {
         @Override
         protected void onPostExecute(Void result) {
             adding.dismiss();
-            if(isAdded()) {
+            if (isAdded()) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
                 if (error != null && error.length() > 2) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
-                if(mainFragment != null)
+                if (mainFragment != null)
                     mainFragment.setListManga(true);
-                    getActivity().onBackPressed();
+                getActivity().onBackPressed();
             }
             super.onPostExecute(result);
         }

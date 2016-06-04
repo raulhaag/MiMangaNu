@@ -494,7 +494,6 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_READ_ORDER, ordinal);
         getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
-
     }
 
     @Override

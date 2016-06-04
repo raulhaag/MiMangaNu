@@ -165,4 +165,6 @@
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
     <string name="download_next_chapter_automatically_subtitle">Automatically downloads the next chapter</string>
     <string name="new_chapter_of">New chapter of </string>
+    <string name="dir_already_on_db">Dir already added</string>
+    <string name="already_on_db">Manga already added</string>
 </resources>

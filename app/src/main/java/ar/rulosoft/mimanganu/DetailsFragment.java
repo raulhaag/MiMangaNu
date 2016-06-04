@@ -25,6 +25,8 @@ import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.ImageLoader;
 
+import java.util.List;
+
 import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -74,15 +76,25 @@ public class DetailsFragment extends Fragment {
         button_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                new AddMangaTask().execute(manga);
-                AnimatorSet set = new AnimatorSet();
-                ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 1.0f, 0.0f);
-                anim1.setDuration(0);
-                DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                ObjectAnimator anim2 = ObjectAnimator.ofFloat(button_add, "y", displayMetrics.heightPixels);
-                anim2.setDuration(500);
-                set.playSequentially(anim2, anim1);
-                set.start();
+                List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                boolean onDb = false;
+                for (Manga m : mangas) {
+                    if (m.getPath().contains(manga.getPath())) ;
+                    onDb = true;
+                }
+                if (!onDb) {
+                    new AddMangaTask().execute(manga);
+                    AnimatorSet set = new AnimatorSet();
+                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 1.0f, 0.0f);
+                    anim1.setDuration(0);
+                    DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(button_add, "y", displayMetrics.heightPixels);
+                    anim2.setDuration(500);
+                    set.playSequentially(anim2, anim1);
+                    set.start();
+                }else{
+                    Toast.makeText(getContext(),getString(R.string.already_on_db),Toast.LENGTH_LONG).show();
+                }
             }
         });
         if (getActivity() != null) {
