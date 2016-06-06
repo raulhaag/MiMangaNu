@@ -13,6 +13,17 @@
             android:title="@string/escondergaleria" />
     </android.support.v7.preference.PreferenceCategory>
 
+    <PreferenceCategory android:title="@string/connection_settings">
+    <ar.rulosoft.custompref.SeekBarCustomPreference
+        android:defaultValue="5"
+        android:dialogTitle="@string/cantidad_descargas_title"
+        android:key="connection_timeout"
+        android:summary="@string/connection_timeout_summary"
+        android:title="@string/connection_timeout_title"
+        app:val_max="20"
+        app:val_min="3" />
+    </PreferenceCategory>
+
     <android.support.v7.preference.PreferenceCategory android:title="@string/update_settings_title">
         <ListPreference
             android:defaultValue="0"

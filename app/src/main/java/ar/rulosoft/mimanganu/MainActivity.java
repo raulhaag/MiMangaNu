@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
@@ -19,8 +20,12 @@ import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.Toast;
 
+import java.util.concurrent.ThreadPoolExecutor;
+
+import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navegador;
 
 public class MainActivity extends AppCompatActivity {
     public int[] colors;
@@ -53,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
                 mangaFragment.setArguments(bundle);
                 replaceFragment(mangaFragment, "MangaFragment");
             }
-
             showUpdateDialog();
         } else {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
+        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,pm);
     }
 
     private void showUpdateDialog(){

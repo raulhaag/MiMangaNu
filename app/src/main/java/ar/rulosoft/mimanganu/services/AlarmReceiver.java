@@ -19,6 +19,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.navegadores.Navegador;
 
 /**
  * Alarm Receiver
@@ -51,6 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         SearchUpdates su = new SearchUpdates();
         su.setContext(context);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+        Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
         pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
         su.setSound(pm.getBoolean("update_sound", false));
         int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));

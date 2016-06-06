@@ -53,7 +53,7 @@ public class MangaFolderSelect extends DialogFragment {
                 List<Manga> mangas = Database.getMangas(getContext(), null, true);
                 boolean onDb = false;
                 for (Manga m : mangas) {
-                    if (m.getPath().contains(actual)) ;
+                    if (m.getPath().contains(actual))
                         onDb = true;
                 }
                 if (!onDb) {

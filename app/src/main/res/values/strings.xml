@@ -124,6 +124,9 @@
     <string name="genre">Genre</string>
     <string name="update_message">Changes in v1.50:\n\t*fix some bugs\n\t*make adding chapters / mangas to db more robust\n\t*let mark selected / all as read / unread functions run in the background\n\t*add Seamless chapter transitions\n\t*add fine grained notifications\n\t*add ReadComicOnline</string>
     <string name="search_for_updates">Search for updates</string>
+    <string name="connection_settings">Connection Settings </string>
+    <string name="connection_timeout_title">Connection timeout</string>
+    <string name="connection_timeout_summary">%s seconds</string>
     <string name="update_thread_background_title">Update threads (Background)</string>
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
     <string name="update_thread_manual_title">Update threads (Manual)</string>

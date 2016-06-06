@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navegador {
+    public static int TIME_OUT = 5000;
     OkHttpClient httpClient;
     UserAgentInterceptor userAgentInterceptor;
     private HashMap<String, String> parametros = new HashMap<>();
@@ -24,12 +25,12 @@ public class Navegador {
     }
 
     public String get(String web) throws Exception {
-        return this.get(web, 5000);
+        return this.get(web, TIME_OUT);
     }
 
     public String get(String web, int timeOut) throws Exception {
-        httpClient.setConnectTimeout(timeOut, TimeUnit.MILLISECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
+        httpClient.setConnectTimeout(timeOut, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(timeOut, TimeUnit.SECONDS);
 
         Response response = httpClient.newCall(new Request.Builder().url(web).build()).execute();
 
@@ -42,8 +43,8 @@ public class Navegador {
     }
 
     public String get(String ip, String path, String host) throws Exception {
-        httpClient.setConnectTimeout(10, TimeUnit.SECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
+        httpClient.setConnectTimeout(TIME_OUT, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(TIME_OUT, TimeUnit.SECONDS);
 
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
@@ -60,8 +61,8 @@ public class Navegador {
     }
 
     public String post(String web) throws Exception {
-        httpClient.setConnectTimeout(5, TimeUnit.SECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
+        httpClient.setConnectTimeout(TIME_OUT, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(TIME_OUT, TimeUnit.SECONDS);
 
         Request request = new Request.Builder()
                 .url(web)
@@ -78,9 +79,8 @@ public class Navegador {
     }
 
     public String post(String ip, String path, String host) throws Exception {
-        httpClient.setConnectTimeout(5, TimeUnit.SECONDS);
-        httpClient.setReadTimeout(5, TimeUnit.SECONDS);
-
+        httpClient.setConnectTimeout(TIME_OUT, TimeUnit.SECONDS);
+        httpClient.setReadTimeout(TIME_OUT, TimeUnit.SECONDS);
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
                 .addHeader("Host", host)
