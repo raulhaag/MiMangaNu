@@ -26,7 +26,7 @@ public class SearchResultsFragment extends Fragment {
     private int serverId;
     private ProgressBar loading;
     private ListView list;
-    private boolean darkTheme;
+    private PerformSearchTask performSearchTask;
 
     @Nullable
     @Override
@@ -56,7 +56,7 @@ public class SearchResultsFragment extends Fragment {
                 ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");
             }
         });
-        new PerformSearchTask().execute();
+        performSearchTask = (PerformSearchTask) new PerformSearchTask().execute();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -71,6 +71,11 @@ public class SearchResultsFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        performSearchTask.cancel(true);
+    }
 
     public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {
         public String error = "";
@@ -84,9 +89,9 @@ public class SearchResultsFragment extends Fragment {
         protected ArrayList<Manga> doInBackground(Void... params) {
             ArrayList<Manga> mangas = new ArrayList<>();
             if(isAdded()) {
-                ServerBase s = ServerBase.getServer(serverId);
+                ServerBase serverBase = ServerBase.getServer(serverId);
                 try {
-                    mangas = s.search(search_term);
+                    mangas = serverBase.search(search_term);
                 } catch (Exception e) {
                     error = e.getMessage();
                 }

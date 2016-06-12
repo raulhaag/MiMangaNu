@@ -3,9 +3,12 @@ package ar.rulosoft.mimanganu;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,54 +19,70 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.Toast;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
+import ar.rulosoft.mimanganu.services.WifiStateChangeReceiver;
 import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
-import ar.rulosoft.navegadores.Navegador;
 
 public class MainActivity extends AppCompatActivity {
-    public int[] colors;
-    public ActionBar mActBar;
+    private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
+    private WifiStateChangeReceiver wifiStateChangeReceiver = new WifiStateChangeReceiver();
     boolean darkTheme;
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
-    private SharedPreferences pm;
-    private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
+    public int[] colors;
+    public ActionBar mActBar;
+    public static SharedPreferences pm;
+    public static boolean isConnectedToWifi;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         darkTheme = pm.getBoolean("dark_theme", false);
+        boolean ignoreNetworkDetection = pm.getBoolean("ignore_network_detection", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
-            int mangaIdFromNotification = getIntent().getIntExtra("manga_id", -1);
-
             if (savedInstanceState == null) {
                 MainFragment mainFragment = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();
             }
 
-            if (mangaIdFromNotification > -1) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
-                MangaFragment mangaFragment = new MangaFragment();
-                mangaFragment.setArguments(bundle);
-                replaceFragment(mangaFragment, "MangaFragment");
+            if(ignoreNetworkDetection) {
+                isConnectedToWifi = true;
+            } else {
+                IntentFilter intentFilter = new IntentFilter();
+                intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+                intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+                registerReceiver(wifiStateChangeReceiver, intentFilter);
             }
+
             showUpdateDialog();
         } else {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
-        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,pm);
+        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, pm);
+    }
+
+    @Override
+    protected void onNewIntent (Intent intent){
+        int mangaIdFromNotification = intent.getIntExtra("manga_id", -1);
+        Log.d("MainActivity", "mangaID: " + mangaIdFromNotification);
+
+        if (mangaIdFromNotification > -1) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
+            MangaFragment mangaFragment = new MangaFragment();
+            mangaFragment.setArguments(bundle);
+            replaceFragment(mangaFragment, "MangaFragment");
+        }
     }
 
     private void showUpdateDialog(){
@@ -127,6 +146,12 @@ public class MainActivity extends AppCompatActivity {
         }
         colors = ThemeColors.getColors(pm, getApplicationContext());
         setColorToBars();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(wifiStateChangeReceiver);
     }
 
     public void setColorToBars() {

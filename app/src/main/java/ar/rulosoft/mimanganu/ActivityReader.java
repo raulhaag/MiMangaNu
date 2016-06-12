@@ -51,6 +51,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener, VerticalReader.OnBeginFlingListener {
 
@@ -263,6 +264,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 if(pm.getBoolean("download_next_chapter_automatically", false)) {
                     try {
                         DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                        Util.getInstance().toast(this, "Downloading: " + nextChapter.getTitle());
                     } catch (Exception e) {
                         Log.e("ServB", "Download add pool error", e);
                     }
@@ -578,8 +580,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         // this is the opposite of onEndFling
         if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
-            if (seamlessChapterTransition)
+            if (seamlessChapterTransition) {
                 updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
+                Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+            }
         }
     }
 
@@ -589,6 +593,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean imagesDelete = pm.getBoolean("delete_images", false);
         boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+        boolean seamlessChapterTransitionDeleteRead = pm.getBoolean("seamless_chapter_transitions_delete_read", false);
         if (nextChapter != null) {
             if (!seamlessChapterTransition) {
                 View v = inflater.inflate(R.layout.dialog_next_chapter, null);
@@ -617,7 +622,15 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                         })
                         .show();
             } else {
+                Chapter tmpChapter = mChapter;
+
                 updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
+                Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+
+                if (seamlessChapterTransitionDeleteRead) {
+                    tmpChapter.freeSpace(ActivityReader.this);
+                    Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
+                }
             }
         } else {
             View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);

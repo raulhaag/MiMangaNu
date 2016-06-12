@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:largeHeap="true"
@@ -20,7 +21,8 @@
             Better if app starts dark and turns white than blinds you with white splash screen
             before it turns dark.
 
-            MainActivity's launchMode needs to be "standard" for OnActivityResult to work
+            MainActivity's launchMode needs to be "standard" for onActivityResult to work
+            note: we don't currently use onActivityResult
         -->
         <activity
             android:name=".MainActivity"

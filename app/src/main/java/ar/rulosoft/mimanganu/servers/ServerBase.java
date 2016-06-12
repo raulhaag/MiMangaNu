@@ -4,18 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import ar.rulosoft.mimanganu.MainActivity;
-import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navegador;
-
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public abstract class ServerBase {
 
@@ -72,9 +71,6 @@ public abstract class ServerBase {
             case SUBMANGA:
                 serverBase = new SubManga();
                 break;
-            case ESMANGA:
-                serverBase = new EsManga();
-                break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga();
                 break;
@@ -95,12 +91,6 @@ public abstract class ServerBase {
                 break;
             case TUMANGAONLINE:
                 serverBase = new TuMangaOnline();
-                break;
-            case TUSMANGAS:
-                serverBase = new TusMangasOnlineCom();
-                break;
-            case STARKANACOM:
-                serverBase = new StarkanaCom();
                 break;
             case DENINEMANGA:
                 serverBase = new DeNineManga();
@@ -233,7 +223,7 @@ public abstract class ServerBase {
                 Database.updateNewMangas(context, mangaDb, diff);
             }
 
-            if(MainFragment.pm.getBoolean("show_notification_per_new_chapter", false))
+            if(MainActivity.pm.getBoolean("show_notification_per_new_chapter", false))
                 new CreateNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             returnValue = simpleList.size();
@@ -398,7 +388,8 @@ public abstract class ServerBase {
             for (int i = 0; i < simpleList.size(); i++) {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra("manga_id", simpleList.get(i).getMangaID());
-                Util.getInstance().createSimpleNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.new_chapter_of)+ " " + manga.getTitle(), "" + simpleList.get(i).getTitle());
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Util.getInstance().createSimpleNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getString(R.string.new_chapter, manga.getTitle()), simpleList.get(i).getTitle());
             }
             return null;
         }

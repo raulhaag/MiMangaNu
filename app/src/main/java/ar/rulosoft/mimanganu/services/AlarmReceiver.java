@@ -49,14 +49,16 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        SearchUpdates su = new SearchUpdates();
-        su.setContext(context);
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
-        pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-        su.setSound(pm.getBoolean("update_sound", false));
-        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
-        su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
+        if(MainActivity.isConnectedToWifi) {
+            SearchUpdates searchUpdates = new SearchUpdates();
+            searchUpdates.setContext(context);
+            SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+            Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
+            pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
+            searchUpdates.setSound(pm.getBoolean("update_sound", false));
+            int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
+            searchUpdates.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
+        }
     }
 
 

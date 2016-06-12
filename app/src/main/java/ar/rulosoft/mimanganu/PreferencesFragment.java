@@ -17,6 +17,8 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.view.MenuItem;
 
+import com.fedorvlasov.lazylist.FileCache;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -96,16 +98,16 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         Boolean readType = prefs.getBoolean("reader_type", false);
         Preference reader_type = getPreferenceManager().findPreference("reader_type");
-        Preference seamlessChapterTransitions = getPreferenceManager().findPreference("seamless_chapter_transitions");
+        Preference seamlessChapterTransitionsPref = getPreferenceManager().findPreference("seamless_chapter_transitions");
         if (readType) {
             reader_type.setSummary("Paged Reader");
-            seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
+            seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
         } else {
             reader_type.setSummary("Continuous Reader");
-            seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
+            seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
         }
-        final SwitchPreferenceCompat cBoxPrefA = (SwitchPreferenceCompat) getPreferenceManager().findPreference("reader_type");
-        cBoxPrefA.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        final SwitchPreferenceCompat readerTypePref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("reader_type");
+        readerTypePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
@@ -115,11 +117,59 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 if (!readType) {
                     reader_type.setSummary("Paged Reader");
                     seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
-                }
-                else {
+                } else {
                     reader_type.setSummary("Continuous Reader");
                     seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
                 }
+                return true;
+            }
+        });
+
+        /** enable / disable seamless_chapter_transitions_delete_read depending on the state of seamless_chapter_transitions **/
+        Boolean seamlessChapterTransitions = prefs.getBoolean("seamless_chapter_transitions", false);
+        Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
+        if (seamlessChapterTransitions) {
+            seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
+        } else {
+            seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
+        }
+        final SwitchPreferenceCompat seamlessChapterTransitionsSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("seamless_chapter_transitions");
+        seamlessChapterTransitionsSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Boolean seamlessChapterTransitions = prefs.getBoolean("seamless_chapter_transitions", false);
+                Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
+                if (!seamlessChapterTransitions) {
+                    seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
+                } else {
+                    seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
+
+                    SharedPreferences.Editor prefEdit = prefs.edit();
+                    prefEdit.putBoolean("seamless_chapter_transitions_delete_read", false);
+                    prefEdit.apply();
+                }
+                return true;
+            }
+        });
+
+        /** ignore network detection switch **/
+        final SwitchPreferenceCompat ignoreNetworkDetectionSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("ignore_network_detection");
+        ignoreNetworkDetectionSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Boolean ignoreNetworkDetection = prefs.getBoolean("ignore_network_detection", false);
+                if(ignoreNetworkDetection) {
+                    SharedPreferences.Editor prefEdit = prefs.edit();
+                    prefEdit.putBoolean("ignore_network_detection", false);
+                    prefEdit.apply();
+                } else {
+                    SharedPreferences.Editor prefEdit = prefs.edit();
+                    prefEdit.putBoolean("ignore_network_detection", true);
+                    prefEdit.apply();
+                }
+                Util.getInstance().restartApp(getContext());
                 return true;
             }
         });
@@ -187,6 +237,17 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 ((MainActivity) getActivity()).replaceFragment(new LicenseFragment(), "licence_fragment");
                 return false;
+            }
+        });
+
+        final Preference prefClearCache = getPreferenceManager().findPreference("clear_cache");
+        prefClearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Preference clearCache = getPreferenceManager().findPreference("clear_cache");
+                clearCache.setEnabled(false);
+                new FileCache(getActivity()).clearCache();
+                return true;
             }
         });
 
@@ -294,7 +355,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
+                            prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize / 1024.0) + " GB");
                         }
                     });
                 }
@@ -303,7 +364,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     handler.post(new Runnable() {
                         @Override
                         public void run() {
-                            prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
+                            prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize) + " MB");
                         }
                     });
                 }

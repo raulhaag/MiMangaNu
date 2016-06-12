@@ -76,7 +76,7 @@
     <string name="no_update">Don\'t check for updates</string>
     <string name="opciones_descarga">Download settings</string>
     <string name="opciones_lec">Reader settings</string>
-    <string name="opciones_mm">My Mangas settings</string>
+    <string name="opciones_mm">Manga settings</string>
     <string name="quitar_descarga">Can\'t remove active download</string>
     <string name="quitar_seleccion">Select none</string>
     <string name="r2l">Right to Left</string>
@@ -94,7 +94,7 @@
     <string name="stay_awake_on">Stay awake on</string>
     <string name="title_activity_activity_lector">Reader</string>
     <string name="unwritable_folder">Unwritable folder.</string>
-    <string name="update_settings_title">Update Preferences</string>
+    <string name="update_settings_title">Update Settings</string>
     <string name="update_title">Update interval</string>
     <string name="vercomolista">View as List</string>
     <string name="vertical">Vertical</string>
@@ -166,8 +166,17 @@
     <string name="show_notification_per_new_chapter_title">Show fine grained notifications</string>
     <string name="show_notification_per_new_chapter_subtitle">Shows one notification per new chapter</string>
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
-    <string name="download_next_chapter_automatically_subtitle">Automatically downloads the next chapter</string>
-    <string name="new_chapter_of">New chapter of </string>
-    <string name="dir_already_on_db">Dir already added</string>
+    <string name="download_next_chapter_automatically_subtitle">While reading next chapter will be downloaded automatically</string>
+    <string name="deleted">Deleted: \"%s\"</string>
+    <string name="clear_cache_title">Clear cache</string>
+    <string name="clear_cache_subtitle">This will clear the cache. Keep in mind that all Cover Images will have to be re-downloaded.</string>
+    <string name="misc_settings">Misc Settings</string>
+    <string name="seamless_chapter_transitions_delete_read_title">Delete chapter after reading</string>
+    <string name="seamless_chapter_transitions_delete_read_subtitle">This deletes the current chapter when transitioning to the next chapter</string>
+    <string name="not_connected_to_the_internet">Not connected to the Internet</string>
+    <string name="ignore_network_detection_title">Ignore network detection</string>
+    <string name="ignore_network_detection_subtitle">Enable this if you have trouble connecting. Note: changing this setting will restart the app</string>
+    <string name="new_chapter">New Chapter of %s</string>
+    <string name="dir_already_on_db">Directory already added</string>
     <string name="already_on_db">Manga already added</string>
 </resources>

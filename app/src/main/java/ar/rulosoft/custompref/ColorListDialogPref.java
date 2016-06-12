@@ -20,9 +20,6 @@ package ar.rulosoft.custompref;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-//import android.graphics.drawable.ShapeDrawable;
-//import android.graphics.drawable.shapes.OvalShape;
-//import android.graphics.drawable.shapes.RectShape;
 import android.support.v7.preference.DialogPreference;
 import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;

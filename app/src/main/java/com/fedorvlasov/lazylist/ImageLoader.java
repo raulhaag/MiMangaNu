@@ -6,8 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
-import ar.rulosoft.mimanganu.componentes.Imaginable;
-import ar.rulosoft.navegadores.Navegador;
 
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -23,6 +21,9 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import ar.rulosoft.mimanganu.componentes.Imaginable;
+import ar.rulosoft.navegadores.Navegador;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =

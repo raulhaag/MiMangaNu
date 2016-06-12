@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.utils;
 
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.preference.PreferenceManager;
 
 import ar.rulosoft.navegadores.Navegador;
 

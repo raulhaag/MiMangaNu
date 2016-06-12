@@ -5,8 +5,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -82,12 +80,6 @@ public class Util {
         return result;
     }
 
-    public boolean isWifiConnected(Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return mNetworkInfo.isConnected();
-    }
-
     public static ArrayList<String> dirList(String directory) {
         ArrayList<String> list = new ArrayList<>();
         if (directory.length() != 1) {
@@ -130,6 +122,16 @@ public class Util {
             @Override
             public void run() {
                 Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public void toast(final Context context, final String toast, final int length) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(context, toast, length).show();
             }
         });
     }

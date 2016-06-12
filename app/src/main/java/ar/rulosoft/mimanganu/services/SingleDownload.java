@@ -2,8 +2,6 @@ package ar.rulosoft.mimanganu.services;
 
 import android.util.Log;
 
-import ar.rulosoft.navegadores.RefererInterceptor;
-
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
@@ -17,6 +15,7 @@ import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.navegadores.Navegador;
+import ar.rulosoft.navegadores.RefererInterceptor;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;

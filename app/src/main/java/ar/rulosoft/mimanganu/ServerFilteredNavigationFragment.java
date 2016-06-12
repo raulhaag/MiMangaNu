@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.app.ActionBar;
 import android.app.AlertDialog;
-import android.support.v4.app.Fragment;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -10,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -152,13 +152,13 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
 
             @Override
-            public boolean onQueryTextSubmit(String st) {
+            public boolean onQueryTextSubmit(String value) {
                 Bundle bundle = new Bundle();
                 bundle.putInt(MainFragment.SERVER_ID, sBase.getServerID());
-                bundle.putString(SearchResultsFragment.TERM, st);
-                SearchResultsFragment detailsFragment = new SearchResultsFragment();
-                detailsFragment.setArguments(bundle);
-                ((MainActivity) getActivity()).replaceFragment(detailsFragment, "SearchFragment");
+                bundle.putString(SearchResultsFragment.TERM, value);
+                SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
+                searchResultsFragment.setArguments(bundle);
+                ((MainActivity) getActivity()).replaceFragment(searchResultsFragment, "SearchFragment");
                 return true;
             }
 

@@ -50,23 +50,22 @@ import ar.rulosoft.mimanganu.utils.Util;
  */
 
 public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener {
-
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     public static final String SELECT_MODE = "selector_modo";
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
-    public static SharedPreferences pm;
     private static final String TAG = "MainFragment";
-    Menu menu;
-    FloatingActionButton floatingActionButton_add;
-    boolean is_server_list_open = false;
+    private SharedPreferences pm;
+    private Menu menu;
+    private FloatingActionButton floatingActionButton_add;
+    private boolean is_server_list_open = false;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
-    private UpdateListTask newUpdate;
+    private UpdateListTask updateListTask;
     private int mNotifyID = 1246502;
 
     @Nullable
@@ -259,31 +258,31 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         ServerRecAdapter adapter = new ServerRecAdapter(ServerBase.getServers());
         server_list.setAdapter(adapter);
         adapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
-                                             @Override
-                                             public void onServerClick(ServerBase server) {
-                                                 if (!(server instanceof FromFolder)) {
-                                                     if (server.hasFilteredNavigation()) {
-                                                         ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
-                                                         Bundle b = new Bundle();
-                                                         b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                                                         fragment.setArguments(b);
-                                                         ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
-                                                     } else {
-                                                         ServerListFragment fragment = new ServerListFragment();
-                                                         Bundle b = new Bundle();
-                                                         b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                                                         fragment.setArguments(b);
-                                                         ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
-                                                     }
-                                                 } else {
-                                                     MangaFolderSelect dialog = new MangaFolderSelect();
-                                                     dialog.setMainFragment(MainFragment.this);
-                                                     dialog.show(getChildFragmentManager(), "fragment_find_folder");
+            @Override
+            public void onServerClick(ServerBase server) {
+                if (!(server instanceof FromFolder)) {
+                    if (server.hasFilteredNavigation()) {
+                        ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
+                        Bundle b = new Bundle();
+                        b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                        fragment.setArguments(b);
+                        ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
+                    } else {
+                        ServerListFragment fragment = new ServerListFragment();
+                        Bundle b = new Bundle();
+                        b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                        fragment.setArguments(b);
+                        ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
+                    }
+                } else {
+                    MangaFolderSelect dialog = new MangaFolderSelect();
+                    dialog.setMainFragment(MainFragment.this);
+                    dialog.show(getChildFragmentManager(), "fragment_find_folder");
 
-                                                     Log.e("from file","selected");
-                                                 }
-                                             }
-                                         });
+                    Log.e("from file", "selected");
+                }
+            }
+        });
         return viewGroup;
     }
 
@@ -365,21 +364,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Manga m = (Manga) grid.getAdapter().getItem(info.position);
+        Manga manga = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.delete) {
-            DownloadPoolService.forceStop(m.getId());
-            ServerBase s = ServerBase.getServer(m.getServerId());
-            String path = DownloadPoolService.generateBasePath(s, m, getActivity());
+            DownloadPoolService.forceStop(manga.getId());
+            ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+            String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
             Util.getInstance().deleteRecursive(new File(path));
-            Database.deleteManga(getActivity(), m.getId());
-            adapter.remove(m);
+            Database.deleteManga(getActivity(), manga.getId());
+            adapter.remove(manga);
+            Util.getInstance().toast(getActivity(), getResources().getString(R.string.deleted, manga.getTitle()));
         } else if (item.getItemId() == R.id.noupdate) {
-            if (m.isFinished()) {
-                m.setFinished(false);
-                Database.setUpgradable(getActivity(), m.getId(), false);
+            if (manga.isFinished()) {
+                manga.setFinished(false);
+                Database.setUpgradable(getActivity(), manga.getId(), false);
             } else {
-                m.setFinished(true);
-                Database.setUpgradable(getActivity(), m.getId(), true);
+                manga.setFinished(true);
+                Database.setUpgradable(getActivity(), manga.getId(), true);
             }
         }
         return super.onContextItemSelected(item);
@@ -394,9 +394,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
-                    newUpdate = new UpdateListTask(getActivity());
-                    newUpdate.execute();
+                if (updateListTask == null || updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
+                    if(MainActivity.isConnectedToWifi) {
+                        updateListTask = new UpdateListTask(getActivity());
+                        updateListTask.execute();
+                    } else {
+                        swipeReLayout.setRefreshing(false);
+                        Util.getInstance().toast(getContext(), getString(R.string.not_connected_to_the_internet), 0);
+                    }
                 }
             }
         });
@@ -411,7 +416,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         else if (columnas > 6)
             columnas = 6;
         grid.setNumColumns(columnas);
-        if (newUpdate != null && newUpdate.getStatus() == AsyncTask.Status.RUNNING) {
+        if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
             swipeReLayout.post(new Runnable() {
                 @Override
                 public void run() {
@@ -517,6 +522,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         int result = 0;
         int numNow = 0;
         Context context;
+        boolean connectionError;
 
         public UpdateListTask(Context context){
             this.context = context;
@@ -547,34 +553,39 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 ticket = threads;
                 // Starting searching for new chapters
                 for (int idx = 0; idx < mList.size(); idx++) {
-                    final int idxNow = idx;
-                    // If there is no ticket, sleep for 1 second and ask again
-                    while (ticket < 1) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Log.e(TAG, "Update sleep failure", e);
-                        }
-                    }
-                    ticket--;
-                    // If ticked were passed, create new request
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Manga mManga = mList.get(idxNow);
-                            ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
-                            publishProgress(idxNow);
+                    if(MainActivity.isConnectedToWifi) {
+                        final int idxNow = idx;
+                        // If there is no ticket, sleep for 1 second and ask again
+                        while (ticket < 1) {
                             try {
-                                serverBase.loadChapters(mManga, false);
-                                int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity());
-                                result += diff;
-                            } catch (Exception e) {
-                                Log.e(TAG, "Update server failure", e);
-                            } finally {
-                                ticket++;
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Log.e(TAG, "Update sleep failure", e);
                             }
                         }
-                    }).start();
+                        ticket--;
+                        // If ticked were passed, create new request
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Manga mManga = mList.get(idxNow);
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                publishProgress(idxNow);
+                                try {
+                                    serverBase.loadChapters(mManga, false);
+                                    int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity());
+                                    result += diff;
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Update server failure", e);
+                                } finally {
+                                    ticket++;
+                                }
+                            }
+                        }).start();
+                    } else {
+                        connectionError = true;
+                        Util.getInstance().cancelNotification(mNotifyID);
+                    }
                 }
                 // After finishing the loop, wait for all threads to finish their task before ending
                 while (ticket < threads) {
@@ -592,13 +603,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             if (context != null) {
-                if (result > 0 && !pm.getBoolean("show_notification_per_new_chapter", false)) {
-                    Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result),false);
-                    setListManga(true);
-                    Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
-                } else {
-                    Util.getInstance().cancelNotification(mNotifyID);
-                    Toast.makeText(context, context.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
+                if(!connectionError) {
+                    if (result > 0) {
+                        if(!pm.getBoolean("show_notification_per_new_chapter", false))
+                            Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result), false);
+                        else
+                            Util.getInstance().cancelNotification(mNotifyID);
+                        setListManga(true);
+                        Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
+                    } else {
+                        Util.getInstance().cancelNotification(mNotifyID);
+                        Toast.makeText(context, context.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
+                    }
                 }
                 swipeReLayout.setRefreshing(false);
             } else {
