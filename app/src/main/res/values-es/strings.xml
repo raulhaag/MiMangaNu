@@ -168,4 +168,5 @@
     <string name="show_notification_per_new_chapter_title">Notificaciones separadas</string>
     <string name="already_on_db">El manga ya estaba agregado</string>
     <string name="dir_already_on_db">El directorio ya estaba agregado</string>
+    <string name="edit_server_list">Editar lista</string>
 </resources>
