@@ -169,4 +169,11 @@
     <string name="already_on_db">El manga ya estaba agregado</string>
     <string name="dir_already_on_db">El directorio ya estaba agregado</string>
     <string name="edit_server_list">Editar lista</string>
+    <string name="connection_settings">Opciones de conección</string>
+    <string name="connection_timeout_summary">%s segundos</string>
+    <string name="connection_timeout_title">TimeOut de conección</string>
+    <string name="no_internet_connection">Sin conección a internet</string>
+    <string name="no_wifi_connection">Sin conección WIFI</string>
+    <string name="use_only_wifi_subtitle">Para evitar uso de datos</string>
+    <string name="use_only_wifi_title">Usar solo WIFI</string>
 </resources>

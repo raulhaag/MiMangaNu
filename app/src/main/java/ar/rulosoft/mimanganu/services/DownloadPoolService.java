@@ -21,6 +21,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload.DownloadStatus;
 import ar.rulosoft.mimanganu.services.SingleDownload.Status;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 
 public class DownloadPoolService extends Service implements StateChangeListener {
 
@@ -44,8 +45,8 @@ public class DownloadPoolService extends Service implements StateChangeListener 
 
     public int slots = SLOTS;
 
-    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) {
-        if (!chapter.isDownloaded()) {
+    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception{
+        if (!chapter.isDownloaded() && NetworkUtilsAndReciever.isConnected(activity)) {
             if (isNewDownload(chapter.getId())) {
                 ChapterDownload dc = new ChapterDownload(chapter);
                 if (mDownloadsChangesListener != null) {

@@ -133,8 +133,12 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
                         if (can_download) {
-                            DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                            Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                            try {
+                                DownloadPoolService.addChapterDownloadPool(activity, c, false);
+                                Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                            }catch (Exception e){
+                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 }

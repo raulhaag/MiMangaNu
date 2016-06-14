@@ -1083,10 +1083,14 @@ public class ActivityPagedReader extends AppCompatActivity
             if (error != null && error.length() > 1) {
                 Toast.makeText(ActivityPagedReader.this, error, Toast.LENGTH_LONG).show();
             } else {
-                Database.updateChapter(ActivityPagedReader.this, result);
-                DownloadPoolService.addChapterDownloadPool(ActivityPagedReader.this, result, true);
-                DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
-                loadChapter(result);
+                try {
+                    Database.updateChapter(ActivityPagedReader.this, result);
+                    DownloadPoolService.addChapterDownloadPool(ActivityPagedReader.this, result, true);
+                    DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
+                    loadChapter(result);
+                }catch (Exception e){
+                    Toast.makeText(ActivityPagedReader.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
             super.onPostExecute(result);
         }

@@ -198,7 +198,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference, Object o) {
                 NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
                 NetworkUtilsAndReciever.state = -1;
-                return false;
+                return true;
             }
         });
         setFirstRunDefaults();

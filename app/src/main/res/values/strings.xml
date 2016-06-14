@@ -171,4 +171,8 @@
     <string name="dir_already_on_db">Dir already added</string>
     <string name="already_on_db">Manga already added</string>
     <string name="edit_server_list">Edit server list</string>
+    <string name="no_wifi_connection">No wifi connection</string>
+    <string name="no_internet_connection">No internet connection</string>
+    <string name="use_only_wifi_title">Use only WIFI</string>
+    <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
 </resources>

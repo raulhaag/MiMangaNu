@@ -717,9 +717,13 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             if (error != null && error.length() > 1) {
                 Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
             } else {
-                Database.updateChapter(ActivityReader.this, result);
-                DownloadPoolService.addChapterDownloadPool(ActivityReader.this, result, true);
-                loadChapter(result);
+                try {
+                    Database.updateChapter(ActivityReader.this, result);
+                    DownloadPoolService.addChapterDownloadPool(ActivityReader.this, result, true);
+                    loadChapter(result);
+                }catch (Exception e){
+                    Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
             super.onPostExecute(result);
         }

@@ -539,19 +539,23 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 if (error != null && error.length() > 1) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 } else {
-                    asyncdialog.dismiss();
-                    Database.updateChapter(getActivity(), result);
-                    DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
-                    int first = mListView.getFirstVisiblePosition();
-                    Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
-                    Intent intent;
-                    if (readerType == 2) {
-                        intent = new Intent(getActivity(), ActivityReader.class);
-                    } else {
-                        intent = new Intent(getActivity(), ActivityPagedReader.class);
+                    try {
+                        asyncdialog.dismiss();
+                        Database.updateChapter(getActivity(), result);
+                        DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
+                        int first = mListView.getFirstVisiblePosition();
+                        Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
+                        Intent intent;
+                        if (readerType == 2) {
+                            intent = new Intent(getActivity(), ActivityReader.class);
+                        } else {
+                            intent = new Intent(getActivity(), ActivityPagedReader.class);
+                        }
+                        intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
+                        MangaFragment.this.startActivity(intent);
+                    }catch (Exception e){
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                     }
-                    intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
-                    MangaFragment.this.startActivity(intent);
                 }
             }
             super.onPostExecute(result);

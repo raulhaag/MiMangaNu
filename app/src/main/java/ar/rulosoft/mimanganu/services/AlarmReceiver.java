@@ -23,12 +23,12 @@ import ar.rulosoft.navegadores.Navegador;
 
 /**
  * Alarm Receiver
- * <p/>
+ *
  * Created by Raul on 09/07/2015.
  */
 public class AlarmReceiver extends BroadcastReceiver {
     private static final String CUSTOM_INTENT_ACTION = "ar.rulosoft.CHECK_UPDATES";
-    private static final String LAST_CHECK = "last_check_update";
+    public static final String LAST_CHECK = "last_check_update";
 
     public static void stopAlarms(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -49,6 +49,8 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        if(MainActivity.mContext != null)
+            MainActivity.mContext = context;
         SearchUpdates su = new SearchUpdates();
         su.setContext(context);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);

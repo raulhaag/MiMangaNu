@@ -4,6 +4,8 @@ import android.content.Context;
 
 import com.squareup.okhttp.OkHttpClient;
 
+import ar.rulosoft.mimanganu.Exceptions.NoConnectionException;
+import ar.rulosoft.mimanganu.Exceptions.NoWifiException;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 
 /**
@@ -14,9 +16,9 @@ public class OkHttpClientConnectionChecker extends OkHttpClient {
         super();
         if(!NetworkUtilsAndReciever.isConnected(context)){
             if(NetworkUtilsAndReciever.ONLY_WIFI){
-                throw new Exception("No WIFI connection");
+                throw new NoWifiException(context);
             }else{
-                throw new Exception("No internet connection");
+                throw new NoConnectionException(context);
             }
         }
     }

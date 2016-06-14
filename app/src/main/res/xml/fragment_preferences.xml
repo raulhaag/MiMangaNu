@@ -17,8 +17,8 @@
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="only_wifi"
-            android:summary="..."
-            android:title="Only WIFI" />
+            android:summary="@string/use_only_wifi_subtitle"
+            android:title="@string/use_only_wifi_title" />
         <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="5"
             android:dialogTitle="@string/cantidad_descargas_title"

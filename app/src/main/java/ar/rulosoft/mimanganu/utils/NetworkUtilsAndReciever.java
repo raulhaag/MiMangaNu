@@ -4,11 +4,17 @@ import android.annotation.TargetApi;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+
+import ar.rulosoft.mimanganu.Exceptions.NoConnectionException;
+import ar.rulosoft.mimanganu.Exceptions.NoWifiException;
+import ar.rulosoft.mimanganu.services.AlarmReceiver;
 
 /*
     Base from Yakiv Mospan
@@ -30,6 +36,7 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
                         state = 2;
                     } else {
                         state = 0;
+                        throw new NoWifiException(context);
                     }
                     return result;
                 } else {
@@ -38,13 +45,14 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
                         state = 2;
                     } else {
                         state = 1;
+                        throw new NoConnectionException(context);
                     }
                     return result;
                 }
             case 0:
-                throw new Exception("No WIFI connection");
+                throw new NoWifiException(context);
             case 1:
-                throw new Exception("No internet connection");
+                throw new NoConnectionException(context);
             case 2:
                 return true;
             default:
@@ -92,5 +100,18 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         state = -1;
+        try {
+            if (isConnected(context)) {
+                SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+                long last_check = pm.getLong(AlarmReceiver.LAST_CHECK,0);
+                long current_time = System.currentTimeMillis();
+                long interval = pm.getLong("update_interval", 0);
+                if(interval > 0){
+                    if(interval < current_time - last_check){
+                        new AlarmReceiver().onReceive(context, intent);
+                    }
+                }
+            }
+        } catch (Exception ignore) {}
     }
 }
