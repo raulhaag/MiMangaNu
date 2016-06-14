@@ -46,11 +46,11 @@ public class SearchResultsFragment extends Fragment {
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Manga m = (Manga) list.getAdapter().getItem(position);
+                Manga manga = (Manga) list.getAdapter().getItem(position);
                 Bundle bundle = new Bundle();
                 bundle.putInt(MainFragment.SERVER_ID, serverId);
-                bundle.putString(DetailsFragment.TITLE, m.getTitle());
-                bundle.putString(DetailsFragment.PATH, m.getPath());
+                bundle.putString(DetailsFragment.TITLE, manga.getTitle());
+                bundle.putString(DetailsFragment.PATH, manga.getPath());
                 DetailsFragment detailsFragment = new DetailsFragment();
                 detailsFragment.setArguments(bundle);
                 ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");
