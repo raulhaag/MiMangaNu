@@ -80,14 +80,33 @@ public class SingleDownload implements Runnable {
                     input = response.body().byteStream();
                     output = new FileOutputStream(ot);
                 } catch (FileNotFoundException e) {
-                    changeStatus(Status.ERROR_WRITING_FILE);
-                    retry = 0;
-                    break;
+                    Log.e("MIMANGA DOWNLOAD", "ERROR_WRITING_FILE");
+                    retry--;
+                    if (retry > 0) {
+                        changeStatus(Status.RETRY);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e1) {}
+                        continue;
+                    } else {
+                        changeStatus(Status.ERROR_WRITING_FILE);
+                        break;
+                    }
                 } catch (IOException e) {
-                    changeStatus(Status.ERROR_OPENING_FILE);
-                    retry = 0;
-                    break;
+                    Log.e("MIMANGA DOWNLOAD", "ERROR_OPENING_FILE");
+                    retry--;
+                    if (retry > 0) {
+                        changeStatus(Status.RETRY);
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException e1) {}
+                        continue;
+                    } else {
+                        changeStatus(Status.ERROR_OPENING_FILE);
+                        break;
+                    }
                 }
+
                 try {
                     changeStatus(Status.DOWNLOADING);
                     byte[] buffer = new byte[4096];
@@ -102,6 +121,10 @@ public class SingleDownload implements Runnable {
                     } else {
                         changeStatus(Status.ERROR_TIMEOUT);
                     }
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e1) {}
+                    Log.e("MIMANGA DOWNLOAD", "ERROR_TIMEOUT");
                 } finally {
                     boolean flaggedOk = false;
                     if (status != Status.RETRY) {

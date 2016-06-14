@@ -17,6 +17,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -49,17 +50,19 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener {
+public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ActionMode.Callback {
+
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     public static final String SELECT_MODE = "selector_modo";
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
-    private SharedPreferences pm;
+    private static SharedPreferences pm;
     private Menu menu;
     private FloatingActionButton floatingActionButton_add;
     private boolean is_server_list_open = false;
+    ServerRecAdapter serverRecAdapteradapter;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
@@ -101,7 +104,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onPause() {
         super.onPause();
-        if(is_server_list_open)
+        if (is_server_list_open)
             is_server_list_open = false;
     }
 
@@ -121,7 +124,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.backListener = this;
         activity.keyUpListener = this;
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(activity.colors[1]));
-        if(!is_server_list_open && getView() != null){
+        if (!is_server_list_open && getView() != null) {
             ObjectAnimator anim =
                     ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
             anim.setDuration(0);
@@ -131,20 +134,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onClick(View v) {
-        if (mViewPager.getCurrentItem() == 0) {
-            is_server_list_open = true;
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(v, "rotation", 360.0f, 315.0f);
-            anim.setDuration(200);
-            anim.start();
-            mViewPager.setCurrentItem(1);
-        } else {
-            is_server_list_open = false;
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(v, "rotation", 315.0f, 360.0f);
-            anim.setDuration(200);
-            anim.start();
-            mViewPager.setCurrentItem(0);
+        if (serverRecAdapteradapter.actionMode == null) {
+            if (mViewPager.getCurrentItem() == 0) {
+                is_server_list_open = true;
+                ObjectAnimator anim =
+                        ObjectAnimator.ofFloat(v, "rotation", 360.0f, 315.0f);
+                anim.setDuration(200);
+                anim.start();
+                mViewPager.setCurrentItem(1);
+            } else {
+                is_server_list_open = false;
+                ObjectAnimator anim =
+                        ObjectAnimator.ofFloat(v, "rotation", 315.0f, 360.0f);
+                anim.setDuration(200);
+                anim.start();
+                mViewPager.setCurrentItem(0);
+            }
         }
     }
 
@@ -253,11 +258,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public ViewGroup getServerListView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
-        RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
+        final RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        ServerRecAdapter adapter = new ServerRecAdapter(ServerBase.getServers());
-        server_list.setAdapter(adapter);
-        adapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
+        serverRecAdapteradapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
+        server_list.setAdapter(serverRecAdapteradapter);
+        serverRecAdapteradapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
             public void onServerClick(ServerBase server) {
                 if (!(server instanceof FromFolder)) {
@@ -427,11 +432,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
-                MangaFragment mangaFragment = new MangaFragment();
-                mangaFragment.setArguments(bundle);
-                ((MainActivity) getActivity()).replaceFragment(mangaFragment, "MangaFragment");
+                if (serverRecAdapteradapter.actionMode == null) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
+                    MangaFragment mangaFragment = new MangaFragment();
+                    mangaFragment.setArguments(bundle);
+                    ((MainActivity) getActivity()).replaceFragment(mangaFragment, "MangaFragment");
+                }
             }
         });
         registerForContextMenu(grid);
@@ -459,6 +466,26 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+
     }
 
     public class SectionsPagerAdapter extends PagerAdapter {
@@ -524,7 +551,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         Context context;
         boolean connectionError;
 
-        public UpdateListTask(Context context){
+        public UpdateListTask(Context context) {
             this.context = context;
         }
 
@@ -542,14 +569,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             // Update progress
             if (context != null) {
                 Util.getInstance().changeNotification(mList.size(), ++numNow, mNotifyID, context.getResources().getString(R.string.searching_for_updates), numNow + "/" + mList.size() + " - " +
-                        mList.get(values[0]).getTitle(),true);
+                        mList.get(values[0]).getTitle(), true);
             }
             super.onProgressUpdate(values);
         }
 
         @Override
         protected Integer doInBackground(Void... params) {
-            if(context != null) {
+            if (context != null) {
                 ticket = threads;
                 // Starting searching for new chapters
                 for (int idx = 0; idx < mList.size(); idx++) {

@@ -347,7 +347,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                     if (d.chapter.getPages() == 0) {
                         if (d.status != DownloadStatus.ERROR && d.status != DownloadStatus.PAUSED)
                             try {
-                                ServerBase server = null;
+                                ServerBase server;
                                 Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
                                 server = ServerBase.getServer(m.getServerId());
                                 server.chapterInit(d.chapter);

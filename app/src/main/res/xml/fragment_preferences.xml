@@ -142,7 +142,7 @@
             android:key="reintentos"
             android:summary="@string/cantidad_reintentos_subtitle"
             android:title="@string/cantidad_reintentos_title"
-            app:val_max="10"
+            app:val_max="20"
             app:val_min="0" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"

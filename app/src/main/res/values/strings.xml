@@ -179,4 +179,5 @@
     <string name="new_chapter">New Chapter of %s</string>
     <string name="dir_already_on_db">Directory already added</string>
     <string name="already_on_db">Manga already added</string>
+    <string name="edit_server_list">Edit server list</string>
 </resources>
