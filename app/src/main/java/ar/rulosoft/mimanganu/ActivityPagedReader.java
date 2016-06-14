@@ -528,7 +528,6 @@ public class ActivityPagedReader extends AppCompatActivity
 
     public void onEndDrag() {
         LayoutInflater inflater = getLayoutInflater();
-        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean deleteImages = pm.getBoolean("delete_images", false);
         boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
         if (nextChapter != null) {
@@ -567,37 +566,43 @@ public class ActivityPagedReader extends AppCompatActivity
                         .show();
             }
         } else {
-            View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
-            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
-            checkBox.setChecked(deleteImages);
-            new AlertDialog.Builder(ActivityPagedReader.this)
-                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
-                    .setView(v)
-                    .setIcon(R.drawable.ic_launcher)
-                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            firedMessage = false;
-                            dialog.dismiss();
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean del_images = checkBox.isChecked();
-                            if (pm != null)
-                                pm.edit().putBoolean("delete_images", del_images).apply();
-                            mViewPager.setAdapter(null);
-                            if (del_images) {
-                                mChapter.freeSpace(ActivityPagedReader.this);
-                            }
-                            firedMessage = false;
-                            dialog.dismiss();
-                            onBackPressed();
-                        }
-                    })
-                    .show();
+            displayLastChapterDialog();
         }
+    }
+
+    private void displayLastChapterDialog(){
+        LayoutInflater inflater = getLayoutInflater();
+        boolean deleteImages = pm.getBoolean("delete_images", false);
+        View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
+        final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+        checkBox.setChecked(deleteImages);
+        new AlertDialog.Builder(ActivityPagedReader.this)
+                .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                .setView(v)
+                .setIcon(R.drawable.ic_launcher)
+                .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        firedMessage = false;
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        boolean del_images = checkBox.isChecked();
+                        if (pm != null)
+                            pm.edit().putBoolean("delete_images", del_images).apply();
+                        mViewPager.setAdapter(null);
+                        if (del_images) {
+                            mChapter.freeSpace(ActivityPagedReader.this);
+                        }
+                        firedMessage = false;
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -722,6 +727,8 @@ public class ActivityPagedReader extends AppCompatActivity
                             Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
                         }
                     }
+                } else {
+                    displayLastChapterDialog();
                 }
             }
         }
@@ -751,6 +758,8 @@ public class ActivityPagedReader extends AppCompatActivity
                             Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
                         }
                     }
+                } else {
+                    displayLastChapterDialog();
                 }
             } else if (mDirection.equals(Direction.L2R)) {
                 if (previousChapter != null) {

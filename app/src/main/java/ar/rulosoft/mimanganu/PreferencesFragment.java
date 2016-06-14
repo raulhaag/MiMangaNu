@@ -1,7 +1,9 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Debug;
@@ -153,23 +155,26 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** ignore network detection switch **/
-        final SwitchPreferenceCompat ignoreNetworkDetectionSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("ignore_network_detection");
-        ignoreNetworkDetectionSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        /** network detection switch **/
+        final SwitchPreferenceCompat networkDetectionSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("network_detection");
+        networkDetectionSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                Boolean ignoreNetworkDetection = prefs.getBoolean("ignore_network_detection", false);
-                if(ignoreNetworkDetection) {
-                    SharedPreferences.Editor prefEdit = prefs.edit();
-                    prefEdit.putBoolean("ignore_network_detection", false);
-                    prefEdit.apply();
+                Boolean networkDetection = prefs.getBoolean("network_detection", true);
+                if(networkDetection) {
+                    try {
+                        getActivity().unregisterReceiver(MainActivity.wifiStateChangeReceiver);
+                    } catch (Exception ignore){
+                        ignore.printStackTrace();
+                    }
+                    MainActivity.isConnectedToWifi = true;
                 } else {
-                    SharedPreferences.Editor prefEdit = prefs.edit();
-                    prefEdit.putBoolean("ignore_network_detection", true);
-                    prefEdit.apply();
+                    IntentFilter intentFilter = new IntentFilter();
+                    intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+                    intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+                    getActivity().registerReceiver(MainActivity.wifiStateChangeReceiver, intentFilter);
                 }
-                Util.getInstance().restartApp(getContext());
                 return true;
             }
         });

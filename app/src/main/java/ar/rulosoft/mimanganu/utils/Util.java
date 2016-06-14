@@ -155,7 +155,7 @@ public class Util {
 
     public void createSearchingForUpdatesNotification(Context context, int id) {
         Notification notification;
-        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_UPDATE_CURRENT);
         builder = new NotificationCompat.Builder(context);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
             builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).setProgress(100, 0, false).build();

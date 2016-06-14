@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -58,11 +60,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
-    private static SharedPreferences pm;
+    private SharedPreferences pm;
     private Menu menu;
     private FloatingActionButton floatingActionButton_add;
     private boolean is_server_list_open = false;
-    ServerRecAdapter serverRecAdapteradapter;
+    private ServerRecAdapter serverRecAdapter;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
@@ -134,7 +136,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onClick(View v) {
-        if (serverRecAdapteradapter.actionMode == null) {
+        if (serverRecAdapter.actionMode == null) {
             if (mViewPager.getCurrentItem() == 0) {
                 is_server_list_open = true;
                 ObjectAnimator anim =
@@ -260,9 +262,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
         final RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        serverRecAdapteradapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
-        server_list.setAdapter(serverRecAdapteradapter);
-        serverRecAdapteradapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
+        serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
+        server_list.setAdapter(serverRecAdapter);
+        serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
             public void onServerClick(ServerBase server) {
                 if (!(server instanceof FromFolder)) {
@@ -432,7 +434,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (serverRecAdapteradapter.actionMode == null) {
+                if (serverRecAdapter.actionMode == null) {
                     Bundle bundle = new Bundle();
                     bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
                     MangaFragment mangaFragment = new MangaFragment();
@@ -612,6 +614,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     } else {
                         connectionError = true;
                         Util.getInstance().cancelNotification(mNotifyID);
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeReLayout.setRefreshing(false);
+                            }
+                        });
                     }
                 }
                 // After finishing the loop, wait for all threads to finish their task before ending

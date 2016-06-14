@@ -60,10 +60,10 @@
             android:summary="@string/show_notification_per_new_chapter_subtitle"
             android:title="@string/show_notification_per_new_chapter_title" />
         <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="ignore_network_detection"
-            android:summary="@string/ignore_network_detection_subtitle"
-            android:title="@string/ignore_network_detection_title" />
+            android:defaultValue="true"
+            android:key="network_detection"
+            android:summary="@string/network_detection_subtitle"
+            android:title="@string/network_detection_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_lec">

@@ -31,7 +31,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 
 public class MainActivity extends AppCompatActivity {
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
-    private WifiStateChangeReceiver wifiStateChangeReceiver = new WifiStateChangeReceiver();
+    protected static WifiStateChangeReceiver wifiStateChangeReceiver = new WifiStateChangeReceiver();
     boolean darkTheme;
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        boolean ignoreNetworkDetection = pm.getBoolean("ignore_network_detection", false);
+        boolean networkDetection = pm.getBoolean("network_detection", true);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -54,13 +54,13 @@ public class MainActivity extends AppCompatActivity {
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();
             }
 
-            if(ignoreNetworkDetection) {
-                isConnectedToWifi = true;
-            } else {
+            if(networkDetection) {
                 IntentFilter intentFilter = new IntentFilter();
                 intentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
                 intentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
                 registerReceiver(wifiStateChangeReceiver, intentFilter);
+            } else {
+                isConnectedToWifi = true;
             }
 
             showUpdateDialog();
@@ -151,7 +151,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(wifiStateChangeReceiver);
+        try {
+            unregisterReceiver(wifiStateChangeReceiver);
+        } catch (Exception ignore){
+            ignore.printStackTrace();
+        }
     }
 
     public void setColorToBars() {

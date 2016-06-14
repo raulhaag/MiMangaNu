@@ -590,7 +590,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public void onEndFling() {
         LayoutInflater inflater = getLayoutInflater();
-        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean imagesDelete = pm.getBoolean("delete_images", false);
         boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
         boolean seamlessChapterTransitionDeleteRead = pm.getBoolean("seamless_chapter_transitions_delete_read", false);
