@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
 
     <application
         android:largeHeap="true"
@@ -39,6 +40,12 @@
             android:largeHeap="true"
             android:theme="@style/AppTheme.Dark.NoActionbar" />
         <service android:name=".services.DownloadPoolService" />
+        <receiver android:name=".utils.NetworkUtilsAndReciever" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+            </intent-filter>
+        </receiver>
         <receiver android:name=".services.AlarmReceiver">
             <action android:name="ar.rulosoft.CHECK_UPDATES" />
         </receiver>

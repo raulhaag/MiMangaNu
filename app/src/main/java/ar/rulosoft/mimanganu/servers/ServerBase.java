@@ -342,7 +342,7 @@ public abstract class ServerBase {
         return true;
     }
 
-    Navegador getNavWithHeader() {
+    Navegador getNavWithHeader() throws Exception {
         return new Navegador();
     }
 

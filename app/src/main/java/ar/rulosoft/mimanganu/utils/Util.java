@@ -82,12 +82,6 @@ public class Util {
         return result;
     }
 
-    public boolean isWifiConnected(Context context) {
-        ConnectivityManager connManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo mNetworkInfo = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return mNetworkInfo.isConnected();
-    }
-
     public static ArrayList<String> dirList(String directory) {
         ArrayList<String> list = new ArrayList<>();
         if (directory.length() != 1) {

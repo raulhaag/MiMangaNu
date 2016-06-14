@@ -434,6 +434,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     protected void onResume() {
         super.onResume();
+        MainActivity.mContext = getApplicationContext();
         DownloadPoolService.attachListener(this, mChapter.getId());
         mReader.seekPage(mChapter.getPagesRead() - 1);
     }

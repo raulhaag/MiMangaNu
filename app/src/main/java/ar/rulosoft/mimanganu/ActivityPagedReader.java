@@ -406,6 +406,12 @@ public class ActivityPagedReader extends AppCompatActivity
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        MainActivity.mContext = getApplicationContext();
+    }
+
+    @Override
     protected void onPause() {
         if(mPageAdapter != null) {
             mChapter.setPagesRead(mPageAdapter.currentPage + 1);

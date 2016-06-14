@@ -43,7 +43,7 @@ public class ImageLoader {
         imgThreadPool = Executors.newFixedThreadPool(3);
     }
 
-    public static Navegador initAndGetNavegador() {
+    public static Navegador initAndGetNavegador() throws Exception {
         if (NAVEGADOR == null) NAVEGADOR = new Navegador();
         return NAVEGADOR;
     }

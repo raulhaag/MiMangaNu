@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navegador;
 
 public class MainActivity extends AppCompatActivity {
+    public static Context mContext;
     public int[] colors;
     public ActionBar mActBar;
     boolean darkTheme;
@@ -122,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mContext = getApplicationContext();
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
             Util.getInstance().restartApp(getApplicationContext());
         }

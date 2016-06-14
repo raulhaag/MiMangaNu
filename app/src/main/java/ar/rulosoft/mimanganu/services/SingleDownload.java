@@ -59,7 +59,7 @@ public class SingleDownload implements Runnable {
                 Response response;
                 long contentLength;
                 try {
-                    OkHttpClient client = new Navegador().getHttpClient();
+                    OkHttpClient client = new Navegador(DownloadPoolService.mContext).getHttpClient();
                     if (reference)
                         client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
@@ -106,8 +106,12 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.ERROR_OPENING_FILE);
                         break;
                     }
+                } catch (Exception e) {
+                    retry = 0;
+                    Log.e("MIMANGA DOWNLOAD", "ERROR_CONNECTION " + e.getMessage());
+                    changeStatus(Status.ERROR_CONNECTION);
+                    break;
                 }
-
                 try {
                     changeStatus(Status.DOWNLOADING);
                     byte[] buffer = new byte[4096];

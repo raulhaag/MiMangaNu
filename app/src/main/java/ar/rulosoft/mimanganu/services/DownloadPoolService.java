@@ -31,6 +31,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
             58, 42, 63, 92, 47
     };
     public static int SLOTS = 2;
+    public static Context mContext;
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     public static DownloadsChangesListener mDownloadsChangesListener;
@@ -331,10 +332,11 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private void initPool() {
+        mContext = getApplicationContext();
         Manga manga = null;
         ServerBase s = null;
         String path = "";
-        int lcid = -1;
+        int lcId = -1;
         while (hasDownloadsPending()) {
             if (slots > 0) {
                 slots--;
@@ -374,8 +376,8 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                             dc.status = DownloadStatus.ERROR;
                         }
                     }
-                    if (lcid != dc.chapter.getId()) {
-                        lcid = dc.chapter.getId();
+                    if (lcId != dc.chapter.getId()) {
+                        lcId = dc.chapter.getId();
                         path = generateBasePath(s, manga, dc.chapter, getApplicationContext());
                         new File(path).mkdirs();
                     }

@@ -29,7 +29,9 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.OkHttpClientConnectionChecker;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
@@ -190,6 +192,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+        SwitchPreferenceCompat onlyWifiSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("only_wifi");
+        onlyWifiSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
+                NetworkUtilsAndReciever.state = -1;
+                return false;
+            }
+        });
         setFirstRunDefaults();
     }
 
