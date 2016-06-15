@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
             int mangaIdFromNotification = getIntent().getIntExtra("manga_id", -1);
-
             if (savedInstanceState == null) {
                 MainFragment mainFragment = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();

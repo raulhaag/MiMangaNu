@@ -43,6 +43,7 @@ import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -62,7 +63,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     Menu menu;
     FloatingActionButton floatingActionButton_add;
     boolean is_server_list_open = false;
-    ServerRecAdapter serverRecAdapteradapter;
+    ServerRecAdapter serverRecAdapter;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
@@ -134,7 +135,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onClick(View v) {
-        if (serverRecAdapteradapter.actionMode == null) {
+        if (serverRecAdapter.actionMode == null) {
             if (mViewPager.getCurrentItem() == 0) {
                 is_server_list_open = true;
                 ObjectAnimator anim =
@@ -260,9 +261,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
         final RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        serverRecAdapteradapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
-        server_list.setAdapter(serverRecAdapteradapter);
-        serverRecAdapteradapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
+        serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
+        server_list.setAdapter(serverRecAdapter);
+        serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
             public void onServerClick(ServerBase server) {
                 if (!(server instanceof FromFolder)) {
@@ -393,15 +394,25 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public ViewGroup getMMView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_mis_mangas, container, false);
+        MainActivity mMainActivity = (MainActivity) getActivity();
         grid = (GridView) viewGroup.findViewById(R.id.grilla_mis_mangas);
         swipeReLayout = (SwipeRefreshLayout) viewGroup.findViewById(R.id.str);
+        swipeReLayout.setColorSchemeColors(mMainActivity.colors[0],mMainActivity.colors[1]);
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
-                    newUpdate = new UpdateListTask(getActivity());
-                    newUpdate.execute();
+                try{
+                    if(NetworkUtilsAndReciever.isConnected(getActivity())){
+                        if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
+                            newUpdate = new UpdateListTask(getActivity());
+                            newUpdate.execute();
+                        }
+                    }
+                }catch (Exception e){
+                    Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+                    swipeReLayout.setRefreshing(false);
                 }
+
             }
         });
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -426,7 +437,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (serverRecAdapteradapter.actionMode == null) {
+                if (serverRecAdapter.actionMode == null) {
                     Bundle bundle = new Bundle();
                     bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
                     MangaFragment mangaFragment = new MangaFragment();

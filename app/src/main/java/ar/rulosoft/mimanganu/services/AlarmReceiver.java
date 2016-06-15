@@ -19,16 +19,17 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.navegadores.Navegador;
 
 /**
  * Alarm Receiver
- *
+ * <p/>
  * Created by Raul on 09/07/2015.
  */
 public class AlarmReceiver extends BroadcastReceiver {
-    private static final String CUSTOM_INTENT_ACTION = "ar.rulosoft.CHECK_UPDATES";
     public static final String LAST_CHECK = "last_check_update";
+    private static final String CUSTOM_INTENT_ACTION = "ar.rulosoft.CHECK_UPDATES";
 
     public static void stopAlarms(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -49,16 +50,20 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(MainActivity.mContext != null)
+        if (MainActivity.mContext != null)
             MainActivity.mContext = context;
-        SearchUpdates su = new SearchUpdates();
-        su.setContext(context);
-        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-        Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
-        pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-        su.setSound(pm.getBoolean("update_sound", false));
-        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
-        su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
+        try {
+            if (NetworkUtilsAndReciever.isConnected(context)) {
+                SearchUpdates su = new SearchUpdates();
+                su.setContext(context);
+                SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+                Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
+                pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
+                su.setSound(pm.getBoolean("update_sound", false));
+                int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
+                su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
+            }
+        } catch (Exception ignore) {}//next time on connection go to update
     }
 
 
