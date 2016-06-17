@@ -1,7 +1,5 @@
 package ar.rulosoft.navegadores;
 
-import android.content.Context;
-
 import com.squareup.okhttp.*;
 
 import java.io.IOException;

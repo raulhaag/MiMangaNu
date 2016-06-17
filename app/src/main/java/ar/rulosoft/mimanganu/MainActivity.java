@@ -2,8 +2,9 @@ package ar.rulosoft.mimanganu;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
@@ -17,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.Toast;
@@ -51,18 +53,25 @@ public class MainActivity extends AppCompatActivity {
                 MainFragment mainFragment = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();
             }
-
-            if (mangaIdFromNotification > -1) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
-                MangaFragment mangaFragment = new MangaFragment();
-                mangaFragment.setArguments(bundle);
-                replaceFragment(mangaFragment, "MangaFragment");
-            }
             showUpdateDialog();
         } else {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
+        }
+        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, pm);
+    }
+
+    @Override
+    protected void onNewIntent (Intent intent){
+        int mangaIdFromNotification = intent.getIntExtra("manga_id", -1);
+        Log.d("MainActivity", "mangaID: " + mangaIdFromNotification);
+
+        if (mangaIdFromNotification > -1) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
+            MangaFragment mangaFragment = new MangaFragment();
+            mangaFragment.setArguments(bundle);
+            replaceFragment(mangaFragment, "MangaFragment");
         }
         new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,pm);
     }

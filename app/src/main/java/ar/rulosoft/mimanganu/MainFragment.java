@@ -69,7 +69,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private GridView grid;
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
-    private UpdateListTask newUpdate;
+    private UpdateListTask updateListTask;
     private int mNotifyID = 1246502;
 
     @Nullable
@@ -370,21 +370,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Manga m = (Manga) grid.getAdapter().getItem(info.position);
+        Manga manga = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.delete) {
-            DownloadPoolService.forceStop(m.getId());
-            ServerBase s = ServerBase.getServer(m.getServerId());
-            String path = DownloadPoolService.generateBasePath(s, m, getActivity());
+            DownloadPoolService.forceStop(manga.getId());
+            ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+            String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
             Util.getInstance().deleteRecursive(new File(path));
-            Database.deleteManga(getActivity(), m.getId());
-            adapter.remove(m);
+            Database.deleteManga(getActivity(), manga.getId());
+            adapter.remove(manga);
+            Util.getInstance().toast(getActivity(), getResources().getString(R.string.deleted, manga.getTitle()));
         } else if (item.getItemId() == R.id.noupdate) {
-            if (m.isFinished()) {
-                m.setFinished(false);
-                Database.setUpgradable(getActivity(), m.getId(), false);
+            if (manga.isFinished()) {
+                manga.setFinished(false);
+                Database.setUpgradable(getActivity(), manga.getId(), false);
             } else {
-                m.setFinished(true);
-                Database.setUpgradable(getActivity(), m.getId(), true);
+                manga.setFinished(true);
+                Database.setUpgradable(getActivity(), manga.getId(), true);
             }
         }
         return super.onContextItemSelected(item);
@@ -426,7 +427,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         else if (columnas > 6)
             columnas = 6;
         grid.setNumColumns(columnas);
-        if (newUpdate != null && newUpdate.getStatus() == AsyncTask.Status.RUNNING) {
+        if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
             swipeReLayout.post(new Runnable() {
                 @Override
                 public void run() {

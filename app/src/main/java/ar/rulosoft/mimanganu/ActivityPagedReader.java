@@ -59,6 +59,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
@@ -320,6 +321,7 @@ public class ActivityPagedReader extends AppCompatActivity
                 if(pm.getBoolean("download_next_chapter_automatically", false)) {
                     try {
                         DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                        Util.getInstance().toast(this, "Downloading: " + nextChapter.getTitle());
                     } catch (Exception e) {
                         Log.e("ServB", "Download add pool error", e);
                     }
@@ -532,7 +534,6 @@ public class ActivityPagedReader extends AppCompatActivity
 
     public void onEndDrag() {
         LayoutInflater inflater = getLayoutInflater();
-        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         boolean deleteImages = pm.getBoolean("delete_images", false);
         boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
         if (nextChapter != null) {
@@ -571,37 +572,43 @@ public class ActivityPagedReader extends AppCompatActivity
                         .show();
             }
         } else {
-            View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
-            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
-            checkBox.setChecked(deleteImages);
-            new AlertDialog.Builder(ActivityPagedReader.this)
-                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
-                    .setView(v)
-                    .setIcon(R.drawable.ic_launcher)
-                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            firedMessage = false;
-                            dialog.dismiss();
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean del_images = checkBox.isChecked();
-                            if (pm != null)
-                                pm.edit().putBoolean("delete_images", del_images).apply();
-                            mViewPager.setAdapter(null);
-                            if (del_images) {
-                                mChapter.freeSpace(ActivityPagedReader.this);
-                            }
-                            firedMessage = false;
-                            dialog.dismiss();
-                            onBackPressed();
-                        }
-                    })
-                    .show();
+            displayLastChapterDialog();
         }
+    }
+
+    private void displayLastChapterDialog(){
+        LayoutInflater inflater = getLayoutInflater();
+        boolean deleteImages = pm.getBoolean("delete_images", false);
+        View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
+        final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+        checkBox.setChecked(deleteImages);
+        new AlertDialog.Builder(ActivityPagedReader.this)
+                .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                .setView(v)
+                .setIcon(R.drawable.ic_launcher)
+                .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        firedMessage = false;
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        boolean del_images = checkBox.isChecked();
+                        if (pm != null)
+                            pm.edit().putBoolean("delete_images", del_images).apply();
+                        mViewPager.setAdapter(null);
+                        if (del_images) {
+                            mChapter.freeSpace(ActivityPagedReader.this);
+                        }
+                        firedMessage = false;
+                        dialog.dismiss();
+                        onBackPressed();
+                    }
+                })
+                .show();
     }
 
     @Override
@@ -699,21 +706,35 @@ public class ActivityPagedReader extends AppCompatActivity
             act--;
 
         if (act == -1) {
+            boolean seamlessChapterTransition;
+            boolean seamlessChapterTransitionDeleteRead;
             if (mDirection.equals(Direction.R2L) || mDirection.equals(Direction.VERTICAL)) {
                 if (previousChapter != null) {
-                    boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+                    seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
                     if (seamlessChapterTransition) {
                         updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
                         setCurrentItem(mChapter.getPagesRead() - 1);
+                        Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                     }
                 }
             } else if (mDirection.equals(Direction.L2R)) {
                 if (nextChapter != null) {
-                    boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+                    seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+                    seamlessChapterTransitionDeleteRead = pm.getBoolean("seamless_chapter_transitions_delete_read", false);
                     if (seamlessChapterTransition) {
+                        Chapter tmpChapter = mChapter;
+
                         updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
                         setCurrentItem(mChapter.getPagesRead() - 1);
+                        Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+
+                        if (seamlessChapterTransitionDeleteRead) {
+                            tmpChapter.freeSpace(ActivityPagedReader.this);
+                            Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
+                        }
                     }
+                } else {
+                    displayLastChapterDialog();
                 }
             }
         }
@@ -725,20 +746,34 @@ public class ActivityPagedReader extends AppCompatActivity
         if (act < mPageAdapter.getCount()) setCurrentItem(++act);
 
         if (mPageAdapter.getCount() == act) {
+            boolean seamlessChapterTransition;
+            boolean seamlessChapterTransitionDeleteRead;
             if (mDirection.equals(Direction.R2L) || mDirection.equals(Direction.VERTICAL)) {
                 if (nextChapter != null) {
-                    boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+                    seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+                    seamlessChapterTransitionDeleteRead = pm.getBoolean("seamless_chapter_transitions_delete_read", false);
                     if (seamlessChapterTransition) {
+                        Chapter tmpChapter = mChapter;
+
                         updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
                         setCurrentItem(mChapter.getPagesRead() - 1);
+                        Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+
+                        if (seamlessChapterTransitionDeleteRead) {
+                            tmpChapter.freeSpace(ActivityPagedReader.this);
+                            Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
+                        }
                     }
+                } else {
+                    displayLastChapterDialog();
                 }
             } else if (mDirection.equals(Direction.L2R)) {
                 if (previousChapter != null) {
-                    boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
+                    seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
                     if (seamlessChapterTransition) {
                         updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
                         setCurrentItem(mChapter.getPagesRead() - 1);
+                        Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                     }
                 }
             }

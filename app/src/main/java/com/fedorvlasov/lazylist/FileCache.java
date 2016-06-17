@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -64,8 +63,9 @@ public class FileCache {
         if (files == null)
             return;
         for (File f : files) {
-            Log.d("FileCache: ","deleting: "+f.getAbsolutePath());
+            //Log.d("FileCache: ", "deleting: " + f.getAbsolutePath());
             f.delete();
         }
     }
+
 }

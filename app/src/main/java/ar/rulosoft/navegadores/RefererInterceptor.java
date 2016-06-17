@@ -1,7 +1,5 @@
 package ar.rulosoft.navegadores;
 
-import android.util.Log;
-
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.Response;
 

@@ -64,6 +64,11 @@
             android:key="show_notification_per_new_chapter"
             android:summary="@string/show_notification_per_new_chapter_subtitle"
             android:title="@string/show_notification_per_new_chapter_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="network_detection"
+            android:summary="@string/network_detection_subtitle"
+            android:title="@string/network_detection_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_lec">
@@ -108,6 +113,11 @@
             android:key="seamless_chapter_transitions"
             android:summary="@string/seamless_chapter_transitions_paged_reader_subtitle"
             android:title="@string/seamless_chapter_transitions_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="seamless_chapter_transitions_delete_read"
+            android:summary="@string/seamless_chapter_transitions_delete_read_subtitle"
+            android:title="@string/seamless_chapter_transitions_delete_read_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_descarga">
@@ -166,6 +176,13 @@
             android:key="reader_bg_col"
             android:summary="@string/color_reader_sub"
             android:title="@string/color_reader" />
+    </android.support.v7.preference.PreferenceCategory>
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/misc_settings">
+        <android.support.v7.preference.Preference
+            android:key="clear_cache"
+            android:summary="@string/clear_cache_subtitle"
+            android:title="@string/clear_cache_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/about">
