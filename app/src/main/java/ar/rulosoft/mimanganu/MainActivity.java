@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     boolean darkTheme;
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
-    private SharedPreferences pm;
+    public static SharedPreferences pm;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
 
     @Override

@@ -404,9 +404,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             public void onRefresh() {
                 try{
                     if(NetworkUtilsAndReciever.isConnected(getActivity())){
-                        if (newUpdate == null || newUpdate.getStatus() == AsyncTask.Status.FINISHED) {
-                            newUpdate = new UpdateListTask(getActivity());
-                            newUpdate.execute();
+                        if (updateListTask == null || updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
+                            updateListTask = new UpdateListTask(getActivity());
+                            updateListTask.execute();
                         }
                     }
                 }catch (Exception e){

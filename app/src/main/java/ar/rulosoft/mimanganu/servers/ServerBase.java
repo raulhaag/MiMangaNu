@@ -71,6 +71,9 @@ public abstract class ServerBase {
             case SUBMANGA:
                 serverBase = new SubManga();
                 break;
+            case ESMANGA:
+                serverBase = new EsManga();
+                break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga();
                 break;
@@ -91,6 +94,12 @@ public abstract class ServerBase {
                 break;
             case TUMANGAONLINE:
                 serverBase = new TuMangaOnline();
+                break;
+            case TUSMANGAS:
+                serverBase = new TusMangasOnlineCom();
+                break;
+            case STARKANACOM:
+                serverBase = new StarkanaCom();
                 break;
             case DENINEMANGA:
                 serverBase = new DeNineManga();
