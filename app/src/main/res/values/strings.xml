@@ -173,15 +173,14 @@
     <string name="misc_settings">Misc Settings</string>
     <string name="seamless_chapter_transitions_delete_read_title">Delete chapter after reading</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">This deletes the current chapter when transitioning to the next chapter</string>
-    <string name="not_connected_to_the_internet">Not connected to the Internet</string>
-    <string name="network_detection_title">Network detection</string>
-    <string name="network_detection_subtitle">Enable this to allow app to know if you are connected to Wifi. App will then cancel the update process if you\'re disconnected from Wifi.</string>
     <string name="new_chapter">New Chapter of %s</string>
     <string name="dir_already_on_db">Directory already added</string>
     <string name="already_on_db">Manga already added</string>
     <string name="edit_server_list">Edit server list</string>
-    <string name="no_wifi_connection">No wifi connection</string>
-    <string name="no_internet_connection">No internet connection</string>
-    <string name="use_only_wifi_title">Use only WIFI</string>
+    <string name="no_wifi_connection">No WiFi connection</string>
+    <string name="no_internet_connection">No Internet connection</string>
+    <string name="use_only_wifi_title">Use only WiFi</string>
     <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
+    <string name="reset_server_list_to_defaults_title">Reset servers to defaults</string>
+    <string name="reset_server_list_to_defaults_subtitle">This will unhide all servers</string>
 </resources>

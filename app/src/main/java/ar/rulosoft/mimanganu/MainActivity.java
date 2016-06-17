@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
@@ -24,12 +23,9 @@ import android.view.KeyEvent;
 import android.view.Window;
 import android.widget.Toast;
 
-import java.util.concurrent.ThreadPoolExecutor;
-
 import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
-import ar.rulosoft.navegadores.Navegador;
 
 public class MainActivity extends AppCompatActivity {
     public static Context mContext;
@@ -49,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
-            int mangaIdFromNotification = getIntent().getIntExtra("manga_id", -1);
             if (savedInstanceState == null) {
                 MainFragment mainFragment = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();
@@ -74,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
             mangaFragment.setArguments(bundle);
             replaceFragment(mangaFragment, "MangaFragment");
         }
-        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,pm);
     }
 
     private void showUpdateDialog(){

@@ -388,7 +388,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     this.direction = Direction.R2L;
                 }
                 mManga.setReadingDirection(this.direction.ordinal());
-                Database.updadeReadOrder(ActivityReader.this, this.direction.ordinal(), mManga.getId());
+                Database.updateReadOrder(ActivityReader.this, this.direction.ordinal(), mManga.getId());
                 setReader();
                 break;
             }

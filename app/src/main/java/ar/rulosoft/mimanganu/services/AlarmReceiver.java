@@ -50,20 +50,21 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (MainActivity.mContext != null)
+        if (context != null)
             MainActivity.mContext = context;
         try {
             if (NetworkUtilsAndReciever.isConnected(context)) {
-                SearchUpdates su = new SearchUpdates();
-                su.setContext(context);
+                SearchUpdates searchUpdates = new SearchUpdates();
+                searchUpdates.setContext(context);
                 SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
                 Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-                su.setSound(pm.getBoolean("update_sound", false));
+                searchUpdates.setSound(pm.getBoolean("update_sound", false));
                 int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
-                su.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
+                searchUpdates.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
             }
-        } catch (Exception ignore) {}//next time on connection go to update
+        } catch (Exception ignore) { //next time on connection go to update
+        }
     }
 
 

@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -59,11 +61,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
-    public static SharedPreferences pm;
-    Menu menu;
-    FloatingActionButton floatingActionButton_add;
-    boolean is_server_list_open = false;
-    ServerRecAdapter serverRecAdapter;
+    private SharedPreferences pm;
+    private Menu menu;
+    private FloatingActionButton floatingActionButton_add;
+    private boolean is_server_list_open = false;
+    private ServerRecAdapter serverRecAdapter;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
@@ -402,18 +404,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                try{
-                    if(NetworkUtilsAndReciever.isConnected(getActivity())){
-                        if (updateListTask == null || updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
-                            updateListTask = new UpdateListTask(getActivity());
-                            updateListTask.execute();
-                        }
+                if (NetworkUtilsAndReciever.isWifiConnected(getActivity()) || NetworkUtilsAndReciever.isMobileConnected(getActivity())) {
+                    if (updateListTask == null || updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
+                        updateListTask = new UpdateListTask(getActivity());
+                        updateListTask.execute();
                     }
-                }catch (Exception e){
-                    Toast.makeText(getActivity(),e.getMessage(),Toast.LENGTH_LONG).show();
+                } else {
+                    Util.getInstance().toast(getActivity(), getString(R.string.no_internet_connection));
                     swipeReLayout.setRefreshing(false);
                 }
-
             }
         });
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -585,34 +584,47 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 ticket = threads;
                 // Starting searching for new chapters
                 for (int idx = 0; idx < mList.size(); idx++) {
-                    final int idxNow = idx;
-                    // If there is no ticket, sleep for 1 second and ask again
-                    while (ticket < 1) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Log.e(TAG, "Update sleep failure", e);
-                        }
-                    }
-                    ticket--;
-                    // If ticked were passed, create new request
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Manga mManga = mList.get(idxNow);
-                            ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
-                            publishProgress(idxNow);
+                    if (NetworkUtilsAndReciever.isWifiConnected(context) || NetworkUtilsAndReciever.isMobileConnected(context)) {
+                        final int idxNow = idx;
+                        // If there is no ticket, sleep for 1 second and ask again
+                        while (ticket < 1) {
                             try {
-                                serverBase.loadChapters(mManga, false);
-                                int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity());
-                                result += diff;
-                            } catch (Exception e) {
-                                Log.e(TAG, "Update server failure", e);
-                            } finally {
-                                ticket++;
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Log.e(TAG, "Update sleep failure", e);
                             }
                         }
-                    }).start();
+                        ticket--;
+                        // If ticked were passed, create new request
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Manga mManga = mList.get(idxNow);
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                publishProgress(idxNow);
+                                try {
+                                    serverBase.loadChapters(mManga, false);
+                                    int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity());
+                                    result += diff;
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Update server failure", e);
+                                } finally {
+                                    ticket++;
+                                }
+                            }
+                        }).start();
+
+                    } else {
+                        Util.getInstance().cancelNotification(mNotifyID);
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                swipeReLayout.setRefreshing(false);
+                            }
+                        });
+                        break;
+                    }
                 }
                 // After finishing the loop, wait for all threads to finish their task before ending
                 while (ticket < threads) {
@@ -630,8 +642,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
             if (context != null) {
-                if (result > 0 && !pm.getBoolean("show_notification_per_new_chapter", false)) {
-                    Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result), false);
+                if (result > 0) {
+                    if (!pm.getBoolean("show_notification_per_new_chapter", false))
+                        Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result), false);
+                    else
+                        Util.getInstance().cancelNotification(mNotifyID);
                     setListManga(true);
                     Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
                 } else {
