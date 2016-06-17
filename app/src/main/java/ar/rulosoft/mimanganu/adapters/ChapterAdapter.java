@@ -14,21 +14,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
-import ar.rulosoft.mimanganu.MangaFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
-import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.mimanganu.utils.Util;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private static int COLOR_READ = Color.parseColor("#b2b2b2");
@@ -135,7 +130,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                                Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG).show();
+                                Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_SHORT).show();
                             }catch (Exception e){
                                 Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
                             }

@@ -368,7 +368,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                     this.mDirection = Direction.R2L;
                 }
                 mManga.setReadingDirection(this.mDirection.ordinal());
-                Database.updadeReadOrder(getActivity(), this.mDirection.ordinal(), mManga.getId());
+                Database.updateReadOrder(getActivity(), this.mDirection.ordinal(), mManga.getId());
                 break;
             }
             case R.id.action_reader:

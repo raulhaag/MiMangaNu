@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseBooleanArray;
@@ -24,14 +23,13 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.ServerViewHolder> implements ActionMode.Callback {
-    SharedPreferences pm;
-    FragmentActivity mActivity;
-    public ActionMode actionMode;
+    private SharedPreferences pm;
+    private FragmentActivity mActivity;
     private OnServerClickListener onServerClickListener;
     private ServerBase[] servers;
     private List<Integer> unused_servers;
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
-
+    public ActionMode actionMode;
 
     public ServerRecAdapter(ServerBase[] serverBases, SharedPreferences pm, FragmentActivity mActivity) {
         this.servers = serverBases;
@@ -98,8 +96,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
                     return false;
                 }
                 actionMode = mActivity.startActionMode(ServerRecAdapter.this);
-                int idx = pos;
-                toggleSelection(idx);
+                toggleSelection(pos);
                 return false;
             }
         });
@@ -116,9 +113,9 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         MenuInflater inflater = mActivity.getMenuInflater();
         inflater.inflate(R.menu.listitem_server_menu_cab, menu);
-        for(Integer sid : unused_servers){
-            for(int i = 0; i < servers.length; i++){
-                if(servers[i].getServerID() == sid){
+        for (Integer sid : unused_servers) {
+            for (int i = 0; i < servers.length; i++) {
+                if (servers[i].getServerID() == sid) {
                     toggleSelection(i);
                     break;
                 }
@@ -136,15 +133,15 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
 
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        if(item.getItemId() == R.id.action_done){
+        if (item.getItemId() == R.id.action_done) {
             unused_servers = new ArrayList<>();
-            for(Integer in :getSelectedItems()){
-                unused_servers.add(servers[in].getServerID());
+            for (Integer i : getSelectedItems()) {
+                unused_servers.add(servers[i].getServerID());
             }
             clearSelections();
             actionMode.finish();
             actionMode = null;
-            pm.edit().putString("unused_servers",intListToString(unused_servers)).apply();
+            pm.edit().putString("unused_servers", intListToString(unused_servers)).apply();
             notifyDataSetChanged();
         }
         return true;

@@ -98,15 +98,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         /** Set summary for Reader preference + seamless chapter transitions summary **/
         // true: Paged Reader; false: Continuous Reader
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         Boolean readType = prefs.getBoolean("reader_type", false);
         Preference reader_type = getPreferenceManager().findPreference("reader_type");
         Preference seamlessChapterTransitionsPref = getPreferenceManager().findPreference("seamless_chapter_transitions");
         if (readType) {
-            reader_type.setSummary("Paged Reader");
+            reader_type.setTitle("Paged Reader");
             seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
         } else {
-            reader_type.setSummary("Continuous Reader");
+            reader_type.setTitle("Continuous Reader");
             seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
         }
         final SwitchPreferenceCompat readerTypePref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("reader_type");
@@ -118,10 +118,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 Preference reader_type = getPreferenceManager().findPreference("reader_type");
                 Preference seamlessChapterTransitions = getPreferenceManager().findPreference("seamless_chapter_transitions");
                 if (!readType) {
-                    reader_type.setSummary("Paged Reader");
+                    reader_type.setTitle("Paged Reader");
                     seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
                 } else {
-                    reader_type.setSummary("Continuous Reader");
+                    reader_type.setTitle("Continuous Reader");
                     seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
                 }
                 return true;
@@ -231,6 +231,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
+
         final Preference prefClearCache = getPreferenceManager().findPreference("clear_cache");
         prefClearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -238,6 +239,18 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 Preference clearCache = getPreferenceManager().findPreference("clear_cache");
                 clearCache.setEnabled(false);
                 new FileCache(getActivity()).clearCache();
+                return true;
+            }
+        });
+
+        final Preference prefResetServersToDefaults = getPreferenceManager().findPreference("reset_server_list_to_defaults");
+        prefResetServersToDefaults.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Preference resetServerListToDefaults = getPreferenceManager().findPreference("reset_server_list_to_defaults");
+                resetServerListToDefaults.setEnabled(false);
+                prefs.edit().putString("unused_servers", "").apply();
+
                 return true;
             }
         });

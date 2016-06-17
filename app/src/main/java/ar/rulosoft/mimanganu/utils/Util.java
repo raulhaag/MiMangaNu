@@ -158,9 +158,9 @@ public class Util {
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_UPDATE_CURRENT);
         builder = new NotificationCompat.Builder(context);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).setProgress(100, 0, false).build();
+            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).setProgress(100, 0, true).build();
         else
-            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setProgress(100, 0, false).build();
+            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setProgress(100, 0, true).build();
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
         notification = builder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
@@ -169,15 +169,29 @@ public class Util {
 
     public void changeNotification(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (ongoing)
-                builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
-            else
-                builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+            if (ongoing) {
+                if (progress == max)
+                    builder.setOngoing(true).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+                else
+                    builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+            } else {
+                if (progress == max)
+                    builder.setOngoing(false).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+                else
+                    builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+            }
         } else {
-            if (ongoing)
-                builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
-            else
-                builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
+            if (ongoing) {
+                if (progress == max)
+                    builder.setOngoing(true).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText);
+                else
+                    builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
+            } else {
+                if (progress == max)
+                    builder.setOngoing(false).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText);
+                else
+                    builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
+            }
         }
         notificationManager.notify(id, builder.build());
     }

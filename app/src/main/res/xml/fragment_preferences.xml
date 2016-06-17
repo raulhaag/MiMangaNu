@@ -70,8 +70,8 @@
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="reader_type"
-            android:summary="..."
-            android:title="Reader" />
+            android:summary=""
+            android:title="..." />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="@string/sentido_lectura"
@@ -178,6 +178,10 @@
             android:key="clear_cache"
             android:summary="@string/clear_cache_subtitle"
             android:title="@string/clear_cache_title" />
+        <android.support.v7.preference.Preference
+            android:key="reset_server_list_to_defaults"
+            android:summary="@string/reset_server_list_to_defaults_subtitle"
+            android:title="@string/reset_server_list_to_defaults_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/about">
