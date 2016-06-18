@@ -194,6 +194,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");
                 break;
             }
+            case R.id.action_edit_server_list:
+                if(mViewPager.getCurrentItem() == 0){
+                    mViewPager.setCurrentItem(1);
+                }
+                serverRecAdapter.startActionMode();
+                break;
             case R.id.sort_last_read: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 0).apply();

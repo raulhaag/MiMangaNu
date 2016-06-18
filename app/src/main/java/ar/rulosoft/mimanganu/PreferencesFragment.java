@@ -225,7 +225,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
-                NetworkUtilsAndReciever.connectionStatus = -1;
+                NetworkUtilsAndReciever.connectionStatus = NetworkUtilsAndReciever.ConnectionStatus.UNCHECKED;
                 return true;
             }
         });

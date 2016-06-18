@@ -92,14 +92,17 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
         sHolder.v.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                if (actionMode != null) {
-                    return false;
-                }
-                actionMode = mActivity.startActionMode(ServerRecAdapter.this);
-                toggleSelection(pos);
-                return false;
+                return startActionMode();
             }
         });
+    }
+
+    public boolean startActionMode(){
+        if (actionMode != null) {
+            return false;
+        }
+        actionMode = mActivity.startActionMode(ServerRecAdapter.this);
+        return false;
     }
 
 

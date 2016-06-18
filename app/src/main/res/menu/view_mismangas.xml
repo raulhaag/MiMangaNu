@@ -56,6 +56,8 @@
                     </group>
                 </menu>
             </item>
+            <item android:id="@+id/action_edit_server_list"
+                android:title="@string/edit_server_list"/>
             <item
                 android:id="@+id/action_settings"
                 android:title="@string/configuraciones" />
