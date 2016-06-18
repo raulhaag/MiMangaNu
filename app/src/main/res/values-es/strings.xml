@@ -147,8 +147,8 @@
     <string name="mgs_update_found">Nuevos capitulos encotrados (%s)</string>
     <string name="delete_on_chapter_change">¿Borrar imagenes?</string>
     <string name="close">Cerrar</string>
-    <string name="sort_number">Ordenar por número de capítulo</string>
-    <string name="sort_number_asc">Ordenar por número de capítulo ASC</string>
+    <string name="sort_number">Ordenar por número de capítulo (9–0)</string>
+    <string name="sort_number_asc">Ordenar por número de capítulo</string>
     <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
     <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
     <string name="no_new_updates_found">No se encontró nuevo capítulo :(</string>
@@ -168,7 +168,7 @@
     <string name="show_notification_per_new_chapter_title">Notificaciones separadas</string>
     <string name="already_on_db">El manga ya estaba agregado</string>
     <string name="dir_already_on_db">El directorio ya estaba agregado</string>
-    <string name="edit_server_list">Editar lista</string>
+    <string name="edit_server_list">Editar lista de servidores</string>
     <string name="connection_settings">Opciones de conección</string>
     <string name="connection_timeout_summary">%s segundos</string>
     <string name="connection_timeout_title">TimeOut de conección</string>
@@ -176,4 +176,12 @@
     <string name="no_wifi_connection">Sin conección WIFI</string>
     <string name="use_only_wifi_subtitle">Para evitar uso de datos</string>
     <string name="use_only_wifi_title">Usar solo WIFI</string>
+    <string name="clear_cache_title">Borrar cache imagenes</string>
+    <string name="clear_cache_subtitle">Borra el cache de covers de los server</string>
+    <string name="deleted">Borrar: %s</string>
+    <string name="seamless_chapter_transitions_delete_read_title">Borrar capítulo despues de leer</string>
+    <string name="seamless_chapter_transitions_delete_read_subtitle">Esto borra el capítulo al pasar al siguiente.</string>
+    <string name="reset_server_list_to_defaults_title">Resetear Lista de servidores</string>
+    <string name="reset_server_list_to_defaults_subtitle">Mostrara todos los servidores escondidos.</string>
+    <string name="misc_settings">Otras Configuraciones</string>
 </resources>

@@ -159,4 +159,27 @@
     <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="seamless_chapter_transitions_paged_reader_subtitle">Press left or right on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="ram_usage">Memory Usage</string>
+    <string name="clear_cache_subtitle">Dies wird den Cache löschen. Beachten Sie, dass alle Cover-Bilder haben wird erneut heruntergeladen werden.</string>
+    <string name="clear_cache_title">Cache leeren</string>
+    <string name="connection_settings">Verbindungseinstellungen</string>
+    <string name="connection_timeout_summary">%s sekunden</string>
+    <string name="connection_timeout_title">Verbindungszeitüberschreitung</string>
+    <string name="deleted">Gelöscht: %s</string>
+    <string name="dir_already_on_db">Verzeichnis bereits hinzugefügt</string>
+    <string name="download_next_chapter_automatically_subtitle">Während nächste Kapitel lesen, werden automatisch heruntergeladen</string>
+    <string name="download_next_chapter_automatically_title">Herunterladen nächstes Kapitel</string>
+    <string name="use_only_wifi_subtitle">Um Datenplanverwendung vermeiden</string>
+    <string name="use_only_wifi_title">Verwenden Sie nur WiFi</string>
+    <string name="show_notification_per_new_chapter_title">Zeigen feinkörnig Benachrichtigungen</string>
+    <string name="show_notification_per_new_chapter_subtitle">Zeigt eine Meldung pro neues Kapitel</string>
+    <string name="seamless_chapter_transitions_delete_read_title">Löschen Kapitel nach dem Lesen</string>
+    <string name="seamless_chapter_transitions_delete_read_subtitle">Dies löscht das aktuelle Kapitel, wenn Sie das nächste Kapitel Übergang</string>
+    <string name="reset_server_list_to_defaults_title">Reset-Serverliste auf die Standardwerte </string>
+    <string name="reset_server_list_to_defaults_subtitle">Dadurch werden alle Server sichtbar machen</string>
+    <string name="no_wifi_connection">Kein WiFi-Verbindung</string>
+    <string name="no_internet_connection">Keine Internetverbindung</string>
+    <string name="new_chapter">Neues Kapitel von %s</string>
+    <string name="misc_settings">Verschiedene Einstellungen</string>
+    <string name="edit_server_list">Serverliste bearbeiten</string>
+    <string name="already_on_db">Manga bereits hinzugefügt</string>
 </resources>
