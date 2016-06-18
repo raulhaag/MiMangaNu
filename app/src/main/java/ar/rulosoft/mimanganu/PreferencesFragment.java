@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -34,7 +33,6 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.Util;
-import ar.rulosoft.navegadores.OkHttpClientConnectionChecker;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
@@ -227,7 +225,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
-                NetworkUtilsAndReciever.state = -1;
+                NetworkUtilsAndReciever.connectionStatus = -1;
                 return true;
             }
         });

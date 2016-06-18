@@ -23,42 +23,66 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 
 public class NetworkUtilsAndReciever extends BroadcastReceiver {
 
-    public static int state = -1; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
+    public static ConnectionStatus connectionStatus = ConnectionStatus.UNCHECKED; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
     public static boolean ONLY_WIFI;
 
     public static boolean isConnected(@NonNull Context context) throws Exception {
         boolean result;
-        switch (state) {
-            case -1:
+        switch (connectionStatus) {
+            case UNCHECKED:
                 if (ONLY_WIFI) {
                     result = isWifiConnected(context);
                     if (result) {
-                        state = 2;
+                        connectionStatus = ConnectionStatus.CONNECTED;
                     } else {
-                        state = 0;
+                        connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
                         throw new NoWifiException(context);
                     }
                     return result;
                 } else {
                     result = _isConnected(context);
                     if (result) {
-                        state = 2;
+                        connectionStatus = ConnectionStatus.CONNECTED;
                     } else {
-                        state = 1;
+                        connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
                         throw new NoConnectionException(context);
                     }
                     return result;
                 }
-            case 0:
+            case NO_WIFI_CONNECTED:
                 throw new NoWifiException(context);
-            case 1:
+            case NO_INET_CONNECTED:
                 throw new NoConnectionException(context);
-            case 2:
+            case CONNECTED:
                 return true;
             default:
                 return true;
         }
     }
+
+    public static ConnectionStatus getConnectionStatus(@NonNull Context context){
+        boolean result;
+            if(connectionStatus == ConnectionStatus.UNCHECKED) {
+                if (ONLY_WIFI) {
+                    result = isWifiConnected(context);
+                    if (result) {
+                        connectionStatus = ConnectionStatus.CONNECTED;
+                    } else {
+                        connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
+                    }
+                } else {
+                    result = _isConnected(context);
+                    if (result) {
+                        connectionStatus = ConnectionStatus.CONNECTED;
+                    } else {
+                        connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
+                    }
+                }
+            }
+            return connectionStatus;
+    }
+
+
 
     public static boolean _isConnected(@NonNull Context context) {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -99,7 +123,7 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        state = -1;
+        connectionStatus = ConnectionStatus.UNCHECKED;
         try {
             if (isConnected(context)) {
                 SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
@@ -114,4 +138,6 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
             }
         } catch (Exception ignore) {}
     }
+
+    public enum ConnectionStatus {UNCHECKED,NO_INET_CONNECTED,NO_WIFI_CONNECTED,CONNECTED}
 }

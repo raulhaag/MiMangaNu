@@ -404,14 +404,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (NetworkUtilsAndReciever.isWifiConnected(getActivity()) || NetworkUtilsAndReciever.isMobileConnected(getActivity())) {
-                    if (updateListTask == null || updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
-                        updateListTask = new UpdateListTask(getActivity());
-                        updateListTask.execute();
-                    }
-                } else {
-                    Util.getInstance().toast(getActivity(), getString(R.string.no_internet_connection));
-                    swipeReLayout.setRefreshing(false);
+                switch (NetworkUtilsAndReciever.getConnectionStatus(getActivity())){
+                    case CONNECTED:
+                        if (updateListTask == null || updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
+                            updateListTask = new UpdateListTask(getActivity());
+                            updateListTask.execute();
+                        }
+                        break;
+                    case NO_INET_CONNECTED:
+                        Util.getInstance().toast(getActivity(), getString(R.string.no_internet_connection));
+                        swipeReLayout.setRefreshing(false);
+                        break;
+                    case NO_WIFI_CONNECTED:
+                        Util.getInstance().toast(getActivity(), getString(R.string.no_wifi_connection));
+                        swipeReLayout.setRefreshing(false);
+                        break;
                 }
             }
         });
