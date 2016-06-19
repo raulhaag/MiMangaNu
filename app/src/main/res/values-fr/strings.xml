@@ -167,7 +167,7 @@
     <string name="dir_already_on_db">Répertoire déjà ajouté</string>
     <string name="download_next_chapter_automatically_subtitle">Le chapitre suivant sera téléchargé automatiquement en lisant</string>
     <string name="download_next_chapter_automatically_title">Télécharger le chapitre suivant</string>
-    <string name="use_only_wifi_subtitle">Pour éviter d'utiliser la data de l\'opérateur</string>
+    <string name="use_only_wifi_subtitle">Pour éviter d\'utiliser la data de l\'opérateur</string>
     <string name="use_only_wifi_title">Utilisez uniquement le WiFi</string>
     <string name="sort_number_asc">Trier par numéro de chapitre</string>
     <string name="sort_number">Trier par numéro de chapitre (9–0)</string>
