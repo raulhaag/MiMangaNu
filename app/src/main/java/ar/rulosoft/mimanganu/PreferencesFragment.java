@@ -101,10 +101,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         Preference reader_type = getPreferenceManager().findPreference("reader_type");
         Preference seamlessChapterTransitionsPref = getPreferenceManager().findPreference("seamless_chapter_transitions");
         if (readType) {
-            reader_type.setTitle("Paged Reader");
+            reader_type.setTitle(getString(R.string.paged_reader));
             seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
         } else {
-            reader_type.setTitle("Continuous Reader");
+            reader_type.setTitle(getString(R.string.continuous_reader));
             seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
         }
         final SwitchPreferenceCompat readerTypePref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("reader_type");
@@ -116,10 +116,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 Preference reader_type = getPreferenceManager().findPreference("reader_type");
                 Preference seamlessChapterTransitions = getPreferenceManager().findPreference("seamless_chapter_transitions");
                 if (!readType) {
-                    reader_type.setTitle("Paged Reader");
+                    reader_type.setTitle(getString(R.string.paged_reader));
                     seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_paged_reader_subtitle));
                 } else {
-                    reader_type.setTitle("Continuous Reader");
+                    reader_type.setTitle(getString(R.string.continuous_reader));
                     seamlessChapterTransitions.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
                 }
                 return true;
