@@ -97,7 +97,7 @@
     <string name="mitlic">Licence MIT et remerciements</string>
     <string name="notification_sound_title">Notification sonore</string>
     <string name="notification_sound_subtitle">Quand un nouveau manga est trouvé</string>
-     <string name="download_selection">Télécharger la sélection</string>
+    <string name="download_selection">Télécharger la sélection</string>
     <string name="theme_title">Utiliser le thème sombre</string>
     <string name="scroll_speed">Vitesse de défilement</string>
     <string name="color_primario_sub">Couleur principale, pour les barres système</string>

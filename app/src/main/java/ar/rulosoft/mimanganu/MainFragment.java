@@ -53,7 +53,7 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ActionMode.Callback {
+public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ServerRecAdapter.OnEndActionModeListener{
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -73,6 +73,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private SwipeRefreshLayout swipeReLayout;
     private UpdateListTask updateListTask;
     private int mNotifyID = 1246502;
+    private boolean returnToMangaList = false;
 
     @Nullable
     @Override
@@ -185,8 +186,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
             case R.id.action_hide_read: {
                 item.setChecked(!item.isChecked());
-                pm.edit().putInt(SELECT_MODE, item.isChecked() ? MODE_HIDE_READ : MODE_SHOW_ALL
-                ).apply();
+                pm.edit().putInt(SELECT_MODE, item.isChecked() ? MODE_HIDE_READ : MODE_SHOW_ALL).apply();
                 setListManga(true);
                 break;
             }
@@ -197,6 +197,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             case R.id.action_edit_server_list:
                 if(mViewPager.getCurrentItem() == 0){
                     mViewPager.setCurrentItem(1);
+                    returnToMangaList = true;
                 }
                 serverRecAdapter.startActionMode();
                 break;
@@ -270,6 +271,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         final RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
         serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
+        serverRecAdapter.setEndActionModeListener(this);
         server_list.setAdapter(serverRecAdapter);
         serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
@@ -487,23 +489,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
     @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-
+    public void onEndActionMode() {
+        if(returnToMangaList){
+            returnToMangaList = false;
+            mViewPager.setCurrentItem(0);
+        }
     }
 
     public class SectionsPagerAdapter extends PagerAdapter {

@@ -30,6 +30,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     private List<Integer> unused_servers;
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
     public ActionMode actionMode;
+    private OnEndActionModeListener endActionModeListener;
 
     public ServerRecAdapter(ServerBase[] serverBases, SharedPreferences pm, FragmentActivity mActivity) {
         this.servers = serverBases;
@@ -154,6 +155,9 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     public void onDestroyActionMode(ActionMode mode) {
         this.actionMode = null;
         clearSelections();
+        if(endActionModeListener != null){
+            endActionModeListener.onEndActionMode();
+        }
     }
 
     public List<Integer> stringToIntList(String sl) {
@@ -201,6 +205,10 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
         return items;
     }
 
+    public void setEndActionModeListener(OnEndActionModeListener endActionModeListener) {
+        this.endActionModeListener = endActionModeListener;
+    }
+
     public interface OnServerClickListener {
         void onServerClick(ServerBase server);
     }
@@ -218,6 +226,10 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
             icon = (ImageView) itemView.findViewById(R.id.server_imagen);
             v = itemView;
         }
+    }
+
+    public interface OnEndActionModeListener{
+        void onEndActionMode();
     }
 
 }
