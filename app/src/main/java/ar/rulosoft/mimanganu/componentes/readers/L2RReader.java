@@ -7,7 +7,7 @@ import android.view.MotionEvent;
 /**
  * Created by Raul on 25/10/2015.
  */
-public class L2RReader extends R2LReader {
+public class L2RReader extends HorizontalReader {
 
     boolean firstTime = true;
     float totalWidth = 0;
