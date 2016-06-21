@@ -83,6 +83,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     private boolean controlVisible = false;
 
+    enum LoadMode {START, END, SAVED}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -197,11 +199,20 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mReader.mScrollSensitive = mScrollFactor;
         mReader.setOnEndFlingListener(this);
         mReader.setOnBeginFlingListener(this);
-        loadChapter(mChapter);
+        loadChapter(mChapter, LoadMode.SAVED);
     }
 
-    private void loadChapter(Chapter nChapter) {
+    private void loadChapter(Chapter nChapter, LoadMode mode) {
         mChapter = nChapter;
+        if (!mChapter.isDownloaded()) {
+            try {
+                DownloadPoolService.addChapterDownloadPool(ActivityReader.this, mChapter, true);
+            } catch (Exception e) {
+                if (e.getMessage() != null) {
+                    Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_SHORT);
+                }
+            }
+        }
         setTitle(mChapter.getTitle());
         if (nChapter.getPages() == 0) {
             new GetPageTask().execute(nChapter);
@@ -271,6 +282,14 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 }
             }
         }
+        switch (mode){
+            case START: mReader.goToPage(1);
+                break;
+            case END: mReader.goToPage(mChapter.getPages());
+                break;
+            case SAVED: mReader.goToPage(mChapter.getPagesRead());
+        }
+
 
         mReader.postInvalidateDelayed(200);
     }
@@ -570,11 +589,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mReader.seekPage(mChapter.getPagesRead() - 1);
     }
 
-    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread) {
+    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread, LoadMode mode) {
         mChapter.setReadStatus(readOrUnread);
         mChapter.setPagesRead(pagesread);
         Database.updateChapter(ActivityReader.this, mChapter);
-        loadChapter(chapter);
+        loadChapter(chapter, mode);
     }
 
     @Override
@@ -583,7 +602,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
             if (seamlessChapterTransition) {
-                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
+                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, LoadMode.END);
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
             }
         }
@@ -615,7 +634,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                                 mChapter.setPagesRead(mChapter.getPages());
                                 Database.updateChapter(ActivityReader.this, mChapter);
                                 Chapter pChapter = mChapter;
-                                loadChapter(nextChapter);
+                                loadChapter(nextChapter, LoadMode.START);
                                 if (del_images) {
                                     pChapter.freeSpace(ActivityReader.this);
                                 }
@@ -624,7 +643,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                         .show();
             } else {
                 Chapter tmpChapter = mChapter;
-                updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
+                updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages(),LoadMode.START);
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                 if (seamlessChapterTransitionDeleteRead) {
                     tmpChapter.freeSpace(ActivityReader.this);
@@ -732,7 +751,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 try {
                     Database.updateChapter(ActivityReader.this, result);
                     DownloadPoolService.addChapterDownloadPool(ActivityReader.this, result, true);
-                    loadChapter(result);
+                    loadChapter(result, LoadMode.SAVED);
                 }catch (Exception e){
                     Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
