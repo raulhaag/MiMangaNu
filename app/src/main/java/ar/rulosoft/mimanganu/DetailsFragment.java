@@ -36,7 +36,6 @@ public class DetailsFragment extends Fragment {
 
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
-
     private static final String TAG = "DetailFragment";
     String title, path;
     int id;

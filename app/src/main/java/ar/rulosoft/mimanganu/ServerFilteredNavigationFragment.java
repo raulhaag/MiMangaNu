@@ -42,7 +42,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
     int serverID;
     private boolean mStart = true;
-    private ServerBase sBase;
+    private ServerBase serverBase;
     private RecyclerView grid;
     private ProgressBar loading;
     private MangaRecAdapterBase mAdapter;
@@ -75,7 +75,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setTitle(getResources()
-                    .getString(R.string.listaen) + " " + sBase.getServerName());
+                    .getString(R.string.listaen) + " " + serverBase.getServerName());
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -85,7 +85,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         }
 
 
-        sBase = ServerBase.getServer(serverID);
+        serverBase = ServerBase.getServer(serverID);
         grid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
 
@@ -95,7 +95,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         float density = getResources().getDisplayMetrics().density;
         float dpWidth = outMetrics.widthPixels / density;
         int columnas = (int) (dpWidth / 150);
-        if (sBase.getFilteredType() == ServerBase.FilteredType.TEXT)
+        if (serverBase.getFilteredType() == ServerBase.FilteredType.TEXT)
             columnas = 1;
         else if (columnas == 0)
             columnas = 2;
@@ -113,14 +113,14 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
     @Override
     public void onRequestedLastItem() {
-        if (sBase.hasMore && !loading.isShown() && !mStart)
+        if (serverBase.hasMore && !loading.isShown() && !mStart)
             new LoadLastTask().execute(page);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + sBase.getServerName());
+        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + serverBase.getServerName());
         ((MainActivity) getActivity()).enableHomeButton(true);
     }
 
@@ -133,7 +133,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     @Override
     public void onMangaClick(Manga manga) {
         Bundle bundle = new Bundle();
-        bundle.putInt(MainFragment.SERVER_ID, sBase.getServerID());
+        bundle.putInt(MainFragment.SERVER_ID, serverBase.getServerID());
         bundle.putString(DetailsFragment.TITLE, manga.getTitle());
         bundle.putString(DetailsFragment.PATH, manga.getPath());
         DetailsFragment detailsFragment = new DetailsFragment();
@@ -146,7 +146,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         inflater.inflate(R.menu.manga_server_visual, menu);
         search = menu.findItem(R.id.action_search);
         MenuItem vcl = menu.findItem(R.id.ver_como_lista);
-        if (!sBase.hasList())
+        if (!serverBase.hasList())
             vcl.setVisible(false);
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
@@ -154,7 +154,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             @Override
             public boolean onQueryTextSubmit(String value) {
                 Bundle bundle = new Bundle();
-                bundle.putInt(MainFragment.SERVER_ID, sBase.getServerID());
+                bundle.putInt(MainFragment.SERVER_ID, serverBase.getServerID());
                 bundle.putString(SearchResultsFragment.TERM, value);
                 SearchResultsFragment searchResultsFragment = new SearchResultsFragment();
                 searchResultsFragment.setArguments(bundle);
@@ -177,13 +177,13 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         } else if (item.getItemId() == R.id.ver_como_lista) {
             ServerListFragment fragment = new ServerListFragment();
             Bundle b = new Bundle();
-            b.putInt(MainFragment.SERVER_ID, sBase.getServerID());
+            b.putInt(MainFragment.SERVER_ID, serverBase.getServerID());
             fragment.setArguments(b);
             ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
         } else if (item.getItemId() == R.id.filter) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.filtrar)
-                    .setItems(sBase.getCategories(), new
+                    .setItems(serverBase.getCategories(), new
                             DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -192,7 +192,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                                         mAdapter = null;
                                         page = 1;
                                         mStart = true;
-                                        sBase.hasMore = true;
+                                        serverBase.hasMore = true;
                                         new LoadLastTask().execute(page);
                                     } else {
                                         newTask = true;
@@ -204,7 +204,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         } else if (item.getItemId() == R.id.sort) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle(R.string.filtrar)
-                    .setItems(sBase.getOrders(), new
+                    .setItems(serverBase.getOrders(), new
                             DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -213,7 +213,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                                         mAdapter = null;
                                         page = 1;
                                         mStart = true;
-                                        sBase.hasMore = true;
+                                        serverBase.hasMore = true;
                                         new LoadLastTask().execute(page);
                                     } else {
                                         newTask = true;
@@ -240,7 +240,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
             try {
-                mangas = sBase.getMangasFiltered(filter, order, params[0]);
+                mangas = serverBase.getMangasFiltered(filter, order, params[0]);
             } catch (Exception e) {
                 error = e.getMessage();
             }
@@ -256,7 +256,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                 if (result != null && result.size() != 0 && grid != null) {
                     if(isAdded()) {
                         if (mAdapter == null) {
-                            if (sBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
+                            if (serverBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
                                 mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
                             } else {
                                 mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
@@ -274,7 +274,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                     mAdapter = null;
                     page = 1;
                     mStart = true;
-                    sBase.hasMore = true;
+                    serverBase.hasMore = true;
                     new LoadLastTask().execute(page);
                     newTask = false;
                 }
