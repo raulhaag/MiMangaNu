@@ -623,16 +623,15 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                         .show();
             } else {
                 Chapter tmpChapter = mChapter;
-
                 updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
-
                 if (seamlessChapterTransitionDeleteRead) {
                     tmpChapter.freeSpace(ActivityReader.this);
                     Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
                 }
             }
         } else {
+            final Chapter tmpChapter = mChapter;
             View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
@@ -653,7 +652,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             if (pm != null)
                                 pm.edit().putBoolean("delete_images", del_images).apply();
                             if (del_images) {
-                                mChapter.freeSpace(ActivityReader.this);
+                                tmpChapter.freeSpace(ActivityReader.this);
                             }
                             dialog.dismiss();
                             onBackPressed();

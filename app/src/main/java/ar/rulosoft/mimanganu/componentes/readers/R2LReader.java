@@ -196,8 +196,10 @@ public class R2LReader extends Reader {
         //Log.d("R2LRe",""+e1.getX()+" "+e2.getX()+" xS: "+xScroll+" yS: "+yScroll);
         if (mOnEndFlingListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
             mOnEndFlingListener.onEndFling();
-        } else if (mOnBeginFlingListener != null && xScroll < 0.1) {
+            return true;
+        } else if (mOnBeginFlingListener != null && e2.getX() - e1.getX() > 100 && (xScroll < 0.1)) {
             mOnBeginFlingListener.onBeginFling();
+            return true;
         }
         return super.onFling(e1, e2, velocityX, velocityY);
     }
