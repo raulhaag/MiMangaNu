@@ -272,6 +272,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             }
         }
 
+        mReader.invalidate();
+        mReader.invalidate();//two times are needed -\(-_-)/-
     }
 
     private void modScrollSensitive(float diff) {
