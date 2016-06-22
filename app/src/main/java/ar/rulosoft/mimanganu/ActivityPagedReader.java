@@ -277,7 +277,7 @@ public class ActivityPagedReader extends AppCompatActivity
                 DownloadPoolService.addChapterDownloadPool(ActivityPagedReader.this, mChapter, true);
             } catch (Exception e) {
                 if (e.getMessage() != null) {
-                    Toast.makeText(ActivityPagedReader.this, e.getMessage(), Toast.LENGTH_SHORT);
+                    Toast.makeText(ActivityPagedReader.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -348,7 +348,6 @@ public class ActivityPagedReader extends AppCompatActivity
             case SAVED:
                 setCurrentItem(mChapter.getPagesRead());
         }
-
 
     }
 

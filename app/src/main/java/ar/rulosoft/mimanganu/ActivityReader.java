@@ -209,7 +209,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 DownloadPoolService.addChapterDownloadPool(ActivityReader.this, mChapter, true);
             } catch (Exception e) {
                 if (e.getMessage() != null) {
-                    Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_SHORT);
+                    Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
