@@ -19,7 +19,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.ActionMode;
 import android.view.ContextMenu;
 import android.view.Display;
 import android.view.KeyEvent;

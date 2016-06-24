@@ -72,6 +72,13 @@ public class SearchResultsFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        ServerBase serverBase = ServerBase.getServer(serverId);
+        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + serverBase.getServerName());
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
         performSearchTask.cancel(true);

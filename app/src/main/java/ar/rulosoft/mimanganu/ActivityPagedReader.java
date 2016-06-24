@@ -267,11 +267,20 @@ public class ActivityPagedReader extends AppCompatActivity
                 return false;
             }
         });
-        loadChapter(mChapter);
+        loadChapter(mChapter, ActivityReader.LoadMode.SAVED);
     }
 
-    public void loadChapter(Chapter nChapter) {
+    public void loadChapter(Chapter nChapter, ActivityReader.LoadMode mode) {
         mChapter = nChapter;
+        if (!mChapter.isDownloaded()) {
+            try {
+                DownloadPoolService.addChapterDownloadPool(ActivityPagedReader.this, mChapter, true);
+            } catch (Exception e) {
+                if (e.getMessage() != null) {
+                    Toast.makeText(ActivityPagedReader.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
         setTitle(mChapter.getTitle());
         if (nChapter.getPages() == 0) {
             new GetPageTask().execute(nChapter);
@@ -317,8 +326,8 @@ public class ActivityPagedReader extends AppCompatActivity
         }
 
         if (nextChapter != null) {
-            if(!nextChapter.isDownloaded()) {
-                if(pm.getBoolean("download_next_chapter_automatically", false)) {
+            if (!nextChapter.isDownloaded()) {
+                if (pm.getBoolean("download_next_chapter_automatically", false)) {
                     try {
                         DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
                         Util.getInstance().toast(this, "Downloading: " + nextChapter.getTitle());
@@ -327,6 +336,17 @@ public class ActivityPagedReader extends AppCompatActivity
                     }
                 }
             }
+        }
+
+        switch (mode) {
+            case START:
+                setCurrentItem(0);
+                break;
+            case END:
+                setCurrentItem(mChapter.getPages());
+                break;
+            case SAVED:
+                setCurrentItem(mChapter.getPagesRead());
         }
 
     }
@@ -415,7 +435,7 @@ public class ActivityPagedReader extends AppCompatActivity
 
     @Override
     protected void onPause() {
-        if(mPageAdapter != null) {
+        if (mPageAdapter != null) {
             mChapter.setPagesRead(mPageAdapter.currentPage + 1);
         }
         Database.updateChapterPage(ActivityPagedReader.this, mChapter.getId(), mChapter.getPagesRead());
@@ -562,7 +582,7 @@ public class ActivityPagedReader extends AppCompatActivity
                                 mChapter.setPagesRead(mChapter.getPages());
                                 Database.updateChapter(ActivityPagedReader.this, mChapter);
                                 Chapter pChapter = mChapter;
-                                loadChapter(nextChapter);
+                                loadChapter(nextChapter, ActivityReader.LoadMode.START);
                                 if (del_images) {
                                     pChapter.freeSpace(ActivityPagedReader.this);
                                 }
@@ -576,7 +596,7 @@ public class ActivityPagedReader extends AppCompatActivity
         }
     }
 
-    private void displayLastChapterDialog(){
+    private void displayLastChapterDialog() {
         LayoutInflater inflater = getLayoutInflater();
         boolean deleteImages = pm.getBoolean("delete_images", false);
         View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
@@ -687,11 +707,11 @@ public class ActivityPagedReader extends AppCompatActivity
         }
     }
 
-    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread) {
+    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesRead, ActivityReader.LoadMode mode) {
         mChapter.setReadStatus(readOrUnread);
-        mChapter.setPagesRead(pagesread);
+        mChapter.setPagesRead(pagesRead);
         Database.updateChapter(ActivityPagedReader.this, mChapter);
-        loadChapter(chapter);
+        loadChapter(chapter, mode);
         firedMessage = false;
         if (!chapter.isDownloaded())
             mPageAdapter.notifyDataSetChanged();
@@ -712,7 +732,7 @@ public class ActivityPagedReader extends AppCompatActivity
                 if (previousChapter != null) {
                     seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
                     if (seamlessChapterTransition) {
-                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
+                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, ActivityReader.LoadMode.START);
                         setCurrentItem(mChapter.getPagesRead() - 1);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                     }
@@ -724,7 +744,7 @@ public class ActivityPagedReader extends AppCompatActivity
                     if (seamlessChapterTransition) {
                         Chapter tmpChapter = mChapter;
 
-                        updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
+                        updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages(), ActivityReader.LoadMode.START);
                         setCurrentItem(mChapter.getPagesRead() - 1);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
 
@@ -755,7 +775,7 @@ public class ActivityPagedReader extends AppCompatActivity
                     if (seamlessChapterTransition) {
                         Chapter tmpChapter = mChapter;
 
-                        updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages());
+                        updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages(), ActivityReader.LoadMode.START);
                         setCurrentItem(mChapter.getPagesRead() - 1);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
 
@@ -771,7 +791,7 @@ public class ActivityPagedReader extends AppCompatActivity
                 if (previousChapter != null) {
                     seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
                     if (seamlessChapterTransition) {
-                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0);
+                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, ActivityReader.LoadMode.END);
                         setCurrentItem(mChapter.getPagesRead() - 1);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                     }
@@ -1037,12 +1057,13 @@ public class ActivityPagedReader extends AppCompatActivity
             } else {
                 Context context = ActivityPagedReader.this;
                 page = new Page(context);
-                if(!(mServerBase instanceof FromFolder)) {
+                if (!(mServerBase instanceof FromFolder)) {
                     page.setImage(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (position + 1) + ".jpg");
-                }else{
+                } else {
                     try {
-                        page.setImage(mServerBase.getImageFrom(mChapter,position));
-                    } catch (Exception ignore) {}
+                        page.setImage(mServerBase.getImageFrom(mChapter, position));
+                    } catch (Exception ignore) {
+                    }
                 }
                 container.addView(page, 0);
                 page.index = position;
@@ -1122,8 +1143,8 @@ public class ActivityPagedReader extends AppCompatActivity
                     Database.updateChapter(ActivityPagedReader.this, result);
                     DownloadPoolService.addChapterDownloadPool(ActivityPagedReader.this, result, true);
                     DownloadPoolService.setDownloadListener(ActivityPagedReader.this);
-                    loadChapter(result);
-                }catch (Exception e){
+                    loadChapter(result, ActivityReader.LoadMode.SAVED);
+                } catch (Exception e) {
                     Toast.makeText(ActivityPagedReader.this, e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }

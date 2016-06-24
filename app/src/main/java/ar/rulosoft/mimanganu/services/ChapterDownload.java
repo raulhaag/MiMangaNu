@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.services;
 
+import android.util.Log;
+
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.services.SingleDownload.Status;
@@ -39,10 +41,14 @@ public class ChapterDownload implements StateChangeListener {
                 j = -11;
             } else if (progress < chapter.getPages()) {
                 for (int i = 0; i < chapter.getPages(); i++) {
-                    if (pagesStatus[i] == Status.QUEUED || pagesStatus[i] == Status.POSTPONED) {
-                        pagesStatus[i] = Status.INIT;
-                        j = i;
-                        break;
+                    if (pagesStatus.length > i) {
+                        if (pagesStatus[i] == Status.QUEUED || pagesStatus[i] == Status.POSTPONED) {
+                            pagesStatus[i] = Status.INIT;
+                            j = i;
+                            break;
+                        }
+                    } else {
+                        Log.e("ChapterDownload", "i is too large! pagesStatus.length: " + pagesStatus.length + " i: " + i);
                     }
                 }
             }
