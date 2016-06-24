@@ -59,7 +59,6 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     Handler mHandler;
     ArrayList<Page.Segment> toDraw = new ArrayList<>();
     boolean drawing = false, preparing = false, waiting = false;
-    boolean downloading = false;
 
     float ppi;
 
@@ -79,9 +78,9 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         init(context);
     }
 
-    public abstract void absoluteScroll(float x, float y);
+    protected abstract void absoluteScroll(float x, float y);
 
-    public abstract void relativeScroll(double distanceX, double distanceY);
+    protected abstract void relativeScroll(double distanceX, double distanceY);
 
     protected abstract void calculateParticularScale();
 
@@ -108,7 +107,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         return pages.get(page - 1);
     }
 
-    public void init(Context context) {
+    private void init(Context context) {
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
         mHandler = new Handler();
@@ -130,7 +129,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         super.onLayout(changed, left, top, right, bottom);
     }
 
-    public void generateDrawPool() {
+    protected void generateDrawPool() {
         if (!preparing) {
             preparing = true;
             new Thread(new Runnable() {
@@ -241,7 +240,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     }
 
     @Override
-    public void onDraw(Canvas canvas) {
+    protected void onDraw(Canvas canvas) {
         waiting = false;
         if (drawing) {
             if (toDraw.size() > 0)
@@ -302,7 +301,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         }
     }
 
-    public Page initValues(String path) {
+    private Page initValues(String path) {
         Page dimension = getNewPage();
         dimension.path = path;
         File f = new File(path);
