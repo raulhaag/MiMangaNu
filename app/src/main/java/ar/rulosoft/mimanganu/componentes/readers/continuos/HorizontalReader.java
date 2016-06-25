@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.componentes.readers;
+package ar.rulosoft.mimanganu.componentes.readers.continuos;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 /**
  * Created by Raul on 21/06/2016.
  */
-public abstract class HorizontalReader extends Reader {
+public abstract class HorizontalReader extends ReaderC {
 
     protected float totalWidth = 0;
 

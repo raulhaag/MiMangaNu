@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.componentes.readers;
+package ar.rulosoft.mimanganu.componentes.readers.continuos;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class VerticalReader extends Reader {
+public class VerticalReader extends ReaderC {
 
     private float totalHeight = 0;
 

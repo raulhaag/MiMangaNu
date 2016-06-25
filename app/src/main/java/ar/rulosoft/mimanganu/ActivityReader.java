@@ -39,10 +39,11 @@ import ar.rulosoft.mimanganu.MangaFragment.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.componentes.readers.L2RReader;
-import ar.rulosoft.mimanganu.componentes.readers.R2LReader;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
-import ar.rulosoft.mimanganu.componentes.readers.VerticalReader;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.L2RReader;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.R2LReader;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.ReaderC;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.VerticalReader;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
@@ -196,7 +197,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mReader.setMaxTexture(mTextureMax);
         mReader.setViewReadyListener(this);
         mReader.setTapListener(this);
-        mReader.mScrollSensitive = mScrollFactor;
+        mReader.setScrollSensitive(mScrollFactor);
         mReader.setOnEndFlingListener(this);
         mReader.setOnBeginFlingListener(this);
         loadChapter(mChapter, LoadMode.SAVED);
@@ -769,8 +770,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         protected void onPreExecute() {
             super.onPreExecute();
             idx = mReader.getCurrentPage();
-            mReader.getPage(idx).freeMemory();
-            path = mReader.getPage(idx).getPath();
+            mReader.freePage(idx);
+            path = mReader.getPath(idx);
             File f = new File(path);
             if (f.exists()) {
                 f.delete();
