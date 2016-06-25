@@ -287,7 +287,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 break;
             case END: mReader.goToPage(mChapter.getPages());
                 break;
-            case SAVED: mReader.goToPage(mChapter.getPagesRead());
         }
 
 

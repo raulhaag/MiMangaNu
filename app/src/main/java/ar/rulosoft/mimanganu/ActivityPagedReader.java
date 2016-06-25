@@ -345,8 +345,6 @@ public class ActivityPagedReader extends AppCompatActivity
             case END:
                 setCurrentItem(mChapter.getPages());
                 break;
-            case SAVED:
-                setCurrentItem(mChapter.getPagesRead());
         }
 
     }
