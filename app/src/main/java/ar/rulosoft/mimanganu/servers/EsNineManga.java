@@ -131,7 +131,7 @@ public class EsNineManga extends ServerBase {
         String source = getNavWithHeader().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
-                "Error al obtener el n�mero de p�ginas");
+                "Error al obtener el número de páginas");
         chapter.setPages(Integer.parseInt(nop));
     }
 

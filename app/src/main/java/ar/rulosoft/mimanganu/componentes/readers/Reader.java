@@ -135,7 +135,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ArrayList<Page.Segment> _segments = new ArrayList<Page.Segment>();
+                    ArrayList<Page.Segment> _segments = new ArrayList<>();
                     if (viewReady) {
                         lastBestVisible = -1;
                         iniVisibility = false;
@@ -343,10 +343,7 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     }
 
     public boolean isLastPageVisible() {
-        if (pages == null)
-            return false;
-        else
-            return pages.get(pages.size() - 1).isVisible();
+        return pages != null && pages.get(pages.size() - 1).isVisible();
     }
 
     public void setScrollSensitive(float mScrollSensitive) {
