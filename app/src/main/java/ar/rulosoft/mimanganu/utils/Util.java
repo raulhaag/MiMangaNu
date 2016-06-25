@@ -174,7 +174,6 @@ public class Util {
             builder.setOngoing(true);
             if (progress == max) {
                 builder.setProgress(max, progress, true);
-                builder.setContentText("Finishing Update ... (TODO)");
             } else {
                 builder.setProgress(max, progress, false);
             }
