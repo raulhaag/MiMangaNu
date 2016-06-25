@@ -398,7 +398,7 @@ public abstract class ServerBase {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra("manga_id", simpleList.get(i).getMangaID());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                Util.getInstance().createSimpleNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getString(R.string.new_chapter, manga.getTitle()), simpleList.get(i).getTitle());
+                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getString(R.string.new_chapter, manga.getTitle()), simpleList.get(i).getTitle());
             }
             return null;
         }

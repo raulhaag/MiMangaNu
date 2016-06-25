@@ -136,11 +136,11 @@ public class Util {
         });
     }
 
-    public void createSimpleNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
+    public void createNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
         Notification notification;
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder = new NotificationCompat.Builder(context);
-        builder.setOngoing(true).setContentTitle(contentTitle).setContentText(contentText).setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).build(); //setProgress(0, 0, isIndeterminate)
+        builder.setOngoing(true).setContentTitle(contentTitle).setContentText(contentText).setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).build();
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
 
         notification = builder.build();
@@ -167,32 +167,23 @@ public class Util {
         notificationManager.notify(id, notification);
     }
 
-    public void changeNotification(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            if (ongoing) {
-                if (progress == max)
-                    builder.setOngoing(true).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
-                else
-                    builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+    public void changeSearchingForUpdatesNotification(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
+        builder.setContentTitle(contentTitle);
+        builder.setContentText(contentText);
+        if (ongoing) {
+            builder.setOngoing(true);
+            if (progress == max) {
+                builder.setProgress(max, progress, true);
+                builder.setContentText("Finishing Update ... (TODO)");
             } else {
-                if (progress == max)
-                    builder.setOngoing(false).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
-                else
-                    builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText).setPriority(Notification.PRIORITY_HIGH);
+                builder.setProgress(max, progress, false);
             }
         } else {
-            if (ongoing) {
-                if (progress == max)
-                    builder.setOngoing(true).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText);
-                else
-                    builder.setOngoing(true).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
-            } else {
-                if (progress == max)
-                    builder.setOngoing(false).setProgress(max, progress, true).setContentTitle(contentTitle).setContentText(contentText);
-                else
-                    builder.setOngoing(false).setProgress(max, progress, false).setContentTitle(contentTitle).setContentText(contentText);
-            }
+            builder.setOngoing(false);
+            builder.setProgress(max, progress, false);
         }
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+            builder.setPriority(Notification.PRIORITY_HIGH);
         notificationManager.notify(id, builder.build());
     }
 

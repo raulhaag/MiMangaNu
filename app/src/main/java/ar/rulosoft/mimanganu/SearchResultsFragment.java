@@ -27,6 +27,8 @@ public class SearchResultsFragment extends Fragment {
     private ProgressBar loading;
     private ListView list;
     private PerformSearchTask performSearchTask;
+    private boolean searchPerformed;
+    private ArrayList<Manga> mangasFromSearch = new ArrayList<>();
 
     @Nullable
     @Override
@@ -54,9 +56,14 @@ public class SearchResultsFragment extends Fragment {
                 DetailsFragment detailsFragment = new DetailsFragment();
                 detailsFragment.setArguments(bundle);
                 ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");
+                searchPerformed = true;
             }
         });
-        performSearchTask = (PerformSearchTask) new PerformSearchTask().execute();
+        if (searchPerformed) {
+            if (list != null)
+                list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mangasFromSearch));
+        } else
+            performSearchTask = (PerformSearchTask) new PerformSearchTask().execute();
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -76,12 +83,15 @@ public class SearchResultsFragment extends Fragment {
         super.onResume();
         ServerBase serverBase = ServerBase.getServer(serverId);
         ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + serverBase.getServerName());
+        if(searchPerformed)
+            loading.setVisibility(ProgressBar.INVISIBLE);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
         performSearchTask.cancel(true);
+        mangasFromSearch.clear();
     }
 
     public class PerformSearchTask extends AsyncTask<Void, Void, ArrayList<Manga>> {
@@ -114,6 +124,9 @@ public class SearchResultsFragment extends Fragment {
                     if (error.length() < 2) {
                         if (result != null && !result.isEmpty() && list != null) {
                             list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, result));
+                            if(!mangasFromSearch.isEmpty())
+                                mangasFromSearch.clear();
+                            mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {
                             Toast.makeText(getActivity(), getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
                         }

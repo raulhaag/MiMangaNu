@@ -139,10 +139,10 @@ public class Chapter {
         deleteImages(context, manga, s);
     }
 
-    private void deleteImages(Context context, Manga manga, ServerBase s) {
+    private void deleteImages(Context context, Manga manga, ServerBase serverBase) {
         String path;
-        if (!(s instanceof FromFolder))
-            path = DownloadPoolService.generateBasePath(s, manga, this, context);
+        if (!(serverBase instanceof FromFolder))
+            path = DownloadPoolService.generateBasePath(serverBase, manga, this, context);
         else
             path = getPath();
         //Util.getInstance().deleteRecursive(new File(path));
