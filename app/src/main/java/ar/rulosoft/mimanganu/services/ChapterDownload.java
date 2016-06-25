@@ -49,6 +49,7 @@ public class ChapterDownload implements StateChangeListener {
                         }
                     } else {
                         Log.e("ChapterDownload", "i is too large! pagesStatus.length: " + pagesStatus.length + " i: " + i);
+                        break;
                     }
                 }
             }
