@@ -27,11 +27,12 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class ServerListFragment extends Fragment {
 
-    int id = -1;
-    private ServerBase s;
+    private int id = -1;
+    private ServerBase serverBase;
     private ListView list;
     private ProgressBar loading;
     private MangaAdapter adapter;
+    private LoadMangasTask loadMangasTask = new LoadMangasTask();
 
     @Nullable
     @Override
@@ -46,11 +47,11 @@ public class ServerListFragment extends Fragment {
         super.onStart();
         if (id == -1)
             id = getArguments().getInt(MainFragment.SERVER_ID);
-        s = ServerBase.getServer(id);
+        serverBase = ServerBase.getServer(id);
         list = (ListView) getView().findViewById(R.id.lista_de_mangas);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
         if (adapter == null) {
-            new LoadMangasTask().execute();
+            loadMangasTask = (LoadMangasTask) new LoadMangasTask().execute();
         } else {
             list.setAdapter(adapter);
             loading.setVisibility(View.INVISIBLE);
@@ -61,7 +62,7 @@ public class ServerListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Manga m = (Manga) list.getAdapter().getItem(position);
                 Bundle bundle = new Bundle();
-                bundle.putInt(MainFragment.SERVER_ID, s.getServerID());
+                bundle.putInt(MainFragment.SERVER_ID, serverBase.getServerID());
                 bundle.putString(DetailsFragment.TITLE, m.getTitle());
                 bundle.putString(DetailsFragment.PATH, m.getPath());
                 DetailsFragment detailsFragment = new DetailsFragment();
@@ -74,7 +75,7 @@ public class ServerListFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + s.getServerName());
+        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + serverBase.getServerName());
         ((MainActivity)getActivity()).enableHomeButton(true);
     }
 
@@ -111,6 +112,12 @@ public class ServerListFragment extends Fragment {
         });
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        loadMangasTask.cancel(true);
+    }
+
     private class LoadMangasTask extends AsyncTask<Void, Void, List<Manga>> {
 
         String error = "";
@@ -125,7 +132,7 @@ public class ServerListFragment extends Fragment {
         protected List<Manga> doInBackground(Void... params) {
             List<Manga> mangas = null;
             try {
-                mangas = s.getMangas();
+                mangas = serverBase.getMangas();
             } catch (Exception e) {
                 if (e.getMessage() != null)
                     error = e.getMessage();
@@ -137,11 +144,11 @@ public class ServerListFragment extends Fragment {
 
         @Override
         protected void onPostExecute(List<Manga> result) {
-            if (list != null && result != null && !result.isEmpty()) {
-                adapter = new MangaAdapter(getActivity(), result, ((MainActivity) getActivity()).darkTheme);
+            if (list != null && result != null && !result.isEmpty() && isAdded()) {
+                adapter = new MangaAdapter(getContext(), result, MainActivity.darkTheme);
                 list.setAdapter(adapter);
             }
-            if (error != null && error.length() > 2) {
+            if (error != null && error.length() > 2 && isAdded()) {
                 Toast.makeText(getActivity(), "Error: " + error, Toast.LENGTH_LONG).show();
             }
             loading.setVisibility(ProgressBar.INVISIBLE);
