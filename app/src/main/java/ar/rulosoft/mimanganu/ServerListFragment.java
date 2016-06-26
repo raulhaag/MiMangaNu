@@ -145,7 +145,7 @@ public class ServerListFragment extends Fragment {
         @Override
         protected void onPostExecute(List<Manga> result) {
             if (list != null && result != null && !result.isEmpty() && isAdded()) {
-                adapter = new MangaAdapter(getContext(), result, MainActivity.darkTheme);
+                adapter = new MangaAdapter(getContext(), result, ((MainActivity) getActivity()).darkTheme);
                 list.setAdapter(adapter);
             }
             if (error != null && error.length() > 2 && isAdded()) {
