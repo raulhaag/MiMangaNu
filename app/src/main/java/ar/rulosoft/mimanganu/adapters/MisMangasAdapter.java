@@ -21,17 +21,17 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 public class MisMangasAdapter extends ArrayAdapter<Manga> {
 
     private static int resource = R.layout.control_tapa_manga;
-    Activity c;
+    Activity activity;
     private ImageLoader imageLoader;
     private boolean darkTheme = false;
     private int darkBackground;
 
-    public MisMangasAdapter(Activity context, List<Manga> objects, boolean darkTheme) {
-        super(context, resource, objects);
+    public MisMangasAdapter(Activity activity, List<Manga> objects, boolean darkTheme) {
+        super(activity, resource, objects);
         this.darkTheme = darkTheme;
-        this.darkBackground = context.getResources().getColor(R.color.background_floating_material_dark);
-        c = context;
-        imageLoader = new ImageLoader(context);
+        this.darkBackground = activity.getResources().getColor(R.color.background_floating_material_dark);
+        this.activity = activity;
+        imageLoader = new ImageLoader(activity);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class MisMangasAdapter extends ArrayAdapter<Manga> {
         View item = convertView;
         ViewHolder holder;
         if (item == null) {
-            LayoutInflater inflater = c.getLayoutInflater();
+            LayoutInflater inflater = activity.getLayoutInflater();
             item = inflater.inflate(resource, null);
             holder = new ViewHolder(item);
             item.setTag(holder);

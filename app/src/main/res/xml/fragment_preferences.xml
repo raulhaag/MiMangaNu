@@ -64,6 +64,11 @@
             android:key="show_notification_per_new_chapter"
             android:summary="@string/show_notification_per_new_chapter_subtitle"
             android:title="@string/show_notification_per_new_chapter_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="include_finished_manga"
+            android:summary="@string/include_finished_manga_subtitle"
+            android:title="@string/include_finished_manga_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_lec">
@@ -113,6 +118,11 @@
             android:key="seamless_chapter_transitions_delete_read"
             android:summary="@string/seamless_chapter_transitions_delete_read_subtitle"
             android:title="@string/seamless_chapter_transitions_delete_read_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="hide_sensitivity_scrollbar"
+            android:summary="@string/hide_sensitivity_scrollbar_subtitle"
+            android:title="@string/hide_sensitivity_scrollbar_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_descarga">

@@ -163,7 +163,7 @@
     <string name="seamless_chapter_transitions_title">Seamless chapter transitions</string>
     <string name="seamless_chapter_transitions_paged_reader_subtitle">Press left or right on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
-    <string name="show_notification_per_new_chapter_title">Show fine grained notifications</string>
+    <string name="show_notification_per_new_chapter_title">Show detailed notifications</string>
     <string name="show_notification_per_new_chapter_subtitle">Shows one notification per new chapter</string>
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
     <string name="download_next_chapter_automatically_subtitle">While reading next chapter will be downloaded automatically</string>
@@ -182,6 +182,13 @@
     <string name="use_only_wifi_title">Use only WiFi</string>
     <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
     <string name="reset_server_list_to_defaults_title">Reset server list to defaults</string>
-    <string name="reset_server_list_to_defaults_subtitle">This will unhide all servers</string>
+    <string name="reset_server_list_to_defaults_subtitle">This will un-hide all servers</string>
     <string name="search_result">Search result for \"%s\" on</string>
+    <string name="downloading">Downloading:</string>
+    <string name="update_search_cancelled">Update search cancelled</string>
+    <string name="finishing_update">Finishing Update &#8230;</string>
+    <string name="include_finished_manga_title">Include Finished Manga</string>
+    <string name="include_finished_manga_subtitle">This will include Manga that are marked as Finished. By default only Ongoing manga are included in the update search</string>
+    <string name="hide_sensitivity_scrollbar_title">Hide sensitivity scrollbar</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">This will hide the sensitivity scrollbar when reading in non-Fullscreen mode</string>
 </resources>

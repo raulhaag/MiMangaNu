@@ -310,17 +310,16 @@ public class Database extends SQLiteOpenHelper {
         return mangas;
     }
 
-    public static Manga getFullManga(Context c, int mangaID) {
-        return getFullManga(c, mangaID, false);
+    public static Manga getFullManga(Context context, int mangaID) {
+        return getFullManga(context, mangaID, false);
     }
 
-    public static Manga getFullManga(Context c, int mangaID, boolean asc) {
+    public static Manga getFullManga(Context context, int mangaID, boolean asc) {
         Manga manga = null;
         try {
-            Manga m = getMangasCondition(c, COL_ID + "=" + mangaID, null, false).get(0);
-            m.setChapters(getChapters(c, mangaID, "1", asc));
-            manga = m;
-        } catch (Exception e) {
+            manga = getMangasCondition(context, COL_ID + "=" + mangaID, null, false).get(0);
+            manga.setChapters(getChapters(context, mangaID, "1", asc));
+        } catch (Exception ignore) {
             // ignore this
         }
         return manga;

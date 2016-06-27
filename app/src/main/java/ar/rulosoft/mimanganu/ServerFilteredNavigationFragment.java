@@ -71,7 +71,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int[] colors = ThemeColors.getColors(pm, getActivity());
+        int[] colors = ThemeColors.getColors(pm);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setTitle(getResources()
@@ -257,9 +257,9 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                     if(isAdded()) {
                         if (mAdapter == null) {
                             if (serverBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
-                                mAdapter = new MangasRecAdapter(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
+                                mAdapter = new MangasRecAdapter(result, getActivity(), MainActivity.darkTheme);
                             } else {
-                                mAdapter = new MangasRecAdapterText(result, getActivity(), ((MainActivity) getActivity()).darkTheme);
+                                mAdapter = new MangasRecAdapterText(result, getActivity(), MainActivity.darkTheme);
                             }
                             mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setMangaClickListener(ServerFilteredNavigationFragment.this);

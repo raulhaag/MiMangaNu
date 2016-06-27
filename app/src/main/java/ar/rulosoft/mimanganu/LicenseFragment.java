@@ -31,7 +31,7 @@ public class LicenseFragment extends Fragment {
         lic = new TextView(getActivity());
         lic.setTextAppearance(getActivity(), android.R.style.TextAppearance_Medium);
         lic.setPadding(10, 10, 10, 10);
-        if (!((MainActivity)getActivity()).darkTheme) {
+        if (!MainActivity.darkTheme) {
             lic.setTextColor(getResources().getColor(black));
         }
         ScrollView newScroll = new ScrollView(getActivity());

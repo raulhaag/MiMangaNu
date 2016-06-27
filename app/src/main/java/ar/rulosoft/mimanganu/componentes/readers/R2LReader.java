@@ -1,9 +1,6 @@
 package ar.rulosoft.mimanganu.componentes.readers;
 
-import android.animation.Animator;
-import android.animation.ValueAnimator;
 import android.content.Context;
-import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 

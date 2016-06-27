@@ -37,14 +37,15 @@ public class DetailsFragment extends Fragment {
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
     private static final String TAG = "DetailFragment";
-    String title, path;
-    int id;
+    private String title, path;
+    private int id;
     private ImageLoader imageLoader;
     private ControlInfo data;
     private SwipeRefreshLayout swipeRefreshLayout;
     private ServerBase serverBase;
     private Manga manga;
-    private FloatingActionButton button_add;
+    private FloatingActionButton floatingActionButton_add;
+    private LoadDetailsTask loadDetailsTask = new LoadDetailsTask();
 
     @Nullable
     @Override
@@ -71,8 +72,8 @@ public class DetailsFragment extends Fragment {
         if (mActBar != null) {
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
-        button_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
-        button_add.setOnClickListener(new OnClickListener() {
+        floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
+        floatingActionButton_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
                 List<Manga> mangas = Database.getMangas(getContext(), null, true);
@@ -84,10 +85,10 @@ public class DetailsFragment extends Fragment {
                 if (!onDb) {
                     new AddMangaTask().execute(manga);
                     AnimatorSet set = new AnimatorSet();
-                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 1.0f, 0.0f);
+                    ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 1.0f, 0.0f);
                     anim1.setDuration(0);
                     DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(button_add, "y", displayMetrics.heightPixels);
+                    ObjectAnimator anim2 = ObjectAnimator.ofFloat(floatingActionButton_add, "y", displayMetrics.heightPixels);
                     anim2.setDuration(500);
                     set.playSequentially(anim2, anim1);
                     set.start();
@@ -96,24 +97,24 @@ public class DetailsFragment extends Fragment {
                 }
             }
         });
+        floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
+        swipeRefreshLayout.setColorSchemeColors(MainActivity.colors[0], MainActivity.colors[1]);
+        data.setColor(MainActivity.darkTheme, MainActivity.colors[0]);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getActivity().getWindow();
+            window.setNavigationBarColor(MainActivity.colors[0]);
+            window.setStatusBarColor(MainActivity.colors[4]);
+        }
         if (getActivity() != null) {
-            button_add.setBackgroundTintList(ColorStateList.valueOf(((MainActivity) getActivity()).colors[1]));
-            swipeRefreshLayout.setColorSchemeColors(((MainActivity) getActivity()).colors[0], ((MainActivity) getActivity()).colors[1]);
-            data.setColor(((MainActivity) getActivity()).darkTheme, ((MainActivity) getActivity()).colors[0]);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                Window window = getActivity().getWindow();
-                window.setNavigationBarColor(((MainActivity) getActivity()).colors[0]);
-                window.setStatusBarColor(((MainActivity) getActivity()).colors[4]);
-            }
-            ((MainActivity)getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
+            ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
         manga = new Manga(id, title, path, false);
         serverBase = ServerBase.getServer(id);
-        imageLoader = new ImageLoader(this.getActivity());
+        imageLoader = new ImageLoader(getContext());
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                new LoadDetailsTask().execute();
+                loadDetailsTask = (LoadDetailsTask) new LoadDetailsTask().execute();
             }
         });
         swipeRefreshLayout.post(new Runnable() {
@@ -122,13 +123,19 @@ public class DetailsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(true);
             }
         });
-        new LoadDetailsTask().execute();
+        loadDetailsTask = (LoadDetailsTask) new LoadDetailsTask().execute();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         ((MainActivity)getActivity()).enableHomeButton(true);
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        loadDetailsTask.cancel(true);
     }
 
     @Override
@@ -189,13 +196,13 @@ public class DetailsFragment extends Fragment {
                         Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                     } else {
                         AnimatorSet set = new AnimatorSet();
-                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(button_add, "alpha", 0.0f, 1.0f);
+                        ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 0.0f, 1.0f);
                         anim1.setDuration(0);
-                        float y = button_add.getY();
+                        float y = floatingActionButton_add.getY();
                         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(button_add, "y", displayMetrics.heightPixels);
+                        ObjectAnimator anim2 = ObjectAnimator.ofFloat(floatingActionButton_add, "y", displayMetrics.heightPixels);
                         anim2.setDuration(0);
-                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(button_add, "y", y);
+                        ObjectAnimator anim3 = ObjectAnimator.ofFloat(floatingActionButton_add, "y", y);
                         anim3.setInterpolator(new AccelerateDecelerateInterpolator());
                         anim3.setDuration(500);
                         set.playSequentially(anim2, anim1, anim3);

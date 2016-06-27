@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu.utils;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 
@@ -18,7 +17,7 @@ public class ThemeColors {
      * [3] pressed
      * [4] dark
      */
-    public static int[] getColors(SharedPreferences sp, Context context) {
+    public static int[] getColors(SharedPreferences sp) {
         int[] colors = new int[5];
         colors[0] = sp.getInt("primario", Color.parseColor("#2A52BE"));
         colors[1] = sp.getInt("secundario", Color.parseColor("#1E90FF"));

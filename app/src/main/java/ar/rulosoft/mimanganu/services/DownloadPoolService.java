@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,7 +33,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
             58, 42, 63, 92, 47
     };
     public static int SLOTS = 2;
-    public static Context mContext;
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     public static DownloadsChangesListener mDownloadsChangesListener;
@@ -46,6 +46,9 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public int slots = SLOTS;
 
     public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception{
+        if(activity == null)
+            Log.d("DPS","null");
+
         if (!chapter.isDownloaded() && NetworkUtilsAndReciever.isConnected(activity)) {
             if (isNewDownload(chapter.getId())) {
                 ChapterDownload dc = new ChapterDownload(chapter);
@@ -156,20 +159,20 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         attachListener(null, cid);
     }
 
-    public static String generateBasePath(ServerBase s, Manga m, Chapter c, Context context) {
+    public static String generateBasePath(ServerBase serverBase, Manga manga, Chapter chapter, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" +
-                cleanFileName(m.getTitle()).trim() + "/" + cleanFileName(c.getTitle()).trim();
+        return dir + "/MiMangaNu/" + cleanFileName(serverBase.getServerName()) + "/" +
+                cleanFileName(manga.getTitle()).trim() + "/" + cleanFileName(chapter.getTitle()).trim();
     }
 
-    public static String generateBasePath(ServerBase s, Manga m, Context context) {
+    public static String generateBasePath(ServerBase serverBase, Manga manga, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()).trim() + "/" +
-                cleanFileName(m.getTitle()).trim();
+        return dir + "/MiMangaNu/" + cleanFileName(serverBase.getServerName()).trim() + "/" +
+                cleanFileName(manga.getTitle()).trim();
     }
 
     private static String cleanFileName(String badFileName) {
@@ -235,7 +238,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void retryError(Context context , Chapter cid, ChapterDownload.OnErrorListener errorListener) {
-
             for (int i = 0; i < chapterDownloads.size(); i++) {
                 ChapterDownload cd = chapterDownloads.get(i);
                 if (cd.status == DownloadStatus.ERROR && cd.getChapter().getId() == cid.getId()) {
@@ -333,7 +335,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private void initPool() {
-        mContext = getApplicationContext();
         Manga manga = null;
         ServerBase s = null;
         String path = "";
