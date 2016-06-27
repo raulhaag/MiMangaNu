@@ -60,8 +60,9 @@ import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
+import it.sephiroth.android.library.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
-import it.sephiroth.android.library.imagezoom.ImageViewTouch.TapListener;
+
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
 import it.sephiroth.android.library.imagezoom.graphics.FastBitmapDrawable;

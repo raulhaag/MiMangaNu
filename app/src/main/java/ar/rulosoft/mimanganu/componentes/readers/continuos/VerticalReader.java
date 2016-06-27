@@ -7,7 +7,7 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-public class VerticalReader extends ReaderC {
+public class VerticalReader extends ReaderContinuous {
 
     private float totalHeight = 0;
 

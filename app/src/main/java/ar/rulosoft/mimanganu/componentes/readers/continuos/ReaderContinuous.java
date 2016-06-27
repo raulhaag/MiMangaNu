@@ -33,8 +33,8 @@ import rapid.decoder.BitmapDecoder;
 /**
  * Created by Raul on 22/10/2015.
  */
-public abstract class ReaderC extends Reader{
-    public float mScrollSensitive = 1.f;
+
+public abstract class ReaderContinuous extends Reader{
     protected int currentPage = 0, lastBestVisible = 0;
     protected float lastPageBestPercent = 0f;
     protected int mTextureMax = 1024;
@@ -59,17 +59,17 @@ public abstract class ReaderC extends Reader{
     float ppi;
 
 
-    public ReaderC(Context context) {
+    public ReaderContinuous(Context context) {
         super(context);
         init(context);
     }
 
-    public ReaderC(Context context, AttributeSet attrs) {
+    public ReaderContinuous(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context);
     }
 
-    public ReaderC(Context context, AttributeSet attrs, int defStyle) {
+    public ReaderContinuous(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init(context);
     }
@@ -112,6 +112,7 @@ public abstract class ReaderC extends Reader{
     }
 
     private void init(Context context) {
+        setWillNotDraw(false);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
         mHandler = new Handler();
@@ -267,7 +268,6 @@ public abstract class ReaderC extends Reader{
         }
     }
 
-
     public void setPaths(List<String> paths) {
         pages = new ArrayList<>();
         for (int i = 0; i < paths.size(); i++) {
@@ -290,8 +290,6 @@ public abstract class ReaderC extends Reader{
 
     public void reloadImage(int idx) {
         if (pages != null) {
-            /*Log.d("Reader", "idx: " + idx);
-            Log.d("Reader", "pages.s: " + pages.size());*/
             if(idx < pages.size()) {
                 int iniPage = getCurrentPage() - 1;
                 Page page = initValues(pages.get(idx).path);

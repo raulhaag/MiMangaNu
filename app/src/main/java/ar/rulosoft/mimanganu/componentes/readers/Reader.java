@@ -4,18 +4,28 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.View;
+import android.widget.LinearLayout;
 
 import java.util.List;
+
+import it.sephiroth.android.library.TapListener;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
 /**
  * Created by Raul on 24/06/2016.
  */
-public abstract class Reader extends View implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
-    protected OnTapListener mTapListener;
+public abstract class Reader extends LinearLayout implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+    protected TapListener mTapListener;
     protected OnEndFlingListener mOnEndFlingListener;
     protected OnBeginFlingListener mOnBeginFlingListener;
     protected OnViewReadyListener mViewReadyListener;
     protected OnPageChangeListener pageChangeListener;
+
+    public enum Direction {VERTICAL, R2L, L2R}
+
+    protected int mTextureMax;
+    protected float mScrollSensitive = 1.f;
+    protected Direction mDirection = Direction.R2L;
 
     public Reader(Context context) {
         super(context);
@@ -40,11 +50,17 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
     public abstract String getPath(int idx);
     public abstract void reloadImage(int idx);
     public abstract boolean isLastPageVisible();
-    public abstract void setScrollSensitive(float mScrollSensitive);
-    public abstract void setMaxTexture(int mTextureMax);
     public abstract int getCurrentPage();
 
-    public void setTapListener(OnTapListener mTapListener) {
+    public void setScrollSensitive(float mScrollSensitive) {
+        this.mScrollSensitive = mScrollSensitive;
+    }
+
+    public void setMaxTexture(int mTextureMax){
+        this.mTextureMax = mTextureMax;
+    }
+
+    public void setTapListener(TapListener mTapListener) {
         this.mTapListener = mTapListener;
     }
 
@@ -64,18 +80,22 @@ public abstract class Reader extends View implements GestureDetector.OnGestureLi
         this.mOnBeginFlingListener = onBeginFlingListener;
     }
 
+    public Direction getDirection() {
+        return mDirection;
+    }
 
+    public void setDirection(Direction direction) {
+        this.mDirection = direction;
+    }
+
+    public boolean hasFitFeature(){
+        return false;
+    }
+
+    public void setScreenFit(DisplayType displayType){}
 
     public interface OnPageChangeListener {
         void onPageChanged(int page);
-    }
-
-    public interface OnTapListener {
-        void onCenterTap();
-
-        void onLeftTap();
-
-        void onRightTap();
     }
 
     public interface OnViewReadyListener {

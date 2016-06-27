@@ -42,8 +42,11 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
 import ar.rulosoft.mimanganu.componentes.readers.continuos.L2RReader;
 import ar.rulosoft.mimanganu.componentes.readers.continuos.R2LReader;
-import ar.rulosoft.mimanganu.componentes.readers.continuos.ReaderC;
 import ar.rulosoft.mimanganu.componentes.readers.continuos.VerticalReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.HorizontalPagedReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.L2RPagedReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.R2LPagedReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.VerticalPagedReader;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
@@ -53,13 +56,17 @@ import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
+import it.sephiroth.android.library.TapListener;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
+import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
-public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, VerticalReader.OnTapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener, VerticalReader.OnBeginFlingListener {
+public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, TapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener, VerticalReader.OnBeginFlingListener {
 
     // These are magic numbers
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
+    private static final String ADJUST_KEY = "ajustar_a";
     private static int mTextureMax;
     public Reader mReader;
     boolean updatedValue = false;//just a flag to no seek when the reader seek
@@ -81,6 +88,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     private TextView mSeekerPage, mScrollSensitiveText;
     private MenuItem keepOnMenuItem, screenRotationMenuItem;
     private Button mButtonMinus, mButtonPlus;
+    private static DisplayType mScreenFit;
+
 
     private boolean controlVisible = false;
 
@@ -98,6 +107,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mManga = Database.getFullManga(this, mChapter.getMangaID());
 
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
         mOrientation = pm.getInt(ORIENTATION, 0);
         mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
@@ -182,19 +192,20 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             mReader.freeMemory();
         }
         if (direction == Direction.R2L) {
-            mReader = new R2LReader(this);
+            mReader = new R2LPagedReader(this);
             mSeekBar.setRotation(0);
         } else if (direction == Direction.L2R) {
-            mReader = new L2RReader(this);
+            mReader = new L2RPagedReader(this);
             mSeekBar.setRotation(180);
         } else {
-            mReader = new VerticalReader(this);
+            mReader = new VerticalPagedReader(this);
             mSeekBar.setRotation(0);
         }
         mReader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         ((FrameLayout) findViewById(R.id.reader_placeholder)).removeAllViews();
         ((FrameLayout) findViewById(R.id.reader_placeholder)).addView(mReader);
         mReader.setMaxTexture(mTextureMax);
+        mReader.setScreenFit(mScreenFit);
         mReader.setViewReadyListener(this);
         mReader.setTapListener(this);
         mReader.setScrollSensitive(mScrollFactor);
