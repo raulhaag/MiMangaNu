@@ -50,8 +50,6 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        if (context != null)
-            MainActivity.mContext = context;
         try {
             if (NetworkUtilsAndReciever.isConnected(context)) {
                 SearchUpdates searchUpdates = new SearchUpdates();

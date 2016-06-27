@@ -182,4 +182,5 @@
     <string name="new_chapter">Новая глава %s</string>
     <string name="misc_settings">Настройки Разное</string>
     <string name="edit_server_list">Редактирование списка серверов</string>
+    <string name="downloading">Скачивание: </string>
 </resources>

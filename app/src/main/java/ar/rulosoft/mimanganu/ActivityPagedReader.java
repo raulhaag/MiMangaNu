@@ -236,6 +236,9 @@ public class ActivityPagedReader extends AppCompatActivity
         mSeekBar.setBackgroundColor(reader_bg);
         mScrollSelect.setBackgroundColor(reader_bg);
 
+        if(pm.getBoolean("hide_sensitivity_scrollbar", false))
+            mScrollSelect.setVisibility(View.INVISIBLE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(reader_bg);
@@ -428,7 +431,6 @@ public class ActivityPagedReader extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        MainActivity.mContext = getApplicationContext();
     }
 
     @Override
@@ -730,8 +732,7 @@ public class ActivityPagedReader extends AppCompatActivity
                 if (previousChapter != null) {
                     seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
                     if (seamlessChapterTransition) {
-                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, ActivityReader.LoadMode.START);
-                        setCurrentItem(mChapter.getPagesRead() - 1);
+                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, ActivityReader.LoadMode.SAVED);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                     }
                 }
@@ -743,7 +744,6 @@ public class ActivityPagedReader extends AppCompatActivity
                         Chapter tmpChapter = mChapter;
 
                         updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages(), ActivityReader.LoadMode.START);
-                        setCurrentItem(mChapter.getPagesRead() - 1);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
 
                         if (seamlessChapterTransitionDeleteRead) {
@@ -774,7 +774,6 @@ public class ActivityPagedReader extends AppCompatActivity
                         Chapter tmpChapter = mChapter;
 
                         updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages(), ActivityReader.LoadMode.START);
-                        setCurrentItem(mChapter.getPagesRead() - 1);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
 
                         if (seamlessChapterTransitionDeleteRead) {
@@ -789,8 +788,7 @@ public class ActivityPagedReader extends AppCompatActivity
                 if (previousChapter != null) {
                     seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
                     if (seamlessChapterTransition) {
-                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, ActivityReader.LoadMode.END);
-                        setCurrentItem(mChapter.getPagesRead() - 1);
+                        updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, ActivityReader.LoadMode.SAVED);
                         Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                     }
                 }

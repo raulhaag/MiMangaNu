@@ -1,7 +1,5 @@
 package ar.rulosoft.navegadores;
 
-import android.content.Context;
-
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
@@ -17,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
-
 /**
  * @author Raul, nulldev, xtj-9182
  */
@@ -29,19 +25,7 @@ public class Navegador {
     private HashMap<String, String> parametros = new HashMap<>();
 
     public Navegador() throws Exception {
-        Context mContext;
-        if(MainActivity.mContext != null){
-            mContext = MainActivity.mContext;
-        }else{
-            throw new Exception("No context reached");
-        }
-        httpClient = new OkHttpClientConnectionChecker(mContext);
-        userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
-        httpClient.networkInterceptors().add(userAgentInterceptor);
-    }
-
-    public Navegador(Context mContext) throws Exception {
-        httpClient = new OkHttpClientConnectionChecker(mContext);
+        httpClient = new OkHttpClientConnectionChecker();
         userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
         httpClient.networkInterceptors().add(userAgentInterceptor);
     }

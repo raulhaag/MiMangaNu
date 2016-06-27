@@ -58,7 +58,7 @@ public class SingleDownload implements Runnable {
                 Response response;
                 long contentLength;
                 try {
-                    OkHttpClient client = new Navegador(DownloadPoolService.mContext).getHttpClient();
+                    OkHttpClient client = new Navegador().getHttpClient();
                     if (reference)
                         client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
                     client.setConnectTimeout(3, TimeUnit.SECONDS);
@@ -80,7 +80,7 @@ public class SingleDownload implements Runnable {
                     input = response.body().byteStream();
                     output = new FileOutputStream(ot);
                 } catch (FileNotFoundException e) {
-                    Log.e("MIMANGA DOWNLOAD", "ERROR_WRITING_FILE");
+                    Log.e("SingleDownload", "ERROR_WRITING_FILE");
                     retry--;
                     if (retry > 0) {
                         changeStatus(Status.RETRY);
@@ -93,7 +93,7 @@ public class SingleDownload implements Runnable {
                         break;
                     }
                 } catch (IOException e) {
-                    Log.e("MIMANGA DOWNLOAD", "ERROR_OPENING_FILE");
+                    Log.e("SingleDownload", "ERROR_OPENING_FILE");
                     retry--;
                     if (retry > 0) {
                         changeStatus(Status.RETRY);
@@ -107,7 +107,8 @@ public class SingleDownload implements Runnable {
                     }
                 } catch (Exception e) {
                     retry = 0;
-                    Log.e("MIMANGA DOWNLOAD", "ERROR_CONNECTION " + e.getMessage());
+                    Log.e("SingleDownload", "ERROR_CONNECTION " + e.getMessage());
+                    e.printStackTrace();
                     changeStatus(Status.ERROR_CONNECTION);
                     break;
                 }
@@ -128,12 +129,12 @@ public class SingleDownload implements Runnable {
                     try {
                         Thread.sleep(3000);
                     } catch (InterruptedException e1) {}
-                    Log.e("MIMANGA DOWNLOAD", "ERROR_TIMEOUT");
+                    Log.e("SingleDownload", "ERROR_TIMEOUT");
                 } finally {
                     boolean flaggedOk = false;
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
-                            Log.e("MIMANGA DOWNLOAD", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
+                            Log.e("SingleDownload", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
                             ot.delete();
                             retry--;
                             changeStatus(Status.RETRY);
@@ -154,7 +155,7 @@ public class SingleDownload implements Runnable {
                                 writeErrorImage(ot);
                                 ot.renameTo(o);
                             }
-                            //  Log.i("MIMANGA DOWNLOAD", "download ok =" + o.getPath());
+                            //  Log.i("SingleDownload", "download ok =" + o.getPath());
                             changeStatus(Status.DOWNLOAD_OK);
                         }
                     } catch (IOException e) {

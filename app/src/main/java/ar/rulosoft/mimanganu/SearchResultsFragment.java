@@ -26,7 +26,7 @@ public class SearchResultsFragment extends Fragment {
     private int serverId;
     private ProgressBar loading;
     private ListView list;
-    private PerformSearchTask performSearchTask;
+    private PerformSearchTask performSearchTask = new PerformSearchTask();
     private boolean searchPerformed;
     private ArrayList<Manga> mangasFromSearch = new ArrayList<>();
 
