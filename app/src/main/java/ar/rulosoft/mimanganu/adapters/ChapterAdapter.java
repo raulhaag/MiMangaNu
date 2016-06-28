@@ -41,12 +41,12 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private ArrayList<Chapter> chapters;
     private boolean can_download;
 
-    public ChapterAdapter(Activity context, ArrayList<Chapter> items, boolean can_download) {
-        super(context, listItem);
-        this.activity = context;
+    public ChapterAdapter(Activity activity, ArrayList<Chapter> items, boolean can_download) {
+        super(activity, listItem);
+        this.activity = activity;
         this.chapters = items;
         this.can_download = can_download;
-        li = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        li = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
     public static void setColor(boolean dark_theme, int colorSelected, int colorReading) {

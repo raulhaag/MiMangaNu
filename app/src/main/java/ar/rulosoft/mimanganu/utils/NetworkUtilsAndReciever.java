@@ -11,9 +11,11 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import ar.rulosoft.mimanganu.Exceptions.NoConnectionException;
 import ar.rulosoft.mimanganu.Exceptions.NoWifiException;
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 
 /*
@@ -23,6 +25,7 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 
 public class NetworkUtilsAndReciever extends BroadcastReceiver {
 
+    public enum ConnectionStatus {UNCHECKED, NO_INET_CONNECTED, NO_WIFI_CONNECTED, CONNECTED}
     public static ConnectionStatus connectionStatus = ConnectionStatus.UNCHECKED; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
     public static boolean ONLY_WIFI;
 
@@ -124,20 +127,29 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         connectionStatus = ConnectionStatus.UNCHECKED;
+
+        if (isWifiConnected(context) || isMobileConnected(context)) {
+            Log.d("NUAR", "onRec Connected");
+            MainActivity.isConnected = true;
+        } else {
+            Log.d("NUAR", "onRec Disconnected");
+            MainActivity.isConnected = false;
+        }
+
         try {
             if (isConnected(context)) {
                 SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-                long last_check = pm.getLong(AlarmReceiver.LAST_CHECK,0);
+                long last_check = pm.getLong(AlarmReceiver.LAST_CHECK, 0);
                 long current_time = System.currentTimeMillis();
                 long interval = pm.getLong("update_interval", 0);
-                if(interval > 0){
-                    if(interval < current_time - last_check){
+                if (interval > 0) {
+                    if (interval < current_time - last_check) {
                         new AlarmReceiver().onReceive(context, intent);
                     }
                 }
             }
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
     }
 
-    public enum ConnectionStatus {UNCHECKED,NO_INET_CONNECTED,NO_WIFI_CONNECTED,CONNECTED}
 }

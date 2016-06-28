@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.io.File;
@@ -32,7 +33,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
             58, 42, 63, 92, 47
     };
     public static int SLOTS = 2;
-    public static Context mContext;
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     public static DownloadsChangesListener mDownloadsChangesListener;
@@ -46,6 +46,9 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public int slots = SLOTS;
 
     public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception{
+        if(activity == null)
+            Log.d("DPS","null");
+
         if (!chapter.isDownloaded() && NetworkUtilsAndReciever.isConnected(activity)) {
             if (isNewDownload(chapter.getId())) {
                 ChapterDownload dc = new ChapterDownload(chapter);
@@ -332,7 +335,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private void initPool() {
-        mContext = getApplicationContext();
         Manga manga = null;
         ServerBase s = null;
         String path = "";

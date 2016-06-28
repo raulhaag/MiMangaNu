@@ -184,4 +184,5 @@
     <string name="reset_server_list_to_defaults_title">Resetear Lista de servidores</string>
     <string name="reset_server_list_to_defaults_subtitle">Mostrara todos los servidores escondidos.</string>
     <string name="misc_settings">Otras Configuraciones</string>
+    <string name="downloading">Descargando: </string>
 </resources>

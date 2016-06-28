@@ -182,4 +182,5 @@
     <string name="misc_settings">Sonstige Einstellungen</string>
     <string name="edit_server_list">Serverliste bearbeiten</string>
     <string name="already_on_db">Manga bereits hinzugefügt</string>
+    <string name="downloading">Lade herunter: </string>
 </resources>

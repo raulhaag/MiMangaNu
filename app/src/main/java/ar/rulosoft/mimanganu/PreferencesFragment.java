@@ -248,7 +248,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 Preference resetServerListToDefaults = getPreferenceManager().findPreference("reset_server_list_to_defaults");
                 resetServerListToDefaults.setEnabled(false);
                 prefs.edit().putString("unused_servers", "").apply();
-
                 return true;
             }
         });
@@ -280,20 +279,17 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         } else if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
             // This is a new install or upgrade
 
-            // set number of manual search threads = number of cores
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_manual");
-
-            // set number of download threads = number of cores
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "download_threads");
+            setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_background");
         }
-        // Update the shared preferences with the current version code
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
     }
 
     private void setNumberOfThreadsToBeEqualToNumberOfCores(int threadsMax, String preference) {
-        int threads;
-        if (Runtime.getRuntime().availableProcessors() <= threadsMax) {
-            threads = Runtime.getRuntime().availableProcessors();
+        int threads, availableProcessors = Runtime.getRuntime().availableProcessors();
+        if (availableProcessors <= threadsMax) {
+            threads = availableProcessors;
         } else {
             threads = threadsMax;
         }

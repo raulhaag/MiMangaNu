@@ -1,7 +1,9 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -51,9 +53,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
     private static final String TAG = "MangaFragment";
-    public SwipeRefreshLayout mSwipeRefreshLayout;
+    public SwipeRefreshLayout swipeReLayout;
     public Manga mManga;
-    SearchForNewsChapters searchTask = new SearchForNewsChapters();
+    private SearchForNewChapters searchForNewChapters = new SearchForNewChapters();
     private Direction mDirection;
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
@@ -64,7 +66,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private int chapters_order; // 0 = db | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc
     private Menu menu;
     private ControlInfoNoScroll mInfo;
-    ServerBase mServerBase;
+    private ServerBase mServerBase;
+    private Activity activity;
 
     @Nullable
     @Override
@@ -90,27 +93,27 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
         if (getView() != null) {
             mListView = (ListView) getView().findViewById(R.id.lista);
-            mSwipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+            swipeReLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         }
         mImageLoader = new ImageLoader(getActivity());
-        int[] colors = ThemeColors.getColors(pm, getActivity());
-        mSwipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
+        int[] colors = ThemeColors.getColors(pm);
+        swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
         if (savedInstanceState != null) {
-            if (searchTask.getStatus() == AsyncTask.Status.RUNNING) {
-                mSwipeRefreshLayout.post(new Runnable() {
+            if (searchForNewChapters.getStatus() == AsyncTask.Status.RUNNING) {
+                swipeReLayout.post(new Runnable() {
                     @Override
                     public void run() {
-                        mSwipeRefreshLayout.setRefreshing(true);
+                        swipeReLayout.setRefreshing(true);
                     }
                 });
             }
         }
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if ((searchTask.getStatus() != AsyncTask.Status.RUNNING)) {
-                    searchTask = new SearchForNewsChapters();
-                    searchTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                if ((searchForNewChapters.getStatus() != AsyncTask.Status.RUNNING)) {
+                    searchForNewChapters = new SearchForNewChapters();
+                    searchForNewChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
         });
@@ -118,8 +121,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         mListView.setDividerHeight(1);
         mInfo = new ControlInfoNoScroll(getActivity());
         mListView.addHeaderView(mInfo);
-        mInfo.setColor(((MainActivity) (getActivity())).darkTheme, colors[0]);
-        ChapterAdapter.setColor(((MainActivity) (getActivity())).darkTheme, colors[1], colors[0]);
+        mInfo.setColor(MainActivity.darkTheme, colors[0]);
+        ChapterAdapter.setColor(MainActivity.darkTheme, colors[1], colors[0]);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -282,7 +285,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             fvi = mListView.getFirstVisiblePosition();
             mChapterAdapter.replaceData(chapters);
         } else {
-            mChapterAdapter = new ChapterAdapter(getActivity(), chapters,!(mServerBase instanceof FromFolder));
+            if(activity != null)
+                mChapterAdapter = new ChapterAdapter(activity, chapters, !(mServerBase instanceof FromFolder));
         }
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
@@ -296,6 +300,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         int first = mListView.getFirstVisiblePosition();
         Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
         super.onPause();
+        if(swipeReLayout != null)
+            swipeReLayout.clearAnimation();
     }
 
     @Override
@@ -460,6 +466,21 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        activity = null;
+        searchForNewChapters.cancel(true);
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_manga, menu);
         mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
@@ -557,9 +578,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    public class SearchForNewsChapters extends AsyncTask<Void, Void, Integer> {
+    public class SearchForNewChapters extends AsyncTask<Void, Void, Integer> {
         boolean running = false;
-        SearchForNewsChapters actual = null;
+        SearchForNewChapters actual = null;
         int mangaId = 0;
         String msg;
         String orgMsg;
@@ -598,7 +619,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             Manga manga = Database.getManga(getActivity(), mangaId);
             loadInfo(manga);
             new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            mSwipeRefreshLayout.setRefreshing(false);
+            swipeReLayout.setRefreshing(false);
             if(isAdded()) {
                 getActivity().setTitle(orgMsg);
             }

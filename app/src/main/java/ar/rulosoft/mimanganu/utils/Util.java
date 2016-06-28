@@ -167,13 +167,14 @@ public class Util {
         notificationManager.notify(id, notification);
     }
 
-    public void changeSearchingForUpdatesNotification(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
+    public void changeSearchingForUpdatesNotification(Context context, int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
         builder.setContentTitle(contentTitle);
         builder.setContentText(contentText);
         if (ongoing) {
             builder.setOngoing(true);
             if (progress == max) {
                 builder.setProgress(max, progress, true);
+                builder.setContentText(context.getResources().getString(R.string.finishing_update));
             } else {
                 builder.setProgress(max, progress, false);
             }

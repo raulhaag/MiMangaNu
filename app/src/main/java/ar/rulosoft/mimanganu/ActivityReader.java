@@ -154,6 +154,9 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mSeekBar.setBackgroundColor(reader_bg);
         mScrollSelect.setBackgroundColor(reader_bg);
 
+        if(pm.getBoolean("hide_sensitivity_scrollbar", false))
+            mScrollSelect.setVisibility(View.INVISIBLE);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.setNavigationBarColor(reader_bg);
@@ -507,7 +510,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     protected void onResume() {
         super.onResume();
-        MainActivity.mContext = getApplicationContext();
         DownloadPoolService.attachListener(this, mChapter.getId());
         mReader.seekPage(mChapter.getPagesRead() - 1);
     }
@@ -653,7 +655,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
             if (seamlessChapterTransition) {
-                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, LoadMode.END);
+                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, LoadMode.SAVED);
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
             }
         }

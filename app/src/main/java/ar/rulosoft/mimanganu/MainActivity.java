@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.Manifest;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -28,13 +27,14 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class MainActivity extends AppCompatActivity {
-    public static Context mContext;
-    public int[] colors;
+    public static int[] colors;
+    public static boolean darkTheme;
+    public static SharedPreferences pm;
+    public static MainFragment.UpdateListTask updateListTask;
+    public static boolean isConnected = true;
     public ActionBar mActBar;
-    boolean darkTheme;
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
-    public static SharedPreferences pm;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
 
     @Override
@@ -68,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
             replaceFragment(mangaFragment, "MangaFragment");
+        } else if (mangaIdFromNotification == -1) {
+            if(updateListTask != null)
+                updateListTask.cancel(true);
         }
     }
 
@@ -127,16 +130,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mContext = getApplicationContext();
         if (darkTheme != pm.getBoolean("dark_theme", false)) {
             Util.getInstance().restartApp(getApplicationContext());
         }
-        colors = ThemeColors.getColors(pm, getApplicationContext());
+        colors = ThemeColors.getColors(pm);
         setColorToBars();
     }
 
     public void setColorToBars() {
-        colors = ThemeColors.getColors(pm, getApplicationContext());
+        colors = ThemeColors.getColors(pm);
         mActBar = getSupportActionBar();
         if (mActBar != null) mActBar.setBackgroundDrawable(new ColorDrawable(colors[0]));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

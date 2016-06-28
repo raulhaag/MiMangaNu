@@ -182,4 +182,5 @@
     <string name="new_chapter">Nouveau chapitre de %s</string>
     <string name="misc_settings">Paramètres Divers</string>
     <string name="edit_server_list">Modifier la liste des serveurs</string>
+    <string name="downloading">Téléchargement: </string>
 </resources>
