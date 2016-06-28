@@ -156,20 +156,20 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         attachListener(null, cid);
     }
 
-    public static String generateBasePath(ServerBase s, Manga m, Chapter c, Context context) {
+    public static String generateBasePath(ServerBase serverBase, Manga manga, Chapter chapter, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()) + "/" +
-                cleanFileName(m.getTitle()).trim() + "/" + cleanFileName(c.getTitle()).trim();
+        return dir + "/MiMangaNu/" + cleanFileName(serverBase.getServerName()) + "/" +
+                cleanFileName(manga.getTitle()).trim() + "/" + cleanFileName(chapter.getTitle()).trim();
     }
 
-    public static String generateBasePath(ServerBase s, Manga m, Context context) {
+    public static String generateBasePath(ServerBase serverBase, Manga manga, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(s.getServerName()).trim() + "/" +
-                cleanFileName(m.getTitle()).trim();
+        return dir + "/MiMangaNu/" + cleanFileName(serverBase.getServerName()).trim() + "/" +
+                cleanFileName(manga.getTitle()).trim();
     }
 
     private static String cleanFileName(String badFileName) {
@@ -235,7 +235,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void retryError(Context context , Chapter cid, ChapterDownload.OnErrorListener errorListener) {
-
             for (int i = 0; i < chapterDownloads.size(); i++) {
                 ChapterDownload cd = chapterDownloads.get(i);
                 if (cd.status == DownloadStatus.ERROR && cd.getChapter().getId() == cid.getId()) {

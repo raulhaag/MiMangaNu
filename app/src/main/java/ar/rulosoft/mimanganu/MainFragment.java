@@ -574,7 +574,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onProgressUpdate(Integer... values) {
             // Update progress
             if (context != null) {
-                Util.getInstance().changeNotification(mList.size(), ++numNow, mNotifyID, context.getResources().getString(R.string.searching_for_updates), numNow + "/" + mList.size() + " - " +
+                Util.getInstance().changeSearchingForUpdatesNotification(mList.size(), ++numNow, mNotifyID, context.getResources().getString(R.string.searching_for_updates), numNow + "/" + mList.size() + " - " +
                         mList.get(values[0]).getTitle(), true);
             }
             super.onProgressUpdate(values);
@@ -646,7 +646,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (context != null) {
                 if (result > 0) {
                     if (!pm.getBoolean("show_notification_per_new_chapter", false))
-                        Util.getInstance().changeNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result), false);
+                        Util.getInstance().changeSearchingForUpdatesNotification(0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result), false);
                     else
                         Util.getInstance().cancelNotification(mNotifyID);
                     setListManga(true);
