@@ -77,6 +77,7 @@ public class VerticalPagedReader extends PagedReader {
                 if (pageChangeListener != null) {
                     pageChangeListener.onPageChanged(position);
                 }
+                currentPage = position;
             }
 
             @Override
@@ -106,18 +107,18 @@ public class VerticalPagedReader extends PagedReader {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        float x = ev.getX();
-        if (!mPageAdapter.getCurrentPage().canScroll(Math.round(x - mStartDragX))) {
+        float y = ev.getY();
+        if (!mPageAdapter.getCurrentPage().canScrollV(Math.round(y - mStartDragX))) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    mStartDragX = x;
+                    mStartDragX = y;
                     firedListener = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (mOnEndFlingListener != null && isFirstPage() && mStartDragX < x && !firedListener) {
+                    if (mOnEndFlingListener != null && isLastPage() && mStartDragX > y && !firedListener) {
                         mOnEndFlingListener.onEndFling();
                         firedListener = true;
-                    } else if (mOnBeginFlingListener != null && isLastPage() && mStartDragX > x && !firedListener) {
+                    } else if (mOnBeginFlingListener != null && isFirstPage() && mStartDragX < y && !firedListener) {
                         mOnBeginFlingListener.onBeginFling();
                         firedListener = true;
                     }

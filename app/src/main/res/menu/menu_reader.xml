@@ -23,6 +23,12 @@
         app:showAsAction="always" />
 
     <item
+        android:id="@+id/action_ajustar"
+        android:icon="@drawable/ic_action_original"
+        android:title="@string/action_ajustar_a"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/re_download_image"
         android:icon="@drawable/ic_action_image_reload"
         android:orderInCategory="100"

@@ -545,12 +545,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                         int first = mListView.getFirstVisiblePosition();
                         Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
-                        Intent intent;
-                        if (readerType == 2) {
-                            intent = new Intent(getActivity(), ActivityReader.class);
-                        } else {
-                            intent = new Intent(getActivity(), ActivityPagedReader.class);
-                        }
+                        Intent intent = new Intent(getActivity(), ActivityReader.class);
                         intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
                         MangaFragment.this.startActivity(intent);
                     }catch (Exception e){

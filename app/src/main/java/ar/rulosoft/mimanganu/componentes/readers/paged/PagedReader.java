@@ -157,6 +157,11 @@ public abstract class PagedReader extends Reader {
         return false;
     }
 
+    @Override
+    public boolean hasFitFeature() {
+        return true;
+    }
+
     public class PageAdapter extends PagerAdapter {
         Page[] pages = new Page[paths.size()];
 

@@ -37,6 +37,7 @@ public class R2LPagedReader extends HorizontalPagedReader {
                 if (pageChangeListener != null) {
                     pageChangeListener.onPageChanged(position);
                 }
+                currentPage = position;
             }
 
             @Override
@@ -61,11 +62,11 @@ public class R2LPagedReader extends HorizontalPagedReader {
                     firedListener = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (mOnEndFlingListener != null && isFirstPage() && mStartDragX < x && !firedListener) {
-                        mOnEndFlingListener.onEndFling();
-                        firedListener = true;
-                    } else if (mOnBeginFlingListener != null && isLastPage() && mStartDragX > x && !firedListener) {
+                    if (mOnBeginFlingListener != null && isLastPage() && mStartDragX < x && !firedListener) {
                         mOnBeginFlingListener.onBeginFling();
+                        firedListener = true;
+                    } else if (mOnEndFlingListener != null && isFirstPage() && mStartDragX > x && !firedListener) {
+                        mOnEndFlingListener.onEndFling();
                         firedListener = true;
                     }
                     break;
@@ -73,5 +74,4 @@ public class R2LPagedReader extends HorizontalPagedReader {
         }
         return false;
     }
-
 }
