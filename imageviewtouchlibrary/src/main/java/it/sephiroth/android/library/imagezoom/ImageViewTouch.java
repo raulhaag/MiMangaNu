@@ -14,6 +14,8 @@ import android.view.ScaleGestureDetector;
 import android.view.ScaleGestureDetector.OnScaleGestureListener;
 import android.view.ViewConfiguration;
 
+import it.sephiroth.android.library.TapListener;
+
 public class ImageViewTouch extends ImageViewTouchBase {
 
     protected static final float SCROLL_DELTA_THRESHOLD = 1.0f;
@@ -25,10 +27,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
     protected OnScaleGestureListener mScaleListener;
     protected boolean mScaleEnabled = true;
     protected boolean mScaleModeAuto = true;
-    //protected boolean mDoubleTapEnabled = true;
-    //protected boolean mScrollEnabled = true;
-    //private OnImageViewTouchDoubleTapListener mDoubleTapListener;
-    //private OnImageViewTouchSingleTapListener mSingleTapListener;
     private TapListener mTapListener;
 
     public ImageViewTouch(Context context) {
@@ -127,7 +125,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
     }
 
     public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        if (getScale() == 1f) return false;
+        //if (getScale() == 1f) return false;
         mUserScaled = true;
         scrollBy(-distanceX, -distanceY);
         invalidate();
@@ -229,14 +227,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
         void onSingleTapConfirmed();
     }
     */
-
-    public interface TapListener {
-        void onCenterTap();
-
-        void onLeftTap();
-
-        void onRightTap();
-    }
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener {
 

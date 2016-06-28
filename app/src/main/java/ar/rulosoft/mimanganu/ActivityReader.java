@@ -326,7 +326,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 break;
         }
 
-
         mReader.postInvalidateDelayed(200);
     }
 
