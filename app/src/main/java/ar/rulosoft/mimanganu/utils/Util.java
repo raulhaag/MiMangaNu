@@ -140,7 +140,17 @@ public class Util {
         Notification notification;
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         builder = new NotificationCompat.Builder(context);
-        builder.setOngoing(true).setContentTitle(contentTitle).setContentText(contentText).setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).build();
+        builder.setOngoing(true);
+        builder.setContentTitle(contentTitle);
+        builder.setContentText(contentText);
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setContentIntent(pIntent);
+        builder.setAutoCancel(true);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+        }
+        builder.build();
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
 
         notification = builder.build();
