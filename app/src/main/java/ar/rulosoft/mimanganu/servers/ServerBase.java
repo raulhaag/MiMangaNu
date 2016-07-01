@@ -232,8 +232,7 @@ public abstract class ServerBase {
                 Database.updateNewMangas(context, mangaDb, diff);
             }
 
-            if(MainActivity.pm.getBoolean("show_notification_per_new_chapter", false))
-                new CreateNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             returnValue = simpleList.size();
         }
@@ -371,17 +370,17 @@ public abstract class ServerBase {
                 new DeNineManga(),
                 new Manga_Tube(),
                 new RawSenManga(),
-               // new ReadComicOnline(),
+               //new ReadComicOnline(),
                 new FromFolder()
         });
     }
 
-    public class CreateNotificationsTask extends AsyncTask<Void, Integer, Integer> {
+    /*public class CreateNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
         private Context context;
         private Manga manga;
 
-        public CreateNotificationsTask(ArrayList<Chapter> simpleList,Manga manga, Context context) {
+        public CreateNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
             this.simpleList.addAll(simpleList);
             this.context = context;
             this.manga = manga;
@@ -400,6 +399,58 @@ public abstract class ServerBase {
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
                 Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getString(R.string.new_chapter, manga.getTitle()), simpleList.get(i).getTitle());
             }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+        }
+    }*/
+
+    public class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
+        private ArrayList<Chapter> simpleList = new ArrayList<>();
+        private Context context;
+        private Manga manga;
+        private String LargeContentText = null;
+
+        public CreateGroupByMangaNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
+            this.simpleList.addAll(simpleList);
+            this.context = context;
+            this.manga = manga;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            for (int i = simpleList.size() - 1; i > -1; i--) {
+                if (LargeContentText == null)
+                    if (i == 0)
+                        LargeContentText = simpleList.get(i).getTitle();
+                    else
+                        LargeContentText = simpleList.get(i).getTitle() + "\n";
+                else {
+                    if (i == 0)
+                        LargeContentText = LargeContentText + simpleList.get(i).getTitle();
+                    else
+                        LargeContentText = LargeContentText + simpleList.get(i).getTitle() + "\n";
+                }
+            }
+
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.putExtra("manga_id", simpleList.get(0).getMangaID());
+            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
+            if (simpleList.size() > 1) {
+                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapters, manga.getTitle()), LargeContentText);
+            } else {
+                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), LargeContentText);
+            }
+
             return null;
         }
 

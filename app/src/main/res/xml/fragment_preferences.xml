@@ -66,11 +66,6 @@
             app:val_min="1" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
-            android:key="show_notification_per_new_chapter"
-            android:summary="@string/show_notification_per_new_chapter_subtitle"
-            android:title="@string/show_notification_per_new_chapter_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
-            android:defaultValue="false"
             android:key="include_finished_manga"
             android:summary="@string/include_finished_manga_subtitle"
             android:title="@string/include_finished_manga_title" />

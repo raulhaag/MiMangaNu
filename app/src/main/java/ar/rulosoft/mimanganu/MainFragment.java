@@ -651,11 +651,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             super.onPostExecute(result);
             if (context != null) {
                 if (result > 0) {
-                    if (!pm.getBoolean("show_notification_per_new_chapter", false))
-                        Util.getInstance().changeSearchingForUpdatesNotification(context, 0, 0, mNotifyID, context.getResources().getString(R.string.update_complete), String.format(context.getResources().getString(R.string.mgs_update_found), result), false);
-                    else
-                        Util.getInstance().cancelNotification(mNotifyID);
-
+                    Util.getInstance().cancelNotification(mNotifyID);
                     setListManga(true);
                     Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
                 } else {

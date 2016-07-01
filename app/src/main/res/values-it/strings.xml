@@ -172,8 +172,6 @@
     <string name="use_only_wifi_title">Utilizzare solo WiFi</string>
     <string name="sort_number_asc">Ordina per numero di capitolo</string>
     <string name="sort_number">Ordina per numero di capitolo (9–0)</string>
-    <string name="show_notification_per_new_chapter_title">Mostra fini notifiche grana</string>
-    <string name="show_notification_per_new_chapter_subtitle">Mostra una notifica per ogni nuovo capitolo</string>
     <string name="seamless_chapter_transitions_delete_read_title">Elimina capitolo dopo aver letto</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">Questo elimina il capitolo corrente quando passa al capitolo successivo</string>
     <string name="reset_server_list_to_defaults_title">Ripristina la lista dei server di default</string>
@@ -192,5 +190,5 @@
     <string name="include_finished_manga_subtitle">Ciò includerà Manga che sono contrassegnati come finito. Per impostazione predefinita solo manga in corso sono inclusi nella ricerca di aggiornamento</string>
     <string name="hide_sensitivity_scrollbar_title">Hide sensibilità barra di scorrimento</string>
     <string name="hide_sensitivity_scrollbar_subtitle">In questo modo nascondere la barra di scorrimento sensibilità durante la lettura in modalità non a schermo intero</string>
-    <string name="finishing_update">Aggiornamento di finitura</string>
+    <string name="finishing_update">Aggiornamento di finitura …</string>
 </resources>
