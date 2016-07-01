@@ -171,8 +171,6 @@
     <string name="use_only_wifi_title">Используйте только WiFi</string>
     <string name="sort_number_asc">Сортировка по номеру раздела</string>
     <string name="sort_number">Сортировка по номеру раздела (9–0)</string>
-    <string name="show_notification_per_new_chapter_title">Показать мелкозернистых уведомления</string>
-    <string name="show_notification_per_new_chapter_subtitle">Показывает одно уведомление за новую главу</string>
     <string name="seamless_chapter_transitions_delete_read_title">Удалить главу после прочтения</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">Это удаляет текущую главу при переходе к следующей главе</string>
     <string name="reset_server_list_to_defaults_subtitle">Это позволит отобразить все серверы</string>
@@ -190,5 +188,5 @@
     <string name="include_finished_manga_subtitle"> Это будет включать манга, которые помечены как Готовые. По умолчанию только Текущая манга включены в поисках обновлений</string>
     <string name="hide_sensitivity_scrollbar_title"> Скрыть полосу прокрутки чувствительности</string>
     <string name="hide_sensitivity_scrollbar_subtitle">Это позволит скрыть полосу прокрутки чувствительности при чтении в режиме не полноэкранных</string>
-    <string name="finishing_update">Завершение обновления</string>
+    <string name="finishing_update">Завершение обновления …</string>
 </resources>

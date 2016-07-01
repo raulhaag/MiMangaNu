@@ -150,7 +150,6 @@ public class Util {
             builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
             builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
         }
-        builder.build();
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
 
         notification = builder.build();
@@ -164,15 +163,23 @@ public class Util {
     }
 
     public void createSearchingForUpdatesNotification(Context context, int id) {
-        Notification notification;
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_UPDATE_CURRENT);
         builder = new NotificationCompat.Builder(context);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setPriority(Notification.PRIORITY_HIGH).setProgress(100, 0, true).build();
-        else
-            builder.setOngoing(true).setContentTitle(context.getResources().getString(R.string.searching_for_updates)).setContentText("").setSmallIcon(R.drawable.ic_launcher).setContentIntent(pIntent).setAutoCancel(true).setProgress(100, 0, true).build();
+        builder.setOngoing(true);
+        builder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
+        builder.setContentText("");
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setContentIntent(pIntent);
+        builder.setAutoCancel(true);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            builder.setPriority(Notification.PRIORITY_HIGH);
+            builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(context.getResources().getString(R.string.searching_for_updates)));
+            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(""));
+        }
+        builder.setProgress(100, 0, true);
+
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
-        notification = builder.build();
+        Notification notification = builder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(id, notification);
     }
@@ -180,11 +187,19 @@ public class Util {
     public void changeSearchingForUpdatesNotification(Context context, int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
         builder.setContentTitle(contentTitle);
         builder.setContentText(contentText);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            builder.setPriority(Notification.PRIORITY_HIGH);
+            builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+        }
         if (ongoing) {
             builder.setOngoing(true);
             if (progress == max) {
                 builder.setProgress(max, progress, true);
                 builder.setContentText(context.getResources().getString(R.string.finishing_update));
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    builder.setStyle(new NotificationCompat.BigTextStyle().bigText(context.getResources().getString(R.string.finishing_update)));
+                }
             } else {
                 builder.setProgress(max, progress, false);
             }
@@ -192,8 +207,6 @@ public class Util {
             builder.setOngoing(false);
             builder.setProgress(max, progress, false);
         }
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
-            builder.setPriority(Notification.PRIORITY_HIGH);
         notificationManager.notify(id, builder.build());
     }
 

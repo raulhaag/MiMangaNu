@@ -164,8 +164,6 @@
     <string name="download_next_chapter_automatically_subtitle">Bajar capítulo siguiente automaticamente</string>
     <string name="download_next_chapter_automatically_title">Bajar capítulo siguiente</string>
     <string name="new_chapter">Nuevo capítulo de %s</string>
-    <string name="show_notification_per_new_chapter_subtitle">Mostrar notificacion por capitulo</string>
-    <string name="show_notification_per_new_chapter_title">Notificaciones separadas</string>
     <string name="already_on_db">El manga ya estaba agregado</string>
     <string name="dir_already_on_db">El directorio ya estaba agregado</string>
     <string name="edit_server_list">Editar lista de servidores</string>
@@ -185,7 +183,7 @@
     <string name="reset_server_list_to_defaults_subtitle">Mostrara todos los servidores escondidos.</string>
     <string name="misc_settings">Otras Configuraciones</string>
     <string name="downloading">Descargando: </string>
-    <string name="finishing_update">Finalizando busqueda</string>
+    <string name="finishing_update">Finalizando busqueda …</string>
     <string name="search_result">Resultados para \"%s\" en</string>
     <string name="use_only_wifi_title_update">Usar solo WiFi (para updates)</string>
     <string name="hide_sensitivity_scrollbar_subtitle">Esconde barra de sensivilidad fuera de la pantalla completa</string>

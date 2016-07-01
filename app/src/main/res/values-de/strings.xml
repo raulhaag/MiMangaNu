@@ -170,8 +170,6 @@
     <string name="download_next_chapter_automatically_title">Nächstes Kapitel runterladen</string>
     <string name="use_only_wifi_subtitle">Um Datenplan Verwendung zuvermeiden</string>
     <string name="use_only_wifi_title">Verwende nur WiFi</string>
-    <string name="show_notification_per_new_chapter_title">Detaillierte Benachrichtigung</string>
-    <string name="show_notification_per_new_chapter_subtitle">Zeigt eine Benachrichtigung pro neuem Kapitel</string>
     <string name="seamless_chapter_transitions_delete_read_title">Lösche Kapitel nach Übergang</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">Dies löscht das aktuelle Kapitel, wenn Sie auf das nächste Kapitel Übergehen</string>
     <string name="reset_server_list_to_defaults_title">Serverliste Zurücksetzen</string>
@@ -183,12 +181,14 @@
     <string name="edit_server_list">Serverliste bearbeiten</string>
     <string name="already_on_db">Manga bereits hinzugefügt</string>
     <string name="downloading">Lade herunter: </string>
-    <string name="finishing_update">Finishing-Update</string>
-    <string name="use_only_wifi_title_update">Verwenden Sie nur WiFi (für Updates)</string>
+    <string name="finishing_update">Beende Update &#8230;</string>
+    <string name="use_only_wifi_title_update">Verwende nur WiFi (für Updates)</string>
     <string name="update_search_cancelled">Update-Suche abgebrochen</string>
-    <string name="search_result">Ergebnis für \"%s\" auf</string>
-    <string name="include_finished_manga_title">Fügen Sie Beendet Manga</string>
-    <string name="include_finished_manga_subtitle"> Dazu gehören Manga, die markiert sind als fertig gestellt. Standardmäßig werden nur Laufende Manga sind in der Update-Suche einbezogen</string>
-    <string name="hide_sensitivity_scrollbar_title">Ausblenden Empfindlichkeit Scrollbar</string>
-    <string name="hide_sensitivity_scrollbar_subtitle">Dadurch wird die Empfindlichkeit Scrollbar ausblenden, wenn in nicht-Vollbild -Modus zu lesen</string>
+    <string name="search_result">Such Resultat für \"%s\" auf</string>
+    <string name="include_finished_manga_title">Beendete Manga einbeziehen</string>
+    <string name="include_finished_manga_subtitle">Diese Einstellung bezieht beendete Manga in der Update-Suche mit ein. Standardmäßig werden nur noch nicht fertig gestellte Manga in der Update-Suche einbezogen</string>
+    <string name="hide_sensitivity_scrollbar_title">Ausblenden der Empfindlichkeits Scrollbar</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">Dadurch wird die Empfindlichkeits Scrollbar ausgeblendet, wenn man im nicht-Vollbild-Modus liest</string>
+    <string name="new_chapters">Neue Kapitel von %s</string>
+    <string name="searching">Suche nach \"%s\" auf</string>
 </resources>
