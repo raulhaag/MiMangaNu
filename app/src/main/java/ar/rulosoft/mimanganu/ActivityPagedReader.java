@@ -50,6 +50,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPager;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
+import ar.rulosoft.mimanganu.componentes.readers.L2RReader;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
@@ -343,10 +344,16 @@ public class ActivityPagedReader extends AppCompatActivity
 
         switch (mode) {
             case START:
-                setCurrentItem(0);
+                if(mDirection == Direction.R2L)
+                    setCurrentItem(0);
+                else
+                    setCurrentItem(mChapter.getPages());
                 break;
             case END:
-                setCurrentItem(mChapter.getPages());
+                if(mDirection == Direction.R2L)
+                    setCurrentItem(mChapter.getPages());
+                else
+                    setCurrentItem(0);
                 break;
         }
 

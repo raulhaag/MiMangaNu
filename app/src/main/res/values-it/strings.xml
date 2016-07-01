@@ -184,4 +184,13 @@
     <string name="misc_settings">Impostazioni varie</string>
     <string name="edit_server_list">Modifica elenco dei server</string>
     <string name="downloading">Scaricando: </string>
+    <string name="use_only_wifi_title_update"> Utilizzare solo WiFi (per gli aggiornamenti)</string>
+    <string name="update_message"></string>
+    <string name="update_search_cancelled">Aggiornamento della ricerca annullato</string>
+    <string name="search_result">risultato per \"%s\" su</string>
+    <string name="include_finished_manga_title">Includi Manga Finito</string>
+    <string name="include_finished_manga_subtitle">Ciò includerà Manga che sono contrassegnati come finito. Per impostazione predefinita solo manga in corso sono inclusi nella ricerca di aggiornamento</string>
+    <string name="hide_sensitivity_scrollbar_title">Hide sensibilità barra di scorrimento</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">In questo modo nascondere la barra di scorrimento sensibilità durante la lettura in modalità non a schermo intero</string>
+    <string name="finishing_update">Aggiornamento di finitura</string>
 </resources>

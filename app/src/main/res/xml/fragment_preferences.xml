@@ -30,6 +30,11 @@
     </PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/update_settings_title">
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="update_only_wifi"
+            android:title="@string/use_only_wifi_title_update"
+            android:summary="@string/use_only_wifi_subtitle" />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="@string/update_title"

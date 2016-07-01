@@ -183,4 +183,12 @@
     <string name="misc_settings">Paramètres Divers</string>
     <string name="edit_server_list">Modifier la liste des serveurs</string>
     <string name="downloading">Téléchargement: </string>
+    <string name="use_only_wifi_title_update">Utilisez uniquement WiFi (pour les mises à jour)</string>
+    <string name="update_search_cancelled">Mise à jour recherche annulée</string>
+    <string name="search_result">résultat pour \"%s\" sur</string>
+    <string name="include_finished_manga_title">Inclure Manga Fini</string>
+    <string name="hide_sensitivity_scrollbar_title">Masquer la sensibilité scrollbar</string>
+    <string name="include_finished_manga_subtitle">Cela comprendra Manga qui sont marqués comme Fini. Par défaut, seul manga en cours sont inclus dans la recherche de mise à jour</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">Cela permet de masquer la barre de défilement de la sensibilité lors de la lecture en mode non-Fullscreen</string>
+    <string name="finishing_update">Mise à jour de finition</string>
 </resources>

@@ -51,16 +51,25 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
-            if (NetworkUtilsAndReciever.isConnected(context)) {
+            SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+
+            boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
+            boolean only_wifi = pm.getBoolean("only_wifi", false);
+            NetworkUtilsAndReciever.reset();
+            if(only_wifi_updates == true){
+                only_wifi = true;
+            }
+            NetworkUtilsAndReciever.reset();
+            if (NetworkUtilsAndReciever.getConnectionStatus(context, only_wifi) == NetworkUtilsAndReciever.ConnectionStatus.CONNECTED) {
                 SearchUpdates searchUpdates = new SearchUpdates();
                 searchUpdates.setContext(context);
-                SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-                Navegador.TIME_OUT = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("connection_timeout", "5"));
+                Navegador.TIME_OUT = Integer.parseInt(pm.getString("connection_timeout", "5"));
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                 searchUpdates.setSound(pm.getBoolean("update_sound", false));
-                int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "1"));
+                int threads = Integer.parseInt(pm.getString("update_threads_manual", "1"));
                 searchUpdates.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
             }
+            NetworkUtilsAndReciever.reset();
         } catch (Exception ignore) { //next time on connection go to update
         }
     }
