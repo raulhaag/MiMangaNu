@@ -43,16 +43,24 @@ public class TuMangaOnline extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         ArrayList<Chapter> result = new ArrayList<>();
-        JSONObject object = new JSONObject(getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + 1 + "&tomo=-1"));
-        int last_page = object.getInt("last_page");
-        result.addAll(0,getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
-        for (int i = 2; i <= last_page; i++) {
-            try {
-                object = new JSONObject(getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + i + "&tomo=-1"));
-                result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
-            }catch (Exception ignore){}
+        String data = getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + 1 + "&tomo=-1");
+        if (data != null && data.length() > 3) {
+            JSONObject object = new JSONObject(data);
+            int last_page = object.getInt("last_page");
+            result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
+            for (int i = 2; i <= last_page; i++) {
+                try {
+                    data = getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + i + "&tomo=-1");
+                    if (data != null && data.length() > 3) {
+                        object = new JSONObject(data);
+                        result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
+                    }
+                } catch (Exception ignore) {
+                }
+            }
         }
         manga.setChapters(result);
+
     }
 
     public ArrayList<Chapter> getChaptersJsonArray(JSONArray jsonArray, String mid) {
@@ -60,11 +68,11 @@ public class TuMangaOnline extends ServerBase {
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 JSONObject object = jsonArray.getJSONObject(i);
-                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), getServerID()+ "_" + mid + "_" + object.getString("numCapitulo"));
+                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), getServerID() + "_" + mid + "_" + object.getString("numCapitulo"));
                 c.setExtra(mid +
                         "/" + object.getString("numCapitulo") + "/" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "|" +
                         object.getJSONArray("subidas").getJSONObject(0).getString("imagenes"));
-                result.add(0,c);
+                result.add(0, c);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -119,7 +127,8 @@ public class TuMangaOnline extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws
+            Exception {
         JSONObject jsonObject = new JSONObject(getNavWithHeader().get("http://www.tumangaonline.com/api/v1/mangas?categorias=%5B%5D&generos=%5B" + genresValues[categorie] + "%5D&itemsPerPage=20&page=" + pageNumber + "&puntuacion=0&searchBy=nombre" + sortByValues[order]));
         lastPage = jsonObject.getInt("last_page");
         return getMangasJsonArray(jsonObject.getJSONArray("data"));

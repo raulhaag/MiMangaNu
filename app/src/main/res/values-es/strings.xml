@@ -185,4 +185,12 @@
     <string name="reset_server_list_to_defaults_subtitle">Mostrara todos los servidores escondidos.</string>
     <string name="misc_settings">Otras Configuraciones</string>
     <string name="downloading">Descargando: </string>
+    <string name="finishing_update">Finalizando busqueda</string>
+    <string name="search_result">Resultados para \"%s\" en</string>
+    <string name="use_only_wifi_title_update">Usar solo WiFi (para updates)</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">Esconde barra de sensivilidad fuera de la pantalla completa</string>
+    <string name="hide_sensitivity_scrollbar_title">Esconde barra de sensivilidad</string>
+    <string name="include_finished_manga_subtitle">Esto incluira mangas finalizados (por extras, etc)</string>
+    <string name="include_finished_manga_title">Incluir mangas finalizados</string>
+    <string name="update_search_cancelled">Búsqueda de actualizaciones cancelada</string>
 </resources>

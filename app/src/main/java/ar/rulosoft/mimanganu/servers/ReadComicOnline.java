@@ -2,6 +2,8 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.text.Html;
 
+import com.squareup.okhttp.OkHttpClient;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +12,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.navegadores.Navegador;
+import ar.rulosoft.navegadores.RefererInterceptor;
 
 public class ReadComicOnline extends ServerBase {
 
@@ -132,9 +135,10 @@ public class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-
-            String source = getNavWithHeader().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
-
+            Navegador nav = new Navegador();
+            OkHttpClient client = nav.getHttpClient();
+            client.networkInterceptors().add(new RefererInterceptor("http://" + HOST + chapter.getPath()));
+            String source = nav.get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -159,12 +163,10 @@ public class ReadComicOnline extends ServerBase {
 
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p =
-                Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
+        Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga =
-                    new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
+            Manga manga = new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
             if (m.group(1).contains(HOST)) {
                 manga.setImages("http://" + IP + m.group(1).replace("http://" + HOST, "") + "|" + HOST);
             } else {
@@ -182,7 +184,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        return new String[]{"Popularity", "Latest Update", "New Manga", "a-z"};
+        return new String[]{"Popularity", "Latest Update", "New Comic", "a-z"};
     }
 
     @Override

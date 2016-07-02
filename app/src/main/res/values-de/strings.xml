@@ -183,4 +183,12 @@
     <string name="edit_server_list">Serverliste bearbeiten</string>
     <string name="already_on_db">Manga bereits hinzugefügt</string>
     <string name="downloading">Lade herunter: </string>
+    <string name="finishing_update">Finishing-Update</string>
+    <string name="use_only_wifi_title_update">Verwenden Sie nur WiFi (für Updates)</string>
+    <string name="update_search_cancelled">Update-Suche abgebrochen</string>
+    <string name="search_result">Ergebnis für \"%s\" auf</string>
+    <string name="include_finished_manga_title">Fügen Sie Beendet Manga</string>
+    <string name="include_finished_manga_subtitle"> Dazu gehören Manga, die markiert sind als fertig gestellt. Standardmäßig werden nur Laufende Manga sind in der Update-Suche einbezogen</string>
+    <string name="hide_sensitivity_scrollbar_title">Ausblenden Empfindlichkeit Scrollbar</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">Dadurch wird die Empfindlichkeit Scrollbar ausblenden, wenn in nicht-Vollbild -Modus zu lesen</string>
 </resources>

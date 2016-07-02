@@ -180,6 +180,7 @@
     <string name="no_wifi_connection">No WiFi connection</string>
     <string name="no_internet_connection">No Internet connection</string>
     <string name="use_only_wifi_title">Use only WiFi</string>
+    <string name="use_only_wifi_title_update">Use only WiFi (for updates)</string>
     <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
     <string name="reset_server_list_to_defaults_title">Reset server list to defaults</string>
     <string name="reset_server_list_to_defaults_subtitle">This will un-hide all servers</string>
