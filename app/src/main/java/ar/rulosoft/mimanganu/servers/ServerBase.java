@@ -232,7 +232,8 @@ public abstract class ServerBase {
                 Database.updateNewMangas(context, mangaDb, diff);
             }
 
-            new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(!simpleList.isEmpty())
+                new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             returnValue = simpleList.size();
         }
