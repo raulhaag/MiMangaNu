@@ -626,7 +626,8 @@ public class ActivityPagedReader extends AppCompatActivity
                         boolean del_images = checkBox.isChecked();
                         if (pm != null)
                             pm.edit().putBoolean("delete_images", del_images).apply();
-                        mViewPager.setAdapter(null);
+                        if(mViewPager != null)
+                            mViewPager.setAdapter(null);
                         if (del_images) {
                             mChapter.freeSpace(ActivityPagedReader.this);
                         }

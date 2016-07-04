@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onNewIntent (Intent intent){
+    protected void onNewIntent(Intent intent) {
         int mangaIdFromNotification = intent.getIntExtra("manga_id", -1);
         Log.d("MainActivity", "mangaID: " + mangaIdFromNotification);
 
@@ -67,9 +67,9 @@ public class MainActivity extends AppCompatActivity {
             bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
-            replaceFragment(mangaFragment, "MangaFragment");
+            replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
         } else if (mangaIdFromNotification == -1) {
-            if(updateListTask != null)
+            if (updateListTask != null)
                 updateListTask.cancel(true);
         }
     }
@@ -160,6 +160,13 @@ public class MainActivity extends AppCompatActivity {
             mActBar = getSupportActionBar();
         if (mActBar != null)
             mActBar.setDisplayHomeAsUpEnabled(enable);
+    }
+
+    public void replaceFragmentAllowStateLoss(Fragment fragment, String tag) {
+        backListener = null;
+        keyUpListener = null;
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container, fragment).addToBackStack(tag).commitAllowingStateLoss();
+        getSupportFragmentManager().executePendingTransactions();
     }
 
     public void replaceFragment(Fragment fragment, String tag) {

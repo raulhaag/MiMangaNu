@@ -271,8 +271,8 @@ public class DetailsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            adding.dismiss();
             if(isAdded()) {
+                adding.dismiss();
                 if(!errorWhileAddingManga)
                     Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
                 if (error != null && error.length() > 2) {
