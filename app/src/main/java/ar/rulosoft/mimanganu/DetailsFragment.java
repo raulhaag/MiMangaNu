@@ -79,7 +79,7 @@ public class DetailsFragment extends Fragment {
                 List<Manga> mangas = Database.getMangas(getContext(), null, true);
                 boolean onDb = false;
                 for (Manga m : mangas) {
-                    if (m.getPath().contains(manga.getPath()))
+                    if (m.getPath().equals(manga.getPath()))
                         onDb = true;
                 }
                 if (!onDb) {
