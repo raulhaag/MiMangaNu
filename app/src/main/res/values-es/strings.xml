@@ -99,7 +99,7 @@
     <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
-    <string name="update_message">Cambios 1.49 \n\t*Incluso más bug fixes\n\t*Establecer el número de hilos de búsqueda manual y los hilos de descarga = núcleos de CPU por defecto\n\t*Fix manejo de memoria en Android 5+\n\t*Mejorar el diseño en Android 5+\n\t*Agregado Inglés MangaEden\n\t*Agregado Inglés NineManga\n\t*fix MangaTube</string>
+    <string name="update_message">Cambios en v1.50:\n\t* Arreglados varios errores\n\t* Pasadas varias funciones al trasfondo \n\t* Agregado lectura continua de capítulos \n\t*Agregadas notificaciones separadas por manga \n\t* Agregada la opción de solo Wifi y otras mejoras.</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="ui_settings">Configuración de UI</string>
     <string name="download_selection">Descargar seleccion</string>

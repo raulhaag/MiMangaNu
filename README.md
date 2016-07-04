@@ -33,6 +33,13 @@ Downloads
 
 Changelog
 ---------
+Cambios 1.50
+* Arreglados varios errores
+* Pasadas varias funciones al trasfondo
+* Agregado lectura continua de capítulos
+* Agregadas notificaciones separadas por manga
+* Agregada la opción de solo Wifi y otras mejoras
+
 Cambios 1.49
 * Incluso más bug fixes
 * Establecer el número de hilos de búsqueda manual y los hilos de descarga = núcleos de CPU por defecto

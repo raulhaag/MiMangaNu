@@ -8,8 +8,8 @@ android {
         applicationId "ar.rulosoft.mimanganu"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 49
-        versionName "1.49"
+        versionCode 50
+        versionName "1.50"
     }
 
     signingConfigs {
