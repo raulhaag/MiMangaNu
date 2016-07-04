@@ -79,7 +79,7 @@ public class DetailsFragment extends Fragment {
                 List<Manga> mangas = Database.getMangas(getContext(), null, true);
                 boolean onDb = false;
                 for (Manga m : mangas) {
-                    if (m.getPath().contains(manga.getPath()))
+                    if (m.getPath().equals(manga.getPath()))
                         onDb = true;
                 }
                 if (!onDb) {
@@ -271,8 +271,8 @@ public class DetailsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            adding.dismiss();
             if(isAdded()) {
+                adding.dismiss();
                 if(!errorWhileAddingManga)
                     Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
                 if (error != null && error.length() > 2) {

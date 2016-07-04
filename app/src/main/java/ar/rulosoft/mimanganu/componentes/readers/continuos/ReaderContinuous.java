@@ -64,16 +64,6 @@ public abstract class ReaderContinuous extends Reader{
         init(context);
     }
 
-    public ReaderContinuous(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init(context);
-    }
-
-    public ReaderContinuous(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init(context);
-    }
-
     protected abstract void absoluteScroll(float x, float y);
 
     protected abstract void relativeScroll(double distanceX, double distanceY);
@@ -219,8 +209,8 @@ public abstract class ReaderContinuous extends Reader{
                             }
                         }
                     } else if (pagesLoaded) {
-                        if (mViewReadyListener != null)
-                            mViewReadyListener.onViewReady();
+                       //TODO if (mViewReadyListener != null)
+                            //mViewReadyListener.onViewReady();
                         viewReady = true;
                         preparing = false;
                         generateDrawPool();
@@ -338,8 +328,8 @@ public abstract class ReaderContinuous extends Reader{
     }
 
     protected void setPage(int page) {
-        if (pageChangeListener != null)
-            pageChangeListener.onPageChanged(page);
+        if (readerListener != null)
+            readerListener.onPageChanged(page);
         currentPage = page;
         generateDrawPool();
     }
@@ -427,20 +417,6 @@ public abstract class ReaderContinuous extends Reader{
 
     @Override
     public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (mTapListener != null) {
-            if (e.getX() < getWidth() / 4) {
-                mTapListener.onLeftTap();
-            } else if (e.getX() > getWidth() / 4 * 3) {
-                mTapListener.onRightTap();
-            } else {
-                mTapListener.onCenterTap();
-            }
-        }
         return false;
     }
 

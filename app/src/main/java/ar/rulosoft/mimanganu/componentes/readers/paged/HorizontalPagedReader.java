@@ -20,32 +20,24 @@ public abstract class HorizontalPagedReader extends PagedReader {
         init();
     }
 
-    public HorizontalPagedReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public HorizontalPagedReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
-    }
-
     public abstract void addOnPageChangeListener();
 
     @Override
     public void seekPage(int aPage) {
         mViewPager.setCurrentItem(aPage);
-        if(pageChangeListener != null){
-            pageChangeListener.onPageChanged(aPage);
+        if(readerListener != null){
+            readerListener.onPageChanged(aPage);
         }
+        currentPage = aPage;
     }
 
     @Override
     public void goToPage(int aPage) {
         mViewPager.setCurrentItem(aPage - 1);
-        if(pageChangeListener != null){
-            pageChangeListener.onPageChanged(aPage);
+        if(readerListener != null){
+            readerListener.onPageChanged(aPage);
         }
+        currentPage = aPage - 1;
     }
 
     @Override

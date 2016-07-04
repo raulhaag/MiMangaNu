@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.componentes.readers.paged;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
@@ -14,12 +13,9 @@ public class R2LPagedReader extends HorizontalPagedReader {
         super(context);
     }
 
-    public R2LPagedReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public R2LPagedReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
+    @Override
+    protected int transformPage(int page) {
+        return 0;
     }
 
     public boolean isLastPage() {
@@ -34,8 +30,8 @@ public class R2LPagedReader extends HorizontalPagedReader {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (pageChangeListener != null) {
-                    pageChangeListener.onPageChanged(position);
+                if (readerListener != null) {
+                    readerListener.onPageChanged(position);
                 }
                 currentPage = position;
             }
@@ -62,11 +58,11 @@ public class R2LPagedReader extends HorizontalPagedReader {
                     firedListener = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (mOnBeginFlingListener != null && isLastPage() && mStartDragX < x && !firedListener) {
-                        mOnBeginFlingListener.onBeginFling();
+                    if (readerListener != null && isLastPage() && mStartDragX < x && !firedListener) {
+                        readerListener.onStartOver();
                         firedListener = true;
-                    } else if (mOnEndFlingListener != null && isFirstPage() && mStartDragX > x && !firedListener) {
-                        mOnEndFlingListener.onEndFling();
+                    } else if (readerListener != null && isFirstPage() && mStartDragX > x && !firedListener) {
+                        readerListener.onEndOver();
                         firedListener = true;
                     }
                     break;
@@ -74,4 +70,30 @@ public class R2LPagedReader extends HorizontalPagedReader {
         }
         return false;
     }
+
+
+
+    @Override
+    public void onLeftTap() {
+        if(currentPage == 0){
+            if(readerListener != null){
+                readerListener.onStartOver();
+            }
+        }else{
+            mViewPager.setCurrentItem(currentPage - 1);
+        }
+    }
+
+    @Override
+    public void onRightTap() {
+        if(currentPage == paths.size() - 1){
+            if(readerListener != null){
+                readerListener.onEndOver();
+            }
+        }else{
+            mViewPager.setCurrentItem(currentPage + 1);
+        }
+    }
+
+
 }

@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.componentes.readers.paged;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 
@@ -11,6 +10,7 @@ import fr.castorflex.android.verticalviewpager.VerticalViewPager;
 
 /**
  * Created by Raul on 27/06/2016.
+ *
  */
 public class VerticalPagedReader extends PagedReader {
 
@@ -21,34 +21,22 @@ public class VerticalPagedReader extends PagedReader {
         init();
     }
 
-    public VerticalPagedReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public VerticalPagedReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-        init();
-    }
-
-
-
     @Override
     public void seekPage(int aPage) {
-        currentPage = aPage;
         mViewPager.setCurrentItem(aPage);
-        if (pageChangeListener != null) {
-            pageChangeListener.onPageChanged(aPage);
+        if (readerListener != null) {
+            readerListener.onPageChanged(aPage);
         }
+        currentPage = aPage;
     }
 
     @Override
     public void goToPage(int aPage) {
-        currentPage = aPage - 1;
         mViewPager.setCurrentItem(aPage - 1);
-        if (pageChangeListener != null) {
-            pageChangeListener.onPageChanged(aPage);
+        if (readerListener != null) {
+            readerListener.onPageChanged(aPage);
         }
+        currentPage = aPage - 1;
     }
 
     @Override
@@ -74,8 +62,8 @@ public class VerticalPagedReader extends PagedReader {
         mViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (pageChangeListener != null) {
-                    pageChangeListener.onPageChanged(position);
+                if (readerListener != null) {
+                    readerListener.onPageChanged(position);
                 }
                 currentPage = position;
             }
@@ -111,20 +99,47 @@ public class VerticalPagedReader extends PagedReader {
         if (!mPageAdapter.getCurrentPage().canScrollV(Math.round(y - mStartDragX))) {
             switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    mStartDragX = y;
+                    mStartDragX = y; //is x only to use the same for v & h
                     firedListener = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (mOnEndFlingListener != null && isLastPage() && mStartDragX > y && !firedListener) {
-                        mOnEndFlingListener.onEndFling();
+                    if (readerListener != null && isLastPage() && mStartDragX > y && !firedListener) {
+                        readerListener.onEndOver();
                         firedListener = true;
-                    } else if (mOnBeginFlingListener != null && isFirstPage() && mStartDragX < y && !firedListener) {
-                        mOnBeginFlingListener.onBeginFling();
+                    } else if (readerListener != null && isFirstPage() && mStartDragX < y && !firedListener) {
+                        readerListener.onStartOver();
                         firedListener = true;
                     }
                     break;
             }
         }
         return false;
+    }
+
+    @Override
+    public void onLeftTap() {
+        if(currentPage == 0){
+            if(readerListener != null){
+                readerListener.onStartOver();
+            }
+        }else{
+            mViewPager.setCurrentItem(currentPage - 1);
+        }
+    }
+
+    @Override
+    public void onRightTap() {
+        if(currentPage == paths.size() - 1){
+            if(readerListener != null){
+                readerListener.onEndOver();
+            }
+        }else{
+            mViewPager.setCurrentItem(currentPage + 1);
+        }
+    }
+
+    @Override
+    protected int transformPage(int page) {
+        return page + 1;
     }
 }

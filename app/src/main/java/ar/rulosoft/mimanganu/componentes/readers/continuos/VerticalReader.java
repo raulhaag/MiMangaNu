@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 public class VerticalReader extends ReaderContinuous {
@@ -15,20 +14,12 @@ public class VerticalReader extends ReaderContinuous {
         super(context);
     }
 
-    public VerticalReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public VerticalReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
-
     @Override
     public void calculateParticularScale() {
         for (Page dimension : pages) {
-                dimension.unification_scale = (screenWidth / dimension.original_width);
-                dimension.scaled_width = screenWidth;
-                dimension.scaled_height = dimension.original_height * dimension.unification_scale;
+            dimension.unification_scale = (screenWidth / dimension.original_width);
+            dimension.scaled_width = screenWidth;
+            dimension.scaled_height = dimension.original_height * dimension.unification_scale;
         }
     }
 
@@ -56,21 +47,40 @@ public class VerticalReader extends ReaderContinuous {
         pagesLoaded = true;
     }
 
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
+        //Log.d("VertRe", "" + e1.getY() + " " + e2.getY() + " xS: " + xScroll + " yS: " + yScroll);
+        if (readerListener != null)
+            if (e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
+                readerListener.onEndOver();
+            } else if (yScroll < 0.1) {
+                readerListener.onStartOver();
+            }
+        return super.onFling(e1, e2, velocityX, velocityY);
+    }
 
     @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (readerListener != null)
+            if (e.getX() < getWidth() / 4) {
+                if (currentPage == 0)
+                    readerListener.onStartOver();
+                else
+                    goToPage(currentPage);
+            } else if (e.getX() > getWidth() / 4 * 3) {
+                if (isLastPageVisible())
+                    readerListener.onEndOver();
+                else
+                    goToPage(currentPage + 2);
+            } else {
+                readerListener.onMenuRequired();
+            }
         return false;
     }
 
     @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        //Log.d("VertRe", "" + e1.getY() + " " + e2.getY() + " xS: " + xScroll + " yS: " + yScroll);
-        if (mOnEndFlingListener != null && e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
-            mOnEndFlingListener.onEndFling();
-        } else if (mOnBeginFlingListener != null && yScroll < 0.1) {
-            mOnBeginFlingListener.onBeginFling();
-        }
-        return super.onFling(e1, e2, velocityX, velocityY);
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
     }
 
     @Override
@@ -131,6 +141,11 @@ public class VerticalReader extends ReaderContinuous {
     public void seekPage(int index) {
         absoluteScroll(xScroll, getPagePosition(index));
         generateDrawPool();
+    }
+
+    @Override
+    protected int transformPage(int page) {
+        return page + 1;
     }
 
     public void goToPage(final int aPage) {
@@ -272,7 +287,7 @@ public class VerticalReader extends ReaderContinuous {
                 boolean visibility = (visibleTop <= _init_visibility * mScaleFactor && _init_visibility * mScaleFactor <= visibleBottom) ||
                         (visibleTop <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleBottom) ||
                         (_init_visibility * mScaleFactor < visibleTop && _end_visibility * mScaleFactor >= visibleBottom);
-                if(visible != visibility){
+                if (visible != visibility) {
                     visibilityChanged();
                 }
                 return visibility;
@@ -289,7 +304,8 @@ public class VerticalReader extends ReaderContinuous {
                     m.postScale(mScaleFactor, mScaleFactor);
                     try {
                         canvas.drawBitmap(segment, m, mPaint);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }
