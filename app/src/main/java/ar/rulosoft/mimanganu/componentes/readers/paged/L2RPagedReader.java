@@ -99,24 +99,27 @@ public class L2RPagedReader extends HorizontalPagedReader {
     }
 
     @Override
-    public void onLeftTap() {
-        if(currentPage == 0){
-            if(readerListener != null){
-                readerListener.onEndOver();
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (readerListener != null)
+            if (e.getX() < getWidth() / 4) {
+                if(currentPage == 0){
+                    if(readerListener != null){
+                        readerListener.onEndOver();
+                    }
+                }else{
+                    mViewPager.setCurrentItem(currentPage - 1);
+                }
+            } else if (e.getX() > getWidth() / 4 * 3) {
+                if(currentPage == paths.size() - 1){
+                    if(readerListener != null){
+                        readerListener.onStartOver();
+                    }
+                }else{
+                    mViewPager.setCurrentItem(currentPage + 1);
+                }
+            } else {
+                readerListener.onMenuRequired();
             }
-        }else{
-            mViewPager.setCurrentItem(currentPage - 1);
-        }
-    }
-
-    @Override
-    public void onRightTap() {
-        if(currentPage == paths.size() - 1){
-            if(readerListener != null){
-                readerListener.onStartOver();
-            }
-        }else{
-            mViewPager.setCurrentItem(currentPage + 1);
-        }
+        return false;
     }
 }

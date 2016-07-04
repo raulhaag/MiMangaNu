@@ -30,7 +30,7 @@ import it.sephiroth.android.library.imagezoom.graphics.FastBitmapDrawable;
  * Created by Raul on 24/06/2016.
  */
 
-public abstract class PagedReader extends Reader implements TapListener {
+public abstract class PagedReader extends Reader {
 
     private static ImageViewTouchBase.DisplayType mScreenFit;
     List<String> paths;
@@ -98,12 +98,6 @@ public abstract class PagedReader extends Reader implements TapListener {
     public void setScrollSensitive(float mScrollSensitive) {
 
     }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-
     @Override
     public boolean onDoubleTap(MotionEvent e) {
         return false;
@@ -231,12 +225,6 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
     }
 
-    @Override
-    public void onCenterTap() {
-        if(readerListener != null)
-            readerListener.onMenuRequired();
-    }
-
     public class Page extends RelativeLayout {
         public ImageViewTouch visor;
         ProgressBar loading;
@@ -250,23 +238,13 @@ public abstract class PagedReader extends Reader implements TapListener {
             init();
         }
 
-        public Page(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            init();
-        }
-
-        public Page(Context context, AttributeSet attrs, int defStyleAttr) {
-            super(context, attrs, defStyleAttr);
-            init();
-        }
-
         public void init() {
             String infService = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater li = (LayoutInflater) getContext().getSystemService(infService);
             li.inflate(R.layout.view_reader_page, this, true);
             visor = (ImageViewTouch) findViewById(R.id.visor);
             visor.setDisplayType(mScreenFit);
-            visor.setTapListener(PagedReader.this);
+            //TODO visor.setTapListener(PagedReader.this);
             visor.setScaleEnabled(false);
             loading = (ProgressBar) findViewById(R.id.loading);
             loading.bringToFront();
