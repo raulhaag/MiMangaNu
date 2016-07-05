@@ -34,6 +34,9 @@ Downloads
 Changelog
 ---------
 Cambios 1.50
+* Hotfixs 1.50.
+
+Cambios 1.50
 * Arreglados varios errores
 * Pasadas varias funciones al trasfondo
 * Agregado lectura continua de capítulos
