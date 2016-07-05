@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.componentes.readers.continuos;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
@@ -12,14 +11,6 @@ public class R2LReader extends HorizontalReader {
 
     public R2LReader(Context context) {
         super(context);
-    }
-
-    public R2LReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public R2LReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
     }
 
     @Override
@@ -98,11 +89,11 @@ public class R2LReader extends HorizontalReader {
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
         //Log.d("R2LRe",""+e1.getX()+" "+e2.getX()+" xS: "+xScroll+" yS: "+yScroll);
-        if (mOnEndFlingListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
-            mOnEndFlingListener.onEndFling();
+        if (readerListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
+            readerListener.onEndOver();
             return true;
-        } else if (mOnBeginFlingListener != null && e2.getX() - e1.getX() > 100 && (xScroll < 0.1)) {
-            mOnBeginFlingListener.onBeginFling();
+        } else if (readerListener != null && e2.getX() - e1.getX() > 100 && (xScroll < 0.1)) {
+            readerListener.onStartOver();
             return true;
         }
         return super.onFling(e1, e2, velocityX, velocityY);
@@ -130,5 +121,28 @@ public class R2LReader extends HorizontalReader {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (e.getX() < getWidth() / 4) {
+            if (currentPage == 0)
+                readerListener.onStartOver();
+            else
+                goToPage(currentPage);
+        } else if (e.getX() > getWidth() / 4 * 3) {
+            if (isLastPageVisible())
+                readerListener.onEndOver();
+            else
+                goToPage(currentPage + 2);
+        } else {
+            readerListener.onMenuRequired();
+        }
+        return false;
+    }
+
+    @Override
+    protected int transformPage(int page) {
+        return page + 1;
     }
 }

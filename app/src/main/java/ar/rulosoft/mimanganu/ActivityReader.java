@@ -55,13 +55,13 @@ import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
-import it.sephiroth.android.library.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
-public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, TapListener, ChapterDownload.OnErrorListener, VerticalReader.OnViewReadyListener, VerticalReader.OnEndFlingListener, VerticalReader.OnBeginFlingListener {
+public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener {
 
     // These are magic numbers
+    enum LoadMode {START, END, SAVED}
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
@@ -224,11 +224,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         ((FrameLayout) findViewById(R.id.reader_placeholder)).addView(mReader);
         mReader.setMaxTexture(mTextureMax);
         mReader.setScreenFit(mScreenFit);
-        mReader.setViewReadyListener(this);
-        mReader.setTapListener(this);
+        mReader.setReaderListener(this);
         mReader.setScrollSensitive(mScrollFactor);
-        mReader.setOnEndFlingListener(this);
-        mReader.setOnBeginFlingListener(this);
         if (displayMenu != null)
             if (mReader.hasFitFeature()) {
                 displayMenu.setVisible(true);
@@ -276,20 +273,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             mReader.setPaths(pages);
             mActionBar.setTitle(mChapter.getTitle());
             mSeekBar.setMax(mChapter.getPages() - 1);
-            mReader.setPageChangeListener(new VerticalReader.OnPageChangeListener() {
-                @Override
-                public void onPageChanged(int page) {
-                    updatedValue = true;
-                    mChapter.setPagesRead(page + 1);
-                    mSeekBar.setProgress(page);
-                    if (mReader.isLastPageVisible()) {
-                        mChapter.setPagesRead(mChapter.getPages());
-                        mChapter.setReadStatus(Chapter.READ);
-                    } else if (mChapter.getReadStatus() == Chapter.READ) {
-                        mChapter.setReadStatus(Chapter.READING);
-                    }
-                }
-            });
             DownloadPoolService.attachListener(this, mChapter.getId());
             boolean next = false;
             for (int i = 0; i < mManga.getChapters().size(); i++) {
@@ -535,14 +518,14 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
-            onCenterTap();
+            onMenuRequired();
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     @Override
-    public void onCenterTap() {
+    public void onMenuRequired() {
         if (controlVisible) {
             hideSystemUI();
             controlVisible = false;
@@ -593,21 +576,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
     }
 
-    @Override
-    public void onLeftTap() {
-        if (direction == Direction.L2R)
-            mReader.goToPage(mReader.getCurrentPage() + 1);
-        else
-            mReader.goToPage(mReader.getCurrentPage() - 1);
-    }
-
-    @Override
-    public void onRightTap() {
-        if (direction == Direction.L2R)
-            mReader.goToPage(mReader.getCurrentPage() - 1);
-        else
-            mReader.goToPage(mReader.getCurrentPage() + 1);
-    }
 
     @Override
     public void onError(final Chapter chapter) {
@@ -637,9 +605,16 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     }
 
-    @Override
-    public void onViewReady() {
-        mReader.seekPage(mChapter.getPagesRead() - 1);
+    public void onPageChanged(int page) {
+        updatedValue = true;
+        mChapter.setPagesRead(page + 1);
+        mSeekBar.setProgress(page);
+        if (mReader.isLastPageVisible()) {
+            mChapter.setPagesRead(mChapter.getPages());
+            mChapter.setReadStatus(Chapter.READ);
+        } else if (mChapter.getReadStatus() == Chapter.READ) {
+            mChapter.setReadStatus(Chapter.READING);
+        }
     }
 
     private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread, LoadMode mode) {
@@ -650,8 +625,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     @Override
-    public void onBeginFling() {
-        // this is the opposite of onEndFling
+    public void onStartOver() {
         if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
             if (seamlessChapterTransition) {
@@ -662,7 +636,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     @Override
-    public void onEndFling() {
+    public void onEndOver() {
         LayoutInflater inflater = getLayoutInflater();
         boolean imagesDelete = pm.getBoolean("delete_images", false);
         boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
@@ -790,8 +764,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
         }
     }
-
-    enum LoadMode {START, END, SAVED}
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncDialog = new ProgressDialog(ActivityReader.this);

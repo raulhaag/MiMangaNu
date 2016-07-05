@@ -7,6 +7,8 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+
 /**
  * Created by Raul on 21/06/2016.
  */
@@ -16,14 +18,6 @@ public abstract class HorizontalReader extends ReaderContinuous {
 
     public HorizontalReader(Context context) {
         super(context);
-    }
-
-    public HorizontalReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public HorizontalReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
     }
 
     @Override

@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.componentes.readers.paged;
 
 import android.content.Context;
 import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 import java.util.Collections;
@@ -17,21 +16,14 @@ public class L2RPagedReader extends HorizontalPagedReader {
         super(context);
     }
 
-    public L2RPagedReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public L2RPagedReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
-    }
 
     @Override
     public void addOnPageChangeListener() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                if (pageChangeListener != null) {
-                    pageChangeListener.onPageChanged(paths.size() - position - 1);
+                if (readerListener != null) {
+                    readerListener.onPageChanged(paths.size() - position - 1);
                 }
                 currentPage = position;
             }
@@ -58,11 +50,11 @@ public class L2RPagedReader extends HorizontalPagedReader {
                     firedListener = false;
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    if (mOnEndFlingListener != null && isFirstPage() && mStartDragX < x && !firedListener) {
-                        mOnEndFlingListener.onEndFling();
+                    if (readerListener != null && isFirstPage() && mStartDragX < x && !firedListener) {
+                        readerListener.onEndOver();
                         firedListener = true;
-                    } else if (mOnBeginFlingListener != null && isLastPage() && mStartDragX > x && !firedListener) {
-                        mOnBeginFlingListener.onBeginFling();
+                    } else if (readerListener != null && isLastPage() && mStartDragX > x && !firedListener) {
+                        readerListener.onStartOver();
                         firedListener = true;
                     }
                     break;
@@ -99,5 +91,32 @@ public class L2RPagedReader extends HorizontalPagedReader {
     @Override
     public int getCurrentPage() {
         return paths.size() - super.getCurrentPage() + 1;
+    }
+
+    @Override
+    protected int transformPage(int page) {
+        return page + 1;
+    }
+
+    @Override
+    public void onLeftTap() {
+        if(currentPage == 0){
+            if(readerListener != null){
+                readerListener.onEndOver();
+            }
+        }else{
+            mViewPager.setCurrentItem(currentPage - 1);
+        }
+    }
+
+    @Override
+    public void onRightTap() {
+        if(currentPage == paths.size() - 1){
+            if(readerListener != null){
+                readerListener.onStartOver();
+            }
+        }else{
+            mViewPager.setCurrentItem(currentPage + 1);
+        }
     }
 }

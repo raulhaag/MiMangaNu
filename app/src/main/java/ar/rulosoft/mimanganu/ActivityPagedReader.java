@@ -50,7 +50,6 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPager;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
-import ar.rulosoft.mimanganu.componentes.readers.L2RReader;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;

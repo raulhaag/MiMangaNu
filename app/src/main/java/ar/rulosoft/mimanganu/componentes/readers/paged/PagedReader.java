@@ -20,6 +20,7 @@ import java.util.List;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
+import it.sephiroth.android.library.TapListener;
 import it.sephiroth.android.library.imagezoom.ImageViewTouch;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.InitialPosition;
@@ -29,7 +30,7 @@ import it.sephiroth.android.library.imagezoom.graphics.FastBitmapDrawable;
  * Created by Raul on 24/06/2016.
  */
 
-public abstract class PagedReader extends Reader {
+public abstract class PagedReader extends Reader implements TapListener {
 
     private static ImageViewTouchBase.DisplayType mScreenFit;
     List<String> paths;
@@ -41,16 +42,6 @@ public abstract class PagedReader extends Reader {
 
     public PagedReader(Context context) {
         super(context);
-        init();
-    }
-
-    public PagedReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
-
-    public PagedReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
         init();
     }
 
@@ -78,10 +69,6 @@ public abstract class PagedReader extends Reader {
     public void setPaths(List<String> paths) {
         this.paths = paths;
         setPagerAdapter(new PageAdapter());
-    }
-
-    @Override
-    public void changePath(int idx, String path) {
     }
 
     @Override
@@ -244,6 +231,12 @@ public abstract class PagedReader extends Reader {
         }
     }
 
+    @Override
+    public void onCenterTap() {
+        if(readerListener != null)
+            readerListener.onMenuRequired();
+    }
+
     public class Page extends RelativeLayout {
         public ImageViewTouch visor;
         ProgressBar loading;
@@ -273,8 +266,7 @@ public abstract class PagedReader extends Reader {
             li.inflate(R.layout.view_reader_page, this, true);
             visor = (ImageViewTouch) findViewById(R.id.visor);
             visor.setDisplayType(mScreenFit);
-            if (mTapListener != null)
-                visor.setTapListener(mTapListener);
+            visor.setTapListener(PagedReader.this);
             visor.setScaleEnabled(false);
             loading = (ProgressBar) findViewById(R.id.loading);
             loading.bringToFront();
