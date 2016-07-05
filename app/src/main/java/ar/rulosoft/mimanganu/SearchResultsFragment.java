@@ -81,10 +81,10 @@ public class SearchResultsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ServerBase serverBase = ServerBase.getServer(serverId);
-        ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + serverBase.getServerName());
-        if(searchPerformed)
+        if (searchPerformed) {
             loading.setVisibility(ProgressBar.INVISIBLE);
+            ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + ServerBase.getServer(serverId).getServerName());
+        }
     }
 
     @Override
@@ -99,7 +99,10 @@ public class SearchResultsFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            loading.setVisibility(ProgressBar.VISIBLE);
+            if (isAdded()) {
+                loading.setVisibility(ProgressBar.VISIBLE);
+                ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.searching, search_term) + " " + ServerBase.getServer(serverId).getServerName());
+            }
         }
 
         @Override
@@ -120,11 +123,12 @@ public class SearchResultsFragment extends Fragment {
         protected void onPostExecute(ArrayList<Manga> result) {
             if (isAdded()) {
                 loading.setVisibility(ProgressBar.INVISIBLE);
+                ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + ServerBase.getServer(serverId).getServerName());
                 if (error != null) {
                     if (error.length() < 2) {
                         if (result != null && !result.isEmpty() && list != null) {
                             list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, result));
-                            if(!mangasFromSearch.isEmpty())
+                            if (!mangasFromSearch.isEmpty())
                                 mangasFromSearch.clear();
                             mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {

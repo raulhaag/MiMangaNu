@@ -220,15 +220,25 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+        final SwitchPreferenceCompat onlyWifiUpdateSwitch = (SwitchPreferenceCompat)getPreferenceManager().findPreference("update_only_wifi");
+
         SwitchPreferenceCompat onlyWifiSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("only_wifi");
         onlyWifiSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
                 NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
                 NetworkUtilsAndReciever.connectionStatus = NetworkUtilsAndReciever.ConnectionStatus.UNCHECKED;
+                onlyWifiUpdateSwitch.setEnabled(!(Boolean) o);
                 return true;
             }
         });
+
+        if(onlyWifiSwitch.isChecked()){
+            onlyWifiUpdateSwitch.setEnabled(false);
+        }else{
+            onlyWifiUpdateSwitch.setEnabled(true);
+        }
+
 
         final Preference prefClearCache = getPreferenceManager().findPreference("clear_cache");
         prefClearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {

@@ -549,7 +549,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            if (asyncdialog != null)
+            if (asyncdialog != null && isAdded())
                 asyncdialog.dismiss();
             super.onProgressUpdate(values);
         }

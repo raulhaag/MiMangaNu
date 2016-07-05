@@ -99,7 +99,7 @@
     <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
-    <string name="update_message">Cambios 1.49 \n\t*Incluso más bug fixes\n\t*Establecer el número de hilos de búsqueda manual y los hilos de descarga = núcleos de CPU por defecto\n\t*Fix manejo de memoria en Android 5+\n\t*Mejorar el diseño en Android 5+\n\t*Agregado Inglés MangaEden\n\t*Agregado Inglés NineManga\n\t*fix MangaTube</string>
+    <string name="update_message">Cambios en v1.51:\n\t* Hotfixs 1.50.\n\nCambios en v1.50:\n\t* Arreglados varios errores\n\t* Pasadas varias funciones al trasfondo \n\t* Agregado lectura continua de capítulos \n\t*Agregadas notificaciones separadas por manga \n\t* Agregada la opción de solo Wifi y otras mejoras.</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="ui_settings">Configuración de UI</string>
     <string name="download_selection">Descargar seleccion</string>
@@ -164,8 +164,6 @@
     <string name="download_next_chapter_automatically_subtitle">Bajar capítulo siguiente automaticamente</string>
     <string name="download_next_chapter_automatically_title">Bajar capítulo siguiente</string>
     <string name="new_chapter">Nuevo capítulo de %s</string>
-    <string name="show_notification_per_new_chapter_subtitle">Mostrar notificacion por capitulo</string>
-    <string name="show_notification_per_new_chapter_title">Notificaciones separadas</string>
     <string name="already_on_db">El manga ya estaba agregado</string>
     <string name="dir_already_on_db">El directorio ya estaba agregado</string>
     <string name="edit_server_list">Editar lista de servidores</string>
@@ -185,4 +183,12 @@
     <string name="reset_server_list_to_defaults_subtitle">Mostrara todos los servidores escondidos.</string>
     <string name="misc_settings">Otras Configuraciones</string>
     <string name="downloading">Descargando: </string>
+    <string name="finishing_update">Finalizando busqueda …</string>
+    <string name="search_result">Resultados para \"%s\" en</string>
+    <string name="use_only_wifi_title_update">Usar solo WiFi (para updates)</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">Esconde barra de sensivilidad fuera de la pantalla completa</string>
+    <string name="hide_sensitivity_scrollbar_title">Esconde barra de sensivilidad</string>
+    <string name="include_finished_manga_subtitle">Esto incluira mangas finalizados (por extras, etc)</string>
+    <string name="include_finished_manga_title">Incluir mangas finalizados</string>
+    <string name="update_search_cancelled">Búsqueda de actualizaciones cancelada</string>
 </resources>

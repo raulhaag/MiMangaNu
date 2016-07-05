@@ -64,28 +64,34 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
     }
 
     public static ConnectionStatus getConnectionStatus(@NonNull Context context){
-        boolean result;
-            if(connectionStatus == ConnectionStatus.UNCHECKED) {
-                if (ONLY_WIFI) {
-                    result = isWifiConnected(context);
-                    if (result) {
-                        connectionStatus = ConnectionStatus.CONNECTED;
-                    } else {
-                        connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
-                    }
-                } else {
-                    result = _isConnected(context);
-                    if (result) {
-                        connectionStatus = ConnectionStatus.CONNECTED;
-                    } else {
-                        connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
-                    }
-                }
-            }
-            return connectionStatus;
+            return getConnectionStatus(context,ONLY_WIFI);
     }
 
+    public static ConnectionStatus getConnectionStatus(@NonNull Context context, boolean only_wifi){
+        boolean result;
+        if(connectionStatus == ConnectionStatus.UNCHECKED) {
+            if (only_wifi) {
+                result = isWifiConnected(context);
+                if (result) {
+                    connectionStatus = ConnectionStatus.CONNECTED;
+                } else {
+                    connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
+                }
+            } else {
+                result = _isConnected(context);
+                if (result) {
+                    connectionStatus = ConnectionStatus.CONNECTED;
+                } else {
+                    connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
+                }
+            }
+        }
+        return connectionStatus;
+    }
 
+    public static void reset() {
+        connectionStatus = ConnectionStatus.UNCHECKED;
+    }
 
     public static boolean _isConnected(@NonNull Context context) {
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
