@@ -99,7 +99,7 @@
     <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
-    <string name="update_message">Cambios en v1.50:\n\t* Hotfixs 1.50.\n\nCambios en v1.50:\n\t* Arreglados varios errores\n\t* Pasadas varias funciones al trasfondo \n\t* Agregado lectura continua de capítulos \n\t*Agregadas notificaciones separadas por manga \n\t* Agregada la opción de solo Wifi y otras mejoras.</string>
+    <string name="update_message">Cambios en v1.51:\n\t* Hotfixs 1.50.\n\nCambios en v1.50:\n\t* Arreglados varios errores\n\t* Pasadas varias funciones al trasfondo \n\t* Agregado lectura continua de capítulos \n\t*Agregadas notificaciones separadas por manga \n\t* Agregada la opción de solo Wifi y otras mejoras.</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="ui_settings">Configuración de UI</string>
     <string name="download_selection">Descargar seleccion</string>
