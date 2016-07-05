@@ -33,7 +33,7 @@ Downloads
 
 Changelog
 ---------
-Cambios 1.50
+Cambios 1.51
 * Hotfixs 1.50.
 
 Cambios 1.50
