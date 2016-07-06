@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.componentes.readers;
+package ar.rulosoft.mimanganu.componentes.readers.continuos;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
@@ -7,23 +7,17 @@ import android.graphics.Canvas;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
+import java.util.ArrayList;
+
 /**
  * Created by Raul on 21/06/2016.
  */
-public abstract class HorizontalReader extends Reader {
+public abstract class HorizontalReader extends ReaderContinuous {
 
     protected float totalWidth = 0;
 
     public HorizontalReader(Context context) {
         super(context);
-    }
-
-    public HorizontalReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public HorizontalReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
     }
 
     @Override

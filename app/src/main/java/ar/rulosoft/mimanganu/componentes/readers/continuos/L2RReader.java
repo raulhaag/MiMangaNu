@@ -1,25 +1,18 @@
-package ar.rulosoft.mimanganu.componentes.readers;
+package ar.rulosoft.mimanganu.componentes.readers.continuos;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
 
 /**
  * Created by Raul on 25/10/2015.
- *
  */
-public class R2LReader extends HorizontalReader {
+public class L2RReader extends HorizontalReader {
 
-    public R2LReader(Context context) {
+    boolean firstTime = true;
+    float totalWidth = 0;
+
+    public L2RReader(Context context) {
         super(context);
-    }
-
-    public R2LReader(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public R2LReader(Context context, AttributeSet attrs, int defStyle) {
-        super(context, attrs, defStyle);
     }
 
     @Override
@@ -80,55 +73,81 @@ public class R2LReader extends HorizontalReader {
     protected void calculateVisibilities() {
         float scrollXAd = getPagePosition(currentPage);
         float acc = 0;
-        for (int i = 0; i < pages.size(); i++) {
+        for (int i = pages.size() - 1; i >= 0; i--) {
             Page d = pages.get(i);
             d.init_visibility = (float) Math.floor(acc);
             acc += d.scaled_width;
             acc = (float) Math.floor(acc);
             d.end_visibility = acc;
         }
+        scrollXAd = getPagePosition(currentPage) - scrollXAd;//correction for new added pages
         totalWidth = acc;
-        scrollXAd = getPagePosition(currentPage) - scrollXAd;
-        relativeScroll(scrollXAd, 0);
+        if (firstTime) {
+            xScroll = getPagePosition(0);
+            firstTime = false;
+        } else {
+            relativeScroll(scrollXAd, 0);
+        }
         pagesLoaded = true;
-
     }
-
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        //Log.d("R2LRe",""+e1.getX()+" "+e2.getX()+" xS: "+xScroll+" yS: "+yScroll);
-        if (mOnEndFlingListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
-            mOnEndFlingListener.onEndFling();
+        //Log.d("L2RRe", "" + e1.getX() + " " + e2.getX() + " xS: " + xScroll + " yS: " + yScroll);
+        if (readerListener != null && e2.getX() - e1.getX() > 100 && (xScroll < 0.1)) {
+            readerListener.onEndOver();
             return true;
-        } else if (mOnBeginFlingListener != null && e2.getX() - e1.getX() > 100 && (xScroll < 0.1)) {
-            mOnBeginFlingListener.onBeginFling();
+        } else if (readerListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
+            readerListener.onStartOver();
             return true;
         }
         return super.onFling(e1, e2, velocityX, velocityY);
     }
 
-/*
- * Starting from 0
-*/
-
+    /*
+     * Starting from 0
+    */
     @Override
     public float getPagePosition(int page) {
         if (pages != null && pages.size() > 1) {
             if (page < 0) {
-                return pages.get(0).init_visibility;
+                return pages.get(0).end_visibility;
             } else if (page < pages.size()) {
                 if (pages.get(page).scaled_width * mScaleFactor > screenWidth) {
-                    return pages.get(page).init_visibility;
+                    return (pages.get(page).end_visibility - (screenWidth / mScaleFactor));
                 } else {
                     int add = (int) (pages.get(page).scaled_width * mScaleFactor - screenWidth) / 2;
-                    return pages.get(page).init_visibility + add;
+                    return (pages.get(page).end_visibility - (screenWidth / mScaleFactor)) - add;
                 }
             } else {
-                return pages.get(pages.size() - 1).end_visibility;
+                return pages.get(pages.size() - 1).end_visibility - (screenWidth / mScaleFactor);
             }
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        if (readerListener != null)
+            if (e.getX() < getWidth() / 4) {
+                if (isLastPageVisible())
+                    readerListener.onEndOver();
+                else
+                    goToPage(currentPage + 2);
+            } else if (e.getX() > getWidth() / 4 * 3) {
+                if (currentPage == 0)
+                    readerListener.onStartOver();
+                else
+                    goToPage(currentPage);
+            } else {
+                readerListener.onMenuRequired();
+            }
+        return false;
+    }
+
+    @Override
+    protected int transformPage(int page) {
+        return 0;
     }
 }
