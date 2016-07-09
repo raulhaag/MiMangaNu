@@ -30,25 +30,16 @@ import it.sephiroth.android.library.imagezoom.graphics.FastBitmapDrawable;
  * Created by Raul on 24/06/2016.
  */
 
-public abstract class PagedReader extends Reader {
+public abstract class PagedReader extends Reader implements TapListener {
 
     private static ImageViewTouchBase.DisplayType mScreenFit;
     List<String> paths;
     private InitialPosition iniPosition = InitialPosition.LEFT_UP;
     protected PageAdapter mPageAdapter;
-    float mStartDragX;
-    boolean firedListener = false;
     int currentPage = 0;
 
     public PagedReader(Context context) {
         super(context);
-        init();
-    }
-
-    public void init() {
-        String infService = Context.LAYOUT_INFLATER_SERVICE;
-        LayoutInflater li = (LayoutInflater)getContext().getSystemService(infService);
-        li.inflate(R.layout.view_paged_reader, this, true);
     }
 
     public abstract void setPagerAdapter(PageAdapter mPageAdapter);
@@ -244,7 +235,7 @@ public abstract class PagedReader extends Reader {
             li.inflate(R.layout.view_reader_page, this, true);
             visor = (ImageViewTouch) findViewById(R.id.visor);
             visor.setDisplayType(mScreenFit);
-            //TODO visor.setTapListener(PagedReader.this);
+            visor.setTapListener(PagedReader.this);
             visor.setScaleEnabled(false);
             loading = (ProgressBar) findViewById(R.id.loading);
             loading.bringToFront();

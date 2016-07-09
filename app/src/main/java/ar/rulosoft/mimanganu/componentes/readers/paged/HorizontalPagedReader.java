@@ -1,19 +1,19 @@
 package ar.rulosoft.mimanganu.componentes.readers.paged;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.componentes.OnSwipeOutListener;
+import ar.rulosoft.mimanganu.componentes.UnScrolledViewPager;
 
 /**
  * Created by Raul on 26/06/2016.
  */
 
-public abstract class HorizontalPagedReader extends PagedReader {
+public abstract class HorizontalPagedReader extends PagedReader implements OnSwipeOutListener {
 
-    ViewPager mViewPager;
+    UnScrolledViewPager mViewPager;
 
     public HorizontalPagedReader(Context context) {
         super(context);
@@ -50,13 +50,13 @@ public abstract class HorizontalPagedReader extends PagedReader {
         return mViewPager.getCurrentItem() + 1;
     }
 
-    @Override
     public void init() {
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater li = (LayoutInflater)getContext().getSystemService(infService);
         li.inflate(R.layout.view_paged_reader, this, true);
-        mViewPager = (ViewPager)findViewById(R.id.pager);
+        mViewPager = (UnScrolledViewPager) findViewById(R.id.pager);
         addOnPageChangeListener();
+        mViewPager.setOnSwipeOutListener(this);
     }
 
     @Override

@@ -26,6 +26,7 @@ public class L2RPagedReader extends HorizontalPagedReader {
                     readerListener.onPageChanged(paths.size() - position - 1);
                 }
                 currentPage = position;
+                mPageAdapter.setCurrentPage(position);
             }
 
             @Override
@@ -41,26 +42,8 @@ public class L2RPagedReader extends HorizontalPagedReader {
     }
 
     @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        float x = ev.getX();
-        if (!mPageAdapter.getCurrentPage().canScroll(Math.round(x - mStartDragX))) {
-            switch (ev.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mStartDragX = x;
-                    firedListener = false;
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    if (readerListener != null && isFirstPage() && mStartDragX < x && !firedListener) {
-                        readerListener.onEndOver();
-                        firedListener = true;
-                    } else if (readerListener != null && isLastPage() && mStartDragX > x && !firedListener) {
-                        readerListener.onStartOver();
-                        firedListener = true;
-                    }
-                    break;
-            }
-        }
-        return false;
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return super.onFling(e1, e2, velocityX, velocityY);
     }
 
     public boolean isLastPage(){
@@ -121,5 +104,19 @@ public class L2RPagedReader extends HorizontalPagedReader {
                 readerListener.onMenuRequired();
             }
         return false;
+    }
+
+    @Override
+    public void onStartOver() {
+        if(readerListener != null){
+            readerListener.onEndOver();
+        }
+    }
+
+    @Override
+    public void onEndOver() {
+        if(readerListener != null){
+            readerListener.onStartOver();
+        }
     }
 }

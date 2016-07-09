@@ -7,6 +7,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -235,13 +236,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
 
             if (null != mTapListener) {
                 try {
-                    if (e.getX() < getWidth() / 4) {
-                        mTapListener.onLeftTap();
-                    } else if (e.getX() > getWidth() / 4 * 3) {
-                        mTapListener.onRightTap();
-                    } else {
-                        mTapListener.onCenterTap();
-                    }
+                    mTapListener.onSingleTapConfirmed(e);
                 } catch (Exception ex) {
                     // nothing
                 }
@@ -293,18 +288,19 @@ public class ImageViewTouch extends ImageViewTouchBase {
             if (e1 == null || e2 == null) return false;
             if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
             if (mScaleDetector.isInProgress()) return false;
-
             return ImageViewTouch.this.onScroll(e1, e2, distanceX, distanceY);
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-
+            float diffX = e2.getX() - e1.getX();
             //if (!mScrollEnabled) return false;
             if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
             if (mScaleDetector.isInProgress()) return false;
             if (getScale() == 1f) return false;
-
+            if(canScroll((int)diffX)&& mTapListener != null){
+                mTapListener.onFling(e1, e2, velocityX, velocityY);
+            }
             return ImageViewTouch.this.onFling(e1, e2, velocityX, velocityY);
         }
 

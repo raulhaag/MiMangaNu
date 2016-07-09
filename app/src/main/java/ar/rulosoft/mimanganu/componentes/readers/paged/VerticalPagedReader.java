@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
 import fr.castorflex.android.verticalviewpager.VerticalViewPager;
 
 /**
@@ -14,7 +15,7 @@ import fr.castorflex.android.verticalviewpager.VerticalViewPager;
  */
 public class VerticalPagedReader extends PagedReader {
 
-    public VerticalViewPager mViewPager;
+    public UnScrolledViewPagerVertical mViewPager;
 
     public VerticalPagedReader(Context context) {
         super(context);
@@ -49,12 +50,11 @@ public class VerticalPagedReader extends PagedReader {
         return mViewPager.getCurrentItem() + 1;
     }
 
-    @Override
     public void init() {
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(infService);
         li.inflate(R.layout.view_paged_reader_vertical, this, true);
-        mViewPager = (VerticalViewPager) findViewById(R.id.pager);
+        mViewPager = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
         addOnPageChangeListener();
     }
 
@@ -66,6 +66,7 @@ public class VerticalPagedReader extends PagedReader {
                     readerListener.onPageChanged(position);
                 }
                 currentPage = position;
+                mPageAdapter.setCurrentPage(position);
             }
 
             @Override
@@ -91,29 +92,6 @@ public class VerticalPagedReader extends PagedReader {
     public void setPagerAdapter(PageAdapter nPageAdapter) {
         mPageAdapter = nPageAdapter;
         mViewPager.setAdapter(mPageAdapter);
-    }
-
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent ev) {
-        float y = ev.getY();
-        if (!mPageAdapter.getCurrentPage().canScrollV(Math.round(y - mStartDragX))) {
-            switch (ev.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    mStartDragX = y; //is x only to use the same for v & h
-                    firedListener = false;
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    if (readerListener != null && isLastPage() && mStartDragX > y && !firedListener) {
-                        readerListener.onEndOver();
-                        firedListener = true;
-                    } else if (readerListener != null && isFirstPage() && mStartDragX < y && !firedListener) {
-                        readerListener.onStartOver();
-                        firedListener = true;
-                    }
-                    break;
-            }
-        }
-        return false;
     }
 
     public boolean onSingleTapConfirmed(MotionEvent e) {
