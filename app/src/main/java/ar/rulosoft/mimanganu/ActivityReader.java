@@ -35,17 +35,11 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.MangaFragment.Direction;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
-import ar.rulosoft.mimanganu.componentes.readers.continuos.L2RReader;
-import ar.rulosoft.mimanganu.componentes.readers.continuos.R2LReader;
-import ar.rulosoft.mimanganu.componentes.readers.continuos.VerticalReader;
-import ar.rulosoft.mimanganu.componentes.readers.paged.L2RPagedReader;
-import ar.rulosoft.mimanganu.componentes.readers.paged.R2LPagedReader;
-import ar.rulosoft.mimanganu.componentes.readers.paged.VerticalPagedReader;
+import ar.rulosoft.mimanganu.componentes.readers.Reader.Direction;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
@@ -60,8 +54,6 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
 public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener {
 
-    // These are magic numbers
-    enum LoadMode {START, END, SAVED}
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
@@ -87,9 +79,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     private TextView mSeekerPage, mScrollSensitiveText;
     private MenuItem keepOnMenuItem, screenRotationMenuItem;
     private Button mButtonMinus, mButtonPlus;
-    private int readerType;
-
-
+    private Reader.Type readerType = Reader.Type.CONTINUOUS;
     private boolean controlVisible = false;
     private MenuItem displayMenu;
 
@@ -110,10 +100,12 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mOrientation = pm.getInt(ORIENTATION, 0);
         mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
         mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
-        readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
+        int intReaderType = pm.getBoolean("reader_type", true) ? 1 : 2;
         if (mManga.getReaderType() != 0) {
-            readerType = mManga.getReaderType();
+            intReaderType = mManga.getReaderType();
         }
+        if (intReaderType != 2)
+            readerType = Reader.Type.PAGED;
         if (mManga.getReadingDirection() != -1) {
             direction = Direction.values()[mManga.getReadingDirection()];
         } else {
@@ -196,28 +188,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (mReader != null) {
             mReader.freeMemory();
         }
-        if (readerType != 2) {
-            if (direction == Direction.R2L) {
-                mReader = new R2LPagedReader(this);
-                mSeekBar.setRotation(0);
-            } else if (direction == Direction.L2R) {
-                mReader = new L2RPagedReader(this);
-                mSeekBar.setRotation(180);
-            } else {
-                mReader = new VerticalPagedReader(this);
-                mSeekBar.setRotation(0);
-            }
+        mReader = Reader.getNewReader(getApplicationContext(), direction, readerType);
+        if (direction == Direction.L2R) {
+            mSeekBar.setRotation(180);
         } else {
-            if (direction == Direction.R2L) {
-                mReader = new R2LReader(this);
-                mSeekBar.setRotation(0);
-            } else if (direction == Direction.L2R) {
-                mReader = new L2RReader(this);
-                mSeekBar.setRotation(180);
-            } else {
-                mReader = new VerticalReader(this);
-                mSeekBar.setRotation(0);
-            }
+            mSeekBar.setRotation(0);
         }
         mReader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         ((FrameLayout) findViewById(R.id.reader_placeholder)).removeAllViews();
@@ -234,7 +209,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             }
         loadChapter(mChapter, LoadMode.SAVED);
     }
-
 
     private void loadChapter(Chapter nChapter, LoadMode mode) {
         mChapter = nChapter;
@@ -305,13 +279,14 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
         switch (mode) {
             case START:
-                mReader.goToPage(1);
+                mReader.seekPage(1);
                 break;
             case END:
-                mReader.goToPage(mChapter.getPages());
+                mReader.seekPage(mChapter.getPages());
                 break;
+            case SAVED:
+                mReader.seekPage(mChapter.getPagesRead());
         }
-
         mReader.postInvalidateDelayed(200);
     }
 
@@ -459,7 +434,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public void onImageDownloaded(int cid, int page) {
         if (cid == mChapter.getId())
-            mReader.reloadImage(page);
+            mReader.reloadImage(page + 1);
     }
 
     @Override
@@ -494,7 +469,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     protected void onResume() {
         super.onResume();
         DownloadPoolService.attachListener(this, mChapter.getId());
-        mReader.seekPage(mChapter.getPagesRead() - 1);
     }
 
     @Override
@@ -576,7 +550,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
     }
 
-
     @Override
     public void onError(final Chapter chapter) {
         ActivityReader.this.runOnUiThread(new Runnable() {
@@ -607,7 +580,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     public void onPageChanged(int page) {
         updatedValue = true;
-        mChapter.setPagesRead(page + 1);
+        mChapter.setPagesRead(page);
         mSeekBar.setProgress(page);
         if (mReader.isLastPageVisible()) {
             mChapter.setPagesRead(mChapter.getPages());
@@ -712,7 +685,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     public void onChange(final SingleDownload singleDownload) {
         if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
-            mReader.reloadImage(singleDownload.getIndex() - 1);
+            mReader.reloadImage(singleDownload.getIndex());
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -763,6 +736,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 
         }
+    }
+
+    // These are magic numbers
+    enum LoadMode {
+        START, END, SAVED
     }
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
@@ -831,7 +809,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             if (f.exists()) {
                 f.delete();
             }
-            mReader.reloadImage(idx - 1);
+            mReader.reloadImage(idx);
         }
 
         @Override

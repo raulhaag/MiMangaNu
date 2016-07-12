@@ -1,15 +1,18 @@
 package ar.rulosoft.mimanganu.componentes.readers;
 
 import android.content.Context;
-import android.util.AttributeSet;
 import android.view.GestureDetector;
-import android.view.View;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import it.sephiroth.android.library.TapListener;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.L2RReader;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.R2LReader;
+import ar.rulosoft.mimanganu.componentes.readers.continuos.VerticalReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.L2RPagedReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.R2LPagedReader;
+import ar.rulosoft.mimanganu.componentes.readers.paged.VerticalPagedReader;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
 /**
@@ -25,8 +28,6 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
  *
  */
 public abstract class Reader extends LinearLayout implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
-    public enum Direction {VERTICAL, R2L, L2R}
-
     protected int mTextureMax;
     protected float mScrollSensitive = 1.f;
     protected Direction mDirection = Direction.R2L;
@@ -37,16 +38,48 @@ public abstract class Reader extends LinearLayout implements GestureDetector.OnG
         super(context);
     }
 
+    public static Reader getNewReader(Context context, Direction mDirection, Type mType) {
+        if (mDirection == Direction.L2R) {
+            if (mType == Type.CONTINUOUS) {
+                return new L2RReader(context);
+            } else {
+                return new L2RPagedReader(context);
+            }
+        } else if (mDirection == Direction.R2L) {
+            if (mType == Type.CONTINUOUS) {
+                return new R2LReader(context);
+            } else {
+                return new R2LPagedReader(context);
+            }
+        } else {
+            if (mType == Type.CONTINUOUS) {
+                return new VerticalReader(context);
+            } else {
+                return new VerticalPagedReader(context);
+            }
+        }
+    }
+
     public abstract void goToPage(int aPage);
+
     public abstract void reset();
+
     public abstract void seekPage(int index);
+
     public abstract void setPaths(List<String> paths);
+
     public abstract void freeMemory();
+
     public abstract void freePage(int idx);
+
     public abstract String getPath(int idx);
+
     public abstract void reloadImage(int idx);
+
     public abstract boolean isLastPageVisible();
+
     public abstract int getCurrentPage();
+
     protected abstract int transformPage(int page);
 
     public void setScrollSensitive(float mScrollSensitive) {
@@ -74,6 +107,10 @@ public abstract class Reader extends LinearLayout implements GestureDetector.OnG
     }
 
     public void setScreenFit(DisplayType displayType){}
+
+    public enum Direction {L2R, R2L, VERTICAL}
+
+    public enum Type {CONTINUOUS, PAGED}
 
     public interface ReaderListener {
         void onPageChanged(int page);

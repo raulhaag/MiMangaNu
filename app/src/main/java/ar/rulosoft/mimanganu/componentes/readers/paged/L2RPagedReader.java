@@ -63,17 +63,23 @@ public class L2RPagedReader extends HorizontalPagedReader {
 
     @Override
     public void seekPage(int aPage) {
-        goToPage(aPage + 1);
+        int page = paths.size() - aPage;
+        mViewPager.setCurrentItem(page);
+        if (readerListener != null) {
+            readerListener.onPageChanged(transformPage(page));
+        }
+        currentPage = page;
     }
 
     @Override
     public void goToPage(int aPage) {
-        super.goToPage(paths.size() - aPage + 1);
+        seekPage(aPage);
     }
+
 
     @Override
     public int getCurrentPage() {
-        return paths.size() - super.getCurrentPage() + 1;
+        return paths.size() - mViewPager.getCurrentItem() + 1;
     }
 
     @Override

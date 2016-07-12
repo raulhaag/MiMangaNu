@@ -8,8 +8,8 @@ import android.view.MotionEvent;
  */
 public class L2RReader extends HorizontalReader {
 
-    boolean firstTime = true;
     float totalWidth = 0;
+    boolean firstTime = false;
 
     public L2RReader(Context context) {
         super(context);
@@ -71,7 +71,6 @@ public class L2RReader extends HorizontalReader {
 
     @Override
     protected void calculateVisibilities() {
-        float scrollXAd = getPagePosition(currentPage);
         float acc = 0;
         for (int i = pages.size() - 1; i >= 0; i--) {
             Page d = pages.get(i);
@@ -80,16 +79,14 @@ public class L2RReader extends HorizontalReader {
             acc = (float) Math.floor(acc);
             d.end_visibility = acc;
         }
-        scrollXAd = getPagePosition(currentPage) - scrollXAd;//correction for new added pages
         totalWidth = acc;
         if (firstTime) {
             xScroll = getPagePosition(0);
             firstTime = false;
-        } else {
-            relativeScroll(scrollXAd, 0);
         }
         pagesLoaded = true;
     }
+
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
@@ -144,10 +141,5 @@ public class L2RReader extends HorizontalReader {
                 readerListener.onMenuRequired();
             }
         return false;
-    }
-
-    @Override
-    protected int transformPage(int page) {
-        return 0;
     }
 }

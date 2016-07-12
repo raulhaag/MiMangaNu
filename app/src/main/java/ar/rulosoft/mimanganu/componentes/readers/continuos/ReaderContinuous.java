@@ -14,11 +14,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
-import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
-import android.view.View;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +32,7 @@ import rapid.decoder.BitmapDecoder;
  * Created by Raul on 22/10/2015.
  */
 
-public abstract class ReaderContinuous extends Reader{
+public abstract class ReaderContinuous extends Reader {
     protected int currentPage = 0, lastBestVisible = 0;
     protected float lastPageBestPercent = 0f;
     protected int mTextureMax = 1024;
@@ -82,6 +80,16 @@ public abstract class ReaderContinuous extends Reader{
 
     public abstract void seekPage(int index);
 
+    public abstract void postLayout();
+
+    public abstract void reloadImage(int idx);
+
+
+    @Override
+    protected int transformPage(int page) {
+        return page + 1;
+    }
+
     public void freeMemory() {
         if (pages != null)
             for (Page p : pages) {
@@ -89,11 +97,16 @@ public abstract class ReaderContinuous extends Reader{
             }
     }
 
-    public void freePage(int idx){
+    public void freePage(int idx) {
         getPage(idx).freeMemory();
     }
 
-    public String getPath(int idx){
+    @Override
+    public int getCurrentPage() {
+        return currentPage + 1;
+    }
+
+    public String getPath(int idx) {
         return getPage(idx).getPath();
     }
 
@@ -121,6 +134,7 @@ public abstract class ReaderContinuous extends Reader{
             layoutReady = true;
             generateDrawPool();
         }
+        postLayout();
         super.onLayout(changed, left, top, right, bottom);
     }
 
@@ -202,15 +216,13 @@ public abstract class ReaderContinuous extends Reader{
                                 } catch (Exception e) {
                                     tested = false;
                                 }//catch errors caused for array concurrent modify
-
                             }
                             if (currentPage != lastBestVisible) {
                                 setPage(lastBestVisible);
                             }
                         }
                     } else if (pagesLoaded) {
-                       //TODO if (mViewReadyListener != null)
-                            //mViewReadyListener.onViewReady();
+                        //TODO if (mViewReadyListener != null)
                         viewReady = true;
                         preparing = false;
                         generateDrawPool();
@@ -270,30 +282,8 @@ public abstract class ReaderContinuous extends Reader{
         }
     }
 
-    public void changePath(int idx, String path) {
-        Page page = initValues(path);
-        calculateParticularScale(page);
-        pages.set(idx, page);
-        calculateVisibilities();
-        generateDrawPool();
-    }
 
-    public void reloadImage(int idx) {
-        if (pages != null) {
-            if(idx < pages.size()) {
-                int iniPage = getCurrentPage() - 1;
-                Page page = initValues(pages.get(idx).path);
-                pages.set(idx, page);
-                calculateParticularScale(pages.get(idx));
-                calculateVisibilities();
-                if (iniPage >= idx)
-                    seekPage(iniPage);
-                generateDrawPool();
-            }
-        }
-    }
-
-    private Page initValues(String path) {
+    protected Page initValues(String path) {
         Page dimension = getNewPage();
         dimension.path = path;
         File f = new File(path);
@@ -472,10 +462,6 @@ public abstract class ReaderContinuous extends Reader{
         }
     }
 
-    public int getCurrentPage() {
-        return (currentPage + 1);
-    }
-
     /*
      * Starting from 0
      */
@@ -483,20 +469,19 @@ public abstract class ReaderContinuous extends Reader{
 
     private InputStream getBitmapFromAsset(String strName) {
         AssetManager assetManager = getContext().getAssets();
-        InputStream istr = null;
+        InputStream iStr = null;
         try {
-            istr = assetManager.open(strName);
+            iStr = assetManager.open(strName);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return istr;
+        return iStr;
     }
 
 
     public enum ImagesStates {NULL, RECYCLED, ERROR, LOADING, LOADED}
 
     public abstract class Page {
-
         String path;
         float original_width;
         float original_height;

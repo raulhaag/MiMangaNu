@@ -46,7 +46,7 @@ public class TuMangaOnline extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        loadChapters(manga, forceReload, true);
+        loadChapters(manga, forceReload, false);
     }
 
     public void loadChapters(Manga manga, boolean forceReload, boolean last) throws Exception {

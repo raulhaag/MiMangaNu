@@ -7,8 +7,6 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
-import android.util.AttributeSet;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -33,10 +31,10 @@ import it.sephiroth.android.library.imagezoom.graphics.FastBitmapDrawable;
 public abstract class PagedReader extends Reader implements TapListener {
 
     private static ImageViewTouchBase.DisplayType mScreenFit;
-    List<String> paths;
-    private InitialPosition iniPosition = InitialPosition.LEFT_UP;
     protected PageAdapter mPageAdapter;
+    List<String> paths;
     int currentPage = 0;
+    private InitialPosition iniPosition = InitialPosition.LEFT_UP;
 
     public PagedReader(Context context) {
         super(context);
@@ -52,11 +50,6 @@ public abstract class PagedReader extends Reader implements TapListener {
     }
 
     @Override
-    public void seekPage(int aPage) {
-        goToPage(aPage);
-    }
-
-    @Override
     public void setPaths(List<String> paths) {
         this.paths = paths;
         setPagerAdapter(new PageAdapter());
@@ -64,11 +57,16 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void freeMemory() {
-
+        mPageAdapter.pages = null;
     }
 
     @Override
     public void freePage(int idx) {}
+
+
+    @Override
+    public void reset() {
+    }
 
     @Override
     public String getPath(int idx) {

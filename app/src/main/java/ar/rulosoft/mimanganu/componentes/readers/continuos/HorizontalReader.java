@@ -4,10 +4,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
-import android.util.AttributeSet;
 import android.view.MotionEvent;
-
-import java.util.ArrayList;
 
 /**
  * Created by Raul on 21/06/2016.
@@ -51,11 +48,44 @@ public abstract class HorizontalReader extends ReaderContinuous {
         }
     }
 
+    @Override
+    public void postLayout() {
+        absoluteScroll(getPagePosition(currentPage), yScroll);
+        generateDrawPool();
+        if (readerListener != null) {
+            readerListener.onPageChanged(currentPage);
+        }
+    }
 
     @Override
     public void seekPage(int index) {
-        absoluteScroll(getPagePosition(index), yScroll);
-        generateDrawPool();
+        int page = index - 1;
+        if (page < 0)
+            page = 0;
+        else if (index >= pages.size())
+            page = pages.size() - 1;
+        if (viewReady && pagesLoaded) {
+            absoluteScroll(getPagePosition(page), yScroll);
+            generateDrawPool();
+        }
+        currentPage = page;
+    }
+
+    public void reloadImage(int idx) {
+        int pageIdx = idx - 1;
+        if (pages != null) {
+            if (idx <= pages.size()) {
+                int cPage = currentPage;
+                float value = pages.get(cPage).init_visibility;
+                Page page = initValues(pages.get(pageIdx).path);
+                pages.set(pageIdx, page);
+                calculateParticularScale(pages.get(pageIdx));
+                calculateVisibilities();
+                value = value - pages.get(cPage).init_visibility;
+                relativeScroll(-value, 0);
+                generateDrawPool();
+            }
+        }
     }
 
     @Override
@@ -137,14 +167,14 @@ public abstract class HorizontalReader extends ReaderContinuous {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    if(visibility != lastVisibleState){
+                    if (visibility != lastVisibleState) {
                         lastVisibleState = visibility;
-                        if(!visibility){
+                        if (!visibility) {
                             freeMemory();
                         }
                     }
-                    if(visibility && segments != null)
-                        for(Segment s: segments){
+                    if (visibility && segments != null)
+                        for (Segment s : segments) {
                             s.checkVisibility();
                         }
                 }
@@ -173,7 +203,8 @@ public abstract class HorizontalReader extends ReaderContinuous {
                 }
             }
         }
-        public class HSegment extends Segment{
+
+        public class HSegment extends Segment {
             @Override
             public boolean checkVisibility() {
                 float visibleLeft = xScroll * mScaleFactor;
@@ -183,7 +214,7 @@ public abstract class HorizontalReader extends ReaderContinuous {
                 boolean visibility = (visibleLeft <= _init_visibility * mScaleFactor && _init_visibility * mScaleFactor <= visibleRight) ||
                         (visibleLeft <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleRight) ||
                         (_init_visibility * mScaleFactor < visibleLeft && _end_visibility * mScaleFactor >= visibleRight);
-                if(visible != visibility){
+                if (visible != visibility) {
                     visibilityChanged();
                 }
                 return visibility;
@@ -191,7 +222,7 @@ public abstract class HorizontalReader extends ReaderContinuous {
 
             @Override
             public void draw(Canvas canvas) {
-                if(state == ImagesStates.LOADED) {
+                if (state == ImagesStates.LOADED) {
                     m.reset();
                     mPaint.setAlpha(alpha);
                     m.postTranslate(dx, dy);
@@ -200,7 +231,8 @@ public abstract class HorizontalReader extends ReaderContinuous {
                     m.postScale(mScaleFactor, mScaleFactor);
                     try {
                         canvas.drawBitmap(segment, m, mPaint);
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {
+                    }
                 }
             }
         }

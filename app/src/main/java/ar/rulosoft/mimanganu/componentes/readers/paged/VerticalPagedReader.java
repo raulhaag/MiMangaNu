@@ -7,14 +7,12 @@ import android.view.MotionEvent;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
-import fr.castorflex.android.verticalviewpager.VerticalViewPager;
 
 /**
  * Created by Raul on 27/06/2016.
  *
  */
 public class VerticalPagedReader extends PagedReader {
-
     public UnScrolledViewPagerVertical mViewPager;
 
     public VerticalPagedReader(Context context) {
@@ -24,25 +22,17 @@ public class VerticalPagedReader extends PagedReader {
 
     @Override
     public void seekPage(int aPage) {
-        mViewPager.setCurrentItem(aPage);
-        if (readerListener != null) {
-            readerListener.onPageChanged(aPage);
-        }
-        currentPage = aPage;
+        goToPage(aPage);
     }
 
     @Override
     public void goToPage(int aPage) {
-        mViewPager.setCurrentItem(aPage - 1);
+        int page = aPage - 1;
+        mViewPager.setCurrentItem(page);
         if (readerListener != null) {
-            readerListener.onPageChanged(aPage);
+            readerListener.onPageChanged(transformPage(page));
         }
-        currentPage = aPage - 1;
-    }
-
-    @Override
-    public void reset() {
-
+        currentPage = page;
     }
 
     @Override
@@ -63,7 +53,7 @@ public class VerticalPagedReader extends PagedReader {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (readerListener != null) {
-                    readerListener.onPageChanged(position);
+                    readerListener.onPageChanged(transformPage(position));
                 }
                 currentPage = position;
                 mPageAdapter.setCurrentPage(position);

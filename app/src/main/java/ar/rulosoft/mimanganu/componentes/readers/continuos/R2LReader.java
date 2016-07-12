@@ -69,7 +69,6 @@ public class R2LReader extends HorizontalReader {
 
     @Override
     protected void calculateVisibilities() {
-        float scrollXAd = getPagePosition(currentPage);
         float acc = 0;
         for (int i = 0; i < pages.size(); i++) {
             Page d = pages.get(i);
@@ -79,12 +78,8 @@ public class R2LReader extends HorizontalReader {
             d.end_visibility = acc;
         }
         totalWidth = acc;
-        scrollXAd = getPagePosition(currentPage) - scrollXAd;
-        relativeScroll(scrollXAd, 0);
         pagesLoaded = true;
-
     }
-
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
@@ -139,10 +134,5 @@ public class R2LReader extends HorizontalReader {
             readerListener.onMenuRequired();
         }
         return false;
-    }
-
-    @Override
-    protected int transformPage(int page) {
-        return page + 1;
     }
 }

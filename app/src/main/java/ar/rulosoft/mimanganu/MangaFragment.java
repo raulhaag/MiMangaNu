@@ -43,6 +43,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.ControlInfoNoScroll;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.readers.Reader.Direction;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -80,6 +81,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         super.onCreate(savedInstanceState);
         if (mMangaId == -1) {
@@ -512,10 +514,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
 
         this.menu = menu;
-    }
-
-    public enum Direction {
-        L2R, R2L, VERTICAL
     }
 
     private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {

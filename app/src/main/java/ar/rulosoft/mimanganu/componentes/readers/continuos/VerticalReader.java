@@ -32,7 +32,6 @@ public class VerticalReader extends ReaderContinuous {
 
     @Override
     public void calculateVisibilities() {
-        float scrollYAd = getPagePosition(currentPage);
         float acc = 0;
         for (int i = 0; i < pages.size(); i++) {
             Page d = pages.get(i);
@@ -42,14 +41,28 @@ public class VerticalReader extends ReaderContinuous {
             d.end_visibility = acc;
         }
         totalHeight = acc;
-        scrollYAd = getPagePosition(currentPage) - scrollYAd;
-        relativeScroll(0, scrollYAd);
         pagesLoaded = true;
+    }
+
+    public void reloadImage(int idx) {
+        int pageIdx = idx - 1;
+        if (pages != null) {
+            if (idx <= pages.size()) {
+                int cPage = currentPage;
+                float value = pages.get(cPage).init_visibility;
+                Page page = initValues(pages.get(pageIdx).path);
+                pages.set(pageIdx, page);
+                calculateParticularScale(pages.get(pageIdx));
+                calculateVisibilities();
+                value = value - pages.get(cPage).init_visibility;
+                relativeScroll(0, -value);
+                generateDrawPool();
+            }
+        }
     }
 
     @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        //Log.d("VertRe", "" + e1.getY() + " " + e2.getY() + " xS: " + xScroll + " yS: " + yScroll);
         if (readerListener != null)
             if (e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
                 readerListener.onEndOver();
@@ -138,9 +151,29 @@ public class VerticalReader extends ReaderContinuous {
     }
 
     @Override
-    public void seekPage(int index) {
-        absoluteScroll(xScroll, getPagePosition(index));
+    public void postLayout() {
+        absoluteScroll(xScroll, getPagePosition(currentPage));
         generateDrawPool();
+        if (readerListener != null) {
+            readerListener.onPageChanged(transformPage(currentPage));
+        }
+    }
+
+    @Override
+    public void seekPage(int index) {
+        int page = index - 1;
+        if (page < 0)
+            page = 0;
+        else if (index >= pages.size())
+            page = pages.size() - 1;
+        if (viewReady && pagesLoaded) {
+            absoluteScroll(xScroll, getPagePosition(page));
+            generateDrawPool();
+        }
+        if (readerListener != null) {
+            readerListener.onPageChanged(index);
+        }
+        currentPage = page;
     }
 
     @Override
