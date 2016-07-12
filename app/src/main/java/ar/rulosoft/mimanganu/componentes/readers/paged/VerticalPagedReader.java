@@ -11,7 +11,6 @@ import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
 
 /**
  * Created by Raul on 27/06/2016.
- *
  */
 public class VerticalPagedReader extends PagedReader implements OnSwipeOutListener {
     public UnScrolledViewPagerVertical mViewPager;
@@ -24,6 +23,11 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
     @Override
     public void seekPage(int aPage) {
         goToPage(aPage);
+    }
+
+    @Override
+    public boolean isLastPageVisible() {
+        return mViewPager.getCurrentItem() == (paths.size() - 1);
     }
 
     @Override
@@ -89,19 +93,19 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (readerListener != null)
             if (e.getX() < getWidth() / 4) {
-                if(currentPage == 0){
-                    if(readerListener != null){
+                if (currentPage == 0) {
+                    if (readerListener != null) {
                         readerListener.onStartOver();
                     }
-                }else{
+                } else {
                     mViewPager.setCurrentItem(currentPage - 1);
                 }
             } else if (e.getX() > getWidth() / 4 * 3) {
-                if(currentPage == paths.size() - 1){
-                    if(readerListener != null){
+                if (currentPage == paths.size() - 1) {
+                    if (readerListener != null) {
                         readerListener.onEndOver();
                     }
-                }else{
+                } else {
                     mViewPager.setCurrentItem(currentPage + 1);
                 }
             } else {
@@ -117,14 +121,14 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
 
     @Override
     public void onStartOver() {
-        if(readerListener != null){
+        if (readerListener != null) {
             readerListener.onStartOver();
         }
     }
 
     @Override
     public void onEndOver() {
-        if(readerListener != null){
+        if (readerListener != null) {
             readerListener.onEndOver();
         }
     }

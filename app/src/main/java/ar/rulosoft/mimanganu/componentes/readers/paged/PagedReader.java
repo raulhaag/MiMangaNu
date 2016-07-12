@@ -8,7 +8,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
@@ -43,6 +42,11 @@ public abstract class PagedReader extends Reader implements TapListener {
     public abstract void setPagerAdapter(PageAdapter mPageAdapter);
 
     @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+    }
+
+    @Override
     public void setScreenFit(ImageViewTouchBase.DisplayType displayType) {
         mScreenFit = displayType;
         if (mPageAdapter != null)
@@ -62,11 +66,16 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void freePage(int idx) {
+        if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
+            mPageAdapter.pages[idx - 1] = null;
+        }
     }
 
 
     @Override
     public void reset() {
+        currentPage = 0;
+        setPagerAdapter(null);
     }
 
     @Override
@@ -76,59 +85,16 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void reloadImage(int idx) {
-        if (mPageAdapter.pages[idx - 1] != null){
+        if (mPageAdapter.pages[idx - 1] != null) {
             mPageAdapter.pages[idx - 1].setImage();
         }
     }
 
     @Override
-    public boolean isLastPageVisible() {
-        return false;
-    }
-
-    @Override
     public void setScrollSensitive(float mScrollSensitive) {
-
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
+        this.mScrollSensitive = mScrollSensitive;
+        if (mPageAdapter != null)
+            mPageAdapter.setPageScroll(mScrollSensitive);
     }
 
     @Override
@@ -204,11 +170,12 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
 
         public void setPageScroll(float pageScroll) {
-            for (int i = 0; i < pages.length; i++) {
-                if (pages[i] != null) {
-                    pages[i].visor.setScrollFactor(pageScroll);
+            if (pages != null)
+                for (int i = 0; i < pages.length; i++) {
+                    if (pages[i] != null) {
+                        pages[i].visor.setScrollFactor(pageScroll);
+                    }
                 }
-            }
         }
 
         public void pageDownloaded(int page) {

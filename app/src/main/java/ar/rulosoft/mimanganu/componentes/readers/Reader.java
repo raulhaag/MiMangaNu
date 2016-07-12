@@ -27,7 +27,7 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
  * returned pages ever go to be number 1 to n, being n the array paths size
  *
  */
-public abstract class Reader extends LinearLayout implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public abstract class Reader extends LinearLayout  {
     protected int mTextureMax;
     protected float mScrollSensitive = 1.f;
     protected Direction mDirection = Direction.R2L;

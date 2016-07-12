@@ -293,14 +293,10 @@ public class ImageViewTouch extends ImageViewTouchBase {
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            float diffX = e2.getX() - e1.getX();
             //if (!mScrollEnabled) return false;
             if (e1.getPointerCount() > 1 || e2.getPointerCount() > 1) return false;
             if (mScaleDetector.isInProgress()) return false;
             if (getScale() == 1f) return false;
-            if(canScroll((int)diffX)&& mTapListener != null){
-                mTapListener.onFling(e1, e2, velocityX, velocityY);
-            }
             return ImageViewTouch.this.onFling(e1, e2, velocityX, velocityY);
         }
 

@@ -32,7 +32,7 @@ import rapid.decoder.BitmapDecoder;
  * Created by Raul on 22/10/2015.
  */
 
-public abstract class ReaderContinuous extends Reader {
+public abstract class ReaderContinuous extends Reader implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
     protected int currentPage = 0, lastBestVisible = 0;
     protected float lastPageBestPercent = 0f;
     protected int mTextureMax = 1024;

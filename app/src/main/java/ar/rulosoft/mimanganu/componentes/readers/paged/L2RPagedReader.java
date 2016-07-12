@@ -41,11 +41,6 @@ public class L2RPagedReader extends HorizontalPagedReader {
         });
     }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return super.onFling(e1, e2, velocityX, velocityY);
-    }
-
     public boolean isLastPage(){
         return (paths.size() - 1) == mViewPager.getCurrentItem();
     }
@@ -82,6 +77,11 @@ public class L2RPagedReader extends HorizontalPagedReader {
         if (mPageAdapter.pages[intIdx] != null){
             mPageAdapter.pages[intIdx].setImage();
         }
+    }
+
+    @Override
+    public boolean isLastPageVisible() {
+        return mViewPager.getCurrentItem() == 0;
     }
 
     @Override

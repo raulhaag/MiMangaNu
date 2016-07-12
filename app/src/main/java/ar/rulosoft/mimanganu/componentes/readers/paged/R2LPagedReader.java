@@ -50,6 +50,11 @@ public class R2LPagedReader extends HorizontalPagedReader {
     }
 
     @Override
+    public boolean isLastPageVisible() {
+        return mViewPager.getCurrentItem() == (paths.size() - 1);
+    }
+
+    @Override
     public void goToPage(int aPage) {
         int page = aPage - 1;
         mViewPager.setCurrentItem(page);

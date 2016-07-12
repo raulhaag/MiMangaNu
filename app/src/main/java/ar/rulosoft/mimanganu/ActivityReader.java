@@ -54,10 +54,13 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
 public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener {
 
+    enum LoadMode {START, END, SAVED}
+
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
     private static final String ADJUST_KEY = "ajustar_a";
+
     private static int mTextureMax;
     private static DisplayType mScreenFit;
     public Reader mReader;
@@ -226,7 +229,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             new GetPageTask().execute(nChapter);
         } else {
             DownloadPoolService.setDownloadListener(this);
-            mSeekBar.setProgress(0);
             mChapter.setReadStatus(Chapter.READING);
             Database.updateChapter(ActivityReader.this, mChapter);
             mReader.reset();
@@ -605,7 +607,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
             if (seamlessChapterTransition) {
-                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, LoadMode.SAVED);
+                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, LoadMode.END);
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
             }
         }
@@ -739,11 +741,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
 
         }
-    }
-
-    // These are magic numbers
-    enum LoadMode {
-        START, END, SAVED
     }
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
