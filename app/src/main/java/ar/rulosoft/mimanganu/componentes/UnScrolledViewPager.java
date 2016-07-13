@@ -16,7 +16,6 @@ public class UnScrolledViewPager extends ViewPager {
     }
 
     float mStartDragX;
-    float x = 0;
     OnSwipeOutListener mOnSwipeOutListener;
 
     public void setOnSwipeOutListener(OnSwipeOutListener listener) {
@@ -67,7 +66,6 @@ public class UnScrolledViewPager extends ViewPager {
             mStartDragX=0;
         }
         return super.onTouchEvent(ev);
-
     }
 
 

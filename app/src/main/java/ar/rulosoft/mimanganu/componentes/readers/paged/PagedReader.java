@@ -61,7 +61,8 @@ public abstract class PagedReader extends Reader implements TapListener {
     }
 
     @Override
-    public void freePage(int idx) {}
+    public void freePage(int idx) {
+    }
 
 
     @Override
@@ -75,7 +76,9 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void reloadImage(int idx) {
-
+        if (mPageAdapter.pages[idx - 1] != null){
+            mPageAdapter.pages[idx - 1].setImage();
+        }
     }
 
     @Override
@@ -87,6 +90,7 @@ public abstract class PagedReader extends Reader implements TapListener {
     public void setScrollSensitive(float mScrollSensitive) {
 
     }
+
     @Override
     public boolean onDoubleTap(MotionEvent e) {
         return false;

@@ -6,13 +6,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.componentes.OnSwipeOutListener;
 import ar.rulosoft.mimanganu.componentes.UnScrolledViewPagerVertical;
 
 /**
  * Created by Raul on 27/06/2016.
  *
  */
-public class VerticalPagedReader extends PagedReader {
+public class VerticalPagedReader extends PagedReader implements OnSwipeOutListener {
     public UnScrolledViewPagerVertical mViewPager;
 
     public VerticalPagedReader(Context context) {
@@ -46,6 +47,7 @@ public class VerticalPagedReader extends PagedReader {
         li.inflate(R.layout.view_paged_reader_vertical, this, true);
         mViewPager = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
         addOnPageChangeListener();
+        mViewPager.setOnSwipeOutListener(this);
     }
 
     protected void addOnPageChangeListener() {
@@ -111,5 +113,19 @@ public class VerticalPagedReader extends PagedReader {
     @Override
     protected int transformPage(int page) {
         return page + 1;
+    }
+
+    @Override
+    public void onStartOver() {
+        if(readerListener != null){
+            readerListener.onStartOver();
+        }
+    }
+
+    @Override
+    public void onEndOver() {
+        if(readerListener != null){
+            readerListener.onEndOver();
+        }
     }
 }

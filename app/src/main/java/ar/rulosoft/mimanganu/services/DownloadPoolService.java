@@ -357,7 +357,9 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                                 server.chapterInit(d.chapter);
                                 d.reset();
                             } catch (Exception e) {
-                                d.status = DownloadStatus.ERROR;
+                            }finally {
+                                if(d.chapter.getPages() == 0)
+                                    d.status = DownloadStatus.ERROR;
                             }
                         Database.updateChapter(getApplicationContext(), d.chapter);
                     }

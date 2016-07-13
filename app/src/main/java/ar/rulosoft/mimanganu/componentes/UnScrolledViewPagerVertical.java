@@ -12,7 +12,6 @@ import fr.castorflex.android.verticalviewpager.VerticalViewPager;
 public class UnScrolledViewPagerVertical extends VerticalViewPager {
 
     float mStartDragY;
-    float y = 0;
     OnSwipeOutListener mOnSwipeOutListener;
 
     public UnScrolledViewPagerVertical(Context context, AttributeSet attrs) {
@@ -48,7 +47,6 @@ public class UnScrolledViewPagerVertical extends VerticalViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev){
-
         if(getCurrentItem()==0 || getCurrentItem()==getAdapter().getCount()-1){
             final int action = ev.getAction();
             float y = ev.getY();

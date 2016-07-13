@@ -440,6 +440,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     protected void onPause() {
         try {
+            DownloadPoolService.setDownloadListener(null);
+            DownloadPoolService.detachListener(mChapter.getId());
             Database.updateChapter(ActivityReader.this, mChapter);
             if (mReader.isLastPageVisible()) {
                 mChapter.setPagesRead(mChapter.getPages());
@@ -447,8 +449,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 Database.updateChapter(ActivityReader.this, mChapter);
             } else
                 Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
-            DownloadPoolService.detachListener(mChapter.getId());
         } catch (Exception ignored) {
+            ignored.printStackTrace();
         }
         super.onPause();
     }
@@ -469,6 +471,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     protected void onResume() {
         super.onResume();
         DownloadPoolService.attachListener(this, mChapter.getId());
+        DownloadPoolService.setDownloadListener(this);
     }
 
     @Override

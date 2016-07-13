@@ -37,6 +37,9 @@ public class ChapterDownload implements StateChangeListener {
         if (status.ordinal() < DownloadStatus.DOWNLOADED.ordinal()) {
             if (status == DownloadStatus.QUEUED)
                 changeStatus(DownloadStatus.DOWNLOADING);
+            if(chapter.getPages() == 0){
+                changeStatus(DownloadStatus.ERROR);
+            }
             if (areErrors()) {
                 j = -11;
             } else if (progress < chapter.getPages()) {
