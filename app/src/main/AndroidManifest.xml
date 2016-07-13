@@ -35,12 +35,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ActivityPagedReader"
-            android:label="@string/title_activity_activity_lector"
-            android:largeHeap="true"
-            android:theme="@style/AppTheme.Dark.NoActionbar" />
-        <service android:name=".services.DownloadPoolService" />
         <receiver android:name=".utils.NetworkUtilsAndReciever" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
