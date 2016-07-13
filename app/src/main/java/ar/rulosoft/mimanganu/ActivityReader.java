@@ -214,6 +214,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     private void loadChapter(Chapter nChapter, LoadMode mode) {
+        if(mChapter != null) {
+            DownloadPoolService.detachListener(mChapter.getId());
+            Database.updateChapter(ActivityReader.this, mChapter);
+        }
         mChapter = nChapter;
         if (!mChapter.isDownloaded()) {
             try {
@@ -225,8 +229,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             }
         }
         setTitle(mChapter.getTitle());
-        if (nChapter.getPages() == 0) {
-            new GetPageTask().execute(nChapter);
+        if (mChapter.getPages() == 0) {
+            new GetPageTask().execute(mChapter);
         } else {
             DownloadPoolService.setDownloadListener(this);
             mChapter.setReadStatus(Chapter.READING);
@@ -245,7 +249,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     }
                 }
             }
-
             mReader.setPaths(pages);
             mActionBar.setTitle(mChapter.getTitle());
             mSeekBar.setMax(mChapter.getPages() - 1);
@@ -586,7 +589,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     public void onPageChanged(int page) {
         updatedValue = true;
         mChapter.setPagesRead(page);
-        mSeekBar.setProgress(page);
+        mSeekBar.setProgress(page-1);
         if (mReader.isLastPageVisible()) {
             mChapter.setPagesRead(mChapter.getPages());
             mChapter.setReadStatus(Chapter.READ);
@@ -595,20 +598,15 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
     }
 
-    private void updateDBAndLoadChapter(Chapter chapter, int readOrUnread, int pagesread, LoadMode mode) {
-        mChapter.setReadStatus(readOrUnread);
-        mChapter.setPagesRead(pagesread);
-        Database.updateChapter(ActivityReader.this, mChapter);
-        loadChapter(chapter, mode);
-    }
-
     @Override
     public void onStartOver() {
         if (previousChapter != null) {
             boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
             if (seamlessChapterTransition) {
-                updateDBAndLoadChapter(previousChapter, Chapter.UNREAD, 0, LoadMode.END);
-                Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+                mChapter.setReadStatus(Chapter.UNREAD);
+                mChapter.setPagesRead(1);
+                loadChapter(previousChapter,LoadMode.END);
+                //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
             }
         }
     }
@@ -647,8 +645,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                         })
                         .show();
             } else {
+                mChapter.setReadStatus(Chapter.READ);
+                mChapter.setPagesRead(mChapter.getPages());
                 Chapter tmpChapter = mChapter;
-                updateDBAndLoadChapter(nextChapter, Chapter.READ, mChapter.getPages(), LoadMode.START);
+                loadChapter(nextChapter,LoadMode.START);
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                 if (seamlessChapterTransitionDeleteRead) {
                     tmpChapter.freeSpace(ActivityReader.this);

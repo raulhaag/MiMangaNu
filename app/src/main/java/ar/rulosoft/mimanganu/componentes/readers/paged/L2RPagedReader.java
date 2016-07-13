@@ -41,14 +41,6 @@ public class L2RPagedReader extends HorizontalPagedReader {
         });
     }
 
-    public boolean isLastPage(){
-        return (paths.size() - 1) == mViewPager.getCurrentItem();
-    }
-
-    public boolean isFirstPage(){
-        return 0 == mViewPager.getCurrentItem();
-    }
-
     @Override
     public void setPaths(List<String> paths) {
         Collections.reverse(paths);
@@ -86,12 +78,12 @@ public class L2RPagedReader extends HorizontalPagedReader {
 
     @Override
     public int getCurrentPage() {
-        return paths.size() - mViewPager.getCurrentItem() + 1;
+        return transformPage(currentPage);
     }
 
     @Override
     protected int transformPage(int page) {
-        return page + 1;
+        return paths.size() - page;
     }
 
     @Override
@@ -132,4 +124,5 @@ public class L2RPagedReader extends HorizontalPagedReader {
             readerListener.onStartOver();
         }
     }
+
 }

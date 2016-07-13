@@ -42,11 +42,6 @@ public abstract class PagedReader extends Reader implements TapListener {
     public abstract void setPagerAdapter(PageAdapter mPageAdapter);
 
     @Override
-    protected void onLayout(boolean changed, int l, int t, int r, int b) {
-        super.onLayout(changed, l, t, r, b);
-    }
-
-    @Override
     public void setScreenFit(ImageViewTouchBase.DisplayType displayType) {
         mScreenFit = displayType;
         if (mPageAdapter != null)
@@ -62,6 +57,8 @@ public abstract class PagedReader extends Reader implements TapListener {
     @Override
     public void freeMemory() {
         mPageAdapter.pages = null;
+        setPagerAdapter(null);
+        mPageAdapter = null;
     }
 
     @Override
@@ -71,11 +68,13 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
     }
 
-
     @Override
     public void reset() {
         currentPage = 0;
+        if (mPageAdapter != null)
+            mPageAdapter.pages = null;
         setPagerAdapter(null);
+        mPageAdapter = null;
     }
 
     @Override

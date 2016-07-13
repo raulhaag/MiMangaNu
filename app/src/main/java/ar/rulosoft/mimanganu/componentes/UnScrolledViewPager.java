@@ -56,9 +56,11 @@ public class UnScrolledViewPager extends ViewPager {
                 case MotionEvent.ACTION_UP:
                     if (getCurrentItem()==0 && x>mStartDragX) {
                         onSwipeOutAtStart();
+                        return true;
                     }
                     if (getCurrentItem()==getAdapter().getCount()-1 && x<mStartDragX){
                         onSwipeOutAtEnd();
+                        return true;
                     }
                     break;
             }

@@ -13,14 +13,6 @@ public class R2LPagedReader extends HorizontalPagedReader {
         super(context);
     }
 
-    public boolean isLastPage() {
-        return 0 == mViewPager.getCurrentItem();
-    }
-
-    public boolean isFirstPage() {
-        return (paths.size() - 1) == mViewPager.getCurrentItem();
-    }
-
     public void addOnPageChangeListener() {
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

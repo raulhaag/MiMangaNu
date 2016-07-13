@@ -76,14 +76,6 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
         });
     }
 
-    public boolean isLastPage() {
-        return (paths.size() - 1) == mViewPager.getCurrentItem();
-    }
-
-    public boolean isFirstPage() {
-        return 0 == mViewPager.getCurrentItem();
-    }
-
     @Override
     public void setPagerAdapter(PageAdapter nPageAdapter) {
         mPageAdapter = nPageAdapter;

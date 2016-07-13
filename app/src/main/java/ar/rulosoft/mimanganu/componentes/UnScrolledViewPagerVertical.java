@@ -56,9 +56,11 @@ public class UnScrolledViewPagerVertical extends VerticalViewPager {
                 case MotionEvent.ACTION_UP:
                     if (getCurrentItem()==0 && y>mStartDragY) {
                         onSwipeOutAtStart();
+                        return true;
                     }
                     if (getCurrentItem()==getAdapter().getCount()-1 && y<mStartDragY){
                         onSwipeOutAtEnd();
+                        return true;
                     }
                     break;
             }
