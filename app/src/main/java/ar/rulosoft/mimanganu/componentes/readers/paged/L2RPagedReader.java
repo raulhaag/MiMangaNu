@@ -70,6 +70,18 @@ public class L2RPagedReader extends HorizontalPagedReader {
             mPageAdapter.pages[intIdx].setImage();
         }
     }
+    @Override
+    public String getPath(int idx) {
+        return paths.get(paths.size() - idx);
+    }
+
+    @Override
+    public void freePage(int idx) {
+        if (mPageAdapter != null && mPageAdapter.pages[paths.size() - idx] != null) {
+            mPageAdapter.pages[paths.size() - idx].unloadImage();
+        }
+    }
+
 
     @Override
     public boolean isLastPageVisible() {

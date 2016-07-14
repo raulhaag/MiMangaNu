@@ -64,9 +64,15 @@ public abstract class PagedReader extends Reader implements TapListener {
     @Override
     public void freePage(int idx) {
         if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
-            mPageAdapter.pages[idx - 1] = null;
+            mPageAdapter.pages[idx - 1].unloadImage();
         }
     }
+
+    @Override
+    public String getPath(int idx) {
+        return paths.get(idx - 1);
+    }
+
 
     @Override
     public void reset() {
@@ -75,11 +81,6 @@ public abstract class PagedReader extends Reader implements TapListener {
             mPageAdapter.pages = null;
         setPagerAdapter(null);
         mPageAdapter = null;
-    }
-
-    @Override
-    public String getPath(int idx) {
-        return null;
     }
 
     @Override
