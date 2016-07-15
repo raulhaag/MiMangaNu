@@ -71,7 +71,10 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public String getPath(int idx) {
-        return paths.get(idx - 1);
+        if (paths != null)
+            return paths.get(idx - 1);
+        else
+            return "";
     }
 
 
@@ -131,7 +134,9 @@ public abstract class PagedReader extends Reader implements TapListener {
 
         @Override
         public int getCount() {
-            return pages.length;
+            if (pages != null)
+                return pages.length;
+            else return 0;
         }
 
         @Override
@@ -159,7 +164,11 @@ public abstract class PagedReader extends Reader implements TapListener {
 
         @Override
         public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView((Page) object);
+            try {
+                container.removeView((Page) object);
+            } catch (Exception ignore) {
+
+            }
         }
 
         public void updateDisplayType() {
