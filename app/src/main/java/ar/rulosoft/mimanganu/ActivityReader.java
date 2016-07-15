@@ -85,6 +85,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     private Reader.Type readerType = Reader.Type.CONTINUOUS;
     private boolean controlVisible = false;
     private MenuItem displayMenu;
+    private AlertDialog mDialog = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,7 +150,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mSeekBar.setBackgroundColor(reader_bg);
         mScrollSelect.setBackgroundColor(reader_bg);
 
-        if(pm.getBoolean("hide_sensitivity_scrollbar", false))
+        if (pm.getBoolean("hide_sensitivity_scrollbar", false))
             mScrollSelect.setVisibility(View.INVISIBLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -214,7 +215,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     private void loadChapter(Chapter nChapter, LoadMode mode) {
-        if(mChapter != null) {
+        if (mChapter != null) {
             DownloadPoolService.detachListener(mChapter.getId());
             Database.updateChapter(ActivityReader.this, mChapter);
         }
@@ -444,6 +445,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     @Override
     protected void onPause() {
         try {
+            if (mDialog != null)
+                mDialog.dismiss();
             DownloadPoolService.setDownloadListener(null);
             DownloadPoolService.detachListener(mChapter.getId());
             Database.updateChapter(ActivityReader.this, mChapter);
@@ -451,8 +454,9 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 mChapter.setPagesRead(mChapter.getPages());
                 mChapter.setReadStatus(Chapter.READ);
                 Database.updateChapter(ActivityReader.this, mChapter);
-            } else
+            } else {
                 Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
+            }
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
@@ -563,7 +567,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             @Override
             public void run() {
                 try {
-                    new AlertDialog.Builder(ActivityReader.this)
+                    mDialog = new AlertDialog.Builder(ActivityReader.this)
                             .setTitle(chapter.getTitle() + " " + getString(R.string.error))
                             .setMessage(getString(R.string.demaciados_errores))
                             .setIcon(R.drawable.ic_launcher)
@@ -573,6 +577,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                                 public void onClick(DialogInterface dialog, int which) {
                                     DownloadPoolService.retryError(getApplicationContext(), mChapter, ActivityReader.this);
                                     dialog.dismiss();
+                                    mDialog = null;
                                     DownloadPoolService.setDownloadListener(ActivityReader.this);
                                 }
                             })
@@ -588,7 +593,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     public void onPageChanged(int page) {
         updatedValue = true;
         mChapter.setPagesRead(page);
-        mSeekBar.setProgress(page-1);
+        mSeekBar.setProgress(page - 1);
         if (mReader.isLastPageVisible()) {
             mChapter.setPagesRead(mChapter.getPages());
             mChapter.setReadStatus(Chapter.READ);
@@ -604,7 +609,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             if (seamlessChapterTransition) {
                 mChapter.setReadStatus(Chapter.UNREAD);
                 mChapter.setPagesRead(1);
-                loadChapter(previousChapter,LoadMode.END);
+                loadChapter(previousChapter, LoadMode.END);
                 //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
             }
         }
@@ -621,7 +626,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 View v = inflater.inflate(R.layout.dialog_next_chapter, null);
                 final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
                 checkBox.setChecked(imagesDelete);
-                new AlertDialog.Builder(ActivityReader.this)
+                mDialog = new AlertDialog.Builder(ActivityReader.this)
                         .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                         .setView(v)
                         .setIcon(R.drawable.ic_launcher)
@@ -640,6 +645,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                                 if (del_images) {
                                     pChapter.freeSpace(ActivityReader.this);
                                 }
+                                mDialog.dismiss();
+                                mDialog = null;
                             }
                         })
                         .show();
@@ -647,7 +654,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 mChapter.setReadStatus(Chapter.READ);
                 mChapter.setPagesRead(mChapter.getPages());
                 Chapter tmpChapter = mChapter;
-                loadChapter(nextChapter,LoadMode.START);
+                loadChapter(nextChapter, LoadMode.START);
                 Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                 if (seamlessChapterTransitionDeleteRead) {
                     tmpChapter.freeSpace(ActivityReader.this);
@@ -659,7 +666,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
-            new AlertDialog.Builder(ActivityReader.this)
+            mDialog = new AlertDialog.Builder(ActivityReader.this)
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                     .setView(v)
                     .setIcon(R.drawable.ic_launcher)
@@ -678,11 +685,13 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             if (del_images) {
                                 tmpChapter.freeSpace(ActivityReader.this);
                             }
-                            dialog.dismiss();
+                            mDialog.dismiss();
+                            mDialog = null;
                             onBackPressed();
                         }
                     })
                     .show();
+
         }
     }
 
