@@ -268,29 +268,28 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             }
             if (!next)
                 nextChapter = null;
-        }
-
-        if (nextChapter != null) {
-            if (!nextChapter.isDownloaded()) {
-                if (pm.getBoolean("download_next_chapter_automatically", false)) {
-                    try {
-                        DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
-                        Util.getInstance().toast(this, "Downloading: " + nextChapter.getTitle());
-                    } catch (Exception e) {
-                        Log.e("ServB", "Download add pool error", e);
+            if (nextChapter != null) {
+                if (!nextChapter.isDownloaded()) {
+                    if (pm.getBoolean("download_next_chapter_automatically", false)) {
+                        try {
+                            DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
+                            Util.getInstance().toast(this, "Downloading: " + nextChapter.getTitle());
+                        } catch (Exception e) {
+                            Log.e("ServB", "Download add pool error", e);
+                        }
                     }
                 }
             }
-        }
-        switch (mode) {
-            case START:
-                mReader.seekPage(1);
-                break;
-            case END:
-                mReader.seekPage(mChapter.getPages());
-                break;
-            case SAVED:
-                mReader.seekPage(mChapter.getPagesRead());
+            switch (mode) {
+                case START:
+                    mReader.seekPage(1);
+                    break;
+                case END:
+                    mReader.seekPage(mChapter.getPages());
+                    break;
+                case SAVED:
+                    mReader.seekPage(mChapter.getPagesRead());
+            }
         }
         mReader.postInvalidateDelayed(200);
     }

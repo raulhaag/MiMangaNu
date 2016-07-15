@@ -56,7 +56,8 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void freeMemory() {
-        mPageAdapter.pages = null;
+        if (mPageAdapter != null)
+            mPageAdapter.pages = null;
         setPagerAdapter(null);
         mPageAdapter = null;
     }
