@@ -191,4 +191,5 @@
     <string name="include_finished_manga_subtitle">Esto incluira mangas finalizados (por extras, etc)</string>
     <string name="include_finished_manga_title">Incluir mangas finalizados</string>
     <string name="update_search_cancelled">Búsqueda de actualizaciones cancelada</string>
+    <string name="add">Agregar</string>
 </resources>

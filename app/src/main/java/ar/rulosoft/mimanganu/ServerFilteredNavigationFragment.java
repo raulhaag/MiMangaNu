@@ -16,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.util.DisplayMetrics;
+import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,6 +37,7 @@ import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapterText;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class ServerFilteredNavigationFragment extends Fragment implements OnLastItem, OnMangaClick {
@@ -52,11 +54,28 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private int filter = 0;
     private int order = 0;
     private int firstVisibleItem;
+    private int lastContextMenuIndex = 0;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
+        menu.setHeaderTitle(mAdapter.getItem((int)v.getTag()).getTitle());
+        lastContextMenuIndex = (int)v.getTag();
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AsyncAddManga nAsyncAddManga = new AsyncAddManga();
+        nAsyncAddManga.setContext(getContext());
+        nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mAdapter.getItem(lastContextMenuIndex));
+        return super.onContextItemSelected(item);
     }
 
     @Nullable
@@ -103,6 +122,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             columnas = 6;
         grid.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
         if (mAdapter != null) {
+            mAdapter.setOnCreateContextMenuListener(this);
             grid.setAdapter(mAdapter);
             grid.getLayoutManager().scrollToPosition(firstVisibleItem);
             loading.setVisibility(View.INVISIBLE);
@@ -254,13 +274,14 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {
-                    if(isAdded()) {
+                    if (isAdded()) {
                         if (mAdapter == null) {
                             if (serverBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
                                 mAdapter = new MangasRecAdapter(result, getActivity(), MainActivity.darkTheme);
                             } else {
                                 mAdapter = new MangasRecAdapterText(result, getActivity(), MainActivity.darkTheme);
                             }
+                            mAdapter.setOnCreateContextMenuListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setMangaClickListener(ServerFilteredNavigationFragment.this);
                             grid.setAdapter(mAdapter);

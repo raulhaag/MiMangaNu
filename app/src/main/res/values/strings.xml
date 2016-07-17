@@ -192,4 +192,5 @@
     <string name="include_finished_manga_subtitle">This will include Manga that are marked as Finished. By default only Ongoing manga are included in the update search</string>
     <string name="hide_sensitivity_scrollbar_title">Hide sensitivity scrollbar</string>
     <string name="hide_sensitivity_scrollbar_subtitle">This will hide the sensitivity scrollbar when reading in non-Fullscreen mode</string>
+    <string name="add">Add</string>
 </resources>
