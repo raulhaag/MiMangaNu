@@ -43,6 +43,7 @@ public abstract class ServerBase {
     public static final int TUMANGAONLINE = 22;
     public static final int NINEMANGA = 23;
     public static final int MANGAEDEN = 24;
+    public static final int LEOMANGA = 25;
 
     public static final int READCOMICONLINE = 1000;
     public static final int FROMFOLDER = 1001;
@@ -127,6 +128,9 @@ public abstract class ServerBase {
                 break;
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline();
+                break;
+            case LEOMANGA:
+                serverBase = new LeoManga();
                 break;
             case FROMFOLDER:
                 serverBase = new FromFolder();
@@ -356,6 +360,7 @@ public abstract class ServerBase {
                 new SubManga(),
                 new EsNineManga(),
                 new EsMangaHere(),
+                new LeoManga(),
                 new MangaPanda(),
                 new MangaReader(),
                 new MangaHere(),
