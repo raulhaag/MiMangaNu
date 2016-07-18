@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.R;
@@ -193,6 +195,7 @@ public abstract class PagedReader extends Reader implements TapListener {
         public ImageViewTouch visor;
         ProgressBar loading;
         Runnable r = null;
+        boolean loadingImage = false;
         boolean imageLoaded = false;
         int index = 0;
         private String path = null;
@@ -223,10 +226,11 @@ public abstract class PagedReader extends Reader implements TapListener {
                 visor.setImageBitmap(null);
             }
             imageLoaded = false;
+            loadingImage = false;
         }
 
         public void setImage() {
-            if (!imageLoaded && visor != null)
+            if (!imageLoaded && visor != null && !loadingImage)
                 new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
 
@@ -247,6 +251,7 @@ public abstract class PagedReader extends Reader implements TapListener {
 
             @Override
             protected void onPreExecute() {
+                loadingImage = true;
                 if (loading != null)
                     loading.setVisibility(ProgressBar.VISIBLE);
                 super.onPreExecute();
@@ -254,22 +259,28 @@ public abstract class PagedReader extends Reader implements TapListener {
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                boolean notLoaded = true;
-                Bitmap bitmap = null;
-                BitmapFactory.Options opts = new BitmapFactory.Options();
-                opts.inPreferredConfig = Bitmap.Config.RGB_565;
-                while (notLoaded) {
-                    try {
-                        bitmap = BitmapFactory.decodeFile(path, opts);
-                        notLoaded = false;
-                    } catch (OutOfMemoryError oom) {
+                if (new File(path).exists()) {
+                    boolean notLoaded = true;
+                    int retry = 5;
+                    Bitmap bitmap = null;
+                    BitmapFactory.Options opts = new BitmapFactory.Options();
+                    opts.inPreferredConfig = Bitmap.Config.RGB_565;
+                    while (notLoaded && retry > 0) {
                         try {
-                            Thread.sleep(3000);//time to free memory
-                        } catch (InterruptedException ignored) {
+                            bitmap = BitmapFactory.decodeFile(path, opts);
+                            notLoaded = false;
+                        } catch (OutOfMemoryError oom) {
+                            retry--;
+                            try {
+                                Thread.sleep(3000);//time to free memory
+                            } catch (InterruptedException ignored) {
+                            }
                         }
                     }
+                    return bitmap;
+                } else {
+                    return null;
                 }
-                return bitmap;
             }
 
             @Override
@@ -294,6 +305,7 @@ public abstract class PagedReader extends Reader implements TapListener {
                     }
                     loading.setVisibility(ProgressBar.INVISIBLE);
                 }
+                loadingImage = false;
                 super.onPostExecute(result);
             }
         }
