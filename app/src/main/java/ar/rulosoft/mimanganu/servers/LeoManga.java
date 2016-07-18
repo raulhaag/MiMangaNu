@@ -99,7 +99,7 @@ public class LeoManga extends ServerBase {
             Pattern pattern = Pattern.compile("<li>[\\s]*<a href=\"(/manga/.+?)\">(.+?)</a>");
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
-                chapters.add(new Chapter(matcher.group(2).replaceAll("<.+?>", "").trim(), "http://" + HOST + matcher.group(1)));
+                chapters.add(0,new Chapter(matcher.group(2).replaceAll("<.+?>", "").trim(), "http://" + HOST + matcher.group(1)));
             }
             manga.setChapters(chapters);
         }
