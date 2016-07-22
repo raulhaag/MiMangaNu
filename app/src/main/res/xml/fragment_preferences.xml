@@ -33,8 +33,8 @@
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_only_wifi"
-            android:title="@string/use_only_wifi_title_update"
-            android:summary="@string/use_only_wifi_subtitle" />
+            android:summary="@string/use_only_wifi_subtitle"
+            android:title="@string/use_only_wifi_title_update" />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="@string/update_title"
@@ -42,7 +42,7 @@
             android:entryValues="@array/periodo_val"
             android:key="update_interval"
             android:summary="%s"
-            android:title="@string/update_title"/>
+            android:title="@string/update_title" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_sound"
@@ -64,6 +64,11 @@
             android:title="@string/update_thread_manual_title"
             app:val_max="8"
             app:val_min="1" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="fast_update"
+            android:summary="@string/fast_update_subtitle"
+            android:title="@string/fast_update_subtitle" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="include_finished_manga"
