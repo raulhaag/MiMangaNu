@@ -89,9 +89,9 @@ public class MangaFox extends ServerBase {
             while (m.find()) {
                 Chapter mc;
                 if (m.group(4) != null)
-                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), m.group(1));
+                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), m.group(1).replace("1.html",""));
                 else
-                    mc = new Chapter(m.group(2).trim(), m.group(1));
+                    mc = new Chapter(m.group(2).trim(), m.group(1).replace("1.html",""));
                 mc.addChapterFirst(manga);
             }
         }

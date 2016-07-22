@@ -175,7 +175,11 @@ public class DetailsFragment extends Fragment {
                         infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                     }
                     data.setStatus(infoExtra);
-                    data.setServer(serverBase.getServerName());
+                    String chapters = "";
+                    if(manga.getChapters().size() > 0){
+                        chapters = " (" + manga.getChapters().size() + " " + getString(R.string.chapters)+")";
+                    }
+                    data.setServer(serverBase.getServerName() + chapters);
                     if (manga.getAuthor() != null && manga.getAuthor().length() > 1) {
                         data.setAuthor(manga.getAuthor());
                     } else {

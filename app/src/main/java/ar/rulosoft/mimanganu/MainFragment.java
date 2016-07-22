@@ -605,10 +605,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             public void run() {
                                 Manga mManga = mangaList.get(idxNow);
                                 ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                boolean fast = pm.getBoolean("fast_update",true);
                                 publishProgress(idxNow);
                                 try {
                                     if (!isCancelled()) {
-                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity());
+                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(),fast);
                                         result += diff;
                                     }
                                 } catch (Exception e) {

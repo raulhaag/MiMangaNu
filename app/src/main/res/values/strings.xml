@@ -195,4 +195,5 @@
     <string name="add">Add</string>
     <string name="fast_update_title">Fast updates</string>
     <string name="fast_update_subtitle">Only compare last 20 chapter from sever</string>
+    <string name="chapters">chapters</string>
 </resources>

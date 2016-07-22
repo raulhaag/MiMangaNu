@@ -192,4 +192,9 @@
     <string name="include_finished_manga_title">Incluir mangas finalizados</string>
     <string name="update_search_cancelled">Búsqueda de actualizaciones cancelada</string>
     <string name="add">Agregar</string>
+    <string name="fast_update_title">Actualizaciones rápidas</string>
+    <string name="fast_update_subtitle">Solo compara los ultimos 20 capítulos</string>
+    <string name="new_chapters">Nuevo capítulos de %s</string>
+    <string name="searching">Busqueda para \"%s\" en</string>
+    <string name="chapters">capítulos</string>
 </resources>

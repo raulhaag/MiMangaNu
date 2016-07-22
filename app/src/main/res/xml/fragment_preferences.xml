@@ -68,7 +68,7 @@
             android:defaultValue="true"
             android:key="fast_update"
             android:summary="@string/fast_update_subtitle"
-            android:title="@string/fast_update_subtitle" />
+            android:title="@string/fast_update_title" />
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="include_finished_manga"

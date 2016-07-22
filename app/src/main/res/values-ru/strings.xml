@@ -189,4 +189,9 @@
     <string name="hide_sensitivity_scrollbar_title"> Скрыть полосу прокрутки чувствительности</string>
     <string name="hide_sensitivity_scrollbar_subtitle">Это позволит скрыть полосу прокрутки чувствительности при чтении в режиме не полноэкранных</string>
     <string name="finishing_update">Завершение обновления …</string>
+    <string name="add">Добавить</string>
+    <string name="fast_update_subtitle">Только сравните последние 20 главу из сервера</string>
+    <string name="fast_update_title">Быстрые обновления</string>
+    <string name="new_chapters">Новые Главы %s</string>
+    <string name="chapters">главы</string>
 </resources>

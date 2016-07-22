@@ -600,7 +600,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             ServerBase s = ServerBase.getServer(mManga.getServerId());
             mangaId = mManga.getId();
             try {
-                int diff = s.searchForNewChapters(mManga.getId(), getActivity());
+                int diff = s.searchForNewChapters(mManga.getId(), getActivity(), false);//always full update
                 result += diff;
             } catch (Exception e) {
                 if (e.getMessage() != null) {

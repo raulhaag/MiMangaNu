@@ -158,7 +158,7 @@ public class TuMangaOnline extends ServerBase {
     }
 
     @Override
-    public int searchForNewChapters(int id, Context context) throws Exception {
+    public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {//TODO FAST
         int returnValue = 0;
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,78 +170,57 @@ public abstract class ServerBase {
 
     // public abstract boolean supportStatus();
 
-    public int searchForNewChapters(int id, Context context) throws Exception {
+
+    public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {
         int returnValue = 0;
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
         this.loadMangaInformation(manga, true);
         this.loadChapters(manga, false);
-        int diff = manga.getChapters().size() - mangaDb.getChapters().size();
-        if (diff > 0) {
-            ArrayList<Chapter> simpleList = new ArrayList<>();
-            if (manga.getChapters().size() < diff) {
-                simpleList.addAll(manga.getChapters().subList(0, diff));
-                simpleList.addAll(manga.getChapters().subList(
-                        manga.getChapters().size() -
-                                diff, manga.getChapters().size()));
-                ArrayList<Chapter> simpleListC = new ArrayList<>();
-                simpleListC.addAll(mangaDb.getChapters().subList(0, diff));
-                simpleListC.addAll(mangaDb.getChapters().subList(
-                        mangaDb.getChapters().size() -
-                                diff, mangaDb.getChapters().size()));
-                for (Chapter c : simpleListC) {
-                    for (Chapter csl : simpleList) {
-                        if (c.getPath().equalsIgnoreCase(csl.getPath())) {
-                            simpleList.remove(csl);
-                            break;
-                        }
-                    }
-                }
-            }
-            if (simpleList.size() == 1) {
-                Chapter c = simpleList.get(0);
-                for (Chapter cap : manga.getChapters()) {
-                    if (cap.getPath().equalsIgnoreCase(c.getPath())) {
-                        simpleList.remove(0);
+        ArrayList<Chapter> simpleList = new ArrayList<>();
+        if (fast && mangaDb.getChapters().size() > 20) {
+            int chapters = manga.getChapters().size();
+            List<Chapter> f20 = manga.getChapters().subList(chapters - 20, chapters);
+            for (Chapter chapter : f20) {
+                boolean add = true;
+                for (Chapter chapterDB : mangaDb.getChapters()) {
+                    if (chapter.getPath().equals(chapterDB.getPath())) {
+                        add = false;
                         break;
                     }
                 }
+                if (add)
+                    simpleList.add(chapter);
             }
-
-            if (!(simpleList.size() >= diff)) {
-                simpleList = new ArrayList<>();
-                for (Chapter c : manga.getChapters()) {
-                    boolean masUno = true;
-                    for (Chapter csl : mangaDb.getChapters()) {
-                        if (c.getPath().equalsIgnoreCase(csl.getPath())) {
-                            mangaDb.getChapters().remove(csl);
-                            masUno = false;
-                            break;
-                        }
-                    }
-                    if (masUno) {
-                        simpleList.add(c);
+        } else {
+            for (Chapter chapter : manga.getChapters()) {
+                boolean add = true;
+                for (Chapter chapterDB : mangaDb.getChapters()) {
+                    if (chapter.getPath().equals(chapterDB.getPath())) {
+                        add = false;
+                        break;
                     }
                 }
-                // simpleList = manga.getChapters();
+                if (add)
+                    simpleList.add(chapter);
             }
-            for (Chapter chapter : simpleList) {
-                chapter.setMangaID(mangaDb.getId());
-                chapter.setReadStatus(Chapter.NEW);
-                Database.addChapter(context, chapter, mangaDb.getId());
-            }
-
-            if (simpleList.size() > 0) {
-                Database.updateMangaRead(context, mangaDb.getId());
-                Database.updateNewMangas(context, mangaDb, diff);
-            }
-
-            if(!simpleList.isEmpty())
-                new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-            returnValue = simpleList.size();
         }
+        for (Chapter chapter : simpleList) {
+            chapter.setMangaID(mangaDb.getId());
+            chapter.setReadStatus(Chapter.NEW);
+            Database.addChapter(context, chapter, mangaDb.getId());
+        }
+
+        if (simpleList.size() > 0) {
+            Database.updateMangaRead(context, mangaDb.getId());
+            Database.updateNewMangas(context, mangaDb, simpleList.size());
+        }
+
+        if (!simpleList.isEmpty())
+            new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+
+        returnValue = simpleList.size();
 
         boolean changes = false;
         if (!mangaDb.getAuthor().equals(manga.getAuthor()) &&
@@ -376,7 +356,7 @@ public abstract class ServerBase {
                 new DeNineManga(),
                 new Manga_Tube(),
                 new RawSenManga(),
-               //new ReadComicOnline(),
+                //new ReadComicOnline(),
                 new FromFolder()
         });
     }

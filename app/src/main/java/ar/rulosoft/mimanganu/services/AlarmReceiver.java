@@ -30,6 +30,7 @@ import ar.rulosoft.navegadores.Navegador;
 public class AlarmReceiver extends BroadcastReceiver {
     public static final String LAST_CHECK = "last_check_update";
     private static final String CUSTOM_INTENT_ACTION = "ar.rulosoft.CHECK_UPDATES";
+    private SharedPreferences pm;
 
     public static void stopAlarms(Context context) {
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
@@ -51,7 +52,7 @@ public class AlarmReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         try {
-            SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+            pm = PreferenceManager.getDefaultSharedPreferences(context);
 
             boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
             boolean only_wifi = pm.getBoolean("only_wifi", false);
@@ -94,6 +95,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         @Override
         protected Void doInBackground(Integer... params) {
             keys = params[0];
+            final boolean fast = pm.getBoolean("fast_update",true);
             mangas = Database.getMangasForUpdates(context);
             for (int i = 0; i < mangas.size(); i++) {
                 final int j = i;
@@ -111,7 +113,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                             ServerBase s = ServerBase.getServer(manga.getServerId());
                             publishProgress("(" + (j + 1) + "/" + mangas.size() + ")" + manga.getTitle());
                             s.loadChapters(manga, false);
-                            int diff = s.searchForNewChapters(manga.getId(), context);
+                            int diff = s.searchForNewChapters(manga.getId(), context, fast);
                             if (diff > 0) {
                                 found += diff;
                                 res = res + manga.getTitle() + " " + diff + " " + context.getString(R.string.new_manga_found) + "\n";
