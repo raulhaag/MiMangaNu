@@ -361,39 +361,6 @@ public abstract class ServerBase {
         });
     }
 
-    /*public class CreateNotificationsTask extends AsyncTask<Void, Integer, Integer> {
-        private ArrayList<Chapter> simpleList = new ArrayList<>();
-        private Context context;
-        private Manga manga;
-
-        public CreateNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
-            this.simpleList.addAll(simpleList);
-            this.context = context;
-            this.manga = manga;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            for (int i = 0; i < simpleList.size(); i++) {
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.putExtra("manga_id", simpleList.get(i).getMangaID());
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getString(R.string.new_chapter, manga.getTitle()), simpleList.get(i).getTitle());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            super.onPostExecute(result);
-        }
-    }*/
-
     public class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
         private Context context;

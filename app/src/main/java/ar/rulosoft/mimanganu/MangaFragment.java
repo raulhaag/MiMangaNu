@@ -37,6 +37,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.ChapterAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -172,14 +173,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         mChapterAdapter.selectTo(selection.keyAt(0));
                         return true;
                     case R.id.download_selection:
-                        Chapter[] chapters = mChapterAdapter.getSelectedChapters();
-                        for (Chapter chapter : chapters) {
-                            try {
-                                DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Download add pool error", e);
-                            }
-                        }
+                        new AsyncAddMangas().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mChapterAdapter.getSelectedChapters());
                         break;
                     case R.id.mark_as_read_and_delete_images:
                         new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -329,8 +323,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 dlgAlert.setCancelable(true);
                 dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        ArrayList<Chapter> chapters =
-                                Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
+                        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
                         for (Chapter chapter : chapters) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
@@ -515,6 +508,23 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
 
         this.menu = menu;
+    }
+
+    private class AsyncAddMangas extends AsyncTask<Chapter, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Chapter... chapters) {
+            List<Chapter> chaptersList = Arrays.asList(chapters);
+            Collections.sort(chaptersList,Chapter.Comparators.NUMBERS_ASC);
+            for (Chapter chapter : chaptersList) {
+                try {
+                    DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
+                } catch (Exception e) {
+                    Log.e(TAG, "Download add pool error", e);
+                }
+            }
+            return null;
+        }
     }
 
     private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {
