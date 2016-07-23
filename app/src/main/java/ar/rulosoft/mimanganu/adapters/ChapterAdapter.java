@@ -40,6 +40,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
     private boolean can_download;
+    private Toast singleToast;
 
     public ChapterAdapter(Activity activity, ArrayList<Chapter> items, boolean can_download) {
         super(activity, listItem);
@@ -123,16 +124,24 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
-                        Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT).show();
+                        if (singleToast != null) singleToast.cancel();
+                        singleToast = Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT);
+                        singleToast.show();
                         notifyDataSetChanged();
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
                         if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                                Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_SHORT).show();
-                            }catch (Exception e){
-                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_LONG).show();
+                                if (singleToast != null) singleToast.cancel();
+                                singleToast = Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_SHORT);
+                                singleToast.show();
+                            } catch (Exception e) {
+                                if (e.getMessage() != null) {
+                                    if (singleToast != null) singleToast.cancel();
+                                    singleToast = Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG);
+                                    singleToast.show();
+                                }
                             }
                         }
                     }
@@ -219,7 +228,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     public void sort_chapters(Comparator<Chapter> comparator) {
         try {
             Collections.sort(chapters, comparator);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         notifyDataSetChanged();

@@ -69,6 +69,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
     private Activity activity;
+    private Toast singleToast;
 
     @Nullable
     @Override
@@ -287,7 +288,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             fvi = mListView.getFirstVisiblePosition();
             mChapterAdapter.replaceData(chapters);
         } else {
-            if(activity != null)
+            if (activity != null)
                 mChapterAdapter = new ChapterAdapter(activity, chapters, !(mServerBase instanceof FromFolder));
         }
         if (mListView != null) {
@@ -302,7 +303,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         int first = mListView.getFirstVisiblePosition();
         Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
         super.onPause();
-        if(swipeReLayout != null)
+        if (swipeReLayout != null)
             swipeReLayout.clearAnimation();
     }
 
@@ -554,9 +555,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onPostExecute(Chapter result) {
-            if(isAdded()) {
+            if (isAdded()) {
                 if (error != null && error.length() > 1) {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                    if (singleToast != null) singleToast.cancel();
+                    singleToast = Toast.makeText(getActivity(), error, Toast.LENGTH_LONG);
+                    singleToast.show();
                 } else {
                     try {
                         asyncdialog.dismiss();
@@ -567,8 +570,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         Intent intent = new Intent(getActivity(), ActivityReader.class);
                         intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
                         MangaFragment.this.startActivity(intent);
-                    }catch (Exception e){
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    } catch (Exception e) {
+                        if (e.getMessage() != null) {
+                            if (singleToast != null) singleToast.cancel();
+                            singleToast = Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG);
+                            singleToast.show();
+                        }
                     }
                 }
             }
@@ -618,15 +625,21 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             loadInfo(manga);
             new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             swipeReLayout.setRefreshing(false);
-            if(isAdded()) {
+            if (isAdded()) {
                 getActivity().setTitle(orgMsg);
             }
             if (result > 0) {
-                if(isAdded())
-                    Toast.makeText(getActivity(), getString(R.string.mgs_update_found, result), Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    if (singleToast != null) singleToast.cancel();
+                    singleToast = Toast.makeText(getActivity(), getString(R.string.mgs_update_found, result), Toast.LENGTH_SHORT);
+                    singleToast.show();
+                }
             } else if (errorMsg != null && errorMsg.length() > 2) {
-                if(isAdded())
-                    Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+                if (isAdded()) {
+                    if (singleToast != null) singleToast.cancel();
+                    singleToast = Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT);
+                    singleToast.show();
+                }
             }
             running = false;
             actual = null;
@@ -638,28 +651,28 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected Void doInBackground(Void... params) {
-                chapters = Database.getChapters(getActivity(), mMangaId);
-                try {
-                    switch (chapters_order) {
-                        case 1:
-                            Collections.sort(chapters, Chapter.Comparators.NUMBERS_DESC);
-                            break;
-                        case 2:
-                            Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
-                            break;
-                        case 3:
-                            Collections.sort(chapters, Chapter.Comparators.TITLE_DESC);
-                            break;
-                        case 4:
-                            Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
-                            break;
-                    }
-                } catch (Exception e) {
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    e.printStackTrace(pw);
-                    Log.d(TAG, sw.toString());
+            chapters = Database.getChapters(getActivity(), mMangaId);
+            try {
+                switch (chapters_order) {
+                    case 1:
+                        Collections.sort(chapters, Chapter.Comparators.NUMBERS_DESC);
+                        break;
+                    case 2:
+                        Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
+                        break;
+                    case 3:
+                        Collections.sort(chapters, Chapter.Comparators.TITLE_DESC);
+                        break;
+                    case 4:
+                        Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
+                        break;
                 }
+            } catch (Exception e) {
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                e.printStackTrace(pw);
+                Log.d(TAG, sw.toString());
+            }
             return null;
         }
 
@@ -715,19 +728,19 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected Void doInBackground(Void... params) {
-                for (int i = 0; i < selectionSize; i++) {
-                    if(mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 1) {
-                        Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
-                        chapter.markRead(getActivity(), true);
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                mChapterAdapter.notifyDataSetChanged();
-                            }
-                        });
-                    }
+            for (int i = 0; i < selectionSize; i++) {
+                if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 1) {
+                    Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter.markRead(getActivity(), true);
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mChapterAdapter.notifyDataSetChanged();
+                        }
+                    });
                 }
+            }
             return null;
         }
 
@@ -747,7 +760,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < selectionSize; i++) {
-                if(mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 0) {
+                if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 0) {
                     Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
                     chapter.markRead(getActivity(), false);
                     Handler handler = new Handler(Looper.getMainLooper());
