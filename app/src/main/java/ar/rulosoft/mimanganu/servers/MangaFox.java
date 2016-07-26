@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class MangaFox extends ServerBase {
 
@@ -48,7 +48,7 @@ public class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = new Navegador().get("http://mangafox.me/manga/");
+        String data = MainActivity.navigator.get("http://mangafox.me/manga/");
         data = getFirstMatch(SEGMENTO, data, "no se ha obtenido el segmento");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
@@ -67,7 +67,7 @@ public class MangaFox extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
-            String data = new Navegador().get((manga.getPath()));
+            String data = MainActivity.navigator.get((manga.getPath()));
 
             // Title
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
@@ -118,14 +118,14 @@ public class MangaFox extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(chapter, page));
+        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(chapter.getPath());
+        data = MainActivity.navigator.get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas)-1);//last page is for comments
     }
@@ -134,7 +134,7 @@ public class MangaFox extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://mangafox.me/" + genreV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
-        String data = new Navegador().get(web);
+        String data = MainActivity.navigator.get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -167,8 +167,7 @@ public class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Navegador nav = new Navegador();
-        String data = nav
+        String data = MainActivity.navigator
                 .get("http://mangafox.me/search.php?name_method=cw&name="
                         + term
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");

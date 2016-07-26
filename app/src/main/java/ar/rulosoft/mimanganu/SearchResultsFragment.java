@@ -40,7 +40,7 @@ public class SearchResultsFragment extends Fragment {
 
     @Override
     public void onActivityCreated(Bundle savedState) {
-        super.onStart();
+        super.onActivityCreated(savedState);
         serverId = getArguments().getInt(MainFragment.SERVER_ID);
         search_term = getArguments().getString(TERM);
         list = (ListView) getView().findViewById(R.id.result);

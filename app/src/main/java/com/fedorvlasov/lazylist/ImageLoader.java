@@ -7,10 +7,6 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -22,13 +18,16 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.componentes.Imaginable;
-import ar.rulosoft.navegadores.Navegador;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
-    public static Navegador NAVEGADOR = null;
+    //public static Navegador NAVEGADOR = null;
 
     private MemCache mMemCache;
     private FileCache mFileCache;
@@ -44,10 +43,10 @@ public class ImageLoader {
         imgThreadPool = Executors.newFixedThreadPool(3);
     }
 
-    public static Navegador initAndGetNavegador() throws Exception {
+    /*public static Navegador initAndGetNavegador() throws Exception {
         if (NAVEGADOR == null) NAVEGADOR = new Navegador();
         return NAVEGADOR;
-    }
+    }*/
 
     /**
      * Android lollipop automaticamente ignora estas lineas para
@@ -66,7 +65,7 @@ public class ImageLoader {
         bfOptions.inDither = false;
         // Tell to gc that whether it needs free memory, the Bitmap can be cleared
         bfOptions.inPurgeable = true;
-        // Which kind of reference will be used to recover the Bitmap data after being clear,
+        // Which kind of referer will be used to recover the Bitmap data after being clear,
         // when it will be used in the future
         bfOptions.inInputShareable = true;
         bfOptions.inPreferredConfig = Config.RGB_565;
@@ -140,14 +139,15 @@ public class ImageLoader {
                     url = url.substring(0, idx);
                 }
             }
-            OkHttpClient client = initAndGetNavegador().getHttpClient();
-            client.setConnectTimeout(5, TimeUnit.SECONDS);
-            client.setReadTimeout(5, TimeUnit.SECONDS);
+            OkHttpClient copy = MainActivity.navigator.getHttpClient().newBuilder()
+                    .connectTimeout(5, TimeUnit.SECONDS)
+                    .readTimeout(5, TimeUnit.SECONDS)
+                    .build();
             Request.Builder builder = new Request.Builder().url(url);
             if (host != null) {
                 builder.addHeader("Host", host);
             }
-            Response response = client.newCall(builder.build()).execute();
+            Response response = copy.newCall(builder.build()).execute();
             FileCache.writeFile(response.body().byteStream(), f);
             response.body().close();
             return decodeFile(f);

@@ -2,10 +2,9 @@ package ar.rulosoft.navegadores;
 
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by Raul on 14/06/2016.

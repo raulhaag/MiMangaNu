@@ -2,10 +2,6 @@ package ar.rulosoft.mimanganu.services;
 
 import android.util.Log;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -14,12 +10,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
-import ar.rulosoft.navegadores.Navegador;
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.navegadores.RefererInterceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    public boolean reference;
+    public boolean referer;
     public Status status = Status.QUEUED;
     int index, cid;
     ChapterDownload cd;
@@ -28,13 +27,13 @@ public class SingleDownload implements Runnable {
     private StateChangeListener changeListener = null;
     private int retry = RETRY;
 
-    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean reference) {
+    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
         super();
         this.fromURL = fromURL;
         this.toFile = toFile;
         this.index = index;
         this.cid = cid;
-        this.reference = reference;
+        this.referer = referer;
         this.cd = cd;
     }
 
@@ -58,12 +57,20 @@ public class SingleDownload implements Runnable {
                 Response response;
                 long contentLength;
                 try {
-                    OkHttpClient client = new Navegador().getHttpClient();
-                    if (reference)
-                        client.networkInterceptors().add(new RefererInterceptor(cd.chapter.getPath()));
-                    client.setConnectTimeout(3, TimeUnit.SECONDS);
-                    client.setReadTimeout(3, TimeUnit.SECONDS);
-                    response = client.newCall(new Request.Builder().url(fromURL).build()).execute();
+                    OkHttpClient copy;
+                    if(referer){
+                        copy = MainActivity.navigator.getHttpClient().newBuilder()
+                                .connectTimeout(3, TimeUnit.SECONDS)
+                                .readTimeout(3, TimeUnit.SECONDS)
+                                .addNetworkInterceptor(new RefererInterceptor(cd.chapter.getPath()))
+                                .build();
+                    } else {
+                        copy = MainActivity.navigator.getHttpClient().newBuilder()
+                                .connectTimeout(3, TimeUnit.SECONDS)
+                                .readTimeout(3, TimeUnit.SECONDS)
+                                .build();
+                    }
+                    response = copy.newCall(new Request.Builder().url(fromURL).build()).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);

@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.52:\n\t* Added  LeoManga.\n\t* Added fast updates.\n\t* Added context menu "Add Manga".\n\t* Fixes and improves.</string>
+    <string name="update_message">Changes in v1.53:\n\t* some bug fixes \n\t* add local search \n\t* clear cache now also deletes empty directories\n\t* update to okhttp v3</string>
     <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>
@@ -167,7 +167,7 @@
     <string name="download_next_chapter_automatically_subtitle">While reading next chapter will be downloaded automatically</string>
     <string name="deleted">Deleted: %s</string>
     <string name="clear_cache_title">Clear cache</string>
-    <string name="clear_cache_subtitle">This will clear the cache. Keep in mind that all Cover Images will have to be re-downloaded.</string>
+    <string name="clear_cache_subtitle">Tap here to clear the cache. Keep in mind that all Cover Images will have to be re-downloaded.</string>
     <string name="misc_settings">Misc Settings</string>
     <string name="seamless_chapter_transitions_delete_read_title">Delete chapter after reading</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">This deletes the current chapter when transitioning to the next chapter</string>
@@ -182,18 +182,23 @@
     <string name="use_only_wifi_title_update">Use only WiFi (for updates)</string>
     <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
     <string name="reset_server_list_to_defaults_title">Reset server list to defaults</string>
-    <string name="reset_server_list_to_defaults_subtitle">This will un-hide all servers</string>
+    <string name="reset_server_list_to_defaults_subtitle">Tap here to un-hide all servers</string>
     <string name="search_result">Search result for \"%s\" on</string>
     <string name="searching">Searching for \"%s\" on</string>
     <string name="downloading">Downloading:</string>
     <string name="update_search_cancelled">Update search cancelled</string>
     <string name="finishing_update">Finishing Update &#8230;</string>
     <string name="include_finished_manga_title">Include Finished Manga</string>
-    <string name="include_finished_manga_subtitle">This will include Manga that are marked as Finished. By default only Ongoing manga are included in the update search</string>
+    <string name="include_finished_manga_subtitle">This will include Manga that are marked as Finished. By default only Ongoing manga are included in the update search.</string>
     <string name="hide_sensitivity_scrollbar_title">Hide sensitivity scrollbar</string>
     <string name="hide_sensitivity_scrollbar_subtitle">This will hide the sensitivity scrollbar when reading in non-Fullscreen mode</string>
     <string name="add">Add</string>
-    <string name="fast_update_title">Fast updates</string>
-    <string name="fast_update_subtitle">Only compare last 20 chapter from sever</string>
+    <string name="fast_update_title">Fast update</string>
+    <string name="fast_update_subtitle">Only compares the latest 20 chapters from server</string>
     <string name="chapters">chapters</string>
+    <string name="write_timeout_title">Write timeout</string>
+    <string name="read_timeout_title">Read timeout</string>
+    <string name="deleting_empty_directories">Deleting Empty Directories &#8230;</string>
+    <string name="cancel">Cancel</string>
+    <string name="reader_type_subtitle">Tap here to change Reader type</string>
 </resources>

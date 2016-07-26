@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class MangaPanda extends ServerBase {
 
@@ -58,7 +58,7 @@ public class MangaPanda extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = new Navegador().get(HOST + "/alphabetical");
+        String data = MainActivity.navigator.get(HOST + "/alphabetical");
         Pattern p = Pattern.compile(PATTERN_SUB);
         Matcher m = p.matcher(data);
         if (m.find()) {
@@ -76,8 +76,7 @@ public class MangaPanda extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Navegador nav = new Navegador();
-        String data = nav.get(HOST + "/actions/search/?q=" + term + "&limit=100");
+        String data = MainActivity.navigator.get(HOST + "/actions/search/?q=" + term + "&limit=100");
         Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -95,7 +94,7 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = new Navegador().get(manga.getPath());
+        String data = MainActivity.navigator.get(manga.getPath());
         Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER);
         Matcher m = p.matcher(data);
         if (m.find()) {
@@ -135,14 +134,14 @@ public class MangaPanda extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(chapter, page));
+        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data, "Error: Could not get the link to the image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(chapter.getPath());
+        data = MainActivity.navigator.get(chapter.getPath());
         String pages =
                 getFirstMatch("of (\\d+)</div>", data, "Error: Could not get the number of pages");
         chapter.setPages(Integer.parseInt(pages));
@@ -157,7 +156,7 @@ public class MangaPanda extends ServerBase {
         else
             web = HOST + "/popular" + "/" + genreV[category] + "/" + (pageNumber - 1) * 20;
 
-        String data = new Navegador().get(web);
+        String data = MainActivity.navigator.get(web);
         Pattern p =
                 Pattern.compile("url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>");
         Matcher m = p.matcher(data);

@@ -25,6 +25,7 @@ import android.widget.Toast;
 import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 public class MainActivity extends AppCompatActivity {
     public static int[] colors;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
+    public static Navigator navigator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (mangaIdFromNotification == -1) {
             if (updateListTask != null)
                 updateListTask.cancel(true);
+            Util.getInstance().cancelNotification(1246502);
         }
     }
 

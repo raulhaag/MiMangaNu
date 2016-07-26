@@ -57,7 +57,7 @@ dependencies {
     compile 'rapid.decoder:library:0.3.0'
     compile 'rapid.decoder:jpeg-decoder:0.3.0'
     compile 'rapid.decoder:png-decoder:0.3.0'
-    compile 'com.squareup.okhttp:okhttp:2.7.5'
-    compile 'com.squareup.okio:okio:1.8.0'
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
+    compile 'com.squareup.okio:okio:1.9.0'
     compile 'ch.acra:acra:4.9.0'
 }

@@ -3,6 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.MisMangas">
     <item
+        android:id="@+id/action_search_local"
+        android:icon="@drawable/ic_action_action_search"
+        android:title="@string/filtrar"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/action_view_download"
         android:icon="@drawable/ic_action_downloads"
         android:title="@string/descargas"

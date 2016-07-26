@@ -192,7 +192,7 @@
     <string name="new_chapters">Neue Kapitel von %s</string>
     <string name="searching">Suche nach \"%s\" auf</string>
     <string name="add">Hinzufügen</string>
-    <string name="fast_update_title">Schnelle Updates</string>
-    <string name="fast_update_subtitle">Nur vergleichen letzten 20 Kapitel vom Server</string>
-    <string name="chapters">kapitel</string>
+    <string name="fast_update_title">Schnelles Update</string>
+    <string name="fast_update_subtitle">vergleicht nur die neusten 20 Kapitel vom Server</string>
+    <string name="chapters">Kapitel</string>
 </resources>

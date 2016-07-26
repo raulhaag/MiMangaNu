@@ -23,7 +23,7 @@ public class FileCache {
         else
             cacheDir = context.getCacheDir();
         if (!cacheDir.exists()) {
-            boolean created = cacheDir.mkdirs();
+            cacheDir.mkdirs();
         }
     }
 

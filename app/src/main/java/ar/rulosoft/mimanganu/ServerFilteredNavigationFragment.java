@@ -50,10 +50,10 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private MangaRecAdapterBase mAdapter;
     private boolean newTask = false;
     private int page = 1;
-    private MenuItem search;
     private int filter = 0;
     private int order = 0;
     private int firstVisibleItem;
+    private LoadLastTask loadLastTask = new LoadLastTask();
     private int lastContextMenuIndex = 0;
 
     @Override
@@ -127,14 +127,14 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             grid.getLayoutManager().scrollToPosition(firstVisibleItem);
             loading.setVisibility(View.INVISIBLE);
         } else {
-            new LoadLastTask().execute(page);
+            loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
         }
     }
 
     @Override
     public void onRequestedLastItem() {
         if (serverBase.hasMore && !loading.isShown() && !mStart)
-            new LoadLastTask().execute(page);
+            loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
     }
 
     @Override
@@ -151,6 +151,12 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        loadLastTask.cancel(true);
+    }
+
+    @Override
     public void onMangaClick(Manga manga) {
         Bundle bundle = new Bundle();
         bundle.putInt(MainFragment.SERVER_ID, serverBase.getServerID());
@@ -164,7 +170,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.manga_server_visual, menu);
-        search = menu.findItem(R.id.action_search);
+        MenuItem search = menu.findItem(R.id.action_search);
         MenuItem vcl = menu.findItem(R.id.ver_como_lista);
         if (!serverBase.hasList())
             vcl.setVisible(false);
@@ -213,7 +219,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                                         page = 1;
                                         mStart = true;
                                         serverBase.hasMore = true;
-                                        new LoadLastTask().execute(page);
+                                        loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
                                     } else {
                                         newTask = true;
                                     }
@@ -234,7 +240,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                                         page = 1;
                                         mStart = true;
                                         serverBase.hasMore = true;
-                                        new LoadLastTask().execute(page);
+                                        loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
                                     } else {
                                         newTask = true;
                                     }
@@ -296,7 +302,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                     page = 1;
                     mStart = true;
                     serverBase.hasMore = true;
-                    new LoadLastTask().execute(page);
+                    loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
                     newTask = false;
                 }
             }

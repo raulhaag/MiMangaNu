@@ -33,6 +33,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 
 public class PreferencesFragment extends PreferenceFragmentCompat {
@@ -239,6 +240,32 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             onlyWifiUpdateSwitch.setEnabled(true);
         }
 
+        final SeekBarCustomPreference seekBarConnectionTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("connection_timeout");
+        seekBarConnectionTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Navigator.connectionTimeout = Integer.parseInt(prefs.getString("connection_timeout", "10"));
+                return true;
+            }
+        });
+
+        final SeekBarCustomPreference seekBarWriteTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("write_timeout");
+        seekBarWriteTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Navigator.writeTimeout = Integer.parseInt(prefs.getString("write_timeout", "10"));
+                return true;
+            }
+        });
+
+        final SeekBarCustomPreference seekBarReadTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("read_timeout");
+        seekBarReadTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Navigator.readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
+                return true;
+            }
+        });
 
         final Preference prefClearCache = getPreferenceManager().findPreference("clear_cache");
         prefClearCache.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -246,7 +273,24 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
                 Preference clearCache = getPreferenceManager().findPreference("clear_cache");
                 clearCache.setEnabled(false);
-                new FileCache(getActivity()).clearCache();
+                Thread t0 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new FileCache(getActivity()).clearCache();
+                    }
+                });
+
+                Thread t1 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.getInstance().createNotificationWithProgressbar(getContext(), 69, getString(R.string.deleting_empty_directories), "");
+                        Util.getInstance().deleteEmptyDirectoriesRecursive(new File(current_filepath));
+                        Util.getInstance().cancelNotification(69);
+                    }
+                });
+
+                t0.start();
+                t1.start();
                 return true;
             }
         });
@@ -292,6 +336,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_manual");
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "download_threads");
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_background");
+
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("connection_timeout", "10").apply();
+            editor.putString("write_timeout", "10").apply();
+            editor.putString("read_timeout", "30").apply();
         }
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
     }
@@ -307,8 +356,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(preference, "" + threads).apply();
 
-        final SeekBarCustomPreference tmpSeekbar = (SeekBarCustomPreference) getPreferenceManager().findPreference(preference);
-        tmpSeekbar.setProgress(threads);
+        final SeekBarCustomPreference tmpSeekBar = (SeekBarCustomPreference) getPreferenceManager().findPreference(preference);
+        tmpSeekBar.setProgress(threads);
     }
 
     @Override

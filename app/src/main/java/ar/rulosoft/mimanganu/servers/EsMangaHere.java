@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class EsMangaHere extends ServerBase {
 
@@ -57,7 +57,7 @@ public class EsMangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = new Navegador().get("http://es.mangahere.co/mangalist/");
+        String data = MainActivity.navigator.get("http://es.mangahere.co/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
@@ -71,7 +71,7 @@ public class EsMangaHere extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher matcher;
-            String data = new Navegador().get((manga.getPath()));
+            String data = MainActivity.navigator.get((manga.getPath()));
 
             // portada
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
@@ -85,7 +85,6 @@ public class EsMangaHere extends ServerBase {
 
             //autor
             manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", data, ""));
-
 
             //generos
             manga.setGenre((Html.fromHtml(getFirstMatchDefault("<li>[^:]+nero\\(s\\):(.+?)</li>", data, "")).toString().trim()));
@@ -120,14 +119,14 @@ public class EsMangaHere extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(chapter, page));
+        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(chapter.getPath());
+        data = MainActivity.navigator.get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas));
     }
@@ -136,7 +135,7 @@ public class EsMangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://es.mangahere.co/" + categoriasV[categorie] + pageNumber + ".htm" + ordenM[order];
-        String data = new Navegador().get(web);
+        String data = MainActivity.navigator.get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
@@ -166,8 +165,7 @@ public class EsMangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Navegador nav = new Navegador();
-        String data = nav.get("http://es.mangahere.co/site/search?name=" + term);
+        String data = MainActivity.navigator.get("http://es.mangahere.co/site/search?name=" + term);
         Pattern p = Pattern.compile("<dt>		<a href=\"(http://es.mangahere.co/manga/.+?)\".+?'>(.+?)<");
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
