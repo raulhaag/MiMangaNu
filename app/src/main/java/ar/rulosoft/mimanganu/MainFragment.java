@@ -12,11 +12,13 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -160,6 +162,29 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.view_mismangas, menu);
+
+        /** Local Search **/
+        MenuItem search = menu.findItem(R.id.action_search_local);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String value) {
+                // do nothing
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String value) {
+                ArrayList<Manga> mangaList;
+                mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                        "SELECT id " +
+                        "FROM manga " +
+                        "WHERE nombre LIKE '%"+value+"%' GROUP BY id)", null, false);
+                adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                grid.setAdapter(adapter);
+                return false;
+            }
+        });
 
         /** Set hide/unhide checkbox */
         boolean checkedRead = pm.getInt(SELECT_MODE, MODE_SHOW_ALL) > 0;

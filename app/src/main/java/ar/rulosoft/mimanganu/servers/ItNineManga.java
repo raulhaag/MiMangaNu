@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -63,7 +64,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavWithHeader().get(
+        String source = MainActivity.navigator.get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
@@ -83,7 +84,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(manga.getPath() + "?waring=1");
+        String source = MainActivity.navigator.get(manga.getPath() + "?waring=1");
         // portada
         manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // sinopsis
@@ -121,7 +122,7 @@ public class ItNineManga extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavWithHeader().get(
+        String source = MainActivity.navigator.get(
                 chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
@@ -134,7 +135,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavWithHeader().get(chapter.getPath());
+        String source = MainActivity.navigator.get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Error al obtener el n�mero de p�ginas");
@@ -143,7 +144,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getNavWithHeader().get(
+        String source = MainActivity.navigator.get(
                 HOST + ItNineManga.order[order] +
                         generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);

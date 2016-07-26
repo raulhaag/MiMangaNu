@@ -14,7 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.R;

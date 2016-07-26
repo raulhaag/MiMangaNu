@@ -15,7 +15,6 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.utils.Util;
-import ar.rulosoft.navegadores.Navegador;
 
 public abstract class ServerBase {
 
@@ -323,10 +322,6 @@ public abstract class ServerBase {
 
     public boolean hasFilteredNavigation() {
         return true;
-    }
-
-    Navegador getNavWithHeader() throws Exception {
-        return new Navegador();
     }
 
     public FilteredType getFilteredType() {

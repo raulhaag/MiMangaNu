@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.utils.InitGlobals;
 
 /**
  * Created by Raul on 17/07/2016.
@@ -64,7 +64,7 @@ public class LeoManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String web = "http://" + HOST + "/buscar?s=" + URLEncoder.encode(term, "UTF-8");
-        String data = getNavWithHeader().get(web);
+        String data = MainActivity.navigator.get(web);
         Pattern pattern = Pattern.compile("<td onclick='window.location=\"(.+?)\"'>.+?<img src=\"(.+?)\"[^>]alt=\"(.+?)\"");
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -83,7 +83,7 @@ public class LeoManga extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
 
-            String data = getNavWithHeader().get(manga.getPath());
+            String data = MainActivity.navigator.get(manga.getPath());
             manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, "Sin sinopsis"));
             String image = getFirstMatchDefault("<img src=\"(/uploads/images/mangas/.+?)\"", data, "");
             if (image.length() > 4) {
@@ -117,9 +117,9 @@ public class LeoManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavWithHeader().get(chapter.getPath());
+        String data = MainActivity.navigator.get(chapter.getPath());
         String web = "http://" + HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error obteniendo paginas 1");
-        data = getNavWithHeader().get(web);
+        data = MainActivity.navigator.get(web);
         String sub = "http://" + HOST + getFirstMatch("id=\"read-chapter\" name=\"(.+?)\"", data, "Error obteniendo paginas 3");
         String[] pos = getFirstMatch("pos=\"(.+?)\"", data, "Error obteniendo paginas 4").split(";");
         chapter.setPages(pos.length);
@@ -139,7 +139,7 @@ public class LeoManga extends ServerBase {
         if (order != 0) {
             web = web + "&" + ordenM[order];
         }
-        String data = getNavWithHeader().get(web);
+        String data = MainActivity.navigator.get(web);
         return getMangasFromSource(data);
     }
 

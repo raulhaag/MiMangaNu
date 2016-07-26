@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class LectureEnLigne extends ServerBase {
 
@@ -23,7 +23,7 @@ public class LectureEnLigne extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String source = new Navegador().get(HOST);
+        String source = MainActivity.navigator.get(HOST);
         Pattern p = Pattern.compile("<option value=\"([^\"]+)\">(.+?)</option>");
         Matcher m = p.matcher(source);
         while (m.find()) {
@@ -46,16 +46,15 @@ public class LectureEnLigne extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-
-        String data = new Navegador().get((manga.getPath()));// :</p><p>(.+?)</p>
+        String data = MainActivity.navigator.get((manga.getPath()));// :</p><p>(.+?)</p>
 
         manga.setSynopsis(getFirstMatchDefault("</p>[\\s]+<p>(.+?)</p>", data, "Sans synopsis"));
         manga.setImages(getFirstMatchDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
 
-        //autor
+        // autor
         manga.setAuthor(getFirstMatchDefault("Auteur :.+?d>(.+?)<", data, ""));
 
-        //genre
+        // genre
         manga.setGenre(getFirstMatchDefault("<tr><th>Genres :</th><td>(.+?)</td>", data, ""));
 
         // capitulos
@@ -75,13 +74,13 @@ public class LectureEnLigne extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data = new Navegador().get(this.getPagesNumber(chapter, page));
+        String data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
         return getFirstMatch("<img id='image' src='(.+?)'", data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = new Navegador().get(chapter.getPath());
+        String data = MainActivity.navigator.get(chapter.getPath());
         String paginas = getFirstMatch("<select class=\"pages\">.+?(\\d+)</option>[\\s]*</select>", data, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas));
     }

@@ -6,10 +6,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class KissManga extends ServerBase {
 
@@ -57,16 +57,13 @@ public class KissManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
+        // make use of AdvanceSearch, more data is then needed
+        MainActivity.navigator.addPost("authorArtist", "");
+        MainActivity.navigator.addPost("mangaName", term);
+        MainActivity.navigator.addPost("status", "");
+        MainActivity.navigator.addPost("genres", "");
 
-        Navegador nav = getNavWithHeader();
-
-        // make use of AdvanceSearch, mor data is then needed
-        nav.addPost("authorArtist", "");
-        nav.addPost("mangaName", term);
-        nav.addPost("status", "");
-        nav.addPost("genres", "");
-
-        String source = nav.post(IP, "/AdvanceSearch", HOST);
+        String source = MainActivity.navigator.post(IP, "/AdvanceSearch", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -89,7 +86,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(IP, manga.getPath(), HOST);
+        String source = MainActivity.navigator.get(IP, manga.getPath(), HOST);
 
         // Summary
         manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
@@ -105,7 +102,7 @@ public class KissManga extends ServerBase {
         // Author
         manga.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
 
-        //genre
+        // Genre
         manga.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
 
         manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
@@ -129,7 +126,7 @@ public class KissManga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().post(IP, chapter.getPath(), HOST);
+            String source = MainActivity.navigator.post(IP, chapter.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -148,7 +145,7 @@ public class KissManga extends ServerBase {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = MainActivity.navigator.get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -168,7 +165,7 @@ public class KissManga extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavWithHeader().post(IP, web, HOST);
+        String source = MainActivity.navigator.post(IP, web, HOST);
         return getMangasSource(source);
     }
 

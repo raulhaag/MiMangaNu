@@ -20,12 +20,28 @@
             android:summary="@string/use_only_wifi_subtitle"
             android:title="@string/use_only_wifi_title" />
         <ar.rulosoft.custompref.SeekBarCustomPreference
-            android:defaultValue="5"
-            android:dialogTitle="@string/cantidad_descargas_title"
+            android:defaultValue="10"
+            android:dialogTitle="@string/connection_timeout_title"
             android:key="connection_timeout"
             android:summary="@string/connection_timeout_summary"
             android:title="@string/connection_timeout_title"
-            app:val_max="20"
+            app:val_max="30"
+            app:val_min="3" />
+        <ar.rulosoft.custompref.SeekBarCustomPreference
+            android:defaultValue="10"
+            android:dialogTitle="asd"
+            android:key="write_timeout"
+            android:summary="@string/connection_timeout_summary"
+            android:title="@string/write_timeout_title"
+            app:val_max="30"
+            app:val_min="3" />
+        <ar.rulosoft.custompref.SeekBarCustomPreference
+            android:defaultValue="30"
+            android:dialogTitle="asd"
+            android:key="read_timeout"
+            android:summary="@string/connection_timeout_summary"
+            android:title="@string/read_timeout_title"
+            app:val_max="30"
             app:val_min="3" />
     </PreferenceCategory>
 
@@ -80,7 +96,7 @@
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="reader_type"
-            android:summary=""
+            android:summary="@string/reader_type_subtitle"
             android:title="..." />
         <ListPreference
             android:defaultValue="0"

@@ -21,7 +21,9 @@ import ar.rulosoft.mimanganu.R;
 
 public class Util {
     private static Util utilInstance = null;
-    protected static NotificationCompat.Builder builder;
+    protected static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
+    protected static NotificationCompat.Builder notificationBuilder;
+    protected static NotificationCompat.Builder notificationWithProgressbarBuilder;
     protected static NotificationManager notificationManager;
 
     private Util() {
@@ -42,6 +44,21 @@ public class Util {
                 }
             }
             fileOrDirectory.delete();
+        }
+    }
+
+    public void deleteEmptyDirectoriesRecursive(File fileOrDirectory) {
+        if(fileOrDirectory != null) {
+            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles().length > 0) {
+                for (File child : fileOrDirectory.listFiles()) {
+                    deleteEmptyDirectoriesRecursive(child);
+                }
+            }
+            if(fileOrDirectory.isDirectory())
+                if(fileOrDirectory.listFiles().length == 0) {
+                    fileOrDirectory.delete();
+                    Util.getInstance().changeNotificationWithProgressbar(0, 0, 69, fileOrDirectory.getAbsolutePath(), true);
+                }
         }
     }
 
@@ -139,20 +156,20 @@ public class Util {
     public void createNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
         Notification notification;
         PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        builder = new NotificationCompat.Builder(context);
-        builder.setOngoing(true);
-        builder.setContentTitle(contentTitle);
-        builder.setContentText(contentText);
-        builder.setSmallIcon(R.drawable.ic_launcher);
-        builder.setContentIntent(pIntent);
-        builder.setAutoCancel(true);
+        notificationBuilder = new NotificationCompat.Builder(context);
+        notificationBuilder.setOngoing(true);
+        notificationBuilder.setContentTitle(contentTitle);
+        notificationBuilder.setContentText(contentText);
+        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationBuilder.setContentIntent(pIntent);
+        notificationBuilder.setAutoCancel(true);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
-            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
         }
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
 
-        notification = builder.build();
+        notification = notificationBuilder.build();
         if (isPermanent) {
             notification.flags = Notification.FLAG_ONGOING_EVENT;
             notification.flags = Notification.FLAG_NO_CLEAR;
@@ -163,51 +180,127 @@ public class Util {
     }
 
     public void createSearchingForUpdatesNotification(Context context, int id) {
-        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), new Intent(context, MainActivity.class).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), PendingIntent.FLAG_UPDATE_CURRENT);
-        builder = new NotificationCompat.Builder(context);
-        builder.setOngoing(true);
-        builder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
-        builder.setContentText("");
-        builder.setSmallIcon(R.drawable.ic_launcher);
-        builder.setContentIntent(pIntent);
-        builder.setAutoCancel(true);
+        Intent cancelIntent = new Intent(context, MainActivity.class);
+        cancelIntent.putExtra("manga_id", -1);
+        cancelIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        Intent defaultIntent = new Intent(context, MainActivity.class);
+        defaultIntent.putExtra("manga_id", -2);
+        defaultIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent defaultPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), defaultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context);
+        searchingForUpdatesNotificationBuilder.setOngoing(true);
+        searchingForUpdatesNotificationBuilder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
+        searchingForUpdatesNotificationBuilder.setContentText("");
+        searchingForUpdatesNotificationBuilder.setSmallIcon(R.drawable.ic_action_av_reload);
+        searchingForUpdatesNotificationBuilder.setContentIntent(defaultPendingIntent);
+        searchingForUpdatesNotificationBuilder.setAutoCancel(true);
+        searchingForUpdatesNotificationBuilder.addAction(R.drawable.ic_action_x_light, context.getResources().getString(R.string.cancel), cancelPendingIntent);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            builder.setPriority(Notification.PRIORITY_HIGH);
-            builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(context.getResources().getString(R.string.searching_for_updates)));
-            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(""));
+            searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
+            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(context.getResources().getString(R.string.searching_for_updates)));
+            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(""));
         }
-        builder.setProgress(100, 0, true);
+        searchingForUpdatesNotificationBuilder.setProgress(100, 0, true);
 
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
-        Notification notification = builder.build();
+        Notification notification = searchingForUpdatesNotificationBuilder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
         notificationManager.notify(id, notification);
     }
 
     public void changeSearchingForUpdatesNotification(Context context, int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
-        builder.setContentTitle(contentTitle);
-        builder.setContentText(contentText);
+        searchingForUpdatesNotificationBuilder.setContentTitle(contentTitle);
+        searchingForUpdatesNotificationBuilder.setContentText(contentText);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            builder.setPriority(Notification.PRIORITY_HIGH);
-            builder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
-            builder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+            searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
+            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
         }
         if (ongoing) {
-            builder.setOngoing(true);
+            searchingForUpdatesNotificationBuilder.setOngoing(true);
             if (progress == max) {
-                builder.setProgress(max, progress, true);
-                builder.setContentText(context.getResources().getString(R.string.finishing_update));
+                searchingForUpdatesNotificationBuilder.setProgress(max, progress, true);
+                searchingForUpdatesNotificationBuilder.setContentText(context.getResources().getString(R.string.finishing_update));
                 if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    builder.setStyle(new NotificationCompat.BigTextStyle().bigText(context.getResources().getString(R.string.finishing_update)));
+                    searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(context.getResources().getString(R.string.finishing_update)));
                 }
             } else {
-                builder.setProgress(max, progress, false);
+                searchingForUpdatesNotificationBuilder.setProgress(max, progress, false);
             }
         } else {
-            builder.setOngoing(false);
-            builder.setProgress(max, progress, false);
+            searchingForUpdatesNotificationBuilder.setOngoing(false);
+            searchingForUpdatesNotificationBuilder.setProgress(max, progress, false);
         }
-        notificationManager.notify(id, builder.build());
+        notificationManager.notify(id, searchingForUpdatesNotificationBuilder.build());
+    }
+
+    public void createNotificationWithProgressbar(Context context, int id, String contentTitle, String contentText) {
+        Intent defaultIntent = new Intent(context, MainActivity.class);
+        defaultIntent.putExtra("manga_id", -2);
+        defaultIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent defaultPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), defaultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        notificationWithProgressbarBuilder = new NotificationCompat.Builder(context);
+        notificationWithProgressbarBuilder.setOngoing(true);
+        notificationWithProgressbarBuilder.setContentTitle(contentTitle);
+        notificationWithProgressbarBuilder.setContentText(contentText);
+        notificationWithProgressbarBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationWithProgressbarBuilder.setContentIntent(defaultPendingIntent);
+        notificationWithProgressbarBuilder.setAutoCancel(true);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
+            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+        }
+        notificationWithProgressbarBuilder.setProgress(100, 0, true);
+
+        notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
+        Notification notification = notificationWithProgressbarBuilder.build();
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        notificationManager.notify(id, notification);
+    }
+
+    public void changeNotificationWithProgressbar(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
+        notificationWithProgressbarBuilder.setContentTitle(contentTitle);
+        notificationWithProgressbarBuilder.setContentText(contentText);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
+            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+        }
+        if (ongoing) {
+            notificationWithProgressbarBuilder.setOngoing(true);
+            if (progress == max) {
+                notificationWithProgressbarBuilder.setProgress(max, progress, true);
+            } else {
+                notificationWithProgressbarBuilder.setProgress(max, progress, false);
+            }
+        } else {
+            notificationWithProgressbarBuilder.setOngoing(false);
+            notificationWithProgressbarBuilder.setProgress(max, progress, false);
+        }
+        notificationManager.notify(id, notificationWithProgressbarBuilder.build());
+    }
+
+    // same as above but without contentTitle
+    public void changeNotificationWithProgressbar(int max, int progress, int id, String contentText, boolean ongoing) {
+        notificationWithProgressbarBuilder.setContentText(contentText);
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
+            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+        }
+        if (ongoing) {
+            notificationWithProgressbarBuilder.setOngoing(true);
+            if (progress == max) {
+                notificationWithProgressbarBuilder.setProgress(max, progress, true);
+            } else {
+                notificationWithProgressbarBuilder.setProgress(max, progress, false);
+            }
+        } else {
+            notificationWithProgressbarBuilder.setOngoing(false);
+            notificationWithProgressbarBuilder.setProgress(max, progress, false);
+        }
+        notificationManager.notify(id, notificationWithProgressbarBuilder.build());
     }
 
     public void cancelNotification(int id) {

@@ -2,17 +2,16 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.text.Html;
 
-import com.squareup.okhttp.OkHttpClient;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 import ar.rulosoft.navegadores.RefererInterceptor;
+import okhttp3.OkHttpClient;
 
 public class ReadComicOnline extends ServerBase {
 
@@ -46,11 +45,8 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-
-        Navegador nav = getNavWithHeader();
-
-        nav.addPost("keyword", term);
-        String source = nav.post(IP, "/Search/Comic", HOST);
+        MainActivity.navigator.addPost("keyword", term);
+        String source = MainActivity.navigator.post(IP, "/Search/Comic", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -73,7 +69,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavWithHeader().get(IP, manga.getPath(), HOST);
+        String source = MainActivity.navigator.get(IP, manga.getPath(), HOST);
 
         // Summary
         manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
@@ -93,7 +89,7 @@ public class ReadComicOnline extends ServerBase {
         // Author
         manga.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
 
-        //genre
+        // Genre
         manga.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
 
         manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
@@ -117,7 +113,7 @@ public class ReadComicOnline extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavWithHeader().post(IP, chapter.getPath(), HOST);
+            String source = MainActivity.navigator.post(IP, chapter.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -135,10 +131,9 @@ public class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            Navegador nav = new Navegador();
-            OkHttpClient client = nav.getHttpClient();
+            OkHttpClient client = MainActivity.navigator.getHttpClient();
             client.networkInterceptors().add(new RefererInterceptor("http://" + HOST + chapter.getPath()));
-            String source = nav.get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = MainActivity.navigator.get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -157,7 +152,7 @@ public class ReadComicOnline extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavWithHeader().post(IP, web, HOST);
+        String source = MainActivity.navigator.post(IP, web, HOST);
         return getMangasSource(source);
     }
 

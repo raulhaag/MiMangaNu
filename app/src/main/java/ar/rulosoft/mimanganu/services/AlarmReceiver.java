@@ -20,7 +20,7 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
-import ar.rulosoft.navegadores.Navegador;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Alarm Receiver
@@ -64,7 +64,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             if (NetworkUtilsAndReciever.getConnectionStatus(context, only_wifi) == NetworkUtilsAndReciever.ConnectionStatus.CONNECTED) {
                 SearchUpdates searchUpdates = new SearchUpdates();
                 searchUpdates.setContext(context);
-                Navegador.TIME_OUT = Integer.parseInt(pm.getString("connection_timeout", "5"));
+                Navigator.connectionTimeout = Integer.parseInt(pm.getString("connection_timeout", "10"));
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                 searchUpdates.setSound(pm.getBoolean("update_sound", false));
                 int threads = Integer.parseInt(pm.getString("update_threads_manual", "1"));

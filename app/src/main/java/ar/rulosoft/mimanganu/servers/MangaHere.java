@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 public class MangaHere extends ServerBase {
 
@@ -56,7 +56,7 @@ public class MangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = new Navegador().get(HOST + "/mangalist/");
+        String data = MainActivity.navigator.get(HOST + "/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -68,7 +68,7 @@ public class MangaHere extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
-            String data = new Navegador().get(manga.getPath());
+            String data = MainActivity.navigator.get(manga.getPath());
             // Front
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
             // Summary
@@ -108,14 +108,14 @@ public class MangaHere extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = new Navegador().get(this.getPagesNumber(chapter, page));
+        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: Could not get the link to the image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = new Navegador().get(chapter.getPath());
+        data = MainActivity.navigator.get(chapter.getPath());
         String paginas =
                 getFirstMatch(PATRON_LAST, data, "Error: Could not get the number of pages");
         chapter.setPages(Integer.parseInt(paginas));
@@ -125,7 +125,7 @@ public class MangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/" + genreV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
-        String data = new Navegador().get(web);
+        String data = MainActivity.navigator.get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -156,8 +156,7 @@ public class MangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Navegador nav = new Navegador();
-        String data = nav.get(HOST + "/search.php?name=" + term);
+        String data = MainActivity.navigator.get(HOST + "/search.php?name=" + term);
         Pattern p = Pattern.compile("<dt>				<a href=\"(" + HOST +
                 "/manga/.+?)\".+?\">(.+?)<");
         Matcher m = p.matcher(data);

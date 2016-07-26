@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.Navegador;
 
 /**
  * Created by Raul on 02/12/2015.
@@ -42,7 +42,7 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavWithHeader().get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=1&q="+ URLEncoder.encode(term,"UTF-8")+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
+        String source = MainActivity.navigator.get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=1&q="+ URLEncoder.encode(term,"UTF-8")+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
         return getMangasFromSource(source);
     }
 
@@ -55,10 +55,8 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-
-        Navegador nav = getNavWithHeader();
-        nav.addPost("adult","true");
-        String source = nav.post(manga.getPath());
+        MainActivity.navigator.addPost("adult","true");
+        String source = MainActivity.navigator.post(manga.getPath());
         // Front
         manga.setImages(getFirstMatchDefault("<img src=\"(http://www.manga-tube.com/content/comics\\/.+?)\"", source, ""));
         // Summary
@@ -85,24 +83,22 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        Navegador nav = getNavWithHeader();
-        nav.addPost("adult","true");
-        String source = nav.post(getPagesNumber(chapter,page));
+        MainActivity.navigator.addPost("adult","true");
+        String source = MainActivity.navigator.post(getPagesNumber(chapter,page));
         return getFirstMatch("<img class=\"open\" src=\"(.+?)\"",source,"Error getting image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        Navegador nav = getNavWithHeader();
-        nav.addPost("adult","true");
-        String source = nav.post(chapter.getPath());
+        MainActivity.navigator.addPost("adult","true");
+        String source = MainActivity.navigator.post(chapter.getPath());
         int pages = Integer.parseInt(getFirstMatch("<div class=\"tbtitle dropdown_parent dropdown_right\"><div class=\"text\">(\\d+)",source,"Error"));
         chapter.setPages(pages);
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getNavWithHeader().get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=" + pageNumber + "&q="+genreV[categorie]+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
+        String source = MainActivity.navigator.get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=" + pageNumber + "&q="+genreV[categorie]+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
         return getMangasFromSource(source);
     }
 
