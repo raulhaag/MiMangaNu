@@ -18,5 +18,6 @@ allprojects {
         maven {
             url 'https://github.com/suckgamony/RapidDecoder/raw/master/repository'
         }
+        maven { url "https://jitpack.io" }
     }
 }
