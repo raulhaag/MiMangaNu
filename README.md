@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.52:
+* Agregado LeoManga.
+* Agregado fast updates.
+* Agregado menu contextual "Agregar Manga".
+* Fixes y mejoras.
+
 Cambios 1.51
 * Hotfixs 1.50.
 
