@@ -1,18 +1,17 @@
 package ar.rulosoft.mimanganu.utils;
 
-import android.content.SharedPreferences;
+import android.content.Context;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.navegadores.Navigator;
 
-public class InitGlobals extends AsyncTask<SharedPreferences, Void, Void> {
-
+public class InitGlobals extends AsyncTask<Context, Void, Void> {
     @Override
-    protected Void doInBackground(SharedPreferences... pm) {
+    protected Void doInBackground(Context... contexts) {
         try {
-            NetworkUtilsAndReciever.ONLY_WIFI = pm[0].getBoolean("only_wifi", false);
-            Navigator.navigator = new Navigator();
+            NetworkUtilsAndReciever.ONLY_WIFI = PreferenceManager.getDefaultSharedPreferences(contexts[0]).getBoolean("only_wifi", false);
+            Navigator.navigator = new Navigator(contexts[0]);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

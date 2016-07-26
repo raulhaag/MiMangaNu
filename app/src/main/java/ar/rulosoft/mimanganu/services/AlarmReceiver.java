@@ -53,7 +53,6 @@ public class AlarmReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         try {
             pm = PreferenceManager.getDefaultSharedPreferences(context);
-
             boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
             boolean only_wifi = pm.getBoolean("only_wifi", false);
             NetworkUtilsAndReciever.reset();
@@ -68,6 +67,8 @@ public class AlarmReceiver extends BroadcastReceiver {
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                 searchUpdates.setSound(pm.getBoolean("update_sound", false));
                 int threads = Integer.parseInt(pm.getString("update_threads_manual", "1"));
+                NetworkUtilsAndReciever.ONLY_WIFI = pm.getBoolean("only_wifi", false);
+                Navigator.navigator = new Navigator(context);
                 searchUpdates.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
             }
             NetworkUtilsAndReciever.reset();
@@ -96,6 +97,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         protected Void doInBackground(Integer... params) {
             keys = params[0];
             final boolean fast = pm.getBoolean("fast_update",true);
+
             mangas = Database.getMangasForUpdates(context);
             for (int i = 0; i < mangas.size(); i++) {
                 final int j = i;

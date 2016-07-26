@@ -1,5 +1,12 @@
 package ar.rulosoft.navegadores;
 
+import android.content.Context;
+
+import com.franmontiel.persistentcookiejar.ClearableCookieJar;
+import com.franmontiel.persistentcookiejar.PersistentCookieJar;
+import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
+import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -27,11 +34,13 @@ public class Navigator {
     UserAgentInterceptor userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
     private HashMap<String, String> parameters = new HashMap<>();
 
-    public Navigator() throws Exception {
+    public Navigator(Context context) throws Exception {
+        ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
         httpClient = new OkHttpClientConnectionChecker.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
+                .cookieJar(cookieJar)
                 .addNetworkInterceptor(userAgentInterceptor)
                 .build();
     }

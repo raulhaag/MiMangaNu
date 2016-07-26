@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
-        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, pm);
+        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getApplicationContext());
     }
 
     @Override
