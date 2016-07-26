@@ -50,7 +50,7 @@
     </string-array>
     <string-array name="periodo_val">
         <item>0</item>
-        <item>150000</item>
+        <item>21600000</item>
         <item>43200000</item>
         <item>86400000</item>
         <item>172800000</item>
