@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.componentes.Imaginable;
+import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -139,7 +140,7 @@ public class ImageLoader {
                     url = url.substring(0, idx);
                 }
             }
-            OkHttpClient copy = MainActivity.navigator.getHttpClient().newBuilder()
+            OkHttpClient copy = Navigator.navigator.getHttpClient().newBuilder()
                     .connectTimeout(5, TimeUnit.SECONDS)
                     .readTimeout(5, TimeUnit.SECONDS)
                     .build();

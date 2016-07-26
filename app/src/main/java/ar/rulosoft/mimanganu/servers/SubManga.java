@@ -25,7 +25,7 @@ public class SubManga extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         // <td><a href="(http://submanga.com/.+?)".+?</b>(.+?)<
         ArrayList<Manga> mangas = new ArrayList<>();
-        String source = MainActivity.navigator.get("http://submanga.com/series");
+        String source = getNavigator().get("http://submanga.com/series");
         Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
@@ -48,7 +48,7 @@ public class SubManga extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
-            String data = MainActivity.navigator.get((manga.getPath() + "/completa"));
+            String data = getNavigator().get((manga.getPath() + "/completa"));
             p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>");
             m = p.matcher(data);
 
@@ -64,7 +64,7 @@ public class SubManga extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         Pattern p;
         Matcher m;
-        String data = MainActivity.navigator.get((manga.getPath()));
+        String data = getNavigator().get((manga.getPath()));
 
         p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>");
         m = p.matcher(data);
@@ -87,14 +87,14 @@ public class SubManga extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
             String data;
-            data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
+            data = getNavigator().get(this.getPagesNumber(chapter, page));
             data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, null);
         return data;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = MainActivity.navigator.get(chapter.getPath());
+        String data = getNavigator().get(chapter.getPath());
         chapter.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "No se pudo obtener la cantidad de páginas")));
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
             data = getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);

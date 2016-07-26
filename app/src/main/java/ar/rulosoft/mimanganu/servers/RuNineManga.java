@@ -50,7 +50,7 @@ public class RuNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = MainActivity.navigator.get(
+        String source = getNavigator().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
@@ -70,7 +70,7 @@ public class RuNineManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = MainActivity.navigator.get(manga.getPath() + "?waring=1");
+        String source = getNavigator().get(manga.getPath() + "?waring=1");
         // Front
         manga.setImages(getFirstMatchDefault("<img itemprop=\"image\".+?src=\"(.+?)\"", source, ""));
         // Summary
@@ -108,7 +108,7 @@ public class RuNineManga extends ServerBase {
     }
 
     private void setExtra(Chapter c) throws Exception {
-        String source = MainActivity.navigator.get(
+        String source = getNavigator().get(
                 c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
@@ -121,7 +121,7 @@ public class RuNineManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = MainActivity.navigator.get(chapter.getPath());
+        String source = getNavigator().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Не удалось получить количество страниц");
@@ -130,7 +130,7 @@ public class RuNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = MainActivity.navigator.get(
+        String source = getNavigator().get(
                 HOST + genreV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }

@@ -52,7 +52,7 @@ public class MangaEden extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = MainActivity.navigator.get("http://www.mangaeden.com/en/en-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
+        String source = getNavigator().get("http://www.mangaeden.com/en/en-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
         return getMangasFromSource(source);
     }
 
@@ -64,7 +64,7 @@ public class MangaEden extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = MainActivity.navigator.get(manga.getPath());
+        String source = getNavigator().get(manga.getPath());
         // Front
         String image = getFirstMatchDefault("<div class=\"mangaImage2\"><img src=\"(.+?)\"", source, "");
         if(image.length() > 2)
@@ -99,7 +99,7 @@ public class MangaEden extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = MainActivity.navigator.get(chapter.getPath());
+            String source = getNavigator().get(chapter.getPath());
             Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
             Matcher matcher = pattern.matcher(source);
             String images = "";
@@ -115,7 +115,7 @@ public class MangaEden extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = MainActivity.navigator.get(chapter.getPath());
+            String source = getNavigator().get(chapter.getPath());
             Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
             Matcher matcher = pattern.matcher(source);
             String images = "";
@@ -134,7 +134,7 @@ public class MangaEden extends ServerBase {
         if(categories > 0){
             web = web + "&categoriesInc=" + genreV[categories];
         }
-        String source = MainActivity.navigator.get(web);
+        String source = getNavigator().get(web);
         return getMangasFromSource(source);
     }
 

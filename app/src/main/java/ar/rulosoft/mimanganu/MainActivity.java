@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
-    public static Navigator navigator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

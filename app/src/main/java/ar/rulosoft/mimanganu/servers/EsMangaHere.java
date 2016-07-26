@@ -57,7 +57,7 @@ public class EsMangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = MainActivity.navigator.get("http://es.mangahere.co/mangalist/");
+        String data = getNavigator().get("http://es.mangahere.co/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
@@ -71,7 +71,7 @@ public class EsMangaHere extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher matcher;
-            String data = MainActivity.navigator.get((manga.getPath()));
+            String data = getNavigator().get((manga.getPath()));
 
             // portada
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
@@ -119,14 +119,14 @@ public class EsMangaHere extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
+        data = getNavigator().get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = MainActivity.navigator.get(chapter.getPath());
+        data = getNavigator().get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas));
     }
@@ -135,7 +135,7 @@ public class EsMangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://es.mangahere.co/" + categoriasV[categorie] + pageNumber + ".htm" + ordenM[order];
-        String data = MainActivity.navigator.get(web);
+        String data = getNavigator().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
@@ -165,7 +165,7 @@ public class EsMangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = MainActivity.navigator.get("http://es.mangahere.co/site/search?name=" + term);
+        String data = getNavigator().get("http://es.mangahere.co/site/search?name=" + term);
         Pattern p = Pattern.compile("<dt>		<a href=\"(http://es.mangahere.co/manga/.+?)\".+?'>(.+?)<");
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {

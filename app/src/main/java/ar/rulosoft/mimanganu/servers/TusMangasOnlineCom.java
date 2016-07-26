@@ -81,7 +81,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = MainActivity.navigator.get(
+        String source = getNavigator().get(
                 HOST + "/listado-mangas?tipo=1&filter=" + URLEncoder.encode(term, "UTF-8"), TIMEOUT);
         return getMangasFromSource(source);
     }
@@ -94,7 +94,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = MainActivity.navigator.get(manga.getPath(), TIMEOUT);
+        String source = getNavigator().get(manga.getPath(), TIMEOUT);
         // sinopsis
         String sinopsis = getFirstMatchDefault("(<p itemprop=\"description\".+?</p></div>)",
                 source, "Sin sinopsis");
@@ -132,7 +132,7 @@ public class TusMangasOnlineCom extends ServerBase {
             if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
                 getExtraWeb(chapter);
             }
-            String source = MainActivity.navigator.get(chapter.getExtra(), TIMEOUT);
+            String source = getNavigator().get(chapter.getExtra(), TIMEOUT);
             Pattern p = Pattern.compile(
                     "<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
@@ -159,9 +159,9 @@ public class TusMangasOnlineCom extends ServerBase {
     private void getExtraWeb(Chapter c) throws Exception {
         String cId = getFirstMatch("idCapitulo=([^&]+)", c.getPath(), "Error al iniciar Capítulo");
         String mId = getFirstMatch("idManga=([^&]+)", c.getPath(), "Error al iniciar Capítulo");
-        MainActivity.navigator.addPost("idManga", mId);
-        MainActivity.navigator.addPost("idCapitulo", cId);
-        String source = MainActivity.navigator.post("http://www.tumangaonline.com/index.php?option=com_controlmanga&view=capitulos&format=raw");
+        getNavigator().addPost("idManga", mId);
+        getNavigator().addPost("idCapitulo", cId);
+        String source = getNavigator().post("http://www.tumangaonline.com/index.php?option=com_controlmanga&view=capitulos&format=raw");
         String fs = getFirstMatch("(http://www.tumangaonline.com/visor/.+?)\"",
                 source, "Error al iniciar Capítulo");
         c.setExtra(fs);
@@ -172,7 +172,7 @@ public class TusMangasOnlineCom extends ServerBase {
         if (!(chapter.getExtra() != null && chapter.getExtra().length() > 1)) {
             getExtraWeb(chapter);
         }
-        String source = MainActivity.navigator.get(chapter.getExtra());
+        String source = getNavigator().get(chapter.getExtra());
         String paginas = getFirstMatch(
                 "<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">",
                 source, "Error al iniciar Capítulo");
@@ -181,7 +181,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = MainActivity.navigator.get(
+        String source = getNavigator().get(
                 HOST + "/listado-mangas/mangas?" + generosV[categorie] + "&pag=" + pageNumber, TIMEOUT);
         return getMangasFromSource(source);
     }

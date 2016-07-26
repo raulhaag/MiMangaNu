@@ -58,7 +58,7 @@ public class MangaPanda extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = MainActivity.navigator.get(HOST + "/alphabetical");
+        String data = getNavigator().get(HOST + "/alphabetical");
         Pattern p = Pattern.compile(PATTERN_SUB);
         Matcher m = p.matcher(data);
         if (m.find()) {
@@ -76,7 +76,7 @@ public class MangaPanda extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = MainActivity.navigator.get(HOST + "/actions/search/?q=" + term + "&limit=100");
+        String data = getNavigator().get(HOST + "/actions/search/?q=" + term + "&limit=100");
         Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -94,7 +94,7 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = MainActivity.navigator.get(manga.getPath());
+        String data = getNavigator().get(manga.getPath());
         Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER);
         Matcher m = p.matcher(data);
         if (m.find()) {
@@ -134,14 +134,14 @@ public class MangaPanda extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
+        data = getNavigator().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data, "Error: Could not get the link to the image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = MainActivity.navigator.get(chapter.getPath());
+        data = getNavigator().get(chapter.getPath());
         String pages =
                 getFirstMatch("of (\\d+)</div>", data, "Error: Could not get the number of pages");
         chapter.setPages(Integer.parseInt(pages));
@@ -156,7 +156,7 @@ public class MangaPanda extends ServerBase {
         else
             web = HOST + "/popular" + "/" + genreV[category] + "/" + (pageNumber - 1) * 20;
 
-        String data = MainActivity.navigator.get(web);
+        String data = getNavigator().get(web);
         Pattern p =
                 Pattern.compile("url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>");
         Matcher m = p.matcher(data);

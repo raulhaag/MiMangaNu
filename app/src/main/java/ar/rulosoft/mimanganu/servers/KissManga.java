@@ -58,12 +58,12 @@ public class KissManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         // make use of AdvanceSearch, more data is then needed
-        MainActivity.navigator.addPost("authorArtist", "");
-        MainActivity.navigator.addPost("mangaName", term);
-        MainActivity.navigator.addPost("status", "");
-        MainActivity.navigator.addPost("genres", "");
+        getNavigator().addPost("authorArtist", "");
+        getNavigator().addPost("mangaName", term);
+        getNavigator().addPost("status", "");
+        getNavigator().addPost("genres", "");
 
-        String source = MainActivity.navigator.post(IP, "/AdvanceSearch", HOST);
+        String source = getNavigator().post(IP, "/AdvanceSearch", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -86,7 +86,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = MainActivity.navigator.get(IP, manga.getPath(), HOST);
+        String source = getNavigator().get(IP, manga.getPath(), HOST);
 
         // Summary
         manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
@@ -126,7 +126,7 @@ public class KissManga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = MainActivity.navigator.post(IP, chapter.getPath(), HOST);
+            String source = getNavigator().post(IP, chapter.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -145,7 +145,7 @@ public class KissManga extends ServerBase {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = MainActivity.navigator.get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = getNavigator().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -165,7 +165,7 @@ public class KissManga extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = MainActivity.navigator.post(IP, web, HOST);
+        String source = getNavigator().post(IP, web, HOST);
         return getMangasSource(source);
     }
 

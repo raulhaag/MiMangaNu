@@ -22,6 +22,7 @@ public class Navigator {
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
+    public static Navigator navigator;
     private OkHttpClient httpClient;
     UserAgentInterceptor userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
     private HashMap<String, String> parameters = new HashMap<>();

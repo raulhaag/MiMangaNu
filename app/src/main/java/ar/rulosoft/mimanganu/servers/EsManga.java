@@ -38,7 +38,7 @@ public class EsManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        String source = MainActivity.navigator.get("http://esmanga.com");
+        String source = getNavigator().get("http://esmanga.com");
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern pre = Pattern.compile("<div class=\"blk-hd\"><span>Todas las series Manga</span></div>[\\s\\S]+");
         Matcher preMatcher = pre.matcher(source);
@@ -67,7 +67,7 @@ public class EsManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = MainActivity.navigator.get(manga.getPath());
+        String source = getNavigator().get(manga.getPath());
         // sinopsis
         manga.setSynopsis(getFirstMatchDefault("<b>Sinopsis</b><br>([\\s\\S]+?)</s",
                 source, "Sin Sinopsis").replaceAll("<.+?>", ""));
@@ -92,13 +92,13 @@ public class EsManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
+        String source = getNavigator().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+\\d.(jpg|png|bmp))", source, "Error en plugin (obtener imager)");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = MainActivity.navigator.get(chapter.getPath());
+        String source = getNavigator().get(chapter.getPath());
         String textNum = getFirstMatch("option value=\"(\\d+)[^=]+</option></select>",
                 source, "Error en plugin (obtener p�ginas)");
         chapter.setPages(Integer.parseInt(textNum));
@@ -111,7 +111,7 @@ public class EsManga extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasWeb(String web) throws Exception {
-        String source = MainActivity.navigator.get(web);
+        String source = getNavigator().get(web);
         Pattern p = Pattern.compile("src=\"([^\"]+)\".+?<a href=\"(http://esmanga.com/manga/.+?)\">(.+?)<");
         Matcher matcher = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();

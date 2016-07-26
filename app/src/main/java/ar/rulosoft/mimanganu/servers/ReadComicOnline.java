@@ -45,8 +45,8 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        MainActivity.navigator.addPost("keyword", term);
-        String source = MainActivity.navigator.post(IP, "/Search/Comic", HOST);
+        getNavigator().addPost("keyword", term);
+        String source = getNavigator().post(IP, "/Search/Comic", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -69,7 +69,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = MainActivity.navigator.get(IP, manga.getPath(), HOST);
+        String source = getNavigator().get(IP, manga.getPath(), HOST);
 
         // Summary
         manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
@@ -113,7 +113,7 @@ public class ReadComicOnline extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = MainActivity.navigator.post(IP, chapter.getPath(), HOST);
+            String source = getNavigator().post(IP, chapter.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -131,9 +131,9 @@ public class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            OkHttpClient client = MainActivity.navigator.getHttpClient();
+            OkHttpClient client = getNavigator().getHttpClient();
             client.networkInterceptors().add(new RefererInterceptor("http://" + HOST + chapter.getPath()));
-            String source = MainActivity.navigator.get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = getNavigator().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -152,7 +152,7 @@ public class ReadComicOnline extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = MainActivity.navigator.post(IP, web, HOST);
+        String source = getNavigator().post(IP, web, HOST);
         return getMangasSource(source);
     }
 

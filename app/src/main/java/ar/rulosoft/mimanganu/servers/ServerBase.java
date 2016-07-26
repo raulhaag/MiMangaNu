@@ -15,6 +15,8 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
+import ar.rulosoft.navegadores.OkHttpClientConnectionChecker;
 
 public abstract class ServerBase {
 
@@ -285,6 +287,10 @@ public abstract class ServerBase {
 
     public void setServerName(String serverName) {
         this.serverName = serverName;
+    }
+
+    public static Navigator getNavigator(){
+        return Navigator.navigator;
     }
 
     public static String getFirstMatch(String patron, String source, String errorMsj) throws Exception {

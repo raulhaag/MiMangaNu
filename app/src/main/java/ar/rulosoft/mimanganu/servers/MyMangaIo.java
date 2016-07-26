@@ -46,7 +46,7 @@ public class MyMangaIo extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
-            String data = MainActivity.navigator.get(manga.getPath());
+            String data = getNavigator().get(manga.getPath());
             // Front
             manga.setImages("http://www.mymanga.io/" + getFirstMatchDefault("<img src=\"(images/mangas_thumb/.+?)\"", data, ""));
             // Summary
@@ -86,14 +86,14 @@ public class MyMangaIo extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = MainActivity.navigator.get(this.getPagesNumber(chapter, page));
+        data = getNavigator().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("<img src=\"(.+?)\"", data, "Error: Could not get the link to the image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = MainActivity.navigator.get(chapter.getPath());
+        data = getNavigator().get(chapter.getPath());
         String pages =
                 getFirstMatch("(\\d+)</option></select></span>", data, "Error: Could not get the number of pages");
         chapter.setPages(Integer.parseInt(pages));
@@ -102,11 +102,11 @@ public class MyMangaIo extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         if (categorie == 0) {
-            String data = MainActivity.navigator.get("http://www.mymanga.io/mangas/");
+            String data = getNavigator().get("http://www.mymanga.io/mangas/");
             return getMangasFromSource(data);
         } else {
             String web = "http://www.mymanga.io/search?" + genreV[categorie];
-            String data = MainActivity.navigator.get(web);
+            String data = getNavigator().get(web);
             return getMangasFromSource(data);
         }
     }
@@ -142,7 +142,7 @@ public class MyMangaIo extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String web = "http://www.mymanga.io/search?name=" + URLEncoder.encode(term, "UTF-8");
-        String data = MainActivity.navigator.get(web);
+        String data = getNavigator().get(web);
         return getMangasFromSource(data);
     }
 }
