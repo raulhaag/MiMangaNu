@@ -6,12 +6,9 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.navegadores.RefererInterceptor;
-import okhttp3.OkHttpClient;
 
 public class ReadComicOnline extends ServerBase {
 
@@ -79,11 +76,7 @@ public class ReadComicOnline extends ServerBase {
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
         if (pictures != null) {
-           /* if (pictures.contains(HOST)) {
-                manga.setImages("http://" + IP + pictures.replace("http://" + HOST, "") + "|" + HOST);
-            } else {/*/
-                manga.setImages(pictures);
-            //}
+            manga.setImages(pictures);
         }
 
         // Author
@@ -112,9 +105,7 @@ public class ReadComicOnline extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-
             String source = getNavigator().post("http://" + HOST + chapter.getPath());
-
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -123,7 +114,6 @@ public class ReadComicOnline extends ServerBase {
             }
             chapter.setExtra(images);
         }
-
         return chapter.getExtra().split("\\|")[page];
     }
 
@@ -131,7 +121,7 @@ public class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigator().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""),"http://" + HOST + chapter.getPath());
+            String source = getNavigator().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""), "http://" + HOST + chapter.getPath());
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -160,11 +150,7 @@ public class ReadComicOnline extends ServerBase {
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
-           /* if (m.group(1).contains(HOST)) {
-                manga.setImages("http://" + IP + m.group(1).replace("http://" + HOST, "") + "|" + HOST);
-            } else {/*/
-                manga.setImages(m.group(1));
-           // }
+            manga.setImages(m.group(1));
             mangas.add(manga);
         }
         return mangas;
