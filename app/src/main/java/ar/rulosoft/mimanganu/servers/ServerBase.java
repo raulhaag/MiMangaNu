@@ -357,7 +357,7 @@ public abstract class ServerBase {
                 new DeNineManga(),
                 new Manga_Tube(),
                 new RawSenManga(),
-                //new ReadComicOnline(),
+                new ReadComicOnline(),
                 new FromFolder()
         });
     }

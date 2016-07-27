@@ -30,13 +30,15 @@ public class Navigator {
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     public static Navigator navigator;
+    public static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
     private OkHttpClient httpClient;
-    UserAgentInterceptor userAgentInterceptor = new UserAgentInterceptor("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0");
+    UserAgentInterceptor userAgentInterceptor = new UserAgentInterceptor(USER_AGENT);
     private HashMap<String, String> parameters = new HashMap<>();
 
     public Navigator(Context context) throws Exception {
         ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
         httpClient = new OkHttpClientConnectionChecker.Builder()
+                .addInterceptor(new CFInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -60,6 +62,22 @@ public class Navigator {
                 .build();
 
         Response response = copy.newCall(new Request.Builder().url(web).build()).execute();
+
+        if (response.isSuccessful()) {
+            return formatResponseBody(response.body());
+        } else {
+            response.body().close();
+            return "";
+        }
+    }
+
+    public String get(String web, String referer ) throws Exception {
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
+        Response response = copy.newCall(new Request.Builder().url(web).header("Referer",referer).build()).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());

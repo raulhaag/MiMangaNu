@@ -24,11 +24,11 @@ import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import rapid.decoder.BitmapDecoder;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =
             Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
-    //public static Navegador NAVEGADOR = null;
 
     private MemCache mMemCache;
     private FileCache mFileCache;
@@ -44,56 +44,16 @@ public class ImageLoader {
         imgThreadPool = Executors.newFixedThreadPool(3);
     }
 
-    /*public static Navegador initAndGetNavegador() throws Exception {
-        if (NAVEGADOR == null) NAVEGADOR = new Navegador();
-        return NAVEGADOR;
-    }*/
-
     /**
-     * Android lollipop automaticamente ignora estas lineas para
-     * verciones anteriores es realmente necesario
-     * <p/>
-     * Android lollipop automatically ignores these lines for
-     * previous versions, but it's necessary
-     *
      * @param path to file
      * @return bitmap, which is converted
      */
     private static Bitmap convertBitmap(String path) {
         Bitmap bitmap = null;
-        BitmapFactory.Options bfOptions = new BitmapFactory.Options();
-        // Disable Dithering mode
-        bfOptions.inDither = false;
-        // Tell to gc that whether it needs free memory, the Bitmap can be cleared
-        bfOptions.inPurgeable = true;
-        // Which kind of referer will be used to recover the Bitmap data after being clear,
-        // when it will be used in the future
-        bfOptions.inInputShareable = true;
-        bfOptions.inPreferredConfig = Config.RGB_565;
-        bfOptions.inTempStorage = new byte[32 * 1024];
-
-        File file = new File(path);
-        FileInputStream fs = null;
         try {
-            fs = new FileInputStream(file);
-        } catch (FileNotFoundException e) {
+            bitmap = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+        } catch (Exception e) {
             // e.printStackTrace();
-        }
-
-        try {
-            if (fs != null) {
-                bitmap = BitmapFactory.decodeFileDescriptor(fs.getFD(), null, bfOptions);
-            }
-        } catch (IOException e) {
-            // e.printStackTrace();
-        } finally {
-            if (fs != null) {
-                try {
-                    fs.close();
-                } catch (IOException e) {
-                    // e.printStackTrace();
-                }
-            }
         }
         return bitmap;
     }
@@ -146,7 +106,7 @@ public class ImageLoader {
                     .build();
             Request.Builder builder = new Request.Builder().url(url);
             if (host != null) {
-                builder.addHeader("Host", host);
+                builder.header("Host", host);
             }
             Response response = copy.newCall(builder.build()).execute();
             FileCache.writeFile(response.body().byteStream(), f);

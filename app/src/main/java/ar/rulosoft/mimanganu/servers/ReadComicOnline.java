@@ -46,7 +46,7 @@ public class ReadComicOnline extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         getNavigator().addPost("keyword", term);
-        String source = getNavigator().post(IP, "/Search/Comic", HOST);
+        String source = getNavigator().post("http://" + HOST + "/Search/Comic");
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -69,7 +69,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(IP, manga.getPath(), HOST);
+        String source = getNavigator().get("http://" + HOST + manga.getPath());
 
         // Summary
         manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
@@ -79,11 +79,11 @@ public class ReadComicOnline extends ServerBase {
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
         if (pictures != null) {
-            if (pictures.contains(HOST)) {
+           /* if (pictures.contains(HOST)) {
                 manga.setImages("http://" + IP + pictures.replace("http://" + HOST, "") + "|" + HOST);
-            } else {
+            } else {/*/
                 manga.setImages(pictures);
-            }
+            //}
         }
 
         // Author
@@ -113,7 +113,7 @@ public class ReadComicOnline extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavigator().post(IP, chapter.getPath(), HOST);
+            String source = getNavigator().post("http://" + HOST + chapter.getPath());
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -131,9 +131,7 @@ public class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            OkHttpClient client = getNavigator().getHttpClient();
-            client.networkInterceptors().add(new RefererInterceptor("http://" + HOST + chapter.getPath()));
-            String source = getNavigator().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = getNavigator().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""),"http://" + HOST + chapter.getPath());
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -152,7 +150,7 @@ public class ReadComicOnline extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavigator().post(IP, web, HOST);
+        String source = getNavigator().post("http://" + HOST + web);
         return getMangasSource(source);
     }
 
@@ -162,11 +160,11 @@ public class ReadComicOnline extends ServerBase {
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
-            if (m.group(1).contains(HOST)) {
+           /* if (m.group(1).contains(HOST)) {
                 manga.setImages("http://" + IP + m.group(1).replace("http://" + HOST, "") + "|" + HOST);
-            } else {
+            } else {/*/
                 manga.setImages(m.group(1));
-            }
+           // }
             mangas.add(manga);
         }
         return mangas;

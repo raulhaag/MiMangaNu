@@ -59,6 +59,7 @@ dependencies {
     compile 'rapid.decoder:png-decoder:0.3.0'
     compile 'com.squareup.okhttp3:okhttp:3.4.1'
     compile 'com.squareup.okio:okio:1.9.0'
+    compile 'com.squareup.duktape:duktape-android:0.9.5'
     compile 'com.github.franmontiel:PersistentCookieJar:v0.9.3'
     compile 'ch.acra:acra:4.9.0'
 }
