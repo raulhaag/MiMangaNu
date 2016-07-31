@@ -39,11 +39,12 @@ public class ServerListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        return inflater.inflate(R.layout.frament_server_plain_list, container, false);
+        return inflater.inflate(R.layout.fragment_server_plain_list, container, false);
     }
 
     @Override
     public void onActivityCreated(Bundle savedState) {
+        super.onActivityCreated(savedState);
         super.onStart();
         if (id == -1)
             id = getArguments().getInt(MainFragment.SERVER_ID);

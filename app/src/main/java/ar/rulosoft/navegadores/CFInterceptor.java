@@ -24,7 +24,7 @@ public class CFInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
         if (response.code() == 503) {
-            resolveOverCF(chain,response);
+            return resolveOverCF(chain,response);
         }
         return response;
     }
@@ -74,10 +74,7 @@ public class CFInterceptor implements Interceptor {
                 .build();
 
         response = chain.proceed(request1);//generate the cookie
-        response = chain.proceed(new Request.Builder()
-                .url(request.url())
-                .header("User-Agent", Navigator.USER_AGENT)
-                .build());//get response for original request
+        response = chain.proceed(request.newBuilder().build());
         return response;
     }
 
