@@ -44,20 +44,6 @@ public class ImageLoader {
         imgThreadPool = Executors.newFixedThreadPool(3);
     }
 
-    /**
-     * @param path to file
-     * @return bitmap, which is converted
-     */
-    private static Bitmap convertBitmap(String path) {
-        Bitmap bitmap = null;
-        try {
-            bitmap = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
-        } catch (Exception e) {
-            // e.printStackTrace();
-        }
-        return bitmap;
-    }
-
     public void displayImg(String url, Imaginable imageView) {
         if (imageViewReUse(imageView, url)) {
             imageViews.put(imageView, url);
@@ -126,7 +112,14 @@ public class ImageLoader {
      * @return Bitmap
      */
     private Bitmap decodeFile(File put_file) {
-        return convertBitmap(put_file.getPath());
+        try {
+            BitmapFactory.Options bmpOpts = new BitmapFactory.Options();
+            bmpOpts.inSampleSize = 1;
+            return BitmapFactory.decodeFile(put_file.getAbsolutePath(), bmpOpts);
+        } catch (Exception e) {
+            // usually file not found, but just ignore it
+            return null;
+        }
     }
 
     /**
