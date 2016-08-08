@@ -112,9 +112,20 @@ public class ImageLoader {
      * @return Bitmap
      */
     private Bitmap decodeFile(File put_file) {
+        // if file not exist, skip everything
+        if (!put_file.exists())
+            return null;
+        // We want Image to be equal or smaller than 400px height
+        int tempSampleSize = 1, requiredSize = 400;
         try {
             BitmapFactory.Options bmpOpts = new BitmapFactory.Options();
-            bmpOpts.inSampleSize = 1;
+            bmpOpts.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(put_file.getAbsolutePath(), bmpOpts);
+            while ((bmpOpts.outHeight / tempSampleSize) >= requiredSize) {
+                tempSampleSize *= 2;
+            }
+            bmpOpts.inSampleSize = tempSampleSize;
+            bmpOpts.inJustDecodeBounds = false;
             return BitmapFactory.decodeFile(put_file.getAbsolutePath(), bmpOpts);
         } catch (Exception e) {
             // usually file not found, but just ignore it
