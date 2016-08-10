@@ -51,13 +51,14 @@ public class VerticalReader extends ReaderContinuous {
             if (pages.size() < cPage || cPage < 0)
                 cPage = 0;
             float value = 0;
-            if(pages.get(cPage)!= null)
-                 value = pages.get(cPage).init_visibility;
+            if (pages.get(cPage) != null)
+                value = pages.get(cPage).init_visibility;
             Page page = initValues(pages.get(pageIdx).path);
             pages.set(pageIdx, page);
             calculateParticularScale(pages.get(pageIdx));
             calculateVisibilities();
-            value = value - pages.get(cPage).init_visibility;
+            if (pages.get(cPage) != null)
+                value = value - pages.get(cPage).init_visibility;
             relativeScroll(0, -value);
             generateDrawPool();
 

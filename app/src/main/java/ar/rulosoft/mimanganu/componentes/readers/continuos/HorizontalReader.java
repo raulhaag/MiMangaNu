@@ -84,7 +84,8 @@ public abstract class HorizontalReader extends ReaderContinuous {
             pages.set(pageIdx, page);
             calculateParticularScale(pages.get(pageIdx));
             calculateVisibilities();
-            value = value - pages.get(cPage).init_visibility;
+            if (pages.get(cPage) != null)
+                value = value - pages.get(cPage).init_visibility;
             relativeScroll(-value, 0);
             generateDrawPool();
         }
