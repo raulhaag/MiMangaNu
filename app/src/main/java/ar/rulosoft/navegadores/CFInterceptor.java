@@ -23,7 +23,7 @@ public class CFInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
-        if (response.code() == 503) {
+        if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
             return resolveOverCF(chain,response);
         }
         return response;
@@ -73,7 +73,9 @@ public class CFInterceptor implements Interceptor {
                 .header("Referer", request.url().toString())
                 .build();
 
+        response.body().close();
         response = chain.proceed(request1);//generate the cookie
+        response.body().close();
         response = chain.proceed(request.newBuilder().build());
         return response;
     }

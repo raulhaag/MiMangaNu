@@ -46,18 +46,21 @@ public class VerticalReader extends ReaderContinuous {
 
     public void reloadImage(int idx) {
         int pageIdx = idx - 1;
-        if (pages != null) {
-            if (idx <= pages.size()) {
-                int cPage = currentPage;
-                float value = pages.get(cPage).init_visibility;
-                Page page = initValues(pages.get(pageIdx).path);
-                pages.set(pageIdx, page);
-                calculateParticularScale(pages.get(pageIdx));
-                calculateVisibilities();
-                value = value - pages.get(cPage).init_visibility;
-                relativeScroll(0, -value);
-                generateDrawPool();
-            }
+        if (pages != null && pageIdx < pages.size() && pageIdx >= 0) {
+            int cPage = currentPage;
+            if (pages.size() < cPage || cPage < 0)
+                cPage = 0;
+            float value = 0;
+            if(pages.get(cPage)!= null)
+                 value = pages.get(cPage).init_visibility;
+            Page page = initValues(pages.get(pageIdx).path);
+            pages.set(pageIdx, page);
+            calculateParticularScale(pages.get(pageIdx));
+            calculateVisibilities();
+            value = value - pages.get(cPage).init_visibility;
+            relativeScroll(0, -value);
+            generateDrawPool();
+
         }
     }
 

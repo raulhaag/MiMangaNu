@@ -140,7 +140,7 @@ public class ReadComicOnline extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavigator().post("http://" + HOST + web);
+        String source = getNavigator().get("http://" + HOST + web);
         return getMangasSource(source);
     }
 
