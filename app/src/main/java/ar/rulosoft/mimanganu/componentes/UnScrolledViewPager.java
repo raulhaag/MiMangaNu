@@ -15,7 +15,10 @@ public class UnScrolledViewPager extends ViewPager {
         super(context, attrs);
     }
 
+    static final int MIN_DISTANCE = 200;
+    static final int MAX_TIME = 200;
     float mStartDragX;
+    long mStartTime;
     OnSwipeOutListener mOnSwipeOutListener;
 
     public void setOnSwipeOutListener(OnSwipeOutListener listener) {
@@ -23,49 +26,52 @@ public class UnScrolledViewPager extends ViewPager {
     }
 
     private void onSwipeOutAtStart() {
-        if (mOnSwipeOutListener!=null) {
+        if (mOnSwipeOutListener != null) {
             mOnSwipeOutListener.onStartOver();
         }
     }
 
     private void onSwipeOutAtEnd() {
-        if (mOnSwipeOutListener!=null) {
+        if (mOnSwipeOutListener != null) {
             mOnSwipeOutListener.onEndOver();
         }
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        switch(ev.getAction() & MotionEventCompat.ACTION_MASK){
+        switch (ev.getAction() & MotionEventCompat.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 mStartDragX = ev.getX();
+                mStartTime = ev.getEventTime();
                 break;
         }
         return super.onInterceptTouchEvent(ev);
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent ev){
-
-        if(getCurrentItem()==0 || getCurrentItem()==getAdapter().getCount()-1){
+    public boolean onTouchEvent(MotionEvent ev) {
+        if (getCurrentItem() == 0 || getCurrentItem() == getAdapter().getCount() - 1) {
             final int action = ev.getAction();
             float x = ev.getX();
-            switch(action & MotionEventCompat.ACTION_MASK){
+            switch (action & MotionEventCompat.ACTION_MASK) {
                 case MotionEvent.ACTION_MOVE:
                     break;
                 case MotionEvent.ACTION_UP:
-                    if (getCurrentItem()==0 && x>mStartDragX) {
-                        onSwipeOutAtStart();
-                        return true;
-                    }
-                    if (getCurrentItem()==getAdapter().getCount()-1 && x<mStartDragX){
-                        onSwipeOutAtEnd();
-                        return true;
+                    long mEndTime = ev.getEventTime();
+                    if (Math.abs(x - mStartDragX) > MIN_DISTANCE && (mEndTime - mStartTime) < MAX_TIME) {
+                        if (getCurrentItem() == 0 && x > mStartDragX) {
+                            onSwipeOutAtStart();
+                            return true;
+                        }
+                        if (getCurrentItem() == getAdapter().getCount() - 1 && x < mStartDragX) {
+                            onSwipeOutAtEnd();
+                            return true;
+                        }
                     }
                     break;
             }
-        }else{
-            mStartDragX=0;
+        } else {
+            mStartDragX = 0;
         }
         return super.onTouchEvent(ev);
     }
@@ -74,7 +80,7 @@ public class UnScrolledViewPager extends ViewPager {
     @Override
     protected boolean canScroll(View v, boolean checkV, int dx, int x, int y) {
         try {
-            return  ((PagedReader.PageAdapter) getAdapter()).getCurrentPage().canScroll(dx);
+            return ((PagedReader.PageAdapter) getAdapter()).getCurrentPage().canScroll(dx);
         } catch (Exception ignored) {
         }
         return super.canScroll(v, checkV, dx, x, y);
