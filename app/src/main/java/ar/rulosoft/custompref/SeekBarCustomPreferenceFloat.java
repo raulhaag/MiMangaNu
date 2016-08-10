@@ -15,9 +15,9 @@ import ar.rulosoft.mimanganu.R;
  */
 public class SeekBarCustomPreferenceFloat extends DialogPreference {
 
-    private int mFC;
-    private int mMin;
-    private int mMax;
+    private float mFC;
+    private float mMin;
+    private float mMax;
     private float mStep;
     private float mValue;
     private TextView textSummary;
@@ -38,12 +38,12 @@ public class SeekBarCustomPreferenceFloat extends DialogPreference {
     public SeekBarCustomPreferenceFloat(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
-        mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
-        mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
+        mMin = a.getFloat(R.styleable.CustomDialogPref_val_min_float, 0);
+        mMax = a.getFloat(R.styleable.CustomDialogPref_val_max_float, 9);
         mStep = a.getFloat(R.styleable.CustomDialogPref_val_step, 1.f);
         mFC = -mMin;
-        mMax = Math.round((mMax - mMin) / mStep);
-        mMin = Math.round(mMin / mStep);
+        mMax = (mMax - mMin) / mStep;
+        mMin = (mMin / mStep);
         a.recycle();
         mSummary = (String) super.getSummary();
         setLayoutResource(R.layout.preference_seekbar_widget_layout);
@@ -77,7 +77,7 @@ public class SeekBarCustomPreferenceFloat extends DialogPreference {
         SeekBar seekBar = (SeekBar) holder.findViewById(R.id.seekbar);
         textSummary = (TextView) holder.findViewById(android.R.id.summary);
         textSummary.setText(String.format(mSummary, mValue));
-        seekBar.setMax(mMax);
+        seekBar.setMax((int)mMax);
         seekBar.setProgress(Math.round((mValue + mFC) / mStep) );
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override

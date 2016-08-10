@@ -5,6 +5,8 @@
         <attr name="val_max" format="integer" />
         <attr name="val_type" format="integer" />
         <attr name="val_step" format="float"/>
+        <attr name="val_min_float" format="float" />
+        <attr name="val_max_float" format="float" />
         <attr name="wrap_around" format="boolean" />
     </declare-styleable>
 </resources>

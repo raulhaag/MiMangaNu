@@ -166,14 +166,14 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mButtonMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modScrollSensitive(-.5f);
+                modScrollSensitive(-.25f);
             }
         });
 
         mButtonPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                modScrollSensitive(.5f);
+                modScrollSensitive(.25f);
             }
         });
         mScrollSensitiveText.setOnLongClickListener(new View.OnLongClickListener() {
