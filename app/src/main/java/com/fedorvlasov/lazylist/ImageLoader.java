@@ -3,14 +3,10 @@ package com.fedorvlasov.lazylist;
 import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -18,13 +14,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.componentes.Imaginable;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rapid.decoder.BitmapDecoder;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =
@@ -42,20 +36,6 @@ public class ImageLoader {
         mMemCache = MemCache.getInstance();
         mFileCache = new FileCache(context);
         imgThreadPool = Executors.newFixedThreadPool(3);
-    }
-
-    /**
-     * @param path to file
-     * @return bitmap, which is converted
-     */
-    private static Bitmap convertBitmap(String path) {
-        Bitmap bitmap = null;
-        try {
-            bitmap = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
-        } catch (Exception e) {
-            // e.printStackTrace();
-        }
-        return bitmap;
     }
 
     public void displayImg(String url, Imaginable imageView) {
@@ -126,7 +106,25 @@ public class ImageLoader {
      * @return Bitmap
      */
     private Bitmap decodeFile(File put_file) {
-        return convertBitmap(put_file.getPath());
+        // if file not exist, skip everything
+        if (!put_file.exists())
+            return null;
+        // We want Image to be equal or smaller than 400px height
+        int tempSampleSize = 1, requiredSize = 400;
+        try {
+            BitmapFactory.Options bmpOpts = new BitmapFactory.Options();
+            bmpOpts.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(put_file.getAbsolutePath(), bmpOpts);
+            while ((bmpOpts.outHeight / tempSampleSize) >= requiredSize) {
+                tempSampleSize *= 2;
+            }
+            bmpOpts.inSampleSize = tempSampleSize;
+            bmpOpts.inJustDecodeBounds = false;
+            return BitmapFactory.decodeFile(put_file.getAbsolutePath(), bmpOpts);
+        } catch (Exception e) {
+            // usually file not found, but just ignore it
+            return null;
+        }
     }
 
     /**
