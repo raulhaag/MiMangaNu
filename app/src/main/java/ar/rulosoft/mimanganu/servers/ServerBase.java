@@ -16,7 +16,6 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
-import ar.rulosoft.navegadores.OkHttpClientConnectionChecker;
 
 public abstract class ServerBase {
 
@@ -180,7 +179,7 @@ public abstract class ServerBase {
         this.loadMangaInformation(manga, true);
         this.loadChapters(manga, false);
         ArrayList<Chapter> simpleList = new ArrayList<>();
-        if (fast && mangaDb.getChapters().size() > 20) {
+        if (fast && manga.getChapters().size() > 20) {
             int chapters = manga.getChapters().size();
             List<Chapter> f20 = manga.getChapters().subList(chapters - 20, chapters);
             for (Chapter chapter : f20) {

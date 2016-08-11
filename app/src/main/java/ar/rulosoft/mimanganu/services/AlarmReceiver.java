@@ -24,7 +24,7 @@ import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Alarm Receiver
- * <p/>
+ * <p>
  * Created by Raul on 09/07/2015.
  */
 public class AlarmReceiver extends BroadcastReceiver {
@@ -56,7 +56,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
             boolean only_wifi = pm.getBoolean("only_wifi", false);
             NetworkUtilsAndReciever.reset();
-            if(only_wifi_updates == true){
+            if (only_wifi_updates == true) {
                 only_wifi = true;
             }
             NetworkUtilsAndReciever.reset();
@@ -96,9 +96,12 @@ public class AlarmReceiver extends BroadcastReceiver {
         @Override
         protected Void doInBackground(Integer... params) {
             keys = params[0];
-            final boolean fast = pm.getBoolean("fast_update",true);
+            final boolean fast = pm.getBoolean("fast_update", true);
+            if (pm.getBoolean("include_finished_manga", false))
+                mangas = Database.getMangas(context, null, true);
+            else
+                mangas = Database.getMangasForUpdates(context);
 
-            mangas = Database.getMangasForUpdates(context);
             for (int i = 0; i < mangas.size(); i++) {
                 final int j = i;
                 while (keys == 0)

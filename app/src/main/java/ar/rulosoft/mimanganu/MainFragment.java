@@ -575,7 +575,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
-        ArrayList<Manga> mangaList = Database.getMangasForUpdates(getContext());
+        ArrayList<Manga> mangaList;
         int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
         int ticket = threads;
         int result = 0;
@@ -586,6 +586,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             this.context = context;
             if (pm.getBoolean("include_finished_manga", false))
                 mangaList = Database.getMangas(getContext(), null, true);
+            else
+                mangaList = Database.getMangasForUpdates(getContext());
         }
 
         @Override

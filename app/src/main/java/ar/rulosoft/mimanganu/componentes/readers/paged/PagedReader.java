@@ -78,8 +78,8 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void reset() {
-        currentPage = 0;
         setPagerAdapter(null);
+        currentPage = 0;
     }
 
     @Override
@@ -102,7 +102,11 @@ public abstract class PagedReader extends Reader implements TapListener {
     }
 
     public class PageAdapter extends PagerAdapter {
-        Page[] pages = new Page[paths.size()];
+        private Page[] pages;
+
+        PageAdapter(){
+            pages = new Page[paths.size()];
+        }
 
         public Page getCurrentPage() {
             return pages[currentPage];
@@ -121,10 +125,6 @@ public abstract class PagedReader extends Reader implements TapListener {
                     }
                 }
             }
-        }
-
-        public Page getPage(int position) {
-            return pages[position];
         }
 
         @Override
@@ -181,12 +181,6 @@ public abstract class PagedReader extends Reader implements TapListener {
                         pages[i].visor.setScrollFactor(pageScroll);
                     }
                 }
-        }
-
-        public void pageDownloaded(int page) {
-            if (pages[page] != null && currentPage == page) {
-                pages[page].setImage();
-            }
         }
     }
 
