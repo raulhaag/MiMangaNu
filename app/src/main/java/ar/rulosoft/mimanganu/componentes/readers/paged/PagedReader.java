@@ -75,7 +75,6 @@ public abstract class PagedReader extends Reader implements TapListener {
             return "";
     }
 
-
     @Override
     public void reset() {
         setPagerAdapter(null);
@@ -125,6 +124,10 @@ public abstract class PagedReader extends Reader implements TapListener {
                     }
                 }
             }
+        }
+
+        public Page getPage(int idx){
+            return pages[idx];
         }
 
         @Override

@@ -69,8 +69,8 @@ public class L2RPagedReader extends HorizontalPagedReader {
     public void reloadImage(int idx) {
         if (paths != null) {
             int intIdx = paths.size() - idx;
-            if (mPageAdapter.pages[intIdx] != null) {
-                mPageAdapter.pages[intIdx].setImage();
+            if (mPageAdapter.getPage(intIdx) != null) {
+                mPageAdapter.getPage(intIdx) .setImage();
             }
         }
     }
@@ -82,8 +82,8 @@ public class L2RPagedReader extends HorizontalPagedReader {
 
     @Override
     public void freePage(int idx) {
-        if (mPageAdapter != null && mPageAdapter.pages[paths.size() - idx] != null) {
-            mPageAdapter.pages[paths.size() - idx].unloadImage();
+        if (mPageAdapter != null && mPageAdapter.getPage(paths.size() - idx) != null) {
+            mPageAdapter.getPage(paths.size() - idx).unloadImage();
         }
     }
 
