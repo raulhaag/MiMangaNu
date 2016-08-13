@@ -173,7 +173,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         mChapterAdapter.selectTo(selection.keyAt(0));
                         return true;
                     case R.id.download_selection:
-                        new AsyncAddMangas().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mChapterAdapter.getSelectedChapters());
+                        new AsyncAddMangas().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChapterAdapter.getSelectedChapters());
                         break;
                     case R.id.mark_as_read_and_delete_images:
                         new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -421,31 +421,37 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             case R.id.sort_number:
                 pm.edit().putInt(CHAPTERS_ORDER, 1).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DESC);
+                item.setChecked(true);
                 break;
 
             case R.id.sort_number_asc:
                 pm.edit().putInt(CHAPTERS_ORDER, 2).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
+                item.setChecked(true);
                 break;
 
             case R.id.sort_title:
                 pm.edit().putInt(CHAPTERS_ORDER, 3).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DESC);
+                item.setChecked(true);
                 break;
 
             case R.id.sort_title_asc:
                 pm.edit().putInt(CHAPTERS_ORDER, 4).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
+                item.setChecked(true);
                 break;
 
             case R.id.sort_as_added_to_db_asc_chapters:
                 pm.edit().putInt(CHAPTERS_ORDER, 5).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_ASC);
+                item.setChecked(true);
                 break;
 
             case R.id.sort_as_added_to_db_desc_chapters:
                 pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_DESC);
+                item.setChecked(true);
                 break;
 
         }
@@ -481,6 +487,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         inflater.inflate(R.menu.menu_manga, menu);
         mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
         mMenuItemReaderType = menu.findItem(R.id.action_reader);
+        int sortList[] = {
+                R.id.sort_as_added_to_db_desc_chapters,R.id.sort_number,
+                R.id.sort_number_asc, R.id.sort_title,
+                R.id.sort_title_asc,R.id.sort_as_added_to_db_asc_chapters
+        };
+        menu.findItem(sortList[chapters_order]).setChecked(true);
         int readDirection;
         if (mManga.getReadingDirection() != -1) {
             readDirection = mManga.getReadingDirection();
@@ -515,7 +527,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected Void doInBackground(Chapter... chapters) {
             List<Chapter> chaptersList = Arrays.asList(chapters);
-            Collections.sort(chaptersList,Chapter.Comparators.NUMBERS_ASC);
+            Collections.sort(chaptersList, Chapter.Comparators.NUMBERS_ASC);
             for (Chapter chapter : chaptersList) {
                 try {
                     DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
@@ -676,6 +688,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                     case 4:
                         Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
                         break;
+                    case 5:
+                        mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_ASC);
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
