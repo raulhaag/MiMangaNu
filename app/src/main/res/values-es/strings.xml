@@ -99,7 +99,7 @@
     <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
-    <string name="update_message">Cambios en v1.52:\n\t* Agregado LeoManga.\n\t* Agregado fast updates.\n\t* Agregado menu contextual "Agregar Manga".\n\t* Fixes y mejoras.</string>
+    <string name="update_message">Cambios en v1.53:\n\t* Bastantes bug fixes \n\t* Busqueda en coleccion \n\t* Limpiar cache extendido\n\t* Actualizado okhttp v3\n\t* Agregado ReadComicOnline</string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="ui_settings">Configuración de UI</string>
     <string name="download_selection">Descargar seleccion</string>
@@ -197,4 +197,9 @@
     <string name="new_chapters">Nuevo capítulos de %s</string>
     <string name="searching">Busqueda para \"%s\" en</string>
     <string name="chapters">capítulos</string>
+    <string name="cancel">Cancelar</string>
+    <string name="deleting_empty_directories">Borrando directorios vacios …</string>
+    <string name="reader_type_subtitle">Toca aqui para cambiar el tipo de lector</string>
+    <string name="write_timeout_title">Write Timeout</string>
+    <string name="read_timeout_title">Read Timeout</string>
 </resources>

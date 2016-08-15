@@ -196,4 +196,10 @@
     <string name="fast_update_subtitle">Confrontare solo lo scorso 20 capitolo dal server</string>
     <string name="new_chapters">Nuovi capitoli di %s</string>
     <string name="chapters">capitoli</string>
+    <string name="cancel">annullare</string>
+    <string name="deleting_empty_directories">Eliminazione directory vuote …</string>
+    <string name="reader_type_subtitle">Toccare qui per cambiare il tipo di lettore</string>
+    <string name="write_timeout_title">write timeout</string>
+    <string name="read_timeout_title">Leggi timeout</string>
+    <string name="searching">Ricerca di \"%s\" sono</string>
 </resources>

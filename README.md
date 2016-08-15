@@ -33,6 +33,14 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.53:
+* Bastantes bug fixes
+* Busqueda en coleccion
+* Limpiar cache extendido
+* Actualizado okhttp v3
+* Agregado ReadComicOnline
+
 Cambios en v1.52:
 * Agregado LeoManga.
 * Agregado fast updates.

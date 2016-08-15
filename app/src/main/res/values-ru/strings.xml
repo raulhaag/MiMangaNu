@@ -194,4 +194,10 @@
     <string name="fast_update_title">Быстрые обновления</string>
     <string name="new_chapters">Новые Главы %s</string>
     <string name="chapters">главы</string>
+    <string name="cancel">отменить</string>
+    <string name="deleting_empty_directories">Удаление пустых каталогов …</string>
+    <string name="reader_type_subtitle">Нажмите здесь, чтобы изменить тип чтения</string>
+    <string name="write_timeout_title">Запись тайм-аута</string>
+    <string name="read_timeout_title">таймаут</string>
+    <string name="searching">Поиск \"%s\2 являются</string>
 </resources>

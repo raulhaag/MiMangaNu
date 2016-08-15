@@ -689,7 +689,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         Collections.sort(chapters, Chapter.Comparators.TITLE_ASC);
                         break;
                     case 5:
-                        mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_ASC);
+                        Collections.sort(chapters, Chapter.Comparators.DATABASE_ADDED_ASC);
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();

@@ -376,7 +376,7 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
                 return 1f;
             }
         } else if (type == DisplayType.FIT_TO_HEIGHT) {
-            if (getWidth() != 0 && getHeight() != 0) {
+            if (getWidth() != 0 && getHeight() != 0 && getDrawable() != null) {
                 float mImageOriginalWidth = getDrawable().getIntrinsicWidth();
                 float mImageOriginalHeight = getDrawable().getMinimumHeight();
                 if ((mImageOriginalWidth - getWidth()) * mImageOriginalWidth / getWidth() <

@@ -26,6 +26,7 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 public class NetworkUtilsAndReciever extends BroadcastReceiver {
 
     public enum ConnectionStatus {UNCHECKED, NO_INET_CONNECTED, NO_WIFI_CONNECTED, CONNECTED}
+
     public static ConnectionStatus connectionStatus = ConnectionStatus.UNCHECKED; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
     public static boolean ONLY_WIFI;
 
@@ -63,13 +64,13 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
         }
     }
 
-    public static ConnectionStatus getConnectionStatus(@NonNull Context context){
-            return getConnectionStatus(context,ONLY_WIFI);
+    public static ConnectionStatus getConnectionStatus(@NonNull Context context) {
+        return getConnectionStatus(context, ONLY_WIFI);
     }
 
-    public static ConnectionStatus getConnectionStatus(@NonNull Context context, boolean only_wifi){
+    public static ConnectionStatus getConnectionStatus(@NonNull Context context, boolean only_wifi) {
         boolean result;
-        if(connectionStatus == ConnectionStatus.UNCHECKED) {
+        if (connectionStatus == ConnectionStatus.UNCHECKED) {
             if (only_wifi) {
                 result = isWifiConnected(context);
                 if (result) {
@@ -119,13 +120,17 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     private static boolean isConnected(@NonNull ConnectivityManager connMgr, int type) {
-        Network[] networks = connMgr.getAllNetworks();
-        NetworkInfo networkInfo;
-        for (Network mNetwork : networks) {
-            networkInfo = connMgr.getNetworkInfo(mNetwork);
-            if (networkInfo != null && networkInfo.getType() == type && networkInfo.isConnected()) {
-                return true;
+        try {
+            Network[] networks = connMgr.getAllNetworks();
+            NetworkInfo networkInfo;
+            for (Network mNetwork : networks) {
+                networkInfo = connMgr.getNetworkInfo(mNetwork);
+                if (networkInfo != null && networkInfo.getType() == type && networkInfo.isConnected()) {
+                    return true;
+                }
             }
+        } catch (Exception e) {
+            //ignore return false
         }
         return false;
     }

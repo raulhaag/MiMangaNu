@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.53:\n\t* some bug fixes \n\t* add local search \n\t* clear cache now also deletes empty directories\n\t* update to okhttp v3</string>
+    <string name="update_message">Changes in v1.53:\n\t* Some bug fixes \n\t* add local search \n\t* Clear cache now also deletes empty directories\n\t* Update to okhttp v3\n\t* Added ReadComicOnline  </string>
     <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>

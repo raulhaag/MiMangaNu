@@ -195,4 +195,9 @@
     <string name="fast_update_title">Schnelles Update</string>
     <string name="fast_update_subtitle">Vergleiche nur die neuesten 20 Kapitel vom Server</string>
     <string name="chapters">Kapitel</string>
+    <string name="cancel">stornieren</string>
+    <string name="deleting_empty_directories">Löschen Sie leere Verzeichnisse …</string>
+    <string name="read_timeout_title">Lesen Timeout</string>
+    <string name="reader_type_subtitle">Tippen Sie hier, um Typ-Reader ändern</string>
+    <string name="write_timeout_title">Write Timeout</string>
 </resources>
