@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -31,6 +32,7 @@ import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class DetailsFragment extends Fragment {
 
@@ -97,13 +99,14 @@ public class DetailsFragment extends Fragment {
                 }
             }
         });
-        floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
-        swipeRefreshLayout.setColorSchemeColors(MainActivity.colors[0], MainActivity.colors[1]);
-        data.setColor(MainActivity.darkTheme, MainActivity.colors[0]);
+        int[] colors = ThemeColors.getColors(PreferenceManager.getDefaultSharedPreferences(getActivity()));
+        floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(colors[1]));
+        swipeRefreshLayout.setColorSchemeColors(colors[0], colors[1]);
+        data.setColor(MainActivity.darkTheme, colors[0]);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getActivity().getWindow();
-            window.setNavigationBarColor(MainActivity.colors[0]);
-            window.setStatusBarColor(MainActivity.colors[4]);
+            window.setNavigationBarColor(colors[0]);
+            window.setStatusBarColor(colors[4]);
         }
         if (getActivity() != null) {
             ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);

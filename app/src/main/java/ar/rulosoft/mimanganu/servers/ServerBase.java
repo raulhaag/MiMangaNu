@@ -288,7 +288,7 @@ public abstract class ServerBase {
         this.serverName = serverName;
     }
 
-    public static Navigator getNavigator(){
+    public static Navigator getNavigator() {
         return Navigator.navigator;
     }
 
@@ -394,14 +394,15 @@ public abstract class ServerBase {
                 }
             }
 
-            Intent intent = new Intent(context, MainActivity.class);
-            intent.putExtra("manga_id", simpleList.get(0).getMangaID());
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-
-            if (simpleList.size() > 1) {
-                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapters, manga.getTitle()), LargeContentText);
-            } else {
-                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), LargeContentText);
+            if (!simpleList.isEmpty() && context != null) {
+                Intent intent = new Intent(context, MainActivity.class);
+                intent.putExtra("manga_id", simpleList.get(0).getMangaID());
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                if (simpleList.size() > 1) {
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapters, manga.getTitle()), LargeContentText);
+                } else {
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), LargeContentText);
+                }
             }
 
             return null;
