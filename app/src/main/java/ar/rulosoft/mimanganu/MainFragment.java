@@ -54,7 +54,7 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ServerRecAdapter.OnEndActionModeListener{
+public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ServerRecAdapter.OnEndActionModeListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -110,7 +110,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         super.onPause();
         if (is_server_list_open)
             is_server_list_open = false;
-        if(swipeReLayout != null)
+        if (swipeReLayout != null)
             swipeReLayout.clearAnimation();
     }
 
@@ -162,14 +162,33 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.view_mismangas, menu);
+        final Menu mMenu = menu;
 
         /** Local Search **/
         MenuItem search = menu.findItem(R.id.action_search_local);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+
+        searchView.setOnSearchClickListener(new SearchView.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mMenu.findItem(R.id.action_view_download).setVisible(false);
+                mMenu.findItem(R.id.submenu).setVisible(false);
+            }
+        });
+
+        searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                mMenu.findItem(R.id.action_view_download).setVisible(true);
+                mMenu.findItem(R.id.submenu).setVisible(true);
+                return false;
+            }
+        });
+
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String value) {
-                // do nothing
+                searchView.clearFocus();
                 return false;
             }
 
@@ -179,7 +198,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
                         "SELECT id " +
                         "FROM manga " +
-                        "WHERE nombre LIKE '%"+value+"%' GROUP BY id)", null, false);
+                        "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
                 adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
                 grid.setAdapter(adapter);
                 return false;
@@ -220,7 +239,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 break;
             }
             case R.id.action_edit_server_list:
-                if(mViewPager.getCurrentItem() == 0){
+                if (mViewPager.getCurrentItem() == 0) {
                     mViewPager.setCurrentItem(1);
                     returnToMangaList = true;
                 }
@@ -436,7 +455,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                switch (NetworkUtilsAndReciever.getConnectionStatus(getActivity())){
+                switch (NetworkUtilsAndReciever.getConnectionStatus(getActivity())) {
                     case CONNECTED:
                         if (MainActivity.updateListTask == null || MainActivity.updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
                             MainActivity.updateListTask = new UpdateListTask(getActivity());
@@ -514,7 +533,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onEndActionMode() {
-        if(returnToMangaList){
+        if (returnToMangaList) {
             returnToMangaList = false;
             mViewPager.setCurrentItem(0);
         }
@@ -632,11 +651,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             public void run() {
                                 Manga mManga = mangaList.get(idxNow);
                                 ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
-                                boolean fast = pm.getBoolean("fast_update",true);
+                                boolean fast = pm.getBoolean("fast_update", true);
                                 publishProgress(idxNow);
                                 try {
                                     if (!isCancelled()) {
-                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(),fast);
+                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
                                         result += diff;
                                     }
                                 } catch (Exception e) {

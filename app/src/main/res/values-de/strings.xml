@@ -11,7 +11,7 @@
     <string name="ajuste_ancho">An Breite anpassen</string>
     <string name="ajuste_imagen">Standard Bild-Anpassung</string>
     <string name="apachelic">Apache Lizenz</string>
-    <string name="autor">Author</string>
+    <string name="autor">Autor</string>
     <string name="borrado_imagenes">Bilder gelöscht</string>
     <string name="borrar">Löschen</string>
     <string name="borrar_imagenes">Lösche Bilder</string>
@@ -129,9 +129,9 @@
     <string name="download_unread_confirmation">Ungelesene Kapitel herunterladen?</string>
     <string name="mar_and_di">Als gelesen markieren und Bilder löschen</string>
     <string name="select_end">Markiere bis zum Ende</string>
-    <string name="select_begin">Markiere vom Anfang</string>
+    <string name="select_begin">Markiere von Anfang</string>
     <string name="continuous_reader">Fortlaufende Lesemodus</string>
-    <string name="paged_reader">Paged Reader</string>
+    <string name="paged_reader">Seitenleser</string>
     <string name="pause_all_downloads">Download pausieren</string>
     <string name="paused">(Angehalten)</string>
     <string name="remove_all">Alle entfernen</string>
@@ -147,7 +147,7 @@
     <string name="sort_number">Kapitelnummer (9&#8211;0)</string>
     <string name="sort_number_asc">Kapitelnummer</string>
     <string name="delete_comfirm">Das Kapitel wirklich löschen?</string>
-    <string name="storage_permission_denied">MiMangaNu benötigt die Berechtigung für den Zugriff auf den Speicher, um korrekt funktionieren zu können.</string>
+    <string name="storage_permission_denied">Die Berechtigung für den Speicherzugriff wird benötigt, damit MiMangaNu korrekt funktionieren kann.</string>
     <string name="no_new_updates_found">Keine neuen Kapitel gefunden :(</string>
     <string name="used_space">Speicherbedarf der Mangas</string>
     <string name="sort_as_added_to_db_asc">Wie in DB hinzugefügt (asc)</string>
@@ -159,11 +159,11 @@
     <string name="seamless_chapter_transitions_continuous_reader_subtitle">Wische links oder rechts (hoch oder runter für Vertikale Leserichtung) auf der ersten oder letzten Seite um das vorherige oder nächste Kapitel zu laden.</string>
     <string name="seamless_chapter_transitions_paged_reader_subtitle">Drücke links oder rechts auf der ersten oder letzten Seite um das vorherige oder nächste Kapitel zu laden.</string>
     <string name="ram_usage">Speicher Nutzung</string>
-    <string name="clear_cache_subtitle">Dies löscht den Cache. Es müssen danach alle Cover-Bilder erneut heruntergeladen werden.</string>
+    <string name="clear_cache_subtitle">Löscht den Cache. Alle Cover-Bilder müssen danach erneut heruntergeladen werden.</string>
     <string name="clear_cache_title">Cache löschen</string>
     <string name="connection_settings">Verbindungseinstellungen</string>
     <string name="connection_timeout_summary">%s Sekunden</string>
-    <string name="connection_timeout_title">Verbindungszeitüberschreitung</string>
+    <string name="connection_timeout_title">Zeitüberschreitung der Verbindung</string>
     <string name="deleted">%s wurde gelöscht</string>
     <string name="dir_already_on_db">Verzeichnis bereits hinzugefügt</string>
     <string name="download_next_chapter_automatically_subtitle">Beim Lesen wird das nächste Kapitel automatisch heruntergeladen</string>
@@ -186,7 +186,7 @@
     <string name="update_search_cancelled">Update-Suche abgebrochen</string>
     <string name="search_result">Such Resultat für \"%s\" auf</string>
     <string name="include_finished_manga_title">Beendete Manga einbeziehen</string>
-    <string name="include_finished_manga_subtitle">Diese Einstellung bezieht beendete Manga in der Update-Suche mit ein. Standardmäßig werden nur laufende Mangas in der Update-Suche einbezogen.</string>
+    <string name="include_finished_manga_subtitle">Es werde auch bereits beendete Mangas bei der Update-Suche mit beinbezogen. Sonst werden nur laufende Mangas berücksichtigt.</string>
     <string name="hide_sensitivity_scrollbar_title">Ausblenden der Empfindlichkeits-Scrollbar</string>
     <string name="hide_sensitivity_scrollbar_subtitle">Dadurch wird die Empfindlichkeit-Scrollbar ausgeblendet, wenn man im nicht-Vollbild-Modus liest</string>
     <string name="new_chapters">Neue Kapitel von %s</string>
@@ -195,9 +195,9 @@
     <string name="fast_update_title">Schnelles Update</string>
     <string name="fast_update_subtitle">Vergleiche nur die neuesten 20 Kapitel vom Server</string>
     <string name="chapters">Kapitel</string>
-    <string name="cancel">stornieren</string>
+    <string name="cancel">Abbrechen</string>
     <string name="deleting_empty_directories">Löschen Sie leere Verzeichnisse …</string>
-    <string name="read_timeout_title">Lesen Timeout</string>
-    <string name="reader_type_subtitle">Tippen Sie hier, um Typ-Reader ändern</string>
-    <string name="write_timeout_title">Write Timeout</string>
+    <string name="read_timeout_title">Timeout beim Einlesen</string>
+    <string name="write_timeout_title">Timeout beim Speichern</string>
+    <string name="reader_type_subtitle">Aktiviert den Seitenleser. </string>
 </resources>
