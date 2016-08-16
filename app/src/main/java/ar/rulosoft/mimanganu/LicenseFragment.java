@@ -20,7 +20,7 @@ import static android.R.color.black;
 
 public class LicenseFragment extends Fragment {
 
-    private TextView lic;
+    private TextView mLicenseView;
     private static final String TAG = "LicenseFragment";
 
     @Nullable
@@ -28,14 +28,14 @@ public class LicenseFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        lic = new TextView(getActivity());
-        lic.setTextAppearance(getActivity(), android.R.style.TextAppearance_Medium);
-        lic.setPadding(10, 10, 10, 10);
+        mLicenseView = new TextView(getActivity());
+//        mLicenseView.setTextAppearance(getActivity(), android.R.style.TextAppearance_Medium);
+        mLicenseView.setPadding(10, 10, 10, 10);
         if (!MainActivity.darkTheme) {
-            lic.setTextColor(getResources().getColor(black));
+            mLicenseView.setTextColor(getResources().getColor(black));
         }
         ScrollView newScroll = new ScrollView(getActivity());
-        newScroll.addView(lic);
+        newScroll.addView(mLicenseView);
         return newScroll;
     }
 
@@ -79,7 +79,7 @@ public class LicenseFragment extends Fragment {
             is.read(buffer);
             String licenseStr = new String(buffer);
             is.close();
-            lic.setText(licenseStr);
+            mLicenseView.setText(licenseStr);
         } catch (IOException e) {
             Log.e(TAG, "Error while loading license", e);
         }
