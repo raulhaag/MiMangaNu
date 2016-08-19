@@ -455,22 +455,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                switch (NetworkUtilsAndReciever.getConnectionStatus(getActivity())) {
-                    case CONNECTED:
-                        if (MainActivity.updateListTask == null || MainActivity.updateListTask.getStatus() == AsyncTask.Status.FINISHED) {
-                            MainActivity.updateListTask = new UpdateListTask(getActivity());
-                            MainActivity.updateListTask.execute();
-                        }
-                        break;
-                    case NO_INET_CONNECTED:
-                        Util.getInstance().toast(getActivity(), getString(R.string.no_internet_connection));
-                        swipeReLayout.setRefreshing(false);
-                        break;
-                    case NO_WIFI_CONNECTED:
-                        Util.getInstance().toast(getActivity(), getString(R.string.no_wifi_connection));
-                        swipeReLayout.setRefreshing(false);
-                        break;
-                }
+                MainActivity.updateListTask = new UpdateListTask(getActivity());
+                MainActivity.updateListTask.execute();
             }
         });
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -599,6 +585,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         int ticket = threads;
         int result = 0;
         int numNow = 0;
+        String errorMsg = "";
         Context context;
 
         public UpdateListTask(Context context) {
@@ -613,8 +600,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected void onPreExecute() {
             super.onPreExecute();
             if (context != null) {
-                Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                Toast.makeText(context, getResources().getString(R.string.searching_for_updates), Toast.LENGTH_SHORT).show();
+                try {
+                    if (NetworkUtilsAndReciever.isConnected(context)) {
+                        Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
+                        Toast.makeText(context, getResources().getString(R.string.searching_for_updates), Toast.LENGTH_SHORT).show();
+                    }
+                } catch (Exception e) {
+                    if (e.getMessage() != null)
+                        errorMsg = e.getMessage();
+                }
             }
         }
 
@@ -629,54 +623,59 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected Integer doInBackground(Void... params) {
-            if (context != null) {
+            if (context != null && errorMsg == "") {
                 ticket = threads;
                 for (int idx = 0; idx < mangaList.size(); idx++) {
-                    if (NetworkUtilsAndReciever.isWifiConnected(context) || NetworkUtilsAndReciever.isMobileConnected(context)) {
-                        final int idxNow = idx;
-
-                        // If there is no ticket, sleep for 1 second and ask again
-                        while (ticket < 1) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                Log.e(TAG, "Update sleep failure", e);
-                            }
-                        }
-                        ticket--;
-
-                        // If tickets were passed, create new requests
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Manga mManga = mangaList.get(idxNow);
-                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
-                                boolean fast = pm.getBoolean("fast_update", true);
-                                publishProgress(idxNow);
+                    try {
+                        if (NetworkUtilsAndReciever.isConnected(context)) {
+                            final int idxNow = idx;
+                            // If there is no ticket, sleep for 1 second and ask again
+                            while (ticket < 1) {
                                 try {
-                                    if (!isCancelled()) {
-                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
-                                        result += diff;
-                                    }
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Update server failure", e);
-                                } finally {
-                                    ticket++;
+                                    Thread.sleep(1000);
+                                } catch (InterruptedException e) {
+                                    Log.e(TAG, "Update sleep failure", e);
                                 }
-
                             }
-                        }).start();
+                            ticket--;
 
-                    } else {
-                        Util.getInstance().cancelNotification(mNotifyID);
-                        Handler handler = new Handler(Looper.getMainLooper());
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                swipeReLayout.setRefreshing(false);
-                            }
-                        });
-                        break;
+                            // If tickets were passed, create new requests
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Manga mManga = mangaList.get(idxNow);
+                                    ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                    boolean fast = pm.getBoolean("fast_update", true);
+                                    publishProgress(idxNow);
+                                    try {
+                                        if (!isCancelled()) {
+                                            int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
+                                            result += diff;
+                                        }
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "Update server failure", e);
+                                    } finally {
+                                        ticket++;
+                                    }
+
+                                }
+                            }).start();
+
+                        } else {
+                            Util.getInstance().cancelNotification(mNotifyID);
+                            Handler handler = new Handler(Looper.getMainLooper());
+                            handler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    swipeReLayout.setRefreshing(false);
+                                }
+                            });
+                            break;
+                        }
+                    } catch (Exception e) {
+                        if (e.getMessage() != null) {
+                            errorMsg = e.getMessage();
+                        }
                     }
                 }
 
@@ -689,7 +688,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     }
                 }
             }
-
             return result;
         }
 
@@ -703,7 +701,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    Toast.makeText(context, context.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
+                    if (errorMsg != "") {
+                        Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(context, context.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
+                    }
                 }
                 swipeReLayout.setRefreshing(false);
             } else {
