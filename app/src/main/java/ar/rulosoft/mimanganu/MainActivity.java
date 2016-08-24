@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -20,7 +21,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Window;
-import android.widget.Toast;
 
 import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -32,10 +32,11 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences pm;
     public static MainFragment.UpdateListTask updateListTask;
     public static boolean isConnected = true;
+    private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
     public ActionBar mActBar;
+    public CoordinatorLayout cLayout;
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
-    private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,13 +48,14 @@ public class MainActivity extends AppCompatActivity {
         if (isStoragePermissionGiven()) {
             if (savedInstanceState == null) {
                 MainFragment mainFragment = new MainFragment();
-                getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mainFragment).commit();
+                getSupportFragmentManager().beginTransaction().add(R.id.coordinator_layout, mainFragment).commit();
             }
             showUpdateDialog();
         } else {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
+        cLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getApplicationContext());
     }
 
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     Util.getInstance().restartApp(getApplicationContext());
                 } else {
                     // Permission Denied
-                    Toast.makeText(MainActivity.this, getString(R.string.storage_permission_denied), Toast.LENGTH_SHORT).show();
+                    Util.showFastSnackBar(getString(R.string.storage_permission_denied), cLayout, this);
                 }
                 break;
             default:
@@ -166,14 +168,14 @@ public class MainActivity extends AppCompatActivity {
     public void replaceFragmentAllowStateLoss(Fragment fragment, String tag) {
         backListener = null;
         keyUpListener = null;
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container, fragment).addToBackStack(tag).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
     }
 
     public void replaceFragment(Fragment fragment, String tag) {
         backListener = null;
         keyUpListener = null;
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.fragment_container, fragment).addToBackStack(tag).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commit();
         getSupportFragmentManager().executePendingTransactions();
     }
 

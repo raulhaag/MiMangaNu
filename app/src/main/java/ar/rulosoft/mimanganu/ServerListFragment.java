@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
@@ -17,13 +18,13 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.MangaAdapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class ServerListFragment extends Fragment {
 
@@ -33,6 +34,7 @@ public class ServerListFragment extends Fragment {
     private ProgressBar loading;
     private MangaAdapter adapter;
     private LoadMangasTask loadMangasTask = new LoadMangasTask();
+    private CoordinatorLayout cLayout;
 
     @Nullable
     @Override
@@ -51,6 +53,7 @@ public class ServerListFragment extends Fragment {
         serverBase = ServerBase.getServer(id);
         list = (ListView) getView().findViewById(R.id.lista_de_mangas);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
+        cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         if (adapter == null) {
             loadMangasTask = (LoadMangasTask) new LoadMangasTask().execute();
         } else {
@@ -150,7 +153,7 @@ public class ServerListFragment extends Fragment {
                 list.setAdapter(adapter);
             }
             if (error != null && error.length() > 2 && isAdded()) {
-                Toast.makeText(getActivity(), "Error: " + error, Toast.LENGTH_LONG).show();
+                Util.showFastSnackBar("Error: " + error, cLayout, (MainActivity) getActivity());
             }
             loading.setVisibility(ProgressBar.INVISIBLE);
         }

@@ -225,7 +225,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                         //TODO if (mViewReadyListener != null)
                         viewReady = true;
                         preparing = false;
-                        generateDrawPool();
+                        seekPage(transformPage(currentPage));
                     }
                     toDraw = _segments;
                     drawing = true;

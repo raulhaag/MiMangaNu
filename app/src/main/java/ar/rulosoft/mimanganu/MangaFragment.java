@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -28,7 +28,6 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.ImageLoader;
 
@@ -49,6 +48,7 @@ import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener {
     public static final String DIRECTION = "direcciondelectura";
@@ -69,8 +69,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private Menu menu;
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
-    private Activity activity;
-    private Toast singleToast;
+    private MainActivity mActivity;
+    private CoordinatorLayout cLayout;
 
     @Nullable
     @Override
@@ -98,6 +98,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         if (getView() != null) {
             mListView = (ListView) getView().findViewById(R.id.lista);
             swipeReLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+            cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         }
         mImageLoader = new ImageLoader(getActivity());
         int[] colors = ThemeColors.getColors(pm);
@@ -282,8 +283,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             fvi = mListView.getFirstVisiblePosition();
             mChapterAdapter.replaceData(chapters);
         } else {
-            if (activity != null)
-                mChapterAdapter = new ChapterAdapter(activity, chapters, !(mServerBase instanceof FromFolder));
+            if (mActivity != null)
+                mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder), cLayout);
         }
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
@@ -470,15 +471,15 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof Activity) {
-            activity = (Activity) context;
+        if (context instanceof MainActivity) {
+            mActivity = (MainActivity) context;
         }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        activity = null;
+        mActivity = null;
         searchForNewChapters.cancel(true);
     }
 
@@ -488,9 +489,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
         mMenuItemReaderType = menu.findItem(R.id.action_reader);
         int sortList[] = {
-                R.id.sort_as_added_to_db_desc_chapters,R.id.sort_number,
+                R.id.sort_as_added_to_db_desc_chapters, R.id.sort_number,
                 R.id.sort_number_asc, R.id.sort_title,
-                R.id.sort_title_asc,R.id.sort_as_added_to_db_asc_chapters
+                R.id.sort_title_asc, R.id.sort_as_added_to_db_asc_chapters
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
         int readDirection;
@@ -578,10 +579,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onPostExecute(Chapter result) {
             if (isAdded()) {
-                if (error != null && error.length() > 1) {
-                    if (singleToast != null) singleToast.cancel();
-                    singleToast = Toast.makeText(getActivity(), error, Toast.LENGTH_LONG);
-                    singleToast.show();
+                if (error != null && error.length() > 1 && mActivity != null) {
+                    Util.showFastSnackBar(error, cLayout, mActivity);
                 } else {
                     try {
                         asyncdialog.dismiss();
@@ -593,10 +592,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
                         MangaFragment.this.startActivity(intent);
                     } catch (Exception e) {
-                        if (e.getMessage() != null) {
-                            if (singleToast != null) singleToast.cancel();
-                            singleToast = Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG);
-                            singleToast.show();
+                        if (e.getMessage() != null && mActivity != null) {
+                            Util.showFastSnackBar(e.getMessage(), cLayout, mActivity);
                         }
                     }
                 }
@@ -652,15 +649,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             if (result > 0) {
                 if (isAdded()) {
-                    if (singleToast != null) singleToast.cancel();
-                    singleToast = Toast.makeText(getActivity(), getString(R.string.mgs_update_found, result), Toast.LENGTH_SHORT);
-                    singleToast.show();
+                    Util.showFastSnackBar(getString(R.string.mgs_update_found, result), cLayout, mActivity);
                 }
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 if (isAdded()) {
-                    if (singleToast != null) singleToast.cancel();
-                    singleToast = Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT);
-                    singleToast.show();
+                    Util.showFastSnackBar(errorMsg, cLayout, mActivity);
                 }
             }
             running = false;

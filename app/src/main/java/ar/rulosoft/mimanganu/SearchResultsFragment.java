@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -13,12 +14,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class SearchResultsFragment extends Fragment {
     public static final String TERM = "termino_busqueda";
@@ -29,13 +30,14 @@ public class SearchResultsFragment extends Fragment {
     private PerformSearchTask performSearchTask = new PerformSearchTask();
     private boolean searchPerformed;
     private ArrayList<Manga> mangasFromSearch = new ArrayList<>();
+    private CoordinatorLayout cLayout;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setRetainInstance(true);
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_search_result,container,false);
+        return inflater.inflate(R.layout.fragment_search_result, container, false);
     }
 
     @Override
@@ -45,6 +47,7 @@ public class SearchResultsFragment extends Fragment {
         search_term = getArguments().getString(TERM);
         list = (ListView) getView().findViewById(R.id.result);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
+        cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -65,6 +68,7 @@ public class SearchResultsFragment extends Fragment {
         } else
             performSearchTask = (PerformSearchTask) new PerformSearchTask().execute();
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -108,7 +112,7 @@ public class SearchResultsFragment extends Fragment {
         @Override
         protected ArrayList<Manga> doInBackground(Void... params) {
             ArrayList<Manga> mangas = new ArrayList<>();
-            if(isAdded()) {
+            if (isAdded()) {
                 ServerBase serverBase = ServerBase.getServer(serverId);
                 try {
                     mangas = serverBase.search(search_term);
@@ -132,10 +136,10 @@ public class SearchResultsFragment extends Fragment {
                                 mangasFromSearch.clear();
                             mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {
-                            Toast.makeText(getActivity(), getResources().getString(R.string.busquedanores), Toast.LENGTH_LONG).show();
+                            Util.showFastSnackBar(getResources().getString(R.string.busquedanores), cLayout, (MainActivity) getActivity());
                         }
                     } else {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                        Util.showFastSnackBar(error, cLayout, (MainActivity) getActivity());
                     }
                 }
             }

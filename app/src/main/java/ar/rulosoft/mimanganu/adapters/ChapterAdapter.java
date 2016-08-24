@@ -1,9 +1,9 @@
 package ar.rulosoft.mimanganu.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.support.design.widget.CoordinatorLayout;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,18 +12,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private static int COLOR_READ = Color.parseColor("#b2b2b2");
@@ -35,18 +36,19 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     private static int listItem = R.layout.listitem_capitulo;
     private SparseBooleanArray selected = new SparseBooleanArray();
-    private Activity activity;
+    private MainActivity activity;
     private ColorStateList defaultColor;
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
     private boolean can_download;
-    private Toast singleToast;
+    private CoordinatorLayout cLayout;
 
-    public ChapterAdapter(Activity activity, ArrayList<Chapter> items, boolean can_download) {
+    public ChapterAdapter(MainActivity activity, ArrayList<Chapter> items, boolean can_download, CoordinatorLayout cLayout) {
         super(activity, listItem);
         this.activity = activity;
         this.chapters = items;
         this.can_download = can_download;
+        this.cLayout = cLayout;
         li = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -124,23 +126,17 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
-                        if (singleToast != null) singleToast.cancel();
-                        singleToast = Toast.makeText(activity, activity.getResources().getString(R.string.borrado_imagenes), Toast.LENGTH_SHORT);
-                        singleToast.show();
+                        Util.showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes),cLayout,activity);
                         notifyDataSetChanged();
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
                         if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                                if (singleToast != null) singleToast.cancel();
-                                singleToast = Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_SHORT);
-                                singleToast.show();
+                                Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),cLayout,activity);
                             } catch (Exception e) {
                                 if (e.getMessage() != null) {
-                                    if (singleToast != null) singleToast.cancel();
-                                    singleToast = Toast.makeText(activity, activity.getResources().getString(R.string.agregadodescarga), Toast.LENGTH_LONG);
-                                    singleToast.show();
+                                    Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),cLayout,activity);
                                 }
                             }
                         }

@@ -69,6 +69,9 @@ public abstract class HorizontalReader extends ReaderContinuous {
             generateDrawPool();
         }
         currentPage = page;
+        if (readerListener != null) {
+            readerListener.onPageChanged(transformPage(currentPage));
+        }
     }
 
     public void reloadImage(int idx) {

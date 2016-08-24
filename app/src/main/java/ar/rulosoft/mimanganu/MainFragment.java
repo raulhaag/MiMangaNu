@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
@@ -32,7 +33,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
-import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -62,6 +62,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
+    MainActivity mActivity;
+    CoordinatorLayout cLayout;
     private SharedPreferences pm;
     private Menu menu;
     private FloatingActionButton floatingActionButton_add;
@@ -89,6 +91,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         mSectionsPagerAdapter = new SectionsPagerAdapter();
         if (getView() != null) {
             mViewPager = (ViewPager) getView().findViewById(R.id.pager);
+            cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
             floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
             if (is_server_list_open) {
@@ -117,6 +120,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onResume() {
         super.onResume();
+        mActivity = (MainActivity) getActivity();
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setPageTransformer(false, new MoreMangasPageTransformer());
         MainActivity activity = (MainActivity) getActivity();
@@ -432,7 +436,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             Util.getInstance().deleteRecursive(new File(path));
             Database.deleteManga(getActivity(), manga.getId());
             adapter.remove(manga);
-            Util.getInstance().toast(getActivity(), getResources().getString(R.string.deleted, manga.getTitle()));
+            Util.showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), cLayout, mActivity);
         } else if (item.getItemId() == R.id.noupdate) {
             if (manga.isFinished()) {
                 manga.setFinished(false);
@@ -603,7 +607,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 try {
                     if (NetworkUtilsAndReciever.isConnected(context)) {
                         Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Toast.makeText(context, getResources().getString(R.string.searching_for_updates), Toast.LENGTH_SHORT).show();
+                        Util.showFastSnackBar(getResources().getString(R.string.searching_for_updates), cLayout, mActivity);
                     }
                 } catch (Exception e) {
                     if (e.getMessage() != null)
@@ -698,13 +702,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 if (result > 0) {
                     Util.getInstance().cancelNotification(mNotifyID);
                     setListManga(true);
-                    Toast.makeText(context, context.getResources().getString(R.string.mgs_update_found, result), Toast.LENGTH_LONG).show();
+                    Util.showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), cLayout, mActivity);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
                     if (errorMsg != "") {
-                        Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show();
+                        Util.showFastSnackBar(errorMsg, cLayout, mActivity);
                     } else {
-                        Toast.makeText(context, context.getResources().getString(R.string.no_new_updates_found), Toast.LENGTH_LONG).show();
+                        Util.showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), cLayout, mActivity);
                     }
                 }
                 swipeReLayout.setRefreshing(false);
@@ -715,8 +719,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected void onCancelled() {
-            if (context != null)
-                Util.getInstance().toast(context, getString(R.string.update_search_cancelled));
+            Util.showFastSnackBar(getString(R.string.update_search_cancelled), cLayout, mActivity);
             swipeReLayout.setRefreshing(false);
         }
     }

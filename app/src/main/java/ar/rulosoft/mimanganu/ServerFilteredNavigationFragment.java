@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -26,7 +27,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -39,6 +39,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class ServerFilteredNavigationFragment extends Fragment implements OnLastItem, OnMangaClick {
 
@@ -55,6 +56,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private int firstVisibleItem;
     private LoadLastTask loadLastTask = new LoadLastTask();
     private int lastContextMenuIndex = 0;
+    private CoordinatorLayout cLayout;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -66,15 +68,15 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
-        menu.setHeaderTitle(mAdapter.getItem((int)v.getTag()).getTitle());
-        lastContextMenuIndex = (int)v.getTag();
+        menu.setHeaderTitle(mAdapter.getItem((int) v.getTag()).getTitle());
+        lastContextMenuIndex = (int) v.getTag();
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AsyncAddManga nAsyncAddManga = new AsyncAddManga();
         nAsyncAddManga.setContext(getContext());
-        nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,mAdapter.getItem(lastContextMenuIndex));
+        nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mAdapter.getItem(lastContextMenuIndex));
         return super.onContextItemSelected(item);
     }
 
@@ -107,7 +109,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         serverBase = ServerBase.getServer(serverID);
         grid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-
+        cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
@@ -276,7 +278,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Toast.makeText(getActivity(), "Error: " + error, Toast.LENGTH_SHORT).show();
+                Util.showFastSnackBar("Error: " + error, cLayout, (MainActivity) getActivity());
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {
