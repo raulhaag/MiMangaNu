@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -48,7 +47,7 @@ public class LectureEnLigne extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String data = getNavigator().get((manga.getPath()));// :</p><p>(.+?)</p>
 
-        manga.setSynopsis(getFirstMatchDefault("</p>[\\s]+<p>(.+?)</p>", data, "Sans synopsis"));
+        manga.setSynopsis(getFirstMatchDefault("</p>[\\s]+<p>(.+?)</p>", data, defaultSynopsis));
         manga.setImages(getFirstMatchDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
 
         // autor

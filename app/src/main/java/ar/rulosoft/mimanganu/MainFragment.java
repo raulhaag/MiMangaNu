@@ -627,9 +627,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected Integer doInBackground(Void... params) {
-            if (context != null && errorMsg == "") {
+            if (context != null && errorMsg.equals("")) {
                 ticket = threads;
                 for (int idx = 0; idx < mangaList.size(); idx++) {
+                    if (Util.n > (48 - threads))
+                        cancel(true);
                     try {
                         if (NetworkUtilsAndReciever.isConnected(context)) {
                             final int idxNow = idx;
@@ -705,7 +707,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), cLayout, mActivity);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    if (errorMsg != "") {
+                    if (!errorMsg.equals("")) {
                         Util.showFastSnackBar(errorMsg, cLayout, mActivity);
                     } else {
                         Util.showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), cLayout, mActivity);
@@ -719,7 +721,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected void onCancelled() {
-            Util.showFastSnackBar(getString(R.string.update_search_cancelled), cLayout, mActivity);
+            Util.getInstance().cancelNotification(mNotifyID);
+            if (context != null) {
+                Util.getInstance().toast(context, getString(R.string.update_search_cancelled));
+                if (Util.n > (48 - threads)) {
+                    Util.getInstance().toast(context, getString(R.string.notification_tray_is_full));
+                }
+            }
             swipeReLayout.setRefreshing(false);
         }
     }

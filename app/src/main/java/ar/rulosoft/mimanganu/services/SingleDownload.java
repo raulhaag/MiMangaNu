@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.navegadores.Navigator;
 import ar.rulosoft.navegadores.RefererInterceptor;
 import okhttp3.OkHttpClient;

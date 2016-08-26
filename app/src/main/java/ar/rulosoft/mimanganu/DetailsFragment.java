@@ -48,6 +48,7 @@ public class DetailsFragment extends Fragment {
     private Manga manga;
     private FloatingActionButton floatingActionButton_add;
     private LoadDetailsTask loadDetailsTask = new LoadDetailsTask();
+    private boolean mangaAlreadyAdded;
 
     @Nullable
     @Override
@@ -68,6 +69,19 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                for (Manga m : mangas) {
+                    if (m.getPath().equals(manga.getPath()))
+                        mangaAlreadyAdded = true;
+                }
+            }
+        });
+        t0.start();
+
         data = (ControlInfo) getView().findViewById(R.id.datos);
         swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
@@ -78,13 +92,7 @@ public class DetailsFragment extends Fragment {
         floatingActionButton_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                List<Manga> mangas = Database.getMangas(getContext(), null, true);
-                boolean onDb = false;
-                for (Manga m : mangas) {
-                    if (m.getPath().equals(manga.getPath()))
-                        onDb = true;
-                }
-                if (!onDb) {
+                if (!mangaAlreadyAdded) {
                     new AddMangaTask().execute(manga);
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 1.0f, 0.0f);
@@ -94,8 +102,8 @@ public class DetailsFragment extends Fragment {
                     anim2.setDuration(500);
                     set.playSequentially(anim2, anim1);
                     set.start();
-                }else{
-                    Toast.makeText(getContext(),getString(R.string.already_on_db),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), getString(R.string.already_on_db), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -177,7 +185,10 @@ public class DetailsFragment extends Fragment {
                     } else {
                         infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                     }
-                    data.setStatus(infoExtra);
+                    if(mangaAlreadyAdded)
+                        data.setStatus(infoExtra + " (" + getString(R.string.already_on_db) + ")");
+                    else
+                        data.setStatus(infoExtra);
                     String chapters = "";
                     if(manga.getChapters().size() > 0){
                         chapters = " (" + manga.getChapters().size() + " " + getString(R.string.chapters)+")";

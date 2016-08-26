@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -72,7 +71,7 @@ public class MangaFox extends ServerBase {
             // Title
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
             // Summary
-            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Without synopsis."));
+            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, defaultSynopsis));
 
             manga.setFinished(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
 

@@ -35,6 +35,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <receiver android:name=".utils.NotificationDeleteIntentReceiver" >
+        </receiver>
         <receiver android:name=".utils.NetworkUtilsAndReciever" >
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />

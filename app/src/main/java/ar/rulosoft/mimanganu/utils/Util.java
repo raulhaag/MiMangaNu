@@ -23,11 +23,12 @@ import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 
 public class Util {
+    private static Util utilInstance = null;
     protected static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
     protected static NotificationCompat.Builder notificationBuilder;
     protected static NotificationCompat.Builder notificationWithProgressbarBuilder;
     protected static NotificationManager notificationManager;
-    private static Util utilInstance = null;
+    public static int n = 0;
 
     private Util() {
     }
@@ -89,10 +90,12 @@ public class Util {
     }
 
     public void deleteRecursive(File fileOrDirectory) {
-        if(fileOrDirectory != null) {
-            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles().length > 0) {
-                for (File child : fileOrDirectory.listFiles()) {
-                    deleteRecursive(child);
+        if (fileOrDirectory != null) {
+            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles() != null) {
+                if (fileOrDirectory.listFiles().length > 0) {
+                    for (File child : fileOrDirectory.listFiles()) {
+                        deleteRecursive(child);
+                    }
                 }
             }
             fileOrDirectory.delete();
@@ -100,17 +103,20 @@ public class Util {
     }
 
     public void deleteEmptyDirectoriesRecursive(File fileOrDirectory) {
-        if(fileOrDirectory != null) {
-            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles().length > 0) {
-                for (File child : fileOrDirectory.listFiles()) {
-                    deleteEmptyDirectoriesRecursive(child);
+        if (fileOrDirectory != null) {
+            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles() != null) {
+                if (fileOrDirectory.listFiles().length > 0) {
+                    for (File child : fileOrDirectory.listFiles()) {
+                        deleteEmptyDirectoriesRecursive(child);
+                    }
                 }
             }
-            if(fileOrDirectory.isDirectory())
-                if(fileOrDirectory.listFiles().length == 0) {
+            if (fileOrDirectory.isDirectory() && fileOrDirectory.listFiles() != null) {
+                if (fileOrDirectory.listFiles().length == 0) {
                     fileOrDirectory.delete();
                     Util.getInstance().changeNotificationWithProgressbar(0, 0, 69, fileOrDirectory.getAbsolutePath(), true);
                 }
+            }
         }
     }
 
@@ -169,16 +175,31 @@ public class Util {
         });
     }
 
+    private int getCorrectIcon(){
+        int icon;
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            icon = R.drawable.ic_launcher_white;
+        } else {
+            icon = R.drawable.ic_launcher;
+        }
+        return icon;
+    }
+
     public void createNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
         Notification notification;
-        PendingIntent pIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent deleteIntent = new Intent(context, NotificationDeleteIntentReceiver.class);
+        PendingIntent deletePendingIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         notificationBuilder = new NotificationCompat.Builder(context);
         notificationBuilder.setOngoing(true);
         notificationBuilder.setContentTitle(contentTitle);
         notificationBuilder.setContentText(contentText);
-        notificationBuilder.setSmallIcon(R.drawable.ic_launcher);
-        notificationBuilder.setContentIntent(pIntent);
+        notificationBuilder.setSmallIcon(getCorrectIcon());
+        notificationBuilder.setContentIntent(contentPendingIntent);
         notificationBuilder.setAutoCancel(true);
+        notificationBuilder.setDeleteIntent(deletePendingIntent);
+        ++n;
+        //notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
@@ -199,17 +220,17 @@ public class Util {
         Intent cancelIntent = new Intent(context, MainActivity.class);
         cancelIntent.putExtra("manga_id", -1);
         cancelIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        Intent defaultIntent = new Intent(context, MainActivity.class);
-        defaultIntent.putExtra("manga_id", -2);
-        defaultIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        PendingIntent defaultPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), defaultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        Intent contentIntent = new Intent(context, MainActivity.class);
+        contentIntent.putExtra("manga_id", -2);
+        contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), contentIntent, PendingIntent.FLAG_CANCEL_CURRENT);
         searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context);
         searchingForUpdatesNotificationBuilder.setOngoing(true);
         searchingForUpdatesNotificationBuilder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
         searchingForUpdatesNotificationBuilder.setContentText("");
         searchingForUpdatesNotificationBuilder.setSmallIcon(R.drawable.ic_action_av_reload);
-        searchingForUpdatesNotificationBuilder.setContentIntent(defaultPendingIntent);
+        searchingForUpdatesNotificationBuilder.setContentIntent(contentPendingIntent);
         searchingForUpdatesNotificationBuilder.setAutoCancel(true);
         searchingForUpdatesNotificationBuilder.addAction(R.drawable.ic_action_x_light, context.getResources().getString(R.string.cancel), cancelPendingIntent);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -260,7 +281,7 @@ public class Util {
         notificationWithProgressbarBuilder.setOngoing(true);
         notificationWithProgressbarBuilder.setContentTitle(contentTitle);
         notificationWithProgressbarBuilder.setContentText(contentText);
-        notificationWithProgressbarBuilder.setSmallIcon(R.drawable.ic_launcher);
+        notificationWithProgressbarBuilder.setSmallIcon(getCorrectIcon());
         notificationWithProgressbarBuilder.setContentIntent(defaultPendingIntent);
         notificationWithProgressbarBuilder.setAutoCancel(true);
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {

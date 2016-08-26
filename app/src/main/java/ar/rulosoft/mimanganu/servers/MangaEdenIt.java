@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -70,7 +69,7 @@ public class MangaEdenIt extends ServerBase {
         manga.setImages(image);
         // Summary
         String summary = getFirstMatchDefault("mangaDescription\">(.+?)</h",
-                source, "Senza sinossi").replaceAll("<.+?>", "");
+                source, defaultSynopsis).replaceAll("<.+?>", "");
         manga.setSynopsis(Html.fromHtml(summary).toString());
         // Stato
         manga.setFinished(getFirstMatchDefault("Stato</h(.+?)<h", source, "").contains("Completato"));

@@ -29,12 +29,14 @@ import android.view.Window;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnLastItem;
 import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnMangaClick;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapterText;
+import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.AsyncAddManga;
@@ -57,6 +59,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private LoadLastTask loadLastTask = new LoadLastTask();
     private int lastContextMenuIndex = 0;
     private CoordinatorLayout cLayout;
+    private boolean mangaAlreadyAdded;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -70,13 +73,30 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
         menu.setHeaderTitle(mAdapter.getItem((int) v.getTag()).getTitle());
         lastContextMenuIndex = (int) v.getTag();
+
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                for (Manga m : mangas) {
+                    if (m.getPath().equals(mAdapter.getItem(lastContextMenuIndex).getPath()))
+                        mangaAlreadyAdded = true;
+                }
+            }
+        });
+        t0.start();
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AsyncAddManga nAsyncAddManga = new AsyncAddManga();
-        nAsyncAddManga.setContext(getContext());
-        nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mAdapter.getItem(lastContextMenuIndex));
+        if (!mangaAlreadyAdded) {
+            AsyncAddManga nAsyncAddManga = new AsyncAddManga();
+            nAsyncAddManga.setContext(getContext());
+            nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mAdapter.getItem(lastContextMenuIndex));
+        } else {
+            Util.getInstance().toast(getContext(), getString(R.string.already_on_db), 1);
+        }
+        mangaAlreadyAdded = false;
         return super.onContextItemSelected(item);
     }
 

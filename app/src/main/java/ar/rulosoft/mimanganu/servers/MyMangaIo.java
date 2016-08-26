@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -50,7 +49,7 @@ public class MyMangaIo extends ServerBase {
             // Front
             manga.setImages("http://www.mymanga.io/" + getFirstMatchDefault("<img src=\"(images/mangas_thumb/.+?)\"", data, ""));
             // Summary
-            manga.setSynopsis(getFirstMatchDefault("Synopsis</h1><p>(.+?)</p>", data, "Without synopsis.").replaceAll("<.+?>", ""));
+            manga.setSynopsis(getFirstMatchDefault("Synopsis</h1><p>(.+?)</p>", data, defaultSynopsis).replaceAll("<.+?>", ""));
             // Status
             manga.setFinished(!data.contains("en cours</a>"));
             // Author

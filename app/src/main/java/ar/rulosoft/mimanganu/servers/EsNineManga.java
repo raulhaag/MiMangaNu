@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -83,7 +82,7 @@ public class EsNineManga extends ServerBase {
         manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // sinopsis
         String sinopsis = getFirstMatchDefault("<p itemprop=\"description\">(.+?)&nbsp;Show less",
-                source, "Sin sinopsis").replaceAll("<.+?>", "");
+                source, defaultSynopsis).replaceAll("<.+?>", "");
         manga.setSynopsis(Html.fromHtml(sinopsis).toString());
         // estado
         manga.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));

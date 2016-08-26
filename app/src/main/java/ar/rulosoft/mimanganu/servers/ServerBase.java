@@ -54,6 +54,7 @@ public abstract class ServerBase {
     private int icon;
     private int flag;
     private int serverID;
+    protected String defaultSynopsis = "N/A";
 
     public static ServerBase getServer(int id) {
         ServerBase serverBase = null;
@@ -172,7 +173,7 @@ public abstract class ServerBase {
 
 
     public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {
-        int returnValue = 0;
+        int returnValue;
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
@@ -236,7 +237,7 @@ public abstract class ServerBase {
         }
 
         if (!mangaDb.getSynopsis().equals(manga.getSynopsis()) &&
-                manga.getSynopsis().length() > 2) {
+                manga.getSynopsis().length() > 3) {
             mangaDb.setSynopsis(manga.getSynopsis());
             changes = true;
         }
@@ -365,7 +366,7 @@ public abstract class ServerBase {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
         private Context context;
         private Manga manga;
-        private String LargeContentText = null;
+        private String LargeContentText = "";
 
         public CreateGroupByMangaNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
             this.simpleList.addAll(simpleList);
@@ -381,17 +382,10 @@ public abstract class ServerBase {
         @Override
         protected Integer doInBackground(Void... params) {
             for (int i = simpleList.size() - 1; i > -1; i--) {
-                if (LargeContentText == null)
-                    if (i == 0)
-                        LargeContentText = simpleList.get(i).getTitle();
-                    else
-                        LargeContentText = simpleList.get(i).getTitle() + "\n";
-                else {
-                    if (i == 0)
-                        LargeContentText = LargeContentText + simpleList.get(i).getTitle();
-                    else
-                        LargeContentText = LargeContentText + simpleList.get(i).getTitle() + "\n";
-                }
+                if (i == 0) // last element
+                    LargeContentText = LargeContentText + simpleList.get(i).getTitle();
+                else
+                    LargeContentText = LargeContentText + simpleList.get(i).getTitle() + "\n";
             }
 
             if (!simpleList.isEmpty() && context != null) {

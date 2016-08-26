@@ -7,7 +7,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -73,7 +72,7 @@ public class SubManga extends ServerBase {
             manga.setImages(m.group(1));
             manga.setSynopsis(Html.fromHtml(m.group(2)).toString());
         } else {
-            manga.setSynopsis("Sin sinopsis.");
+            manga.setSynopsis(defaultSynopsis);
         }
         manga.setAuthor(Html.fromHtml(getFirstMatchDefault("<p>Creado por ().+?</p>", data, "")).toString().trim());
         manga.setGenre(Html.fromHtml(getFirstMatchDefault("(<a class=\"b\" href=\"http://submanga.com/ge.+?</p>)", data, "")).toString().trim());

@@ -65,7 +65,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private ListView mListView;
     private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
     private int mMangaId, readerType;
-    private int chapters_order; // 0 = db | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc
+    private int chapters_order; // 0 = db_desc | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc | 5 = db_asc
     private Menu menu;
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
@@ -454,7 +454,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_DESC);
                 item.setChecked(true);
                 break;
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -668,7 +667,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Void doInBackground(Void... params) {
             chapters = Database.getChapters(getActivity(), mMangaId);
             try {
-                switch (chapters_order) {
+                int chaptersOrder;
+                if(pm != null)
+                    chaptersOrder = pm.getInt(CHAPTERS_ORDER, 1);
+                else
+                    chaptersOrder = chapters_order;
+                switch (chaptersOrder) {
                     case 1:
                         Collections.sort(chapters, Chapter.Comparators.NUMBERS_DESC);
                         break;
@@ -683,6 +687,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         break;
                     case 5:
                         Collections.sort(chapters, Chapter.Comparators.DATABASE_ADDED_ASC);
+                        break;
+                    case 0:
+                        Collections.sort(chapters, Chapter.Comparators.DATABASE_ADDED_DESC);
+                        break;
                 }
             } catch (Exception e) {
                 StringWriter sw = new StringWriter();
