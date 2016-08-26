@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
-import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -14,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,13 +30,14 @@ import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 
 public class DetailsFragment extends Fragment {
 
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
-    private static final String TAG = "DetailFragment";
+    private static final String TAG = "DetailsFragment";
     private String title, path;
     private int id;
     private ImageLoader imageLoader;
@@ -93,7 +92,10 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mangaAlreadyAdded) {
-                    new AddMangaTask().execute(manga);
+                    AsyncAddManga nAsyncAddManga = new AsyncAddManga();
+                    nAsyncAddManga.setContext(getContext());
+                    nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
+
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 1.0f, 0.0f);
                     anim1.setDuration(0);
@@ -234,71 +236,4 @@ public class DetailsFragment extends Fragment {
         }
     }
 
-    public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
-        ProgressDialog adding = new ProgressDialog(getActivity());
-        String error = ".";
-        int total = 0;
-        boolean errorWhileAddingManga;
-
-        @Override
-        protected void onPreExecute() {
-            adding.setMessage(getResources().getString(R.string.adding_to_db));
-            adding.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Manga... params) {
-            try {
-                serverBase.loadChapters(manga, false);
-            } catch (Exception e) {
-                error = e.getMessage();
-                Log.e(TAG, "Chapter load error", e);
-            }
-            total = params[0].getChapters().size();
-            int mid = Database.addManga(getActivity(), params[0]);
-            if (mid > -1) {
-                long initTime = System.currentTimeMillis();
-                for (int i = 0; i < params[0].getChapters().size(); i++) {
-                    if (System.currentTimeMillis() - initTime > 500) {
-                        publishProgress(i);
-                        initTime = System.currentTimeMillis();
-                    }
-                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
-                }
-            } else {
-                errorWhileAddingManga = true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(final Integer... values) {
-            super.onProgressUpdate(values);
-            if (isAdded()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adding != null) {
-                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
-                        }
-                    }
-                });
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if(isAdded()) {
-                adding.dismiss();
-                if(!errorWhileAddingManga)
-                    Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-                if (error != null && error.length() > 2) {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-                }
-                getActivity().onBackPressed();
-            }
-            super.onPostExecute(result);
-        }
-    }
 }

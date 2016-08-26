@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         } else if (mangaIdFromNotification == -1) {
             if (updateListTask != null)
                 updateListTask.cancel(true);
-            Util.getInstance().cancelNotification(1246502);
+            Util.getInstance().cancelNotification(MainFragment.mNotifyID);
         }
     }
 

@@ -74,7 +74,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private GridView grid;
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
-    private int mNotifyID = 1246502;
+    public static int mNotifyID = 1246502;
     private boolean returnToMangaList = false;
 
     @Nullable
