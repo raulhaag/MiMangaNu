@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -110,7 +109,7 @@ public class HeavenManga extends ServerBase {
         manga.setImages(portada);
 
         // sinopsis
-        String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, "Sin sinopsis");
+        String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, defaultSynopsis);
         manga.setSynopsis(sinopsis.replaceAll("<.+?>", ""));
 
         // estado no soportado

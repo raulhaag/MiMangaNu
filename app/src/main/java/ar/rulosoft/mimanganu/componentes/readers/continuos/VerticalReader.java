@@ -342,6 +342,7 @@ public class VerticalReader extends ReaderContinuous {
                     try {
                         canvas.drawBitmap(segment, m, mPaint);
                     } catch (Exception ignored) {
+                        ignored.printStackTrace();
                     }
                 }
             }

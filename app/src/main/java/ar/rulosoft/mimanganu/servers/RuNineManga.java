@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -75,7 +74,7 @@ public class RuNineManga extends ServerBase {
         manga.setImages(getFirstMatchDefault("<img itemprop=\"image\".+?src=\"(.+?)\"", source, ""));
         // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
-                source, "нет синопсис").replaceAll("<.+?>", "");
+                source, defaultSynopsis).replaceAll("<.+?>", "");
         manga.setSynopsis(Html.fromHtml(summary.replaceFirst("резюме:", "")).toString());
         // Status
         manga.setFinished(false);//not supported by server

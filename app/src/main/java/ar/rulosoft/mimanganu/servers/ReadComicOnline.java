@@ -71,7 +71,7 @@ public class ReadComicOnline extends ServerBase {
         // Summary
         manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
-                "Without" + " synopsis.")).toString());
+                defaultSynopsis)).toString());
         // Title
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);

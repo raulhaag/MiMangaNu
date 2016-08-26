@@ -83,8 +83,10 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void reloadImage(int idx) {
-        if (mPageAdapter.pages[idx - 1] != null) {
-            mPageAdapter.pages[idx - 1].setImage();
+        if(mPageAdapter != null) {
+            if (mPageAdapter.pages[idx - 1] != null) {
+                mPageAdapter.pages[idx - 1].setImage();
+            }
         }
     }
 

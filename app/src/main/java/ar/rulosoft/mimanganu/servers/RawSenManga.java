@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -65,10 +64,10 @@ public class RawSenManga extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             String data = getNavigator().get(manga.getPath());
             String data2 = getFirstMatchDefault("<div class=\"series_desc\">(.+?)<\\/div>", data, "");
-            manga.setSynopsis(Html.fromHtml(getFirstMatchDefault("<div itemprop=\"description\">(.+?)<", data2, "n/a")).toString());
+            manga.setSynopsis(Html.fromHtml(getFirstMatchDefault("<div itemprop=\"description\">(.+?)<", data2, defaultSynopsis)).toString());
             manga.setImages(HOST + getFirstMatchDefault("image\" src=\"(.+?)\"", data, ""));
-            manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, "n/a")).toString());
-            manga.setGenre(Html.fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "n/a")).toString());
+            manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, "N/A")).toString());
+            manga.setGenre(Html.fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "N/A")).toString());
             manga.setFinished(data2.contains("Complete"));
             Pattern p = Pattern.compile("<td><a href=\"(/.+?)\" title=\"(.+?)\"");
             Matcher m = p.matcher(data);

@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -61,7 +60,7 @@ public class Manga_Tube extends ServerBase {
         manga.setImages(getFirstMatchDefault("<img src=\"(http://www.manga-tube.com/content/comics\\/.+?)\"", source, ""));
         // Summary
         String summary = getFirstMatchDefault("<li><b>Beschreibung</b>:(.*?)</li>",
-                source, "Keine inhaltsangabe").replaceAll("<.+?>", "");
+                source, defaultSynopsis).replaceAll("<.+?>", "");
         manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
 
         // Chapter

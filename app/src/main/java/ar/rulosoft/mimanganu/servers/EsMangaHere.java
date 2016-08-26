@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -77,7 +76,7 @@ public class EsMangaHere extends ServerBase {
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
 
             // sinopsis
-            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, "Sin sinopsis."));
+            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, defaultSynopsis));
 
             // estado
             manga.setFinished(getFirstMatchDefault("<li><label>Estado:</label>(.+?)</li>",

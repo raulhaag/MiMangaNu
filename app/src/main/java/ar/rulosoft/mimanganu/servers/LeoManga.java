@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -84,7 +83,7 @@ public class LeoManga extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
 
             String data = getNavigator().get(manga.getPath());
-            manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, "Sin sinopsis"));
+            manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, defaultSynopsis));
             String image = getFirstMatchDefault("<img src=\"(/uploads/images/mangas/.+?)\"", data, "");
             if (image.length() > 4) {
                 manga.setImages("http://" + HOST + image);
