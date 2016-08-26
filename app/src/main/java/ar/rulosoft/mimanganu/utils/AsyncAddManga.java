@@ -35,7 +35,6 @@ public class AsyncAddManga extends AsyncTask<Manga, Integer, Void> {
         manga = mangas[0];
         ServerBase serverBase = ServerBase.getServer(manga.getServerId());
         try {
-            serverBase.loadMangaInformation(manga, false);
             serverBase.loadChapters(manga, false);
             total = manga.getChapters().size();
             int mid = Database.addManga(mContext, manga);
