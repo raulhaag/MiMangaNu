@@ -17,7 +17,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 public class Manga_Tube extends ServerBase {
 
     private static String[] genre = new String[]{
-            "Alle",
+            "0-9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
@@ -26,6 +26,7 @@ public class Manga_Tube extends ServerBase {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
+    int no_more_pages = -1;
 
     public Manga_Tube() {
         this.setFlag(R.drawable.flag_de);
@@ -97,17 +98,22 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=" + pageNumber + "&q="+genreV[categorie]+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
-        return getMangasFromSource(source);
+        if (no_more_pages != categorie) {
+            String source = getNavigator().get("http://www.manga-tube.com/reader/list/" + genreV[categorie]);
+            no_more_pages = categorie;
+            return getMangasFromSource(source);
+        } else {
+            return new ArrayList<Manga>();
+        }
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile(",\"title\":\"(.+?)\".+?image\":\"(.+?)\".+?url\":\"(.+?)\"");
+        Pattern p = Pattern.compile("<img class=\"preview\" src=\"(http:\\/\\/www.manga-tube.com\\/content\\/.+?)\".+?title\"><a href=\"(.+?)\".+?>(.+?)<");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(1), m.group(3), false);
-            manga.setImages(m.group(2));
+            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
+            manga.setImages(m.group(1));
             mangas.add(manga);
         }
         return mangas;
