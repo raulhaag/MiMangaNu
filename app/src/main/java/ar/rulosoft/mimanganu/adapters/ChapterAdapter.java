@@ -257,6 +257,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         return chapters;
     }
 
+    public void setCoordinationLayout(CoordinatorLayout cLayout) {
+        this.cLayout = cLayout;
+    }
+
     public static class ViewHolder {
         private TextView textViewName;
         private TextView textViewStatus;

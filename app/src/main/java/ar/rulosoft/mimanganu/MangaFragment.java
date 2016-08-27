@@ -461,6 +461,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     @Override
     public void onResume() {
         super.onResume();
+        if (mChapterAdapter != null) {
+            mChapterAdapter.setCoordinationLayout(cLayout);
+        }
         ((MainActivity) getActivity()).enableHomeButton(true);
         ((MainActivity) getActivity()).setTitle(mManga.getTitle());
         Chapter.Comparators.setManga_title(mManga.getTitle());
