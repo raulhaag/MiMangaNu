@@ -1,9 +1,9 @@
 package ar.rulosoft.mimanganu.utils;
 
-import android.content.Context;
 import android.os.AsyncTask;
-import android.widget.Toast;
+import android.support.design.widget.CoordinatorLayout;
 
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -13,15 +13,17 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
  * Created by Raul on 17/07/2016.
  */
 public class AsyncAddManga extends AsyncTask<Manga, Integer, Void> {
-    Context mContext;
+    MainActivity mContext;
     String error;
     boolean allOk = true;
+    CoordinatorLayout cLayout;
     Manga manga;
     int total = 0;
     int mNotifyID = (int) System.currentTimeMillis();
 
-    public void setContext(Context mContext) {
-        this.mContext = mContext;
+    public AsyncAddManga(MainActivity mActivity, CoordinatorLayout cLayout) {
+        this.cLayout = cLayout;
+        this.mContext = mActivity;
     }
 
     @Override
@@ -71,9 +73,9 @@ public class AsyncAddManga extends AsyncTask<Manga, Integer, Void> {
     protected void onPostExecute(Void aVoid) {
         if (mContext != null) {
             if (!allOk) {
-                Toast.makeText(mContext, error, Toast.LENGTH_SHORT).show();
+                Util.showFastSnackBar(error, cLayout, mContext);
             } else {
-                Toast.makeText(mContext, mContext.getString(R.string.agregado) + " " + manga.getTitle(), Toast.LENGTH_SHORT).show();
+                Util.showFastSnackBar(mContext.getString(R.string.agregado) + " " + manga.getTitle(), cLayout, mContext);
             }
         }
         Util.getInstance().cancelNotification(mNotifyID);

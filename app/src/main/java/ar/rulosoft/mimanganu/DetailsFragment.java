@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -20,7 +21,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.ImageLoader;
 
@@ -32,6 +32,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class DetailsFragment extends Fragment {
 
@@ -48,6 +49,7 @@ public class DetailsFragment extends Fragment {
     private FloatingActionButton floatingActionButton_add;
     private LoadDetailsTask loadDetailsTask = new LoadDetailsTask();
     private boolean mangaAlreadyAdded;
+    private CoordinatorLayout cLayout;
 
     @Nullable
     @Override
@@ -82,6 +84,7 @@ public class DetailsFragment extends Fragment {
         t0.start();
 
         data = (ControlInfo) getView().findViewById(R.id.datos);
+        cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
@@ -92,10 +95,8 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mangaAlreadyAdded) {
-                    AsyncAddManga nAsyncAddManga = new AsyncAddManga();
-                    nAsyncAddManga.setContext(getContext());
+                    AsyncAddManga nAsyncAddManga = new AsyncAddManga((MainActivity) getActivity(), cLayout);
                     nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
-
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 1.0f, 0.0f);
                     anim1.setDuration(0);
@@ -105,7 +106,7 @@ public class DetailsFragment extends Fragment {
                     set.playSequentially(anim2, anim1);
                     set.start();
                 } else {
-                    Toast.makeText(getContext(), getString(R.string.already_on_db), Toast.LENGTH_LONG).show();
+                    Util.showFastSnackBar(getString(R.string.already_on_db), cLayout, (MainActivity) getActivity());
                 }
             }
         });
@@ -213,7 +214,7 @@ public class DetailsFragment extends Fragment {
                     }
                     imageLoader.displayImg(manga.getImages(), data);
                     if (error != null && error.length() > 2) {
-                        Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                        Util.showFastSnackBar(error, cLayout, (MainActivity) getActivity());
                     } else {
                         AnimatorSet set = new AnimatorSet();
                         ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 0.0f, 1.0f);
@@ -229,7 +230,7 @@ public class DetailsFragment extends Fragment {
                         set.start();
                     }
                 } else {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                    Util.showFastSnackBar(error, cLayout, (MainActivity) getActivity());
                 }
             }
             swipeRefreshLayout.setRefreshing(false);

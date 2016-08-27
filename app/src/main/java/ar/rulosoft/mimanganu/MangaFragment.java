@@ -1,9 +1,7 @@
 package ar.rulosoft.mimanganu;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +12,7 @@ import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -101,7 +100,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         }
         mImageLoader = new ImageLoader(getActivity());
-        int[] colors = ThemeColors.getColors(pm);
+        final int[] colors = ThemeColors.getColors(pm);
         swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
         if (savedInstanceState != null) {
             if (searchForNewChapters.getStatus() == AsyncTask.Status.RUNNING) {
@@ -191,33 +190,26 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         break;
                     case R.id.remove_chapter:
                         finish = false;
-                        AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
-                        dlgAlert.setMessage(getString(R.string.delete_comfirm));
-                        dlgAlert.setTitle(R.string.app_name);
-                        dlgAlert.setCancelable(true);
-                        dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                SparseBooleanArray selection = mChapterAdapter.getSelection();
-                                int[] selected = new int[selection.size()];
-                                for (int j = 0; j < selection.size(); j++) {
-                                    selected[j] = selection.keyAt(j);
-                                }
-                                Arrays.sort(selected);
-                                for (int i = selection.size() - 1; i >= 0; i--) {
-                                    Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                                    chapter.delete(getActivity(), mManga, serverBase);
-                                    mChapterAdapter.remove(chapter);
-                                    mode.finish();
-                                }
-                            }
-                        });
-                        dlgAlert.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        dlgAlert.create().show();
+                        Snackbar confirm = Snackbar.make(cLayout, R.string.delete_comfirm, Snackbar.LENGTH_INDEFINITE)
+                                .setAction(android.R.string.yes, new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        SparseBooleanArray selection = mChapterAdapter.getSelection();
+                                        int[] selected = new int[selection.size()];
+                                        for (int j = 0; j < selection.size(); j++) {
+                                            selected[j] = selection.keyAt(j);
+                                        }
+                                        Arrays.sort(selected);
+                                        for (int i = selection.size() - 1; i >= 0; i--) {
+                                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                                            chapter.delete(getActivity(), mManga, serverBase);
+                                            mChapterAdapter.remove(chapter);
+                                            mode.finish();
+                                        }
+                                    }
+                                });
+                        confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+                        confirm.show();
                         break;
                     case R.id.reset_chapter:
                         for (int i = 0; i < selection.size(); i++) {
@@ -318,12 +310,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 getActivity().onBackPressed();
                 return true;
             case R.id.action_download_remaining: {
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
-                dlgAlert.setMessage(getString(R.string.download_remain_confirmation));
-                dlgAlert.setTitle(R.string.descargarestantes);
-                dlgAlert.setCancelable(true);
-                dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
+                Snackbar confirm = Snackbar.make(cLayout, R.string.download_remain_confirmation, Snackbar.LENGTH_INDEFINITE);
+                confirm.setAction(android.R.string.yes, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
                         for (Chapter chapter : chapters) {
                             try {
@@ -334,15 +324,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                     }
                 });
-                dlgAlert.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dlgAlert.create().show();
-                break;
+                confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+                confirm.show();
             }
+            break;
             case R.id.mark_all_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, true);
                 new MarkAllAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -393,14 +378,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 break;
             }
             case R.id.action_descargar_no_leidos: {
-                AlertDialog.Builder dlgAlert = new AlertDialog.Builder(getActivity());
-                dlgAlert.setMessage(getString(R.string.download_unread_confirmation));
-                dlgAlert.setTitle(R.string.descarga_no_leidos);
-                dlgAlert.setCancelable(true);
-                dlgAlert.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        ArrayList<Chapter> chapters =
-                                Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " < 1", true);
+                Snackbar confirm = Snackbar.make(cLayout, R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
+                confirm.setAction(android.R.string.yes, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " < 1", true);
                         for (Chapter c : chapters) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
@@ -410,13 +392,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                     }
                 });
-                dlgAlert.setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                dlgAlert.create().show();
+                confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+                confirm.show();
                 break;
             }
             case R.id.sort_number:
@@ -671,7 +648,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             chapters = Database.getChapters(getActivity(), mMangaId);
             try {
                 int chaptersOrder;
-                if(pm != null)
+                if (pm != null)
                     chaptersOrder = pm.getInt(CHAPTERS_ORDER, 1);
                 else
                     chaptersOrder = chapters_order;

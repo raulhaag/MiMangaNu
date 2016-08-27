@@ -90,8 +90,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (!mangaAlreadyAdded) {
-            AsyncAddManga nAsyncAddManga = new AsyncAddManga();
-            nAsyncAddManga.setContext(getContext());
+            AsyncAddManga nAsyncAddManga = new AsyncAddManga((MainActivity) getActivity(), cLayout);
             nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mAdapter.getItem(lastContextMenuIndex));
         } else {
             Util.getInstance().toast(getContext(), getString(R.string.already_on_db), 1);

@@ -23,12 +23,12 @@ import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 
 public class Util {
-    private static Util utilInstance = null;
+    public static int n = 0;
     protected static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
     protected static NotificationCompat.Builder notificationBuilder;
     protected static NotificationCompat.Builder notificationWithProgressbarBuilder;
     protected static NotificationManager notificationManager;
-    public static int n = 0;
+    private static Util utilInstance = null;
 
     private Util() {
     }

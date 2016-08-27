@@ -12,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
@@ -62,6 +63,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
+    public static int mNotifyID = 1246502;
     MainActivity mActivity;
     CoordinatorLayout cLayout;
     private SharedPreferences pm;
@@ -74,7 +76,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private GridView grid;
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
-    public static int mNotifyID = 1246502;
     private boolean returnToMangaList = false;
 
     @Nullable
@@ -428,16 +429,26 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        Manga manga = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.delete) {
-            DownloadPoolService.forceStop(manga.getId());
-            ServerBase serverBase = ServerBase.getServer(manga.getServerId());
-            String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
-            Util.getInstance().deleteRecursive(new File(path));
-            Database.deleteManga(getActivity(), manga.getId());
-            adapter.remove(manga);
-            Util.showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), cLayout, mActivity);
+            final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
+            Snackbar confirm = Snackbar.make(cLayout, R.string.manga_delete_confirm, Snackbar.LENGTH_INDEFINITE);
+            confirm.setAction(android.R.string.yes, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DownloadPoolService.forceStop(manga.getId());
+                    ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+                    String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
+                    Util.getInstance().deleteRecursive(new File(path));
+                    Database.deleteManga(getActivity(), manga.getId());
+                    adapter.remove(manga);
+                    Util.showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), cLayout, mActivity);
+
+                }
+            });
+            confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+            confirm.show();
         } else if (item.getItemId() == R.id.noupdate) {
+            Manga manga = (Manga) grid.getAdapter().getItem(info.position);
             if (manga.isFinished()) {
                 manga.setFinished(false);
                 Database.setUpgradable(getActivity(), manga.getId(), false);
