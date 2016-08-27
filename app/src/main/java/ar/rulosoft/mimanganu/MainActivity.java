@@ -32,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     public static SharedPreferences pm;
     public static MainFragment.UpdateListTask updateListTask;
     public static boolean isConnected = true;
+    public static CoordinatorLayout cLayout;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
     public ActionBar mActBar;
-    public CoordinatorLayout cLayout;
     OnBackListener backListener;
     OnKeyUpListener keyUpListener;
 
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     Util.getInstance().restartApp(getApplicationContext());
                 } else {
                     // Permission Denied
-                    Util.showFastSnackBar(getString(R.string.storage_permission_denied), cLayout, this);
+                    Util.showFastSnackBar(getString(R.string.storage_permission_denied), this);
                 }
                 break;
             default:

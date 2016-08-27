@@ -4,6 +4,7 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -65,7 +66,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private static final String TAG = "MainFragment";
     public static int mNotifyID = 1246502;
     MainActivity mActivity;
-    CoordinatorLayout cLayout;
     private SharedPreferences pm;
     private Menu menu;
     private FloatingActionButton floatingActionButton_add;
@@ -92,7 +92,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         mSectionsPagerAdapter = new SectionsPagerAdapter();
         if (getView() != null) {
             mViewPager = (ViewPager) getView().findViewById(R.id.pager);
-            cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
+            MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
             floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
             if (is_server_list_open) {
@@ -431,7 +431,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getItemId() == R.id.delete) {
             final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
-            Snackbar confirm = Snackbar.make(cLayout, R.string.manga_delete_confirm, Snackbar.LENGTH_INDEFINITE);
+            Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.manga_delete_confirm, Snackbar.LENGTH_INDEFINITE);
             confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -441,11 +441,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.getInstance().deleteRecursive(new File(path));
                     Database.deleteManga(getActivity(), manga.getId());
                     adapter.remove(manga);
-                    Util.showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), cLayout, mActivity);
+                    Util.showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), mActivity);
 
                 }
             });
             confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+            confirm.setActionTextColor(Color.WHITE);
             confirm.show();
         } else if (item.getItemId() == R.id.noupdate) {
             Manga manga = (Manga) grid.getAdapter().getItem(info.position);
@@ -618,7 +619,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 try {
                     if (NetworkUtilsAndReciever.isConnected(context)) {
                         Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Util.showFastSnackBar(getResources().getString(R.string.searching_for_updates), cLayout, mActivity);
+                        Util.showFastSnackBar(getResources().getString(R.string.searching_for_updates), mActivity);
                     }
                 } catch (Exception e) {
                     if (e.getMessage() != null)
@@ -715,13 +716,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 if (result > 0) {
                     Util.getInstance().cancelNotification(mNotifyID);
                     setListManga(true);
-                    Util.showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), cLayout, mActivity);
+                    Util.showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), mActivity);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
                     if (!errorMsg.equals("")) {
-                        Util.showFastSnackBar(errorMsg, cLayout, mActivity);
+                        Util.showFastSnackBar(errorMsg, mActivity);
                     } else {
-                        Util.showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), cLayout, mActivity);
+                        Util.showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), mActivity);
                     }
                 }
                 swipeReLayout.setRefreshing(false);

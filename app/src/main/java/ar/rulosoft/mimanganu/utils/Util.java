@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
 import android.view.View;
@@ -76,15 +75,15 @@ public class Util {
         return path.substring(idx + 1);
     }
 
-    public static void showFastSnackBar(String message, CoordinatorLayout cLayout, MainActivity mActivity) {
-        if (cLayout != null) {
-            Snackbar snackbar = Snackbar.make(cLayout, message, Snackbar.LENGTH_SHORT);
+    public static void showFastSnackBar(String message, Context context) {
+        if (MainActivity.cLayout != null) {
+            Snackbar snackbar = Snackbar.make(MainActivity.cLayout, message, Snackbar.LENGTH_SHORT);
             View snackBarView = snackbar.getView();
             snackBarView.setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
-            if (mActivity != null) {
-                Toast.makeText(mActivity, message, Toast.LENGTH_SHORT).show();
+            if (context != null) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
             }
         }
     }

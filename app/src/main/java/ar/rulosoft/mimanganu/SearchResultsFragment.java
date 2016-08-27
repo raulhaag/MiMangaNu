@@ -30,7 +30,6 @@ public class SearchResultsFragment extends Fragment {
     private PerformSearchTask performSearchTask = new PerformSearchTask();
     private boolean searchPerformed;
     private ArrayList<Manga> mangasFromSearch = new ArrayList<>();
-    private CoordinatorLayout cLayout;
 
     @Nullable
     @Override
@@ -47,7 +46,7 @@ public class SearchResultsFragment extends Fragment {
         search_term = getArguments().getString(TERM);
         list = (ListView) getView().findViewById(R.id.result);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
+        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -136,10 +135,10 @@ public class SearchResultsFragment extends Fragment {
                                 mangasFromSearch.clear();
                             mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {
-                            Util.showFastSnackBar(getResources().getString(R.string.busquedanores), cLayout, (MainActivity) getActivity());
+                            Util.showFastSnackBar(getResources().getString(R.string.busquedanores), getActivity());
                         }
                     } else {
-                        Util.showFastSnackBar(error, cLayout, (MainActivity) getActivity());
+                        Util.showFastSnackBar(error, getActivity());
                     }
                 }
             }

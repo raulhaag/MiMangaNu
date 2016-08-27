@@ -58,7 +58,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private int firstVisibleItem;
     private LoadLastTask loadLastTask = new LoadLastTask();
     private int lastContextMenuIndex = 0;
-    private CoordinatorLayout cLayout;
     private boolean mangaAlreadyAdded;
 
     @Override
@@ -90,10 +89,10 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (!mangaAlreadyAdded) {
-            AsyncAddManga nAsyncAddManga = new AsyncAddManga((MainActivity) getActivity(), cLayout);
-            nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mAdapter.getItem(lastContextMenuIndex));
+            AsyncAddManga nAsyncAddManga = new AsyncAddManga(mAdapter.getItem(lastContextMenuIndex), getActivity(), false);
+            nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            Util.getInstance().toast(getContext(), getString(R.string.already_on_db), 1);
+            Util.showFastSnackBar(getString(R.string.already_on_db), getActivity());
         }
         mangaAlreadyAdded = false;
         return super.onContextItemSelected(item);
@@ -128,7 +127,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         serverBase = ServerBase.getServer(serverID);
         grid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
+        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
@@ -297,7 +296,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Util.showFastSnackBar("Error: " + error, cLayout, (MainActivity) getActivity());
+                Util.showFastSnackBar("Error: " + error, getActivity());
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {

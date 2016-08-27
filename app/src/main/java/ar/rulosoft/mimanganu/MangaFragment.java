@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -69,7 +70,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
     private MainActivity mActivity;
-    private CoordinatorLayout cLayout;
 
     @Nullable
     @Override
@@ -97,7 +97,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         if (getView() != null) {
             mListView = (ListView) getView().findViewById(R.id.lista);
             swipeReLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
-            cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
+            MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         }
         mImageLoader = new ImageLoader(getActivity());
         final int[] colors = ThemeColors.getColors(pm);
@@ -190,7 +190,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         break;
                     case R.id.remove_chapter:
                         finish = false;
-                        Snackbar confirm = Snackbar.make(cLayout, R.string.delete_comfirm, Snackbar.LENGTH_INDEFINITE)
+                        Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.delete_comfirm, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(android.R.string.yes, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -209,6 +209,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                                     }
                                 });
                         confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+                        confirm.setActionTextColor(Color.WHITE);
                         confirm.show();
                         break;
                     case R.id.reset_chapter:
@@ -276,7 +277,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             mChapterAdapter.replaceData(chapters);
         } else {
             if (mActivity != null)
-                mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder), cLayout);
+                mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder));
         }
         if (mListView != null) {
             mListView.setAdapter(mChapterAdapter);
@@ -310,7 +311,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 getActivity().onBackPressed();
                 return true;
             case R.id.action_download_remaining: {
-                Snackbar confirm = Snackbar.make(cLayout, R.string.download_remain_confirmation, Snackbar.LENGTH_INDEFINITE);
+                Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.download_remain_confirmation, Snackbar.LENGTH_INDEFINITE);
                 confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -325,6 +326,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                     }
                 });
                 confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+                confirm.setActionTextColor(Color.WHITE);
                 confirm.show();
             }
             break;
@@ -378,7 +380,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 break;
             }
             case R.id.action_descargar_no_leidos: {
-                Snackbar confirm = Snackbar.make(cLayout, R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
+                Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
                 confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -393,6 +395,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                     }
                 });
                 confirm.getView().setBackgroundColor(MainActivity.colors[0]);
+                confirm.setActionTextColor(Color.WHITE);
                 confirm.show();
                 break;
             }
@@ -438,9 +441,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     @Override
     public void onResume() {
         super.onResume();
-        if (mChapterAdapter != null) {
-            mChapterAdapter.setCoordinationLayout(cLayout);
-        }
         ((MainActivity) getActivity()).enableHomeButton(true);
         ((MainActivity) getActivity()).setTitle(mManga.getTitle());
         Chapter.Comparators.setManga_title(mManga.getTitle());
@@ -559,7 +559,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected void onPostExecute(Chapter result) {
             if (isAdded()) {
                 if (error != null && error.length() > 1 && mActivity != null) {
-                    Util.showFastSnackBar(error, cLayout, mActivity);
+                    Util.showFastSnackBar(error, mActivity);
                 } else {
                     try {
                         asyncdialog.dismiss();
@@ -572,7 +572,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         MangaFragment.this.startActivity(intent);
                     } catch (Exception e) {
                         if (e.getMessage() != null && mActivity != null) {
-                            Util.showFastSnackBar(e.getMessage(), cLayout, mActivity);
+                            Util.showFastSnackBar(e.getMessage(), mActivity);
                         }
                     }
                 }
@@ -628,11 +628,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             if (result > 0) {
                 if (isAdded()) {
-                    Util.showFastSnackBar(getString(R.string.mgs_update_found, result), cLayout, mActivity);
+                    Util.showFastSnackBar(getString(R.string.mgs_update_found, result), mActivity);
                 }
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 if (isAdded()) {
-                    Util.showFastSnackBar(errorMsg, cLayout, mActivity);
+                    Util.showFastSnackBar(errorMsg, mActivity);
                 }
             }
             running = false;

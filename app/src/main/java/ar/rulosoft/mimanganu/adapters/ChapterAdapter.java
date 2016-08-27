@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu.adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
-import android.support.design.widget.CoordinatorLayout;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,14 +40,12 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
     private boolean can_download;
-    private CoordinatorLayout cLayout;
 
-    public ChapterAdapter(MainActivity activity, ArrayList<Chapter> items, boolean can_download, CoordinatorLayout cLayout) {
+    public ChapterAdapter(MainActivity activity, ArrayList<Chapter> items, boolean can_download) {
         super(activity, listItem);
         this.activity = activity;
         this.chapters = items;
         this.can_download = can_download;
-        this.cLayout = cLayout;
         li = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -126,17 +123,17 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
-                        Util.showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes),cLayout,activity);
+                        Util.showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes),activity);
                         notifyDataSetChanged();
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
                         if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                                Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),cLayout,activity);
+                                Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
                             } catch (Exception e) {
                                 if (e.getMessage() != null) {
-                                    Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),cLayout,activity);
+                                    Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
                                 }
                             }
                         }
@@ -255,10 +252,6 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             chapters[j] = getItem(selected.keyAt(j));
         }
         return chapters;
-    }
-
-    public void setCoordinationLayout(CoordinatorLayout cLayout) {
-        this.cLayout = cLayout;
     }
 
     public static class ViewHolder {
