@@ -25,7 +25,7 @@ public class MiMangaNuApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
 
-        //ACRA.init(this);
+        ACRA.init(this);
     }
 
     public MiMangaNuApplication(){
