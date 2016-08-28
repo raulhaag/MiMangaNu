@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
                     Util.getInstance().restartApp(getApplicationContext());
                 } else {
                     // Permission Denied
-                    Util.showFastSnackBar(getString(R.string.storage_permission_denied), this);
+                    Util.getInstance().showFastSnackBar(getString(R.string.storage_permission_denied), this);
                 }
                 break;
             default:

@@ -92,7 +92,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             AsyncAddManga nAsyncAddManga = new AsyncAddManga(mAdapter.getItem(lastContextMenuIndex), getActivity(), false);
             nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            Util.showFastSnackBar(getString(R.string.already_on_db), getActivity());
+            Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getActivity());
         }
         mangaAlreadyAdded = false;
         return super.onContextItemSelected(item);
@@ -296,7 +296,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (error != null && error.length() > 1) {
-                Util.showFastSnackBar("Error: " + error, getActivity());
+                Util.getInstance().showFastSnackBar("Error: " + error, getActivity());
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {

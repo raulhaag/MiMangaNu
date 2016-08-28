@@ -84,7 +84,6 @@ public class DetailsFragment extends Fragment {
         t0.start();
 
         data = (ControlInfo) getView().findViewById(R.id.datos);
-        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
@@ -95,8 +94,9 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mangaAlreadyAdded) {
-                    AddMangaTask nAsyncAddManga = new AddMangaTask();
-                    nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
+                    AddMangaTask addMangaTask = new AddMangaTask();
+                    addMangaTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
+
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 1.0f, 0.0f);
                     anim1.setDuration(0);
@@ -106,7 +106,7 @@ public class DetailsFragment extends Fragment {
                     set.playSequentially(anim2, anim1);
                     set.start();
                 } else {
-                    Util.showFastSnackBar(getString(R.string.already_on_db), getActivity());
+                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(), getActivity());
                 }
             }
         });
@@ -214,7 +214,7 @@ public class DetailsFragment extends Fragment {
                     }
                     imageLoader.displayImg(manga.getImages(), data);
                     if (error != null && error.length() > 2) {
-                        Util.showFastSnackBar(error, getActivity());
+                        Util.getInstance().showFastSnackBar(error, getView(), getActivity());
                     } else {
                         AnimatorSet set = new AnimatorSet();
                         ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 0.0f, 1.0f);
@@ -230,7 +230,7 @@ public class DetailsFragment extends Fragment {
                         set.start();
                     }
                 } else {
-                    Util.showFastSnackBar(error, getActivity());
+                    Util.getInstance().showFastSnackBar(error, getView(), getActivity());
                 }
             }
             swipeRefreshLayout.setRefreshing(false);
@@ -295,9 +295,9 @@ public class DetailsFragment extends Fragment {
             if (isAdded()) {
                 adding.dismiss();
                 if (!errorWhileAddingManga)
-                    Util.showFastSnackBar(getResources().getString(R.string.agregado), getActivity());
+                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.agregado), getView(), getActivity());
                 if (error != null && error.length() > 2) {
-                    Util.showFastSnackBar(error, getActivity());
+                    Util.getInstance().showFastSnackBar(error, getView(), getActivity());
                 }
             }
             super.onPostExecute(result);

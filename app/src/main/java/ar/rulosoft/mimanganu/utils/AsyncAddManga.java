@@ -28,7 +28,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected void onPreExecute() {
-        Util.showFastSnackBar(mActivity.getString(R.string.adding_to_db) + " " + manga.getTitle(), mActivity);
+        Util.getInstance().showFastSnackBar(mActivity.getString(R.string.adding_to_db) + " " + manga.getTitle(), mActivity);
         Util.getInstance().createNotificationWithProgressbar(mActivity, mNotifyID, mActivity.getResources().getString(R.string.adding_to_db), "");
         super.onPreExecute();
     }
@@ -67,7 +67,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onProgressUpdate(final Integer... values) {
         super.onProgressUpdate(values);
-        Util.getInstance().changeNotificationWithProgressbar(total, values[0], mNotifyID, manga.getTitle(), mActivity.getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total, true);
+        Util.getInstance().changeNotificationWithProgressbar(total, values[0], mNotifyID, mActivity.getResources().getString(R.string.adding_to_db), manga.getTitle() + " " + values[0] + "/" + total, true);
     }
 
     @Override
@@ -76,9 +76,9 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
             if (backOnFinish)
                 mActivity.onBackPressed();
             if (!allOk) {
-                Util.showFastSnackBar(error, mActivity);
+                Util.getInstance().showFastSnackBar(error, mActivity);
             } else {
-                Util.showFastSnackBar(mActivity.getString(R.string.agregado) + " " + manga.getTitle(), mActivity);
+                Util.getInstance().showFastSnackBar(mActivity.getString(R.string.agregado) + " " + manga.getTitle(), mActivity);
             }
         }
         Util.getInstance().cancelNotification(mNotifyID);

@@ -23,6 +23,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload.DownloadStatus;
 import ar.rulosoft.mimanganu.services.SingleDownload.Status;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class DownloadPoolService extends Service implements StateChangeListener {
 
@@ -38,6 +39,8 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public static DownloadsChangesListener mDownloadsChangesListener;
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
+    private int mNotifyID = (int) System.currentTimeMillis();
+    private static boolean resetN;
 
     static {
         Arrays.sort(illegalChars);
@@ -268,6 +271,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void removeDownloaded() {
+        resetN = true;
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
         for (int i = 0; i < chapterDownloads.size(); i++) {
             if (chapterDownloads.get(i).status == DownloadStatus.DOWNLOADED) {
@@ -281,6 +285,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void removeAll() {
+        resetN = true;
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
         for (int i = 0; i < chapterDownloads.size(); i++) {
             if (chapterDownloads.get(i).status != DownloadStatus.DOWNLOADING) {
@@ -335,10 +340,12 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private void initPool() {
+        Util.getInstance().createNotificationWithProgressbar(getApplicationContext(), mNotifyID, getResources().getString(R.string.downloading), "");
         Manga manga = null;
         ServerBase s = null;
         String path = "";
         int lcId = -1;
+        int n = -1;
         while (hasDownloadsPending()) {
             if (slots > 0) {
                 slots--;
@@ -348,6 +355,14 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                 while (idx < chapterDownloads.size()) {
                     ChapterDownload d = chapterDownloads.get(idx);
                     idx++;
+                    // start notification code
+                    if (n < idx)
+                        n = idx;
+                    if (resetN) {
+                        n = 0;
+                        resetN = false;
+                    }
+                    // end notification code
                     if (d.chapter.getPages() == 0) {
                         if (d.status != DownloadStatus.ERROR && d.status != DownloadStatus.PAUSED)
                             try {
@@ -386,6 +401,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         new File(path).mkdirs();
                     }
                     try {
+                        Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, (n - 1) + " of " + chapterDownloads.size() + " Chapters downloaded", getResources().getString(R.string.downloading)+" "+dc.getChapter().getTitle(), true);
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = path + "/" + sig + ".jpg";
                         SingleDownload des;
@@ -415,6 +431,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                 }
             }
         }
+        Util.getInstance().cancelNotification(mNotifyID);
         actual = null;
         stopSelf();
     }

@@ -135,10 +135,10 @@ public class SearchResultsFragment extends Fragment {
                                 mangasFromSearch.clear();
                             mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {
-                            Util.showFastSnackBar(getResources().getString(R.string.busquedanores), getActivity());
+                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.busquedanores), getActivity());
                         }
                     } else {
-                        Util.showFastSnackBar(error, getActivity());
+                        Util.getInstance().showFastSnackBar(error, getActivity());
                     }
                 }
             }

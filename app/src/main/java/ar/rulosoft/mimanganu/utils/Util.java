@@ -75,15 +75,38 @@ public class Util {
         return path.substring(idx + 1);
     }
 
-    public static void showFastSnackBar(String message, Context context) {
+    public void showFastSnackBar(String message, Context context) {
         if (MainActivity.cLayout != null) {
             Snackbar snackbar = Snackbar.make(MainActivity.cLayout, message, Snackbar.LENGTH_SHORT);
-            View snackBarView = snackbar.getView();
-            snackBarView.setBackgroundColor(MainActivity.colors[0]);
+            snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
             if (context != null) {
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void showFastSnackBar(String message, View view, Context context) {
+        if (view != null) {
+            Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
+            snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+            snackbar.show();
+        } else {
+            if (context != null) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    public void showSlowSnackBar(String message, View view, Context context) {
+        if (view != null) {
+            Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+            snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+            snackbar.show();
+        } else {
+            if (context != null) {
+                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
             }
         }
     }
