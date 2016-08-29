@@ -274,7 +274,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     if (pm.getBoolean("download_next_chapter_automatically", false)) {
                         try {
                             DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
-                            Util.getInstance().toast(this, "Downloading: " + nextChapter.getTitle());
+                            Util.getInstance().toast(this, getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
                         } catch (Exception e) {
                             Log.e("ServB", "Download add pool error", e);
                         }
@@ -655,7 +655,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 mChapter.setPagesRead(mChapter.getPages());
                 Chapter tmpChapter = mChapter;
                 loadChapter(nextChapter, LoadMode.START);
-                Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+                //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+                Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getApplicationContext());
                 if (seamlessChapterTransitionDeleteRead) {
                     tmpChapter.freeSpace(ActivityReader.this);
                     Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);

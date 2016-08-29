@@ -441,7 +441,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.getInstance().deleteRecursive(new File(path));
                     Database.deleteManga(getActivity(), manga.getId());
                     adapter.remove(manga);
-                    Util.showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), mActivity);
+                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), mActivity);
 
                 }
             });
@@ -619,7 +619,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 try {
                     if (NetworkUtilsAndReciever.isConnected(context)) {
                         Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Util.showFastSnackBar(getResources().getString(R.string.searching_for_updates), mActivity);
+                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), mActivity);
                     }
                 } catch (Exception e) {
                     if (e.getMessage() != null)
@@ -716,13 +716,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 if (result > 0) {
                     Util.getInstance().cancelNotification(mNotifyID);
                     setListManga(true);
-                    Util.showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), mActivity);
+                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), mActivity);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
                     if (!errorMsg.equals("")) {
-                        Util.showFastSnackBar(errorMsg, mActivity);
+                        Util.getInstance().showFastSnackBar(errorMsg, mActivity);
                     } else {
-                        Util.showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), mActivity);
+                        Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), mActivity);
                     }
                 }
                 swipeReLayout.setRefreshing(false);

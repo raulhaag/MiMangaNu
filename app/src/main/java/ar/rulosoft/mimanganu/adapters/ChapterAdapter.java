@@ -123,17 +123,17 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
-                        Util.showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes),activity);
+                        Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes),activity);
                         notifyDataSetChanged();
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
                         if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                                Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
+                                Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
                             } catch (Exception e) {
                                 if (e.getMessage() != null) {
-                                    Util.showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
+                                    Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
                                 }
                             }
                         }

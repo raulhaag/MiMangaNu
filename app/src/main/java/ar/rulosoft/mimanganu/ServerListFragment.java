@@ -152,7 +152,7 @@ public class ServerListFragment extends Fragment {
                 list.setAdapter(adapter);
             }
             if (error != null && error.length() > 2 && isAdded()) {
-                Util.showFastSnackBar("Error: " + error, getActivity());
+                Util.getInstance().showFastSnackBar("Error: " + error, getActivity());
             }
             loading.setVisibility(ProgressBar.INVISIBLE);
         }

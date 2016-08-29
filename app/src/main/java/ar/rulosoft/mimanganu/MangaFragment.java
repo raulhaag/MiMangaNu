@@ -559,7 +559,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected void onPostExecute(Chapter result) {
             if (isAdded()) {
                 if (error != null && error.length() > 1 && mActivity != null) {
-                    Util.showFastSnackBar(error, mActivity);
+                    Util.getInstance().showFastSnackBar(error, mActivity);
                 } else {
                     try {
                         asyncdialog.dismiss();
@@ -572,7 +572,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         MangaFragment.this.startActivity(intent);
                     } catch (Exception e) {
                         if (e.getMessage() != null && mActivity != null) {
-                            Util.showFastSnackBar(e.getMessage(), mActivity);
+                            Util.getInstance().showFastSnackBar(e.getMessage(), mActivity);
                         }
                     }
                 }
@@ -628,11 +628,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             if (result > 0) {
                 if (isAdded()) {
-                    Util.showFastSnackBar(getString(R.string.mgs_update_found, result), mActivity);
+                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, result), mActivity);
                 }
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 if (isAdded()) {
-                    Util.showFastSnackBar(errorMsg, mActivity);
+                    Util.getInstance().showFastSnackBar(errorMsg, mActivity);
                 }
             }
             running = false;
