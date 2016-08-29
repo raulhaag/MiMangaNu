@@ -202,5 +202,6 @@
     <string name="cancel">Cancel</string>
     <string name="reader_type_subtitle">Tap here to change Reader type</string>
     <string name="notification_tray_is_full">Update was cancelled due to a full notification tray. Please clear some notifications.</string>
-    <string name="manga_delete_confirm">Are you sure to delete?</string>
+    <string name="manga_delete_confirm">Do you want to delete %s?</string>
+    <string name="x_of_y_chapters_downloaded">%1$d of %2$d Chapters downloaded</string>
 </resources>
