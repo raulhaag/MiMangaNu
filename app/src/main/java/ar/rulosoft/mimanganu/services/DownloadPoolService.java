@@ -401,7 +401,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         new File(path).mkdirs();
                     }
                     try {
-                        Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, (n - 1) + " of " + chapterDownloads.size() + " Chapters downloaded", getResources().getString(R.string.downloading)+" "+dc.getChapter().getTitle(), true);
+                        Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, getResources().getString(R.string.x_of_y_chapters_downloaded, (n - 1), chapterDownloads.size()), getResources().getString(R.string.downloading) + " " + dc.getChapter().getTitle(), true);
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = path + "/" + sig + ".jpg";
                         SingleDownload des;

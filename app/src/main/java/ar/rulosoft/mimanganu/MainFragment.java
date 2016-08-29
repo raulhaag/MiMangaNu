@@ -431,7 +431,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getItemId() == R.id.delete) {
             final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
-            Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.manga_delete_confirm, Snackbar.LENGTH_INDEFINITE);
+            Snackbar confirm = Snackbar.make(MainActivity.cLayout, getString(R.string.manga_delete_confirm, manga.getTitle()), Snackbar.LENGTH_INDEFINITE);
             confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
