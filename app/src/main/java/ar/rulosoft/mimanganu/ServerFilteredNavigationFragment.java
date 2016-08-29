@@ -68,11 +68,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        MenuInflater inflater = getActivity().getMenuInflater();
-        inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
-        menu.setHeaderTitle(mAdapter.getItem((int) v.getTag()).getTitle());
-        lastContextMenuIndex = (int) v.getTag();
-
         Thread t0 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -84,12 +79,17 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             }
         });
         t0.start();
+
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
+        menu.setHeaderTitle(mAdapter.getItem((int) v.getTag()).getTitle());
+        lastContextMenuIndex = (int) v.getTag();
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (!mangaAlreadyAdded) {
-            AsyncAddManga nAsyncAddManga = new AsyncAddManga(mAdapter.getItem(lastContextMenuIndex), getActivity(), false);
+            AsyncAddManga nAsyncAddManga = new AsyncAddManga(mAdapter.getItem(lastContextMenuIndex), getActivity(), false, true, false);
             nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getActivity());

@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.app.ActionBar;
-import android.app.ProgressDialog;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,7 +14,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,6 +30,7 @@ import ar.rulosoft.mimanganu.componentes.ControlInfo;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -84,6 +83,7 @@ public class DetailsFragment extends Fragment {
         t0.start();
 
         data = (ControlInfo) getView().findViewById(R.id.datos);
+        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
@@ -94,8 +94,8 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mangaAlreadyAdded) {
-                    AddMangaTask addMangaTask = new AddMangaTask();
-                    addMangaTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, manga);
+                    AsyncAddManga nAsyncAddManga = new AsyncAddManga(manga, getActivity(), false, false, true);
+                    nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     AnimatorSet set = new AnimatorSet();
                     ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 1.0f, 0.0f);
@@ -106,7 +106,7 @@ public class DetailsFragment extends Fragment {
                     set.playSequentially(anim2, anim1);
                     set.start();
                 } else {
-                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(), getActivity());
+                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getActivity());
                 }
             }
         });
@@ -214,7 +214,7 @@ public class DetailsFragment extends Fragment {
                     }
                     imageLoader.displayImg(manga.getImages(), data);
                     if (error != null && error.length() > 2) {
-                        Util.getInstance().showFastSnackBar(error, getView(), getActivity());
+                        Util.getInstance().showFastSnackBar(error, getActivity());
                     } else {
                         AnimatorSet set = new AnimatorSet();
                         ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 0.0f, 1.0f);
@@ -230,14 +230,14 @@ public class DetailsFragment extends Fragment {
                         set.start();
                     }
                 } else {
-                    Util.getInstance().showFastSnackBar(error, getView(), getActivity());
+                    Util.getInstance().showFastSnackBar(error, getActivity());
                 }
             }
             swipeRefreshLayout.setRefreshing(false);
         }
     }
 
-    public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
+    /*public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
         ProgressDialog adding = new ProgressDialog(getActivity());
         String error = ".";
         int total = 0;
@@ -295,13 +295,13 @@ public class DetailsFragment extends Fragment {
             if (isAdded()) {
                 adding.dismiss();
                 if (!errorWhileAddingManga)
-                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.agregado), getView(), getActivity());
+                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.agregado), getActivity());
                 if (error != null && error.length() > 2) {
-                    Util.getInstance().showFastSnackBar(error, getView(), getActivity());
+                    Util.getInstance().showFastSnackBar(error, getActivity());
                 }
             }
             super.onPostExecute(result);
         }
-    }
+    }*/
 
 }
