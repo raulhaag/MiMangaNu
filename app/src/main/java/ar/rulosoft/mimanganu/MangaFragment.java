@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -70,6 +71,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
     private MainActivity mActivity;
+    private int mNotifyID_DeleteImages = (int) System.currentTimeMillis();
+    private int mNotifyID_MarkSelectedAsRead = (int) System.currentTimeMillis();
+    private int mNotifyID_MarkSelectedAsUnread = (int) System.currentTimeMillis();
+    private int mNotifyID_RemoveChapters = (int) System.currentTimeMillis();
+    private int mNotifyID_ResetChapters = (int) System.currentTimeMillis();
 
     @Nullable
     @Override
@@ -173,24 +179,18 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         mChapterAdapter.selectTo(selection.keyAt(0));
                         return true;
                     case R.id.download_selection:
-                        new AsyncAddMangas().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChapterAdapter.getSelectedChapters());
+                        new AsyncAddChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChapterAdapter.getSelectedChapters());
                         break;
                     case R.id.mark_as_read_and_delete_images:
                         new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        for (int i = selection.size() - 1; i >= 0; i--) {
-                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                            chapter.freeSpace(getActivity(), mManga, serverBase);
-                        }
+                        new DeleteImages(serverBase, selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.delete_images:
-                        for (int i = 0; i < selection.size(); i++) {
-                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                            chapter.freeSpace(getActivity(), mManga, serverBase);
-                        }
+                        new DeleteImages(serverBase, selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.remove_chapter:
                         finish = false;
-                        Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.delete_comfirm, Snackbar.LENGTH_INDEFINITE)
+                        Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.delete_confirm, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(android.R.string.yes, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
@@ -200,11 +200,17 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                                             selected[j] = selection.keyAt(j);
                                         }
                                         Arrays.sort(selected);
-                                        for (int i = selection.size() - 1; i >= 0; i--) {
-                                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                                            chapter.delete(getActivity(), mManga, serverBase);
-                                            mChapterAdapter.remove(chapter);
-                                            mode.finish();
+
+                                        if(selection.size() < 8) {
+                                            // Remove chapters on UI Thread
+                                            for (int i = selection.size() - 1; i >= 0; i--) {
+                                                Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                                                chapter.delete(getActivity(), mManga, serverBase);
+                                                mChapterAdapter.remove(chapter);
+                                                mode.finish();
+                                            }
+                                        } else {
+                                            new RemoveChapters(serverBase, selection.size(), mode).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                         }
                                     }
                                 });
@@ -213,10 +219,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         confirm.show();
                         break;
                     case R.id.reset_chapter:
-                        for (int i = 0; i < selection.size(); i++) {
-                            Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                            chapter.reset(getActivity(), mManga, serverBase);
-                        }
+                        new ResetChapters(serverBase, selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.mark_selected_as_read:
                         new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -502,7 +505,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         this.menu = menu;
     }
 
-    private class AsyncAddMangas extends AsyncTask<Chapter, Void, Void> {
+    private class AsyncAddChapters extends AsyncTask<Chapter, Void, Void> {
 
         @Override
         protected Void doInBackground(Chapter... chapters) {
@@ -724,64 +727,248 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class MarkSelectedAsRead extends AsyncTask<Void, Integer, Void> {
-        int selectionSize = 0;
+        private int selectionSize = 0;
+        private Chapter chapter;
 
         public MarkSelectedAsRead(int selectionSize) {
             super();
             this.selectionSize = selectionSize;
+            mNotifyID_MarkSelectedAsRead = (int) System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_MarkSelectedAsRead, getString(R.string.marking_as_read), "");
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            long initTime = System.currentTimeMillis();
             for (int i = 0; i < selectionSize; i++) {
                 if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 1) {
-                    Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
                     chapter.markRead(getActivity(), true);
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mChapterAdapter.notifyDataSetChanged();
-                        }
-                    });
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(i);
+                        initTime = System.currentTimeMillis();
+                    }
                 }
             }
             return null;
         }
 
         @Override
+        protected void onProgressUpdate(final Integer... values) {
+            super.onProgressUpdate(values);
+            mChapterAdapter.notifyDataSetChanged();
+            Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_MarkSelectedAsRead, getString(R.string.marking_as_read), chapter.getTitle(), true);
+        }
+
+        @Override
         protected void onPostExecute(Void aVoid) {
+            Util.getInstance().cancelNotification(mNotifyID_MarkSelectedAsRead);
         }
     }
 
     private class MarkSelectedAsUnread extends AsyncTask<Void, Integer, Void> {
-        int selectionSize = 0;
+        private int selectionSize = 0;
+        private Chapter chapter;
 
         public MarkSelectedAsUnread(int selectionSize) {
             super();
             this.selectionSize = selectionSize;
+            mNotifyID_MarkSelectedAsUnread = (int) System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_MarkSelectedAsUnread, getString(R.string.marking_as_unread), "");
         }
 
         @Override
         protected Void doInBackground(Void... params) {
+            long initTime = System.currentTimeMillis();
             for (int i = 0; i < selectionSize; i++) {
                 if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 0) {
-                    Chapter chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
                     chapter.markRead(getActivity(), false);
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            mChapterAdapter.notifyDataSetChanged();
-                        }
-                    });
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(i);
+                        initTime = System.currentTimeMillis();
+                    }
                 }
             }
             return null;
         }
 
         @Override
+        protected void onProgressUpdate(final Integer... values) {
+            super.onProgressUpdate(values);
+            mChapterAdapter.notifyDataSetChanged();
+            Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_MarkSelectedAsUnread, getString(R.string.marking_as_unread), chapter.getTitle(), true);
+        }
+
+        @Override
         protected void onPostExecute(Void aVoid) {
+            Util.getInstance().cancelNotification(mNotifyID_MarkSelectedAsUnread);
+        }
+    }
+
+    private class DeleteImages extends AsyncTask<Void, Integer, Integer> {
+        private ServerBase serverBase;
+        private int selectionSize = 0;
+        private Chapter chapter;
+
+        public DeleteImages(ServerBase serverBase, int selectionSize) {
+            this.serverBase = serverBase;
+            this.selectionSize = selectionSize;
+            mNotifyID_DeleteImages = (int) System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_DeleteImages, getString(R.string.deleting), "");
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            long initTime = System.currentTimeMillis();
+            for (int i = 0; i < selectionSize; i++) {
+                if(isAdded()) {
+                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter.freeSpace(getActivity(), mManga, serverBase);
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(i);
+                        initTime = System.currentTimeMillis();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            super.onProgressUpdate(values);
+            mChapterAdapter.notifyDataSetChanged();
+            Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_DeleteImages, getString(R.string.deleting), chapter.getTitle(), true);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            Util.getInstance().cancelNotification(mNotifyID_DeleteImages);
+        }
+    }
+
+    private class RemoveChapters extends AsyncTask<Void, Integer, Integer> {
+        private ServerBase serverBase;
+        private int selectionSize = 0;
+        private Chapter chapter;
+        private ActionMode mode;
+        int j = 0;
+
+        public RemoveChapters(ServerBase serverBase, int selectionSize, ActionMode mode) {
+            this.serverBase = serverBase;
+            this.selectionSize = selectionSize;
+            this.mode = mode;
+            mNotifyID_RemoveChapters = (int) System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_RemoveChapters, getString(R.string.removing_chapters), "");
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            long initTime = System.currentTimeMillis();
+            for (int i = selectionSize - 1; i >= 0; i--) {
+                if(isAdded()) {
+                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter.delete(getActivity(), mManga, serverBase);
+                    Handler handler = new Handler(Looper.getMainLooper());
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mChapterAdapter.remove(chapter);
+                            mode.finish();
+                        }
+                    });
+                    j++;
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(j);
+                        initTime = System.currentTimeMillis();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            super.onProgressUpdate(values);
+            Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_RemoveChapters, getString(R.string.removing_chapters), chapter.getTitle(), true);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            Util.getInstance().cancelNotification(mNotifyID_RemoveChapters);
+        }
+    }
+
+    private class ResetChapters extends AsyncTask<Void, Integer, Integer> {
+        private ServerBase serverBase;
+        private int selectionSize = 0;
+        private Chapter chapter;
+
+        public ResetChapters(ServerBase serverBase, int selectionSize) {
+            this.serverBase = serverBase;
+            this.selectionSize = selectionSize;
+            mNotifyID_ResetChapters = (int) System.currentTimeMillis();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_ResetChapters, getString(R.string.resetting_chapters), "");
+        }
+
+        @Override
+        protected Integer doInBackground(Void... params) {
+            long initTime = System.currentTimeMillis();
+            for (int i = 0; i < selectionSize; i++) {
+                if(isAdded()) {
+                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                    chapter.reset(getActivity(), mManga, serverBase);
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(i);
+                        initTime = System.currentTimeMillis();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            super.onProgressUpdate(values);
+            Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_ResetChapters, getString(R.string.resetting_chapters), chapter.getTitle(), true);
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            super.onPostExecute(result);
+            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            Util.getInstance().cancelNotification(mNotifyID_ResetChapters);
         }
     }
 

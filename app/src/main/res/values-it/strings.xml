@@ -140,7 +140,6 @@
     <string name="resume_downloads">Riprendere gli scaricamenti</string>
     <string name="retry_errors">Riprova errori</string>
     <string name="update_complete">Aggiornamento completo</string>
-    <string name="delete_comfirm">Sei sicuro di voler eliminare questi capitoli?</string>
     <string name="close">vicino</string>
     <string name="retry">Riprova</string>
     <string name="storage_permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
@@ -202,4 +201,5 @@
     <string name="write_timeout_title">write timeout</string>
     <string name="read_timeout_title">Leggi timeout</string>
     <string name="searching">Ricerca di \"%s\" sono</string>
+    <string name="delete_confirm">Sei sicuro di voler eliminare questi capitoli?</string>
 </resources>

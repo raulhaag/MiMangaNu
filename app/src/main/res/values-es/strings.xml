@@ -149,7 +149,6 @@
     <string name="close">Cerrar</string>
     <string name="sort_number">Ordenar por número de capítulo (9–0)</string>
     <string name="sort_number_asc">Ordenar por número de capítulo</string>
-    <string name="delete_comfirm">¿Estás seguro de borrar estos capítulos?</string>
     <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
     <string name="no_new_updates_found">No se encontró nuevo capítulo :(</string>
     <string name="title_activity_vertical_reader">Lector</string>
@@ -202,4 +201,5 @@
     <string name="reader_type_subtitle">Toca aqui para cambiar el tipo de lector</string>
     <string name="write_timeout_title">Write Timeout</string>
     <string name="read_timeout_title">Read Timeout</string>
+    <string name="delete_confirm">¿Estás seguro de borrar estos capítulos?</string>
 </resources>

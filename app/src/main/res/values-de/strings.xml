@@ -146,7 +146,6 @@
     <string name="error_downloading_image">Fehler beim Laden des Bildes</string>
     <string name="sort_number">Kapitelnummer (9&#8211;0)</string>
     <string name="sort_number_asc">Kapitelnummer</string>
-    <string name="delete_comfirm">Das Kapitel wirklich löschen?</string>
     <string name="storage_permission_denied">Die Berechtigung für den Speicherzugriff wird benötigt, damit MiMangaNu korrekt funktionieren kann.</string>
     <string name="no_new_updates_found">Keine neuen Kapitel gefunden :(</string>
     <string name="used_space">Speicherbedarf der Mangas</string>
@@ -200,4 +199,5 @@
     <string name="read_timeout_title">Timeout beim Einlesen</string>
     <string name="write_timeout_title">Timeout beim Speichern</string>
     <string name="reader_type_subtitle">Aktiviert den Seitenleser. </string>
+    <string name="delete_confirm">Das Kapitel wirklich löschen?</string>
 </resources>

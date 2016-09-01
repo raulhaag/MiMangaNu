@@ -146,6 +146,16 @@
             android:key="hide_sensitivity_scrollbar"
             android:summary="@string/hide_sensitivity_scrollbar_subtitle"
             android:title="@string/hide_sensitivity_scrollbar_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="hide_actionbar"
+            android:summary="@string/hide_actionbar_subtitle"
+            android:title="@string/hide_actionbar_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="show_status_bar"
+            android:summary="@string/show_status_bar_subtitle"
+            android:title="@string/show_status_bar_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <PreferenceCategory android:title="@string/opciones_descarga">

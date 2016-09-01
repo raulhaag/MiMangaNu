@@ -145,33 +145,17 @@ public class Chapter {
             path = DownloadPoolService.generateBasePath(serverBase, manga, this, context);
         else
             path = getPath();
-        //Util.getInstance().deleteRecursive(new File(path));
-        new DeleteImages(new File(path)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
 
-    private class DeleteImages extends AsyncTask<Void, Integer, Void> {
-        File fileOrDirectory;
-
-        public DeleteImages(File fileOrDirectory) {
-            super();
-            this.fileOrDirectory = fileOrDirectory;
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            Util.getInstance().deleteRecursive(fileOrDirectory);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-        }
+        File fpath = new File(path);
+        if(fpath.exists())
+            Util.getInstance().deleteRecursive(fpath);
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = DownloadPoolService.generateBasePath(s, manga, this, context);
-        //Util.getInstance().deleteRecursive(new File(path));
-        new DeleteImages(new File(path)).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        File fpath = new File(path);
+        if(fpath.exists())
+            Util.getInstance().deleteRecursive(fpath);
         //setPages(0); // this breaks "Sexual Hunter Riot" from KissManga no idea why
         setDownloaded(false);
         setPagesRead(0);
