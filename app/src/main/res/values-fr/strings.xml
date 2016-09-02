@@ -139,7 +139,6 @@
     <string name="resume_downloads">Reprendre les téléchargements</string>
     <string name="retry_errors">Réessayez erreurs</string>
     <string name="update_complete">Mise à jour terminée</string>
-    <string name="delete_comfirm">Etes-vous sûr de supprimer ces chapitres?</string>
     <string name="close">Fermer</string>
     <string name="retry">Réessayer</string>
     <string name="storage_permission_denied">Stockage L\'autorisation est requise pour MiMangaNu fonctionnent correctement</string>
@@ -200,4 +199,5 @@
     <string name="write_timeout_title">Ecrire délai</string>
     <string name="read_timeout_title">Lire la temporisation</string>
     <string name="searching">A la recherche de \"%s\" sont</string>
+    <string name="delete_confirm">Etes-vous sûr de supprimer ces chapitres?</string>
 </resources>

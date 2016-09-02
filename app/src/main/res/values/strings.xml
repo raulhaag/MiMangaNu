@@ -152,7 +152,7 @@
     <string name="retry">Retry</string>
     <string name="sort_number">Sort by chapter number (9–0)</string>
     <string name="sort_number_asc">Sort by chapter number </string>
-    <string name="delete_comfirm">Are you sure you want to delete these chapters?</string>
+    <string name="delete_confirm">Do you want to remove these chapters?</string>
     <string name="storage_permission_denied">Storage Permission is required for MiMangaNu to work correctly</string>
     <string name="no_new_updates_found">No new chapters found :(</string>
     <string name="sort_as_added_to_db_asc">As added to db (asc)</string>
@@ -204,4 +204,13 @@
     <string name="notification_tray_is_full">Update was cancelled due to a full notification tray. Please clear some notifications.</string>
     <string name="manga_delete_confirm">Do you want to delete %s?</string>
     <string name="x_of_y_chapters_downloaded">%1$d of %2$d Chapters downloaded</string>
+    <string name="show_status_bar_title">Show status bar</string>
+    <string name="show_status_bar_subtitle">This will show the status bar while reading</string>
+    <string name="hide_actionbar_title">Hide actionbar</string>
+    <string name="hide_actionbar_subtitle">This will hide the actionbar when reading in non-Fullscreen mode</string>
+    <string name="marking_as_read">Marking as read &#8230;</string>
+    <string name="marking_as_unread">Marking as unread &#8230;</string>
+    <string name="deleting">Deleting &#8230;</string>
+    <string name="removing_chapters">Removing chapters &#8230;</string>
+    <string name="resetting_chapters">Resetting chapters &#8230;</string>
 </resources>

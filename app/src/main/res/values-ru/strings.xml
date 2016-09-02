@@ -139,7 +139,6 @@
     <string name="resume_downloads">Резюме скачивали</string>
     <string name="retry_errors">Повторите ошибки</string>
     <string name="update_complete">Обновление завершено</string>
-    <string name="delete_comfirm">Вы уверены, чтобы удалить эти разделы?</string>
     <string name="close">близко</string>
     <string name="retry">Повторить попытку</string>
     <string name="storage_permission_denied">Разрешение хранения требуется для MiMangaNu для правильной работы</string>
@@ -200,4 +199,5 @@
     <string name="write_timeout_title">Запись тайм-аута</string>
     <string name="read_timeout_title">таймаут</string>
     <string name="searching">Поиск \"%s\2 являются</string>
+    <string name="delete_confirm">Вы уверены, чтобы удалить эти разделы?</string>
 </resources>

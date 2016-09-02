@@ -152,6 +152,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
         if (pm.getBoolean("hide_sensitivity_scrollbar", false))
             mScrollSelect.setVisibility(View.INVISIBLE);
+        if (pm.getBoolean("hide_actionbar", false))
+            mActionBar.setVisibility(View.INVISIBLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
@@ -305,12 +307,20 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     private void hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if(pm.getBoolean("show_status_bar", false)) {
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            } else {
+                getWindow().getDecorView().setSystemUiVisibility(
+                        View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+            }
+        }
     }
 
     private void showSystemUI() {
