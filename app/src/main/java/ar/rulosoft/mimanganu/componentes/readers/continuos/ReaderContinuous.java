@@ -111,7 +111,13 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     }
 
     public Page getPage(int page) {
-        return pages.get(page - 1);
+        if (page == 0) {
+            // only happens when one spams
+            // the re-download button on the last page
+            return pages.get(page);
+        } else {
+            return pages.get(page - 1);
+        }
     }
 
     private void init(Context context) {
@@ -325,10 +331,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     }
 
     public boolean isLastPageVisible() {
-        if (pages == null)
-            return false;
-        else
-            return pages.get(pages.size() - 1).isVisible();
+            return pages != null && pages.get(pages.size() - 1).isVisible();
     }
 
     public void setScrollSensitive(float mScrollSensitive) {

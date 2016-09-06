@@ -64,8 +64,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
+    public static MangaFragment mangaFragment;
     public static int mNotifyID = 1246502;
-    MainActivity mActivity;
     private SharedPreferences pm;
     private Menu menu;
     private FloatingActionButton floatingActionButton_add;
@@ -121,7 +121,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onResume() {
         super.onResume();
-        mActivity = (MainActivity) getActivity();
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setPageTransformer(false, new MoreMangasPageTransformer());
         MainActivity activity = (MainActivity) getActivity();
@@ -360,7 +359,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
              *
              * feel free to add more sort type */
             int sort_val = PreferenceManager.getDefaultSharedPreferences(
-                    getActivity()).getInt("manga_view_sort_by", 0);
+                    getContext()).getInt("manga_view_sort_by", 0);
 
             String sort_by;
             boolean sort_ord = sort_val % 2 == 0;
@@ -390,13 +389,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     sort_ord = !sort_ord;
             }
             int value = PreferenceManager.getDefaultSharedPreferences(
-                    getActivity()).getInt(SELECT_MODE, MODE_SHOW_ALL);
+                    getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
             switch (value) {
                 case MODE_SHOW_ALL:
-                    mangaList = Database.getMangas(getActivity(), sort_by, sort_ord);
+                    mangaList = Database.getMangas(getContext(), sort_by, sort_ord);
                     break;
                 case MODE_HIDE_READ:
-                    mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                    mangaList = Database.getMangasCondition(getContext(), "id IN (" +
                             "SELECT manga_id " +
                             "FROM capitulos " +
                             "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
@@ -441,7 +440,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.getInstance().deleteRecursive(new File(path));
                     Database.deleteManga(getActivity(), manga.getId());
                     adapter.remove(manga);
-                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), mActivity);
+                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getContext());
 
                 }
             });
@@ -500,7 +499,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 if (serverRecAdapter.actionMode == null) {
                     Bundle bundle = new Bundle();
                     bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
-                    MangaFragment mangaFragment = new MangaFragment();
+                    mangaFragment = new MangaFragment();
                     mangaFragment.setArguments(bundle);
                     ((MainActivity) getActivity()).replaceFragment(mangaFragment, "MangaFragment");
                 }
@@ -619,7 +618,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 try {
                     if (NetworkUtilsAndReciever.isConnected(context)) {
                         Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), mActivity);
+                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getContext());
                     }
                 } catch (Exception e) {
                     if (e.getMessage() != null)
@@ -715,14 +714,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (context != null) {
                 if (result > 0) {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    setListManga(true);
-                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), mActivity);
+                    if(isAdded())
+                        setListManga(true);
+                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), context);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
                     if (!errorMsg.equals("")) {
-                        Util.getInstance().showFastSnackBar(errorMsg, mActivity);
+                        Util.getInstance().showFastSnackBar(errorMsg, context);
                     } else {
-                        Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), mActivity);
+                        Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), context);
                     }
                 }
                 swipeReLayout.setRefreshing(false);

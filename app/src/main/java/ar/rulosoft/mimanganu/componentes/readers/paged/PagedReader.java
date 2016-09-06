@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.v4.view.PagerAdapter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -62,16 +63,25 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void freePage(int idx) {
-        if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
-            mPageAdapter.pages[idx - 1].unloadImage();
+        if(idx == 0){
+            if (mPageAdapter != null && mPageAdapter.pages[idx] != null) {
+                mPageAdapter.pages[idx].unloadImage();
+            }
+        } else {
+            if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
+                mPageAdapter.pages[idx - 1].unloadImage();
+            }
         }
     }
 
     @Override
     public String getPath(int idx) {
-        if (paths != null)
-            return paths.get(idx - 1);
-        else
+        if (paths != null) {
+            if (idx == 0)
+                return paths.get(idx);
+            else
+                return paths.get(idx - 1);
+        } else
             return "";
     }
 
@@ -83,9 +93,20 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void reloadImage(int idx) {
-        if(mPageAdapter != null) {
-            if (mPageAdapter.pages[idx - 1] != null) {
-                mPageAdapter.pages[idx - 1].setImage();
+        //Log.d("PR", "idx: " + idx);
+        if (mPageAdapter != null) {
+            if(idx > mPageAdapter.pages.length){
+                Log.e("PagedReader","idx > mPageAdapter.pages.length !");
+            } else {
+                if (idx == 0) {
+                    if (mPageAdapter.pages[idx] != null) {
+                        mPageAdapter.pages[idx].setImage();
+                    }
+                } else {
+                    if (mPageAdapter.pages[idx - 1] != null) {
+                        mPageAdapter.pages[idx - 1].setImage();
+                    }
+                }
             }
         }
     }
@@ -192,7 +213,6 @@ public abstract class PagedReader extends Reader implements TapListener {
     public class Page extends RelativeLayout {
         public ImageViewTouch visor;
         ProgressBar loading;
-        Runnable r = null;
         boolean loadingImage = false;
         boolean imageLoaded = false;
         int index = 0;

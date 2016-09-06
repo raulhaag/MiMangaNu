@@ -88,7 +88,7 @@
     <string name="new_manga_found">Neue Manga gefunden.</string>
     <string name="new_mangas_found">Neue Mangas gefunden.</string>
     <string name="no_update">Nicht auf Updates überprüfen</string>
-    <string name="nodisponible">n/a</string>
+    <string name="nodisponible">N/A</string>
     <string name="notification_sound_subtitle">Bei neu gefundene Mangas.</string>
     <string name="notification_sound_title">Ton abspielen</string>
     <string name="rotation">Rotation</string>
@@ -200,4 +200,16 @@
     <string name="write_timeout_title">Timeout beim Speichern</string>
     <string name="reader_type_subtitle">Aktiviert den Seitenleser. </string>
     <string name="delete_confirm">Das Kapitel wirklich löschen?</string>
+    <string name="hide_actionbar_title">Ausblenden der Aktionsbar</string>
+    <string name="hide_actionbar_subtitle">Dadurch wird die Aktionsbar ausgeblendet, wenn man im nicht-Vollbild-Modus liest</string>
+    <string name="manga_delete_confirm">Möchtest du %s löschen?</string>
+    <string name="marking_as_read">Markiere als gelesen …</string>
+    <string name="marking_as_unread">Markiere als ungelesen …</string>
+    <string name="notification_tray_is_full">Update wurde abgebrochen da zu viele Benachrichtigungen angezeigt werden. Bitte entferne einige Benachrichtigungen.</string>
+    <string name="removing_chapters">Entferne Kapitel …</string>
+    <string name="resetting_chapters">Setze Kapitel zurück …</string>
+    <string name="show_status_bar_title">Zeige Status bar</string>
+    <string name="show_status_bar_subtitle">Dadurch wird die Status bar beim lesen angezeigt</string>
+    <string name="x_of_y_chapters_downloaded">%1$d von %2$d Kapiteln heruntergeladen</string>
+    <string name="deleting">Lösche …</string>
 </resources>

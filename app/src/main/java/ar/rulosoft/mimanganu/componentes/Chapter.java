@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.text.Html;
 
 import java.io.File;

@@ -78,7 +78,8 @@ public class Util {
     public void showFastSnackBar(String message, Context context) {
         if (MainActivity.cLayout != null) {
             Snackbar snackbar = Snackbar.make(MainActivity.cLayout, message, Snackbar.LENGTH_SHORT);
-            snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+            if(MainActivity.colors != null)
+                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
             if (context != null) {
@@ -90,7 +91,8 @@ public class Util {
     public void showFastSnackBar(String message, View view, Context context) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
-            snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+            if(MainActivity.colors != null)
+                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
             if (context != null) {
@@ -102,7 +104,8 @@ public class Util {
     public void showSlowSnackBar(String message, View view, Context context) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
-            snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+            if(MainActivity.colors != null)
+                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
             if (context != null) {
@@ -363,7 +366,8 @@ public class Util {
     }
 
     public void cancelNotification(int id) {
-        notificationManager.cancel(id);
+        if (notificationManager != null)
+            notificationManager.cancel(id);
     }
 
 }

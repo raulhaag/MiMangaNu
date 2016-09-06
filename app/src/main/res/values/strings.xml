@@ -213,4 +213,11 @@
     <string name="deleting">Deleting &#8230;</string>
     <string name="removing_chapters">Removing chapters &#8230;</string>
     <string name="resetting_chapters">Resetting chapters &#8230;</string>
+    <string name="error_sqlite_disk_io_exception">SQLiteDiskIOException: disk I/O error !</string>
+    <string name="error_sqlite_full_exception">SQLiteFullException: database or disk is full !</string>
+    <string name="error_database_is_read_only">Database is ReadOnly ! Failed to update database !</string>
+    <string name="error_sqlite_database_corrupt_exception">SQLiteDatabaseCorruptException: file is encrypted or is not a database !</string>
+    <string name="error_sqlite_cant_open_database_exception">SQLiteCantOpenDatabaseException: unknown error: Could not open database !</string>
+    <string name="error_sqlite_exception_while_trying_to_open_db">SQLiteException while trying to open database !</string>
+    <string name="error_exception_while_trying_to_open_db">Exception while trying to open database !</string>
 </resources>

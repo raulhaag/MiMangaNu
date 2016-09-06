@@ -27,7 +27,7 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
 
     @Override
     public boolean isLastPageVisible() {
-        return mViewPager.getCurrentItem() == (paths.size() - 1);
+        return paths != null && mViewPager.getCurrentItem() == (paths.size() - 1);
     }
 
     @Override

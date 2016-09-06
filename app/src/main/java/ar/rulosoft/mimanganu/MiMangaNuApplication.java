@@ -28,6 +28,12 @@ public class MiMangaNuApplication extends Application {
         ACRA.init(this);
     }
 
+    @Override public void onCreate() {
+        super.onCreate();
+        // don't delete this, this is used to detect memory leaks ~xtj9182
+        //LeakCanary.install(this);
+    }
+
     public MiMangaNuApplication(){
     }
 
