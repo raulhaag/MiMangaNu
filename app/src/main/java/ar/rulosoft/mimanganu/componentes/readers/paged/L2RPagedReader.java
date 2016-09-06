@@ -70,7 +70,7 @@ public class L2RPagedReader extends HorizontalPagedReader {
         if (paths != null) {
             int intIdx = paths.size() - idx;
             if (mPageAdapter != null && mPageAdapter.getPage(intIdx) != null) {
-                mPageAdapter.getPage(intIdx) .setImage();
+                mPageAdapter.getPage(intIdx).setImage();
             }
         }
     }

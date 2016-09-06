@@ -75,7 +75,11 @@ public abstract class HorizontalReader extends ReaderContinuous {
     }
 
     public void reloadImage(int idx) {
-        int pageIdx = idx - 1;
+        int pageIdx;
+        if(idx == 0)
+            pageIdx = idx;
+        else
+            pageIdx = idx - 1;
         if (pages != null && pageIdx < pages.size() && pageIdx >= 0) {
             int cPage = currentPage;
             if (pages.size() < cPage || cPage < 0)

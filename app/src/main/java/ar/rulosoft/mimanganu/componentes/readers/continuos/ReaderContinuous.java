@@ -331,7 +331,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     }
 
     public boolean isLastPageVisible() {
-            return pages != null && pages.get(pages.size() - 1).isVisible();
+        return pages != null && !pages.isEmpty() && pages.get(pages.size() - 1).isVisible();
     }
 
     public void setScrollSensitive(float mScrollSensitive) {

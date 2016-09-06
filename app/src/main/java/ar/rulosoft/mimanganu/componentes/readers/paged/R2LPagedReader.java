@@ -43,7 +43,7 @@ public class R2LPagedReader extends HorizontalPagedReader {
 
     @Override
     public boolean isLastPageVisible() {
-        return paths != null && mViewPager.getCurrentItem() == (paths.size() - 1);
+        return paths != null && !paths.isEmpty() && mViewPager.getCurrentItem() == (paths.size() - 1);
     }
 
     @Override
