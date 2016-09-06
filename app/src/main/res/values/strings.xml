@@ -122,7 +122,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.53:\n\t* Some bug fixes \n\t* add local search \n\t* Clear cache now also deletes empty directories\n\t* Update to okhttp v3\n\t* Added ReadComicOnline  </string>
+    <string name="update_message">Changes in v1.54:\n\t* replace some toasts with snackbars (on devices that support it) \n\t* fix re-download image crash \n\t* make deleting / removing / resetting chapters asynchronous \n\t* add option to show status bar \n\t* add option to hide actionbar \n\t* add notification for download progress \n\t* adding mangas is now asynchronous \n\t* bug fixes and performance improvements </string>
     <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>
