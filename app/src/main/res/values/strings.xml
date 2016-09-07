@@ -220,4 +220,5 @@
     <string name="error_sqlite_cant_open_database_exception">SQLiteCantOpenDatabaseException: unknown error: Could not open database !</string>
     <string name="error_sqlite_exception_while_trying_to_open_db">SQLiteException while trying to open database !</string>
     <string name="error_exception_while_trying_to_open_db">Exception while trying to open database !</string>
+    <string name="error_exception_while_trying_to_update_db">Exception while trying to update database !</string>
 </resources>
