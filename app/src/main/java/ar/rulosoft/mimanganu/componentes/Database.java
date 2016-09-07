@@ -217,7 +217,7 @@ public class Database extends SQLiteOpenHelper {
             if (!getDatabase(c).isReadOnly())
                 getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
             else {
-                Log.e("Database", "(updateMangaLastIndex) " + c.getResources().getString(R.string.error_database_is_read_only));
+                Log.e("Database", "(setUpgradable) " + c.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
             }
         } catch (SQLiteFullException sqlfe) {
