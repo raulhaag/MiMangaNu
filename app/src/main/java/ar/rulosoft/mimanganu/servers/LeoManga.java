@@ -14,6 +14,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 public class LeoManga extends ServerBase {
 
+    public static String HOST = "leomanga.com";
     private static String[] genres = {
             "Todo",
             "Shonen", "Shojo", "Josei", "Seinen", "Kodomo", "Yuri", "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
@@ -21,8 +22,6 @@ public class LeoManga extends ServerBase {
             "Lolicon", "Magia", "Mecha", "Misterio", "Musical", "One-Shot", "Parodia", "Policíaca", "Psicológica", "Romance", "Shojo Ai",
             "Slice of Life", "Smut", "Sobrenatural", "Superpoderes", "Tragedia"
     };
-
-
     private static String[] categoriasV = {
             "", "?demografia=shonen", "?demografia=shojo", "?demografia=josei",
             "?demografia=seinen", "?demografia=kodomo", "?demografia=yuri",
@@ -38,15 +37,12 @@ public class LeoManga extends ServerBase {
             "?genero=slice-of-life", "?genero=smut", "?genero=sobrenatural",
             "?genero=Superpoderes", "?genero=tragedia",
     };
-
     private static String[] orden = {
             "Lecturas", "Alfabetico", "Valoración", "Fecha"
     };
     private static String[] ordenM = {
             "", "orden=alfabetico", "orden=valoracion", "orden=fecha"
     };
-
-    public static String HOST = "leomanga.com";
 
     public LeoManga() {
         this.setFlag(R.drawable.flag_es);
@@ -84,7 +80,7 @@ public class LeoManga extends ServerBase {
 
             String data = getNavigator().get(manga.getPath());
             manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, defaultSynopsis));
-            String image = getFirstMatchDefault("<img src=\"(/uploads/images/mangas/.+?)\"", data, "");
+            String image = getFirstMatchDefault("<img data-original=\"(.+?)\"", data, "");
             if (image.length() > 4) {
                 manga.setImages("http://" + HOST + image);
             } else {
@@ -144,11 +140,11 @@ public class LeoManga extends ServerBase {
 
     private ArrayList<Manga> getMangasFromSource(String data) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"(/manga/.+?)\".+?<img src=\"(.+?)\" alt=\"(.+?)\"");
+        Pattern p = Pattern.compile("<a href=\"(/manga/.+?)\".+?src=\"(.+?)\" alt=\"(.+?)\"");
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(LEOMANGA, m.group(3), "http://" + HOST + m.group(1), false);
-            manga.setImages("http://" + HOST + m.group(2));
+            manga.setImages("http://" + HOST + m.group(2).replace("thumb-", ""));
             mangas.add(manga);
         }
         return mangas;

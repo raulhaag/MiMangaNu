@@ -202,4 +202,16 @@
     <string name="write_timeout_title">Write Timeout</string>
     <string name="read_timeout_title">Read Timeout</string>
     <string name="delete_confirm">¿Estás seguro de borrar estos capítulos?</string>
+    <string name="x_of_y_chapters_downloaded">Capítulos descargados %1$d de %2$d</string>
+    <string name="show_status_bar_title">Mostrar barra de estado</string>
+    <string name="show_status_bar_subtitle">Esto dejara visible la barra de estado mientras lees</string>
+    <string name="resetting_chapters">Reiniciando capítulos…</string>
+    <string name="removing_chapters">Quitando capítulos…</string>
+    <string name="deleting">Borrando…</string>
+    <string name="hide_actionbar_subtitle">Oculta al ActionBar cuando se lea fuera de pantalla completa</string>
+    <string name="hide_actionbar_title">Ocultar ActionBar</string>
+    <string name="manga_delete_confirm">¿Quieres borrar %s?</string>
+    <string name="marking_as_read">Marcando como leido…</string>
+    <string name="marking_as_unread">Marcando como no leido…</string>
+    <string name="notification_tray_is_full">La actualizacion se ha cancelado por esta su bandeja de notificaciones llena. Por favor remoeva algunas.</string>
 </resources>
