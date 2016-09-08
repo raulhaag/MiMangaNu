@@ -58,14 +58,21 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private static final String TAG = "MangaFragment";
     public SwipeRefreshLayout swipeReLayout;
     public Manga mManga;
+    public int mMangaId;
     private SearchForNewChapters searchForNewChapters = new SearchForNewChapters();
+    private RemoveChapters removeChapters = null;
+    private ResetChapters resetChapters = null;
+    private DeleteImages deleteImages = null;
+    private MarkSelectedAsRead markSelectedAsRead = null;
+    private MarkSelectedAsUnread markSelectedAsUnread = null;
+    private GetPagesTask getPagesTask = null;
     private Direction mDirection;
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
     private ImageLoader mImageLoader;
     private ListView mListView;
     private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
-    private int mMangaId, readerType;
+    private int readerType;
     private int chapters_order; // 0 = db_desc | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc | 5 = db_asc
     private Menu menu;
     private ControlInfoNoScroll mInfo;
@@ -137,7 +144,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Chapter c = (Chapter) mListView.getAdapter().getItem(position);
-                new GetPagesTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
+                getPagesTask = new GetPagesTask();
+                getPagesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
             }
         });
         mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -182,11 +190,14 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         new AsyncAddChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChapterAdapter.getSelectedChapters());
                         break;
                     case R.id.mark_as_read_and_delete_images:
-                        new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        new DeleteImages(serverBase, selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        markSelectedAsRead = new MarkSelectedAsRead(selection.size());
+                        markSelectedAsRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        deleteImages = new DeleteImages(serverBase, selection.size());
+                        deleteImages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.delete_images:
-                        new DeleteImages(serverBase, selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        deleteImages = new DeleteImages(serverBase, selection.size());
+                        deleteImages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.remove_chapter:
                         finish = false;
@@ -210,7 +221,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                                                 mode.finish();
                                             }
                                         } else {
-                                            new RemoveChapters(serverBase, selection.size(), mode).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                            removeChapters = new RemoveChapters(serverBase, selection.size(), mode);
+                                            removeChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                         }
                                     }
                                 });
@@ -219,13 +231,16 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         confirm.show();
                         break;
                     case R.id.reset_chapter:
-                        new ResetChapters(serverBase, selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        resetChapters = new ResetChapters(serverBase, selection.size());
+                        resetChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.mark_selected_as_read:
-                        new MarkSelectedAsRead(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        markSelectedAsRead = new MarkSelectedAsRead(selection.size());
+                        markSelectedAsRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                     case R.id.mark_selected_as_unread:
-                        new MarkSelectedAsUnread(selection.size()).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        markSelectedAsUnread = new MarkSelectedAsUnread(selection.size());
+                        markSelectedAsUnread.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                         break;
                 }
                 mChapterAdapter.notifyDataSetChanged();
@@ -274,19 +289,21 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     public void loadChapters(ArrayList<Chapter> chapters) {
-        int fvi = 0;
-        if (mChapterAdapter != null) {
-            fvi = mListView.getFirstVisiblePosition();
-            mChapterAdapter.replaceData(chapters);
-        } else {
-            if (mActivity != null)
-                mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder));
+        if(isAdded()) {
+            int fvi = 0;
+            if (mChapterAdapter != null) {
+                fvi = mListView.getFirstVisiblePosition();
+                mChapterAdapter.replaceData(chapters);
+            } else {
+                if (mActivity != null)
+                    mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder));
+            }
+            if (mListView != null) {
+                mListView.setAdapter(mChapterAdapter);
+                mListView.setSelection(mManga.getLastIndex());
+            }
+            if (fvi != 0) mListView.setSelection(fvi);
         }
-        if (mListView != null) {
-            mListView.setAdapter(mChapterAdapter);
-            mListView.setSelection(mManga.getLastIndex());
-        }
-        if (fvi != 0) mListView.setSelection(fvi);
     }
 
     @Override
@@ -462,7 +479,20 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     public void onDetach() {
         super.onDetach();
         mActivity = null;
-        searchForNewChapters.cancel(true);
+        if(searchForNewChapters != null)
+            searchForNewChapters.cancel(true);
+        if(removeChapters != null)
+            removeChapters.cancel(true);
+        if(resetChapters != null)
+            resetChapters.cancel(true);
+        if(deleteImages != null)
+            deleteImages.cancel(true);
+        if(markSelectedAsRead != null)
+            markSelectedAsRead.cancel(true);
+        if(markSelectedAsUnread != null)
+            markSelectedAsUnread.cancel(true);
+        if(getPagesTask != null)
+            getPagesTask.cancel(true);
     }
 
     @Override
@@ -523,14 +553,14 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncdialog = new ProgressDialog(getActivity());
+        ProgressDialog asyncProgressDialog = new ProgressDialog(getContext());
         String error = "";
 
         @Override
         protected void onPreExecute() {
             try {
-                asyncdialog.setMessage(getResources().getString(R.string.iniciando));
-                asyncdialog.show();
+                asyncProgressDialog.setMessage(getResources().getString(R.string.iniciando));
+                asyncProgressDialog.show();
             } catch (Exception e) {
                 Log.e(TAG, "Exception", e);
             }
@@ -553,19 +583,22 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            if (asyncdialog != null && isAdded())
-                asyncdialog.dismiss();
+            if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                asyncProgressDialog.dismiss();
+            }
             super.onProgressUpdate(values);
         }
 
         @Override
         protected void onPostExecute(Chapter result) {
             if (isAdded()) {
-                if (error != null && error.length() > 1 && mActivity != null) {
-                    Util.getInstance().showFastSnackBar(error, mActivity);
+                if (error != null && error.length() > 1) {
+                    Util.getInstance().showFastSnackBar(error, getContext());
                 } else {
                     try {
-                        asyncdialog.dismiss();
+                        if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                            asyncProgressDialog.dismiss();
+                        }
                         Database.updateChapter(getActivity(), result);
                         DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                         int first = mListView.getFirstVisiblePosition();
@@ -574,13 +607,20 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
                         MangaFragment.this.startActivity(intent);
                     } catch (Exception e) {
-                        if (e.getMessage() != null && mActivity != null) {
-                            Util.getInstance().showFastSnackBar(e.getMessage(), mActivity);
+                        if (e.getMessage() != null) {
+                            Util.getInstance().showFastSnackBar(e.getMessage(), getContext());
                         }
                     }
                 }
             }
             super.onPostExecute(result);
+        }
+
+        @Override
+        protected void onCancelled() {
+            if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                asyncProgressDialog.dismiss();
+            }
         }
     }
 
@@ -631,11 +671,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             if (result > 0) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, result), mActivity);
+                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, result), getContext());
                 }
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(errorMsg, mActivity);
+                    Util.getInstance().showFastSnackBar(errorMsg, getContext());
                 }
             }
             running = false;
@@ -704,7 +744,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(isAdded())
+                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -722,7 +763,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(isAdded())
+                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
     }
 
@@ -746,12 +788,14 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Void doInBackground(Void... params) {
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < selectionSize; i++) {
-                if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 1) {
-                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
-                    chapter.markRead(getActivity(), true);
-                    if (System.currentTimeMillis() - initTime > 500) {
-                        publishProgress(i);
-                        initTime = System.currentTimeMillis();
+                if(isAdded() && !isCancelled()) {
+                    if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 1) {
+                        chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                        chapter.markRead(getActivity(), true);
+                        if (System.currentTimeMillis() - initTime > 250) {
+                            publishProgress(i);
+                            initTime = System.currentTimeMillis();
+                        }
                     }
                 }
             }
@@ -767,6 +811,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            mChapterAdapter.notifyDataSetChanged();
+            Util.getInstance().cancelNotification(mNotifyID_MarkSelectedAsRead);
+        }
+
+        @Override
+        protected void onCancelled() {
             Util.getInstance().cancelNotification(mNotifyID_MarkSelectedAsRead);
         }
     }
@@ -791,12 +841,14 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Void doInBackground(Void... params) {
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < selectionSize; i++) {
-                if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 0) {
-                    chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
-                    chapter.markRead(getActivity(), false);
-                    if (System.currentTimeMillis() - initTime > 500) {
-                        publishProgress(i);
-                        initTime = System.currentTimeMillis();
+                if(isAdded() && !isCancelled()) {
+                    if (mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i)).getReadStatus() != 0) {
+                        chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
+                        chapter.markRead(getActivity(), false);
+                        if (System.currentTimeMillis() - initTime > 250) {
+                            publishProgress(i);
+                            initTime = System.currentTimeMillis();
+                        }
                     }
                 }
             }
@@ -812,6 +864,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onPostExecute(Void aVoid) {
+            mChapterAdapter.notifyDataSetChanged();
+            Util.getInstance().cancelNotification(mNotifyID_MarkSelectedAsUnread);
+        }
+
+        @Override
+        protected void onCancelled() {
             Util.getInstance().cancelNotification(mNotifyID_MarkSelectedAsUnread);
         }
     }
@@ -837,10 +895,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Integer doInBackground(Void... params) {
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < selectionSize; i++) {
-                if(isAdded()) {
+                if(isAdded() && !isCancelled()) {
                     chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
                     chapter.freeSpace(getActivity(), mManga, serverBase);
-                    if (System.currentTimeMillis() - initTime > 500) {
+                    if (System.currentTimeMillis() - initTime > 250) {
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
@@ -860,6 +918,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
+            mChapterAdapter.notifyDataSetChanged();
+            Util.getInstance().cancelNotification(mNotifyID_DeleteImages);
+        }
+
+        @Override
+        protected void onCancelled() {
             Util.getInstance().cancelNotification(mNotifyID_DeleteImages);
         }
     }
@@ -888,7 +952,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Integer doInBackground(Void... params) {
             long initTime = System.currentTimeMillis();
             for (int i = selectionSize - 1; i >= 0; i--) {
-                if(isAdded()) {
+                if(isAdded() && !isCancelled()) {
                     chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
                     chapter.delete(getActivity(), mManga, serverBase);
                     Handler handler = new Handler(Looper.getMainLooper());
@@ -900,7 +964,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         }
                     });
                     j++;
-                    if (System.currentTimeMillis() - initTime > 500) {
+                    if (System.currentTimeMillis() - initTime > 250) {
                         publishProgress(j);
                         initTime = System.currentTimeMillis();
                     }
@@ -919,9 +983,16 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(isAdded())
+                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             Util.getInstance().cancelNotification(mNotifyID_RemoveChapters);
         }
+
+        @Override
+        protected void onCancelled() {
+            Util.getInstance().cancelNotification(mNotifyID_RemoveChapters);
+        }
+
     }
 
     private class ResetChapters extends AsyncTask<Void, Integer, Integer> {
@@ -945,10 +1016,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected Integer doInBackground(Void... params) {
             long initTime = System.currentTimeMillis();
             for (int i = 0; i < selectionSize; i++) {
-                if(isAdded()) {
+                if(isAdded() && !isCancelled()) {
                     chapter = mChapterAdapter.getItem(mChapterAdapter.getSelection().keyAt(i));
                     chapter.reset(getActivity(), mManga, serverBase);
-                    if (System.currentTimeMillis() - initTime > 500) {
+                    if (System.currentTimeMillis() - initTime > 250) {
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
@@ -967,7 +1038,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
-            new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(isAdded())
+                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            Util.getInstance().cancelNotification(mNotifyID_ResetChapters);
+        }
+
+        @Override
+        protected void onCancelled() {
             Util.getInstance().cancelNotification(mNotifyID_ResetChapters);
         }
     }

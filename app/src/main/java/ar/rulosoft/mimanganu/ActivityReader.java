@@ -655,7 +655,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                                 if (del_images) {
                                     pChapter.freeSpace(ActivityReader.this);
                                 }
-                                mDialog.dismiss();
+                                if (mDialog != null && mDialog.isShowing())
+                                    mDialog.dismiss();
                                 mDialog = null;
                             }
                         })
@@ -821,6 +822,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            if(!isDestroyed())
+                mActionBar.setVisibility(View.INVISIBLE);
             idx = mReader.getCurrentPage();
             mReader.freePage(idx);
             path = mReader.getPath(idx);
@@ -852,6 +855,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             if (error.length() > 3) {
                 Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
             }
+            if(!isDestroyed())
+                mActionBar.setVisibility(View.VISIBLE);
         }
     }
 

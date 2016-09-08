@@ -15,6 +15,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.fedorvlasov.lazylist.FileCache;
@@ -391,6 +392,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     public class calcStorage extends AsyncTask<String, Void, Long> {
         Preference prefStoreStat = getPreferenceManager().findPreference("stat_storage");
         Preference prefRamUsage = getPreferenceManager().findPreference("ram_usage");
+        boolean allOk = true;
+        String error;
 
         @Override
         protected void onPreExecute() {
@@ -400,43 +403,52 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         @Override
         protected Long doInBackground(String... strings) {
             long store_total = 0;
-            File[] listStore = new File(strings[0]).listFiles();
-            for (final File oneFold : listStore) {
-                if (oneFold.getName().equals("cache") || oneFold.getName().equals("dbs"))
-                    continue;
-                store_total += Util.getInstance().dirSize(oneFold);
+            try {
+                File[] listStore = new File(strings[0]).listFiles();
+                for (final File oneFold : listStore) {
+                    if (oneFold.getName().equals("cache") || oneFold.getName().equals("dbs"))
+                        continue;
+                    store_total += Util.getInstance().dirSize(oneFold);
 
-                final double cSize = store_total / (1024.0 * 1024.0);
-                if (cSize > 1024.0) {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize / 1024.0) + " GB");
-                        }
-                    });
+                    final double cSize = store_total / (1024.0 * 1024.0);
+                    if (cSize > 1024.0) {
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize / 1024.0) + " GB");
+                            }
+                        });
+                    } else {
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize) + " MB");
+                            }
+                        });
+                    }
+                    publishProgress();
                 }
-                else {
-                    Handler handler = new Handler(Looper.getMainLooper());
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize) + " MB");
-                        }
-                    });
-                }
-                publishProgress();
+            } catch (Exception e) {
+                allOk = false;
+                error = Log.getStackTraceString(e);
             }
             return store_total;
         }
 
         @Override
         protected void onPostExecute(Long l) {
-            double cSize = l / (1024.0 * 1024.0);
-            if (cSize > 1024.0)
-                prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
-            else
-                prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
+            if (allOk) {
+                double cSize = l / (1024.0 * 1024.0);
+                if (cSize > 1024.0)
+                    prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
+                else
+                    prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
+            } else {
+                Log.e("PrefFragment", "" + error);
+                Util.getInstance().toast(getContext(), "" + error);
+            }
             super.onPostExecute(l);
         }
     }

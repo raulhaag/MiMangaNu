@@ -4,8 +4,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.SQLException;
+import android.database.sqlite.SQLiteCantOpenDatabaseException;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteDatabaseCorruptException;
+import android.database.sqlite.SQLiteDiskIOException;
+import android.database.sqlite.SQLiteFullException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
 import android.preference.PreferenceManager;
@@ -95,10 +100,10 @@ public class Database extends SQLiteOpenHelper {
         this.context = context;
     }
 
-    public static SQLiteDatabase getDatabase(Context c) {
+    public static SQLiteDatabase getDatabase(Context context) {
         // Setup path and database name
         if (database_path == null || database_path.length() == 0) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             database_path = (prefs.getString("directorio",
                     Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
             database_name = "mangas.db";
@@ -106,7 +111,21 @@ public class Database extends SQLiteOpenHelper {
         if (!new File(database_path).exists())
             new File(database_path).mkdirs();
         if ((localDB == null) || !localDB.isOpen()) {
-            localDB = new Database(c).getReadableDatabase();
+            try {
+                localDB = new Database(context).getReadableDatabase();
+            } catch (SQLiteDatabaseCorruptException sqldce) {
+                Log.e("Database", "" + Log.getStackTraceString(sqldce));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_database_corrupt_exception));
+            } catch (SQLiteCantOpenDatabaseException sqlcode) {
+                Log.e("Database", "" + Log.getStackTraceString(sqlcode));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_cant_open_database_exception));
+            } catch (SQLException sqle) {
+                Log.e("Database", "" + Log.getStackTraceString(sqle));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_exception_while_trying_to_open_db));
+            } catch (Exception e) {
+                Log.e("Database", "" + Log.getStackTraceString(e));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_open_db));
+            }
         }
         return localDB;
     }
@@ -132,7 +151,7 @@ public class Database extends SQLiteOpenHelper {
         try {
             tmp = (int) getDatabase(context).insertOrThrow(TABLE_MANGA, null, setMangaCV(manga, true));
         } catch (Exception e){
-            e.printStackTrace();
+            Log.e("Database", Log.getStackTraceString(e));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, manga.getTitle()));
         }
         return tmp;
@@ -146,35 +165,116 @@ public class Database extends SQLiteOpenHelper {
      * setTime = true is "updateManga"
      */
     public static void updateManga(Context context, Manga manga, boolean setTime) {
-        getDatabase(context).update(TABLE_MANGA,
-                setMangaCV(manga, setTime), COL_ID + "=" + manga.getId(), null);
+        try {
+            if (!getDatabase(context).isReadOnly())
+                getDatabase(context).update(TABLE_MANGA, setMangaCV(manga, setTime), COL_ID + "=" + manga.getId(), null);
+            else {
+                Log.e("Database", "(updateManga) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            outputMangaDebugInformation(manga);
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            outputMangaDebugInformation(manga);
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            outputMangaDebugInformation(manga);
+            Util.getInstance().toast(context, context.getString(R.string.error_while_updating_chapter_or_manga_in_db, manga.getTitle()));
+        }
     }
 
     public static void updateMangaRead(Context c, int mid) {
         ContentValues cv = new ContentValues();
         cv.put(COL_LAST_READ, System.currentTimeMillis());
         cv.put(COL_NEW, 0);
-        getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+        try {
+            if (!getDatabase(c).isReadOnly())
+                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            else {
+                Log.e("Database", "(updateMangaRead) " + c.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
+            }
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(c, c.getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     public static void setUpgradable(Context c, int mangaid, boolean buscar) {
         ContentValues cv = new ContentValues();
         cv.put(COL_SEARCH, buscar ? 1 : 0);
-        getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
+        try {
+            if (!getDatabase(c).isReadOnly())
+                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
+            else {
+                Log.e("Database", "(setUpgradable) " + c.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
+            }
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(c, c.getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     public static void updateMangaLastIndex(Context c, int mid, int idx) {
         ContentValues cv = new ContentValues();
         cv.put(COL_LAST_INDEX, idx);
-        getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+        try {
+            if (!getDatabase(c).isReadOnly())
+                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            else {
+                Log.e("Database", "(updateMangaLastIndex) " + c.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
+            }
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(c, c.getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     public static void updateMangaScrollSensitive(Context c, int mid, float nScroll) {
         ContentValues cv = new ContentValues();
         cv.put(COL_SCROLL_SENSITIVE, nScroll);
-        getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+        try {
+            if (!getDatabase(c).isReadOnly())
+                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            else {
+                Log.e("Database", "(updateMangaScrollSensitive) " + c.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
+            }
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(c, c.getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
-
 
     public static void updateNewMangas(Context c, Manga m, int news) {
         int actual = 0;
@@ -208,21 +308,19 @@ public class Database extends SQLiteOpenHelper {
         try {
             getDatabase(context).insertOrThrow(TABLE_CHAPTERS, null, contentValues);
         } catch (SQLiteConstraintException sqlce) {
+            // remove orphaned chapters and try again
             try {
                 removeOrphanedChapters(context);
                 getDatabase(context).insertOrThrow(TABLE_CHAPTERS, null, contentValues);
             } catch (Exception e) {
-                e.printStackTrace();
-                Log.d("Database", "Manga_ID: " + mangaId);
-                Log.d("Database", "Title: " + chapter.getTitle());
-                Log.d("Database", "Path: " + chapter.getPath());
-                Log.d("Database", "Pages: " + chapter.getPages());
-                Log.d("Database", "Pages Read: " + chapter.getPagesRead());
-                Log.d("Database", "Read Status: " + chapter.getReadStatus());
-                Log.d("Database", "isDownloaded: " + chapter.isDownloaded());
-                Log.d("Database", "Extra: " + chapter.getExtra());
+                Log.e("Database", "" + Log.getStackTraceString(e));
+                outputChapterDebugInformation(chapter, mangaId);
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, chapter.getTitle()));
             }
+        } catch (Exception e){
+            Log.e("Database", "" + Log.getStackTraceString(e));
+            outputChapterDebugInformation(chapter, mangaId);
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, chapter.getTitle()));
         }
     }
 
@@ -236,17 +334,47 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_EXTRA,chapter.getExtra());
         try {
             getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + chapter.getId(), null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", "" + Log.getStackTraceString(sqlfe));
+            outputChapterDebugInformation(chapter);
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", "" + Log.getStackTraceString(sqldioe));
+            outputChapterDebugInformation(chapter);
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
         } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("Database", "Title: " + chapter.getTitle());
-            Log.d("Database", "Path: " + chapter.getPath());
-            Log.d("Database", "Pages: " + chapter.getPages());
-            Log.d("Database", "Pages Read: " + chapter.getPagesRead());
-            Log.d("Database", "Read Status: " + chapter.getReadStatus());
-            Log.d("Database", "isDownloaded: " + chapter.isDownloaded());
-            Log.d("Database", "Extra: " + chapter.getExtra());
+            Log.e("Database", "" + Log.getStackTraceString(e));
+            outputChapterDebugInformation(chapter);
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_updating_chapter_or_manga_in_db, chapter.getTitle()));
         }
+    }
+
+    private static void outputMangaDebugInformation(Manga manga) {
+        Log.i("Database", "Title: " + manga.getTitle());
+        Log.i("Database", "ID: " + manga.getId());
+        Log.i("Database", "Path: " + manga.getPath());
+        Log.i("Database", "Server ID: " + manga.getServerId());
+    }
+
+    private static void outputChapterDebugInformation(Chapter chapter, int mangaId) {
+        Log.i("Database", "Manga_ID: " + mangaId);
+        Log.i("Database", "Title: " + chapter.getTitle());
+        Log.i("Database", "Path: " + chapter.getPath());
+        Log.i("Database", "Pages: " + chapter.getPages());
+        Log.i("Database", "Pages Read: " + chapter.getPagesRead());
+        Log.i("Database", "Read Status: " + chapter.getReadStatus());
+        Log.i("Database", "isDownloaded: " + chapter.isDownloaded());
+        Log.i("Database", "Extra: " + chapter.getExtra());
+    }
+
+    private static void outputChapterDebugInformation(Chapter chapter) {
+        Log.i("Database", "Title: " + chapter.getTitle());
+        Log.i("Database", "Path: " + chapter.getPath());
+        Log.i("Database", "Pages: " + chapter.getPages());
+        Log.i("Database", "Pages Read: " + chapter.getPagesRead());
+        Log.i("Database", "Read Status: " + chapter.getReadStatus());
+        Log.i("Database", "isDownloaded: " + chapter.isDownloaded());
+        Log.i("Database", "Extra: " + chapter.getExtra());
     }
 
     public static ArrayList<Manga> getMangasForUpdates(Context context) {
@@ -260,53 +388,59 @@ public class Database extends SQLiteOpenHelper {
     public static ArrayList<Manga> getMangasCondition(
             Context context, String condition, String sortBy, boolean asc) {
         if (sortBy == null) sortBy = COL_LAST_READ;
-        Cursor cursor = getDatabase(context).query(
-                TABLE_MANGA,
-                new String[]{
-                        COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
-                        COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_SEARCH, COL_LAST_INDEX,
-                        COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE, COL_READER
-                },
-                condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
+        Cursor cursor = null;
+        if(getDatabase(context) != null) {
+            cursor = getDatabase(context).query(
+                    TABLE_MANGA,
+                    new String[]{
+                            COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
+                            COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_SEARCH, COL_LAST_INDEX,
+                            COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE, COL_READER
+                    },
+                    condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
+        }
+
         return getMangasFromCursor(cursor);
     }
 
     public static ArrayList<Manga> getMangasFromCursor(Cursor cursor) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        if (cursor.moveToFirst()) {
-            int colId = cursor.getColumnIndex(COL_ID);
-            int colServerId = cursor.getColumnIndex(COL_SERVER_ID);
-            int colTitle = cursor.getColumnIndex(COL_NAME);
-            int colSynopsis = cursor.getColumnIndex(COL_SYNOPSIS);
-            int colImage = cursor.getColumnIndex(COL_IMAGE);
-            int colWeb = cursor.getColumnIndex(COL_PATH);
-            int colNew = cursor.getColumnIndex(COL_NEW);
-            int colSearch = cursor.getColumnIndex(COL_SEARCH);
-            int colLastIdx = cursor.getColumnIndex(COL_LAST_INDEX);
-            int colOrder = cursor.getColumnIndex(COL_READ_ORDER);
-            int colAuthor = cursor.getColumnIndex(COL_AUTHOR);
-            int colScroll = cursor.getColumnIndex(COL_SCROLL_SENSITIVE);
-            int colGenre = cursor.getColumnIndex(COL_GENRE);
-            int colReader = cursor.getColumnIndex(COL_READER);
+        if(cursor != null) {
+            if (cursor.moveToFirst()) {
+                int colId = cursor.getColumnIndex(COL_ID);
+                int colServerId = cursor.getColumnIndex(COL_SERVER_ID);
+                int colTitle = cursor.getColumnIndex(COL_NAME);
+                int colSynopsis = cursor.getColumnIndex(COL_SYNOPSIS);
+                int colImage = cursor.getColumnIndex(COL_IMAGE);
+                int colWeb = cursor.getColumnIndex(COL_PATH);
+                int colNew = cursor.getColumnIndex(COL_NEW);
+                int colSearch = cursor.getColumnIndex(COL_SEARCH);
+                int colLastIdx = cursor.getColumnIndex(COL_LAST_INDEX);
+                int colOrder = cursor.getColumnIndex(COL_READ_ORDER);
+                int colAuthor = cursor.getColumnIndex(COL_AUTHOR);
+                int colScroll = cursor.getColumnIndex(COL_SCROLL_SENSITIVE);
+                int colGenre = cursor.getColumnIndex(COL_GENRE);
+                int colReader = cursor.getColumnIndex(COL_READER);
 
-            do {
-                Manga manga = new Manga(cursor.getInt(colServerId),
-                        cursor.getString(colTitle), cursor.getString(colWeb), false);
-                manga.setSynopsis(cursor.getString(colSynopsis));
-                manga.setImages(cursor.getString(colImage));
-                manga.setId(cursor.getInt(colId));
-                manga.setNews(cursor.getInt(colNew));
-                manga.setFinished(cursor.getInt(colSearch) > 0);
-                manga.setLastIndex(cursor.getInt(colLastIdx));
-                manga.setReadingDirection(cursor.getInt(colOrder));
-                manga.setAuthor(cursor.getString(colAuthor));
-                manga.setScrollSensitive(cursor.getFloat(colScroll));
-                manga.setGenre(cursor.getString(colGenre));
-                manga.setReaderType(cursor.getInt(colReader));
-                mangas.add(manga);
-            } while (cursor.moveToNext());
+                do {
+                    Manga manga = new Manga(cursor.getInt(colServerId),
+                            cursor.getString(colTitle), cursor.getString(colWeb), false);
+                    manga.setSynopsis(cursor.getString(colSynopsis));
+                    manga.setImages(cursor.getString(colImage));
+                    manga.setId(cursor.getInt(colId));
+                    manga.setNews(cursor.getInt(colNew));
+                    manga.setFinished(cursor.getInt(colSearch) > 0);
+                    manga.setLastIndex(cursor.getInt(colLastIdx));
+                    manga.setReadingDirection(cursor.getInt(colOrder));
+                    manga.setAuthor(cursor.getString(colAuthor));
+                    manga.setScrollSensitive(cursor.getFloat(colScroll));
+                    manga.setGenre(cursor.getString(colGenre));
+                    manga.setReaderType(cursor.getInt(colReader));
+                    mangas.add(manga);
+                } while (cursor.moveToNext());
+            }
+            cursor.close();
         }
-        cursor.close();
         return mangas;
     }
 
@@ -320,7 +454,7 @@ public class Database extends SQLiteOpenHelper {
             manga = getMangasCondition(context, COL_ID + "=" + mangaID, null, false).get(0);
             manga.setChapters(getChapters(context, mangaID, "1", asc));
         } catch (Exception ignore) {
-            // ignore this
+            Log.d("Database", Log.getStackTraceString(ignore));
         }
         return manga;
     }
@@ -400,10 +534,21 @@ public class Database extends SQLiteOpenHelper {
         return cap;
     }
 
-    public static void updateChapterDownloaded(Context c, int cid, int state) {
+    public static void updateChapterDownloaded(Context context, int cid, int state) {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_DOWNLOADED, state);
-        getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+        try {
+            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     public static void updateChapterPlusDownload(Context context, Chapter cap) {
@@ -414,14 +559,35 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_STATE, cap.getReadStatus());
         cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
         cv.put(COL_CAP_DOWNLOADED, cap.isDownloaded() ? 1 : 0);
-        getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + cap.getId(), null);
-
+        try {
+            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + cap.getId(), null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
-    public static void updateChapterPage(Context c, int cid, int pages) {
+    public static void updateChapterPage(Context context, int cid, int pages) {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_PAG_READ, pages);
-        getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+        try {
+            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     public static void deleteManga(Context c, int mid) {
@@ -474,26 +640,59 @@ public class Database extends SQLiteOpenHelper {
         return manga;
     }
 
-    public static void markChapter(Context c, int capId, boolean read) {
+    public static void markChapter(Context context, int capId, boolean read) {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_STATE, read ? Chapter.READ : Chapter.UNREAD);
-        getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + capId, null);
+        try {
+            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + capId, null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
-    public static void markAllChapters(Context c, int mangaId, boolean read) {
+    public static void markAllChapters(Context context, int mangaId, boolean read) {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_STATE, read ? Chapter.READ : Chapter.UNREAD);
-        getDatabase(c).update(TABLE_CHAPTERS, cv, COL_CAP_ID_MANGA + " = " + mangaId, null);
+        try {
+            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID_MANGA + " = " + mangaId, null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     public static void removeOrphanedChapters(Context c) {
         getDatabase(c).delete(TABLE_CHAPTERS, COL_CAP_ID_MANGA + "= -1", null);
     }
 
-    public static void updateReadOrder(Context c, int ordinal, int mid) {
+    public static void updateReadOrder(Context context, int ordinal, int mid) {
         ContentValues cv = new ContentValues();
         cv.put(COL_READ_ORDER, ordinal);
-        getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+        try {
+            getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", Log.getStackTraceString(sqlfe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", Log.getStackTraceString(sqldioe));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_disk_io_exception));
+        } catch (Exception e) {
+            Log.e("Database", Log.getStackTraceString(e));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_exception_while_trying_to_update_db));
+        }
     }
 
     @Override

@@ -35,7 +35,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected void onPreExecute() {
-        if(showProgressDialog){
+        if (showProgressDialog && addingProgressDialog != null) {
             addingProgressDialog.setMessage(mActivity.getResources().getString(R.string.adding_to_db));
             addingProgressDialog.show();
         }
@@ -83,7 +83,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
             mActivity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (addingProgressDialog != null) {
+                    if (addingProgressDialog != null && addingProgressDialog.isShowing()) {
                         addingProgressDialog.setMessage(mActivity.getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
                     }
                 }
@@ -94,7 +94,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if(showProgressDialog)
+        if(showProgressDialog && addingProgressDialog != null && addingProgressDialog.isShowing())
             addingProgressDialog.dismiss();
         if (mActivity != null) {
             if (backOnFinish)

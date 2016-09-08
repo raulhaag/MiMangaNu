@@ -267,7 +267,28 @@ The MIT License (MIT)
      The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-Thanks to sephiroth74 for the library ImageViewTouch, thest1 for LazyList and castorflex for VerticalViewPager.
+MiMangaNu uses the following libraries (in chronological order) :
+
+ACRA (https://github.com/ACRA/acra) with Tracepot (http://www.tracepot.com/) as backend.
+
+duktape (https://github.com/square/duktape-android)
+
+ImageViewTouch (https://github.com/sephiroth74/ImageViewZoom)
+
+LazyList (https://github.com/thest1/LazyList)
+
+Okhttp (https://github.com/square/okhttp)
+
+okio (https://square.github.io/okhttp/)
+
+PersistentCookieJar (https://github.com/franmontiel/PersistentCookieJar)
+
+RapidDecoder (https://github.com/suckgamony/RapidDecoder)
+
+VerticalViewPager (https://github.com/castorflex/VerticalViewPager)
+
+Our thanks goes out to all of the above mentioned Libraries' authors and contributors.
+We are not explicitly endorsed by any of them.
 
 Contribuciones de Dostoi, TheSniperFan, xtj-9182, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
 
