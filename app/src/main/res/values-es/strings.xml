@@ -99,7 +99,7 @@
     <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
-    <string name="update_message">Cambios en v1.53:\n\t* Bastantes bug fixes \n\t* Busqueda en coleccion \n\t* Limpiar cache extendido\n\t* Actualizado okhttp v3\n\t* Agregado ReadComicOnline</string>
+    <string name="update_message">Cambios en v1.54:\n\t* Reemplazados toasts con snackbars \n\t* bugfix re-download image \n\t* Borrar / reset de capítulos ahora se hace de fondo \n\t* Agregada opcion para mostrar status bar \n\t* Agregada opcion para ocultar actionbar \n\t* Agregada notificacion de descargas \n\t* Agregar mangas ahora lo hace de fondo \n\t* bug fixes and y mejoras en performance </string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="ui_settings">Configuración de UI</string>
     <string name="download_selection">Descargar seleccion</string>
@@ -214,4 +214,5 @@
     <string name="marking_as_read">Marcando como leido…</string>
     <string name="marking_as_unread">Marcando como no leido…</string>
     <string name="notification_tray_is_full">La actualizacion se ha cancelado por esta su bandeja de notificaciones llena. Por favor remoeva algunas.</string>
+    <string name="error_database_is_read_only"></string>
 </resources>
