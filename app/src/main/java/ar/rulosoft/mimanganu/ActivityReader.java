@@ -54,17 +54,15 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
 public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener {
 
-    enum LoadMode {START, END, SAVED}
-
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
     private static final String MAX_TEXTURE = "max_texture";
     private static final String ADJUST_KEY = "ajustar_a";
-
     private static int mTextureMax;
     private static DisplayType mScreenFit;
     public Reader mReader;
     boolean updatedValue = false;//just a flag to no seek when the reader seek
+    FrameLayout rLayout = null;
     private Direction direction;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
@@ -97,7 +95,6 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         }
         mChapter = Database.getChapter(this, chapterId);
         mManga = Database.getFullManga(this, mChapter.getMangaID());
-
         pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
@@ -119,14 +116,17 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
         }
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mServerBase = ServerBase.getServer(mManga.getServerId());
         mActionBar = (Toolbar) findViewById(R.id.action_bar);
         mActionBar.setTitleTextColor(Color.WHITE);
-
-
+        if (pm.getBoolean("show_status_bar", false)) {
+            rLayout = (FrameLayout) findViewById(R.id.parent);
+            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+            lp.setMargins(0, (int) (24 * getResources().getDisplayMetrics().density), 0, 0);
+            rLayout.setLayoutParams(lp);
+        }
         mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
         mControlsLayout.setAlpha(0f);
         mControlsLayout.setVisibility(View.GONE);
@@ -762,6 +762,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
         }
     }
+
+    enum LoadMode {START, END, SAVED}
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncDialog = new ProgressDialog(ActivityReader.this);
