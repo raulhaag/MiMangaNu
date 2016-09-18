@@ -202,11 +202,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 } else {
                     AlarmReceiver.stopAlarms(getActivity().getApplicationContext());
                 }
+
+                if(time == -1)
+                    MainActivity.coldStart = false;
+
                 return true;
             }
         });
 
-        /** This.. sets the Version Number, that's all */
+        /** This sets the Version Number, that's all */
         final Preference prefAbout = getPreferenceManager().findPreference("about_text");
         prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 

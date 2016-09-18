@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -343,6 +344,13 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private void initPool() {
+        PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DPS_wakelock");
+        try {
+            wakeLock.acquire();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Util.getInstance().createNotificationWithProgressbar(getApplicationContext(), mNotifyID, getResources().getString(R.string.downloading), "");
         Manga manga = null;
         ServerBase s = null;
@@ -375,8 +383,9 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                                 server.chapterInit(d.chapter);
                                 d.reset();
                             } catch (Exception e) {
-                            }finally {
-                                if(d.chapter.getPages() == 0)
+                                e.printStackTrace();
+                            } finally {
+                                if (d.chapter.getPages() == 0)
                                     d.status = DownloadStatus.ERROR;
                             }
                         Database.updateChapter(getApplicationContext(), d.chapter);
@@ -445,6 +454,12 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                     MainFragment.mangaFragment.loadChapters(Database.getChapters(getApplicationContext(), MainFragment.mangaFragment.mMangaId));
             }
         });
+        try {
+            if (wakeLock.isHeld())
+                wakeLock.release();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean hasDownloadsPending() {

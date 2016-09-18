@@ -102,6 +102,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
         }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+        long updaterInterval = Long.parseLong(pm.getString("update_interval", "0"));
+        if (MainActivity.coldStart && updaterInterval == -1) {
+            MainActivity.updateListTask = new UpdateListTask(getActivity());
+            MainActivity.updateListTask.execute();
+            MainActivity.coldStart = false;
+        }
     }
 
     @Override
@@ -600,7 +607,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         int ticket = threads;
         int result = 0;
         int numNow = 0;
-        String errorMsg = "";
+        String error = "";
         Context context;
 
         public UpdateListTask(Context context) {
@@ -621,8 +628,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                         Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getContext());
                     }
                 } catch (Exception e) {
-                    if (e.getMessage() != null)
-                        errorMsg = e.getMessage();
+                    error = Log.getStackTraceString(e);
                 }
             }
         }
@@ -638,7 +644,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected Integer doInBackground(Void... params) {
-            if (context != null && errorMsg.equals("")) {
+            if (context != null && error.equals("")) {
                 ticket = threads;
                 for (int idx = 0; idx < mangaList.size(); idx++) {
                     if (Util.n > (48 - threads))
@@ -690,9 +696,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             break;
                         }
                     } catch (Exception e) {
-                        if (e.getMessage() != null) {
-                            errorMsg = e.getMessage();
-                        }
+                        error = Log.getStackTraceString(e);
                     }
                 }
 
@@ -719,8 +723,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), context);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    if (!errorMsg.equals("")) {
-                        Util.getInstance().showFastSnackBar(errorMsg, context);
+                    if (!error.equals("")) {
+                        Util.getInstance().showFastSnackBar(error, context);
                     } else {
                         Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), context);
                     }

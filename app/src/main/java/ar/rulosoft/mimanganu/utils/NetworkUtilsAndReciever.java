@@ -152,14 +152,15 @@ public class NetworkUtilsAndReciever extends BroadcastReceiver {
                 SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
                 long last_check = pm.getLong(AlarmReceiver.LAST_CHECK, 0);
                 long current_time = System.currentTimeMillis();
-                long interval = pm.getLong("update_interval", 0);
+                long interval = Long.parseLong(pm.getString("update_interval", "0"));
                 if (interval > 0) {
                     if (interval < current_time - last_check) {
                         new AlarmReceiver().onReceive(context, intent);
                     }
                 }
             }
-        } catch (Exception ignore) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

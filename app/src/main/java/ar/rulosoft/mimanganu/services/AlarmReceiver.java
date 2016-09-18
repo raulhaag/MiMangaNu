@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.services;
 
 import android.app.AlarmManager;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -9,16 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
-import android.support.v4.app.NotificationCompat;
 
-import java.util.ArrayList;
-
-import ar.rulosoft.mimanganu.MainActivity;
-import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.componentes.Database;
-import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -44,9 +35,9 @@ public class AlarmReceiver extends BroadcastReceiver {
         stopAlarms(context);
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent alarmIntent = new Intent(context, AlarmReceiver.class);
-        PendingIntent pintent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
+        PendingIntent pIntent = PendingIntent.getBroadcast(context, 0, alarmIntent, 0);
         alarmIntent.setAction(CUSTOM_INTENT_ACTION);
-        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, start, interval, pintent);
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, start, interval, pIntent);
     }
 
     @Override
@@ -56,28 +47,26 @@ public class AlarmReceiver extends BroadcastReceiver {
             boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
             boolean only_wifi = pm.getBoolean("only_wifi", false);
             NetworkUtilsAndReciever.reset();
-            if (only_wifi_updates == true) {
+            if (only_wifi_updates) {
                 only_wifi = true;
             }
             NetworkUtilsAndReciever.reset();
             if (NetworkUtilsAndReciever.getConnectionStatus(context, only_wifi) == NetworkUtilsAndReciever.ConnectionStatus.CONNECTED) {
-                SearchUpdates searchUpdates = new SearchUpdates();
-                searchUpdates.setContext(context);
                 Navigator.connectionTimeout = Integer.parseInt(pm.getString("connection_timeout", "10"));
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-                searchUpdates.setSound(pm.getBoolean("update_sound", false));
-                int threads = Integer.parseInt(pm.getString("update_threads_manual", "1"));
                 NetworkUtilsAndReciever.ONLY_WIFI = pm.getBoolean("only_wifi", false);
                 Navigator.navigator = new Navigator(context);
-                searchUpdates.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, threads);
+                AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(context, pm);
+                automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
             NetworkUtilsAndReciever.reset();
         } catch (Exception ignore) { //next time on connection go to update
+            ignore.printStackTrace();
         }
     }
 
 
-    public class SearchUpdates extends AsyncTask<Integer, String, Void> {
+    /*public class SearchUpdates extends AsyncTask<Integer, String, Void> {
         Context context;
         String res = "";
         int found = 0;
@@ -193,6 +182,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         public void setSound(boolean sound) {
             this.sound = sound;
         }
-    }
+    }*/
 
 }

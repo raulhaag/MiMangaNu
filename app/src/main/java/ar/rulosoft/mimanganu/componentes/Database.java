@@ -149,7 +149,13 @@ public class Database extends SQLiteOpenHelper {
     public static int addManga(Context context, Manga manga) {
         int tmp = -1;
         try {
-            tmp = (int) getDatabase(context).insertOrThrow(TABLE_MANGA, null, setMangaCV(manga, true));
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                tmp = (int) database.insertOrThrow(TABLE_MANGA, null, setMangaCV(manga, true));
+            else {
+                Log.e("Database", "(addManga) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (Exception e){
             Log.e("Database", Log.getStackTraceString(e));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, manga.getTitle()));
@@ -166,8 +172,9 @@ public class Database extends SQLiteOpenHelper {
      */
     public static void updateManga(Context context, Manga manga, boolean setTime) {
         try {
-            if (!getDatabase(context).isReadOnly())
-                getDatabase(context).update(TABLE_MANGA, setMangaCV(manga, setTime), COL_ID + "=" + manga.getId(), null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                database.update(TABLE_MANGA, setMangaCV(manga, setTime), COL_ID + "=" + manga.getId(), null);
             else {
                 Log.e("Database", "(updateManga) " + context.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
@@ -192,8 +199,9 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_LAST_READ, System.currentTimeMillis());
         cv.put(COL_NEW, 0);
         try {
-            if (!getDatabase(c).isReadOnly())
-                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            SQLiteDatabase database = getDatabase(c);
+            if (!database.isReadOnly())
+                database.update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
             else {
                 Log.e("Database", "(updateMangaRead) " + c.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
@@ -214,8 +222,9 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_SEARCH, buscar ? 1 : 0);
         try {
-            if (!getDatabase(c).isReadOnly())
-                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
+            SQLiteDatabase database = getDatabase(c);
+            if (!database.isReadOnly())
+                database.update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
             else {
                 Log.e("Database", "(setUpgradable) " + c.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
@@ -236,8 +245,9 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_LAST_INDEX, idx);
         try {
-            if (!getDatabase(c).isReadOnly())
-                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            SQLiteDatabase database = getDatabase(c);
+            if (!database.isReadOnly())
+                database.update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
             else {
                 Log.e("Database", "(updateMangaLastIndex) " + c.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
@@ -258,8 +268,9 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_SCROLL_SENSITIVE, nScroll);
         try {
-            if (!getDatabase(c).isReadOnly())
-                getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            SQLiteDatabase database = getDatabase(c);
+            if (!database.isReadOnly())
+                database.update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
             else {
                 Log.e("Database", "(updateMangaScrollSensitive) " + c.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
@@ -306,7 +317,13 @@ public class Database extends SQLiteOpenHelper {
         contentValues.put(COL_CAP_DOWNLOADED, chapter.isDownloaded());
         contentValues.put(COL_CAP_EXTRA, chapter.getExtra());
         try {
-            getDatabase(context).insertOrThrow(TABLE_CHAPTERS, null, contentValues);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                database.insertOrThrow(TABLE_CHAPTERS, null, contentValues);
+            else {
+                Log.e("Database", "(addChapter) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteConstraintException sqlce) {
             // remove orphaned chapters and try again
             try {
@@ -333,7 +350,13 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_PAG_READ, chapter.getPagesRead());
         cv.put(COL_CAP_EXTRA,chapter.getExtra());
         try {
-            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + chapter.getId(), null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + chapter.getId(), null);
+            else {
+                Log.e("Database", "(updateChapter) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", "" + Log.getStackTraceString(sqlfe));
             outputChapterDebugInformation(chapter);
@@ -364,7 +387,7 @@ public class Database extends SQLiteOpenHelper {
         Log.i("Database", "Pages Read: " + chapter.getPagesRead());
         Log.i("Database", "Read Status: " + chapter.getReadStatus());
         Log.i("Database", "isDownloaded: " + chapter.isDownloaded());
-        Log.i("Database", "Extra: " + chapter.getExtra());
+        //Log.i("Database", "Extra: " + chapter.getExtra());
     }
 
     private static void outputChapterDebugInformation(Chapter chapter) {
@@ -374,7 +397,7 @@ public class Database extends SQLiteOpenHelper {
         Log.i("Database", "Pages Read: " + chapter.getPagesRead());
         Log.i("Database", "Read Status: " + chapter.getReadStatus());
         Log.i("Database", "isDownloaded: " + chapter.isDownloaded());
-        Log.i("Database", "Extra: " + chapter.getExtra());
+        //Log.i("Database", "Extra: " + chapter.getExtra());
     }
 
     public static ArrayList<Manga> getMangasForUpdates(Context context) {
@@ -538,7 +561,13 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_DOWNLOADED, state);
         try {
-            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+            else {
+                Log.e("Database", "(updateChapterDownloaded) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", Log.getStackTraceString(sqlfe));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
@@ -560,7 +589,13 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_PAG_READ, cap.getPagesRead());
         cv.put(COL_CAP_DOWNLOADED, cap.isDownloaded() ? 1 : 0);
         try {
-            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + cap.getId(), null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + cap.getId(), null);
+            else {
+                Log.e("Database", "(updateChapterPlusDownload) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", Log.getStackTraceString(sqlfe));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
@@ -577,7 +612,13 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_PAG_READ, pages);
         try {
-            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly())
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+            else {
+                Log.e("Database", "(updateChapterPage) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", Log.getStackTraceString(sqlfe));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
@@ -591,12 +632,24 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static void deleteManga(Context c, int mid) {
-        getDatabase(c).delete(TABLE_MANGA, COL_ID + " = " + mid, null);
-        getDatabase(c).delete(TABLE_CHAPTERS, COL_CAP_ID_MANGA + "=" + mid, null);
+        SQLiteDatabase database = getDatabase(c);
+        if (!database.isReadOnly()) {
+            database.delete(TABLE_MANGA, COL_ID + " = " + mid, null);
+            database.delete(TABLE_CHAPTERS, COL_CAP_ID_MANGA + "=" + mid, null);
+        } else {
+            Log.e("Database", "(deleteManga) " + c.getResources().getString(R.string.error_database_is_read_only));
+            Util.getInstance().toast(c, c.getResources().getString(R.string.error_database_is_read_only));
+        }
     }
 
     public static void deleteChapter(Context context, Chapter chapter) {
-        getDatabase(context).delete(TABLE_CHAPTERS, COL_CAP_ID + "=" + chapter.getId(), null);
+        SQLiteDatabase database = getDatabase(context);
+        if (!database.isReadOnly()) {
+            database.delete(TABLE_CHAPTERS, COL_CAP_ID + "=" + chapter.getId(), null);
+        } else {
+            Log.e("Database", "(deleteChapter) " + context.getResources().getString(R.string.error_database_is_read_only));
+            Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+        }
     }
 
     public static Manga getManga(Context context, int mangaID) {
@@ -644,7 +697,13 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_STATE, read ? Chapter.READ : Chapter.UNREAD);
         try {
-            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + capId, null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly()) {
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + " = " + capId, null);
+            } else {
+                Log.e("Database", "(markChapter) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", Log.getStackTraceString(sqlfe));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
@@ -661,7 +720,13 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_CAP_STATE, read ? Chapter.READ : Chapter.UNREAD);
         try {
-            getDatabase(context).update(TABLE_CHAPTERS, cv, COL_CAP_ID_MANGA + " = " + mangaId, null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly()) {
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID_MANGA + " = " + mangaId, null);
+            } else {
+                Log.e("Database", "(markAllChapters) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", Log.getStackTraceString(sqlfe));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));
@@ -682,7 +747,13 @@ public class Database extends SQLiteOpenHelper {
         ContentValues cv = new ContentValues();
         cv.put(COL_READ_ORDER, ordinal);
         try {
-            getDatabase(context).update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly()) {
+                database.update(TABLE_MANGA, cv, COL_ID + "=" + mid, null);
+            } else {
+                Log.e("Database", "(updateReadOrder) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
         } catch (SQLiteFullException sqlfe) {
             Log.e("Database", Log.getStackTraceString(sqlfe));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_sqlite_full_exception));

@@ -84,6 +84,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     private boolean controlVisible = false;
     private MenuItem displayMenu;
     private AlertDialog mDialog = null;
+    private boolean redownloadingImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -440,7 +441,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 break;
             }
             case R.id.re_download_image:
-                reDownloadCurrentImage();
+                if(!redownloadingImage)
+                    reDownloadCurrentImage();
+                else
+                    Util.getInstance().toast(getApplicationContext(), getString(R.string.dont_spam_redownload_button));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -593,6 +597,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             })
                             .show();
                 } catch (Exception e) {
+                    e.printStackTrace();
                     // lost references fixed con detachListener
                 }
             }
@@ -621,6 +626,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 mChapter.setPagesRead(1);
                 loadChapter(previousChapter, LoadMode.END);
                 //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
+                Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getApplicationContext());
             }
         }
     }
@@ -824,8 +830,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(!isDestroyed())
-                mActionBar.setVisibility(View.INVISIBLE);
+            redownloadingImage = true;
             idx = mReader.getCurrentPage();
             mReader.freePage(idx);
             path = mReader.getPath(idx);
@@ -857,8 +862,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             if (error.length() > 3) {
                 Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
             }
-            if(!isDestroyed())
-                mActionBar.setVisibility(View.VISIBLE);
+            redownloadingImage = false;
         }
     }
 

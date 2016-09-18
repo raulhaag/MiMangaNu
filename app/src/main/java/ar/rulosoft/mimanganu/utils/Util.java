@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
 import android.view.View;
@@ -223,6 +224,10 @@ public class Util {
         notificationBuilder.setContentIntent(contentPendingIntent);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setDeleteIntent(deletePendingIntent);
+        if(MainActivity.pm != null) {
+            if(MainActivity.pm.getBoolean("update_sound", false))
+                notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+        }
         ++n;
         //notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -237,6 +242,10 @@ public class Util {
             notification.flags = Notification.FLAG_NO_CLEAR;
         } else {
             notification.flags = Notification.FLAG_AUTO_CANCEL;
+        }
+        if(MainActivity.pm != null) {
+            if(MainActivity.pm.getBoolean("update_vibrate", false))
+                notification.defaults |= Notification.DEFAULT_VIBRATE;
         }
         notificationManager.notify(id, notification);
     }
