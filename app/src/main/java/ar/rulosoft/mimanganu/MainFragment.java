@@ -105,8 +105,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         long updaterInterval = Long.parseLong(pm.getString("update_interval", "0"));
         if (MainActivity.coldStart && updaterInterval == -1) {
-            MainActivity.updateListTask = new UpdateListTask(getActivity());
-            MainActivity.updateListTask.execute();
+            AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), pm);
+            automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             MainActivity.coldStart = false;
         }
     }
