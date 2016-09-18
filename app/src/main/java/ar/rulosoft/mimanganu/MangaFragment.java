@@ -773,7 +773,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         private Chapter chapter;
         int threads = Runtime.getRuntime().availableProcessors();
         int ticket = threads;
-        int count = 0;
 
         public MarkSelectedAsRead(int selectionSize) {
             super();
@@ -796,7 +795,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 final int idxNow = i;
                 while (ticket < 1) {
                     if (System.currentTimeMillis() - initTime > 250) {
-                        count++;
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
@@ -863,7 +861,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         private Chapter chapter;
         int threads = Runtime.getRuntime().availableProcessors();
         int ticket = threads;
-        int count = 0;
 
         public MarkSelectedAsUnread(int selectionSize) {
             super();
@@ -886,7 +883,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 final int idxNow = i;
                 while (ticket < 1) {
                     if (System.currentTimeMillis() - initTime > 250) {
-                        count++;
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
@@ -955,7 +951,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         private Chapter chapter;
         int threads = Runtime.getRuntime().availableProcessors();
         int ticket = threads;
-        int count = 0;
 
         public DeleteImages(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
@@ -978,7 +973,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 final int idxNow = i;
                 while (ticket < 1) {
                     if (System.currentTimeMillis() - initTime > 250) {
-                        count++;
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
@@ -1112,7 +1106,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         private Chapter chapter;
         int threads = Runtime.getRuntime().availableProcessors();
         int ticket = threads;
-        int count = 0;
 
         public ResetChapters(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
@@ -1135,7 +1128,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 final int idxNow = i;
                 while (ticket < 1) {
                     if (System.currentTimeMillis() - initTime > 250) {
-                        count++;
                         publishProgress(i);
                         initTime = System.currentTimeMillis();
                     }
