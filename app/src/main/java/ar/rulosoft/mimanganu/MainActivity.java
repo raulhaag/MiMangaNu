@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     public static MainFragment.UpdateListTask updateListTask;
     public static boolean isConnected = true;
     public static CoordinatorLayout cLayout;
+    public static boolean coldStart;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
     public ActionBar mActBar;
     OnBackListener backListener;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
             if (savedInstanceState == null) {
+                coldStart = true;
                 MainFragment mainFragment = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.coordinator_layout, mainFragment).commit();
             }

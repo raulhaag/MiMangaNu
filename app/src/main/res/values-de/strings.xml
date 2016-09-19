@@ -5,7 +5,7 @@
     <string name="action_ajustar_a">Anpassen an</string>
     <string name="action_settings">Einstellungen</string>
     <string name="agregado">Manga hinzugefügt</string>
-    <string name="agregadodescarga">Manga zu Downloads hinzugefügt</string>
+    <string name="agregadodescarga">Kapitel zu Downloads hinzugefügt</string>
     <string name="adding_to_db">Füge zur Datenbank hinzu</string>
     <string name="ajuste_alto">An Höhe anpassen</string>
     <string name="ajuste_ancho">An Breite anpassen</string>
@@ -89,7 +89,7 @@
     <string name="new_mangas_found">Neue Mangas gefunden.</string>
     <string name="no_update">Nicht auf Updates überprüfen</string>
     <string name="nodisponible">N/A</string>
-    <string name="notification_sound_subtitle">Bei neu gefundene Mangas.</string>
+    <string name="notification_sound_subtitle">Bei neu gefundener Kapitel</string>
     <string name="notification_sound_title">Ton abspielen</string>
     <string name="rotation">Rotation</string>
     <string name="see_later">Später lesen</string>
@@ -212,4 +212,5 @@
     <string name="show_status_bar_subtitle">Dadurch wird die Status bar beim lesen angezeigt</string>
     <string name="x_of_y_chapters_downloaded">%1$d von %2$d Kapiteln heruntergeladen</string>
     <string name="deleting">Lösche …</string>
+    <string name="dont_spam_redownload_button">Kamerad, mehrmals auf den Button zu drücken wird den Download nicht beschleunigen !</string>
 </resources>

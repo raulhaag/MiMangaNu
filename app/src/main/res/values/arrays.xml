@@ -42,6 +42,7 @@
     </string-array>
     <string-array name="periodo">
         <item>@string/no_update</item>
+        <item>@string/_update_at_start_up</item>
         <item>@string/_6hours</item>
         <item>@string/_12hours</item>
         <item>@string/_1day</item>
@@ -50,6 +51,7 @@
     </string-array>
     <string-array name="periodo_val">
         <item>0</item>
+        <item>-1</item>
         <item>21600000</item>
         <item>43200000</item>
         <item>86400000</item>

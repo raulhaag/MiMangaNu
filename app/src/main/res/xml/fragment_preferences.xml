@@ -64,6 +64,11 @@
             android:key="update_sound"
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="update_vibrate"
+            android:summary="@string/notification_sound_subtitle"
+            android:title="Vibrate (TODO)" />
         <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="1"
             android:dialogTitle="@string/update_thread_background_title"

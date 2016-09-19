@@ -5,9 +5,10 @@
     <string name="_2day">2 days</string>
     <string name="_6hours">6 Hours</string>
     <string name="_7day">7 days</string>
+    <string name="_update_at_start_up">Update at start up</string>
     <string name="action_ajustar_a">Fit to</string>
     <string name="action_settings">Settings</string>
-    <string name="agregadodescarga">Manga added to downloads</string>
+    <string name="agregadodescarga">Chapter added to downloads</string>
     <string name="agregado">Manga added</string>
     <string name="adding_to_db">Adding to database</string>
     <string name="ajuste_alto">Fit to height</string>
@@ -71,7 +72,7 @@
     <string name="nobuscarupdate">Don\'t search for updates</string>
     <string name="nodisponible">N/A</string>
     <string name="no_scale">Original size</string>
-    <string name="notification_sound_subtitle">When new manga are found</string>
+    <string name="notification_sound_subtitle">When new chapters are found</string>
     <string name="notification_sound_title">Play sound</string>
     <string name="no_update">Don\'t check for updates</string>
     <string name="opciones_descarga">Download settings</string>
@@ -131,7 +132,7 @@
     <string name="update_threads_background_summary">Amount of update threads for background: %s</string>
     <string name="update_thread_manual_title">Update threads (Manual)</string>
     <string name="update_threads_manual_summary">Amount of update threads for manual search: %s</string>
-    <string name="download_remain_confirmation">Do you want to download all chapters that are not yet downloaded?</string>
+    <string name="download_remain_confirmation">Do you want to download all remaining chapters?</string>
     <string name="download_unread_confirmation">Do you want to download all unread chapters?</string>
     <string name="mar_and_di">Mark as read and delete images</string>
     <string name="select_begin">Select from the beginning</string>
@@ -221,4 +222,7 @@
     <string name="error_sqlite_exception_while_trying_to_open_db">SQLiteException while trying to open database !</string>
     <string name="error_exception_while_trying_to_open_db">Exception while trying to open database !</string>
     <string name="error_exception_while_trying_to_update_db">Exception while trying to update database !</string>
+    <string name="dont_spam_redownload_button">Please wait for the current image to finish downloading !</string>
+    <string name="one_more_chapter_not_displayed_here">more chapter not displayed here &#8230;</string>
+    <string name="x_more_chapters_not_displayed_here">more chapters not displayed here &#8230;</string>
 </resources>

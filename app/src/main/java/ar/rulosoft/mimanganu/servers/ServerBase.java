@@ -366,7 +366,7 @@ public abstract class ServerBase {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
         private Context context;
         private Manga manga;
-        private String LargeContentText = "";
+        private String largeContentText = "";
 
         public CreateGroupByMangaNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
             this.simpleList.addAll(simpleList);
@@ -381,21 +381,44 @@ public abstract class ServerBase {
 
         @Override
         protected Integer doInBackground(Void... params) {
-            for (int i = simpleList.size() - 1; i > -1; i--) {
-                if (i == 0) // last element
-                    LargeContentText = LargeContentText + simpleList.get(i).getTitle();
-                else
-                    LargeContentText = LargeContentText + simpleList.get(i).getTitle() + "\n";
-            }
-
             if (!simpleList.isEmpty() && context != null) {
+                int simpleListSize = simpleList.size();
+                int x = 10;
+                if (simpleListSize <= 10)
+                    x = simpleListSize - 1;
+                int n = 0;
+                for (int i = simpleListSize - 1; i > -1; i--) {
+                    if (simpleListSize > 10 && n == x) { // last element if 10+ chapters
+                        int tmp = simpleListSize - x;
+                        if (tmp == 1)
+                            largeContentText = largeContentText + tmp + " " + context.getString(R.string.one_more_chapter_not_displayed_here);
+                        else
+                            largeContentText = largeContentText + tmp + " " + context.getString(R.string.x_more_chapters_not_displayed_here);
+                    } else if (simpleListSize <= 10 && n == x) { // last element if <= 10 chapters
+                        largeContentText = largeContentText + simpleList.get(i).getTitle();
+                    } else { // every element that isn't the last element
+                        if (simpleListSize > 10) { // shorten titles if > 10 chapters
+                            String title = simpleList.get(i).getTitle();
+                            if (title.length() > 38)
+                                title = title.substring(0, Math.min(title.length(), 35)) + "...";
+                            largeContentText = largeContentText + title + "\n";
+                        } else {
+                            largeContentText = largeContentText + simpleList.get(i).getTitle() + "\n";
+                        }
+                    }
+                    n++;
+                    // we can only display 11 lines of text
+                    if (n == 11)
+                        break;
+                }
+
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra("manga_id", simpleList.get(0).getMangaID());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                if (simpleList.size() > 1) {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapters, manga.getTitle()), LargeContentText);
+                if (simpleListSize > 1) {
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleListSize + " " + context.getResources().getString(R.string.new_chapters, manga.getTitle()), largeContentText);
                 } else {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleList.size() + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), LargeContentText);
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleListSize + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), largeContentText);
                 }
             }
 
