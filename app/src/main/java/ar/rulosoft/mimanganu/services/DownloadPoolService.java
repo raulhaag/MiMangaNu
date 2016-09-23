@@ -43,7 +43,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public static DownloadsChangesListener mDownloadsChangesListener;
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
-    private int mNotifyID = (int) System.currentTimeMillis();
     private static boolean resetN;
 
     static {
@@ -51,10 +50,11 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public int slots = SLOTS;
+    private int mNotifyID = (int) System.currentTimeMillis();
 
-    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception{
-        if(activity == null)
-            Log.d("DPS","null");
+    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception {
+        if (activity == null)
+            Log.d("DPS", "null");
 
         if (!chapter.isDownloaded() && NetworkUtilsAndReciever.isConnected(activity)) {
             if (isNewDownload(chapter.getId())) {
@@ -104,7 +104,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     private static void initValues(Context context) {
-        if(context != null) {
+        if (context != null) {
             SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
             int download_threads = Integer.parseInt(pm.getString("download_threads", "2"));
             int tolerance = Integer.parseInt(pm.getString("error_tolerancia", "5"));
@@ -244,15 +244,15 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         startService(context);
     }
 
-    public static void retryError(Context context , Chapter cid, ChapterDownload.OnErrorListener errorListener) {
-            for (int i = 0; i < chapterDownloads.size(); i++) {
-                ChapterDownload cd = chapterDownloads.get(i);
-                if (cd.status == DownloadStatus.ERROR && cd.getChapter().getId() == cid.getId()) {
-                    ChapterDownload ncd = new ChapterDownload(cid);
-                    ncd.setErrorListener(errorListener);
-                    chapterDownloads.set(i, ncd);
-                }
+    public static void retryError(Context context, Chapter cid, ChapterDownload.OnErrorListener errorListener) {
+        for (int i = 0; i < chapterDownloads.size(); i++) {
+            ChapterDownload cd = chapterDownloads.get(i);
+            if (cd.status == DownloadStatus.ERROR && cd.getChapter().getId() == cid.getId()) {
+                ChapterDownload ncd = new ChapterDownload(cid);
+                ncd.setErrorListener(errorListener);
+                chapterDownloads.set(i, ncd);
             }
+        }
         startService(context);
     }
 
@@ -450,7 +450,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (MainFragment.mangaFragment.isAdded())
+                if (MainFragment.mangaFragment != null && MainFragment.mangaFragment.isAdded())
                     MainFragment.mangaFragment.loadChapters(Database.getChapters(getApplicationContext(), MainFragment.mangaFragment.mMangaId));
             }
         });
