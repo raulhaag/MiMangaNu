@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -12,7 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -52,7 +53,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
-public class ActivityReader extends AppCompatActivity implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener {
+public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener, MainActivity.OnKeyUpListener, MainActivity.OnBackListener {
 
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
@@ -84,19 +85,20 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     private boolean controlVisible = false;
     private MenuItem displayMenu;
     private AlertDialog mDialog = null;
-    private boolean redownloadingImage;
+    private boolean reDownloadingImage;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reader);
-        int chapterId = getIntent().getExtras().getInt(MangaFragment.CHAPTER_ID);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_reader, container, false);
+
+        int chapterId = getArguments().getInt(MangaFragment.CHAPTER_ID);
         if (savedInstanceState != null) {
             chapterId = savedInstanceState.getInt(MangaFragment.CHAPTER_ID);
         }
-        mChapter = Database.getChapter(this, chapterId);
-        mManga = Database.getFullManga(this, mChapter.getMangaID());
-        pm = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        mChapter = Database.getChapter(getActivity(), chapterId);
+        mManga = Database.getFullManga(getActivity(), mChapter.getMangaID());
+        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
         mOrientation = pm.getInt(ORIENTATION, 0);
@@ -117,39 +119,41 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
         }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        return view;
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mServerBase = ServerBase.getServer(mManga.getServerId());
-        mActionBar = (Toolbar) findViewById(R.id.action_bar);
-        mActionBar.setTitleTextColor(Color.WHITE);
-        if (pm.getBoolean("show_status_bar", false)) {
-            rLayout = (FrameLayout) findViewById(R.id.parent);
-            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-            lp.setMargins(0, (int) (24 * getResources().getDisplayMetrics().density), 0, 0);
-            rLayout.setLayoutParams(lp);
-        }
-        mControlsLayout = (RelativeLayout) findViewById(R.id.controls);
-        mControlsLayout.setAlpha(0f);
-        mControlsLayout.setVisibility(View.GONE);
-
-        mSeekerPage = (TextView) findViewById(R.id.page);
-        mSeekerPage.setAlpha(.9f);
-        mSeekerPage.setTextColor(Color.WHITE);
-
-        mSeekBar = (SeekBar) findViewById(R.id.seeker);
-        mSeekerLayout = (LinearLayout) findViewById(R.id.seeker_layout);
-        mScrollSelect = (RelativeLayout) findViewById(R.id.scroll_selector);
-        mButtonMinus = (Button) findViewById(R.id.minus);
-        mButtonPlus = (Button) findViewById(R.id.plus);
-        mScrollSensitiveText = (TextView) findViewById(R.id.scroll_level);
-
-        mScrollSensitiveText.setText(mScrollFactor + "x");
         int reader_bg = ThemeColors.getReaderColor(pm);
-        mActionBar.setBackgroundColor(reader_bg);
-        mSeekerLayout.setBackgroundColor(reader_bg);
-        mSeekerPage.setBackgroundColor(reader_bg);
-        mSeekBar.setBackgroundColor(reader_bg);
-        mScrollSelect.setBackgroundColor(reader_bg);
+        if (getView() != null) {
+            mActionBar = (Toolbar) getView().findViewById(R.id.action_bar);
+            mActionBar.setTitleTextColor(Color.WHITE);
+            initMenu();
+            mControlsLayout = (RelativeLayout) getView().findViewById(R.id.controls);
+            mControlsLayout.setAlpha(0f);
+            mControlsLayout.setVisibility(View.GONE);
+
+            mSeekerPage = (TextView) getView().findViewById(R.id.page);
+            mSeekerPage.setAlpha(.9f);
+            mSeekerPage.setTextColor(Color.WHITE);
+
+            mSeekBar = (SeekBar) getView().findViewById(R.id.seeker);
+            mSeekerLayout = (LinearLayout) getView().findViewById(R.id.seeker_layout);
+            mScrollSelect = (RelativeLayout) getView().findViewById(R.id.scroll_selector);
+            mButtonMinus = (Button) getView().findViewById(R.id.minus);
+            mButtonPlus = (Button) getView().findViewById(R.id.plus);
+            mScrollSensitiveText = (TextView) getView().findViewById(R.id.scroll_level);
+
+            mScrollSensitiveText.setText(mScrollFactor + "x");
+            mActionBar.setBackgroundColor(reader_bg);
+            mSeekerLayout.setBackgroundColor(reader_bg);
+            mSeekerPage.setBackgroundColor(reader_bg);
+            mSeekBar.setBackgroundColor(reader_bg);
+            mScrollSelect.setBackgroundColor(reader_bg);
+        }
 
         if (pm.getBoolean("hide_sensitivity_scrollbar", false))
             mScrollSelect.setVisibility(View.INVISIBLE);
@@ -157,13 +161,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             mActionBar.setVisibility(View.INVISIBLE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
+            Window window = getActivity().getWindow();
             window.setNavigationBarColor(reader_bg);
             window.setStatusBarColor(reader_bg);
         }
-
-        setSupportActionBar(mActionBar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         hideSystemUI();
 
         mButtonMinus.setOnClickListener(new View.OnClickListener() {
@@ -182,68 +183,79 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         mScrollSensitiveText.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                Toast.makeText(ActivityReader.this, getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getString(R.string.scroll_speed), Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
 
         mSeekBar.setOnSeekBarChangeListener(this);
         setReader();
+        ((MainActivity) getActivity()).getSupportActionBar().hide();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        mainActivity.backListener = this;
+        mainActivity.keyUpListener = this;
+        super.onAttach(context);
     }
 
     private void setReader() {
         if (mReader != null) {
             mReader.freeMemory();
         }
-        mReader = Reader.getNewReader(getApplicationContext(), direction, readerType);
+        mReader = Reader.getNewReader(getActivity(), direction, readerType);
         if (direction == Direction.L2R) {
             mSeekBar.setRotation(180);
         } else {
             mSeekBar.setRotation(0);
         }
         mReader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        ((FrameLayout) findViewById(R.id.reader_placeholder)).removeAllViews();
-        ((FrameLayout) findViewById(R.id.reader_placeholder)).addView(mReader);
-        mReader.setMaxTexture(mTextureMax);
-        mReader.setScreenFit(mScreenFit);
-        mReader.setReaderListener(this);
-        mReader.setScrollSensitive(mScrollFactor);
-        if (displayMenu != null)
-            if (mReader.hasFitFeature()) {
-                displayMenu.setVisible(true);
-            } else {
-                displayMenu.setVisible(false);
-            }
-        loadChapter(mChapter, LoadMode.SAVED);
+        if (getView() != null) {
+            ((FrameLayout) getView().findViewById(R.id.reader_placeholder)).removeAllViews();
+            ((FrameLayout) getView().findViewById(R.id.reader_placeholder)).addView(mReader);
+            mReader.setMaxTexture(mTextureMax);
+            mReader.setScreenFit(mScreenFit);
+            mReader.setReaderListener(this);
+            mReader.setScrollSensitive(mScrollFactor);
+            if (displayMenu != null)
+                if (mReader.hasFitFeature()) {
+                    displayMenu.setVisible(true);
+                } else {
+                    displayMenu.setVisible(false);
+                }
+            loadChapter(mChapter, LoadMode.SAVED);
+        }
     }
 
     private void loadChapter(Chapter nChapter, LoadMode mode) {
         if (mChapter != null) {
             DownloadPoolService.detachListener(mChapter.getId());
-            Database.updateChapter(ActivityReader.this, mChapter);
+            Database.updateChapter(getActivity(), mChapter);
         }
         mChapter = nChapter;
         if (!mChapter.isDownloaded()) {
             try {
-                DownloadPoolService.addChapterDownloadPool(ActivityReader.this, mChapter, true);
+                DownloadPoolService.addChapterDownloadPool(getActivity(), mChapter, true);
             } catch (Exception e) {
                 if (e.getMessage() != null) {
-                    Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         }
-        setTitle(mChapter.getTitle());
+        getActivity().setTitle(mChapter.getTitle());
         if (mChapter.getPages() == 0) {
             new GetPageTask().execute(mChapter);
         } else {
             DownloadPoolService.setDownloadListener(this);
             mChapter.setReadStatus(Chapter.READING);
-            Database.updateChapter(ActivityReader.this, mChapter);
+            Database.updateChapter(getActivity(), mChapter);
             mReader.reset();
             ArrayList<String> pages = new ArrayList<>();
             if (!(mServerBase instanceof FromFolder)) {
                 for (int i = 0; i < mChapter.getPages(); i++) {
-                    pages.add(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getApplicationContext()) + "/" + (i + 1) + ".jpg");
+                    pages.add(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getActivity()) + "/" + (i + 1) + ".jpg");
                 }
             } else {
                 for (int i = 0; i < mChapter.getPages(); i++) {
@@ -276,8 +288,8 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 if (!nextChapter.isDownloaded()) {
                     if (pm.getBoolean("download_next_chapter_automatically", false)) {
                         try {
-                            DownloadPoolService.addChapterDownloadPool(this, nextChapter, false);
-                            Util.getInstance().toast(this, getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
+                            DownloadPoolService.addChapterDownloadPool(getActivity(), nextChapter, false);
+                            Util.getInstance().toast(getActivity(), getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
                         } catch (Exception e) {
                             Log.e("ServB", "Download add pool error", e);
                         }
@@ -301,7 +313,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     private void modScrollSensitive(float diff) {
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
-            Database.updateMangaScrollSensitive(ActivityReader.this, mManga.getId(), mScrollFactor);
+            Database.updateMangaScrollSensitive(getActivity(), mManga.getId(), mScrollFactor);
             mScrollSensitiveText.setText(mScrollFactor + "x");
             mReader.setScrollSensitive(mScrollFactor);
         }
@@ -309,13 +321,13 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     private void hideSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if(pm.getBoolean("show_status_bar", false)) {
-                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-                getWindow().getDecorView().setSystemUiVisibility(
+            if (pm.getBoolean("show_status_bar", false)) {
+                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+                getActivity().getWindow().getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
             } else {
-                getWindow().getDecorView().setSystemUiVisibility(
+                getActivity().getWindow().getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                                 | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
@@ -326,24 +338,24 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     private void showSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT)
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+            getActivity().getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_reader, menu);
+    public void initMenu() {
+        mActionBar.inflateMenu(R.menu.menu_reader);
+        Menu menu = mActionBar.getMenu();
         displayMenu = menu.findItem(R.id.action_ajustar);
         keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
         screenRotationMenuItem = menu.findItem(R.id.action_orientation);
         if (mKeepOn) {
             keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
         if (mOrientation == 1) {
-            ActivityReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
         } else if (mOrientation == 2) {
-            ActivityReader.this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
             screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
         }
         MenuItem mMenuItem = menu.findItem(R.id.action_sentido);
@@ -364,14 +376,18 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             } else {
                 displayMenu.setVisible(false);
             }
-        return true;
+        mActionBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return ReaderFragment.this.onMenuItemClick(item);
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                getActivity().onBackPressed();
                 return true;
             case R.id.action_ajustar: {
                 mScreenFit = mScreenFit.getNext();
@@ -385,13 +401,13 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             case R.id.action_keep_screen_on: {
                 if (!mKeepOn) {
                     keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
-                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_on),
+                    getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    Toast.makeText(getActivity(), getString(R.string.stay_awake_on),
                             Toast.LENGTH_SHORT).show();
                 } else {
                     keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
-                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Toast.makeText(getApplicationContext(), getString(R.string.stay_awake_off),
+                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    Toast.makeText(getActivity(), getString(R.string.stay_awake_off),
                             Toast.LENGTH_SHORT).show();
                 }
                 mKeepOn = !mKeepOn;
@@ -403,25 +419,26 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             }
             case R.id.action_orientation: {
                 if (mOrientation == 0) {
-                    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
-                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_landscape),
+                    Toast.makeText(getActivity(), getString(R.string.lock_on_landscape),
                             Toast.LENGTH_SHORT).show();
                 } else if (mOrientation == 1) {
-                    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
-                    Toast.makeText(getApplicationContext(), getString(R.string.lock_on_portrait),
+                    Toast.makeText(getActivity(), getString(R.string.lock_on_portrait),
                             Toast.LENGTH_SHORT).show();
                 } else if (mOrientation == 2) {
-                    this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
                     screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
-                    Toast.makeText(getApplicationContext(), getString(R.string.rotation_no_locked),
+                    Toast.makeText(getActivity(), getString(R.string.rotation_no_locked),
                             Toast.LENGTH_SHORT).show();
                 }
                 mOrientation = (mOrientation + 1) % 3;
                 SharedPreferences.Editor editor = pm.edit();
                 editor.putInt(ORIENTATION, mOrientation);
                 editor.apply();
+                mActionBar.setTitleTextColor(Color.WHITE);
                 break;
             }
             case R.id.action_sentido: {
@@ -436,15 +453,15 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     this.direction = Direction.R2L;
                 }
                 mManga.setReadingDirection(this.direction.ordinal());
-                Database.updateReadOrder(ActivityReader.this, this.direction.ordinal(), mManga.getId());
+                Database.updateReadOrder(getActivity(), this.direction.ordinal(), mManga.getId());
                 setReader();
                 break;
             }
             case R.id.re_download_image:
-                if(!redownloadingImage)
+                if (!reDownloadingImage)
                     reDownloadCurrentImage();
                 else
-                    Util.getInstance().toast(getApplicationContext(), getString(R.string.dont_spam_redownload_button));
+                    Util.getInstance().toast(getActivity(), getString(R.string.dont_spam_redownload_button));
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -457,19 +474,19 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         try {
             if (mDialog != null)
                 mDialog.dismiss();
             DownloadPoolService.setDownloadListener(null);
             DownloadPoolService.detachListener(mChapter.getId());
-            Database.updateChapter(ActivityReader.this, mChapter);
+            Database.updateChapter(getActivity(), mChapter);
             if (mReader.isLastPageVisible()) {
                 mChapter.setPagesRead(mChapter.getPages());
                 mChapter.setReadStatus(Chapter.READ);
-                Database.updateChapter(ActivityReader.this, mChapter);
+                Database.updateChapter(getActivity(), mChapter);
             } else {
-                Database.updateChapterPage(ActivityReader.this, mChapter.getId(), mReader.getCurrentPage());
+                Database.updateChapterPage(getActivity(), mChapter.getId(), mReader.getCurrentPage());
             }
         } catch (Exception ignored) {
             ignored.printStackTrace();
@@ -484,13 +501,13 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         mReader.freeMemory();
         super.onDestroy();
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         DownloadPoolService.attachListener(this, mChapter.getId());
         DownloadPoolService.setDownloadListener(this);
@@ -515,12 +532,24 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
             onMenuRequired();
             return true;
         }
-        return super.onKeyDown(keyCode, event);
+        return false;
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (!controlVisible) {
+            onMenuRequired();
+            return true;
+        }
+        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ((MainActivity) getActivity()).getSupportActionBar().show();
+        ((MainActivity) getActivity()).setColorToBars();
+        return false;
     }
 
     @Override
@@ -577,11 +606,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
 
     @Override
     public void onError(final Chapter chapter) {
-        ActivityReader.this.runOnUiThread(new Runnable() {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    mDialog = new AlertDialog.Builder(ActivityReader.this)
+                    mDialog = new AlertDialog.Builder(getActivity())
                             .setTitle(chapter.getTitle() + " " + getString(R.string.error))
                             .setMessage(getString(R.string.demaciados_errores))
                             .setIcon(R.drawable.ic_launcher)
@@ -589,10 +618,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    DownloadPoolService.retryError(getApplicationContext(), mChapter, ActivityReader.this);
+                                    DownloadPoolService.retryError(getActivity(), mChapter, ReaderFragment.this);
                                     dialog.dismiss();
                                     mDialog = null;
-                                    DownloadPoolService.setDownloadListener(ActivityReader.this);
+                                    DownloadPoolService.setDownloadListener(ReaderFragment.this);
                                 }
                             })
                             .show();
@@ -626,14 +655,14 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 mChapter.setPagesRead(1);
                 loadChapter(previousChapter, LoadMode.END);
                 //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
-                Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getApplicationContext());
+                Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getActivity());
             }
         }
     }
 
     @Override
     public void onEndOver() {
-        LayoutInflater inflater = getLayoutInflater();
+        LayoutInflater inflater = getActivity().getLayoutInflater();
         boolean imagesDelete = pm.getBoolean("delete_images", false);
         boolean seamlessChapterTransition = pm.getBoolean("seamless_chapter_transitions", false);
         boolean seamlessChapterTransitionDeleteRead = pm.getBoolean("seamless_chapter_transitions_delete_read", false);
@@ -642,7 +671,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 View v = inflater.inflate(R.layout.dialog_next_chapter, null);
                 final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
                 checkBox.setChecked(imagesDelete);
-                mDialog = new AlertDialog.Builder(ActivityReader.this)
+                mDialog = new AlertDialog.Builder(getActivity())
                         .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                         .setView(v)
                         .setIcon(R.drawable.ic_launcher)
@@ -655,11 +684,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                                     pm.edit().putBoolean("delete_images", del_images).apply();
                                 mChapter.setReadStatus(Chapter.READ);
                                 mChapter.setPagesRead(mChapter.getPages());
-                                Database.updateChapter(ActivityReader.this, mChapter);
+                                Database.updateChapter(getActivity(), mChapter);
                                 Chapter pChapter = mChapter;
                                 loadChapter(nextChapter, LoadMode.START);
                                 if (del_images) {
-                                    pChapter.freeSpace(ActivityReader.this);
+                                    pChapter.freeSpace(getActivity());
                                 }
                                 if (mDialog != null && mDialog.isShowing())
                                     mDialog.dismiss();
@@ -673,10 +702,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 Chapter tmpChapter = mChapter;
                 loadChapter(nextChapter, LoadMode.START);
                 //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
-                Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getApplicationContext());
+                Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getActivity());
                 if (seamlessChapterTransitionDeleteRead) {
-                    tmpChapter.freeSpace(ActivityReader.this);
-                    Util.getInstance().toast(getApplicationContext(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
+                    tmpChapter.freeSpace(getActivity());
+                    Util.getInstance().toast(getActivity(), getResources().getString(R.string.deleted, tmpChapter.getTitle()), 0);
                 }
             }
         } else {
@@ -684,7 +713,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
-            mDialog = new AlertDialog.Builder(ActivityReader.this)
+            mDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                     .setView(v)
                     .setIcon(R.drawable.ic_launcher)
@@ -701,11 +730,11 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                             if (pm != null)
                                 pm.edit().putBoolean("delete_images", del_images).apply();
                             if (del_images) {
-                                tmpChapter.freeSpace(ActivityReader.this);
+                                tmpChapter.freeSpace(getActivity());
                             }
                             mDialog.dismiss();
                             mDialog = null;
-                            onBackPressed();
+                            getActivity().onBackPressed();
                         }
                     })
                     .show();
@@ -717,7 +746,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     public void onChange(final SingleDownload singleDownload) {
         if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
             mReader.reloadImage(singleDownload.getIndex());
-            runOnUiThread(new Runnable() {
+            getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mReader.invalidate();
@@ -725,10 +754,10 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
             });
         } else {
             if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
-                runOnUiThread(new Runnable() {
+                getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(ActivityReader.this, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), R.string.error_downloading_image, Toast.LENGTH_LONG).show();
                     }
                 });
             }
@@ -764,7 +793,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                     break;
             }
             if (showMsg)
-                Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -772,7 +801,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
     enum LoadMode {START, END, SAVED}
 
     public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncDialog = new ProgressDialog(ActivityReader.this);
+        ProgressDialog asyncDialog = new ProgressDialog(getActivity());
         String error;
 
         @Override
@@ -785,7 +814,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         @Override
         protected Chapter doInBackground(Chapter... arg0) {
             Chapter c = arg0[0];
-            ServerBase s = ServerBase.getServer(ActivityReader.this.mManga.getServerId());
+            ServerBase s = ServerBase.getServer(ReaderFragment.this.mManga.getServerId());
             try {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {
@@ -808,14 +837,14 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
                 // ignore error
             }
             if (error != null && error.length() > 1) {
-                Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             } else {
                 try {
-                    Database.updateChapter(ActivityReader.this, result);
-                    DownloadPoolService.addChapterDownloadPool(ActivityReader.this, result, true);
+                    Database.updateChapter(getActivity(), result);
+                    DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                     loadChapter(result, LoadMode.SAVED);
                 } catch (Exception e) {
-                    Toast.makeText(ActivityReader.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
             super.onPostExecute(result);
@@ -830,7 +859,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            redownloadingImage = true;
+            reDownloadingImage = true;
             idx = mReader.getCurrentPage();
             mReader.freePage(idx);
             path = mReader.getPath(idx);
@@ -845,7 +874,7 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         protected Void doInBackground(Void... params) {
             try {
                 SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, idx), path, idx, mChapter.getId(), new ChapterDownload(mChapter), mServerBase.needRefererForImages());
-                s.setChangeListener(ActivityReader.this);
+                s.setChangeListener(ReaderFragment.this);
                 new Thread(s).start();
             } catch (Exception e) {
                 error = e.getMessage();
@@ -860,9 +889,9 @@ public class ActivityReader extends AppCompatActivity implements StateChangeList
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             if (error.length() > 3) {
-                Toast.makeText(ActivityReader.this, error, Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
-            redownloadingImage = false;
+            reDownloadingImage = false;
         }
     }
 

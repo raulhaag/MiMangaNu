@@ -184,13 +184,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (backListener != null) {
-            if (!backListener.onBackPressed())
+            if (!backListener.onBackPressed()) {
+                backListener = null;
+                keyUpListener = null;
                 if (getFragmentManager().getBackStackEntryCount() > 0) {
                     getFragmentManager().popBackStack();
                 } else {
                     super.onBackPressed();
                 }
+            }
         } else if (getFragmentManager().getBackStackEntryCount() > 0) {
+            backListener = null;
+            keyUpListener = null;
             getFragmentManager().popBackStack();
         } else {
             super.onBackPressed();

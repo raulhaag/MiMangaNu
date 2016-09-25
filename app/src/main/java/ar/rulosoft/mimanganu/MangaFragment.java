@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -603,9 +602,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                         int first = mListView.getFirstVisiblePosition();
                         Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
-                        Intent intent = new Intent(getActivity(), ActivityReader.class);
-                        intent.putExtra(MangaFragment.CHAPTER_ID, result.getId());
-                        MangaFragment.this.startActivity(intent);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(MangaFragment.CHAPTER_ID, result.getId());
+                        ReaderFragment readerFragment = new ReaderFragment();
+                        readerFragment.setArguments(bundle);
+                        ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
                     } catch (Exception e) {
                         if (e.getMessage() != null) {
                             Util.getInstance().showFastSnackBar(e.getMessage(), getContext());
@@ -671,7 +672,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             if (result > 0) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, result), getContext());
+                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, "" + result), getContext());
                 }
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 if (isAdded()) {
@@ -769,10 +770,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class MarkSelectedAsRead extends AsyncTask<Void, Integer, Void> {
-        private int selectionSize = 0;
-        private Chapter chapter;
         int threads = Runtime.getRuntime().availableProcessors();
         int ticket = threads;
+        private int selectionSize = 0;
+        private Chapter chapter;
 
         public MarkSelectedAsRead(int selectionSize) {
             super();
@@ -857,10 +858,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class MarkSelectedAsUnread extends AsyncTask<Void, Integer, Void> {
-        private int selectionSize = 0;
-        private Chapter chapter;
         int threads = Runtime.getRuntime().availableProcessors();
         int ticket = threads;
+        private int selectionSize = 0;
+        private Chapter chapter;
 
         public MarkSelectedAsUnread(int selectionSize) {
             super();
@@ -946,11 +947,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class DeleteImages extends AsyncTask<Void, Integer, Integer> {
+        int threads = Runtime.getRuntime().availableProcessors();
+        int ticket = threads;
         private ServerBase serverBase;
         private int selectionSize = 0;
         private Chapter chapter;
-        int threads = Runtime.getRuntime().availableProcessors();
-        int ticket = threads;
 
         public DeleteImages(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
@@ -1033,11 +1034,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class RemoveChapters extends AsyncTask<Void, Integer, Integer> {
+        int j = 0;
         private ServerBase serverBase;
         private int selectionSize = 0;
         private Chapter chapter;
         private ActionMode mode;
-        int j = 0;
 
         public RemoveChapters(ServerBase serverBase, int selectionSize, ActionMode mode) {
             this.serverBase = serverBase;
@@ -1101,11 +1102,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class ResetChapters extends AsyncTask<Void, Integer, Integer> {
+        int threads = Runtime.getRuntime().availableProcessors();
+        int ticket = threads;
         private ServerBase serverBase;
         private int selectionSize = 0;
         private Chapter chapter;
-        int threads = Runtime.getRuntime().availableProcessors();
-        int ticket = threads;
 
         public ResetChapters(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
