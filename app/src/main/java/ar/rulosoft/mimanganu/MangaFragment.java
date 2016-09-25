@@ -89,7 +89,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         setHasOptionsMenu(true);
         setRetainInstance(true);
         mMangaId = getArguments().getInt(MainFragment.MANGA_ID, -1);
-        return inflater.inflate(R.layout.activity_manga, container, false);
+        return inflater.inflate(R.layout.fragment_manga, container, false);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             readerType = mManga.getReaderType();
         }
         if (getView() != null) {
-            mListView = (ListView) getView().findViewById(R.id.lista);
+            mListView = (ListView) getView().findViewById(R.id.list);
             swipeReLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
             MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         }

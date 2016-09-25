@@ -63,7 +63,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private static DisplayType mScreenFit;
     public Reader mReader;
     boolean updatedValue = false;//just a flag to no seek when the reader seek
-    FrameLayout rLayout = null;
     private Direction direction;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
@@ -86,6 +85,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private MenuItem displayMenu;
     private AlertDialog mDialog = null;
     private boolean reDownloadingImage;
+    private int reader_bg;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -127,7 +127,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         super.onStart();
         getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mServerBase = ServerBase.getServer(mManga.getServerId());
-        int reader_bg = ThemeColors.getReaderColor(pm);
+        reader_bg = ThemeColors.getReaderColor(pm);
         if (getView() != null) {
             mActionBar = (Toolbar) getView().findViewById(R.id.action_bar);
             mActionBar.setTitleTextColor(Color.WHITE);
@@ -370,16 +370,24 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             this.direction = Direction.VERTICAL;
             mMenuItem.setIcon(R.drawable.ic_action_verical);
         }
-        if (mReader != null)
+        if (mReader != null) {
             if (mReader.hasFitFeature()) {
                 displayMenu.setVisible(true);
             } else {
                 displayMenu.setVisible(false);
             }
+        }
         mActionBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 return ReaderFragment.this.onMenuItemClick(item);
+            }
+        });
+        mActionBar.setNavigationIcon(R.drawable.ic_back);
+        mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
             }
         });
     }
@@ -511,6 +519,11 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         super.onResume();
         DownloadPoolService.attachListener(this, mChapter.getId());
         DownloadPoolService.setDownloadListener(this);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getActivity().getWindow();
+            window.setNavigationBarColor(reader_bg);
+            window.setStatusBarColor(reader_bg);
+        }
     }
 
     @Override
