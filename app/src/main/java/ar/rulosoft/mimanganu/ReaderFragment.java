@@ -13,6 +13,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -88,10 +89,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private int reader_bg;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View view = inflater.inflate(R.layout.fragment_reader, container, false);
-
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setRetainInstance(true);
         int chapterId = getArguments().getInt(MangaFragment.CHAPTER_ID);
         if (savedInstanceState != null) {
             chapterId = savedInstanceState.getInt(MangaFragment.CHAPTER_ID);
@@ -119,41 +119,46 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
         }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate(R.layout.fragment_reader, container, false);
+        mActionBar = (Toolbar) view.findViewById(R.id.action_bar);
+        mControlsLayout = (RelativeLayout) view.findViewById(R.id.controls);
+        mSeekerPage = (TextView) view.findViewById(R.id.page);
+        mSeekBar = (SeekBar) view.findViewById(R.id.seeker);
+        mSeekerLayout = (LinearLayout) view.findViewById(R.id.seeker_layout);
+        mScrollSelect = (RelativeLayout) view.findViewById(R.id.scroll_selector);
+        mButtonMinus = (Button) view.findViewById(R.id.minus);
+        mButtonPlus = (Button) view.findViewById(R.id.plus);
+        mScrollSensitiveText = (TextView) view.findViewById(R.id.scroll_level);
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        ((MainActivity) getActivity()).getSupportActionBar().hide();
+        if (!pm.getBoolean("show_status_bar", true)) {
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
         mServerBase = ServerBase.getServer(mManga.getServerId());
         reader_bg = ThemeColors.getReaderColor(pm);
-        if (getView() != null) {
-            mActionBar = (Toolbar) getView().findViewById(R.id.action_bar);
-            mActionBar.setTitleTextColor(Color.WHITE);
-            initMenu();
-            mControlsLayout = (RelativeLayout) getView().findViewById(R.id.controls);
-            mControlsLayout.setAlpha(0f);
-            mControlsLayout.setVisibility(View.GONE);
+        mActionBar.setTitleTextColor(Color.WHITE);
+        initMenu();
+        mControlsLayout.setAlpha(0f);
+        mControlsLayout.setVisibility(View.GONE);
+        mSeekerPage.setAlpha(.9f);
+        mSeekerPage.setTextColor(Color.WHITE);
 
-            mSeekerPage = (TextView) getView().findViewById(R.id.page);
-            mSeekerPage.setAlpha(.9f);
-            mSeekerPage.setTextColor(Color.WHITE);
-
-            mSeekBar = (SeekBar) getView().findViewById(R.id.seeker);
-            mSeekerLayout = (LinearLayout) getView().findViewById(R.id.seeker_layout);
-            mScrollSelect = (RelativeLayout) getView().findViewById(R.id.scroll_selector);
-            mButtonMinus = (Button) getView().findViewById(R.id.minus);
-            mButtonPlus = (Button) getView().findViewById(R.id.plus);
-            mScrollSensitiveText = (TextView) getView().findViewById(R.id.scroll_level);
-
-            mScrollSensitiveText.setText(mScrollFactor + "x");
-            mActionBar.setBackgroundColor(reader_bg);
-            mSeekerLayout.setBackgroundColor(reader_bg);
-            mSeekerPage.setBackgroundColor(reader_bg);
-            mSeekBar.setBackgroundColor(reader_bg);
-            mScrollSelect.setBackgroundColor(reader_bg);
-        }
+        mScrollSensitiveText.setText(mScrollFactor + "x");
+        mActionBar.setBackgroundColor(reader_bg);
+        mSeekerLayout.setBackgroundColor(reader_bg);
+        mSeekerPage.setBackgroundColor(reader_bg);
+        mSeekBar.setBackgroundColor(reader_bg);
+        mScrollSelect.setBackgroundColor(reader_bg);
 
         if (pm.getBoolean("hide_sensitivity_scrollbar", false))
             mScrollSelect.setVisibility(View.INVISIBLE);
@@ -190,7 +195,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
         mSeekBar.setOnSeekBarChangeListener(this);
         setReader();
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
     }
 
     @Override
@@ -494,7 +498,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 mChapter.setReadStatus(Chapter.READ);
                 Database.updateChapter(getActivity(), mChapter);
             } else {
-                Database.updateChapterPage(getActivity(), mChapter.getId(), mReader.getCurrentPage());
+                mChapter.setPagesRead(mReader.getCurrentPage());
+                Database.updateChapterPage(getActivity(), mChapter.getId(), mChapter.getPagesRead());
             }
         } catch (Exception ignored) {
             ignored.printStackTrace();
@@ -747,6 +752,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                             }
                             mDialog.dismiss();
                             mDialog = null;
+                            controlVisible = true; //just to close
                             getActivity().onBackPressed();
                         }
                     })

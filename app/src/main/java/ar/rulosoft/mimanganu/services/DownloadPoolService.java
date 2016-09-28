@@ -154,10 +154,14 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void attachListener(ChapterDownload.OnErrorListener lector, int cid) {
-        for (ChapterDownload dc : chapterDownloads) {
-            if (dc.chapter.getId() == cid) {
-                dc.setErrorListener(lector);
-                break;
+        if (chapterDownloads != null && !chapterDownloads.isEmpty()) {
+            ChapterDownload cd;
+            for (int j = 0; j < chapterDownloads.size(); j++) {
+                cd = chapterDownloads.get(j);
+                if (cd.chapter.getId() == cid) {
+                    cd.setErrorListener(lector);
+                    break;
+                }
             }
         }
     }
