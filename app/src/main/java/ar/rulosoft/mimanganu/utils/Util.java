@@ -216,7 +216,7 @@ public class Util {
                 notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         }
         ++n;
-        notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
+        //notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));

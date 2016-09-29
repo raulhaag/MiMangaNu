@@ -272,7 +272,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     }
 
     public class LoadLastTask extends AsyncTask<Integer, Void, ArrayList<Manga>> {
-        String error = null;
+        String error = "";
 
         @Override
         protected void onPreExecute() {
@@ -293,7 +293,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
-            if (error != null) {
+            if (!error.isEmpty()) {
                 Util.getInstance().showFastSnackBar(error, getView(),getContext());
             } else {
                 page++;

@@ -13,6 +13,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -74,8 +75,10 @@ public class DetailsFragment extends Fragment {
             public void run() {
                 List<Manga> mangas = Database.getMangas(getContext(), null, true);
                 for (Manga m : mangas) {
-                    if (m.getPath().equals(manga.getPath()))
+                    if (m.getPath().equals(manga.getPath())) {
                         mangaAlreadyAdded = true;
+                        floatingActionButton_add.hide();
+                    }
                 }
             }
         });
@@ -161,17 +164,14 @@ public class DetailsFragment extends Fragment {
     }
 
     private class LoadDetailsTask extends AsyncTask<Void, Void, Void> {
-        String error;
+        String error = "";
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
                 serverBase.loadMangaInformation(manga, true);
             } catch (Exception e) {
-                if (e.getMessage() != null)
-                    error = e.getMessage();
-                else
-                    error = e.getLocalizedMessage();
+                error = Log.getStackTraceString(e);
             }
             return null;
         }
@@ -180,7 +180,7 @@ public class DetailsFragment extends Fragment {
         protected void onPostExecute(Void v) {
             String infoExtra = "";
             if(isAdded()) {
-                if (error == null || error.length() < 2) {
+                if (error.isEmpty()) {
                     if (manga.isFinished()) {
                         infoExtra = infoExtra + getResources().getString(R.string.finalizado);
                     } else {
@@ -211,7 +211,7 @@ public class DetailsFragment extends Fragment {
                         data.setSynopsis(getResources().getString(R.string.nodisponible));
                     }
                     imageLoader.displayImg(manga.getImages(), data);
-                    if (error != null && error.length() > 2) {
+                    if (!error.isEmpty()) {
                         Util.getInstance().showFastSnackBar(error, getView(),getContext());
                     } else {
                         AnimatorSet set = new AnimatorSet();
@@ -234,72 +234,5 @@ public class DetailsFragment extends Fragment {
             swipeRefreshLayout.setRefreshing(false);
         }
     }
-
-    /*public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
-        ProgressDialog adding = new ProgressDialog(getActivity());
-        String error = ".";
-        int total = 0;
-        boolean errorWhileAddingManga;
-
-        @Override
-        protected void onPreExecute() {
-            adding.setMessage(getResources().getString(R.string.adding_to_db));
-            adding.show();
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Manga... params) {
-            try {
-                serverBase.loadChapters(manga, false);
-            } catch (Exception e) {
-                error = e.getMessage();
-                Log.e(TAG, "Chapter load error", e);
-            }
-            total = params[0].getChapters().size();
-            int mid = Database.addManga(getActivity(), params[0]);
-            if (mid > -1) {
-                long initTime = System.currentTimeMillis();
-                for (int i = 0; i < params[0].getChapters().size(); i++) {
-                    if (System.currentTimeMillis() - initTime > 500) {
-                        publishProgress(i);
-                        initTime = System.currentTimeMillis();
-                    }
-                    Database.addChapter(getActivity(), params[0].getChapter(i), mid);
-                }
-            } else {
-                errorWhileAddingManga = true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(final Integer... values) {
-            super.onProgressUpdate(values);
-            if (isAdded()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adding != null) {
-                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
-                        }
-                    }
-                });
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if (isAdded()) {
-                adding.dismiss();
-                if (!errorWhileAddingManga)
-                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.agregado), getActivity());
-                if (error != null && error.length() > 2) {
-                    Util.getInstance().showFastSnackBar(error, getActivity());
-                }
-            }
-            super.onPostExecute(result);
-        }
-    }*/
 
 }

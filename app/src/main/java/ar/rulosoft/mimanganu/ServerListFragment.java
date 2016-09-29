@@ -52,7 +52,6 @@ public class ServerListFragment extends Fragment {
         serverBase = ServerBase.getServer(id);
         list = (ListView) getView().findViewById(R.id.lista_de_mangas);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        //MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         if (adapter == null) {
             loadMangasTask = (LoadMangasTask) new LoadMangasTask().execute();
         } else {
@@ -122,7 +121,7 @@ public class ServerListFragment extends Fragment {
     }
 
     private class LoadMangasTask extends AsyncTask<Void, Void, List<Manga>> {
-        String error = null;
+        String error = "";
 
         @Override
         protected void onPreExecute() {
@@ -147,7 +146,7 @@ public class ServerListFragment extends Fragment {
                 adapter = new MangaAdapter(getContext(), result, MainActivity.darkTheme);
                 list.setAdapter(adapter);
             }
-            if (error != null && isAdded()) {
+            if (!error.isEmpty() && isAdded()) {
                 Util.getInstance().showFastSnackBar(error, getView(), getActivity());
             }
             loading.setVisibility(ProgressBar.INVISIBLE);
