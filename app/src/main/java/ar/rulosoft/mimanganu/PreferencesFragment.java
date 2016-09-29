@@ -294,7 +294,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     }
                 });
 
-                //t0.start();
+                t0.start();
                 t1.start();
                 return true;
             }
