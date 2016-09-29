@@ -76,19 +76,6 @@ public class Util {
         return path.substring(idx + 1);
     }
 
-    public void showFastSnackBar(String message, Context context) {
-        if (MainActivity.cLayout != null) {
-            Snackbar snackbar = Snackbar.make(MainActivity.cLayout, message, Snackbar.LENGTH_SHORT);
-            if(MainActivity.colors != null)
-                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
-            snackbar.show();
-        } else {
-            if (context != null) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
     public void showFastSnackBar(String message, View view, Context context) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
@@ -229,7 +216,7 @@ public class Util {
                 notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         }
         ++n;
-        //notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
+        notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
             notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));

@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -123,17 +124,18 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
                         item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
                         Database.updateChapterDownloaded(activity, c.getId(), 0);
-                        Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes),activity);
+                        Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.borrado_imagenes), v, activity);
                         notifyDataSetChanged();
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
                         if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
-                                Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
+                                Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga), v, activity);
                             } catch (Exception e) {
-                                if (e.getMessage() != null) {
-                                    Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga),activity);
+                                Log.e("ChapterAdapter", Log.getStackTraceString(e));
+                                if (e.getMessage() != null) { // what the fuck ~ xtj9182
+                                    Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga), v, activity);
                                 }
                             }
                         }

@@ -12,7 +12,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -30,9 +29,8 @@ public class MainActivity extends AppCompatActivity {
     public static int[] colors;
     public static boolean darkTheme;
     public static SharedPreferences pm;
-    public static MainFragment.UpdateListTask updateListTask;
+    public static boolean isCancelled;
     public static boolean isConnected = true;
-    public static CoordinatorLayout cLayout;
     public static boolean coldStart;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
     public ActionBar mActBar;
@@ -57,14 +55,13 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
-        cLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getApplicationContext());
     }
 
     @Override
     protected void onNewIntent(Intent intent) {
         int mangaIdFromNotification = intent.getIntExtra("manga_id", -1);
-        Log.d("MainActivity", "mangaID: " + mangaIdFromNotification);
+        Log.i("MainActivity", "mangaID: " + mangaIdFromNotification);
 
         if (mangaIdFromNotification > -1) {
             Bundle bundle = new Bundle();
@@ -73,8 +70,7 @@ public class MainActivity extends AppCompatActivity {
             mangaFragment.setArguments(bundle);
             replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
         } else if (mangaIdFromNotification == -1) {
-            if (updateListTask != null)
-                updateListTask.cancel(true);
+            isCancelled = true;
             Util.getInstance().cancelNotification(MainFragment.mNotifyID);
         }
     }
@@ -118,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     Util.getInstance().restartApp(getApplicationContext());
                 } else {
                     // Permission Denied
-                    Util.getInstance().showFastSnackBar(getString(R.string.storage_permission_denied), this);
+                    Util.getInstance().toast(this, getString(R.string.storage_permission_denied));
                 }
                 break;
             default:

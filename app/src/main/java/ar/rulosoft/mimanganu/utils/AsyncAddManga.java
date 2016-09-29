@@ -3,6 +3,8 @@ package ar.rulosoft.mimanganu.utils;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.view.View;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -13,19 +15,21 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
  * Created by Raul on 17/07/2016.
  */
 public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
-    Activity mActivity;
-    String error;
-    boolean allOk = true;
-    boolean backOnFinish;
-    Manga manga;
-    int total = 0;
-    int mNotifyID = (int) System.currentTimeMillis();
-    boolean loadMangaInformation;
-    boolean showProgressDialog;
-    ProgressDialog addingProgressDialog;
+    private Activity mActivity;
+    private String error = null;
+    private boolean allOk = true;
+    private boolean backOnFinish;
+    private Manga manga;
+    private int total = 0;
+    private int mNotifyID = (int) System.currentTimeMillis();
+    private boolean loadMangaInformation;
+    private boolean showProgressDialog;
+    private ProgressDialog addingProgressDialog;
+    private View view;
 
-    public AsyncAddManga(Manga manga, Activity mActivity, boolean backOnFinish, boolean loadMangaInformation, boolean showProgressDialog) {
+    public AsyncAddManga(Manga manga, Activity mActivity, View view, boolean backOnFinish, boolean loadMangaInformation, boolean showProgressDialog) {
         this.mActivity = mActivity;
+        this.view = view;
         this.backOnFinish = backOnFinish;
         this.manga = manga;
         this.loadMangaInformation = loadMangaInformation;
@@ -39,7 +43,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
             addingProgressDialog.setMessage(mActivity.getResources().getString(R.string.adding_to_db));
             addingProgressDialog.show();
         }
-        Util.getInstance().showFastSnackBar(mActivity.getString(R.string.adding_to_db) + " " + manga.getTitle(), mActivity);
+        Util.getInstance().showFastSnackBar(mActivity.getString(R.string.adding_to_db) + " " + manga.getTitle(), view, mActivity);
         Util.getInstance().createNotificationWithProgressbar(mActivity, mNotifyID, mActivity.getResources().getString(R.string.adding_to_db), "");
         super.onPreExecute();
     }
@@ -62,16 +66,13 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
                     }
                     Database.addChapter(mActivity, manga.getChapter(i), mid);
                 }
+                publishProgress(total);
             } else {
                 allOk = false;
             }
         } catch (Exception e) {
             allOk = false;
-            if (e.getMessage() != null) {
-                error = e.getMessage();
-            } else {
-                error = "NullPointerException";
-            }
+            error = Log.getStackTraceString(e);
         }
         return null;
     }
@@ -99,10 +100,10 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
         if (mActivity != null) {
             if (backOnFinish)
                 mActivity.onBackPressed();
-            if (!allOk) {
-                Util.getInstance().showFastSnackBar(error, mActivity);
-            } else {
-                Util.getInstance().showFastSnackBar(mActivity.getString(R.string.agregado) + " " + manga.getTitle(), mActivity);
+            if (!allOk && error != null) {
+                Util.getInstance().showFastSnackBar(error, view, mActivity);
+            } else if (allOk) {
+                Util.getInstance().showFastSnackBar(mActivity.getString(R.string.agregado) + " " + manga.getTitle(), view, mActivity);
             }
         }
         Util.getInstance().cancelNotification(mNotifyID);

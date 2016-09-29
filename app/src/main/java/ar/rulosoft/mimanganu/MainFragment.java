@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
@@ -64,7 +63,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";
-    public static MangaFragment mangaFragment;
     public static int mNotifyID = 1246502;
     private SharedPreferences pm;
     private Menu menu;
@@ -77,6 +75,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private MisMangasAdapter adapter;
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
+    private UpdateListTask updateListTask = null;
 
     @Nullable
     @Override
@@ -92,7 +91,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         mSectionsPagerAdapter = new SectionsPagerAdapter();
         if (getView() != null) {
             mViewPager = (ViewPager) getView().findViewById(R.id.pager);
-            MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
             floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
             if (is_server_list_open) {
@@ -105,7 +103,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         long updaterInterval = Long.parseLong(pm.getString("update_interval", "0"));
         if (MainActivity.coldStart && updaterInterval == -1) {
-            AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), pm);
+            AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
             automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             MainActivity.coldStart = false;
         }
@@ -437,7 +435,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         if (item.getItemId() == R.id.delete) {
             final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
-            Snackbar confirm = Snackbar.make(MainActivity.cLayout, getString(R.string.manga_delete_confirm, manga.getTitle()), Snackbar.LENGTH_INDEFINITE);
+            Snackbar confirm = Snackbar.make(getView(), getString(R.string.manga_delete_confirm, manga.getTitle()), Snackbar.LENGTH_INDEFINITE);
             confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -447,8 +445,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.getInstance().deleteRecursive(new File(path));
                     Database.deleteManga(getActivity(), manga.getId());
                     adapter.remove(manga);
-                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getContext());
-
+                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
                 }
             });
             confirm.getView().setBackgroundColor(MainActivity.colors[0]);
@@ -477,8 +474,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                MainActivity.updateListTask = new UpdateListTask(getActivity());
-                MainActivity.updateListTask.execute();
+                updateListTask = new UpdateListTask(getActivity());
+                updateListTask.execute();
             }
         });
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -492,7 +489,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         else if (columnas > 6)
             columnas = 6;
         grid.setNumColumns(columnas);
-        if (MainActivity.updateListTask != null && MainActivity.updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
+        if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
             swipeReLayout.post(new Runnable() {
                 @Override
                 public void run() {
@@ -506,7 +503,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 if (serverRecAdapter.actionMode == null) {
                     Bundle bundle = new Bundle();
                     bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
-                    mangaFragment = new MangaFragment();
+                    MangaFragment mangaFragment = new MangaFragment();
                     mangaFragment.setArguments(bundle);
                     ((MainActivity) getActivity()).replaceFragment(mangaFragment, "MangaFragment");
                 }
@@ -602,15 +599,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
-        ArrayList<Manga> mangaList;
-        int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
-        int ticket = threads;
-        int result = 0;
-        int numNow = 0;
-        String error = "";
-        Context context;
+        private ArrayList<Manga> mangaList;
+        private int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
+        private int ticket = threads;
+        private int result = 0;
+        private int numNow = 0;
+        private String error = "";
+        private Context context;
 
-        public UpdateListTask(Context context) {
+        UpdateListTask(Context context) {
             this.context = context;
             if (pm.getBoolean("include_finished_manga", false))
                 mangaList = Database.getMangas(getContext(), null, true);
@@ -625,7 +622,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 try {
                     if (NetworkUtilsAndReciever.isConnected(context)) {
                         Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getContext());
+                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getView(), getContext());
                     }
                 } catch (Exception e) {
                     error = Log.getStackTraceString(e);
@@ -644,10 +641,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected Integer doInBackground(Void... params) {
-            if (context != null && error.equals("")) {
+            if (context != null && error.isEmpty()) {
                 ticket = threads;
                 for (int idx = 0; idx < mangaList.size(); idx++) {
                     if (Util.n > (48 - threads))
+                        cancel(true);
+                    if(MainActivity.isCancelled)
                         cancel(true);
                     try {
                         if (NetworkUtilsAndReciever.isConnected(context)) {
@@ -720,13 +719,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     Util.getInstance().cancelNotification(mNotifyID);
                     if(isAdded())
                         setListManga(true);
-                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), context);
+                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, "" + result), getView(), context);
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    if (!error.equals("")) {
-                        Util.getInstance().showFastSnackBar(error, context);
+                    if (!error.isEmpty()) {
+                        Util.getInstance().showFastSnackBar(error, getView(), context);
                     } else {
-                        Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), context);
+                        Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), getView(), context);
                     }
                 }
                 swipeReLayout.setRefreshing(false);
@@ -745,6 +744,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 }
             }
             swipeReLayout.setRefreshing(false);
+            MainActivity.isCancelled = false;
         }
     }
 }

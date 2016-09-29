@@ -3,11 +3,11 @@ package ar.rulosoft.mimanganu;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,7 +52,7 @@ public class ServerListFragment extends Fragment {
         serverBase = ServerBase.getServer(id);
         list = (ListView) getView().findViewById(R.id.lista_de_mangas);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
+        //MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         if (adapter == null) {
             loadMangasTask = (LoadMangasTask) new LoadMangasTask().execute();
         } else {
@@ -122,8 +122,7 @@ public class ServerListFragment extends Fragment {
     }
 
     private class LoadMangasTask extends AsyncTask<Void, Void, List<Manga>> {
-
-        String error = "";
+        String error = null;
 
         @Override
         protected void onPreExecute() {
@@ -137,10 +136,7 @@ public class ServerListFragment extends Fragment {
             try {
                 mangas = serverBase.getMangas();
             } catch (Exception e) {
-                if (e.getMessage() != null)
-                    error = e.getMessage();
-                else
-                    error = e.toString();
+                error = Log.getStackTraceString(e);
             }
             return mangas;
         }
@@ -151,8 +147,8 @@ public class ServerListFragment extends Fragment {
                 adapter = new MangaAdapter(getContext(), result, MainActivity.darkTheme);
                 list.setAdapter(adapter);
             }
-            if (error != null && error.length() > 2 && isAdded()) {
-                Util.getInstance().showFastSnackBar("Error: " + error, getActivity());
+            if (error != null && isAdded()) {
+                Util.getInstance().showFastSnackBar(error, getView(), getActivity());
             }
             loading.setVisibility(ProgressBar.INVISIBLE);
         }

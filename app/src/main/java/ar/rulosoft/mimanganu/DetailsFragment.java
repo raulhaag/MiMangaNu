@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -83,7 +82,6 @@ public class DetailsFragment extends Fragment {
         t0.start();
 
         data = (ControlInfo) getView().findViewById(R.id.datos);
-        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
@@ -94,7 +92,7 @@ public class DetailsFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!mangaAlreadyAdded) {
-                    AsyncAddManga nAsyncAddManga = new AsyncAddManga(manga, getActivity(), false, false, true);
+                    AsyncAddManga nAsyncAddManga = new AsyncAddManga(manga, getActivity(), getView(), false, false, true);
                     nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
                     AnimatorSet set = new AnimatorSet();
@@ -106,7 +104,7 @@ public class DetailsFragment extends Fragment {
                     set.playSequentially(anim2, anim1);
                     set.start();
                 } else {
-                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getActivity());
+                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(),getContext());
                 }
             }
         });
@@ -214,7 +212,7 @@ public class DetailsFragment extends Fragment {
                     }
                     imageLoader.displayImg(manga.getImages(), data);
                     if (error != null && error.length() > 2) {
-                        Util.getInstance().showFastSnackBar(error, getActivity());
+                        Util.getInstance().showFastSnackBar(error, getView(),getContext());
                     } else {
                         AnimatorSet set = new AnimatorSet();
                         ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 0.0f, 1.0f);
@@ -230,7 +228,7 @@ public class DetailsFragment extends Fragment {
                         set.start();
                     }
                 } else {
-                    Util.getInstance().showFastSnackBar(error, getActivity());
+                    Util.getInstance().showFastSnackBar(error, getView(), getContext());
                 }
             }
             swipeRefreshLayout.setRefreshing(false);

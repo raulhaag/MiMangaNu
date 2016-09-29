@@ -225,4 +225,5 @@
     <string name="dont_spam_redownload_button">Please wait for the current image to finish downloading !</string>
     <string name="one_more_chapter_not_displayed_here">more chapter not displayed here &#8230;</string>
     <string name="x_more_chapters_not_displayed_here">more chapters not displayed here &#8230;</string>
+    <string name="vibrate">Vibrate</string>
 </resources>

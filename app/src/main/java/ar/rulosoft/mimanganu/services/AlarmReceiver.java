@@ -56,7 +56,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                 NetworkUtilsAndReciever.ONLY_WIFI = pm.getBoolean("only_wifi", false);
                 Navigator.navigator = new Navigator(context);
-                AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(context, pm);
+                AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(context, null, pm);
                 automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
             NetworkUtilsAndReciever.reset();
