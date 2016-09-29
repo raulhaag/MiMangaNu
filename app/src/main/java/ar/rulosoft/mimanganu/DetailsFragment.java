@@ -77,7 +77,8 @@ public class DetailsFragment extends Fragment {
                 for (Manga m : mangas) {
                     if (m.getPath().equals(manga.getPath())) {
                         mangaAlreadyAdded = true;
-                        floatingActionButton_add.hide();
+                        if (floatingActionButton_add != null)
+                            floatingActionButton_add.hide();
                     }
                 }
             }
