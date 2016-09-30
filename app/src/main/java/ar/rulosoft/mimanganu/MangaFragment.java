@@ -582,8 +582,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onPostExecute(Chapter result) {
             if (isAdded()) {
-                if (error != null && error.length() > 1) {
-                    Util.getInstance().showFastSnackBar(error, getView(), getContext());
+                if (!error.isEmpty()) {
+                    Util.getInstance().toast(getContext(), error);
                 } else {
                     try {
                         if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
@@ -620,7 +620,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         int mangaId = 0;
         String msg;
         String orgMsg;
-        String errorMsg;
+        String error = "";
 
         @Override
         protected void onPreExecute() {
@@ -641,11 +641,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 int diff = s.searchForNewChapters(mManga.getId(), getActivity(), false);//always full update
                 result += diff;
             } catch (Exception e) {
-                if (e.getMessage() != null) {
-                    errorMsg = getResources().getString(R.string.error) + ":" + e.getMessage();
-                } else {
-                    errorMsg = getResources().getString(R.string.error);
-                }
+                error = Log.getStackTraceString(e);
+                Log.e(TAG,"Exception", e);
             }
             return result;
         }
@@ -663,9 +660,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 if (isAdded()) {
                     Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, "" + result), getView(), getContext());
                 }
-            } else if (errorMsg != null && errorMsg.length() > 2) {
+            } else if (!error.isEmpty()) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(errorMsg, getView(), getContext());
+                    Util.getInstance().toast(getContext(), error);
                 }
             }
             running = false;

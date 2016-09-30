@@ -147,9 +147,10 @@ public class ServerListFragment extends Fragment {
                 list.setAdapter(adapter);
             }
             if (!error.isEmpty() && isAdded()) {
-                Util.getInstance().showFastSnackBar(error, getView(), getActivity());
+                Util.getInstance().toast(getContext(), error);
             }
-            loading.setVisibility(ProgressBar.INVISIBLE);
+            if (loading != null)
+                loading.setVisibility(ProgressBar.INVISIBLE);
         }
     }
 

@@ -43,6 +43,9 @@
     <string-array name="periodo">
         <item>@string/no_update</item>
         <item>@string/_update_at_start_up</item>
+        <item>Update at start up if 6 hours have passed (todo)</item>
+        <item>Update at start up if 12 hours have passed (todo)</item>
+        <item>Update at start up if 1 day has passed (todo)</item>
         <item>@string/_6hours</item>
         <item>@string/_12hours</item>
         <item>@string/_1day</item>
@@ -52,6 +55,9 @@
     <string-array name="periodo_val">
         <item>0</item>
         <item>-1</item>
+        <item>-2</item>
+        <item>-3</item>
+        <item>-4</item>
         <item>21600000</item>
         <item>43200000</item>
         <item>86400000</item>
