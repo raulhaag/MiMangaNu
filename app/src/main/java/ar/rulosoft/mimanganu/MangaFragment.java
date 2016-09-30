@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -109,7 +108,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         if (getView() != null) {
             mListView = (ListView) getView().findViewById(R.id.list);
             swipeReLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
-            MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         }
         mImageLoader = new ImageLoader(getActivity());
         final int[] colors = ThemeColors.getColors(pm);
@@ -200,17 +198,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         break;
                     case R.id.remove_chapter:
                         finish = false;
-                        Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.delete_confirm, Snackbar.LENGTH_INDEFINITE)
+                        Snackbar confirm = Snackbar.make(getView(), R.string.delete_confirm, Snackbar.LENGTH_INDEFINITE)
                                 .setAction(android.R.string.yes, new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
-                                        /*SparseBooleanArray selection = mChapterAdapter.getSelection();
-                                        int[] selected = new int[selection.size()];
-                                        for (int j = 0; j < selection.size(); j++) {
-                                            selected[j] = selection.keyAt(j);
-                                        }
-                                        Arrays.sort(selected);*/
-
                                         if(selection.size() < 8) {
                                             // Remove chapters on UI Thread
                                             for (int i = selection.size() - 1; i >= 0; i--) {
@@ -330,7 +321,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 getActivity().onBackPressed();
                 return true;
             case R.id.action_download_remaining: {
-                Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.download_remain_confirmation, Snackbar.LENGTH_INDEFINITE);
+                Snackbar confirm = Snackbar.make(getView(), R.string.download_remain_confirmation, Snackbar.LENGTH_INDEFINITE);
                 confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -399,7 +390,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 break;
             }
             case R.id.action_descargar_no_leidos: {
-                Snackbar confirm = Snackbar.make(MainActivity.cLayout, R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
+                Snackbar confirm = Snackbar.make(getView(), R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
                 confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -572,7 +563,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             try {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {
-                error = e.getMessage();
+                error = Log.getStackTraceString(e);
                 Log.e(TAG, "ChapterInit error", e);
             } finally {
                 publishProgress();
@@ -592,7 +583,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         protected void onPostExecute(Chapter result) {
             if (isAdded()) {
                 if (error != null && error.length() > 1) {
-                    Util.getInstance().showFastSnackBar(error, getContext());
+                    Util.getInstance().showFastSnackBar(error, getView(), getContext());
                 } else {
                     try {
                         if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
@@ -608,9 +599,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         readerFragment.setArguments(bundle);
                         ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
                     } catch (Exception e) {
-                        if (e.getMessage() != null) {
-                            Util.getInstance().showFastSnackBar(e.getMessage(), getContext());
-                        }
+                            Util.getInstance().showFastSnackBar(Log.getStackTraceString(e), getView(), getContext());
                     }
                 }
             }
@@ -672,11 +661,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             if (result > 0) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, "" + result), getContext());
+                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, "" + result), getView(), getContext());
                 }
             } else if (errorMsg != null && errorMsg.length() > 2) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(errorMsg, getContext());
+                    Util.getInstance().showFastSnackBar(errorMsg, getView(), getContext());
                 }
             }
             running = false;
@@ -770,12 +759,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class MarkSelectedAsRead extends AsyncTask<Void, Integer, Void> {
-        int threads = Runtime.getRuntime().availableProcessors();
-        int ticket = threads;
         private int selectionSize = 0;
         private Chapter chapter;
+        private int threads = Runtime.getRuntime().availableProcessors();
+        private int ticket = threads;
 
-        public MarkSelectedAsRead(int selectionSize) {
+        MarkSelectedAsRead(int selectionSize) {
             super();
             this.selectionSize = selectionSize;
             mNotifyID_MarkSelectedAsRead = (int) System.currentTimeMillis();
@@ -838,9 +827,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            mChapterAdapter.notifyDataSetChanged();
-            if(selectionSize > 7)
-                Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_MarkSelectedAsRead, getString(R.string.marking_as_read), chapter.getTitle(), true);
+            if (isAdded() && !isCancelled()) {
+                mChapterAdapter.notifyDataSetChanged();
+                if (selectionSize > 7 && chapter != null)
+                    Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_MarkSelectedAsRead, getString(R.string.marking_as_read), chapter.getTitle(), true);
+            }
         }
 
         @Override
@@ -858,12 +849,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class MarkSelectedAsUnread extends AsyncTask<Void, Integer, Void> {
-        int threads = Runtime.getRuntime().availableProcessors();
-        int ticket = threads;
         private int selectionSize = 0;
         private Chapter chapter;
+        private int threads = Runtime.getRuntime().availableProcessors();
+        private int ticket = threads;
 
-        public MarkSelectedAsUnread(int selectionSize) {
+        MarkSelectedAsUnread(int selectionSize) {
             super();
             this.selectionSize = selectionSize;
             mNotifyID_MarkSelectedAsUnread = (int) System.currentTimeMillis();
@@ -927,9 +918,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            mChapterAdapter.notifyDataSetChanged();
-            if(selectionSize > 7)
-                Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_MarkSelectedAsUnread, getString(R.string.marking_as_unread), chapter.getTitle(), true);
+            if (isAdded() && !isCancelled()) {
+                mChapterAdapter.notifyDataSetChanged();
+                if (selectionSize > 7 && chapter != null)
+                    Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_MarkSelectedAsUnread, getString(R.string.marking_as_unread), chapter.getTitle(), true);
+            }
         }
 
         @Override
@@ -947,13 +940,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class DeleteImages extends AsyncTask<Void, Integer, Integer> {
-        int threads = Runtime.getRuntime().availableProcessors();
-        int ticket = threads;
         private ServerBase serverBase;
         private int selectionSize = 0;
         private Chapter chapter;
+        private int threads = Runtime.getRuntime().availableProcessors();
+        private int ticket = threads;
 
-        public DeleteImages(ServerBase serverBase, int selectionSize) {
+        DeleteImages(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
             this.selectionSize = selectionSize;
             mNotifyID_DeleteImages = (int) System.currentTimeMillis();
@@ -1013,9 +1006,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            mChapterAdapter.notifyDataSetChanged();
-            if(selectionSize > 7)
-                Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_DeleteImages, getString(R.string.deleting), chapter.getTitle(), true);
+            if (isAdded() && !isCancelled()) {
+                mChapterAdapter.notifyDataSetChanged();
+                if (selectionSize > 7 && chapter != null)
+                    Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_DeleteImages, getString(R.string.deleting), chapter.getTitle(), true);
+            }
         }
 
         @Override
@@ -1034,13 +1029,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class RemoveChapters extends AsyncTask<Void, Integer, Integer> {
-        int j = 0;
         private ServerBase serverBase;
         private int selectionSize = 0;
         private Chapter chapter;
         private ActionMode mode;
+        private int j = 0;
 
-        public RemoveChapters(ServerBase serverBase, int selectionSize, ActionMode mode) {
+        RemoveChapters(ServerBase serverBase, int selectionSize, ActionMode mode) {
             this.serverBase = serverBase;
             this.selectionSize = selectionSize;
             this.mode = mode;
@@ -1083,7 +1078,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            Util.getInstance().changeNotificationWithProgressbar(selectionSize - 1, values[0], mNotifyID_RemoveChapters, getString(R.string.removing_chapters), chapter.getTitle(), true);
+            if (isAdded() && !isCancelled() && chapter != null) {
+                Util.getInstance().changeNotificationWithProgressbar(selectionSize - 1, values[0], mNotifyID_RemoveChapters, getString(R.string.removing_chapters), chapter.getTitle(), true);
+            }
         }
 
         @Override
@@ -1102,13 +1099,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     private class ResetChapters extends AsyncTask<Void, Integer, Integer> {
-        int threads = Runtime.getRuntime().availableProcessors();
-        int ticket = threads;
         private ServerBase serverBase;
         private int selectionSize = 0;
         private Chapter chapter;
+        private int threads = Runtime.getRuntime().availableProcessors();
+        private int ticket = threads;
 
-        public ResetChapters(ServerBase serverBase, int selectionSize) {
+        ResetChapters(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
             this.selectionSize = selectionSize;
             mNotifyID_ResetChapters = (int) System.currentTimeMillis();
@@ -1168,8 +1165,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            if(selectionSize > 7)
-                Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_ResetChapters, getString(R.string.resetting_chapters), chapter.getTitle(), true);
+            if (isAdded() && !isCancelled()) {
+                if (selectionSize > 7 && chapter != null)
+                    Util.getInstance().changeNotificationWithProgressbar(selectionSize, values[0], mNotifyID_ResetChapters, getString(R.string.resetting_chapters), chapter.getTitle(), true);
+            }
         }
 
         @Override

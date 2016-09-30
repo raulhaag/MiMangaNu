@@ -123,7 +123,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.54:\n\t* replace some toasts with snackbars (on devices that support it) \n\t* fix re-download image crash \n\t* make deleting / removing / resetting chapters asynchronous \n\t* add option to show status bar \n\t* add option to hide actionbar \n\t* add notification for download progress \n\t* adding mangas is now asynchronous \n\t* bug fixes and performance improvements </string>
+    <string name="update_message">Changes in v1.55:\n\t* fix cancelling searching for updates notification not working \n\t* adding manga is now possible from a search result \n\t* placeholder \n\t* placeholderr \n\t* placeholder \n\t* placeholder \n\t* placeholder \n\t* bug fixes and performance improvements </string>
     <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>
@@ -225,4 +225,5 @@
     <string name="dont_spam_redownload_button">Please wait for the current image to finish downloading !</string>
     <string name="one_more_chapter_not_displayed_here">more chapter not displayed here &#8230;</string>
     <string name="x_more_chapters_not_displayed_here">more chapters not displayed here &#8230;</string>
+    <string name="vibrate">Vibrate</string>
 </resources>

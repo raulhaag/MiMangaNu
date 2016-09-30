@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -18,18 +19,20 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by jtx on 15.09.2016.
  */
 public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
-    ArrayList<Manga> mangaList;
-    int threads = 2;
-    int ticket = threads;
-    int result = 0;
-    int numNow = 0;
-    String errorMsg = "";
-    Context context;
-    int mNotifyID = (int) System.currentTimeMillis();
-    SharedPreferences pm;
+    private ArrayList<Manga> mangaList;
+    private int threads = 2;
+    private int ticket = threads;
+    private int result = 0;
+    private int numNow = 0;
+    private String errorMsg = "";
+    private Context context;
+    private int mNotifyID = (int) System.currentTimeMillis();
+    private SharedPreferences pm;
+    private View view;
 
-    public AutomaticUpdateTask(Context context, SharedPreferences pm) {
+    public AutomaticUpdateTask(Context context, View view, SharedPreferences pm) {
         this.context = context;
+        this.view = view;
         this.pm = pm;
         if (pm.getBoolean("include_finished_manga", false))
             mangaList = Database.getMangas(context, null, true);
@@ -47,7 +50,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             try {
                 if (NetworkUtilsAndReciever.isConnected(context)) {
                     Util.getInstance().createSearchingForUpdatesNotification(context, mNotifyID);
-                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.searching_for_updates), context);
+                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.searching_for_updates), view, context);
                 }
             } catch (Exception e) {
                 if (e.getMessage() != null)
@@ -135,13 +138,13 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         if (context != null) {
             if (result > 0) {
                 Util.getInstance().cancelNotification(mNotifyID);
-                Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), context);
+                Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), view, context);
             } else {
                 Util.getInstance().cancelNotification(mNotifyID);
                 if (!errorMsg.equals("")) {
-                    Util.getInstance().showFastSnackBar(errorMsg, context);
+                    Util.getInstance().showFastSnackBar(errorMsg, view, context);
                 } else {
-                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), context);
+                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), view, context);
                 }
             }
         } else {

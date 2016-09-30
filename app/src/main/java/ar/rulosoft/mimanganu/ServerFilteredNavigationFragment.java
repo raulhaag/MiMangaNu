@@ -9,7 +9,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -17,6 +16,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Display;
 import android.view.LayoutInflater;
@@ -89,10 +89,10 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         if (!mangaAlreadyAdded) {
-            AsyncAddManga nAsyncAddManga = new AsyncAddManga(mAdapter.getItem(lastContextMenuIndex), getActivity(), false, true, false);
+            AsyncAddManga nAsyncAddManga = new AsyncAddManga(mAdapter.getItem(lastContextMenuIndex), getActivity(), getView(), false, true, false);
             nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
-            Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getActivity());
+            Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(), getActivity());
         }
         mangaAlreadyAdded = false;
         return super.onContextItemSelected(item);
@@ -127,7 +127,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         serverBase = ServerBase.getServer(serverID);
         grid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
         display.getMetrics(outMetrics);
@@ -273,7 +272,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     }
 
     public class LoadLastTask extends AsyncTask<Integer, Void, ArrayList<Manga>> {
-
         String error = "";
 
         @Override
@@ -288,15 +286,15 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             try {
                 mangas = serverBase.getMangasFiltered(filter, order, params[0]);
             } catch (Exception e) {
-                error = e.getMessage();
+                error = Log.getStackTraceString(e);
             }
             return mangas;
         }
 
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
-            if (error != null && error.length() > 1) {
-                Util.getInstance().showFastSnackBar("Error: " + error, getContext());
+            if (!error.isEmpty()) {
+                Util.getInstance().showFastSnackBar(error, getView(),getContext());
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {

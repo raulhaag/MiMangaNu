@@ -6,9 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
@@ -18,7 +16,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -450,14 +447,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         Util.getInstance().cancelNotification(mNotifyID);
         actual = null;
         stopSelf();
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                if (MainFragment.mangaFragment != null && MainFragment.mangaFragment.isAdded())
-                    MainFragment.mangaFragment.loadChapters(Database.getChapters(getApplicationContext(), MainFragment.mangaFragment.mMangaId));
-            }
-        });
         try {
             if (wakeLock.isHeld())
                 wakeLock.release();

@@ -3,9 +3,10 @@ package ar.rulosoft.mimanganu;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,9 +17,12 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class SearchResultsFragment extends Fragment {
@@ -30,6 +34,8 @@ public class SearchResultsFragment extends Fragment {
     private PerformSearchTask performSearchTask = new PerformSearchTask();
     private boolean searchPerformed;
     private ArrayList<Manga> mangasFromSearch = new ArrayList<>();
+    private boolean mangaAlreadyAdded;
+    private Manga longClickedManga = null;
 
     @Nullable
     @Override
@@ -46,7 +52,6 @@ public class SearchResultsFragment extends Fragment {
         search_term = getArguments().getString(TERM);
         list = (ListView) getView().findViewById(R.id.result);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        MainActivity.cLayout = (CoordinatorLayout) getView().findViewById(R.id.coordinator_layout);
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -61,11 +66,48 @@ public class SearchResultsFragment extends Fragment {
                 searchPerformed = true;
             }
         });
+        registerForContextMenu(list);
         if (searchPerformed) {
             if (list != null)
                 list.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1, mangasFromSearch));
         } else
             performSearchTask = (PerformSearchTask) new PerformSearchTask().execute();
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
+        final Manga manga = (Manga) list.getAdapter().getItem(position);
+        longClickedManga = manga;
+
+        Thread t0 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                for (Manga m : mangas) {
+                    if (m.getPath().equals(manga.getPath()))
+                        mangaAlreadyAdded = true;
+                }
+            }
+        });
+        t0.start();
+
+        MenuInflater inflater = getActivity().getMenuInflater();
+        inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
+        menu.setHeaderTitle(manga.getTitle());
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        if (!mangaAlreadyAdded) {
+            AsyncAddManga nAsyncAddManga = new AsyncAddManga(longClickedManga, getActivity(), getView(), false, true, false);
+            nAsyncAddManga.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } else {
+            Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(), getActivity());
+        }
+        mangaAlreadyAdded = false;
+        longClickedManga = null;
+        return super.onContextItemSelected(item);
     }
 
     @Override
@@ -135,10 +177,10 @@ public class SearchResultsFragment extends Fragment {
                                 mangasFromSearch.clear();
                             mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {
-                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.busquedanores), getActivity());
+                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.busquedanores), getView(),getContext());
                         }
                     } else {
-                        Util.getInstance().showFastSnackBar(error, getActivity());
+                        Util.getInstance().showFastSnackBar(error, getView(),getContext());
                     }
                 }
             }

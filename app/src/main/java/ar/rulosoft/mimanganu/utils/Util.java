@@ -24,10 +24,10 @@ import ar.rulosoft.mimanganu.R;
 
 public class Util {
     public static int n = 0;
-    protected static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
-    protected static NotificationCompat.Builder notificationBuilder;
-    protected static NotificationCompat.Builder notificationWithProgressbarBuilder;
-    protected static NotificationManager notificationManager;
+    private static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
+    private static NotificationCompat.Builder notificationBuilder;
+    private static NotificationCompat.Builder notificationWithProgressbarBuilder;
+    private static NotificationManager notificationManager;
     private static Util utilInstance = null;
 
     private Util() {
@@ -74,19 +74,6 @@ public class Util {
         path = path.substring(0, path.length() - 1);
         int idx = path.lastIndexOf("/");
         return path.substring(idx + 1);
-    }
-
-    public void showFastSnackBar(String message, Context context) {
-        if (MainActivity.cLayout != null) {
-            Snackbar snackbar = Snackbar.make(MainActivity.cLayout, message, Snackbar.LENGTH_SHORT);
-            if(MainActivity.colors != null)
-                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
-            snackbar.show();
-        } else {
-            if (context != null) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     public void showFastSnackBar(String message, View view, Context context) {
@@ -257,8 +244,8 @@ public class Util {
         Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.putExtra("manga_id", -2);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-        PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), contentIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis() + 1, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context);
         searchingForUpdatesNotificationBuilder.setOngoing(true);
         searchingForUpdatesNotificationBuilder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
