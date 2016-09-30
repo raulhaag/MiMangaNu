@@ -24,11 +24,11 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private int ticket = threads;
     private int result = 0;
     private int numNow = 0;
-    private String errorMsg = "";
+    private String error = "";
     private Context context;
-    private int mNotifyID = (int) System.currentTimeMillis();
     private SharedPreferences pm;
     private View view;
+    static int mNotifyID = (int) System.currentTimeMillis();
 
     public AutomaticUpdateTask(Context context, View view, SharedPreferences pm) {
         this.context = context;
@@ -54,7 +54,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 }
             } catch (Exception e) {
                 if (e.getMessage() != null)
-                    errorMsg = e.getMessage();
+                    error = Log.getStackTraceString(e);
             }
         }
     }
@@ -70,11 +70,13 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(Void... params) {
-        if (context != null && errorMsg.equals("")) {
+        if (context != null && error.isEmpty()) {
             final boolean fast = pm.getBoolean("fast_update", true);
             ticket = threads;
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (Util.n > (48 - threads))
+                    cancel(true);
+                if(MainActivity.isCancelled)
                     cancel(true);
                 try {
                     if (NetworkUtilsAndReciever.isConnected(context)) {
@@ -114,9 +116,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                         break;
                     }
                 } catch (Exception e) {
-                    if (e.getMessage() != null) {
-                        errorMsg = e.getMessage();
-                    }
+                    error = Log.getStackTraceString(e);
                 }
             }
 
@@ -138,11 +138,11 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         if (context != null) {
             if (result > 0) {
                 Util.getInstance().cancelNotification(mNotifyID);
-                Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, result), view, context);
+                Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, "" + result), view, context);
             } else {
                 Util.getInstance().cancelNotification(mNotifyID);
-                if (!errorMsg.equals("")) {
-                    Util.getInstance().showFastSnackBar(errorMsg, view, context);
+                if (!error.isEmpty()) {
+                    Util.getInstance().toast(context, error);
                 } else {
                     Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), view, context);
                 }

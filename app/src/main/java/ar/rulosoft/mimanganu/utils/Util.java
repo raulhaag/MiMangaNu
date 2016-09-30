@@ -11,6 +11,7 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -362,8 +363,12 @@ public class Util {
     }
 
     public void cancelNotification(int id) {
-        if (notificationManager != null)
-            notificationManager.cancel(id);
+        try {
+            if (notificationManager != null)
+                notificationManager.cancel(id);
+        } catch (Exception e) {
+            Log.e("Util", "Exception", e);
+        }
     }
 
 }

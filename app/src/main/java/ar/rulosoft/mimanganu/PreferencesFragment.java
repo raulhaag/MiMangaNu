@@ -203,7 +203,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     AlarmReceiver.stopAlarms(getActivity().getApplicationContext());
                 }
 
-                if(time == -1)
+                if(time < 0)
                     MainActivity.coldStart = false;
 
                 return true;
@@ -397,7 +397,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         Preference prefStoreStat = getPreferenceManager().findPreference("stat_storage");
         Preference prefRamUsage = getPreferenceManager().findPreference("ram_usage");
         boolean allOk = true;
-        String error;
+        String error = "";
 
         @Override
         protected void onPreExecute() {

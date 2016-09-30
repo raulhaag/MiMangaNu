@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 
 public class BootAndUpdateReceiver extends BroadcastReceiver {
     @Override
@@ -12,7 +13,7 @@ public class BootAndUpdateReceiver extends BroadcastReceiver {
         try {
             SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
             long interval = Long.parseLong(pm.getString("update_interval", "0"));
-            if (interval != 0) {
+            if (interval > 0) {
                 long last_check = pm.getLong("last_check_update", 0);
                 long dif = System.currentTimeMillis() - last_check;
                 if (dif > interval) {

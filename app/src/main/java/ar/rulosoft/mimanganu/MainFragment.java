@@ -46,10 +46,13 @@ import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
+
+import static ar.rulosoft.mimanganu.services.AlarmReceiver.LAST_CHECK;
 
 /**
  * Created by Raul
@@ -101,12 +104,50 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        long updaterInterval = Long.parseLong(pm.getString("update_interval", "0"));
-        if (MainActivity.coldStart && updaterInterval == -1) {
-            AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
-            automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        // update at start up code
+        long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
+        Log.d("MF","u I: "+updateInterval);
+        Log.d("MF","cold: "+MainActivity.coldStart);
+        if(MainActivity.coldStart && updateInterval < 0) {
             MainActivity.coldStart = false;
+            if (updateInterval == -2) {
+                updateInterval = 21600000; //180000
+            } else if (updateInterval == -3) {
+                updateInterval = 43200000;
+            } else if (updateInterval == -4) {
+                updateInterval = 86400000;
+            }
+
+            if (updateInterval < 0) { // update at start up (with no time)
+                try {
+                    if (NetworkUtilsAndReciever.isConnected(getContext())) {
+                        AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
+                        automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                } catch (Exception e) {
+                    Util.getInstance().toast(getContext(), "Not Connected (todo)");
+                    Log.e("MF", "Exception", e);
+                }
+            } else { // update at start up (with specific time)
+                long last_check = pm.getLong("last_check_update", 0);
+                long dif = System.currentTimeMillis() - last_check;
+                Log.d("MF","dif: "+dif);
+                if (dif > updateInterval) {
+                    pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
+                    try {
+                        if (NetworkUtilsAndReciever.isConnected(getContext())) {
+                            AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
+                            automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        }
+                    } catch (Exception e) {
+                        Util.getInstance().toast(getContext(), "Not Connected (todo)");
+                        Log.e("MF", "Exception", e);
+                    }
+                }
+            }
+
         }
+        // update at start up code end
     }
 
     @Override
@@ -723,7 +764,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 } else {
                     Util.getInstance().cancelNotification(mNotifyID);
                     if (!error.isEmpty()) {
-                        Util.getInstance().showFastSnackBar(error, getView(), context);
+                        Util.getInstance().toast(getContext(), error);
                     } else {
                         Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), getView(), context);
                     }

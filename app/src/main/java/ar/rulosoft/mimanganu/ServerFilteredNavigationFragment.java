@@ -294,7 +294,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         @Override
         protected void onPostExecute(ArrayList<Manga> result) {
             if (!error.isEmpty()) {
-                Util.getInstance().showFastSnackBar(error, getView(),getContext());
+                Util.getInstance().toast(getContext(), error);
             } else {
                 page++;
                 if (result != null && result.size() != 0 && grid != null) {
