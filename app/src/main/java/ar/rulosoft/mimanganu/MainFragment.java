@@ -104,7 +104,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
 
-        // update at start code
+        // update at start up code
         long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
         Log.d("MF","u I: "+updateInterval);
         Log.d("MF","cold: "+MainActivity.coldStart);

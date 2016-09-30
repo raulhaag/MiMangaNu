@@ -40,7 +40,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             mangaList = Database.getMangasForUpdates(context);
         threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "2"));
         ticket = threads;
-        //mNotifyID = (int) System.currentTimeMillis();
+        mNotifyID = (int) System.currentTimeMillis();
     }
 
     @Override
