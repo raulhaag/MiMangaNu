@@ -44,6 +44,7 @@ public class LicenseFragment extends Fragment {
     public void onResume() {
         super.onResume();
         showLicense("Thanks.txt");
+        ((MainActivity) getActivity()).setTitle(getString(R.string.licencia));
     }
 
     @Override

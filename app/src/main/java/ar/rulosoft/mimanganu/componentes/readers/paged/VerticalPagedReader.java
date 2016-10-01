@@ -62,7 +62,8 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
                     readerListener.onPageChanged(transformPage(position));
                 }
                 currentPage = position;
-                mPageAdapter.setCurrentPage(position);
+                if(mPageAdapter != null)
+                    mPageAdapter.setCurrentPage(position);
             }
 
             @Override

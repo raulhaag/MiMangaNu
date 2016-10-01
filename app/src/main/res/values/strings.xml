@@ -123,7 +123,7 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.55:\n\t* fix cancelling searching for updates notification not working \n\t* adding manga is now possible from a search result \n\t* placeholder \n\t* placeholderr \n\t* placeholder \n\t* placeholder \n\t* placeholder \n\t* bug fixes and performance improvements </string>
+    <string name="update_message">Changes in v1.55:\n\t* fix cancelling searching for updates notification not working \n\t* adding manga is now possible from a search result \n\t* fix crash when finishing downloading \n\t* placeholderr \n\t* placeholder \n\t* placeholder \n\t* placeholder \n\t* bug fixes and performance improvements </string>
     <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>
