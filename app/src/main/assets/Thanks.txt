@@ -1,0 +1,28 @@
+MiMangaNu uses the following libraries (in chronological order) :
+
+ACRA (https://github.com/ACRA/acra) with Tracepot (http://www.tracepot.com/) as backend.
+
+duktape (https://github.com/square/duktape-android)
+
+ImageViewTouch (https://github.com/sephiroth74/ImageViewZoom)
+
+LazyList (https://github.com/thest1/LazyList)
+
+Okhttp (https://github.com/square/okhttp)
+
+okio (https://square.github.io/okhttp/)
+
+PersistentCookieJar (https://github.com/franmontiel/PersistentCookieJar)
+
+RapidDecoder (https://github.com/suckgamony/RapidDecoder)
+
+VerticalViewPager (https://github.com/castorflex/VerticalViewPager)
+
+Our thanks goes out to all of the above mentioned Libraries' authors and contributors.
+We are not explicitly endorsed by any of them.
+
+Contribuciones de Dostoi, TheSniperFan, xtj-9182, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
+
+Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.
+
+Press on the top right to see our licenses.

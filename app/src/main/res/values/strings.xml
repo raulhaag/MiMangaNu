@@ -14,7 +14,7 @@
     <string name="ajuste_alto">Fit to height</string>
     <string name="ajuste_ancho">Fit to width</string>
     <string name="ajuste_imagen">Image fit by default</string>
-    <string name="apachelic">Apache Licence</string>
+    <string name="apachelic">Apache License</string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="autor">Author</string>
     <string name="borrado_imagenes">Images deleted</string>
@@ -55,7 +55,7 @@
     <string name="iniciando">Loading number of pages</string>
     <string name="keep_on">Keep screen on</string>
     <string name="l2r">Left to Right</string>
-    <string name="licencia">Licence</string>
+    <string name="licencia">Licenses</string>
     <string name="listaen">Mangas from</string>
     <string name="lock_on_landscape">Screen locked on landscape mode</string>
     <string name="lock_on_portrait">Screen locked on portrait mode</string>
@@ -66,7 +66,7 @@
     <string name="max_texture_subtitle">Size of texture, which will be used (0 to deactivate hardware acceleration)\n%s</string>
     <string name="max_texture_title">Maximum texture size</string>
     <string name="mejor_ajuste">Best fit</string>
-    <string name="mitlic">MIT Licence and Thanks</string>
+    <string name="mitlic">MIT License</string>
     <string name="new_manga_found">New manga found</string>
     <string name="new_mangas_found">New mangas found</string>
     <string name="nobuscarupdate">Don\'t search for updates</string>
@@ -103,7 +103,7 @@
     <string name="cantidad_errores_subtitle">Tolerated number of errors per chapter: %s</string>
     <string name="download_selection">Download selection</string>
     <string name="cantidad_errores_title">Error toleration per chapter</string>
-    <string name="license_sub">Tap to see licence and thanks</string>
+    <string name="license_sub">Tap to see licenses and thanks</string>
     <string name="color_primario_sub">Main coloring, like for titlebar etc.</string>
     <string name="color_secundario_sub">Secondary coloring, for more variety</string>
     <string name="about">About</string>
@@ -226,4 +226,5 @@
     <string name="one_more_chapter_not_displayed_here">more chapter not displayed here &#8230;</string>
     <string name="x_more_chapters_not_displayed_here">more chapters not displayed here &#8230;</string>
     <string name="vibrate">Vibrate</string>
+    <string name="thanks">Thanks</string>
 </resources>
