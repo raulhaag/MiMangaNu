@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -85,7 +86,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private boolean controlVisible = false;
     private MenuItem displayMenu;
     private AlertDialog mDialog = null;
-    private boolean reDownloadingImage;
+    private boolean reDownloadingImage, freshStart = true;
     private int reader_bg;
 
     @Override
@@ -98,6 +99,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
         mChapter = Database.getChapter(getActivity(), chapterId);
         mManga = Database.getFullManga(getActivity(), mChapter.getMangaID());
+        mServerBase = ServerBase.getServer(mManga.getServerId());
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
@@ -134,20 +136,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         mButtonMinus = (Button) view.findViewById(R.id.minus);
         mButtonPlus = (Button) view.findViewById(R.id.plus);
         mScrollSensitiveText = (TextView) view.findViewById(R.id.scroll_level);
-        return view;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
-        if (!pm.getBoolean("show_status_bar", true)) {
-            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
-        mServerBase = ServerBase.getServer(mManga.getServerId());
         reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setTitleTextColor(Color.WHITE);
-        initMenu();
         mControlsLayout.setAlpha(0f);
         mControlsLayout.setVisibility(View.GONE);
         mSeekerPage.setAlpha(.9f);
@@ -164,13 +154,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             mScrollSelect.setVisibility(View.INVISIBLE);
         if (pm.getBoolean("hide_actionbar", false))
             mActionBar.setVisibility(View.INVISIBLE);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getActivity().getWindow();
-            window.setNavigationBarColor(reader_bg);
-            window.setStatusBarColor(reader_bg);
-        }
-        hideSystemUI();
 
         mButtonMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +177,34 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         });
 
         mSeekBar.setOnSeekBarChangeListener(this);
-        setReader();
+        freshStart = true;
+        return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        ((MainActivity) getActivity()).getSupportActionBar().hide();
+        if (!pm.getBoolean("show_status_bar", true)) {
+            getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getActivity().getWindow();
+            window.setNavigationBarColor(reader_bg);
+            window.setStatusBarColor(reader_bg);
+        }
+        hideSystemUI();
+        if (freshStart) {
+            setReader();
+            freshStart = false;
+        }
+        if (controlVisible) {
+            controlVisible = false;
+            onMenuRequired();//before rotate retry menu state (if showed)
+        }
+        // don't know why is needed to set again in every start ()
+        initMenu();
     }
 
     @Override
@@ -346,6 +356,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     }
 
     public void initMenu() {
+        mActionBar.getMenu().clear();
         mActionBar.inflateMenu(R.menu.menu_reader);
         Menu menu = mActionBar.getMenu();
         displayMenu = menu.findItem(R.id.action_ajustar);
@@ -377,6 +388,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if (mReader != null) {
             if (mReader.hasFitFeature()) {
                 displayMenu.setVisible(true);
+                updateIcon(mScreenFit, false);
             } else {
                 displayMenu.setVisible(false);
             }
@@ -388,12 +400,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             }
         });
         mActionBar.setNavigationIcon(R.drawable.ic_back);
-        mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                getActivity().onBackPressed();
-            }
-        });
     }
 
     public boolean onMenuItemClick(MenuItem item) {
@@ -763,24 +769,26 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onChange(final SingleDownload singleDownload) {
-        if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
-            mReader.reloadImage(singleDownload.getIndex());
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mReader.invalidate();
-                }
-            });
-        } else {
-            if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
-                getActivity().runOnUiThread(new Runnable() {
+        Activity activity = getActivity();
+        if (activity != null)
+            if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
+                mReader.reloadImage(singleDownload.getIndex());
+                activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), R.string.error_downloading_image, Toast.LENGTH_LONG).show();
+                        mReader.invalidate();
                     }
                 });
+            } else {
+                if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(getActivity(), R.string.error_downloading_image, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
             }
-        }
     }
 
     public void reDownloadCurrentImage() {
