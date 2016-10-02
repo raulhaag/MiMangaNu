@@ -8,6 +8,9 @@
         app:showAsAction="always">
         <menu>
             <item
+                android:id="@+id/licenseViewThanks"
+                android:title="@string/thanks" />
+            <item
                 android:id="@+id/licenseViewMIT"
                 android:title="@string/mitlic" />
             <item

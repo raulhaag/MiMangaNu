@@ -51,7 +51,7 @@ public class CFInterceptor implements Interceptor {
         Duktape duktape = Duktape.create();
         int result = 0;
         try {
-            String res = duktape.evaluate(js + ".toString()");
+            String res = (String) duktape.evaluate(js + ".toString()");
             result = Integer.parseInt(res);
         } finally {
             duktape.close();

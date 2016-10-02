@@ -73,13 +73,18 @@ public class DetailsFragment extends Fragment {
         Thread t0 = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Manga> mangas = Database.getMangas(getContext(), null, true);
-                for (Manga m : mangas) {
-                    if (m.getPath().equals(manga.getPath())) {
-                        mangaAlreadyAdded = true;
-                        if (floatingActionButton_add != null)
-                            floatingActionButton_add.hide();
+                try {
+                    List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                    for (Manga m : mangas) {
+                        if (m.getPath().equals(manga.getPath())) {
+                            mangaAlreadyAdded = true;
+                            if (floatingActionButton_add != null)
+                                floatingActionButton_add.hide();
+                        }
                     }
+                } catch (Exception e) {
+                    Log.e(TAG, "Exception", e);
+                    Util.getInstance().toast(getContext(), Log.getStackTraceString(e));
                 }
             }
         });

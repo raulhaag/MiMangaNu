@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
@@ -83,10 +84,15 @@ public class SearchResultsFragment extends Fragment {
         Thread t0 = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Manga> mangas = Database.getMangas(getContext(), null, true);
-                for (Manga m : mangas) {
-                    if (m.getPath().equals(manga.getPath()))
-                        mangaAlreadyAdded = true;
+                try {
+                    List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                    for (Manga m : mangas) {
+                        if (m.getPath().equals(manga.getPath()))
+                            mangaAlreadyAdded = true;
+                    }
+                } catch (Exception e) {
+                    Log.e("SFNF", "Exception", e);
+                    Util.getInstance().toast(getContext(), Log.getStackTraceString(e));
                 }
             }
         });

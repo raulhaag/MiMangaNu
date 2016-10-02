@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,7 +33,7 @@ public class LicenseFragment extends Fragment {
 //        mLicenseView.setTextAppearance(getActivity(), android.R.style.TextAppearance_Medium);
         mLicenseView.setPadding(10, 10, 10, 10);
         if (!MainActivity.darkTheme) {
-            mLicenseView.setTextColor(getResources().getColor(black));
+            mLicenseView.setTextColor(ContextCompat.getColor(getContext(), black));
         }
         ScrollView newScroll = new ScrollView(getActivity());
         newScroll.addView(mLicenseView);
@@ -42,7 +43,8 @@ public class LicenseFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        showLicense("MIT.txt");
+        showLicense("Thanks.txt");
+        ((MainActivity) getActivity()).setTitle(getString(R.string.licencia));
     }
 
     @Override
@@ -59,6 +61,10 @@ public class LicenseFragment extends Fragment {
             }
             case R.id.licenseViewMIT: {
                 showLicense("MIT.txt");
+                break;
+            }
+            case R.id.licenseViewThanks: {
+                showLicense("Thanks.txt");
                 break;
             }
             case android.R.id.home: {

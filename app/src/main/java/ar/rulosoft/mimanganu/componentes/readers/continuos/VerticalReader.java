@@ -54,6 +54,8 @@ public class VerticalReader extends ReaderContinuous {
             int cPage = currentPage;
             if (pages.size() < cPage || cPage < 0)
                 cPage = 0;
+            if(cPage >= pages.size())
+                cPage = pages.size()-1;
             float value = 0;
             if (pages.get(cPage) != null)
                 value = pages.get(cPage).init_visibility;

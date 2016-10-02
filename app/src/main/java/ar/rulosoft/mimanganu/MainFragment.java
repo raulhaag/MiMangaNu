@@ -46,7 +46,6 @@ import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -106,9 +105,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         // update at start up code
         long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
-        Log.d("MF","u I: "+updateInterval);
-        Log.d("MF","cold: "+MainActivity.coldStart);
-        if(MainActivity.coldStart && updateInterval < 0) {
+        if (MainActivity.coldStart && updateInterval < 0) {
             MainActivity.coldStart = false;
             if (updateInterval == -2) {
                 updateInterval = 21600000; //180000
@@ -119,35 +116,30 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
 
             if (updateInterval < 0) { // update at start up (with no time)
-                try {
-                    if (NetworkUtilsAndReciever.isConnected(getContext())) {
-                        AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
-                        automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                } catch (Exception e) {
-                    Util.getInstance().toast(getContext(), "Not Connected (todo)");
-                    Log.e("MF", "Exception", e);
-                }
+                automaticUpdate();
             } else { // update at start up (with specific time)
                 long last_check = pm.getLong("last_check_update", 0);
                 long dif = System.currentTimeMillis() - last_check;
-                Log.d("MF","dif: "+dif);
+                Log.i("MF", "dif: " + dif);
                 if (dif > updateInterval) {
                     pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-                    try {
-                        if (NetworkUtilsAndReciever.isConnected(getContext())) {
-                            AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
-                            automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        }
-                    } catch (Exception e) {
-                        Util.getInstance().toast(getContext(), "Not Connected (todo)");
-                        Log.e("MF", "Exception", e);
-                    }
+                    automaticUpdate();
                 }
             }
-
         }
         // update at start up code end
+    }
+
+    private void automaticUpdate() {
+        try {
+            if (NetworkUtilsAndReciever.isConnected(getContext())) {
+                AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
+                automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        } catch (Exception e) {
+            Util.getInstance().toast(getContext(), "Not Connected (todo)");
+            Log.e("MF", "Exception", e);
+        }
     }
 
     @Override
@@ -245,6 +237,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             @Override
             public boolean onQueryTextChange(String value) {
                 ArrayList<Manga> mangaList;
+                if(value.contains("'"))
+                    value = value.replaceAll("'","");
                 mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
                         "SELECT id " +
                         "FROM manga " +

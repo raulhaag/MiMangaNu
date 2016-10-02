@@ -149,7 +149,11 @@ public abstract class PagedReader extends Reader implements TapListener {
             }
         }
 
-        public Page getPage(int idx){
+        Page getPage(int idx){
+            if (idx < 0)
+                idx = 0;
+            else if (idx >= pages.length)
+                idx = pages.length - 1;
             return pages[idx];
         }
 

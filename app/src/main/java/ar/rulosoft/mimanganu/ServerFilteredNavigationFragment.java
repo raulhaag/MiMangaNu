@@ -71,10 +71,15 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         Thread t0 = new Thread(new Runnable() {
             @Override
             public void run() {
-                List<Manga> mangas = Database.getMangas(getContext(), null, true);
-                for (Manga m : mangas) {
-                    if (m.getPath().equals(mAdapter.getItem(lastContextMenuIndex).getPath()))
-                        mangaAlreadyAdded = true;
+                try {
+                    List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                    for (Manga m : mangas) {
+                        if (m.getPath().equals(mAdapter.getItem(lastContextMenuIndex).getPath()))
+                            mangaAlreadyAdded = true;
+                    }
+                } catch (Exception e) {
+                    Log.e("SFNF", "Exception", e);
+                    Util.getInstance().toast(getContext(), Log.getStackTraceString(e));
                 }
             }
         });

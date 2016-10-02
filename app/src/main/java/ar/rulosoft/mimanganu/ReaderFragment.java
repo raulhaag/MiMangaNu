@@ -904,10 +904,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 s.setChangeListener(ReaderFragment.this);
                 new Thread(s).start();
             } catch (Exception e) {
-                error = e.getMessage();
-                if (error == null) {
-                    error = "null";
-                }
+                error = Log.getStackTraceString(e);
             }
             return null;
         }
@@ -915,7 +912,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            if (error.length() > 3) {
+            if (!error.isEmpty()) {
                 Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
             reDownloadingImage = false;
