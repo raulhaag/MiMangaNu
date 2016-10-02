@@ -34,6 +34,15 @@ Downloads
 Changelog
 ---------
 
+Changes in v1.55:
+* fix cancelling searching for updates notification not working
+* adding manga is now possible from a search result
+* fix crash when downloads finish
+* make reader faster
+* speed up "Delete Images", "Reset Chapters" and "Mark selected as ..." functions using multithreading
+* add update at start up option
+* bug fixes and performance improvements
+
 Cambios en v1.54:
 * Reemplazados toasts con snackbars.
 * bugfix re-download image.
@@ -44,6 +53,15 @@ Cambios en v1.54:
 * Agregar mangas ahora lo hace de fondo.
 * bug fixes and y mejoras en performance.
 
+Changes in v1.54:
+* Replace toasts with snackbars
+* fix re-download image crash
+* make deleting / removing / resetting chapters asynchronous
+* add option to show status bar
+* add option to hide actionbar
+* add notification for download progress
+* adding mangas is now asynchronous
+* bug fixes and performance improvements
 
 Cambios en v1.53:
 * Bastantes bug fixes.
@@ -52,23 +70,46 @@ Cambios en v1.53:
 * Actualizado okhttp v3.
 * Agregado ReadComicOnline.
 
+Changes in v1.53:
+* Quite a few bug fixes
+* Add Local search
+* Improve clear cache
+* Update to okhttp v3
+* Add ReadComicOnline
+
 Cambios en v1.52:
 * Agregado LeoManga.
 * Agregado fast updates.
 * Agregado menu contextual "Agregar Manga".
 * Fixes y mejoras.
 
-Cambios 1.51:
-* Hotfixs 1.50.
+Changes in v1.52:
+* Add LeoManga
+* Add fast update option
+* Add "Add Manga" context menu
+* A lot of bug fixes
 
-Cambios 1.50:
+Cambios en v1.51:
+* Hotfixes
+
+Changes in v1.51:
+* Hotfixes
+
+Cambios en v1.50:
 * Arreglados varios errores.
 * Pasadas varias funciones al trasfondo.
 * Agregado lectura continua de capítulos.
 * Agregadas notificaciones separadas por manga.
 * Agregada la opción de solo Wifi y otras mejoras.
 
-Cambios 1.49:
+Changes in v1.50:
+* Fixed several errors
+* Made several functions asynchronous
+* Add seamless chapter transitions
+* Separated notifications by Manga
+* Added option to only use WiFi + other improvements
+
+Cambios en v1.49:
 * Incluso más bug fixes.
 * Establecer el número de hilos de búsqueda manual y los hilos de descarga = núcleos de CPU por defecto.
 * Fix manejo de memoria en Android 5+.
@@ -77,12 +118,28 @@ Cambios 1.49:
 * Agregado Inglés NineManga.
 * fix MangaTube.
 
-Cambios 1.48:
-* Más bug fixes.
-* Fixed senmanga y mymangaio.
+Changes in v1.49:
+* Even more bug fixes
+* set number of manual update threads and download threads = number of cpu cores
+* Fix big memory leak affecting Android 5+
+* Improve memory management in Android 5+
+* Add English MangaEden
+* Add English NineManga
+* fix MangaTube
 
-Cambios 1.47:
-* Bug fixes.
+Cambios en v1.48:
+* Más bug fixes.
+* Fixed SenManga y MyMangaIo.
+
+Changes in v1.48:
+* More bug fixes
+* Fixed SenManga and MyMangaIo
+
+Cambios en v1.47:
+* Bug fixes
+
+Changes in v1.47:
+* Bug fixes
 
 Cambios 1.46:
 * Nueva versión TMO.
