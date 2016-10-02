@@ -608,6 +608,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onCancelled() {
+            Log.i("MF","cancelled GetPagesTask");
             if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
                 asyncProgressDialog.dismiss();
             }

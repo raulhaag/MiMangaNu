@@ -200,6 +200,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
 
     @Override
     public Chapter getItem(int position) {
+        if (position >= chapters.size())
+            position = chapters.size() - 1;
+        if (position < 0)
+            position = 0;
         return chapters.get(position);
     }
 

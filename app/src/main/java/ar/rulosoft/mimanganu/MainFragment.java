@@ -46,7 +46,6 @@ import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -238,6 +237,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             @Override
             public boolean onQueryTextChange(String value) {
                 ArrayList<Manga> mangaList;
+                if(value.contains("'"))
+                    value = value.replaceAll("'","");
                 mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
                         "SELECT id " +
                         "FROM manga " +
