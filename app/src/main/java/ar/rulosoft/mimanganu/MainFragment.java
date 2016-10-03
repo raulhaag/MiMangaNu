@@ -137,7 +137,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         } catch (Exception e) {
-            Util.getInstance().toast(getContext(), "Not Connected (todo)");
+            Util.getInstance().toast(getContext(), getString(R.string.no_internet_connection));
             Log.e("MF", "Exception", e);
         }
     }

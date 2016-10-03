@@ -94,7 +94,7 @@
     <string name="lock_on_landscape">Écran verrouillé en mode paysage</string>
     <string name="rotation_no_locked">Rotation de l\'écran libre</string>
     <string name="ui_settings">Paramètres de l\'interface</string>
-    <string name="mitlic">Licence MIT et remerciements</string>
+    <string name="mitlic">Licence MIT</string>
     <string name="notification_sound_title">Notification sonore</string>
     <string name="notification_sound_subtitle">Quand un nouveau manga est trouvé</string>
     <string name="download_selection">Télécharger la sélection</string>
@@ -200,4 +200,5 @@
     <string name="read_timeout_title">Lire la temporisation</string>
     <string name="searching">A la recherche de \"%s\" sont</string>
     <string name="delete_confirm">Etes-vous sûr de supprimer ces chapitres?</string>
+    <string name="thanks">remerciements</string>
 </resources>
