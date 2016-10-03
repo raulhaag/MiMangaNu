@@ -213,7 +213,7 @@
     <string name="x_of_y_chapters_downloaded">%1$d von %2$d Kapiteln heruntergeladen</string>
     <string name="deleting">Lösche …</string>
     <string name="dont_spam_redownload_button">Kamerad, mehrmals auf den Button zu drücken wird den Download nicht beschleunigen !</string>
-    <string name="one_more_chapter_not_displayed_here">weiteres Kapitel wird nicht angezeigt &#8230;</string>
+    <string name="one_more_chapter_not_displayed_here">weiteres Kapitel nicht angezeigt &#8230;</string>
     <string name="thanks">Danke</string>
     <string name="vibrate">Vibriere</string>
     <string name="x_more_chapters_not_displayed_here">weitere Kapitel nicht angezeigt &#8230;</string>
