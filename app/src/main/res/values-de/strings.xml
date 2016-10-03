@@ -48,7 +48,7 @@
     <string name="folder_changed">Ordner gewechselt.</string>
     <string name="iniciando">Lade Seitenzahl</string>
     <string name="l2r">Links nach rechts</string>
-    <string name="licencia">Lizenz</string>
+    <string name="licencia">Lizenzen</string>
     <string name="listaen">Manga-Liste von</string>
     <string name="macartodoleido">Alle als gelesen markieren</string>
     <string name="macartodonoleido">Alle als ungelesen markieren</string>
@@ -56,7 +56,7 @@
     <string name="max_texture_subtitle">Größe der Texturen, die benutzt werden soll (0 zum Deaktivieren der Hardwarebeschleunigung)\n%s</string>
     <string name="max_texture_title">Maximale Texturgröße</string>
     <string name="mejor_ajuste">Optimal</string>
-    <string name="mitlic">MIT Lizenz und Danksagungen</string>
+    <string name="mitlic">MIT Lizenz</string>
     <string name="no_scale">Originalgröße</string>
     <string name="nobuscarupdate">Nicht nach Updates suchen</string>
     <string name="opciones_descarga">Download Einstellungen</string>
@@ -213,4 +213,12 @@
     <string name="x_of_y_chapters_downloaded">%1$d von %2$d Kapiteln heruntergeladen</string>
     <string name="deleting">Lösche …</string>
     <string name="dont_spam_redownload_button">Kamerad, mehrmals auf den Button zu drücken wird den Download nicht beschleunigen !</string>
+    <string name="one_more_chapter_not_displayed_here">weiteres Kapitel wird nicht angezeigt &#8230;</string>
+    <string name="thanks">Danke</string>
+    <string name="vibrate">Vibriere</string>
+    <string name="x_more_chapters_not_displayed_here">weitere Kapitel nicht angezeigt &#8230;</string>
+    <string name="_update_at_start_up">Update beim starten</string>
+    <string name="_update_at_start_up_12hours">Update beim starten wenn 12 Stunden vergangen sind</string>
+    <string name="_update_at_start_up_6hours">Update beim starten wenn 6 Stunden vergangen sind</string>
+    <string name="_update_at_start_up_1day">Update beim starten wenn 1 Tag vergangen ist</string>
 </resources>

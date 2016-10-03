@@ -35,7 +35,7 @@
     <string name="descargado">(Scaricato)</string>
     <string name="error">(Errore)</string>
     <string name="apachelic">Licenza Apache</string>
-    <string name="mitlic">Licenza MIT e Ringraziamenti</string>
+    <string name="mitlic">Licenza MIT</string>
     <string name="demaciados_errores">"Troppi errori (Scaricamento sospeso) \n Potrebbero essere causati da: \n * Errore durante la connessione \n * Errore lato server \n * Upload difettoso, ecc \nSi prega di riprovare più tardi"</string>
     <string name="descarga_no_leidos">Scarica i non letti</string>
     <string name="action_settings">"Impostazioni"</string>
@@ -202,4 +202,5 @@
     <string name="read_timeout_title">Leggi timeout</string>
     <string name="searching">Ricerca di \"%s\" sono</string>
     <string name="delete_confirm">Sei sicuro di voler eliminare questi capitoli?</string>
+    <string name="thanks">Ringraziamenti</string>
 </resources>

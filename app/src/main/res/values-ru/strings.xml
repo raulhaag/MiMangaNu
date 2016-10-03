@@ -67,7 +67,7 @@
     <string name="max_texture_subtitle">Размер текстуры, которая будет использована (0 для отключения hardware acceleration)\n%s</string>
     <string name="max_texture_title">Максимальный размер текстур</string>
     <string name="mejor_ajuste">Заполнять автоматически</string>
-    <string name="mitlic">MIT Лицензия и Благодарности</string>
+    <string name="mitlic">MIT Лицензия</string>
     <string name="new_manga_found">Найдена новая манга.</string>
     <string name="new_mangas_found">Найдены новые манги</string>
     <string name="no_scale">Оригинальный размер</string>
@@ -200,4 +200,5 @@
     <string name="read_timeout_title">таймаут</string>
     <string name="searching">Поиск \"%s\2 являются</string>
     <string name="delete_confirm">Вы уверены, чтобы удалить эти разделы?</string>
+    <string name="thanks">Благодарности</string>
 </resources>
