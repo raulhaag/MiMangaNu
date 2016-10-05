@@ -69,10 +69,6 @@ public class MainActivity extends AppCompatActivity {
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
             replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
-        } else if (mangaIdFromNotification == -1) {
-            isCancelled = true;
-            Util.getInstance().cancelNotification(MainFragment.mNotifyID);
-            Util.getInstance().cancelNotification(AutomaticUpdateTask.mNotifyID);
         }
     }
 

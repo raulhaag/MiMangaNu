@@ -11,6 +11,8 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -239,13 +241,13 @@ public class Util {
     }
 
     public void createSearchingForUpdatesNotification(Context context, int id) {
-        Intent cancelIntent = new Intent(context, MainActivity.class);
+        Intent cancelIntent = new Intent(context, CancelIntentReceiver.class);
         cancelIntent.putExtra("manga_id", -1);
         cancelIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         Intent contentIntent = new Intent(context, MainActivity.class);
         contentIntent.putExtra("manga_id", -2);
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        PendingIntent cancelPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis() + 1, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context);
         searchingForUpdatesNotificationBuilder.setOngoing(true);
@@ -368,6 +370,15 @@ public class Util {
                 notificationManager.cancel(id);
         } catch (Exception e) {
             Log.e("Util", "Exception", e);
+        }
+    }
+
+    public Spanned fromHtml(String source) {
+        // https://stackoverflow.com/questions/37904739/html-fromhtml-deprecated-in-android-n
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(source, Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            return Html.fromHtml(source);
         }
     }
 
