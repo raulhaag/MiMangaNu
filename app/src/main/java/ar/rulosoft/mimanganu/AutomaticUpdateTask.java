@@ -28,7 +28,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private Context context;
     private SharedPreferences pm;
     private View view;
-    static int mNotifyID = (int) System.currentTimeMillis();
+    public static int mNotifyID = (int) System.currentTimeMillis();
 
     public AutomaticUpdateTask(Context context, View view, SharedPreferences pm) {
         this.context = context;

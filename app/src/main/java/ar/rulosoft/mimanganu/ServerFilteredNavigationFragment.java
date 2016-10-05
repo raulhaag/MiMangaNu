@@ -291,6 +291,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             try {
                 mangas = serverBase.getMangasFiltered(filter, order, params[0]);
             } catch (Exception e) {
+                Log.e("SFNF", "Exception", e);
                 error = Log.getStackTraceString(e);
             }
             return mangas;
