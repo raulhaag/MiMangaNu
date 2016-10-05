@@ -216,4 +216,12 @@
     <string name="notification_tray_is_full">La actualizacion se ha cancelado por esta su bandeja de notificaciones llena. Por favor remoeva algunas.</string>
     <string name="error_database_is_read_only"></string>
     <string name="thanks">Agradecimientos</string>
+    <string name="_update_at_start_up">Buscar actualizaciones al iniciar</string>
+    <string name="_update_at_start_up_12hours">Buscar actualizaciones al iniciar si pasaron 12 horas</string>
+    <string name="_update_at_start_up_1day">Buscar actualizaciones al iniciar si paso 1dia</string>
+    <string name="_update_at_start_up_6hours">Buscar actualizaciones al iniciar si pasaron 6 horas</string>
+    <string name="dont_spam_redownload_button">Aun descargando, espera a que termine</string>
+    <string name="one_more_chapter_not_displayed_here">y un capítulo que no pudo ser mostrado &#8230;</string>
+    <string name="vibrate">Vibrar</string>
+    <string name="x_more_chapters_not_displayed_here">y más capítulos que no pudieron ser mostrados &#8230;</string>
 </resources>
