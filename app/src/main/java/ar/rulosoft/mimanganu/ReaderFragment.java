@@ -566,10 +566,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public boolean onBackPressed() {
-        if (!controlVisible) {
-            onMenuRequired();
-            return true;
-        }
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ((MainActivity) getActivity()).getSupportActionBar().show();
         ((MainActivity) getActivity()).setColorToBars();

@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
             replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
+            if(Util.n > 0)
+                Util.n--;
+            //Util.getInstance().toast(this, "n: " + Util.n, 1);
+            Log.i("MA", "n: " + Util.n);
         }
     }
 
