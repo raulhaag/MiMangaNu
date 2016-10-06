@@ -221,4 +221,7 @@
     <string name="_update_at_start_up_12hours">Update beim starten wenn 12 Stunden vergangen sind</string>
     <string name="_update_at_start_up_6hours">Update beim starten wenn 6 Stunden vergangen sind</string>
     <string name="_update_at_start_up_1day">Update beim starten wenn 1 Tag vergangen ist</string>
+    <string name="error_while_trying_to_open_db">Fehler beim öffnen der Datenbank !</string>
+    <string name="error_while_trying_to_update_db">Fehler beim updaten der Datenbank !</string>
+    <string name="error_database_is_read_only">Datenbank ist nicht beschreibbar ! Konnte Datenbank nicht updaten !</string>
 </resources>
