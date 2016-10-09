@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="update_message">Changes in v1.55:\n\t* Fix cancelling searching for updates notification not working. \n\t* Adding manga is now possible from a search result. \n\t* Fix crash when downloads finish. \n\t* Make reader faster. \n\t* Speed up \"Delete Images\", \"Reset Chapters\" and \"Mark selected as \" functions using multithreading. \n\t* Add update at start up option. \n\t* Bug fixes and performance improvements. </string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
@@ -123,7 +124,6 @@
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="update_message">Changes in v1.55:\n\t* fix cancelling searching for updates notification not working \n\t* adding manga is now possible from a search result \n\t* fix crash when downloads finish \n\t* make reader faster \n\t* speed up \"Delete Images\", \"Reset Chapters\" and \"Mark selected as \" functions using multithreading \n\t* add update at start up option \n\t* bug fixes and performance improvements </string>
     <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>

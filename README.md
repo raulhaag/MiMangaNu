@@ -33,15 +33,23 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.55:
+* Arreglador cancelar updates.
+* Agregado agregar mangas desde el resultado de una búsqueda.
+* Arreglado fallo en descargas terminadas.
+* Acelerada la carga del lector.
+* Acelerado "Borrar Imagenes", "Resetear Capítulo" y "Marcar seleccionados como " usando multihilos.
+* Agregado actualizar db al iniciar.
+* Corregidos varios errores y mejoras realizadas.
 
 Changes in v1.55:
-* fix cancelling searching for updates notification not working
-* adding manga is now possible from a search result
-* fix crash when downloads finish
-* make reader faster
-* speed up "Delete Images", "Reset Chapters" and "Mark selected as ..." functions using multithreading
-* add update at start up option
-* bug fixes and performance improvements
+* Fix cancelling searching for updates notification not working.
+* Adding manga is now possible from a search result.
+* Fix crash when downloads finish.
+* Make reader faster.
+* Speed up "Delete Images", "Reset Chapters" and "Mark selected as ..." functions using multithreading.
+* Add update at start up option.
+* Bug fixes and performance improvements.
 
 Cambios en v1.54:
 * Reemplazados toasts con snackbars.

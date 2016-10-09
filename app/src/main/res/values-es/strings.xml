@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="update_message">Cambios en v1.55:\n\t* Arreglador cancelar updates. \n\t* Agregado agregar mangas desde el resultado de una búsqueda. \n\t* Arreglado fallo en descargas terminadas. \n\t* Acelerada la carga del lector. \n\t* Acelerado \"Borrar Imagenes\", \"Resetear Capítulo\" y \"Marcar seleccionados como \" usando multihilos. \n\t* Agregado actualizar db al iniciar. \n\t* Corregidos varios errores y mejoras realizadas. </string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
@@ -98,7 +99,6 @@
     <string name="notification_sound_subtitle">Al encotrar nuevos mangas.</string>
     <string name="notification_sound_title">Notificación sonora</string>
     <string name="see_later">Ver Despues</string>
-    <string name="update_message">Cambios en v1.54:\n\t* Reemplazados toasts con snackbars \n\t* bugfix re-download image \n\t* Borrar / reset de capítulos ahora se hace de fondo \n\t* Agregada opcion para mostrar status bar \n\t* Agregada opcion para ocultar actionbar \n\t* Agregada notificacion de descargas \n\t* Agregar mangas ahora lo hace de fondo \n\t* bug fixes and y mejoras en performance </string>
     <string name="download_image_again">Volver a bajar imagen</string>
     <string name="ui_settings">Configuración de UI</string>
     <string name="download_selection">Descargar seleccion</string>
