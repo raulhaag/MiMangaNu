@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by jtx on 09.05.2016.
@@ -150,13 +149,13 @@ public class NineManga extends ServerBase {
         // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, defaultSynopsis).replaceAll("<.+?>", "");
-        manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Summary:", "")).toString());
+        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceFirst("Summary:", "")).toString());
         // Status
         manga.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Ongoing"));
         // Author
         manga.setAuthor(getFirstMatchDefault("author.+?\">(.+?)<", source, ""));
         // Genre
-        manga.setGenre((Html.fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
+        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // Chapter
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");

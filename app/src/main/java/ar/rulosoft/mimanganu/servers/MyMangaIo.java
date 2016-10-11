@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by Raul on 04/12/2015.
@@ -53,9 +52,9 @@ public class MyMangaIo extends ServerBase {
             // Status
             manga.setFinished(!data.contains("en cours</a>"));
             // Author
-            manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Auteur\\s*:\\s*(.+?)</tr>", data, "")).toString());
+            manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Auteur\\s*:\\s*(.+?)</tr>", data, "")).toString());
             // Genre
-            manga.setGenre(Html.fromHtml(getFirstMatchDefault("Genre\\s*:\\s*(.+?)</tr>", data, "")).toString());
+            manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genre\\s*:\\s*(.+?)</tr>", data, "")).toString());
             // Chapter
             Pattern p = Pattern.compile("<div class=clearfix>.+?<a href=\"(http://www.mymanga.io/[^\"]+)\".+?chapter>(.+?)<");
             Matcher m = p.matcher(data);

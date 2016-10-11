@@ -16,12 +16,14 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
  * Series information.
  * Created by Raul on 03/05/2015.
  */
+
+// used in DetailsFragment
 public class ControlInfo extends ScrollView implements Imaginable {
-    private View s1;
-    private View s2;
-    private View s3;
-    private View s4;
-    private View b1;
+    private View blockSummaryView;
+    private View lineAuthorView;
+    private View lineStatusView;
+    private View lineServerView;
+    private View lineGenreView;
     private TextView author;
     private TextView status;
     private TextView server;
@@ -52,11 +54,11 @@ public class ControlInfo extends ScrollView implements Imaginable {
     private void initialize() {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.control_info, this, true);
-        b1 = findViewById(R.id.blockSummary);
-        s1 = findViewById(R.id.lineAuthor);
-        s2 = findViewById(R.id.lineStatus);
-        s3 = findViewById(R.id.lineServer);
-        s4 = findViewById(R.id.lineGenre);
+        blockSummaryView = findViewById(R.id.blockSummary);
+        lineAuthorView = findViewById(R.id.lineAuthor);
+        lineStatusView = findViewById(R.id.lineStatus);
+        lineServerView = findViewById(R.id.lineServer);
+        lineGenreView = findViewById(R.id.lineGenre);
         authorTitle = (TextView) findViewById(R.id.titleAuthor);
         statusTitle = (TextView) findViewById(R.id.titleStatus);
         serverTitle = (TextView) findViewById(R.id.titleServer);
@@ -73,11 +75,11 @@ public class ControlInfo extends ScrollView implements Imaginable {
     @SuppressWarnings("ResourceAsColor")//lint error
     public void setColor(boolean dark_theme, int color) {
         int mColor = dark_theme ? ThemeColors.brightenColor(color, 150) : color;
-        b1.setBackgroundColor(color);
-        s1.setBackgroundColor(color);
-        s2.setBackgroundColor(color);
-        s3.setBackgroundColor(color);
-        s4.setBackgroundColor(color);
+        blockSummaryView.setBackgroundColor(color);
+        lineAuthorView.setBackgroundColor(color);
+        lineStatusView.setBackgroundColor(color);
+        lineServerView.setBackgroundColor(color);
+        lineGenreView.setBackgroundColor(color);
         title.setBackgroundColor(mColor);
         authorTitle.setTextColor(mColor);
         statusTitle.setTextColor(mColor);

@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by jtx on 07.05.2016.
@@ -72,20 +71,20 @@ public class MangaEden extends ServerBase {
         // Summary
         String summary = getFirstMatchDefault("mangaDescription\">(.+?)</h",
                 source, defaultSynopsis).replaceAll("<.+?>", "");
-        manga.setSynopsis(Html.fromHtml(summary).toString());
+        manga.setSynopsis(Util.getInstance().fromHtml(summary).toString());
         // Status
         manga.setFinished(getFirstMatchDefault("Status</h(.+?)<h", source, "").contains("Completed"));
         // Author
-        manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Author</h4>(.+?)<h4>", source, "")).toString().trim().replaceAll("\n", ""));
+        manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Author</h4>(.+?)<h4>", source, "")).toString().trim().replaceAll("\n", ""));
         // Genres
-        manga.setGenre((Html.fromHtml(getFirstMatchDefault("Genres</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
+        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
         // Chapters
         Pattern pattern = Pattern.compile(
                 "<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            chapters.add(0, new Chapter(Html.fromHtml(matcher.group(2)).toString(), HOST + matcher.group(1)));
+            chapters.add(0, new Chapter(Util.getInstance().fromHtml(matcher.group(2)).toString(), HOST + matcher.group(1)));
         }
         manga.setChapters(chapters);
     }

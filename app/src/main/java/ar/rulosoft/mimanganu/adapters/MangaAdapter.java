@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaAdapter extends ArrayAdapter<Manga> {
     private static int listItem = R.layout.listitem_server_manga;
@@ -25,7 +27,7 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         this.darkTheme = darkTheme;
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = li.inflate(listItem, parent, false);
@@ -38,7 +40,7 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         final Manga item = getItem(position);
 
         if (item != null) {
-            holder.textViewName.setText(android.text.Html.fromHtml(item.getTitle()));
+            holder.textViewName.setText(Util.getInstance().fromHtml(item.getTitle()));
         }
         return convertView;
     }

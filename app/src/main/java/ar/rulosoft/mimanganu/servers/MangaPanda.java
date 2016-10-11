@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +7,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaPanda extends ServerBase {
 
@@ -119,9 +118,9 @@ public class MangaPanda extends ServerBase {
         // Status
         manga.setFinished(data.contains("</td><td>Completed</td>"));
         // Genre
-        manga.setGenre(Html.fromHtml(getFirstMatchDefault("Genre:</td><td>(.+?)</td>", data, "").replace("a> <a", "a>, <a")).toString());
+        manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genre:</td><td>(.+?)</td>", data, "").replace("a> <a", "a>, <a")).toString());
         // Author
-        manga.setAuthor(Html.fromHtml(getFirstMatchDefault("Author:</td><td>(.+?)<", data, "")).toString());
+        manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Author:</td><td>(.+?)<", data, "")).toString());
     }
 
     @Override

@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 @Deprecated
 public class TusMangasOnlineCom extends ServerBase {
@@ -97,7 +96,7 @@ public class TusMangasOnlineCom extends ServerBase {
         // sinopsis
         String sinopsis = getFirstMatchDefault("(<p itemprop=\"description\".+?</p></div>)",
                 source, "Sin sinopsis");
-        manga.setSynopsis(Html.fromHtml(sinopsis).toString());
+        manga.setSynopsis(Util.getInstance().fromHtml(sinopsis).toString());
         // portada
         manga.setImages(getFirstMatchDefault("src=\"([^\"]+TMOmanga[^\"]+)\"", source, ""));
         // estado
@@ -105,13 +104,13 @@ public class TusMangasOnlineCom extends ServerBase {
         // autor
         manga.setAuthor(getFirstMatchDefault("5&amp;filter=.+?>(.+?)<", source, ""));
         // genero
-        manga.setGenre(Html.fromHtml(getFirstMatchDefault("<tr><td><strong>G&eacute;neros(.+?)</tr>", source, "")).toString());
+        manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("<tr><td><strong>G&eacute;neros(.+?)</tr>", source, "")).toString());
         // capitulos
         ArrayList<Chapter> caps = new ArrayList<>();
         Pattern p = Pattern.compile("<h5><a[^C]+Click=\"listaCapitulos\\((.+?),(.+?)\\)\".+?>(.+?)</a");
         Matcher ma = p.matcher(source);
         while (ma.find()) {
-            Chapter c = new Chapter(Html.fromHtml(
+            Chapter c = new Chapter(Util.getInstance().fromHtml(
                     ma.group(3)).toString().replace("0 0",""),
                     HOST + "/index.php?option=com_controlmanga&view=capitulos&format=raw&idManga=" +
                             ma.group(1) + "&idCapitulo=" + ma.group(2));
