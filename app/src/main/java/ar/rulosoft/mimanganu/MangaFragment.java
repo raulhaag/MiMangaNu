@@ -277,12 +277,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             } else {
                 mInfo.setGenre(getResources().getString(R.string.nodisponible));
             }
-
-            //FIXME testing intensifies
-            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-            Date date = new Date();
-            mInfo.setLastUpdate(dateFormat.format(date));
-
+            if(manga.getLastUpdate().length() > 3){
+                mInfo.setLastUpdate(manga.getLastUpdate());
+            }
             mImageLoader.displayImg(manga.getImages(), mInfo);
         }
     }
