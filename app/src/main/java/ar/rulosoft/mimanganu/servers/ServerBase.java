@@ -4,7 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,32 +24,32 @@ public abstract class ServerBase {
 
     public enum FilteredType {VISUAL, TEXT}
 
-    public static final int MANGAPANDA = 1;
-    public static final int ESMANGAHERE = 3;
-    public static final int MANGAHERE = 4;
-    public static final int MANGAFOX = 5;
-    public static final int SUBMANGA = 6;
-    public static final int ESMANGA = 7;
-    public static final int HEAVENMANGACOM = 8;
-    public static final int STARKANACOM = 9;
-    public static final int ESNINEMANGA = 10;
-    public static final int LECTUREENLIGNE = 11;
-    public static final int KISSMANGA = 12;
-    public static final int ITNINEMANGA = 13;
-    public static final int TUSMANGAS = 14;
-    public static final int MANGAREADER = 15;
-    public static final int DENINEMANGA = 16;
-    public static final int RUNINEMANGA = 17;
-    public static final int MANGATUBE = 18;
-    public static final int MANGAEDENIT = 19;
-    public static final int MYMANGAIO = 20;
-    public static final int RAWSENMANGA = 21;
-    public static final int TUMANGAONLINE = 22;
-    public static final int NINEMANGA = 23;
-    public static final int MANGAEDEN = 24;
-    public static final int LEOMANGA = 25;
+    static final int MANGAPANDA = 1;
+    static final int ESMANGAHERE = 3;
+    static final int MANGAHERE = 4;
+    static final int MANGAFOX = 5;
+    static final int SUBMANGA = 6;
+    static final int ESMANGA = 7;
+    static final int HEAVENMANGACOM = 8;
+    static final int STARKANACOM = 9;
+    static final int ESNINEMANGA = 10;
+    static final int LECTUREENLIGNE = 11;
+    static final int KISSMANGA = 12;
+    static final int ITNINEMANGA = 13;
+    static final int TUSMANGAS = 14;
+    static final int MANGAREADER = 15;
+    static final int DENINEMANGA = 16;
+    static final int RUNINEMANGA = 17;
+    static final int MANGATUBE = 18;
+    static final int MANGAEDENIT = 19;
+    static final int MYMANGAIO = 20;
+    static final int RAWSENMANGA = 21;
+    static final int TUMANGAONLINE = 22;
+    static final int NINEMANGA = 23;
+    static final int MANGAEDEN = 24;
+    static final int LEOMANGA = 25;
 
-    public static final int READCOMICONLINE = 1000;
+    static final int READCOMICONLINE = 1000;
     public static final int FROMFOLDER = 1001;
 
     public boolean hasMore = true;
@@ -252,7 +255,15 @@ public abstract class ServerBase {
             changes = true;
         }
 
-        if (changes) Database.updateManga(context, mangaDb, false);
+        if(!simpleList.isEmpty()) {
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            Date date = new Date();
+            mangaDb.setLastUpdate(dateFormat.format(date));
+            changes = true;
+        }
+
+        if (changes)
+            Database.updateManga(context, mangaDb, false);
 
         return returnValue;
     }

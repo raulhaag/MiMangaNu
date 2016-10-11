@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class DeNineManga extends ServerBase {
     private static String HOST = "http://de.ninemanga.com";
@@ -71,7 +70,7 @@ public class DeNineManga extends ServerBase {
         // Summary
         String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
                 source, defaultSynopsis).replaceAll("<.+?>", "");
-        manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
+        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
         // Status
         manga.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
         // Author

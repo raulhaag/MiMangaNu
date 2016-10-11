@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +7,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaFox extends ServerBase {
 
@@ -79,7 +78,7 @@ public class MangaFox extends ServerBase {
             manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, ""));
 
             // Genre
-            manga.setGenre(Html.fromHtml(getFirstMatchDefault("(<a href=\"http://mangafox.me/search/genres/.+?</td>)", data, "")).toString());
+            manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("(<a href=\"http://mangafox.me/search/genres/.+?</td>)", data, "")).toString());
 
             // Chapter
             p = Pattern.compile(PATTERN_CAPITULOS);

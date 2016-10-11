@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.adapters;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -17,6 +18,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.DownloadsChangesListener;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements DownloadsChangesListener {
 
@@ -53,7 +55,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = li.inflate(listItem, null);
@@ -67,7 +69,7 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
 
         if (item != null) {
             String textInfo = " " + states[item.status.ordinal()];
-            holder.textViewName.setText(android.text.Html.fromHtml(item.getChapter().getTitle() + textInfo));
+            holder.textViewName.setText(Util.getInstance().fromHtml(item.getChapter().getTitle() + textInfo));
             holder.loadingProgressBar.setMax(item.getChapter().getPages());
             holder.loadingProgressBar.setProgress(item.getProgress());
             holder.buttonImageView.setOnClickListener(new OnClickListener() {

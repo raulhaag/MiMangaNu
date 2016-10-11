@@ -414,7 +414,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     break;
                 case 6:
                 case 7:
-                    sort_by = Database.COL_SEARCH;
+                    sort_by = Database.COL_IS_FINISHED;
                     sort_ord = !sort_ord;
                     break;
                 case 8:

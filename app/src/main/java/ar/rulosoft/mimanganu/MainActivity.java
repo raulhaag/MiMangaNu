@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -77,15 +78,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showUpdateDialog(){
-        final boolean show_dialog = pm.getBoolean("show_updates", true);
-        if (show_dialog) {//! o no segun la version 1.41 sin !
+        final boolean show_dialog = pm.getBoolean("show_updates", false);
+        if (!show_dialog) {//! o no segun la version 1.41 sin !
             AlertDialog.Builder dlgAlert = new AlertDialog.Builder(this);
             dlgAlert.setMessage(getString(R.string.update_message));
             dlgAlert.setTitle(R.string.app_name);
             dlgAlert.setCancelable(true);
             dlgAlert.setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    pm.edit().putBoolean("show_updates", false).apply(); //false 1.36
+                    pm.edit().putBoolean("show_updates", true).apply(); //false 1.36
                 }
             });
             dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
@@ -107,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
             case WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {

@@ -32,9 +32,12 @@ import com.fedorvlasov.lazylist.ImageLoader;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.ChapterAdapter;
@@ -273,6 +276,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 mInfo.setGenre(manga.getGenre());
             } else {
                 mInfo.setGenre(getResources().getString(R.string.nodisponible));
+            }
+            if(manga.getLastUpdate().length() > 3){
+                mInfo.setLastUpdate(manga.getLastUpdate());
             }
             mImageLoader.displayImg(manga.getImages(), mInfo);
         }
@@ -573,8 +579,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                asyncProgressDialog.dismiss();
+            try {
+                if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                    asyncProgressDialog.dismiss();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
             }
             super.onProgressUpdate(values);
         }
@@ -599,7 +609,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         readerFragment.setArguments(bundle);
                         ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
                     } catch (Exception e) {
-                            Util.getInstance().showFastSnackBar(Log.getStackTraceString(e), getView(), getContext());
+                        Log.e(TAG, "Exception", e);
+                        error = Log.getStackTraceString(e);
+                        Util.getInstance().toast(getContext(), error);
                     }
                 }
             }
@@ -608,9 +620,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onCancelled() {
-            Log.i("MF","cancelled GetPagesTask");
-            if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                asyncProgressDialog.dismiss();
+            try {
+                if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                    asyncProgressDialog.dismiss();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
             }
         }
     }

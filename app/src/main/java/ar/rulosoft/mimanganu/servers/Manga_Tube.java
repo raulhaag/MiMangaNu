@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by Raul on 02/12/2015.
@@ -62,7 +61,7 @@ public class Manga_Tube extends ServerBase {
         // Summary
         String summary = getFirstMatchDefault("<li><b>Beschreibung</b>:(.*?)</li>",
                 source, defaultSynopsis).replaceAll("<.+?>", "");
-        manga.setSynopsis(Html.fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
+        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
 
         // Chapter
         Pattern p = Pattern.compile(

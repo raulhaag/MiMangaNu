@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class SubManga extends ServerBase {
 
@@ -53,7 +52,7 @@ public class SubManga extends ServerBase {
 
             while (m.find()) {
                 String web = "http://submanga.com/c" + m.group(1).substring(m.group(1).lastIndexOf("/"));
-                Chapter mc = new Chapter(Html.fromHtml(m.group(2)).toString(), web);
+                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString(), web);
                 mc.addChapterFirst(manga);
             }
         }
@@ -70,12 +69,12 @@ public class SubManga extends ServerBase {
 
         if (m.find()) {
             manga.setImages(m.group(1));
-            manga.setSynopsis(Html.fromHtml(m.group(2)).toString());
+            manga.setSynopsis(Util.getInstance().fromHtml(m.group(2)).toString());
         } else {
             manga.setSynopsis(defaultSynopsis);
         }
-        manga.setAuthor(Html.fromHtml(getFirstMatchDefault("<p>Creado por ().+?</p>", data, "")).toString().trim());
-        manga.setGenre(Html.fromHtml(getFirstMatchDefault("(<a class=\"b\" href=\"http://submanga.com/ge.+?</p>)", data, "")).toString().trim());
+        manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("<p>Creado por ().+?</p>", data, "")).toString().trim());
+        manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("(<a class=\"b\" href=\"http://submanga.com/ge.+?</p>)", data, "")).toString().trim());
     }
 
     @Override

@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,6 +8,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class HeavenManga extends ServerBase {
 
@@ -115,7 +114,7 @@ public class HeavenManga extends ServerBase {
         // estado no soportado
 
         // genero
-        manga.setGenre((Html.fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
+        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
 
         // capitulos
         Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"");

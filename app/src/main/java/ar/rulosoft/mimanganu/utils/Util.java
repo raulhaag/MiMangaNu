@@ -28,7 +28,6 @@ import ar.rulosoft.mimanganu.R;
 public class Util {
     public static int n = 0;
     private static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
-    private static NotificationCompat.Builder notificationBuilder;
     private static NotificationCompat.Builder notificationWithProgressbarBuilder;
     private static NotificationManager notificationManager;
     private static Util utilInstance = null;
@@ -206,7 +205,7 @@ public class Util {
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Intent deleteIntent = new Intent(context, NotificationDeleteIntentReceiver.class);
         PendingIntent deletePendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis() + 1, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationBuilder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
         notificationBuilder.setOngoing(true);
         notificationBuilder.setContentTitle(contentTitle);
         notificationBuilder.setContentText(contentText);
