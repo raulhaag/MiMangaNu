@@ -60,7 +60,6 @@ public class Database extends SQLiteOpenHelper {
     private static final String COL_CAP_ID = "id";
     private static final String COL_CAP_EXTRA = "extra";
     // Database creation sql statement
-    //FIXME don't forget to test this
     private static final String DATABASE_MANGA_CREATE = "create table " +
             TABLE_MANGA + "(" +
             COL_ID + " integer primary key autoincrement, " +
@@ -77,7 +76,7 @@ public class Database extends SQLiteOpenHelper {
             COL_AUTHOR + " TEXT NOT NULL DEFAULT 'N/A'," +
             COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1," +
             COL_READER + " INTEGER DEFAULT 0," +
-            COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'" +
+            COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'," +
             COL_LAST_UPDATE + " TEXT DEFAULT 'N/A');";
     private static final String DATABASE_CHAPTERS_CREATE = "create table " +
             TABLE_CHAPTERS + "(" +
