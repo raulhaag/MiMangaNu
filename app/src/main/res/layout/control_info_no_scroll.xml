@@ -135,7 +135,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:text="Last Update"
+                    android:text="@string/last_update"
                     android:textColor="@color/accent_material_light"
                     android:textStyle="bold" />
 

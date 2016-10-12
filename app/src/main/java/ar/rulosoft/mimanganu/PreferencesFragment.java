@@ -315,11 +315,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setFirstRunDefaults() {
-        final String PREFS_NAME = "fragment_preferences";
         final String PREF_VERSION_CODE_KEY = "version_code";
-        final int DOESNT_EXIST = -1;
-
-        // Get current version code
         int currentVersionCode;
         try {
             currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
@@ -327,15 +323,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             e.printStackTrace();
             return;
         }
-        // Get saved version code
-        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, -1);
 
         // Check for first run or upgrade
         if (currentVersionCode == savedVersionCode) {
             // This is just a normal run
             return;
-        } else if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
+        } else if (savedVersionCode == -1 || currentVersionCode > savedVersionCode) {
             // This is a new install or upgrade
 
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_manual");
