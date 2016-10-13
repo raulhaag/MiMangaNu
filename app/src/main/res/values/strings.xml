@@ -225,4 +225,5 @@
     <string name="_update_at_start_up_6hours">Update at start up if 6 hours have passed</string>
     <string name="_update_at_start_up_12hours">Update at start up if 12 hours have passed</string>
     <string name="_update_at_start_up_1day">Update at start up if 1 day has passed</string>
+    <string name="last_update">Last Update</string>
 </resources>

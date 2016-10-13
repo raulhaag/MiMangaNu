@@ -102,44 +102,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
         }
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-
-        // update at start up code
-        long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
-        if (MainActivity.coldStart && updateInterval < 0) {
-            MainActivity.coldStart = false;
-            if (updateInterval == -2) {
-                updateInterval = 21600000; //180000
-            } else if (updateInterval == -3) {
-                updateInterval = 43200000;
-            } else if (updateInterval == -4) {
-                updateInterval = 86400000;
-            }
-
-            if (updateInterval < 0) { // update at start up (with no time)
-                automaticUpdate();
-            } else { // update at start up (with specific time)
-                long last_check = pm.getLong("last_check_update", 0);
-                long dif = System.currentTimeMillis() - last_check;
-                Log.i("MF", "dif: " + dif);
-                if (dif > updateInterval) {
-                    pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-                    automaticUpdate();
-                }
-            }
-        }
-        // update at start up code end
-    }
-
-    private void automaticUpdate() {
-        try {
-            if (NetworkUtilsAndReciever.isConnected(getContext())) {
-                AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
-                automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-        } catch (Exception e) {
-            Util.getInstance().toast(getContext(), getString(R.string.no_internet_connection));
-            Log.e("MF", "Exception", e);
-        }
     }
 
     @Override
@@ -177,6 +139,51 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
             anim.setDuration(0);
             anim.start();
+        }
+
+        if (MainActivity.coldStart) {
+            long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
+            if (updateInterval < 0) {
+                updateAtStartUp(updateInterval);
+            }
+        }
+    }
+
+    private void updateAtStartUp(long updateInterval) {
+        MainActivity.coldStart = false;
+        if (updateInterval == -2) {
+            updateInterval = 21600000; //180000
+        } else if (updateInterval == -3) {
+            updateInterval = 43200000;
+        } else if (updateInterval == -4) {
+            updateInterval = 86400000;
+        }
+
+        if (updateInterval < 0) { // update at start up (with no time)
+            startUpdate();
+        } else { // update at start up (with specific time)
+            long last_check = pm.getLong("last_check_update", 0);
+            long dif = System.currentTimeMillis() - last_check;
+            Log.i("MF", "dif: " + dif);
+            if (dif > updateInterval) {
+                pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
+                startUpdate();
+            }
+        }
+    }
+
+    private void startUpdate() {
+        try {
+            if (NetworkUtilsAndReciever.isConnected(getContext())) {
+                updateListTask = new UpdateListTask(getActivity());
+                updateListTask.execute();
+
+                /*AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
+                automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
+            }
+        } catch (Exception e) {
+            Util.getInstance().toast(getContext(), getString(R.string.no_internet_connection));
+            Log.e("MF", "Exception", e);
         }
     }
 

@@ -67,7 +67,7 @@ public class RawSenManga extends ServerBase {
             manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault("<div itemprop=\"description\">(.+?)<", data2, defaultSynopsis)).toString());
             manga.setImages(HOST + getFirstMatchDefault("image\" src=\"(.+?)\"", data, ""));
             manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, "N/A")).toString());
-            manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "N/A")).toString());
+            manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "N/A")).toString().trim());
             manga.setFinished(data2.contains("Complete"));
             Pattern p = Pattern.compile("<td><a href=\"(/.+?)\" title=\"(.+?)\"");
             Matcher m = p.matcher(data);
