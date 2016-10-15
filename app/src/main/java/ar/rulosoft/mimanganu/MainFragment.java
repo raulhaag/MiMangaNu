@@ -7,8 +7,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -47,7 +45,7 @@ import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -174,7 +172,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     private void startUpdate() {
         try {
-            if (NetworkUtilsAndReciever.isConnected(getContext())) {
+            if (NetworkUtilsAndReceiver.isConnected(getContext())) {
                 updateListTask = new UpdateListTask(getActivity());
                 updateListTask.execute();
 
@@ -642,6 +640,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Manga> mangaList;
+        private ArrayList<Manga> fromFolderMangaList;
         private int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
         private int ticket = threads;
         private int result = 0;
@@ -655,20 +654,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 mangaList = Database.getMangas(getContext(), null, true);
             else
                 mangaList = Database.getMangasForUpdates(getContext());
+            fromFolderMangaList = Database.getFromFolderMangas(getContext());
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             if (context != null) {
-                try {
-                    if (NetworkUtilsAndReciever.isConnected(context)) {
-                        Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getView(), getContext());
-                    }
-                } catch (Exception e) {
-                    error = Log.getStackTraceString(e);
-                }
+                Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
+                Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getView(), getContext());
             }
         }
 
@@ -685,57 +679,48 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected Integer doInBackground(Void... params) {
             if (context != null && error.isEmpty()) {
                 ticket = threads;
+
+                if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
+                    mangaList = fromFolderMangaList;
+                }
+
                 for (int idx = 0; idx < mangaList.size(); idx++) {
-                    if (Util.n > (48 - threads))
-                        cancel(true);
-                    if(MainActivity.isCancelled)
+                    if (MainActivity.isCancelled || Util.n > (48 - threads))
                         cancel(true);
                     try {
-                        if (NetworkUtilsAndReciever.isConnected(context)) {
-                            final int idxNow = idx;
-                            // If there is no ticket, sleep for 1 second and ask again
-                            while (ticket < 1) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    Log.e(TAG, "Update sleep failure", e);
-                                }
+                        final int idxNow = idx;
+                        // If there is no ticket, sleep for 1 second and ask again
+                        while (ticket < 1) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Log.e(TAG, "Update sleep failure", e);
                             }
-                            ticket--;
-
-                            // If tickets were passed, create new requests
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Manga mManga = mangaList.get(idxNow);
-                                    ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
-                                    boolean fast = pm.getBoolean("fast_update", true);
-                                    publishProgress(idxNow);
-                                    try {
-                                        if (!isCancelled()) {
-                                            int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
-                                            result += diff;
-                                        }
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "Update server failure", e);
-                                    } finally {
-                                        ticket++;
-                                    }
-
-                                }
-                            }).start();
-
-                        } else {
-                            Util.getInstance().cancelNotification(mNotifyID);
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeReLayout.setRefreshing(false);
-                                }
-                            });
-                            break;
                         }
+                        ticket--;
+
+                        // If tickets were passed, create new requests
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Manga mManga = mangaList.get(idxNow);
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                boolean fast = pm.getBoolean("fast_update", true);
+                                publishProgress(idxNow);
+                                try {
+                                    if (!isCancelled()) {
+                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
+                                        result += diff;
+                                    }
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Update server failure", e);
+                                } finally {
+                                    ticket++;
+                                }
+
+                            }
+                        }).start();
+
                     } catch (Exception e) {
                         error = Log.getStackTraceString(e);
                     }
@@ -759,7 +744,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (context != null) {
                 if (result > 0) {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    if(isAdded())
+                    if (isAdded())
                         setListManga(true);
                     Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, "" + result), getView(), context);
                 } else {

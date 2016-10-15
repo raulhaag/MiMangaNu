@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +31,7 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -232,8 +231,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         onlyWifiSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
-                NetworkUtilsAndReciever.connectionStatus = NetworkUtilsAndReciever.ConnectionStatus.UNCHECKED;
+                NetworkUtilsAndReceiver.ONLY_WIFI = (Boolean) o;
+                NetworkUtilsAndReceiver.connectionStatus = NetworkUtilsAndReceiver.ConnectionStatus.UNCHECKED;
                 onlyWifiUpdateSwitch.setEnabled(!(Boolean) o);
                 return true;
             }

@@ -23,7 +23,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload.DownloadStatus;
 import ar.rulosoft.mimanganu.services.SingleDownload.Status;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class DownloadPoolService extends Service implements StateChangeListener {
@@ -53,7 +53,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         if (activity == null)
             Log.d("DPS", "null");
 
-        if (!chapter.isDownloaded() && NetworkUtilsAndReciever.isConnected(activity)) {
+        if (!chapter.isDownloaded() && NetworkUtilsAndReceiver.isConnected(activity)) {
             if (isNewDownload(chapter.getId())) {
                 ChapterDownload dc = new ChapterDownload(chapter);
                 if (mDownloadsChangesListener != null) {

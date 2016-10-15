@@ -847,7 +847,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     error = e.getLocalizedMessage();
             }
             if (c.getPages() < 1) {
-                error = getString(R.string.error);
+                error = "Error"; // using a localized string can cause errors
             }
             return c;
         }
@@ -867,7 +867,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
                     loadChapter(result, LoadMode.SAVED);
                 } catch (Exception e) {
-                    Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("ReaderFragment", "Exception", e);
+                    Toast.makeText(getContext(), Log.getStackTraceString(e), Toast.LENGTH_LONG).show();
                 }
             }
             super.onPostExecute(result);
