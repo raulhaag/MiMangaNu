@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,24 +45,24 @@ public class MangaFolderSelect extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setPositiveButton(getActivity().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String title = Util.getLastStringInPath(actual);
-                List<Manga> mangas = Database.getMangas(getContext(), null, true);
+                List<Manga> mangas = Database.getFromFolderMangas(getContext());
+                Log.d("MFS","ac: "+actual);
                 boolean onDb = false;
                 for (Manga m : mangas) {
-                    if (m.getPath().contains(actual))
+                    if (m.getPath().equals(actual))
                         onDb = true;
                 }
                 if (!onDb) {
                     Manga manga = new Manga(FromFolder.FROMFOLDER, title, actual, true);
                     manga.setImages("");
                     (new AddMangaTask()).execute(manga);
-                }else{
-                    Toast.makeText(getContext(),getContext().getString(R.string.dir_already_on_db),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(getContext(), getContext().getString(R.string.dir_already_on_db), Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -113,7 +114,7 @@ public class MangaFolderSelect extends DialogFragment {
 
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
         ProgressDialog adding = new ProgressDialog(getActivity());
-        String error = ".";
+        String error = "";
         int total = 0;
         ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
 
@@ -129,7 +130,8 @@ public class MangaFolderSelect extends DialogFragment {
             try {
                 serverBase.loadChapters(params[0], false);
             } catch (Exception e) {
-                error = e.getMessage();
+                Log.e("MangaFolderSelect", "Exception", e);
+                error = Log.getStackTraceString(e);
             }
             total = params[0].getChapters().size();
             int mid = Database.addManga(getActivity(), params[0]);
@@ -164,7 +166,7 @@ public class MangaFolderSelect extends DialogFragment {
             adding.dismiss();
             if (isAdded()) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-                if (error != null && error.length() > 2) {
+                if (!error.isEmpty()) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
                 if (mainFragment != null)

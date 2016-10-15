@@ -376,13 +376,13 @@ public abstract class ServerBase {
         });
     }
 
-    public class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
+    class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
         private Context context;
         private Manga manga;
         private String largeContentText = "";
 
-        public CreateGroupByMangaNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
+        CreateGroupByMangaNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
             this.simpleList.addAll(simpleList);
             this.context = context;
             this.manga = manga;
