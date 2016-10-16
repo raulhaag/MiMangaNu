@@ -682,7 +682,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (context != null && error.isEmpty()) {
                 ticket = threads;
 
-                //FIXME easy switch to test #310
+                //FIXME easy switch to test #310 test
                 if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
                     mangaList = fromFolderMangaList;
                 }
