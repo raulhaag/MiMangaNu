@@ -32,9 +32,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
@@ -384,9 +386,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                         ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
                     }
                 } else {
-                    MangaFolderSelect dialog = new MangaFolderSelect();
-                    dialog.setMainFragment(MainFragment.this);
-                    dialog.show(getChildFragmentManager(), "fragment_find_folder");
+                    MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
+                    mangaFolderSelect.setMainFragment(MainFragment.this);
+                    mangaFolderSelect.show(getChildFragmentManager(), "fragment_find_folder");
 
                     Log.e("from file", "selected");
                 }
@@ -587,7 +589,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public class SectionsPagerAdapter extends PagerAdapter {
         ViewGroup[] pages;
 
-        public SectionsPagerAdapter() {
+        SectionsPagerAdapter() {
             super();
             this.pages = new ViewGroup[2];
 
@@ -680,6 +682,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (context != null && error.isEmpty()) {
                 ticket = threads;
 
+                //FIXME easy switch to test #310
                 if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
                     mangaList = fromFolderMangaList;
                 }
@@ -759,6 +762,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             } else {
                 Util.getInstance().cancelNotification(mNotifyID);
             }
+
+
+            if (pm.getBoolean("auto_import", false)) {
+                String autoImportPath = pm.getString("auto_import_path","-1");
+                Log.d("MF","auto: "+autoImportPath);
+                if(!autoImportPath.equals("-1"))
+                    new AddAllMangaInDirectoryTask().execute(autoImportPath);
+            }
         }
 
         @Override
@@ -774,5 +785,106 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             MainActivity.isCancelled = false;
         }
     }
+
+
+    public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> { //Manga
+        String error = "";
+        int total = 0;
+        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
+        Manga manga;
+
+        @Override
+        protected void onPreExecute() {
+            /*adding.setMessage(getResources().getString(R.string.adding_to_db));
+            adding.show();*/
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(String... params) { // Manga
+            String directory = params[0]; //"/storage/emulated/0/MiMangaNu/asd/";
+            File f = new File(directory);
+
+            if (f.listFiles().length > 0) {
+                total = f.listFiles().length;
+                int n = 0;
+                for (File child : f.listFiles()) {
+                    n++;
+                    publishProgress(n);
+                    Log.d("MF", "c: " + child.getAbsolutePath());
+                    directory = child.getAbsolutePath();
+
+                    List<Manga> fromFolderMangas = Database.getFromFolderMangas(getContext());
+                    Log.d("MF", "dir: " + directory);
+                    boolean onDb = false;
+                    for (Manga m : fromFolderMangas) {
+                        if (m.getPath().equals(directory))
+                            onDb = true;
+                    }
+                    if (!onDb) {
+                        String title = Util.getLastStringInPathDontRemoveLastChar(directory);
+                        manga = new Manga(FromFolder.FROMFOLDER, title, directory, true);
+                        manga.setImages("");
+
+                        try {
+                            serverBase.loadChapters(manga, false);
+                        } catch (Exception e) {
+                            Log.e("MangaFolderSelect", "Exception", e);
+                            error = Log.getStackTraceString(e);
+                        }
+                        //total = manga.getChapters().size();
+                        int mid = Database.addManga(getActivity(), manga);
+                        long initTime = System.currentTimeMillis();
+                        for (int i = 0; i < manga.getChapters().size(); i++) {
+                            if (System.currentTimeMillis() - initTime > 500) {
+                                publishProgress(i);
+                                initTime = System.currentTimeMillis();
+                            }
+                            Database.addChapter(getActivity(), manga.getChapter(i), mid);
+                        }
+                    } else {
+                        Log.i("MF", "already on db: " + directory);
+                    }
+
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            super.onProgressUpdate(values);
+            /*if (isAdded()) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (adding != null) {
+                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
+                        }
+                    }
+                });
+            }*/
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            /*try {
+                adding.dismiss();
+            } catch (Exception e) {
+                Log.e("MangaFolderSelect", "Exception", e);
+            }*/
+            if (isAdded()) {
+                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+                if (!error.isEmpty()) {
+                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                }
+                setListManga(true);
+                //getActivity().onBackPressed();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
 }
 

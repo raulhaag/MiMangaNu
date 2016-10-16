@@ -222,6 +222,20 @@
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/misc_settings">
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="multi_import"
+            android:summary="When adding a Manga via FromFolder all folders in that directory will be imported"
+            android:title="Multi Import (TODO)" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="auto_import"
+            android:summary="Automatically import folders in a selected path as Mangas after the normal update process finishes"
+            android:title="Auto Import Mangas" />
+        <ar.rulosoft.custompref.PreferencesListDir
+            android:key="auto_import_path"
+            android:summary="Automatically import folders in the selected path as Mangas"
+            android:title="Auto Import Path" />
         <android.support.v7.preference.Preference
             android:key="clear_cache"
             android:summary="@string/clear_cache_subtitle"
