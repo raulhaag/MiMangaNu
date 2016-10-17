@@ -1,6 +1,8 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.app.Activity;
+import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +23,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 public class MisMangasAdapter extends ArrayAdapter<Manga> {
 
     private static int resource = R.layout.control_tapa_manga;
-    Activity activity;
+    private Activity activity;
     private ImageLoader imageLoader;
     private boolean darkTheme = false;
     private int darkBackground;
@@ -29,13 +31,13 @@ public class MisMangasAdapter extends ArrayAdapter<Manga> {
     public MisMangasAdapter(Activity activity, List<Manga> objects, boolean darkTheme) {
         super(activity, resource, objects);
         this.darkTheme = darkTheme;
-        this.darkBackground = activity.getResources().getColor(R.color.background_floating_material_dark);
+        this.darkBackground = ContextCompat.getColor(activity, R.color.background_floating_material_dark);
         this.activity = activity;
         imageLoader = new ImageLoader(activity);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         View item = convertView;
         ViewHolder holder;
         if (item == null) {

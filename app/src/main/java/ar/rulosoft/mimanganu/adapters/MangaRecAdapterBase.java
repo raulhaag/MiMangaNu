@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
@@ -15,15 +16,15 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     protected ArrayList<Manga> mangas;
-    protected OnLastItem lastItemListener;
-    protected OnMangaClick mangaClickListener;
-    protected View.OnCreateContextMenuListener onCreateContextMenuListener;
     protected boolean darkTheme = false;
-    protected int darkBackground;
+    OnLastItem lastItemListener;
+    OnMangaClick mangaClickListener;
+    View.OnCreateContextMenuListener onCreateContextMenuListener;
+    int darkBackground;
 
-    public MangaRecAdapterBase(ArrayList<Manga> lista, Context context, boolean darkTheme) {
+    MangaRecAdapterBase(ArrayList<Manga> lista, Context context, boolean darkTheme) {
         this.darkTheme = darkTheme;
-        this.darkBackground = context.getResources().getColor(R.color.background_floating_material_dark);
+        this.darkBackground = ContextCompat.getColor(context, R.color.background_floating_material_dark);
         mangas = lista;
     }
 
