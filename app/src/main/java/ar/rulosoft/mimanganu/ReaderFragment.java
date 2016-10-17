@@ -569,6 +569,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ((MainActivity) getActivity()).getSupportActionBar().show();
         ((MainActivity) getActivity()).setColorToBars();
+        if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         return false;
     }
 
