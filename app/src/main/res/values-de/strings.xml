@@ -198,7 +198,7 @@
     <string name="deleting_empty_directories">Löschen Sie leere Verzeichnisse …</string>
     <string name="read_timeout_title">Timeout beim Einlesen</string>
     <string name="write_timeout_title">Timeout beim Speichern</string>
-    <string name="reader_type_subtitle">Aktiviert den Seitenleser. </string>
+    <string name="reader_type_subtitle">Drücke hier um den Lesemodus zu ändern</string>
     <string name="delete_confirm">Das Kapitel wirklich löschen?</string>
     <string name="hide_actionbar_title">Ausblenden der Aktionsbar</string>
     <string name="hide_actionbar_subtitle">Dadurch wird die Aktionsbar ausgeblendet, wenn man im nicht-Vollbild-Modus liest</string>
