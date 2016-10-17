@@ -226,4 +226,11 @@
     <string name="_update_at_start_up_12hours">Update at start up if 12 hours have passed</string>
     <string name="_update_at_start_up_1day">Update at start up if 1 day has passed</string>
     <string name="last_update">Last Update</string>
+    <string name="adding_folders_as_mangas">Adding folders as Mangas &#8230;</string>
+    <string name="multi_import_title">Multi Import</string>
+    <string name="multi_import_subtitle">When adding a Manga via FromFolder all folders in that directory will be imported</string>
+    <string name="auto_import_title">Auto Import Mangas</string>
+    <string name="auto_import_subtitle">Automatically import folders in a selected path as Mangas after the normal update process finishes</string>
+    <string name="auto_import_path_title">Auto Import Path</string>
+    <string name="auto_import_path_subtitle">Automatically import folders in the selected path as Mangas</string>
 </resources>

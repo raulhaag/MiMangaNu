@@ -78,6 +78,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
+    private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
 
     @Nullable
     @Override
@@ -177,9 +178,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (NetworkUtilsAndReceiver.isConnected(getContext())) {
                 updateListTask = new UpdateListTask(getActivity());
                 updateListTask.execute();
-
-                /*AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
-                automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
             }
         } catch (Exception e) {
             Util.getInstance().toast(getContext(), getString(R.string.no_internet_connection));
@@ -389,8 +387,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
                     mangaFolderSelect.setMainFragment(MainFragment.this);
                     mangaFolderSelect.show(getChildFragmentManager(), "fragment_find_folder");
-
-                    Log.e("from file", "selected");
+                    Log.i("MF", "from file selected");
                 }
             }
         });
@@ -505,7 +502,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
         return super.onContextItemSelected(item);
     }
-
 
     public ViewGroup getMMView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -681,8 +677,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected Integer doInBackground(Void... params) {
             if (context != null && error.isEmpty()) {
                 ticket = threads;
-
-                //FIXME easy switch to test #310 test
+                
                 if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
                     mangaList = fromFolderMangaList;
                 }
@@ -763,7 +758,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 Util.getInstance().cancelNotification(mNotifyID);
             }
 
-
             if (pm.getBoolean("auto_import", false)) {
                 String autoImportPath = pm.getString("auto_import_path","-1");
                 Log.d("MF","auto: "+autoImportPath);
@@ -786,36 +780,39 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
     }
 
-
-    public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> { //Manga
+    public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
         String error = "";
-        int total = 0;
+        int max = 0;
         ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
         Manga manga;
 
         @Override
         protected void onPreExecute() {
-            /*adding.setMessage(getResources().getString(R.string.adding_to_db));
-            adding.show();*/
+            mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
             super.onPreExecute();
         }
 
         @Override
-        protected Void doInBackground(String... params) { // Manga
-            String directory = params[0]; //"/storage/emulated/0/MiMangaNu/asd/";
+        protected void onProgressUpdate(final Integer... values) {
+            Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            String directory = params[0];
             File f = new File(directory);
 
             if (f.listFiles().length > 0) {
-                total = f.listFiles().length;
+                max = f.listFiles().length;
                 int n = 0;
                 for (File child : f.listFiles()) {
                     n++;
                     publishProgress(n);
-                    Log.d("MF", "c: " + child.getAbsolutePath());
                     directory = child.getAbsolutePath();
-
                     List<Manga> fromFolderMangas = Database.getFromFolderMangas(getContext());
-                    Log.d("MF", "dir: " + directory);
+                    Log.i("MainFragment", "FromFolder directory: " + directory);
                     boolean onDb = false;
                     for (Manga m : fromFolderMangas) {
                         if (m.getPath().equals(directory))
@@ -832,20 +829,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             Log.e("MangaFolderSelect", "Exception", e);
                             error = Log.getStackTraceString(e);
                         }
-                        //total = manga.getChapters().size();
                         int mid = Database.addManga(getActivity(), manga);
-                        long initTime = System.currentTimeMillis();
                         for (int i = 0; i < manga.getChapters().size(); i++) {
-                            if (System.currentTimeMillis() - initTime > 500) {
-                                publishProgress(i);
-                                initTime = System.currentTimeMillis();
-                            }
                             Database.addChapter(getActivity(), manga.getChapter(i), mid);
                         }
                     } else {
-                        Log.i("MF", "already on db: " + directory);
+                        Log.i("MainFragment", "already on db: " + directory);
                     }
-
                 }
             }
 
@@ -853,34 +843,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
 
         @Override
-        protected void onProgressUpdate(final Integer... values) {
-            super.onProgressUpdate(values);
-            /*if (isAdded()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adding != null) {
-                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + total);
-                        }
-                    }
-                });
-            }*/
-        }
-
-        @Override
         protected void onPostExecute(Void result) {
-            /*try {
-                adding.dismiss();
-            } catch (Exception e) {
-                Log.e("MangaFolderSelect", "Exception", e);
-            }*/
             if (isAdded()) {
+                Util.getInstance().cancelNotification(mNotifyID_AddAllMangaInDirectory);
                 Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
                 if (!error.isEmpty()) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
                 setListManga(true);
-                //getActivity().onBackPressed();
             }
             super.onPostExecute(result);
         }

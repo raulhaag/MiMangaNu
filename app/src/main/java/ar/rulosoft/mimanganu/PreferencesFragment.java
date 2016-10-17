@@ -128,9 +128,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** enable / disable seamless_chapter_transitions_delete_read depending on the state of seamless_chapter_transitions **/
-        Boolean seamlessChapterTransitions = prefs.getBoolean("seamless_chapter_transitions", false);
         Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
-        if (seamlessChapterTransitions) {
+        if (prefs.getBoolean("seamless_chapter_transitions", false)) {
             seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
         } else {
             seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
@@ -140,9 +139,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                Boolean seamlessChapterTransitions = prefs.getBoolean("seamless_chapter_transitions", false);
                 Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
-                if (!seamlessChapterTransitions) {
+                if (!prefs.getBoolean("seamless_chapter_transitions", false)) {
                     seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
                 } else {
                     seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
@@ -150,6 +148,28 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     SharedPreferences.Editor prefEdit = prefs.edit();
                     prefEdit.putBoolean("seamless_chapter_transitions_delete_read", false);
                     prefEdit.apply();
+                }
+                return true;
+            }
+        });
+
+        /** enable / disable auto_import_path depending on the state of auto_import **/
+        Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+        if (prefs.getBoolean("auto_import", false)) {
+            autoImportPath.setEnabled(true);
+        } else {
+            autoImportPath.setEnabled(false);
+        }
+        final SwitchPreferenceCompat autoImportSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("auto_import");
+        autoImportSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+                if (!prefs.getBoolean("auto_import", false)) {
+                    autoImportPath.setEnabled(true);
+                } else {
+                    autoImportPath.setEnabled(false);
                 }
                 return true;
             }
