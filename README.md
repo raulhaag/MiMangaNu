@@ -37,6 +37,7 @@ Changes in v1.56:
 * Show time of last update (based on the last time a chapter was added)
 * Add setting to auto import folders as Mangas in a specified folder 
 after the manual update finishes.
+* Add setting to import all sub-folders as Mangas
 * Bug fixes and performance improvements.
 
 Cambios en v1.55:
