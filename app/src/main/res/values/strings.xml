@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.55:\n\t* Fix cancelling searching for updates notification not working. \n\t* Adding manga is now possible from a search result. \n\t* Fix crash when downloads finish. \n\t* Make reader faster. \n\t* Speed up \"Delete Images\", \"Reset Chapters\" and \"Mark selected as \" functions using multithreading. \n\t* Add update at start up option. \n\t* Bug fixes and performance improvements. </string>
+    <string name="update_message">Changes in v1.56:\n\t* Show time of last update (based on the last time a chapter was added). \n\t* Add setting to auto import folders as Mangas in a specified folder after the manual update finishes. \n\t* placeholder. \n\t* placeholder. \n\t* placeholder. \n\t* placeholder. \n\t* Bug fixes and performance improvements. </string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
