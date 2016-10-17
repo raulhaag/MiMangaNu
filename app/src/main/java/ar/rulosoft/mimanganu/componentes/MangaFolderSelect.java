@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -20,10 +21,12 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import ar.rulosoft.custompref.ArrayAdapterDirectory;
+import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.FromFolder;
@@ -39,30 +42,39 @@ public class MangaFolderSelect extends DialogFragment {
     private ListView dirs;
     private TextView dirs_path;
     private MainFragment mainFragment;
+    private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setPositiveButton(getActivity().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String title = Util.getLastStringInPath(actual);
-                List<Manga> mangas = Database.getMangas(getContext(), null, true);
-                boolean onDb = false;
-                for (Manga m : mangas) {
-                    if (m.getPath().contains(actual))
-                        onDb = true;
+
+                if(MainActivity.pm != null){
+                    if (MainActivity.pm.getBoolean("multi_import", false)) {
+                        new AddAllMangaInDirectoryTask().execute(actual);
+                    } else {
+                        String title = Util.getLastStringInPath(actual);
+                        List<Manga> mangas = Database.getFromFolderMangas(getContext());
+                        Log.d("MFS", "ac: " + actual);
+                        boolean onDb = false;
+                        for (Manga m : mangas) {
+                            if (m.getPath().equals(actual))
+                                onDb = true;
+                        }
+                        if (!onDb) {
+                            Manga manga = new Manga(FromFolder.FROMFOLDER, title, actual, true);
+                            manga.setImages("");
+                            (new AddMangaTask()).execute(manga);
+                        } else {
+                            Toast.makeText(getContext(), getContext().getString(R.string.dir_already_on_db), Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
-                if (!onDb) {
-                    Manga manga = new Manga(FromFolder.FROMFOLDER, title, actual, true);
-                    manga.setImages("");
-                    (new AddMangaTask()).execute(manga);
-                }else{
-                    Toast.makeText(getContext(),getContext().getString(R.string.dir_already_on_db),Toast.LENGTH_LONG).show();
-                }
+
             }
         });
 
@@ -113,7 +125,7 @@ public class MangaFolderSelect extends DialogFragment {
 
     public class AddMangaTask extends AsyncTask<Manga, Integer, Void> {
         ProgressDialog adding = new ProgressDialog(getActivity());
-        String error = ".";
+        String error = "";
         int total = 0;
         ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
 
@@ -129,7 +141,8 @@ public class MangaFolderSelect extends DialogFragment {
             try {
                 serverBase.loadChapters(params[0], false);
             } catch (Exception e) {
-                error = e.getMessage();
+                Log.e("MangaFolderSelect", "Exception", e);
+                error = Log.getStackTraceString(e);
             }
             total = params[0].getChapters().size();
             int mid = Database.addManga(getActivity(), params[0]);
@@ -164,14 +177,96 @@ public class MangaFolderSelect extends DialogFragment {
             adding.dismiss();
             if (isAdded()) {
                 Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-                if (error != null && error.length() > 2) {
+                if (!error.isEmpty()) {
                     Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
                 }
-                if (mainFragment != null)
+                if (mainFragment != null) {
                     mainFragment.setListManga(true);
+                }
                 getActivity().onBackPressed();
             }
             super.onPostExecute(result);
         }
     }
+
+
+    public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
+        String error = "";
+        int max = 0;
+        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
+        Manga manga;
+
+        @Override
+        protected void onPreExecute() {
+            mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            String directory = params[0];
+            File f = new File(directory);
+            if (f.listFiles().length > 0) {
+                max = f.listFiles().length;
+                int n = 0;
+                for (File child : f.listFiles()) {
+                    n++;
+                    publishProgress(n);
+                    directory = child.getAbsolutePath();
+                    List<Manga> fromFolderMangas = Database.getFromFolderMangas(getContext());
+                    Log.i("MangaFolderSelect", "FromFolder directory: " + directory);
+                    boolean onDb = false;
+                    for (Manga m : fromFolderMangas) {
+                        if (m.getPath().equals(directory))
+                            onDb = true;
+                    }
+                    if (!onDb) {
+                        String title = Util.getLastStringInPathDontRemoveLastChar(directory);
+                        manga = new Manga(FromFolder.FROMFOLDER, title, directory, true);
+                        manga.setImages("");
+
+                        try {
+                            serverBase.loadChapters(manga, false);
+                        } catch (Exception e) {
+                            Log.e("MangaFolderSelect", "Exception", e);
+                            error = Log.getStackTraceString(e);
+                        }
+                        int mid = Database.addManga(getActivity(), manga);
+                        for (int i = 0; i < manga.getChapters().size(); i++) {
+                            Database.addChapter(getActivity(), manga.getChapter(i), mid);
+                        }
+                    } else {
+                        Log.i("MangaFolderSelect", "already on db: " + directory);
+                    }
+
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if (isAdded()) {
+                Util.getInstance().cancelNotification(mNotifyID_AddAllMangaInDirectory);
+                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+                if (!error.isEmpty()) {
+                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                }
+                if (mainFragment != null) {
+                    mainFragment.setListManga(true);
+                }
+                //getActivity().onBackPressed();
+            }
+            super.onPostExecute(result);
+        }
+    }
+
 }

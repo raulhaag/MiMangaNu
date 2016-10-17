@@ -403,6 +403,10 @@ public class Database extends SQLiteOpenHelper {
         //Log.i("Database", "Extra: " + chapter.getExtra());
     }
 
+    public static ArrayList<Manga> getFromFolderMangas(Context context) {
+        return getMangasCondition(context, COL_SERVER_ID + "= 1001", null, false);
+    }
+
     public static ArrayList<Manga> getMangasForUpdates(Context context) {
         return getMangasCondition(context, COL_IS_FINISHED + "= 0", null, false);
     }

@@ -345,12 +345,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             break;
             case R.id.mark_all_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, true);
-                new MarkAllAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SetChaptersPageCountAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.mark_all_as_unread: {
                 Database.markAllChapters(getActivity(), this.mMangaId, false);
-                new MarkAllAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SetChaptersPageCountAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.action_sentido: {
@@ -730,7 +730,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    private class MarkAllAsUnread extends AsyncTask<Void, Integer, Void> {
+    private class SetChaptersPageCountAsUnread extends AsyncTask<Void, Integer, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
@@ -749,7 +749,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    private class MarkAllAsRead extends AsyncTask<Void, Integer, Void> {
+    private class SetChaptersPageCountAsRead extends AsyncTask<Void, Integer, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {

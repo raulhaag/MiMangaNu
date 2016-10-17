@@ -78,6 +78,12 @@ public class Util {
         return path.substring(idx + 1);
     }
 
+    public static String getLastStringInPathDontRemoveLastChar(String path) {
+        path = path.substring(0, path.length());
+        int idx = path.lastIndexOf("/");
+        return path.substring(idx + 1);
+    }
+
     public void showFastSnackBar(String message, View view, Context context) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);

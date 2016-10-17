@@ -7,8 +7,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -34,9 +32,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
@@ -47,7 +47,7 @@ import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -78,6 +78,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
+    private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
 
     @Nullable
     @Override
@@ -174,12 +175,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     private void startUpdate() {
         try {
-            if (NetworkUtilsAndReciever.isConnected(getContext())) {
+            if (NetworkUtilsAndReceiver.isConnected(getContext())) {
                 updateListTask = new UpdateListTask(getActivity());
                 updateListTask.execute();
-
-                /*AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), getView(), pm);
-                automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);*/
             }
         } catch (Exception e) {
             Util.getInstance().toast(getContext(), getString(R.string.no_internet_connection));
@@ -386,11 +384,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                         ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
                     }
                 } else {
-                    MangaFolderSelect dialog = new MangaFolderSelect();
-                    dialog.setMainFragment(MainFragment.this);
-                    dialog.show(getChildFragmentManager(), "fragment_find_folder");
-
-                    Log.e("from file", "selected");
+                    MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
+                    mangaFolderSelect.setMainFragment(MainFragment.this);
+                    mangaFolderSelect.show(getChildFragmentManager(), "fragment_find_folder");
+                    Log.i("MF", "from file selected");
                 }
             }
         });
@@ -506,7 +503,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         return super.onContextItemSelected(item);
     }
 
-
     public ViewGroup getMMView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_mis_mangas, container, false);
@@ -589,7 +585,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public class SectionsPagerAdapter extends PagerAdapter {
         ViewGroup[] pages;
 
-        public SectionsPagerAdapter() {
+        SectionsPagerAdapter() {
             super();
             this.pages = new ViewGroup[2];
 
@@ -642,6 +638,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Manga> mangaList;
+        private ArrayList<Manga> fromFolderMangaList;
         private int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
         private int ticket = threads;
         private int result = 0;
@@ -655,20 +652,15 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 mangaList = Database.getMangas(getContext(), null, true);
             else
                 mangaList = Database.getMangasForUpdates(getContext());
+            fromFolderMangaList = Database.getFromFolderMangas(getContext());
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             if (context != null) {
-                try {
-                    if (NetworkUtilsAndReciever.isConnected(context)) {
-                        Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
-                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getView(), getContext());
-                    }
-                } catch (Exception e) {
-                    error = Log.getStackTraceString(e);
-                }
+                Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
+                Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getView(), getContext());
             }
         }
 
@@ -685,57 +677,48 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected Integer doInBackground(Void... params) {
             if (context != null && error.isEmpty()) {
                 ticket = threads;
+                
+                if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
+                    mangaList = fromFolderMangaList;
+                }
+
                 for (int idx = 0; idx < mangaList.size(); idx++) {
-                    if (Util.n > (48 - threads))
-                        cancel(true);
-                    if(MainActivity.isCancelled)
+                    if (MainActivity.isCancelled || Util.n > (48 - threads))
                         cancel(true);
                     try {
-                        if (NetworkUtilsAndReciever.isConnected(context)) {
-                            final int idxNow = idx;
-                            // If there is no ticket, sleep for 1 second and ask again
-                            while (ticket < 1) {
-                                try {
-                                    Thread.sleep(1000);
-                                } catch (InterruptedException e) {
-                                    Log.e(TAG, "Update sleep failure", e);
-                                }
+                        final int idxNow = idx;
+                        // If there is no ticket, sleep for 1 second and ask again
+                        while (ticket < 1) {
+                            try {
+                                Thread.sleep(1000);
+                            } catch (InterruptedException e) {
+                                Log.e(TAG, "Update sleep failure", e);
                             }
-                            ticket--;
-
-                            // If tickets were passed, create new requests
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    Manga mManga = mangaList.get(idxNow);
-                                    ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
-                                    boolean fast = pm.getBoolean("fast_update", true);
-                                    publishProgress(idxNow);
-                                    try {
-                                        if (!isCancelled()) {
-                                            int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
-                                            result += diff;
-                                        }
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "Update server failure", e);
-                                    } finally {
-                                        ticket++;
-                                    }
-
-                                }
-                            }).start();
-
-                        } else {
-                            Util.getInstance().cancelNotification(mNotifyID);
-                            Handler handler = new Handler(Looper.getMainLooper());
-                            handler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    swipeReLayout.setRefreshing(false);
-                                }
-                            });
-                            break;
                         }
+                        ticket--;
+
+                        // If tickets were passed, create new requests
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Manga mManga = mangaList.get(idxNow);
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                boolean fast = pm.getBoolean("fast_update", true);
+                                publishProgress(idxNow);
+                                try {
+                                    if (!isCancelled()) {
+                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
+                                        result += diff;
+                                    }
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Update server failure", e);
+                                } finally {
+                                    ticket++;
+                                }
+
+                            }
+                        }).start();
+
                     } catch (Exception e) {
                         error = Log.getStackTraceString(e);
                     }
@@ -759,7 +742,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             if (context != null) {
                 if (result > 0) {
                     Util.getInstance().cancelNotification(mNotifyID);
-                    if(isAdded())
+                    if (isAdded())
                         setListManga(true);
                     Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, "" + result), getView(), context);
                 } else {
@@ -773,6 +756,13 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 swipeReLayout.setRefreshing(false);
             } else {
                 Util.getInstance().cancelNotification(mNotifyID);
+            }
+
+            if (pm.getBoolean("auto_import", false)) {
+                String autoImportPath = pm.getString("auto_import_path","-1");
+                Log.d("MF","auto: "+autoImportPath);
+                if(!autoImportPath.equals("-1"))
+                    new AddAllMangaInDirectoryTask().execute(autoImportPath);
             }
         }
 
@@ -789,5 +779,82 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             MainActivity.isCancelled = false;
         }
     }
+
+    public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
+        String error = "";
+        int max = 0;
+        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
+        Manga manga;
+
+        @Override
+        protected void onPreExecute() {
+            mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
+            super.onPreExecute();
+        }
+
+        @Override
+        protected void onProgressUpdate(final Integer... values) {
+            Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected Void doInBackground(String... params) {
+            String directory = params[0];
+            File f = new File(directory);
+
+            if (f.listFiles().length > 0) {
+                max = f.listFiles().length;
+                int n = 0;
+                for (File child : f.listFiles()) {
+                    n++;
+                    publishProgress(n);
+                    directory = child.getAbsolutePath();
+                    List<Manga> fromFolderMangas = Database.getFromFolderMangas(getContext());
+                    Log.i("MainFragment", "FromFolder directory: " + directory);
+                    boolean onDb = false;
+                    for (Manga m : fromFolderMangas) {
+                        if (m.getPath().equals(directory))
+                            onDb = true;
+                    }
+                    if (!onDb) {
+                        String title = Util.getLastStringInPathDontRemoveLastChar(directory);
+                        manga = new Manga(FromFolder.FROMFOLDER, title, directory, true);
+                        manga.setImages("");
+
+                        try {
+                            serverBase.loadChapters(manga, false);
+                        } catch (Exception e) {
+                            Log.e("MangaFolderSelect", "Exception", e);
+                            error = Log.getStackTraceString(e);
+                        }
+                        int mid = Database.addManga(getActivity(), manga);
+                        for (int i = 0; i < manga.getChapters().size(); i++) {
+                            Database.addChapter(getActivity(), manga.getChapter(i), mid);
+                        }
+                    } else {
+                        Log.i("MainFragment", "already on db: " + directory);
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if (isAdded()) {
+                Util.getInstance().cancelNotification(mNotifyID_AddAllMangaInDirectory);
+                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+                if (!error.isEmpty()) {
+                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                }
+                setListManga(true);
+            }
+            super.onPostExecute(result);
+        }
+    }
+
 }
 
