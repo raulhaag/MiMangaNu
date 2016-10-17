@@ -49,8 +49,8 @@
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_only_wifi"
-            android:summary="@string/use_only_wifi_subtitle"
-            android:title="@string/use_only_wifi_title_update" />
+            android:summary="@string/use_only_wifi_updates_subtitle"
+            android:title="@string/use_only_wifi_title" />
         <ListPreference
             android:defaultValue="0"
             android:dialogTitle="@string/update_title"

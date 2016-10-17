@@ -161,7 +161,7 @@
     <string name="error_while_adding_chapter_or_manga_to_db">Error occurred while trying to add \"%s\" to database</string>
     <string name="error_while_updating_chapter_or_manga_in_db">Error occurred while trying to update \"%s\" in database</string>
     <string name="ram_usage">Memory usage</string>
-    <string name="seamless_chapter_transitions_title">Seamless chapter transitions</string>
+    <string name="seamless_chapter_transitions_title">Seamless transitions</string>
     <string name="seamless_chapter_transitions_paged_reader_subtitle">Press left or right on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
@@ -170,7 +170,7 @@
     <string name="clear_cache_title">Clear cache</string>
     <string name="clear_cache_subtitle">Tap here to clear the cache. Keep in mind that all Cover Images will have to be re-downloaded.</string>
     <string name="misc_settings">Misc Settings</string>
-    <string name="seamless_chapter_transitions_delete_read_title">Delete chapter after reading</string>
+    <string name="seamless_chapter_transitions_delete_read_title">Delete after reading</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">This deletes the current chapter when transitioning to the next chapter</string>
     <string name="new_chapter">New Chapter of %s</string>
     <string name="new_chapters">New Chapters of %s</string>
@@ -180,8 +180,8 @@
     <string name="no_wifi_connection">No WiFi connection</string>
     <string name="no_internet_connection">No Internet connection</string>
     <string name="use_only_wifi_title">Use only WiFi</string>
-    <string name="use_only_wifi_title_update">Use only WiFi (for updates)</string>
     <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
+    <string name="use_only_wifi_updates_subtitle">For updates. To avoid data plan usage</string>
     <string name="reset_server_list_to_defaults_title">Reset server list to defaults</string>
     <string name="reset_server_list_to_defaults_subtitle">Tap here to un-hide all servers</string>
     <string name="search_result">Search result for \"%s\" on</string>
