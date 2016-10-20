@@ -352,23 +352,23 @@ The MIT License (MIT)
 
 MiMangaNu uses the following libraries (in chronological order) :
 
-ACRA (https://github.com/ACRA/acra) with Tracepot (http://www.tracepot.com/) as backend.
+- [ACRA](https://github.com/ACRA/acra) with [Tracepot](http://www.tracepot.com/) as backend.
 
-duktape (https://github.com/square/duktape-android)
+- [duktape](https://github.com/square/duktape-android)
 
-ImageViewTouch (https://github.com/sephiroth74/ImageViewZoom)
+- [ImageViewTouch](https://github.com/sephiroth74/ImageViewZoom)
 
-LazyList (https://github.com/thest1/LazyList)
+- [LazyList](https://github.com/thest1/LazyList)
 
-Okhttp (https://github.com/square/okhttp)
+- [Okhttp](https://github.com/square/okhttp)
 
-okio (https://square.github.io/okhttp/)
+- [okio](https://square.github.io/okhttp/)
 
-PersistentCookieJar (https://github.com/franmontiel/PersistentCookieJar)
+- [PersistentCookieJar](https://github.com/franmontiel/PersistentCookieJar)
 
-RapidDecoder (https://github.com/suckgamony/RapidDecoder)
+- [RapidDecoder](https://github.com/suckgamony/RapidDecoder)
 
-VerticalViewPager (https://github.com/castorflex/VerticalViewPager)
+- [VerticalViewPager](https://github.com/castorflex/VerticalViewPager)
 
 Our thanks goes out to all of the above mentioned Libraries' authors and contributors.
 We are not explicitly endorsed by any of them.
