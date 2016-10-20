@@ -65,8 +65,8 @@ public class ChapterDownload implements StateChangeListener {
         for (Status e : pagesStatus) {
             if (e.ordinal() > Status.DOWNLOAD_OK.ordinal()) {
                 errors++;
+                DownloadPoolService.errors++;
                 if (errors > MAX_ERRORS) {
-                    DownloadPoolService.errors++;
                     changeStatus(DownloadStatus.ERROR);
                     if (errorListener != null) {
                         errorListener.onError(chapter);
