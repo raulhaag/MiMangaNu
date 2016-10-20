@@ -11,7 +11,7 @@ public class ChapterDownload implements StateChangeListener {
     public DownloadStatus status;
     public Chapter chapter;
     private OnErrorListener errorListener = null;
-    private StateChangeListener chagesListener = null;
+    private StateChangeListener changeListener = null;
     private Status[] pagesStatus;
     private int progress = 0;
 
@@ -32,7 +32,7 @@ public class ChapterDownload implements StateChangeListener {
         this.status = newStatus;
     }
 
-    public int getNext() {
+    int getNext() {
         int j = -2;
         if (status.ordinal() < DownloadStatus.DOWNLOADED.ordinal()) {
             if (status == DownloadStatus.QUEUED)
@@ -66,6 +66,7 @@ public class ChapterDownload implements StateChangeListener {
             if (e.ordinal() > Status.DOWNLOAD_OK.ordinal()) {
                 errors++;
                 if (errors > MAX_ERRORS) {
+                    DownloadPoolService.errors++;
                     changeStatus(DownloadStatus.ERROR);
                     if (errorListener != null) {
                         errorListener.onError(chapter);
@@ -109,11 +110,11 @@ public class ChapterDownload implements StateChangeListener {
         this.chapter = chapter;
     }
 
-    public void setChagesListener(StateChangeListener chagesListener) {
-        this.chagesListener = chagesListener;
+    void setChangeListener(StateChangeListener changeListener) {
+        this.changeListener = changeListener;
     }
 
-    public void setErrorIdx(int idx) {
+    void setErrorIdx(int idx) {
         pagesStatus[idx] = Status.ERROR_ON_UPLOAD;
         progress++;
         areErrors();
@@ -132,11 +133,11 @@ public class ChapterDownload implements StateChangeListener {
         pagesStatus[singleDownload.index] = singleDownload.status;
         progress++;
         checkProgreso();
-        if (chagesListener != null)
-            chagesListener.onChange(singleDownload);
+        if (changeListener != null)
+            changeListener.onChange(singleDownload);
     }
 
-    public void setErrorListener(OnErrorListener errorListener) {
+    void setErrorListener(OnErrorListener errorListener) {
         this.errorListener = errorListener;
         if (this.status == DownloadStatus.ERROR && errorListener != null) {
             errorListener.onError(chapter);

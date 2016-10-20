@@ -233,4 +233,5 @@
     <string name="auto_import_subtitle">Automatically import folders in a selected path as Mangas after the normal update process finishes</string>
     <string name="auto_import_path_title">Auto Import Path</string>
     <string name="auto_import_path_subtitle">Automatically import folders in the selected path as Mangas</string>
+    <string name="chapter_download_errors">Chapter download errors:</string>
 </resources>
