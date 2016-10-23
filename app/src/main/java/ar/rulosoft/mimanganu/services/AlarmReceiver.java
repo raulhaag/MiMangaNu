@@ -10,7 +10,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 import ar.rulosoft.mimanganu.AutomaticUpdateTask;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -46,20 +46,20 @@ public class AlarmReceiver extends BroadcastReceiver {
             pm = PreferenceManager.getDefaultSharedPreferences(context);
             boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
             boolean only_wifi = pm.getBoolean("only_wifi", false);
-            NetworkUtilsAndReciever.reset();
+            NetworkUtilsAndReceiver.reset();
             if (only_wifi_updates) {
                 only_wifi = true;
             }
-            NetworkUtilsAndReciever.reset();
-            if (NetworkUtilsAndReciever.getConnectionStatus(context, only_wifi) == NetworkUtilsAndReciever.ConnectionStatus.CONNECTED) {
+            NetworkUtilsAndReceiver.reset();
+            if (NetworkUtilsAndReceiver.getConnectionStatus(context, only_wifi) == NetworkUtilsAndReceiver.ConnectionStatus.CONNECTED) {
                 Navigator.connectionTimeout = Integer.parseInt(pm.getString("connection_timeout", "10"));
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
-                NetworkUtilsAndReciever.ONLY_WIFI = pm.getBoolean("only_wifi", false);
+                NetworkUtilsAndReceiver.ONLY_WIFI = pm.getBoolean("only_wifi", false);
                 Navigator.navigator = new Navigator(context);
                 AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(context, null, pm);
                 automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
-            NetworkUtilsAndReciever.reset();
+            NetworkUtilsAndReceiver.reset();
         } catch (Exception ignore) { //next time on connection go to update
             ignore.printStackTrace();
         }

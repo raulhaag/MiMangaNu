@@ -48,7 +48,7 @@ public class ThemeColors {
      * @param color integer
      * @return brightness (0 - 255)
      */
-    public static int brightness(int color) {
+    private static int brightness(int color) {
         return (int) Math.sqrt(Color.red(color) * Color.red(color) * .241 +
                 Color.green(color) * Color.green(color) * .691 +
                 Color.blue(color) * Color.blue(color) * .068);
@@ -61,7 +61,7 @@ public class ThemeColors {
      * @param factor 0..1 to darken and 1..inf to brighten color
      * @return changed color
      */
-    public static int brightnessColor(int color, float factor) {
+    private static int brightnessColor(int color, float factor) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
         hsv[2] *= factor;

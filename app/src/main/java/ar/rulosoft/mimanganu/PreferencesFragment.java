@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu;
 
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -32,7 +31,7 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -129,9 +128,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /** enable / disable seamless_chapter_transitions_delete_read depending on the state of seamless_chapter_transitions **/
-        Boolean seamlessChapterTransitions = prefs.getBoolean("seamless_chapter_transitions", false);
         Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
-        if (seamlessChapterTransitions) {
+        if (prefs.getBoolean("seamless_chapter_transitions", false)) {
             seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
         } else {
             seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
@@ -141,9 +139,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
-                Boolean seamlessChapterTransitions = prefs.getBoolean("seamless_chapter_transitions", false);
                 Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
-                if (!seamlessChapterTransitions) {
+                if (!prefs.getBoolean("seamless_chapter_transitions", false)) {
                     seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
                 } else {
                     seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
@@ -151,6 +148,28 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     SharedPreferences.Editor prefEdit = prefs.edit();
                     prefEdit.putBoolean("seamless_chapter_transitions_delete_read", false);
                     prefEdit.apply();
+                }
+                return true;
+            }
+        });
+
+        /** enable / disable auto_import_path depending on the state of auto_import **/
+        Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+        if (prefs.getBoolean("auto_import", false)) {
+            autoImportPath.setEnabled(true);
+        } else {
+            autoImportPath.setEnabled(false);
+        }
+        final SwitchPreferenceCompat autoImportSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("auto_import");
+        autoImportSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+                if (!prefs.getBoolean("auto_import", false)) {
+                    autoImportPath.setEnabled(true);
+                } else {
+                    autoImportPath.setEnabled(false);
                 }
                 return true;
             }
@@ -232,8 +251,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         onlyWifiSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
-                NetworkUtilsAndReciever.ONLY_WIFI = (Boolean) o;
-                NetworkUtilsAndReciever.connectionStatus = NetworkUtilsAndReciever.ConnectionStatus.UNCHECKED;
+                NetworkUtilsAndReceiver.ONLY_WIFI = (Boolean) o;
+                NetworkUtilsAndReceiver.connectionStatus = NetworkUtilsAndReceiver.ConnectionStatus.UNCHECKED;
                 onlyWifiUpdateSwitch.setEnabled(!(Boolean) o);
                 return true;
             }
@@ -315,11 +334,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     }
 
     private void setFirstRunDefaults() {
-        final String PREFS_NAME = "fragment_preferences";
         final String PREF_VERSION_CODE_KEY = "version_code";
-        final int DOESNT_EXIST = -1;
-
-        // Get current version code
         int currentVersionCode;
         try {
             currentVersionCode = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionCode;
@@ -327,15 +342,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             e.printStackTrace();
             return;
         }
-        // Get saved version code
-        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, DOESNT_EXIST);
+        int savedVersionCode = prefs.getInt(PREF_VERSION_CODE_KEY, -1);
 
         // Check for first run or upgrade
         if (currentVersionCode == savedVersionCode) {
             // This is just a normal run
             return;
-        } else if (savedVersionCode == DOESNT_EXIST || currentVersionCode > savedVersionCode) {
+        } else if (savedVersionCode == -1 || currentVersionCode > savedVersionCode) {
             // This is a new install or upgrade
 
             setNumberOfThreadsToBeEqualToNumberOfCores(4, "update_threads_manual");

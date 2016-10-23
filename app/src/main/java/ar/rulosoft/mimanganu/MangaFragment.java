@@ -274,6 +274,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             } else {
                 mInfo.setGenre(getResources().getString(R.string.nodisponible));
             }
+            if(manga.getLastUpdate().length() > 3){
+                mInfo.setLastUpdate(manga.getLastUpdate());
+            }
             mImageLoader.displayImg(manga.getImages(), mInfo);
         }
     }
@@ -342,12 +345,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             break;
             case R.id.mark_all_as_read: {
                 Database.markAllChapters(getActivity(), this.mMangaId, true);
-                new MarkAllAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SetChaptersPageCountAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.mark_all_as_unread: {
                 Database.markAllChapters(getActivity(), this.mMangaId, false);
-                new MarkAllAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                new SetChaptersPageCountAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.action_sentido: {
@@ -573,8 +576,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onProgressUpdate(Void... values) {
-            if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                asyncProgressDialog.dismiss();
+            try {
+                if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                    asyncProgressDialog.dismiss();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
             }
             super.onProgressUpdate(values);
         }
@@ -599,7 +606,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         readerFragment.setArguments(bundle);
                         ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
                     } catch (Exception e) {
-                            Util.getInstance().showFastSnackBar(Log.getStackTraceString(e), getView(), getContext());
+                        Log.e(TAG, "Exception", e);
+                        error = Log.getStackTraceString(e);
+                        Util.getInstance().toast(getContext(), error);
                     }
                 }
             }
@@ -608,9 +617,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
 
         @Override
         protected void onCancelled() {
-            Log.i("MF","cancelled GetPagesTask");
-            if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                asyncProgressDialog.dismiss();
+            try {
+                if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
+                    asyncProgressDialog.dismiss();
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Exception", e);
             }
         }
     }
@@ -718,7 +730,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    private class MarkAllAsUnread extends AsyncTask<Void, Integer, Void> {
+    private class SetChaptersPageCountAsUnread extends AsyncTask<Void, Integer, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
@@ -737,7 +749,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    private class MarkAllAsRead extends AsyncTask<Void, Integer, Void> {
+    private class SetChaptersPageCountAsRead extends AsyncTask<Void, Integer, Void> {
         @Override
         protected Void doInBackground(Void... params) {
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {

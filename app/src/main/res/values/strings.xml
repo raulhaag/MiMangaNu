@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.55:\n\t* Fix cancelling searching for updates notification not working. \n\t* Adding manga is now possible from a search result. \n\t* Fix crash when downloads finish. \n\t* Make reader faster. \n\t* Speed up \"Delete Images\", \"Reset Chapters\" and \"Mark selected as \" functions using multithreading. \n\t* Add update at start up option. \n\t* Bug fixes and performance improvements. </string>
+    <string name="update_message">Changes in v1.56:\n\t* Show time of last update (based on the last time a chapter was added). \n\t* Add setting to auto import folders as Mangas in a specified folder after the manual update finishes. \n\t* Add setting to import all sub-folders as Mangas. \n\t* placeholder. \n\t* placeholder. \n\t* placeholder. \n\t* Bug fixes and performance improvements. </string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
@@ -161,7 +161,7 @@
     <string name="error_while_adding_chapter_or_manga_to_db">Error occurred while trying to add \"%s\" to database</string>
     <string name="error_while_updating_chapter_or_manga_in_db">Error occurred while trying to update \"%s\" in database</string>
     <string name="ram_usage">Memory usage</string>
-    <string name="seamless_chapter_transitions_title">Seamless chapter transitions</string>
+    <string name="seamless_chapter_transitions_title">Seamless transitions</string>
     <string name="seamless_chapter_transitions_paged_reader_subtitle">Press left or right on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="seamless_chapter_transitions_continuous_reader_subtitle">Swipe left or right (up or down for Vertical reading direction) on the first or last page of a chapter to load the previous or next chapter.</string>
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
@@ -170,7 +170,7 @@
     <string name="clear_cache_title">Clear cache</string>
     <string name="clear_cache_subtitle">Tap here to clear the cache. Keep in mind that all Cover Images will have to be re-downloaded.</string>
     <string name="misc_settings">Misc Settings</string>
-    <string name="seamless_chapter_transitions_delete_read_title">Delete chapter after reading</string>
+    <string name="seamless_chapter_transitions_delete_read_title">Delete after reading</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">This deletes the current chapter when transitioning to the next chapter</string>
     <string name="new_chapter">New Chapter of %s</string>
     <string name="new_chapters">New Chapters of %s</string>
@@ -180,8 +180,8 @@
     <string name="no_wifi_connection">No WiFi connection</string>
     <string name="no_internet_connection">No Internet connection</string>
     <string name="use_only_wifi_title">Use only WiFi</string>
-    <string name="use_only_wifi_title_update">Use only WiFi (for updates)</string>
     <string name="use_only_wifi_subtitle">To avoid data plan usage</string>
+    <string name="use_only_wifi_updates_subtitle">For updates. To avoid data plan usage</string>
     <string name="reset_server_list_to_defaults_title">Reset server list to defaults</string>
     <string name="reset_server_list_to_defaults_subtitle">Tap here to un-hide all servers</string>
     <string name="search_result">Search result for \"%s\" on</string>
@@ -225,4 +225,13 @@
     <string name="_update_at_start_up_6hours">Update at start up if 6 hours have passed</string>
     <string name="_update_at_start_up_12hours">Update at start up if 12 hours have passed</string>
     <string name="_update_at_start_up_1day">Update at start up if 1 day has passed</string>
+    <string name="last_update">Last Update</string>
+    <string name="adding_folders_as_mangas">Adding folders as Mangas &#8230;</string>
+    <string name="multi_import_title">Multi Import</string>
+    <string name="multi_import_subtitle">When adding a Manga via FromFolder all folders in that directory will be imported</string>
+    <string name="auto_import_title">Auto Import Mangas</string>
+    <string name="auto_import_subtitle">Automatically import folders in a selected path as Mangas after the normal update process finishes</string>
+    <string name="auto_import_path_title">Auto Import Path</string>
+    <string name="auto_import_path_subtitle">Automatically import folders in the selected path as Mangas</string>
+    <string name="chapter_download_errors">Chapter download errors:</string>
 </resources>

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReciever;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -20,6 +20,7 @@ import ar.rulosoft.mimanganu.utils.Util;
  */
 public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private ArrayList<Manga> mangaList;
+    private ArrayList<Manga> fromFolderMangaList;
     private int threads = 2;
     private int ticket = threads;
     private int result = 0;
@@ -38,6 +39,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             mangaList = Database.getMangas(context, null, true);
         else
             mangaList = Database.getMangasForUpdates(context);
+        fromFolderMangaList = Database.getFromFolderMangas(context);
         threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "2"));
         ticket = threads;
         mNotifyID = (int) System.currentTimeMillis();
@@ -47,15 +49,8 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     protected void onPreExecute() {
         super.onPreExecute();
         if (context != null) {
-            try {
-                if (NetworkUtilsAndReciever.isConnected(context)) {
-                    Util.getInstance().createSearchingForUpdatesNotification(context, mNotifyID);
-                    Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.searching_for_updates), view, context);
-                }
-            } catch (Exception e) {
-                if (e.getMessage() != null)
-                    error = Log.getStackTraceString(e);
-            }
+            Util.getInstance().createSearchingForUpdatesNotification(context, mNotifyID);
+            Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.searching_for_updates), view, context);
         }
     }
 
@@ -73,48 +68,46 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         if (context != null && error.isEmpty()) {
             final boolean fast = pm.getBoolean("fast_update", true);
             ticket = threads;
+
+            if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
+                mangaList = fromFolderMangaList;
+            }
+
             for (int idx = 0; idx < mangaList.size(); idx++) {
-                if (Util.n > (48 - threads))
-                    cancel(true);
-                if(MainActivity.isCancelled)
+                if (MainActivity.isCancelled || Util.n > (48 - threads))
                     cancel(true);
                 try {
-                    if (NetworkUtilsAndReciever.isConnected(context)) {
-                        final int idxNow = idx;
-                        // If there is no ticket, sleep for 1 second and ask again
-                        while (ticket < 1) {
+                    final int idxNow = idx;
+                    // If there is no ticket, sleep for 1 second and ask again
+                    while (ticket < 1) {
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            Log.e("ULT", "Update sleep failure", e);
+                        }
+                    }
+                    ticket--;
+
+                    // If tickets were passed, create new requests
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
                             try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                Log.e("ULT", "Update sleep failure", e);
+                                if (!isCancelled()) {
+                                    Manga manga = mangaList.get(idxNow);
+                                    ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+                                    publishProgress(idxNow);
+                                    serverBase.loadChapters(manga, false);
+                                    result += serverBase.searchForNewChapters(manga.getId(), context, fast);
+                                }
+                            } catch (Exception e) {
+                                Log.e("ULT", "Update server failure", e);
+                            } finally {
+                                ticket++;
                             }
                         }
-                        ticket--;
+                    }).start();
 
-                        // If tickets were passed, create new requests
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    if (!isCancelled()) {
-                                        Manga manga = mangaList.get(idxNow);
-                                        ServerBase serverBase = ServerBase.getServer(manga.getServerId());
-                                        publishProgress(idxNow);
-                                        serverBase.loadChapters(manga, false);
-                                        result += serverBase.searchForNewChapters(manga.getId(), context, fast);
-                                    }
-                                } catch (Exception e) {
-                                    Log.e("ULT", "Update server failure", e);
-                                } finally {
-                                    ticket++;
-                                }
-                            }
-                        }).start();
-
-                    } else {
-                        Util.getInstance().cancelNotification(mNotifyID);
-                        break;
-                    }
                 } catch (Exception e) {
                     error = Log.getStackTraceString(e);
                 }

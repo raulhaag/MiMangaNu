@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.adapters;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -61,7 +62,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
         }
     }
 
-    public View getView(final int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
             convertView = li.inflate(listItem, null);
@@ -234,7 +235,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
     }
 
     @Override
-    public void addAll(Collection<? extends Chapter> collection) {
+    public void addAll(@NonNull Collection<? extends Chapter> collection) {
         chapters.addAll(collection);
     }
 

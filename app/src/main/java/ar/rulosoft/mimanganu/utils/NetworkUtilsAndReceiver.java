@@ -23,12 +23,44 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
     from http://stackoverflow.com/questions/32242384/getallnetworkinfo-is-deprecated-how-to-use-getallnetworks-to-check-network
  */
 
-public class NetworkUtilsAndReciever extends BroadcastReceiver {
+public class NetworkUtilsAndReceiver extends BroadcastReceiver {
 
     public enum ConnectionStatus {UNCHECKED, NO_INET_CONNECTED, NO_WIFI_CONNECTED, CONNECTED}
 
     public static ConnectionStatus connectionStatus = ConnectionStatus.UNCHECKED; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
     public static boolean ONLY_WIFI;
+
+    public static boolean isConnectedNonDestructive(@NonNull Context context) {
+        boolean result;
+        switch (connectionStatus) {
+            case UNCHECKED:
+                if (ONLY_WIFI) {
+                    result = isWifiConnected(context);
+                    if (result) {
+                        connectionStatus = ConnectionStatus.CONNECTED;
+                    } else {
+                        connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
+                    }
+                    return result;
+                } else {
+                    result = _isConnected(context);
+                    if (result) {
+                        connectionStatus = ConnectionStatus.CONNECTED;
+                    } else {
+                        connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
+                    }
+                    return result;
+                }
+            case NO_WIFI_CONNECTED:
+                return false;
+            case NO_INET_CONNECTED:
+                return false;
+            case CONNECTED:
+                return true;
+            default:
+                return true;
+        }
+    }
 
     public static boolean isConnected(@NonNull Context context) throws Exception {
         boolean result;

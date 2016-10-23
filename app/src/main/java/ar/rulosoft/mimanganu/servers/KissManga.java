@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.text.Html;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -9,6 +7,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class KissManga extends ServerBase {
 
@@ -88,7 +87,7 @@ public class KissManga extends ServerBase {
         String source = getNavigator().get(IP, manga.getPath(), HOST);
 
         // Summary
-        manga.setSynopsis(Html.fromHtml(getFirstMatchDefault(
+        manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 defaultSynopsis)).toString());
         // Title
@@ -102,7 +101,7 @@ public class KissManga extends ServerBase {
         manga.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
 
         // Genre
-        manga.setGenre((Html.fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
+        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
 
         manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
 

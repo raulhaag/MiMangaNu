@@ -18,6 +18,7 @@ public class Manga {
     private String path;
     private String author = "";
     private String genre = "";
+    private String lastUpdate = "";
 
     private boolean finished;
     private ArrayList<Chapter> chapters = new ArrayList<>();
@@ -188,5 +189,13 @@ public class Manga {
 
     public void setReaderType(int readerType) {
         this.readerType = readerType;
+    }
+
+    public String getLastUpdate() {
+        return lastUpdate;
+    }
+
+    public void setLastUpdate(String lastUpdate) {
+        this.lastUpdate = lastUpdate;
     }
 }

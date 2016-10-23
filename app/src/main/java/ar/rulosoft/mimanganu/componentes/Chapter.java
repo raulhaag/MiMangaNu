@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
-import android.text.Html;
 
 import java.io.File;
 import java.util.Comparator;
@@ -32,7 +31,7 @@ public class Chapter {
 
     public Chapter(String title, String path) {
         super();
-        this.title = Html.fromHtml(title).toString();
+        this.title = Util.getInstance().fromHtml(title).toString();
         this.path = path;
     }
 

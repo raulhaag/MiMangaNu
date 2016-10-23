@@ -95,8 +95,12 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected void onPostExecute(Void aVoid) {
-        if(showProgressDialog && addingProgressDialog != null && addingProgressDialog.isShowing())
-            addingProgressDialog.dismiss();
+        try {
+            if (showProgressDialog && addingProgressDialog != null && addingProgressDialog.isShowing())
+                addingProgressDialog.dismiss();
+        } catch (Exception e) {
+            Log.e("AsyncAddManga", "Exception", e);
+        }
         if (mActivity != null) {
             if (backOnFinish)
                 mActivity.onBackPressed();
