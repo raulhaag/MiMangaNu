@@ -38,9 +38,11 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     public static DownloadsChangesListener mDownloadsChangesListener;
+    public static int errors = 0;
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
     private static boolean resetN;
+    private static boolean resetE;
 
     static {
         Arrays.sort(illegalChars);
@@ -226,6 +228,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void retryError(Context context) {
+        resetE = true;
         if (mDownloadsChangesListener != null) {
             for (int i = 0; i < chapterDownloads.size(); i++) {
                 ChapterDownload cd = chapterDownloads.get(i);
@@ -246,6 +249,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     }
 
     public static void retryError(Context context, Chapter cid, ChapterDownload.OnErrorListener errorListener) {
+        resetE = true;
         for (int i = 0; i < chapterDownloads.size(); i++) {
             ChapterDownload cd = chapterDownloads.get(i);
             if (cd.status == DownloadStatus.ERROR && cd.getChapter().getId() == cid.getId()) {
@@ -291,6 +295,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
 
     public static void removeAll() {
         resetN = true;
+        resetE = true;
         ArrayList<ChapterDownload> toRemove = new ArrayList<>();
         for (int i = 0; i < chapterDownloads.size(); i++) {
             if (chapterDownloads.get(i).status != DownloadStatus.DOWNLOADING) {
@@ -374,6 +379,10 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         n = 0;
                         resetN = false;
                     }
+                    if (resetE) {
+                        errors = 0;
+                        resetE = false;
+                    }
                     // end notification code
                     if (d.chapter.getPages() == 0) {
                         if (d.status != DownloadStatus.ERROR && d.status != DownloadStatus.PAUSED)
@@ -414,13 +423,17 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         new File(path).mkdirs();
                     }
                     try {
-                        Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, getResources().getString(R.string.x_of_y_chapters_downloaded, (n - 1), chapterDownloads.size()), getResources().getString(R.string.downloading) + " " + dc.getChapter().getTitle(), true);
+                        if (errors < 1)
+                            Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, getResources().getString(R.string.x_of_y_chapters_downloaded, (n - 1), chapterDownloads.size()), getResources().getString(R.string.downloading) + " " + dc.getChapter().getTitle(), true);
+                        else {
+                            Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, getResources().getString(R.string.x_of_y_chapters_downloaded, (n - 1), chapterDownloads.size()), "(" + getResources().getString(R.string.chapter_download_errors) + " " + errors + ")\n" + getResources().getString(R.string.downloading) + " " + dc.getChapter().getTitle(), true);
+                        }
                         String origen = s.getImageFrom(dc.chapter, sig);
                         String destino = path + "/" + sig + ".jpg";
                         SingleDownload des;
                         des = new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc, s.needRefererForImages());
                         des.setChangeListener(dc);
-                        dc.setChagesListener(this);
+                        dc.setChangeListener(this);
                         new Thread(des).start();
                     } catch (Exception e) {
                         dc.setErrorIdx(sig - 1);
