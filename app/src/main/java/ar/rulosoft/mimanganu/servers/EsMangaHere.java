@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +9,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class EsMangaHere extends ServerBase {
@@ -172,4 +175,25 @@ public class EsMangaHere extends ServerBase {
         return mangas;
     }
 
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        ArrayList<Manga> mangas = new ArrayList<>();
+        String web = "http://es.mangahere.co/" + categoriasV[filters[0][0]] + pageNumber + ".htm" + ordenM[filters[1][0]];
+        String data = getNavigator().get(web);
+        Pattern p = Pattern.compile(PATRON_CAPS_VIS);
+        Matcher matcher = p.matcher(data);
+        while (matcher.find()) {
+            Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(3), false);
+            manga.setImages(matcher.group(1).replace("thumb_", ""));
+            mangas.add(manga);
+        }
+        hasMore = !mangas.isEmpty();
+        return mangas;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Genero", categorias, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Orden", orden, ServerFilter.FilterType.SINGLE)};
+    }
 }

@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import java.net.URLEncoder;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -135,6 +137,18 @@ public class RawSenManga extends ServerBase {
     @Override
     public String[] getOrders() {
         return new String[]{"Title"};
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Genre", generos, ServerFilter.FilterType.SINGLE)};
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String web = HOST + generosV[filters[0][0]] + "?page=" + pageNumber;
+        String data = getNavigator().get(web);
+        return getMangasFromData(data);
     }
 
     @Override

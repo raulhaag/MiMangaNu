@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class ItNineManga extends ServerBase {
@@ -44,8 +47,11 @@ public class ItNineManga extends ServerBase {
             "Sportivo_.html", "Sports_.html", "Storico_.html", "Supernatural_.html",
             "Tragedy_.html", "Vita+Quotidiana_.html", "Yuri_.html"
     };
-    private static String[] order = new String[]{
+    private static String[] orderV = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
+    };
+    private static String[] order = new String[]{
+            "Lista Manga", "Ultime uscite", "Popolare Manga", "Nuovo Manga"
     };
 
     public ItNineManga() {
@@ -143,7 +149,7 @@ public class ItNineManga extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         String source = getNavigator().get(
-                HOST + ItNineManga.order[order] +
+                HOST + ItNineManga.orderV[order] +
                         generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
@@ -168,8 +174,22 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public String[] getOrders() {
-        // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
-        return new String[]{"Lista Manga", "Ultime uscite", "Popolare Manga", "Nuovo Manga"};
+        return order;
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String source = getNavigator().get(
+                HOST + ItNineManga.orderV[filters[1][0]] +
+                        generosV[filters[0][0]].replace("_", "_" + pageNumber));
+        return getMangasFromSource(source);
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Generi", generos, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Orden", order, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override

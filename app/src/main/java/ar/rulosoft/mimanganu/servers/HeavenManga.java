@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class HeavenManga extends ServerBase {
@@ -201,6 +204,28 @@ public class HeavenManga extends ServerBase {
     @Override
     public String[] getOrders() {
         return new String[]{"a-z"};
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] categorie, int pageNumber) throws Exception {
+        int paginaLoc = pageNumber - 1;
+        ArrayList<Manga> mangas = null;
+        String web = "";
+        if (categorie[0][0] == 0 && paginaLoc < paginas.length) {
+            web = "/letra/" + paginas[paginaLoc];
+        } else if (paginaLoc < 1) {
+            web = generosV[categorie[0][0]];
+        }
+        if (web.length() > 2) {
+            String source = getNavigator().get("http://heavenmanga.com" + web);
+            mangas = getMangasFromSource(source);
+        }
+        return mangas;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Generos", generos, ServerFilter.FilterType.SINGLE)};
     }
 
     @Override

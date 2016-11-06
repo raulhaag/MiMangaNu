@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -18,20 +21,45 @@ public class MangaEdenIt extends ServerBase {
     public static String HOST = "http://www.mangaeden.com/";
 
     private static String[] genre = new String[]{
-            "Tutto","Avventura","Azione","Bara","Commedia","Demenziale",
+            "Avventura", "Azione", "Bara", "Commedia", "Demenziale",
             "Dounshinji","Drama","Ecchi","Fantasy","Harem","Hentai",
             "Horror","Josei","Magico","Mecha","Misteri","Musica",
             "Psicologico","Raccolta","Romantico","Sci-Fi","Scolastico","Seinen",
             "Sentimentale","Shota","Shoujo","Shounen","Sovrannaturale","Splatter",
             "Sportivo","Storico","Vita Quotidiana","Yaoi","Yuri"
     };
+
     private static String[] genreV = new String[]{
-            "", "4e70ea8cc092255ef70073d3","4e70ea8cc092255ef70073c3","4e70ea90c092255ef70074b7","4e70ea8cc092255ef70073d0","4e70ea8fc092255ef7007475",
+            "4e70ea8cc092255ef70073d3", "4e70ea8cc092255ef70073c3", "4e70ea90c092255ef70074b7", "4e70ea8cc092255ef70073d0", "4e70ea8fc092255ef7007475",
             "4e70ea93c092255ef70074e4","4e70ea8cc092255ef70073f9","4e70ea8cc092255ef70073cd","4e70ea8cc092255ef70073c4","4e70ea8cc092255ef70073d1","4e70ea90c092255ef700749a",
             "4e70ea8cc092255ef70073ce","4e70ea90c092255ef70074bd","4e70ea93c092255ef700751b","4e70ea8cc092255ef70073ef","4e70ea8dc092255ef700740a","4e70ea8fc092255ef7007456",
             "4e70ea8ec092255ef7007439","4e70ea90c092255ef70074ae","4e70ea8cc092255ef70073c5","4e70ea8cc092255ef70073e4","4e70ea8cc092255ef70073e5","4e70ea8cc092255ef70073ea",
             "4e70ea8dc092255ef7007432","4e70ea90c092255ef70074b8","4e70ea8dc092255ef7007421","4e70ea8cc092255ef70073c6","4e70ea8cc092255ef70073c7","4e70ea99c092255ef70075a3",
             "4e70ea8dc092255ef7007426","4e70ea8cc092255ef70073f4","4e70ea8ec092255ef700743f","4e70ea8cc092255ef70073de","4e70ea9ac092255ef70075d1"
+    };
+
+    private static String[] type = new String[]{
+            "Japanese Manga", "Korean Manhwa", "Chinese Manhua", "Comic", "Doujinshi"
+    };
+
+    private static String[] typeV = new String[]{
+            "&type=0", "&type=1", "&type=2", "&type=3", "&type=4"
+    };
+
+    private static String[] status = new String[]{
+            "Ongoing", "Completed", "Suspended"
+    };
+
+    private static String[] statusV = new String[]{
+            "&status=1", "&status=2", "&status=0"
+    };
+
+    private static String[] order = new String[]{
+            "Manga Title", "Views", "Chapters"
+    };
+
+    private static String[] orderV = new String[]{
+            "&order=-0", "&order=1", "&order=2"
     };
 
     public MangaEdenIt() {
@@ -159,6 +187,33 @@ public class MangaEdenIt extends ServerBase {
     @Override
     public FilteredType getFilteredType() {
         return FilteredType.TEXT;
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String web = HOST + "it/it-directory/?author=&title=";
+        for (int i = 0; i < filters[2].length; i++) {
+            web = web + statusV[filters[2][i]];
+        }
+        for (int i = 0; i < filters[1].length; i++) {
+            web = web + "&categoriesInc=" + genreV[filters[1][i]];
+        }
+        web = web + "&artist=";
+        for (int i = 0; i < filters[0].length; i++) {
+            web = web + typeV[filters[0][i]];
+        }
+        web = web + orderV[filters[3][0]] + "&page=" + pageNumber;
+        String source = getNavigator().get(web);
+        return getMangasFromSource(source);
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Type", type, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Genres", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Status", status, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override

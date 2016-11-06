@@ -1,8 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -37,13 +35,16 @@ import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase.OnMangaClick;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapterText;
 import ar.rulosoft.mimanganu.componentes.Database;
+import ar.rulosoft.mimanganu.componentes.FilterViewGenerator;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.AsyncAddManga;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class ServerFilteredNavigationFragment extends Fragment implements OnLastItem, OnMangaClick {
+import static ar.rulosoft.mimanganu.MainActivity.colors;
+
+public class ServerFilteredNavigationFragment extends Fragment implements OnLastItem, OnMangaClick, FilterViewGenerator.FilterListener {
 
     int serverID;
     private boolean mStart = true;
@@ -53,8 +54,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private MangaRecAdapterBase mAdapter;
     private boolean newTask = false;
     private int page = 1;
-    private int filter = 0;
-    private int order = 0;
+    private int[][] filters = null;
     private int firstVisibleItem;
     private LoadLastTask loadLastTask = new LoadLastTask();
     private int lastContextMenuIndex = 0;
@@ -130,6 +130,9 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
 
         serverBase = ServerBase.getServer(serverID);
+        if (filters == null) {
+            filters = serverBase.getBasicFilter(getActivity());
+        }
         grid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
@@ -231,50 +234,28 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             fragment.setArguments(b);
             ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
         } else if (item.getItemId() == R.id.filter) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.filtrar)
-                    .setItems(serverBase.getCategories(), new
-                            DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (!loading.isShown()) {
-                                        filter = which;
-                                        mAdapter = null;
-                                        page = 1;
-                                        mStart = true;
-                                        serverBase.hasMore = true;
-                                        loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
-                                    } else {
-                                        newTask = true;
-                                    }
-                                }
-                            });
 
-            builder.create().show();
-        } else if (item.getItemId() == R.id.sort) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-            builder.setTitle(R.string.filtrar)
-                    .setItems(serverBase.getOrders(), new
-                            DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (!loading.isShown()) {
-                                        order = which;
-                                        mAdapter = null;
-                                        page = 1;
-                                        mStart = true;
-                                        serverBase.hasMore = true;
-                                        loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
-                                    } else {
-                                        newTask = true;
-                                    }
-                                }
-                            });
-
-            builder.create().show();
+            FilterViewGenerator mFilter = new FilterViewGenerator(getActivity(), "Filter", serverBase.getServerFilters(getActivity()), filters, colors[0]);
+            mFilter.getDialog().show();
+            mFilter.setFilterListener(this);
         }
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    public void applyFilter(int[][] selectedIndexes) {
+        if (!loading.isShown()) {
+            filters = selectedIndexes;
+            mAdapter = null;
+            page = 1;
+            mStart = true;
+            serverBase.hasMore = true;
+            LoadLastTask loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
+        } else {
+            newTask = true;
+        }
+    }
+
 
     public class LoadLastTask extends AsyncTask<Integer, Void, ArrayList<Manga>> {
         String error = "";
@@ -289,7 +270,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
             try {
-                mangas = serverBase.getMangasFiltered(filter, order, params[0]);
+                mangas = serverBase.getMangasFiltered(filters, params[0]);
             } catch (Exception e) {
                 Log.e("SFNF", "Exception", e);
                 error = Log.getStackTraceString(e);

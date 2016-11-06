@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -124,6 +127,22 @@ public class Manga_Tube extends ServerBase {
     }
 
     @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filter, int pageNumber) throws Exception {
+        if (no_more_pages != filter[0][0]) {
+            String source = getNavigator().get("http://www.manga-tube.com/reader/list/" + genreV[filter[0][0]]);
+            no_more_pages = filter[0][0];
+            return getMangasFromSource(source);
+        } else {
+            return new ArrayList<Manga>();
+        }
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE)};
+    }
+
+    @Override
     public String[] getOrders() {
         return new String[]{""};
     }
@@ -132,4 +151,6 @@ public class Manga_Tube extends ServerBase {
     public boolean hasList() {
         return false;
     }
+
+
 }

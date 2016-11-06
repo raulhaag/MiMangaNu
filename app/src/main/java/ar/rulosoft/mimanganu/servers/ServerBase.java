@@ -17,13 +17,13 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 public abstract class ServerBase {
 
-    public enum FilteredType {VISUAL, TEXT}
-
+    public static final int FROMFOLDER = 1001;
     static final int MANGAPANDA = 1;
     static final int ESMANGAHERE = 3;
     static final int MANGAHERE = 4;
@@ -50,14 +50,12 @@ public abstract class ServerBase {
     static final int LEOMANGA = 25;
 
     static final int READCOMICONLINE = 1000;
-    public static final int FROMFOLDER = 1001;
-
     public boolean hasMore = true;
+    protected String defaultSynopsis = "N/A";
     private String serverName;
     private int icon;
     private int flag;
     private int serverID;
-    protected String defaultSynopsis = "N/A";
 
     public static ServerBase getServer(int id) {
         ServerBase serverBase = null;
@@ -146,6 +144,47 @@ public abstract class ServerBase {
         return serverBase;
     }
 
+    public static Navigator getNavigator() {
+        return Navigator.navigator;
+    }
+
+    public static String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
+        Pattern p = Pattern.compile(patron);
+        Matcher m = p.matcher(source);
+        if (m.find()) {
+            return m.group(1);
+        }
+        throw new Exception(errorMsj);
+    }
+
+    public static ServerBase[] getServers() {
+        return (new ServerBase[]{
+                new TuMangaOnline(),
+                new HeavenManga(),
+                new SubManga(),
+                new EsNineManga(),
+                new EsMangaHere(),
+                new LeoManga(),
+                new MangaPanda(),
+                new MangaReader(),
+                new MangaHere(),
+                new MangaFox(),
+                new KissManga(),
+                new MangaEden(),
+                new NineManga(),
+                new RuNineManga(),
+                new LectureEnLigne(),
+                new MyMangaIo(),
+                new ItNineManga(),
+                new MangaEdenIt(),
+                new DeNineManga(),
+                new Manga_Tube(),
+                new RawSenManga(),
+                new ReadComicOnline(),
+                new FromFolder()
+        });
+    }
+
     // server
     public abstract ArrayList<Manga> getMangas() throws Exception;
 
@@ -168,12 +207,11 @@ public abstract class ServerBase {
 
     public abstract String[] getCategories();
 
+    // public abstract boolean supportStatus();
+
     public abstract String[] getOrders();
 
     public abstract boolean hasList();
-
-    // public abstract boolean supportStatus();
-
 
     public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {
         int returnValue;
@@ -303,19 +341,6 @@ public abstract class ServerBase {
         this.serverName = serverName;
     }
 
-    public static Navigator getNavigator() {
-        return Navigator.navigator;
-    }
-
-    public static String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
-        Pattern p = Pattern.compile(patron);
-        Matcher m = p.matcher(source);
-        if (m.find()) {
-            return m.group(1);
-        }
-        throw new Exception(errorMsj);
-    }
-
     public ArrayList<String> getAllMatch(String patron, String source) throws Exception {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
@@ -348,33 +373,38 @@ public abstract class ServerBase {
         return FilteredType.VISUAL;
     }
 
-    public static ServerBase[] getServers() {
-        return (new ServerBase[]{
-                new TuMangaOnline(),
-                new HeavenManga(),
-                new SubManga(),
-                new EsNineManga(),
-                new EsMangaHere(),
-                new LeoManga(),
-                new MangaPanda(),
-                new MangaReader(),
-                new MangaHere(),
-                new MangaFox(),
-                new KissManga(),
-                new MangaEden(),
-                new NineManga(),
-                new RuNineManga(),
-                new LectureEnLigne(),
-                new MyMangaIo(),
-                new ItNineManga(),
-                new MangaEdenIt(),
-                new DeNineManga(),
-                new Manga_Tube(),
-                new RawSenManga(),
-                new ReadComicOnline(),
-                new FromFolder()
-        });
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{};
     }
+
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        return new ArrayList<>();
+    }
+
+    public int[][] getBasicFilter(Context context) {
+        ServerFilter[] filters = getServerFilters(context);
+        int[][] result = new int[filters.length][];
+        for (int i = 0; i < filters.length; i++) {
+            if (filters[i].getFilterType() == ServerFilter.FilterType.SINGLE) {
+                result[i] = new int[1];
+                result[i][0] = 0;
+            } else {
+                result[i] = new int[0];
+            }
+        }
+        return result;
+    }
+
+    public boolean contains(int[] array, int value) {
+        for (int i : array) {
+            if (i == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public enum FilteredType {VISUAL, TEXT}
 
     class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();

@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,39 +10,47 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class EsNineManga extends ServerBase {
     private static String HOST = "http://es.ninemanga.com";
     private static String[] generos = new String[]{
-            "Todo", "Acción", "Action", "Adult", "Adventure", "Artes Marciales", "Aventura",
-            "Ciencia Ficción", "Comedia", "Comedy", "Deporte", "Deportes", "Drama", "Ecchi",
-            "Escolar", "Fantasía", "Fantasy", "Gender Bender", "Genial", "Harem", "Historical",
-            "HistóRico", "Horror", "Josei", "Maduro", "Martial", "Martial Arts", "Mecha",
-            "Misterio", "Mystery", "None", "One Shot", "Oneshot", "Parodia", "Psicológico",
-            "Psychological", "Romance", "School Life", "Sci-Fi", "Seinen", "Shojo", "Shojo Ai",
-            "Shonen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice Of Life", "Smut",
-            "Sobrenatural", "Sports", "Supernatural", "Tragedia", "Tragedy", "Vida Cotidiana",
-            "Webcomic", "Yuri"
+            "4-Koma", "AccióN", "Action", "Adult", "Adulto", "Adventure", "ApocalíPtico",
+            "Artes Marciales", "Aventura", "Aventuras", "Ciencia FiccióN", "Comedia", "Comedy",
+            "Cotidiano", "Cyberpunk", "Delincuentes", "Demonios", "Deporte", "Deportes", "Drama", "Ecchi",
+            "Escolar", "Fantacia", "FantasíA", "Fantasy", "Gender Bender", "Gore", "Harem", "HaréN",
+            "Hentai", "Historical", "HistóRico", "Horror", "Josei", "Karate", "Maduro", "Mafia", "Magia",
+            "Makoto", "Mangasutra", "Manhwa", "Manwha", "Martial", "Martial Arts", "Mecha", "Militar",
+            "Misterio", "MúSica", "Musical", "Mystery", "None", "One Shot", "Oneshot", "OrgíA", "Parodia",
+            "Policial", "Porno", "PsicolóGico", "Psychological", "Realidad Virtual",
+            "Recuentos De La Vida", "ReencarnacióN", "Romance", "RomáNtica", "RomáNtico", "Samurai",
+            "School Life", "Sci-Fi", "Seinen", "Sexo", "Shojo", "Shojo Ai", "Shonen", "Shonen Ai", "Shonen-Ai",
+            "Shoujo", "Shoujo Ai", "Shoujo-Ai", "Shounen", "Shounen Ai", "Shounen-Ai", "Slice Of Life", "Smut",
+            "Sobrenatural", "Sports", "Super Natural", "Super Poderes", "Superheroes", "Supernatural",
+            "Supervivencia", "Suspense", "Terror", "Terror PsicolóGico", "Thiller", "Thriller", "Tragedia",
+            "Tragedy", "Transexual", "Vampiros", "Vida Cotidiana", "Vida Escolar", "Vida Escolar.",
+            "Webcomic", "Webtoon", "Yura", "Yuri"
     };
     private static String[] generosV = new String[]{
-            "index_.html", "Acci%C3%B3n_.html", "Action_.html", "Adult_.html", "Adventure_.html",
-            "Artes+Marciales_.html", "Aventura_.html", "Ciencia+Ficci%C3%B3n_.html", "Comedia_.html",
-            "Comedy_.html", "Deporte_.html", "Deportes_.html", "Drama_.html", "Ecchi_.html",
-            "Escolar_.html", "Fantas%C3%ADa_.html", "Fantasy_.html", "Gender+Bender_.html",
-            "Genial_.html", "Harem_.html", "Historical_.html", "Hist%C3%B3rico_.html",
-            "Horror_.html", "Josei_.html", "Maduro_.html", "Martial_.html", "Martial+Arts_.html",
-            "Mecha_.html", "Misterio_.html", "Mystery_.html", "None_.html", "One+Shot_.html",
-            "Oneshot_.html", "Parodia_.html", "Psicol%C3%B3gico_.html", "Psychological_.html",
-            "Romance_.html", "School+Life_.html", "Sci-fi_.html", "Seinen_.html", "Shojo_.html",
-            "Shojo+Ai_.html", "Shonen_.html", "Shoujo_.html", "Shoujo+Ai_.html",
-            "Shounen_.html", "Shounen+Ai_.html", "Slice+Of+Life_.html", "Smut_.html",
-            "Sobrenatural_.html", "Sports_.html", "Supernatural_.html", "Tragedia_.html",
-            "Tragedy_.html", "Vida+Cotidiana_.html", "Webcomic_.html", "Yuri_.html"
+            "", "201", "69", "177", "193", "86", "179", "202", "66", "64", "120", "93", "75", "178", "110", "199",
+            "125", "126", "76", "111", "79", "65", "81", "100", "70", "180", "175", "108", "78", "82", "83", "190",
+            "95", "99", "112", "113", "72", "90", "172", "102", "103", "94", "114", "189", "181", "115", "205",
+            "88", "121", "197", "187", "71", "184", "195", "91", "198", "208", "109", "96", "192", "196", "169",
+            "207", "67", "98", "89", "210", "176", "123", "73", "104", "80", "186", "77", "128", "174", "85", "194",
+            "173", "68", "185", "118", "182", "183", "74", "188", "124", "206", "116", "119", "203", "171", "106",
+            "107", "204", "97", "87", "191", "117", "209", "84", "170", "122", "92", "200", "101", "127"
     };
-    private static String[] order = new String[]{
+    private static String[] orderV = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
+
+    private static String[] orders = new String[]{"Lista de Manga", "Recientes", "Popular", "Manga Nueva"};
+
+    private static String[] complete = new String[]{"Todos", "En curso", "Completa"};
+
+    private static String[] completeV = new String[]{"yes", "no", "Completa"};
+
 
     public EsNineManga() {
         this.setFlag(R.drawable.flag_es);
@@ -137,7 +147,7 @@ public class EsNineManga extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         String source = getNavigator().get(
-                HOST + EsNineManga.order[order] +
+                HOST + EsNineManga.orderV[order] +
                         generosV[categorie].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
@@ -163,7 +173,34 @@ public class EsNineManga extends ServerBase {
     @Override
     public String[] getOrders() {
         // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
-        return new String[]{"Lista de Manga", "Recientes", "Popular", "Manga Nueva"};
+        return orders;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Generos", generos, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Orden", orders, ServerFilter.FilterType.SINGLE)};
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String categories = "";
+        if (filters[0].length > 0) {
+            for (int i = 0; i < filters[0].length; i++) {
+                categories = categories + generosV[filters[0][i]] + "%2C";//coma
+            }
+        }
+        String web = "http://es.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + categories + "&out_category_id=&completed_series=" + completeV[filters[1][0]] + "&type=high&page=" + pageNumber + ".html";
+        String source = getNavigator().get(web);
+        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
+        Matcher matcher = pattern.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        while (matcher.find()) {
+            Manga m = new Manga(ESNINEMANGA, matcher.group(3), HOST + matcher.group(1), false);
+            m.setImages(matcher.group(2));
+            mangas.add(m);
+        }
+        return mangas;
     }
 
     @Override

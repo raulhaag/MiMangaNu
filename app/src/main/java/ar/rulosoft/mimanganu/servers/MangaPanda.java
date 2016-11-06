@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +9,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaPanda extends ServerBase {
@@ -22,7 +25,7 @@ public class MangaPanda extends ServerBase {
     private static final String PATTERN_CHAPTER_WEB =
             "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
     private static final String[] genreV = {
-            "", "action", "adventure", "comedy", "demons", "drama", "ecchi",
+            "action", "adventure", "comedy", "demons", "drama", "ecchi",
             "fantasy", "gender-bender", "harem", "historical", "horror",
             "josei", "magic", "martial-arts", "mature", "mecha", "military",
             "mystery", "one-shot", "psychological", "romance", "school-life",
@@ -30,10 +33,9 @@ public class MangaPanda extends ServerBase {
             "slice-of-life", "smut", "sports", "super-power", "supernatural",
             "tragedy", "vampire", "yaoi", "yuri"
     };
-    private static final String[] order = {"Popular"};
     private static String HOST = "http://www.mangapanda.com";
     private static String[] genre = new String[]{
-            "All", "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
+            "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
             "Fantasy", "Gender bender", "Harem", "Historical", "Horror",
             "Josei", "Magic", "Martial arts", "Mature", "Mecha", "Military",
             "Mystery", "One Shot", "Psychological", "Romance", "School life",
@@ -41,6 +43,30 @@ public class MangaPanda extends ServerBase {
             "Slice of Life", "Smut", "Sports", "Super Power", "Supernatural",
             "Tragedy", "Vampire", "Yaoi", "Yuri"
     };
+
+    private static String[] type = new String[]{
+            "Both", "Manhwa", "Manga"
+    };
+
+    private static String[] typeV = new String[]{
+            "&rd=0", "&rd=1", "&rd=2"
+    };
+
+    private static String[] status = new String[]{
+            "Both", "Ongoing", "Completed"
+    };
+
+    private static String[] statusV = new String[]{
+            "&status=", "&status=1", "&status=2"
+    };
+
+    private static String[] order = new String[]{
+            "Alphavetical", "Popularity", "Similarity"
+    };
+    private static String[] orderV = new String[]{
+            "&order=1", "&order=2", "&order="
+    };
+
 
     public MangaPanda() {
         this.setFlag(R.drawable.flag_en);
@@ -180,6 +206,39 @@ public class MangaPanda extends ServerBase {
     @Override
     public String[] getOrders() {
         return order;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Manga Type", type, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Manga Status", status, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Soeting Order", order, ServerFilter.FilterType.SINGLE)};
+    }
+
+    ///search/?w=&rd=0&status=0&order=0&genre=1000010000000000000000000000000000000&p=0
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String gens = "";
+        for (int i = 0; i < genre.length; i++) {
+            if (contains(filters[0], i)) {
+                gens = gens + "1";
+            } else {
+                gens = gens + "0";
+            }
+        }
+        ArrayList<Manga> mangas = new ArrayList<>();
+        String web = HOST + "/search/?w=" + typeV[filters[1][0]] + statusV[filters[2][0]] + orderV[filters[3][0]] + "&genre=" + gens + "&p=" + ((pageNumber - 1) * 30);
+        String data = getNavigator().get(web);
+        Pattern p = Pattern.compile("(http:[^']+/cover/.+?)'.+?<h3><a href=\"(.+?)\">(.+?)<");
+        Matcher m = p.matcher(data);
+        while (m.find()) {
+            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(2), false);
+            manga.setImages(m.group(1).replace("r0", "l0"));
+            mangas.add(manga);
+        }
+        return mangas;
     }
 
     @Override

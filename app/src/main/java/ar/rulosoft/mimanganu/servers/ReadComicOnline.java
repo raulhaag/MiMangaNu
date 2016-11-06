@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,7 +9,9 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 public class ReadComicOnline extends ServerBase {
 
@@ -15,16 +19,29 @@ public class ReadComicOnline extends ServerBase {
             "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[^>]*>([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Comic/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
-    public static String IP = "31.192.104.134";
+    //public static String IP = "31.192.104.134";
     private static String HOST = "readcomiconline.to";
     private static String[] genre = new String[]{
-            "All", "Action", "Adventure", "Anthology", "Anthropomorphic", "Biography", "Comedy", "Crime", "Drama", "Family", "Fantasy", "Fighting", "Graphic Novels", "Historical", "Horror", "Leading Ladies", "Literature", "Manga", "Martial Arts", "Mature", "Military", "Movies & TV", "Mystery", "Mythology", "Political", "Post-Apocalyptic", "Psychological", "Pulp", "Robots", "Romance", "Sci-Fi", "Spy", "Superhero", "Supernatural", "Suspense", "Thriller", "Vampires", "Video Games", "War", "Western", "Zombies"
+            "Action", "Adventure", "Anthology", "Anthropomorphic", "Biography", "Children", "Comedy",
+            "Crime", "Drama", "Family", "Fantasy", "Fighting", "Graphic Novels", "Historical", "Horror",
+            "Leading Ladies", "LGBTQ", "Literature", "Manga", "Martial Arts", "Mature", "Military",
+            "Movies & TV", "Mystery", "Mythology", "Personal", "Political", "Post-Apocalyptic",
+            "Psychological", "Pulp", "Robots", "Romance", "School Life", "Sci-Fi", "Slice of Life",
+            "Spy", "Superhero", "Supernatural", "Suspense", "Thriller", "Vampires", "Video Games", "War",
+            "Western", "Zombies"
     };
     private static String[] genreV = new String[]{
             "/ComicList", "/Genre/Action", "/Genre/Adventure", "/Genre/Anthology", "/Genre/Anthropomorphic", "/Genre/Biography", "/Genre/Comedy", "/Genre/Crime", "/Genre/Drama", "/Genre/Family", "/Genre/Fantasy", "/Genre/Fighting", "/Genre/Graphic-Novels", "/Genre/Historical", "/Genre/Horror", "/Genre/Leading-Ladies", "/Genre/Literature", "/Genre/Manga", "/Genre/Martial-Arts", "/Genre/Mature", "/Genre/Military", "/Genre/Movies-TV", "/Genre/Mystery", "/Genre/Mythology", "/Genre/Political", "/Genre/Post-Apocalyptic", "/Genre/Psychological", "/Genre/Pulp", "/Genre/Robots", "/Genre/Romance", "/Genre/Sci-Fi", "/Genre/Spy", "/Genre/Superhero", "/Genre/Supernatural", "/Genre/Suspense", "/Genre/Thriller", "/Genre/Vampires", "/Genre/Video-Games", "/Genre/War", "/Genre/Western", "/Genre/Zombies"
     };
     private static String[] order = new String[]{
             "/MostPopular", "/LatestUpdate", "/Newest", ""
+    };
+
+    private static String[] state = new String[]{
+            "Any", "Ongoing", "Completed"
+    };
+    private static String[] stateV = new String[]{
+            "", "Ongoing", "Completed"
     };
 
     public ReadComicOnline() {
@@ -163,6 +180,39 @@ public class ReadComicOnline extends ServerBase {
     @Override
     public String[] getOrders() {
         return new String[]{"Popularity", "Latest Update", "New Comic", "a-z"};
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Genres", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Status", state, ServerFilter.FilterType.SINGLE)};
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        if (pageNumber > 1) {
+            return new ArrayList<>();
+        } else {
+            Navigator nav = getNavigator();
+            nav.addPost("comicName", "");
+            if (filters[0].length == 0) {
+                for (int i = 1; i < genre.length; i++) {
+                    nav.addPost("genres", "0");
+                }
+            } else {
+                for (int i = 1; i < genre.length; i++) {
+                    if (contains(filters[0], i)) {
+
+                        nav.addPost("genres", "1");
+                    } else {
+                        nav.addPost("genres", "0");
+                    }
+                }
+            }
+            nav.addPost("status", stateV[filters[1][0]]);
+            String source = nav.post("http://" + HOST + "/AdvanceSearch");
+            return getMangasSource(source);
+        }
     }
 
     @Override

@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -17,93 +20,45 @@ public class NineManga extends ServerBase {
     private static String HOST = "http://ninemanga.com";
 
     private static String[] genre = new String[]{
-            "Everything",
-            "4 Koma",
-            "4-Koma",
-            "Action",
-            "Adult",
-            "Adventure",
-            "Anime",
-            "Award Winning",
-            "Bara",
-            "Comedy",
-            "Cooking",
-            "Demons",
-            "Doujinshi",
-            "Drama",
-            "Ecchi",
-            "Fantasy",
-            "Gender Bender",
-            "Harem",
-            "Historical",
-            "Horror",
-            "Josei",
-            "Live Action",
-            "Magic",
-            "Manhua",
-            "Manhwa",
-            "Martial Arts",
-            "Matsumoto Tomokicomedy",
-            "Mature",
-            "Mecha",
-            "Medical",
-            "Military",
-            "Music",
-            "Mystery",
-            "N/A",
-            "None",
-            "One Shot",
-            "Oneshot",
-            "Psychological",
-            "Reverse Harem",
-            "Romance",
-            "Romance Shoujo",
-            "School Life",
-            "Sci Fi",
-            "Sci-Fi",
-            "Seinen",
-            "Shoujo",
-            "Shoujo Ai",
-            "Shoujo-Ai",
-            "Shoujoai",
-            "Shounen",
-            "Shounen Ai",
-            "Shounen-Ai",
-            "Shounenai",
-            "Slice Of Life",
-            "Smut",
-            "Sports",
-            "Staff Pick",
-            "Super Power",
-            "Supernatural",
-            "Suspense",
-            "Tragedy",
-            "Vampire",
-            "Webtoon",
-            "Webtoons",
-            "Yaoi",
-            "Yuri",
-            "[No Chapters]"
+            "Everything", "4 Koma", "4-Koma", "Action", "Adult", "Adventure", "Anime", "Award Winning",
+            "Bara", "Comedy", "Cooking", "Demons", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender",
+            "Harem", "Historical", "Horror", "Josei", "Live Action", "Magic", "Manhua", "Manhwa",
+            "Martial Arts", "Matsumoto To...", "Mature", "Mecha", "Medical", "Military", "Music",
+            "Mystery", "N/A", "None", "One Shot", "Oneshot", "Psychological", "Reverse Harem",
+            "Romance", "Romance Shoujo", "School Life", "Sci Fi", "Sci-Fi", "Seinen", "Shoujo", "Shoujo Ai",
+            "Shoujo-Ai", "Shoujoai", "Shounen", "Shounen Ai", "Shounen-Ai", "Shounenai", "Slice Of Life",
+            "Smut", "Sports", "Staff Pick", "Super Power", "Supernatural", "Suspense", "Tragedy",
+            "Vampire", "Webtoon", "Webtoons", "Yaoi", "Yuri", "[No Chapters]"
     };
-    private static String[] genreV = new String[genre.length];
+    private static String[] genreV = new String[]{
+            "index.html", "4 Koma.html", "4-Koma.html", "Action.html", "Adult.html", "Adventure.html", "Anime.html", "Award Winning.html",
+            "Bara.html", "Comedy.html", "Cooking.html", "Demons.html", "Doujinshi.html", "Drama.html", "Ecchi.html", "Fantasy.html", "Gender Bender.html",
+            "Harem.html", "Historical.html", "Horror.html", "Josei.html", "Live Action.html", "Magic.html", "Manhua.html", "Manhwa.html",
+            "Martial Arts.html", "Matsumoto Tomokicomedy.html", "Mature.html", "Mecha.html", "Medical.html", "Military.html", "Music.html",
+            "Mystery.html", "N/A.html", "None.html", "One Shot.html", "Oneshot.html", "Psychological.html", "Reverse Harem.html",
+            "Romance.html", "Romance Shoujo.html", "School Life.html", "Sci Fi.html", "Sci-Fi.html", "Seinen.html", "Shoujo.html", "Shoujo Ai.html",
+            "Shoujo-Ai.html", "Shoujoai.html", "Shounen.html", "Shounen Ai.html", "Shounen-Ai.html", "Shounenai.html", "Slice Of Life.html",
+            "Smut.html", "Sports.html", "Staff Pick.html", "Super Power.html", "Supernatural.html", "Suspense.html", "Tragedy.html",
+            "Vampire.html", "Webtoon.html", "Webtoons.html", "Yaoi.html", "Yuri.html", "[No Chapters]"
+    };
 
-    private static String[] order = new String[]{
+    private static String[] order = {
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
     };
 
+    private static String[] orderV = {"Manga Directory", "Latest Releases", "Popular Manga", "New Manga"};
+
     public NineManga() {
-        if(genreV[0] == null) {
+        if (genreV[0] == null) {
             Thread t0 = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     for (int i = 0; i < genre.length; i++) {
-                        //Log.d("NineManga: ", "i: " + i + " genre: " + genre[i]);
                         if (i == 0) {
                             genreV[i] = "index.html";
                         } else {
                             genreV[i] = genre[i] + ".html";
                         }
-                        //Log.d("NineManga: ", "i: " + i + " genreV: " + genreV[i]);
                     }
                 }
             });
@@ -157,8 +112,7 @@ public class NineManga extends ServerBase {
         // Genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // Chapter
-        Pattern p = Pattern.compile(
-                "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -203,16 +157,13 @@ public class NineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(
-                HOST + NineManga.order[order] +
-                        genreV[category].replace("_", "_" + pageNumber));
+        String source = getNavigator().get(HOST + NineManga.order[order] + genreV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile(
-                "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
+        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher matcher = p.matcher(source);
         while (matcher.find()) {
             Manga manga = new Manga(getServerID(), matcher.group(3), HOST + matcher.group(1), false);
@@ -231,6 +182,20 @@ public class NineManga extends ServerBase {
     public String[] getOrders() {
         // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
         return new String[]{"Manga Directory", "Latest Releases", "Popular Manga", "New Manga"};
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{
+                new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order", orderV, ServerFilter.FilterType.SINGLE)
+        };
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String source = getNavigator().get(HOST + NineManga.order[filters[1][0]] + genreV[filters[0][0]].replace("_", "_" + pageNumber));
+        return getMangasFromSource(source);
     }
 
     @Override

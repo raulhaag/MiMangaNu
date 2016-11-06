@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -7,6 +9,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 
 public class MangaHere extends ServerBase {
 
@@ -130,7 +133,7 @@ public class MangaHere extends ServerBase {
         while (m.find()) {
             Manga manga =
                     new Manga(getServerID(), m.group(2), m.group(3), false);
-            manga.setImages(m.group(1).replace("thumb_",""));
+            manga.setImages(m.group(1).replace("thumb_", ""));
             mangas.add(manga);
         }
         hasMore = !mangas.isEmpty();
@@ -150,6 +153,29 @@ public class MangaHere extends ServerBase {
     @Override
     public boolean hasList() {
         return true;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order", orden, ServerFilter.FilterType.SINGLE)};
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        ArrayList<Manga> mangas = new ArrayList<>();
+        String web = HOST + "/" + genreV[filters[0][0]] + "/" + pageNumber + ".htm" + ordenM[filters[1][0]];
+        String data = getNavigator().get(web);
+        Pattern p = Pattern.compile(PATRON_CAPS_VIS);
+        Matcher m = p.matcher(data);
+        while (m.find()) {
+            Manga manga =
+                    new Manga(getServerID(), m.group(2), m.group(3), false);
+            manga.setImages(m.group(1).replace("thumb_", ""));
+            mangas.add(manga);
+        }
+        hasMore = !mangas.isEmpty();
+        return mangas;
     }
 
     @Override

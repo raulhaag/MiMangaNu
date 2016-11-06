@@ -14,17 +14,74 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 
 /**
  * Created by Raul on 05/04/2016.
  */
 public class TuMangaOnline extends ServerBase {
 
-    public static String[] genres = new String[]{"Todo", "Acción", "Apocalíptico", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia", "Cyberpunk", "Demonios", "Deportes", "Drama", "Ecchi", "Fantasía", "Gender Bender", "Gore", "Harem", "Histórico", "Horror", "Magia", "Mecha", "Militar", "Misterio", "Musical", "Parodia", "Policial", "Psicológico", "Realidad Virtual", "Recuentos de la vida", "Reencarnación", "Romance", "Samurai", "Sobrenatural", "Super Poderes", "Supervivencia", "Suspense", "Thiller", "Tragedia", "Vampiros", "Vida Escolar", "Yuri"};
-    public static String[] genresValues = new String[]{"", "1", "24", "33", "2", "14", "3", "37", "41", "16", "4", "6", "7", "35", "23", "19", "27", "10", "8", "20", "28", "11", "38", "39", "40", "12", "36", "5", "22", "13", "34", "9", "31", "21", "15", "30", "25", "32", "26", "17"};
-    public static String[] sortBy = new String[]{"Alfabetico", "Ranking", "Número de lecturas", "Fecha de creacion", "Alfabetico Descendiente", "Ranking Ascendente", "Número de lecturas Ascendente", "Fecha de creacion Ascendente"};
-    public static String[] sortByValues = new String[]{"&sortDir=asc&sortedBy=nombre", "&sortDir=desc&sortedBy=puntuacion", "&sortDir=desc&sortedBy=numVistos", "&sortDir=desc&sortedBy=fechaCreacion", "&sortDir=desc&sortedBy=nombre", "&sortDir=asc&sortedBy=puntuacion", "&sortDir=asc&sortedBy=numVistos", "&sortDir=asc&sortedBy=fechaCreacion"};
-    private static int lastPage;
+    public static String[] genres = new String[]{
+            "Acción", "Apocalíptico", "Artes Marciales", "Aventura", "Ciencia Ficción",
+            "Comedia", "Cyberpunk", "Demonios", "Deportes", "Drama", "Ecchi", "Fantasía",
+            "Gender Bender", "Gore", "Harem", "Histórico", "Horror", "Magia", "Mecha", "Militar",
+            "Misterio", "Musical", "Parodia", "Policial", "Psicológico", "Realidad Virtual",
+            "Recuentos de la vida", "Reencarnación", "Romance", "Samurai", "Sobrenatural",
+            "Super Poderes", "Supervivencia", "Suspense", "Thiller", "Tragedia", "Vampiros",
+            "Vida Escolar", "Yuri"
+    };
+
+    public static String[] genresValues = new String[]{
+            "1", "24", "33", "2", "14", "3", "37", "41", "16", "4", "6", "7", "35", "23", "19",
+            "27", "10", "8", "20", "28", "11", "38", "39", "40", "12", "36", "5", "22", "13", "34",
+            "9", "31", "21", "15", "30", "25", "32", "26", "17"
+    };
+
+    public static String[] demografia = {
+            "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo", "Otros"
+    };
+
+    public static String[] demografiaV = {
+            "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo", "Otros"
+    };
+
+    public static String[] estado = {
+            "Todos", "Activo", "Abandonado", "Finalizado"
+    };
+
+    public static String[] estadoV = {
+            "", "Activo", "Abandonado", "Finalizado"
+    };
+
+    public static String[] type = new String[]{
+            "Todos", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
+    };
+
+    public static String[] typeV = new String[]{
+            "", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
+    };
+
+    public static String[] categoria = new String[]{
+            "Dōjinshi", "One-Shot", "Webtoon", "Yonkoma"
+    };
+
+    public static String[] categoriaV = new String[]{
+            "2", "1", "3", "4"
+    };
+
+    public static String[] sortBy = new String[]{
+            "Alfabetico ↓", "Ranking ↓", "Número de lecturas ↓", "Fecha de creacion ↓",
+            "Alfabetico ↑", "Ranking ↑", "Número de lecturas ↑", "Fecha de creacion ↑"
+    };
+
+    public static String[] sortByValues = new String[]{
+            "&sortDir=asc&sortedBy=nombre", "&sortDir=desc&sortedBy=puntuacion",
+            "&sortDir=desc&sortedBy=numVistos", "&sortDir=desc&sortedBy=fechaCreacion",
+            "&sortDir=desc&sortedBy=nombre", "&sortDir=asc&sortedBy=puntuacion",
+            "&sortDir=asc&sortedBy=numVistos", "&sortDir=asc&sortedBy=fechaCreacion"
+    };
+
+    private static int lastPage = 10000;
 
     public TuMangaOnline() {
         this.setFlag(R.drawable.flag_es);
@@ -135,8 +192,7 @@ public class TuMangaOnline extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws
-            Exception {
+    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
         JSONObject jsonObject = new JSONObject(getNavigator().get("http://www.tumangaonline.com/api/v1/mangas?categorias=%5B%5D&generos=%5B" + genresValues[categorie] + "%5D&itemsPerPage=20&page=" + pageNumber + "&puntuacion=0&searchBy=nombre" + sortByValues[order]));
         lastPage = jsonObject.getInt("last_page");
         return getMangasJsonArray(jsonObject.getJSONArray("data"));
@@ -247,5 +303,52 @@ public class TuMangaOnline extends ServerBase {
     @Override
     public boolean needRefererForImages() {
         return false;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{
+                new ServerFilter("Tipo", type, ServerFilter.FilterType.SINGLE),//0
+                new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),//1
+                new ServerFilter("Generos", genres, ServerFilter.FilterType.MULTI),//2
+                new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),//3
+                new ServerFilter("Categoria", categoria, ServerFilter.FilterType.MULTI),//4
+                new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE)//5
+        };
+    }
+
+    //http://www.tumangaonline.com/api/v1/mangas?categorias=%5B3%5D&defecto=1&demografia=Seinen
+    // &estado=Activo&generos=%5B1%5D&itemsPerPage=20&page=1&puntuacion=0&searchBy=nombre
+    // &sortDir=asc&sortedBy=nombre&tipo=MANGA
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        if (pageNumber <= lastPage) {
+            String gens = "";
+            for (int i = 0; i < filters[2].length; i++) {
+                gens = gens + genresValues[filters[2][i]] + ",";
+            }
+            if (gens.length() > 0)
+                gens = gens.substring(0, gens.length() - 1);
+
+            String cats = "";
+            for (int i = 0; i < filters[4].length; i++) {
+                cats = cats + categoriaV[filters[4][i]] + ",";
+            }
+            if (cats.length() > 0)
+                cats = cats.substring(0, cats.length() - 1);
+
+            String web = "http://www.tumangaonline.com/api/v1/mangas?categorias=%5B" + cats +
+                    "%5D&defecto=1&demografia=" + demografiaV[filters[1][0]] + "&estado=" +
+                    estadoV[filters[3][0]] + "&generos=%5B" + gens + "%5D&itemsPerPage=20&page=" +
+                    pageNumber + "&puntuacion=0&searchBy=nombre" + sortByValues[filters[5][0]] +
+                    "&tipo=" + typeV[filters[0][0]];
+
+            JSONObject jsonObject = new JSONObject(getNavigator().get(web));
+            lastPage = jsonObject.getInt("last_page");
+            return getMangasJsonArray(jsonObject.getJSONArray("data"));
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

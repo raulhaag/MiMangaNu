@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -120,23 +123,19 @@ public class RuNineManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigator().get(chapter.getPath());
-        String nop = getFirstMatch(
-                "\\d+/(\\d+)</option>[\\s]*</select>", source,
-                "Не удалось получить количество страниц");
+        String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>", source, "Не удалось получить количество страниц");
         chapter.setPages(Integer.parseInt(nop));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(
-                HOST + genreV[category].replace("_", "_" + pageNumber));
+        String source = getNavigator().get(HOST + genreV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile(
-                "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
+        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(RUNINEMANGA, m.group(3), HOST + m.group(1), false);
@@ -154,6 +153,19 @@ public class RuNineManga extends ServerBase {
     @Override
     public String[] getOrders() {
         return new String[]{"жанр"};
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{
+                new ServerFilter("Интересное Манга по жанрам", genre, ServerFilter.FilterType.SINGLE)
+        };
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String source = getNavigator().get(HOST + genreV[filters[0][0]].replace("_", "_" + pageNumber));
+        return getMangasFromSource(source);
     }
 
     @Override

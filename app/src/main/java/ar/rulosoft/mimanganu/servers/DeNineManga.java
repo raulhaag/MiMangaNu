@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class DeNineManga extends ServerBase {
@@ -26,8 +29,11 @@ public class DeNineManga extends ServerBase {
             "O_.html", "P_.html", "Q_.html", "R_.html", "S_.html", "T_.html", "U_.html",
             "W_.html", "X_.html", "Y_.html", "Z_.html"
     };
-    private static String[] order = new String[]{
+    private static String[] orderV = new String[]{
             "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
+    };
+    private static String[] order = new String[]{
+            "Manga Liste", "Updates", "Beliebte Manga", "Neue Manga"
     };
 
     public DeNineManga() {
@@ -123,7 +129,7 @@ public class DeNineManga extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
         String source = getNavigator().get(
-                HOST + DeNineManga.order[order] +
+                HOST + DeNineManga.orderV[order] +
                         genreV[category].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
     }
@@ -150,6 +156,19 @@ public class DeNineManga extends ServerBase {
     public String[] getOrders() {
         // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
         return new String[]{"Manga Liste", "Updates", "Beliebte Manga", "Neue Manga"};
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
+    }
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String source = getNavigator().get(
+                HOST + DeNineManga.orderV[filters[1][0]] + genreV[filters[0][0]].replace("_", "_" + pageNumber));
+        return getMangasFromSource(source);
     }
 
     @Override

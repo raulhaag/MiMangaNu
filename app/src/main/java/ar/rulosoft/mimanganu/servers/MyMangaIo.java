@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -16,18 +19,44 @@ import ar.rulosoft.mimanganu.utils.Util;
 public class MyMangaIo extends ServerBase {
 
     private static final String[] genre = {
-            "Tous", "Josei", "Seinen", "Shojo", "Shonen", "Action", "Adulte", "Arts martiaux", "Aventure", "Comédie", "Drame", "Ecchi", "Fantaisie", "Harem", "Historique", "Horreur", "Lolicon", "Mature", "Mecha", "Mystère", "Pervers", "Psychologique", "Romance", "Science fiction", "Shotacon", "Sports", "Surnaturel", "Tragédie", "Tranche de vie", "Travelo", "Vie scolaire", "Yaoi", "Yuri"
+            "Josei", "Seinen", "Shojo", "Shonen"
     };
 
     private static final String[] genreV = {
-            "", "genre%5B4%5D=1", "genre%5B2%5D=1", "genre%5B3%5D=1", "genre%5B1%5D=1", "subgenre%5B5%5D=1", "subgenre%5B23%5D=1", "subgenre%5B3%5D=1", "subgenre%5B10%5D=1", "subgenre%5B12%5D=1", "subgenre%5B2%5D=1", "subgenre%5B20%5D=1", "subgenre%5B25%5D=1", "subgenre%5B19%5D=1", "subgenre%5B6%5D=1", "subgenre%5B30%5D=1", "subgenre%5B26%5D=1", "subgenre%5B15%5D=1", "subgenre%5B22%5D=1", "subgenre%5B8%5D=1", "subgenre%5B13%5D=1", "subgenre%5B1%5D=1", "subgenre%5B21%5D=1", "subgenre%5B29%5D=1", "subgenre%5B17%5D=1", "subgenre%5B9%5D=1", "subgenre%5B18%5D=1", "subgenre%5B16%5D=1", "subgenre%5B27%5D=1", "subgenre%5B11%5D=1", "subgenre%5B28%5D=1", "subgenre%5B24%5D=1"};
-
+            "&genre%5B4%5D=1", "&genre%5B2%5D=1", "&genre%5B3%5D=1", "&genre%5B1%5D=1"
+    };
+    private static final String[] type = {
+            "Doujinshi", "Magazine", "Manfra", "Manga", "Manhua", "Manhwa"
+    };
+    private static final String[] typeV = {
+            "&type%5B3%5D=1", "&type%5B5%5D=1", "&type%5B6%5D=1", "&type%5B1%5D=1", "&type%5B4%5D=1", "&type%5B2%5D=1",
+    };
+    private static final String[] statut = {
+            "Abandonné", "En cours", "One shot", "Terminé"
+    };
+    private static final String[] statutV = {
+            "&statut%5B4%5D=1", "&statut%5B3%5D=1", "&statut%5B1%5D=1", "&statut%5B2%5D=1"
+    };
+    private static final String[] subGenre = {
+            "Action", "Adulte", "Arts martiaux", "Aventure", "Comédie", "Drame", "Ecchi",
+            "Fantaisie", "Harem", "Historique", "Horreur", "Lolicon", "Mature", "Mecha",
+            "Mystère", "Pervers", "Psychologique", "Romance", "Science fiction", "Shotacon",
+            "Sports", "Surnaturel", "Tragédie", "Tranche de vie", "Travelo", "Vie scolaire",
+            "Yaoi", "Yuri"
+    };
+    private static final String[] subGenreV = {
+            "&subgenre%5B5%5D=1", "&subgenre%5B23%5D=1", "&subgenre%5B3%5D=1", "&subgenre%5B10%5D=1",
+            "&subgenre%5B12%5D=1", "&subgenre%5B2%5D=1", "&subgenre%5B20%5D=1", "&subgenre%5B25%5D=1",
+            "&subgenre%5B19%5D=1", "&subgenre%5B6%5D=1", "&subgenre%5B30%5D=1", "&subgenre%5B26%5D=1",
+            "&subgenre%5B15%5D=1", "&subgenre%5B22%5D=1", "&subgenre%5B8%5D=1", "&subgenre%5B13%5D=1",
+            "&subgenre%5B1%5D=1", "&subgenre%5B21%5D=1", "&subgenre%5B29%5D=1", "&subgenre%5B17%5D=1",
+            "&subgenre%5B9%5D=1", "&subgenre%5B18%5D=1", "&subgenre%5B16%5D=1", "&subgenre%5B27%5D=1",
+            "&subgenre%5B11%5D=1", "&subgenre%5B28%5D=1", "&subgenre%5B24%5D=1"
+    };
     private static String HOST = "http://www.mymanga.io/";
-
     private static String[] orden = {
             "Alphabétique"
     };
-
 
     public MyMangaIo() {
         this.setFlag(R.drawable.flag_fr);
@@ -142,5 +171,43 @@ public class MyMangaIo extends ServerBase {
         String web = "http://www.mymanga.io/search?name=" + URLEncoder.encode(term, "UTF-8");
         String data = getNavigator().get(web);
         return getMangasFromSource(data);
+    }
+
+
+    //http://www.mymanga.io/search?name=&author=&illustrator=&parution_span=0&parution=
+    // &type%5B3%5D=0&type%5B5%5D=0&type%5B6%5D=0&type%5B1%5D=0&type%5B4%5D=0&type%5B2%5D=0
+    // &statut%5B4%5D=1&statut%5B3%5D=0&statut%5B1%5D=0&statut%5B2%5D=0
+    // &genre%5B4%5D=0&genre%5B2%5D=1&genre%5B3%5D=0&genre%5B1%5D=0
+    // &subgenre%5B4%5D=0&subgenre%5B5%5D=0&subgenre%5B23%5D=0&subgenre%5B3%5D=0&subgenre%5B10%5D=0&subgenre%5B12%5D=0&subgenre%5B2%5D=0&subgenre%5B20%5D=0&subgenre%5B25%5D=1&subgenre%5B19%5D=0&subgenre%5B6%5D=0&subgenre%5B30%5D=0&subgenre%5B26%5D=0&subgenre%5B15%5D=0&subgenre%5B22%5D=0&subgenre%5B8%5D=0&subgenre%5B13%5D=0&subgenre%5B1%5D=0&subgenre%5B21%5D=0&subgenre%5B29%5D=0&subgenre%5B17%5D=0&subgenre%5B9%5D=0&subgenre%5B18%5D=0&subgenre%5B16%5D=0&subgenre%5B27%5D=0&subgenre%5B11%5D=0&subgenre%5B28%5D=0&subgenre%5B24%5D=0
+    // &chapter_span=0&chapter_count=&last_update=&like_span=0&like=&dislike_span=0&dislike=&search=Rechercher
+
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String web = "http://www.mymanga.io/search?name=&author=&illustrator=&parution_span=0&parution=";
+        for (int i = 0; i < filters[0].length; i++) {
+            web = web + typeV[filters[0][i]];
+        }
+        for (int i = 0; i < filters[1].length; i++) {
+            web = web + statutV[filters[1][i]];
+        }
+        for (int i = 0; i < filters[2].length; i++) {
+            web = web + genre[filters[2][i]];
+        }
+        for (int i = 0; i < filters[3].length; i++) {
+            web = web + subGenreV[filters[3][i]];
+        }
+        web = web + "&chapter_span=0&chapter_count=&last_update=&like_span=0&like=&dislike_span=0&dislike=&search=Rechercher";
+        String source = getNavigator().get(web);
+        return getMangasFromSource(source);
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{
+                new ServerFilter("Type", type, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Statut", statut, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Sous-Genres", subGenre, ServerFilter.FilterType.MULTI)
+        };
     }
 }

@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -8,6 +10,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 
 /**
  * Created by Raul on 17/07/2016.
@@ -15,27 +18,42 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 public class LeoManga extends ServerBase {
 
     public static String HOST = "leomanga.com";
+
+    private static String[] demografia = {
+            "Todo", "Shonen", "Shojo", "Josei", "Seinen", "Kodomo", "Yuri"
+    };
+
+    private static String[] estado = {
+            "Todo", "Finalizado", "En curso"
+    };
+
+    private static String[] estadoV = {
+            "", "&estado=finalizado", "&estado=en-curso"
+    };
+
+    private static String[] demografiaV = {
+            "", "&demografia=shonen", "&demografia=shojo", "&demografia=josei",
+            "&demografia=seinen", "&demografia=kodomo", "&demografia=yuri"
+    };
+
     private static String[] genres = {
-            "Todo",
-            "Shonen", "Shojo", "Josei", "Seinen", "Kodomo", "Yuri", "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
+            "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
             "Deporte", "Doujinshi", "Drama", "Ecchi", "Escolar", "Fantasía", "Gender Bender", "Gore", "Harem", "Histórico", "Horror",
             "Lolicon", "Magia", "Mecha", "Misterio", "Musical", "One-Shot", "Parodia", "Policíaca", "Psicológica", "Romance", "Shojo Ai",
             "Slice of Life", "Smut", "Sobrenatural", "Superpoderes", "Tragedia"
     };
     private static String[] categoriasV = {
-            "", "?demografia=shonen", "?demografia=shojo", "?demografia=josei",
-            "?demografia=seinen", "?demografia=kodomo", "?demografia=yuri",
-            "?genero=accion", "?genero=artes-marciales", "?genero=aventura",
-            "?genero=ciencia-ficcion", "?genero=comedia", "?genero=deporte",
-            "?genero=doujinshi", "?genero=drama", "?genero=ecchi",
-            "?genero=escolar", "?genero=fantasia", "?genero=gender-bender",
-            "?genero=gore", "?genero=harem", "?genero=historico",
-            "?genero=horror", "?genero=lolicon", "?genero=magia",
-            "?genero=mecha", "?genero=misterio", "?genero=musical",
-            "?genero=one-shot", "?genero=parodia", "?genero=policiaca",
-            "?genero=psicologica", "?genero=romance", "?genero=shojo-ai",
-            "?genero=slice-of-life", "?genero=smut", "?genero=sobrenatural",
-            "?genero=Superpoderes", "?genero=tragedia",
+            "&genero=accion", "&genero=artes-marciales", "&genero=aventura",
+            "&genero=ciencia-ficcion", "&genero=comedia", "&genero=deporte",
+            "&genero=doujinshi", "&genero=drama", "&genero=ecchi",
+            "&genero=escolar", "&genero=fantasia", "&genero=gender-bender",
+            "&genero=gore", "&genero=harem", "&genero=historico",
+            "&genero=horror", "&genero=lolicon", "&genero=magia",
+            "&genero=mecha", "&genero=misterio", "&genero=musical",
+            "&genero=one-shot", "6genero=parodia", "&genero=policiaca",
+            "&genero=psicologica", "&genero=romance", "&genero=shojo-ai",
+            "&genero=slice-of-life", "&genero=smut", "&genero=sobrenatural",
+            "&genero=Superpoderes", "&genero=tragedia",
     };
     private static String[] orden = {
             "Lecturas", "Alfabetico", "Valoración", "Fecha"
@@ -138,6 +156,23 @@ public class LeoManga extends ServerBase {
         return getMangasFromSource(data);
     }
 
+    @Override
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        String web = "http://" + HOST + "/directorio-manga?pagina=" + pageNumber;
+        //demografia
+        web = web + demografiaV[filters[0][0]];
+        //genero
+        for (int i = 0; i < filters[1].length; i++) {
+            web = web + filters[1][i];
+        }
+        //estado
+        web = web + estadoV[filters[2][0]];
+        //orden
+        web = web + ordenM[filters[3][0]];
+        String data = getNavigator().get(web);
+        return getMangasFromSource(data);
+    }
+
     private ArrayList<Manga> getMangasFromSource(String data) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/.+?)\".+?src=\"(.+?)\" alt=\"(.+?)\"");
@@ -148,6 +183,15 @@ public class LeoManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters(Context context) {
+        return new ServerFilter[]{new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Genero", genres, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Orden", orden, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override

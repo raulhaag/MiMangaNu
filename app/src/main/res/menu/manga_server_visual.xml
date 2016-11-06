@@ -15,11 +15,6 @@
         android:title="@string/vercomolista"
         app:showAsAction="always" />
     <item
-        android:id="@+id/sort"
-        android:icon="@drawable/ic_action_sort"
-        android:title="@string/sort"
-        app:showAsAction="always"/>
-    <item
         android:id="@+id/filter"
         android:icon="@drawable/ic_action_content_filter"
         android:title="@string/filtrar"

@@ -8,8 +8,8 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,9 +31,9 @@ public class Navigator {
     public static int readTimeout = 30;
     public static Navigator navigator;
     public static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
-    private OkHttpClient httpClient;
     UserAgentInterceptor userAgentInterceptor = new UserAgentInterceptor(USER_AGENT);
-    private HashMap<String, String> parameters = new HashMap<>();
+    private OkHttpClient httpClient;
+    private ArrayList<Parameter> parameters = new ArrayList<>();
 
     public Navigator(Context context) throws Exception {
         ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
@@ -174,14 +174,14 @@ public class Navigator {
 
     public RequestBody getPostParams() throws Exception {
         FormBody.Builder builder = new FormBody.Builder();
-        for (Map.Entry<String, String> entry : parameters.entrySet()) {
-            builder.add(entry.getKey(), entry.getValue());
+        for (Parameter p : parameters) {
+            builder.add(p.getKey(), p.getValue());
         }
         return builder.build();
     }
 
     public void addPost(String key, String value) {
-        parameters.put(key, value);
+        parameters.add(new Parameter(key, value));
     }
 
     public HashMap<String, String> getFormParams(String url) throws Exception {
