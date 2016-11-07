@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -11,13 +12,15 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.GridLayout;
+import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import ar.rulosoft.mimanganu.adapters.CompoundAdapter;
 
 import static android.view.Gravity.CENTER;
 import static android.widget.LinearLayout.VERTICAL;
@@ -54,47 +57,53 @@ public class FilterViewGenerator {
         scrollView.addView(layout);
         compoundButtons = new CompoundButton[filters.length][];
         LinearLayout.LayoutParams paramsText = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        LinearLayout.LayoutParams paramsGroups = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
         int i = 0;
         for (ServerFilter filter : filters) {
             TextView nTextView = new TextView(context);
-            nTextView.setTextColor(Color.WHITE);
             nTextView.setBackgroundColor(color);
             nTextView.setText(filter.getTitle());
+            nTextView.setTextColor(Color.WHITE);
             nTextView.setLayoutParams(paramsText);
-            nTextView.setPadding(dp20, dp10, dp10, dp20);
+            nTextView.setPadding(dp20, dp10, dp20, dp10);
             layout.addView(nTextView);
+            UnScrolledGridView gridView = new UnScrolledGridView(context);
+            CompoundAdapter compoundAdapter = new CompoundAdapter(context);
+            gridView.setPadding(dp20, dp20, dp20, dp20);
             if (filter.getFilterType() == ServerFilter.FilterType.SINGLE) {
                 RadioButton[] rb = new RadioButton[filter.getOptions().length];
-                GridLayout gridLayout = new GridLayout(context);
-                gridLayout.setLayoutParams(paramsGroups);
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
                 CompoundGroup rGroup = new CompoundGroup(true);
                 for (int j = 0; j < filter.getOptions().length; j++) {
                     rb[j] = new RadioButton(context);
-                    rb[j].setTextSize(sp8);
+                    if (Build.VERSION.SDK_INT < 23) {
+                        rb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
+                    } else {
+                        rb[j].setTextAppearance(android.R.style.TextAppearance_Small);
+                    }
                     rb[j].setText(filter.getOptions()[j]);
-                    gridLayout.addView(rb[j]);
+                    compoundAdapter.add(rb[j]);
                     rGroup.add(rb[j]);
                     compoundButtons[i][j] = rb[j];
                 }
-                gridLayout.setColumnCount(2);
-                layout.addView(gridLayout);
             } else {
-                GridLayout gridLayout = new GridLayout(context);
-                gridLayout.setColumnCount(2);
-                gridLayout.setLayoutParams(paramsGroups);
                 CheckBox[] cb = new CheckBox[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
                 for (int j = 0; j < filter.getOptions().length; j++) {
                     cb[j] = new CheckBox(context);
-                    cb[j].setTextSize(sp8);
+                    if (Build.VERSION.SDK_INT < 23) {
+                        cb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
+                    } else {
+                        cb[j].setTextAppearance(android.R.style.TextAppearance_Small);
+                    }
                     cb[j].setText(filter.getOptions()[j]);
-                    gridLayout.addView(cb[j]);
+                    compoundAdapter.add(cb[j]);
                     compoundButtons[i][j] = cb[j];
                 }
-                layout.addView(gridLayout);
             }
+            gridView.setAdapter(compoundAdapter);
+            gridView.setNumColumns(GridView.AUTO_FIT);
+            gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+            layout.addView(gridView);
             i++;
         }
 
@@ -105,12 +114,16 @@ public class FilterViewGenerator {
         }
 
         TextView nTextView = new TextView(context);
+        if (Build.VERSION.SDK_INT < 23) {
+            nTextView.setTextAppearance(context, android.R.style.TextAppearance_Large);
+        } else {
+            nTextView.setTextAppearance(android.R.style.TextAppearance_Large);
+        }
         nTextView.setTextColor(Color.WHITE);
         nTextView.setBackgroundColor(color);
         nTextView.setText(title);
         nTextView.setPadding(dp10, dp20, dp10, dp20);
         nTextView.setLayoutParams(paramsText);
-        nTextView.setTextSize(sp15);
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setCustomTitle(nTextView);
@@ -120,6 +133,7 @@ public class FilterViewGenerator {
         dialogBuilder.setNegativeButton(context.getString(android.R.string.cancel), null);
 
         dialog = dialogBuilder.create();
+
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
 
             @Override
