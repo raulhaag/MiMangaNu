@@ -203,13 +203,9 @@ public abstract class ServerBase {
     public abstract void chapterInit(Chapter chapter) throws Exception;
 
     // server visual
-    public abstract ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception;
-
-    public abstract String[] getCategories();
-
-    // public abstract boolean supportStatus();
-
-    public abstract String[] getOrders();
+    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        return new ArrayList<>();
+    }
 
     public abstract boolean hasList();
 
@@ -375,10 +371,6 @@ public abstract class ServerBase {
 
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{};
-    }
-
-    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        return new ArrayList<>();
     }
 
     public int[][] getBasicFilter(Context context) {

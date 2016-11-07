@@ -14,6 +14,28 @@ import ar.rulosoft.mimanganu.utils.Util;
  */
 public class FromFolder extends ServerBase {
 
+    private static final String FLOAT_PATTERN = "([.,0123456789]+)";
+    private static final String STRING_END_PATTERN = "[^\\d]\\.";
+    private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].{0,1}\\d+";
+    private static Comparator<String> NUMBERS_ASC = new Comparator<String>() {
+        @Override
+        public int compare(String c1, String c2) {
+            try {
+                String str1 = c1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                str1 = str1.replaceAll(STRING_END_PATTERN, " ");
+                str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
+                Float f1 = Float.parseFloat(str1);
+                String str2 = c2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                str2 = str2.replaceAll(STRING_END_PATTERN, " ");
+                str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
+                float f2 = Float.parseFloat(str2);
+                return (int) Math.floor(f1 - f2);
+            } catch (Exception e) {
+                return 0;
+            }
+        }
+    };
+
     FromFolder(){
         this.setFlag(R.drawable.noimage);
         this.setIcon(R.drawable.from_folder);
@@ -74,45 +96,7 @@ public class FromFolder extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        return null;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return new String[0];
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[0];
-    }
-
-    @Override
     public boolean hasList() {
         return false;
     }
-
-
-    private static final String FLOAT_PATTERN = "([.,0123456789]+)";
-    private static final String STRING_END_PATTERN = "[^\\d]\\.";
-    private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].{0,1}\\d+";
-    private static Comparator<String> NUMBERS_ASC = new Comparator<String>() {
-        @Override
-        public int compare(String c1, String c2) {
-            try {
-                    String str1 = c1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                    str1 = str1.replaceAll(STRING_END_PATTERN, " ");
-                    str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
-                    Float f1 = Float.parseFloat(str1);
-                    String str2 = c2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                    str2 = str2.replaceAll(STRING_END_PATTERN, " ");
-                    str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
-                    float f2 = Float.parseFloat(str2);
-                return  (int)Math.floor(f1-f2);
-            } catch (Exception e) {
-                return  0;
-            }
-        }
-    };
 }

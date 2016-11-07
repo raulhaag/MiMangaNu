@@ -67,7 +67,7 @@ public class MyMangaIo extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        return getMangasFiltered(0, 0, 0);
+        return getMangasFiltered(getBasicFilter(null), 0);
     }
 
     @Override
@@ -126,18 +126,6 @@ public class MyMangaIo extends ServerBase {
         chapter.setPages(Integer.parseInt(pages));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        if (categorie == 0) {
-            String data = getNavigator().get("http://www.mymanga.io/mangas/");
-            return getMangasFromSource(data);
-        } else {
-            String web = "http://www.mymanga.io/search?" + genreV[categorie];
-            String data = getNavigator().get(web);
-            return getMangasFromSource(data);
-        }
-    }
-
     public ArrayList<Manga> getMangasFromSource(String source) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(mangas/[^\"]+?)\">(.+?)<");
@@ -149,16 +137,6 @@ public class MyMangaIo extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return orden;
     }
 
     @Override

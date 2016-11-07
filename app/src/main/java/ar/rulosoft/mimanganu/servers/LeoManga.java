@@ -43,23 +43,23 @@ public class LeoManga extends ServerBase {
             "Slice of Life", "Smut", "Sobrenatural", "Superpoderes", "Tragedia"
     };
     private static String[] categoriasV = {
-            "&genero=accion", "&genero=artes-marciales", "&genero=aventura",
-            "&genero=ciencia-ficcion", "&genero=comedia", "&genero=deporte",
-            "&genero=doujinshi", "&genero=drama", "&genero=ecchi",
-            "&genero=escolar", "&genero=fantasia", "&genero=gender-bender",
-            "&genero=gore", "&genero=harem", "&genero=historico",
-            "&genero=horror", "&genero=lolicon", "&genero=magia",
-            "&genero=mecha", "&genero=misterio", "&genero=musical",
-            "&genero=one-shot", "6genero=parodia", "&genero=policiaca",
-            "&genero=psicologica", "&genero=romance", "&genero=shojo-ai",
-            "&genero=slice-of-life", "&genero=smut", "&genero=sobrenatural",
-            "&genero=Superpoderes", "&genero=tragedia",
+            "accion", "artes-marciales", "aventura", "ciencia-ficcion", "comedia", "deporte",
+            "doujinshi", "drama", "ecchi", "escolar", "fantasia", "gender-bender", "gore", "harem",
+            "historico", "horror", "lolicon", "magia", "mecha", "misterio", "musical", "one-shot",
+            "parodia", "policiaca", "psicologica", "romance", "shojo-ai", "slice-of-life", "smut",
+            "sobrenatural", "Superpoderes", "tragedia"
     };
     private static String[] orden = {
             "Lecturas", "Alfabetico", "Valoración", "Fecha"
     };
     private static String[] ordenM = {
             "", "orden=alfabetico", "orden=valoracion", "orden=fecha"
+    };
+    private static String[] estilo = {
+            "Todos", "Manga", "Manhwa", "Manhua"
+    };
+    private static String[] estiloV = {
+            "Todos", "Manga", "Manhwa", "Manhua"
     };
 
     public LeoManga() {
@@ -144,27 +144,20 @@ public class LeoManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String web = "http://" + HOST + "/directorio-manga?pagina=" + pageNumber;
-        if (categorie != 0) {
-            web = web + "&" + categoriasV[categorie];
-        }
-        if (order != 0) {
-            web = web + "&" + ordenM[order];
-        }
-        String data = getNavigator().get(web);
-        return getMangasFromSource(data);
-    }
-
-    @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = "http://" + HOST + "/directorio-manga?pagina=" + pageNumber;
         //demografia
         web = web + demografiaV[filters[0][0]];
         //genero
+        String gen = "&genero=";
         for (int i = 0; i < filters[1].length; i++) {
-            web = web + filters[1][i];
+            gen = gen + categoriasV[filters[1][i]] + "|";
         }
+        if (gen.length() > 8) {
+            gen = gen.substring(0, gen.length() - 1);
+            web = web + gen;
+        }
+
         //estado
         web = web + estadoV[filters[2][0]];
         //orden
@@ -192,16 +185,6 @@ public class LeoManga extends ServerBase {
                 new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Orden", orden, ServerFilter.FilterType.SINGLE)
         };
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genres;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return orden;
     }
 
     @Override

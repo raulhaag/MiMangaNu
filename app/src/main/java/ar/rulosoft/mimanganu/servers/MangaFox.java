@@ -151,35 +151,6 @@ public class MangaFox extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        String web = "http://mangafox.me/" + genreV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
-        String data = getNavigator().get(web);
-        Pattern p = Pattern.compile(PATRON_CAPS_VIS);
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(4), m.group(1), false);
-            manga.setImages(m.group(2));
-            if (m.group(3).length() > 6) {
-                manga.setFinished(true);
-            }
-            mangas.add(manga);
-        }
-        hasMore = !mangas.isEmpty();
-        return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return orden;
-    }
-
-    @Override
     public boolean hasList() {
         return true;
     }

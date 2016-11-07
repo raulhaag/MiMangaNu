@@ -153,16 +153,6 @@ public class MangaEdenIt extends ServerBase {
         chapter.setPages(pages);
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categories, int order, int pageNumber) throws Exception {
-        String web = HOST + "it/it-directory/" + "?page=" + pageNumber;
-        if(categories > 0){
-            web = web + "&categoriesInc=" + genreV[categories];
-        }
-        String source = getNavigator().get(web);
-        return getMangasFromSource(source);
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         Pattern p = Pattern.compile("<tr><td><a href=\"/it/it-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>");
         Matcher m = p.matcher(source);
@@ -172,16 +162,6 @@ public class MangaEdenIt extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Popularite"};
     }
 
     @Override

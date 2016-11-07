@@ -109,13 +109,6 @@ public class RawSenManga extends ServerBase {
         chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String web = HOST + generosV[categorie] + "?page=" + pageNumber;
-        String data = getNavigator().get(web);
-        return getMangasFromData(data);
-    }
-
     @NonNull
     private ArrayList<Manga> getMangasFromData(String data) {
         Pattern p = Pattern.compile("<div class=\"cover\"><a href=\"\\/(.+?)\" title=\"(.+?)\"><img src=\"\\/(.+?)\"");
@@ -127,16 +120,6 @@ public class RawSenManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Title"};
     }
 
     @Override

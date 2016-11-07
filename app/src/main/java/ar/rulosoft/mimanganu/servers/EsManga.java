@@ -103,12 +103,6 @@ public class EsManga extends ServerBase {
         chapter.setPages(Integer.parseInt(textNum));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String web = "http://esmanga.com" + generosV[categorie] + "?page=" + pageNumber;
-        return getMangasWeb(web);
-    }
-
     private ArrayList<Manga> getMangasWeb(String web) throws Exception {
         String source = getNavigator().get(web);
         Pattern p = Pattern.compile("src=\"([^\"]+)\".+?<a href=\"(http://esmanga.com/manga/.+?)\">(.+?)<");
@@ -120,16 +114,6 @@ public class EsManga extends ServerBase {
             mangas.add(0, manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Lecturas"};//, "Ranking"
     }
 
     @Override

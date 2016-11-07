@@ -155,12 +155,6 @@ public class NineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(HOST + NineManga.order[order] + genreV[category].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
@@ -171,17 +165,6 @@ public class NineManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
-        return new String[]{"Manga Directory", "Latest Releases", "Popular Manga", "New Manga"};
     }
 
     @Override

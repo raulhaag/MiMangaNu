@@ -172,43 +172,6 @@ public class MangaPanda extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        String web;
-        if (category == 0)
-            web = HOST + "/popular" + "/" + (pageNumber - 1) * 20;
-        else
-            web = HOST + "/popular" + "/" + genreV[category] + "/" + (pageNumber - 1) * 20;
-
-        String data = getNavigator().get(web);
-        Pattern p =
-                Pattern.compile("url\\('(.+?)'.+?href=\"(.+?)\">(.+?)</a>");
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            Manga manga;
-            if (m.group(2).startsWith("/")) manga =
-                    new Manga(getServerID(), m.group(3),
-                            HOST + m.group(2), false);
-            else manga = new Manga(getServerID(), m.group(3),
-                    HOST + m.group(2), false);
-            manga.setImages(m.group(1));
-            mangas.add(manga);
-        }
-        hasMore = !mangas.isEmpty();
-        return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return order;
-    }
-
-    @Override
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Manga Type", type, ServerFilter.FilterType.SINGLE),

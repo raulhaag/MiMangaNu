@@ -167,23 +167,6 @@ public class HeavenManga extends ServerBase {
         chapter.setExtra(web);
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        int paginaLoc = pageNumber - 1;
-        ArrayList<Manga> mangas = null;
-        String web = "";
-        if (categorie == 0 && paginaLoc < paginas.length) {
-            web = "/letra/" + paginas[paginaLoc];
-        } else if (paginaLoc < 1) {
-            web = generosV[categorie];
-        }
-        if (web.length() > 2) {
-            String source = getNavigator().get("http://heavenmanga.com" + web);
-            mangas = getMangasFromSource(source);
-        }
-        return mangas;
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<article class=\"rel\"><a href=\"(http://heavenmanga.com/.+?)\"><header>(.+?)<.+?src=\"(.+?)\"");
@@ -194,16 +177,6 @@ public class HeavenManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"a-z"};
     }
 
     @Override

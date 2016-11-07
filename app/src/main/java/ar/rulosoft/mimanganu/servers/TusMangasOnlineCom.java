@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,9 +78,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigator().get(
-                HOST + "/listado-mangas?tipo=1&filter=" + URLEncoder.encode(term, "UTF-8"), TIMEOUT);
-        return getMangasFromSource(source);
+        return null;
     }
 
     @Override
@@ -175,36 +172,6 @@ public class TusMangasOnlineCom extends ServerBase {
                 "<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">",
                 source, "Error al iniciar Capítulo");
         chapter.setPages(Integer.parseInt(paginas));
-    }
-
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(
-                HOST + "/listado-mangas/mangas?" + generosV[categorie] + "&pag=" + pageNumber, TIMEOUT);
-        return getMangasFromSource(source);
-    }
-
-    private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile(
-                "2\">[\\s]*<a href=\"([^\"]+)\"[^<]+<img src=\"([^\"]+)\".+?alt=\"([^\"]+)\"");
-        Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<>();
-        while (m.find()) {
-            Manga manga = new Manga(TUSMANGAS, m.group(3), m.group(1), false);
-            manga.setImages(m.group(2));
-            mangas.add(manga);
-        }
-        return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Alfabetico"};
     }
 
     @Override

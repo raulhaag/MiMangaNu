@@ -124,33 +124,6 @@ public class MangaHere extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        String web = HOST + "/" + genreV[categorie] + "/" + pageNumber + ".htm" + ordenM[order];
-        String data = getNavigator().get(web);
-        Pattern p = Pattern.compile(PATRON_CAPS_VIS);
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            Manga manga =
-                    new Manga(getServerID(), m.group(2), m.group(3), false);
-            manga.setImages(m.group(1).replace("thumb_", ""));
-            mangas.add(manga);
-        }
-        hasMore = !mangas.isEmpty();
-        return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return orden;
-    }
-
-    @Override
     public boolean hasList() {
         return true;
     }

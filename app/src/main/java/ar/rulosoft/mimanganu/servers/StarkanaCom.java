@@ -130,24 +130,6 @@ public class StarkanaCom extends ServerBase {
         chapter.setPages(Integer.parseInt(getFirstMatch("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        int paginaLoc = pageNumber - 1;
-        ArrayList<Manga> mangas = null;
-        String web = "";
-        if (categorie == 0 && paginaLoc < paginas.length) {
-            web = paginas[paginaLoc];
-        } else if (paginaLoc < 1) {
-            web = "/manga/search?" + generosV[categorie];
-        }
-        if (web.length() > 2) {
-
-            String source = getNavigator().get("http://starkana.com" + web);
-            mangas = getMangasFromSource(source);
-        }
-        return mangas;
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("title=\"([^\"]+)\" href=\"(/manga/.+?)\".+?src=\"(.+?)\".+?tick_(.+?)\\.");// "<img class=\"a_img\" src=\"(.+?)\".+?<img src=\"http://starkana.com/img/icons/tick_(.+?).png\".+?href=\"(.+?)\".+?>(.+?)</a>");
@@ -166,16 +148,6 @@ public class StarkanaCom extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"a-z"};
     }
 
     @Override

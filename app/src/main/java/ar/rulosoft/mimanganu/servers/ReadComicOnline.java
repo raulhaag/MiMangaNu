@@ -150,16 +150,6 @@ public class ReadComicOnline extends ServerBase {
         chapter.setPages(pages);
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String web = genreV[category] + ReadComicOnline.order[order];
-        if (pageNumber > 1) {
-            web = web + "?page=" + pageNumber;
-        }
-        String source = getNavigator().get("http://" + HOST + web);
-        return getMangasSource(source);
-    }
-
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
@@ -170,16 +160,6 @@ public class ReadComicOnline extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Popularity", "Latest Update", "New Comic", "a-z"};
     }
 
     @Override

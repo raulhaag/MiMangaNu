@@ -85,21 +85,6 @@ public class LectureEnLigne extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        return null;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return null;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return null;
-    }
-
-    @Override
     public boolean hasList() {
         return true;
     }

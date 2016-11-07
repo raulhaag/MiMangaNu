@@ -98,17 +98,6 @@ public class Manga_Tube extends ServerBase {
         chapter.setPages(pages);
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        if (no_more_pages != categorie) {
-            String source = getNavigator().get("http://www.manga-tube.com/reader/list/" + genreV[categorie]);
-            no_more_pages = categorie;
-            return getMangasFromSource(source);
-        } else {
-            return new ArrayList<Manga>();
-        }
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         Pattern p = Pattern.compile("<img class=\"preview\" src=\"(http:\\/\\/www.manga-tube.com\\/content\\/.+?)\".+?title\"><a href=\"(.+?)\".+?>(.+?)<");
         Matcher m = p.matcher(source);
@@ -122,29 +111,19 @@ public class Manga_Tube extends ServerBase {
     }
 
     @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filter, int pageNumber) throws Exception {
         if (no_more_pages != filter[0][0]) {
             String source = getNavigator().get("http://www.manga-tube.com/reader/list/" + genreV[filter[0][0]]);
             no_more_pages = filter[0][0];
             return getMangasFromSource(source);
         } else {
-            return new ArrayList<Manga>();
+            return new ArrayList<>();
         }
     }
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE)};
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{""};
     }
 
     @Override

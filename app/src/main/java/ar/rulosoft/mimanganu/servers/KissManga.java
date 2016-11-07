@@ -19,7 +19,7 @@ public class KissManga extends ServerBase {
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
-    public static String IP = "93.174.95.110";
+    private static String IP = "93.174.95.110";
     private static String HOST = "kissmanga.com";
     private static String[] genre = new String[]{
             "Action", "Adult", "Adventure", "Comedy", "Comic", "Cooking", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Lolicon", "Manga", "Manhua", "Manhwa", "Martial Arts", "Mature", "Mecha", "Medical", "Music", "Mystery", "One shot", "Psychological", "Romance", "School Life", "Sci-fi", "Seinen", "Shotacon", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut", "Sports", "Supernatural", "Tragedy", "Webtoon", "Yaoi", "Yuri"
@@ -147,17 +147,6 @@ public class KissManga extends ServerBase {
         chapter.setPages(pages);
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-       /* String web = genreV[category] + KissManga.order[order];
-        if (pageNumber > 1) {
-            web = web + "?page=" + pageNumber;
-        }
-        String source = getNavigator().post(IP, web, HOST);
-        return getMangasSource(source);/*/
-        return null;
-    }
-
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p =
@@ -170,16 +159,6 @@ public class KissManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Popularity", "Latest Update", "New Manga", "a-z"};
     }
 
     @Override

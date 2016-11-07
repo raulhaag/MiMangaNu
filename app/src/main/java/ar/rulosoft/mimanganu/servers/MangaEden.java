@@ -154,16 +154,6 @@ public class MangaEden extends ServerBase {
         chapter.setPages(pages);
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categories, int order, int pageNumber) throws Exception {
-        String web = HOST + "en/en-directory/" + "?page=" + pageNumber;
-        if(categories > 0){
-            web = web + "&categoriesInc=" + genreV[categories];
-        }
-        String source = getNavigator().get(web);
-        return getMangasFromSource(source);
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         Pattern pattern = Pattern.compile("<tr><td><a href=\"/en/en-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>");
         Matcher matcher = pattern.matcher(source);
@@ -173,16 +163,6 @@ public class MangaEden extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"Popular"};
     }
 
     @Override

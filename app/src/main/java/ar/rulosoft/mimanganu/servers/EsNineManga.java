@@ -145,38 +145,6 @@ public class EsNineManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(
-                HOST + EsNineManga.orderV[order] +
-                        generosV[categorie].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
-    }
-
-    private ArrayList<Manga> getMangasFromSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile(
-                "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
-        Matcher matcher = p.matcher(source);
-        while (matcher.find()) {
-            Manga manga = new Manga(ESNINEMANGA, matcher.group(3), HOST + matcher.group(1), false);
-            manga.setImages(matcher.group(2));
-            mangas.add(manga);
-        }
-        return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
-        return orders;
-    }
-
-    @Override
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{new ServerFilter("Generos", generos, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Orden", orders, ServerFilter.FilterType.SINGLE)};

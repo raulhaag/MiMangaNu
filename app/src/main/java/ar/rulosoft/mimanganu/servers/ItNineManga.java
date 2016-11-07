@@ -146,14 +146,6 @@ public class ItNineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(
-                HOST + ItNineManga.orderV[order] +
-                        generosV[categorie].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile(
@@ -165,16 +157,6 @@ public class ItNineManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return generos;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return order;
     }
 
     @Override

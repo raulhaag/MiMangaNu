@@ -126,14 +126,6 @@ public class DeNineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(
-                HOST + DeNineManga.orderV[order] +
-                        genreV[category].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile(
@@ -145,17 +137,6 @@ public class DeNineManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        // "/category/", "/list/New-Update/", "/list/Hot-Book", "/list/New-Book/"
-        return new String[]{"Manga Liste", "Updates", "Beliebte Manga", "Neue Manga"};
     }
 
     @Override

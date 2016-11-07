@@ -250,7 +250,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             page = 1;
             mStart = true;
             serverBase.hasMore = true;
-            LoadLastTask loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
+            loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
         } else {
             newTask = true;
         }

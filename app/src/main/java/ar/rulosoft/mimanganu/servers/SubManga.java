@@ -101,24 +101,6 @@ public class SubManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String[] getCategories() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String[] getOrders() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public boolean hasList() {
         return true;
     }

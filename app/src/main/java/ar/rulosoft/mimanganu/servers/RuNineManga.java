@@ -127,12 +127,6 @@ public class RuNineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String source = getNavigator().get(HOST + genreV[category].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
-    }
-
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
@@ -143,16 +137,6 @@ public class RuNineManga extends ServerBase {
             mangas.add(manga);
         }
         return mangas;
-    }
-
-    @Override
-    public String[] getCategories() {
-        return genre;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return new String[]{"жанр"};
     }
 
     @Override

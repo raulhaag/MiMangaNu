@@ -19,9 +19,12 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 /**
  * Created by Raul on 05/04/2016.
  */
-public class TuMangaOnline extends ServerBase {
+class TuMangaOnline extends ServerBase {
 
-    public static String[] genres = new String[]{
+    public static String[] type = new String[]{
+            "Todos", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
+    };
+    private static String[] genres = new String[]{
             "Acción", "Apocalíptico", "Artes Marciales", "Aventura", "Ciencia Ficción",
             "Comedia", "Cyberpunk", "Demonios", "Deportes", "Drama", "Ecchi", "Fantasía",
             "Gender Bender", "Gore", "Harem", "Histórico", "Horror", "Magia", "Mecha", "Militar",
@@ -30,51 +33,41 @@ public class TuMangaOnline extends ServerBase {
             "Super Poderes", "Supervivencia", "Suspense", "Thiller", "Tragedia", "Vampiros",
             "Vida Escolar", "Yuri"
     };
-
-    public static String[] genresValues = new String[]{
+    private static String[] genresValues = new String[]{
             "1", "24", "33", "2", "14", "3", "37", "41", "16", "4", "6", "7", "35", "23", "19",
             "27", "10", "8", "20", "28", "11", "38", "39", "40", "12", "36", "5", "22", "13", "34",
             "9", "31", "21", "15", "30", "25", "32", "26", "17"
     };
-
-    public static String[] demografia = {
+    private static String[] demografia = {
             "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo", "Otros"
     };
-
-    public static String[] demografiaV = {
+    private static String[] demografiaV = {
             "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo", "Otros"
     };
-
-    public static String[] estado = {
+    private static String[] estado = {
             "Todos", "Activo", "Abandonado", "Finalizado"
     };
-
-    public static String[] estadoV = {
+    private static String[] estadoV = {
             "", "Activo", "Abandonado", "Finalizado"
     };
-
-    public static String[] type = new String[]{
-            "Todos", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
-    };
-
-    public static String[] typeV = new String[]{
+    private static String[] typeV = new String[]{
             "", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
     };
 
-    public static String[] categoria = new String[]{
+    private static String[] categoria = new String[]{
             "Dōjinshi", "One-Shot", "Webtoon", "Yonkoma"
     };
 
-    public static String[] categoriaV = new String[]{
+    private static String[] categoriaV = new String[]{
             "2", "1", "3", "4"
     };
 
-    public static String[] sortBy = new String[]{
+    private static String[] sortBy = new String[]{
             "Alfabetico ↓", "Ranking ↓", "Número de lecturas ↓", "Fecha de creacion ↓",
             "Alfabetico ↑", "Ranking ↑", "Número de lecturas ↑", "Fecha de creacion ↑"
     };
 
-    public static String[] sortByValues = new String[]{
+    private static String[] sortByValues = new String[]{
             "&sortDir=asc&sortedBy=nombre", "&sortDir=desc&sortedBy=puntuacion",
             "&sortDir=desc&sortedBy=numVistos", "&sortDir=desc&sortedBy=fechaCreacion",
             "&sortDir=desc&sortedBy=nombre", "&sortDir=asc&sortedBy=puntuacion",
@@ -83,7 +76,7 @@ public class TuMangaOnline extends ServerBase {
 
     private static int lastPage = 10000;
 
-    public TuMangaOnline() {
+    TuMangaOnline() {
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.tumangaonline_icon);
         this.setServerName("TuMangaOnline");
@@ -128,7 +121,7 @@ public class TuMangaOnline extends ServerBase {
         manga.setChapters(result);
     }
 
-    public ArrayList<Chapter> getChaptersJsonArray(JSONArray jsonArray, String mid) {
+    private ArrayList<Chapter> getChaptersJsonArray(JSONArray jsonArray, String mid) {
         ArrayList<Chapter> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -157,7 +150,7 @@ public class TuMangaOnline extends ServerBase {
             String genres = "";
             JSONArray array = object.getJSONArray("generos");
             for (int i = 0; i < array.length(); i++) {
-                if (genres == "") {
+                if (genres.equals("")) {
                     genres = array.getJSONObject(i).getString("genero");
                 } else {
                     genres += ", " + array.getJSONObject(i).getString("genero");
@@ -189,13 +182,6 @@ public class TuMangaOnline extends ServerBase {
             images = images + "|" + d1[0] + "/" + d;
         }
         chapter.setExtra(images);
-    }
-
-    @Override
-    public ArrayList<Manga> getMangasFiltered(int categorie, int order, int pageNumber) throws Exception {
-        JSONObject jsonObject = new JSONObject(getNavigator().get("http://www.tumangaonline.com/api/v1/mangas?categorias=%5B%5D&generos=%5B" + genresValues[categorie] + "%5D&itemsPerPage=20&page=" + pageNumber + "&puntuacion=0&searchBy=nombre" + sortByValues[order]));
-        lastPage = jsonObject.getInt("last_page");
-        return getMangasJsonArray(jsonObject.getJSONArray("data"));
     }
 
     ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
@@ -286,16 +272,6 @@ public class TuMangaOnline extends ServerBase {
     }
 
     @Override
-    public String[] getCategories() {
-        return genres;
-    }
-
-    @Override
-    public String[] getOrders() {
-        return sortBy;
-    }
-
-    @Override
     public boolean hasList() {
         return false;
     }
@@ -323,6 +299,8 @@ public class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+        if (pageNumber == 1)
+            lastPage = 10000;
         if (pageNumber <= lastPage) {
             String gens = "";
             for (int i = 0; i < filters[2].length; i++) {
