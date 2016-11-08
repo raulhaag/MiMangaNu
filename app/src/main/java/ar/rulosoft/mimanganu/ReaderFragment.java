@@ -754,9 +754,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                             if (del_images) {
                                 tmpChapter.freeSpace(getActivity());
                             }
-                            mDialog.dismiss();
-                            mDialog = null;
+                            if (mDialog != null)
+                                mDialog.dismiss();
                             controlVisible = true; //just to close
+                            mDialog = null;
                             getActivity().onBackPressed();
                         }
                     })
