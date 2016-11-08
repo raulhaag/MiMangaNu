@@ -289,11 +289,11 @@ public abstract class ServerBase {
             changes = true;
         }
 
-        if(!simpleList.isEmpty()) {
+        if (!simpleList.isEmpty()) {
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
             Date date = new Date();
             String lastUpdate = dateFormat.format(date);
-            if(!mangaDb.getLastUpdate().equals(lastUpdate)) {
+            if (!mangaDb.getLastUpdate().equals(lastUpdate)) {
                 mangaDb.setLastUpdate(lastUpdate);
                 changes = true;
             }

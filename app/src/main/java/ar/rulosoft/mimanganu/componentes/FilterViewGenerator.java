@@ -4,9 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.util.DisplayMetrics;
-import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -40,8 +40,7 @@ public class FilterViewGenerator {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int dp10 = Math.round(10 / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         int dp20 = Math.round(20 / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        int sp15 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 15, displayMetrics);
-        int sp8 = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 8, displayMetrics);
+        Paint paint = new Paint();
 
         LinearLayout rootLayout = new LinearLayout(context);
         LinearLayout.LayoutParams rootParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -55,8 +54,11 @@ public class FilterViewGenerator {
         layout.setGravity(CENTER);
         layout.setLayoutParams(rootParams);
         scrollView.addView(layout);
+        layout.setGravity(CENTER);
         compoundButtons = new CompoundButton[filters.length][];
         LinearLayout.LayoutParams paramsText = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        GridView.LayoutParams paramsComp = new GridView.LayoutParams(GridView.LayoutParams.WRAP_CONTENT, GridView.LayoutParams.WRAP_CONTENT);
+
         int i = 0;
         for (ServerFilter filter : filters) {
             TextView nTextView = new TextView(context);
@@ -68,7 +70,6 @@ public class FilterViewGenerator {
             layout.addView(nTextView);
             UnScrolledGridView gridView = new UnScrolledGridView(context);
             CompoundAdapter compoundAdapter = new CompoundAdapter(context);
-            gridView.setPadding(dp20, dp20, dp20, dp20);
             if (filter.getFilterType() == ServerFilter.FilterType.SINGLE) {
                 RadioButton[] rb = new RadioButton[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
@@ -81,6 +82,7 @@ public class FilterViewGenerator {
                         rb[j].setTextAppearance(android.R.style.TextAppearance_Small);
                     }
                     rb[j].setText(filter.getOptions()[j]);
+                    rb[j].setLayoutParams(paramsComp);
                     compoundAdapter.add(rb[j]);
                     rGroup.add(rb[j]);
                     compoundButtons[i][j] = rb[j];
@@ -96,13 +98,13 @@ public class FilterViewGenerator {
                         cb[j].setTextAppearance(android.R.style.TextAppearance_Small);
                     }
                     cb[j].setText(filter.getOptions()[j]);
+                    cb[j].setLayoutParams(paramsComp);
                     compoundAdapter.add(cb[j]);
                     compoundButtons[i][j] = cb[j];
                 }
             }
             gridView.setAdapter(compoundAdapter);
             gridView.setNumColumns(GridView.AUTO_FIT);
-            gridView.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
             layout.addView(gridView);
             i++;
         }
