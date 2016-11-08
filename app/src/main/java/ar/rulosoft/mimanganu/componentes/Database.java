@@ -30,19 +30,21 @@ import ar.rulosoft.mimanganu.utils.Util;
 
 public class Database extends SQLiteOpenHelper {
 
+    public static final String COL_NAME = "nombre";
+    public static final String COL_LAST_READ = "ultima";
+    public static final String COL_ID = "id";
+    public static final String COL_IS_FINISHED = "burcar";// buscar updates / isFinished
+    public static final String COL_AUTHOR = "autor";
+    public static final String COL_CAP_STATE = "estado";
+    public static final String COL_CAP_DOWNLOADED = "descargado";
     // Table for entire manga
     private static final String TABLE_MANGA = "manga";
     private static final String COL_SERVER_ID = "server_id";
-    public static final String COL_NAME = "nombre";
     private static final String COL_PATH = "path";
     private static final String COL_IMAGE = "imagen";
     private static final String COL_SYNOPSIS = "sinopsis";
-    public static final String COL_LAST_READ = "ultima";
-    public static final String COL_ID = "id";
     private static final String COL_LAST_INDEX = "last_index";// indice listview
     private static final String COL_NEW = "nuevos";// hay nuevos?
-    public static final String COL_IS_FINISHED = "burcar";// buscar updates / isFinished
-    public static final String COL_AUTHOR = "autor";
     private static final String COL_SCROLL_SENSITIVE = "scroll_s";
     private static final String COL_GENRE = "genres";
     private static final String COL_READ_ORDER = "orden_lectura";// sentido de
@@ -55,8 +57,6 @@ public class Database extends SQLiteOpenHelper {
     private static final String COL_CAP_PATH = "path";
     private static final String COL_CAP_PAGES = "paginas";
     private static final String COL_CAP_PAG_READ = "leidas";
-    public static final String COL_CAP_STATE = "estado";
-    public static final String COL_CAP_DOWNLOADED = "descargado";
     private static final String COL_CAP_ID = "id";
     private static final String COL_CAP_EXTRA = "extra";
     // Database creation sql statement
@@ -106,15 +106,17 @@ public class Database extends SQLiteOpenHelper {
         // Setup path and database name
         if (database_path == null || database_path.length() == 0) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            database_path = (prefs.getString("directorio",
-                    Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
+            database_path = (prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
             database_name = "mangas.db";
         }
         if (!new File(database_path).exists())
             new File(database_path).mkdirs();
         if ((localDB == null) || !localDB.isOpen()) {
             try {
-                localDB = new Database(context).getReadableDatabase();
+                File outFile = new File(database_path, database_name);
+                outFile.setWritable(true);
+                localDB = SQLiteDatabase.openDatabase(outFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+                //localDB = new Database(context).getReadableDatabase(); <--- Why readable only?
             } catch (SQLiteDatabaseCorruptException sqldce) {
                 Log.e("Database", "SQLiteDatabaseCorruptException", sqldce);
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_trying_to_open_db));
