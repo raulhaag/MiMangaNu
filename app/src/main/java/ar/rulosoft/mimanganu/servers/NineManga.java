@@ -49,22 +49,6 @@ public class NineManga extends ServerBase {
     private static String[] orderV = {"Manga Directory", "Latest Releases", "Popular Manga", "New Manga"};
 
     public NineManga() {
-        if (genreV[0] == null) {
-            Thread t0 = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    for (int i = 0; i < genre.length; i++) {
-                        if (i == 0) {
-                            genreV[i] = "index.html";
-                        } else {
-                            genreV[i] = genre[i] + ".html";
-                        }
-                    }
-                }
-            });
-            t0.start();
-        }
-
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.ninemanga);
         this.setServerName("NineManga");
