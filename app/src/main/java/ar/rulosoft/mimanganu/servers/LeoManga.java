@@ -133,7 +133,7 @@ public class LeoManga extends ServerBase {
         String data = getNavigator().get(chapter.getPath());
         String web = "http://" + HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error obteniendo paginas 1");
         data = getNavigator().get(web);
-        String sub = "http://" + HOST + getFirstMatch("id=\"read-chapter\" name=\"(.+?)\"", data, "Error obteniendo paginas 3");
+        String sub = "http://" + HOST + getFirstMatch("id=\"read-chapter\" data-name=\"(.+?)\"", data, "Error obteniendo paginas 3");
         String[] pos = getFirstMatch("pos=\"(.+?)\"", data, "Error obteniendo paginas 4").split(";");
         chapter.setPages(pos.length);
         String images = "";
