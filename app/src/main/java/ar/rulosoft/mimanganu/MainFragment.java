@@ -34,6 +34,8 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.Toast;
 
+import org.acra.ACRA;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -242,14 +244,19 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             @Override
             public boolean onQueryTextChange(String value) {
                 ArrayList<Manga> mangaList;
-                if(value.contains("'"))
-                    value = value.replaceAll("'","");
-                mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
-                        "SELECT id " +
-                        "FROM manga " +
-                        "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                grid.setAdapter(adapter);
+                if (value.contains("'"))
+                    value = value.replaceAll("'", "''");
+                try {
+                    mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                            "SELECT id " +
+                            "FROM manga " +
+                            "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
+                    adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                    grid.setAdapter(adapter);
+                } catch (Exception e) {
+                    Log.e("MF", "Exception", e);
+                    ACRA.getErrorReporter().handleException(e);
+                }
                 return false;
             }
         });
@@ -543,7 +550,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
                     MangaFragment mangaFragment = new MangaFragment();
                     mangaFragment.setArguments(bundle);
-                    ((MainActivity) getActivity()).replaceFragment(mangaFragment, "MangaFragment");
+                    //In rare cases State loss occurs
+                    ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
                 }
             }
         });
@@ -769,7 +777,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         @Override
         protected void onCancelled() {
             Util.getInstance().cancelNotification(mNotifyID);
-            if (context != null) {
+            if (context != null && isAdded()) {
                 Util.getInstance().toast(context, getString(R.string.update_search_cancelled));
                 if (Util.n > (48 - threads)) {
                     Util.getInstance().toast(context, getString(R.string.notification_tray_is_full));

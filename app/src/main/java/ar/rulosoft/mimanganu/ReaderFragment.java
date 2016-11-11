@@ -871,7 +871,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     loadChapter(result, LoadMode.SAVED);
                 } catch (Exception e) {
                     Log.e("ReaderFragment", "Exception", e);
-                    Toast.makeText(getContext(), Log.getStackTraceString(e), Toast.LENGTH_LONG).show();
+                    //Toast.makeText(getContext(), Log.getStackTraceString(e), Toast.LENGTH_LONG).show();
                 }
             }
             super.onPostExecute(result);

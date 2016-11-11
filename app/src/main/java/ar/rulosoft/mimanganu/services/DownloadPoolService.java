@@ -363,6 +363,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         String path = "";
         int lcId = -1;
         int n = -1;
+        errors = 0;
         while (hasDownloadsPending()) {
             if (slots > 0) {
                 slots--;

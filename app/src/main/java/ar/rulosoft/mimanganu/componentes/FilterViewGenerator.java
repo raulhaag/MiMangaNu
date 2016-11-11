@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.graphics.Paint;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -31,16 +30,14 @@ import static android.widget.LinearLayout.VERTICAL;
  */
 
 public class FilterViewGenerator {
-
-    public CompoundButton[][] compoundButtons;
-    FilterListener mFilterListener;
-    AlertDialog dialog;
+    private CompoundButton[][] compoundButtons;
+    private FilterListener mFilterListener;
+    private AlertDialog dialog;
 
     public FilterViewGenerator(Context context, String title, final ServerFilter[] filters, int[][] selection, int color) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         int dp10 = Math.round(10 / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
         int dp20 = Math.round(20 / (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        Paint paint = new Paint();
 
         LinearLayout rootLayout = new LinearLayout(context);
         LinearLayout.LayoutParams rootParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
@@ -150,15 +147,15 @@ public class FilterViewGenerator {
                             int[][] result = new int[filters.length][];
                             int j = 0;
                             for (CompoundButton[] cbs : compoundButtons) {
-                                ArrayList<Integer> checkeds = new ArrayList<Integer>();
+                                ArrayList<Integer> checked = new ArrayList<Integer>();
                                 for (int k = 0; k < cbs.length; k++) {
                                     if (cbs[k].isChecked()) {
-                                        checkeds.add(k);
+                                        checked.add(k);
                                     }
                                 }
-                                result[j] = new int[checkeds.size()];
-                                for (int k = 0; k < checkeds.size(); k++) {
-                                    result[j][k] = checkeds.get(k);
+                                result[j] = new int[checked.size()];
+                                for (int k = 0; k < checked.size(); k++) {
+                                    result[j][k] = checked.get(k);
                                 }
                                 j++;
                             }
