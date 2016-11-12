@@ -113,10 +113,10 @@ public class Database extends SQLiteOpenHelper {
             new File(database_path).mkdirs();
         if ((localDB == null) || !localDB.isOpen()) {
             try {
-                File outFile = new File(database_path, database_name);
-                outFile.setWritable(true);
-                localDB = SQLiteDatabase.openDatabase(outFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
-                //localDB = new Database(context).getReadableDatabase(); <--- Why readable only?
+                //File outFile = new File(database_path, database_name);
+                //outFile.setWritable(true);
+                //localDB = SQLiteDatabase.openDatabase(outFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+                localDB = new Database(context).getWritableDatabase(); // Now it's writable! I think.
             } catch (SQLiteDatabaseCorruptException sqldce) {
                 Log.e("Database", "SQLiteDatabaseCorruptException", sqldce);
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_trying_to_open_db));
@@ -811,7 +811,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public void copyDbToSd(Context c) {
+    private void copyDbToSd(Context c) {
         File dbFile = c.getDatabasePath("mangas.db");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         String ruta = sp.getString("directorio",
@@ -832,7 +832,7 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public boolean doesTableExist(SQLiteDatabase db, String tableName) {
+    private boolean doesTableExist(SQLiteDatabase db, String tableName) {
         Cursor cursor = db.rawQuery(
                 "select DISTINCT tbl_name from sqlite_master where tbl_name = '" +
                         tableName + "'", null);
