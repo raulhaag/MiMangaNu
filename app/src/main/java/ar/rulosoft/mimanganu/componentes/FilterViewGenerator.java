@@ -5,15 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
+import android.support.v7.widget.AppCompatCheckBox;
+import android.support.v7.widget.AppCompatRadioButton;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.GridView;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -68,11 +68,11 @@ public class FilterViewGenerator {
             UnScrolledGridView gridView = new UnScrolledGridView(context);
             CompoundAdapter compoundAdapter = new CompoundAdapter(context);
             if (filter.getFilterType() == ServerFilter.FilterType.SINGLE) {
-                RadioButton[] rb = new RadioButton[filter.getOptions().length];
+                AppCompatRadioButton[] rb = new AppCompatRadioButton[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
                 CompoundGroup rGroup = new CompoundGroup(true);
                 for (int j = 0; j < filter.getOptions().length; j++) {
-                    rb[j] = new RadioButton(context);
+                    rb[j] = new AppCompatRadioButton(context);
                     if (Build.VERSION.SDK_INT < 23) {
                         rb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
                     } else {
@@ -85,10 +85,10 @@ public class FilterViewGenerator {
                     compoundButtons[i][j] = rb[j];
                 }
             } else {
-                CheckBox[] cb = new CheckBox[filter.getOptions().length];
+                AppCompatCheckBox[] cb = new AppCompatCheckBox[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
                 for (int j = 0; j < filter.getOptions().length; j++) {
-                    cb[j] = new CheckBox(context);
+                    cb[j] = new AppCompatCheckBox(context);
                     if (Build.VERSION.SDK_INT < 23) {
                         cb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
                     } else {
@@ -181,7 +181,7 @@ public class FilterViewGenerator {
                             for (CompoundButton cb : cbs) {
                                 cb.setChecked(false);
                             }
-                            if (cbs[0] instanceof RadioButton)
+                            if (cbs[0] instanceof AppCompatRadioButton)
                                 cbs[0].setChecked(true);
                         }
                     }
