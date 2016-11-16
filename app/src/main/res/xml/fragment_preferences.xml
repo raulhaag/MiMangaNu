@@ -244,6 +244,10 @@
             android:key="reset_server_list_to_defaults"
             android:summary="@string/reset_server_list_to_defaults_subtitle"
             android:title="@string/reset_server_list_to_defaults_title" />
+        <android.support.v7.preference.Preference
+            android:key="vacuum_database"
+            android:summary="@string/vacuum_database_subtitle"
+            android:title="@string/vacuum_database_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/about">

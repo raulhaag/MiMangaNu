@@ -845,4 +845,13 @@ public class Database extends SQLiteOpenHelper {
         }
         return false;
     }
+
+    public static void vacuumDatabase(Context context) {
+        SQLiteDatabase database = getDatabase(context);
+        try {
+            database.execSQL("VACUUM");
+        } catch (Exception e) {
+            Log.e("Database", "Exception", e);
+        }
+    }
 }
