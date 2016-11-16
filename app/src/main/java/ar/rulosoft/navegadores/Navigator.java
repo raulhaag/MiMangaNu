@@ -30,8 +30,7 @@ public class Navigator {
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     public static Navigator navigator;
-    public static String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
-    UserAgentInterceptor userAgentInterceptor = new UserAgentInterceptor(USER_AGENT);
+    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
 
@@ -43,7 +42,7 @@ public class Navigator {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .cookieJar(cookieJar)
-                .addNetworkInterceptor(userAgentInterceptor)
+                .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
                 .build();
     }
 
@@ -168,11 +167,11 @@ public class Navigator {
         }
     }
 
-    public String formatResponseBody(ResponseBody body) throws IOException {
-        return body.string().replaceAll("(\n|\r)","");
+    private String formatResponseBody(ResponseBody responseBody) throws IOException {
+        return responseBody.string().replaceAll("(\n|\r)","");
     }
 
-    public RequestBody getPostParams() throws Exception {
+    private RequestBody getPostParams() throws Exception {
         FormBody.Builder builder = new FormBody.Builder();
         for (Parameter p : parameters) {
             builder.add(p.getKey(), p.getValue());
@@ -229,7 +228,7 @@ class UserAgentInterceptor implements Interceptor {
 
     private String userAgent;
 
-    public UserAgentInterceptor(String userAgent) {
+    UserAgentInterceptor(String userAgent) {
         this.userAgent = userAgent;
     }
 

@@ -414,37 +414,55 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             case R.id.sort_number:
                 pm.edit().putInt(CHAPTERS_ORDER, 1).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DESC);
+                if(mChapterAdapter != null)
+                    mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_DESC);
+                else
+                    Log.e("MangaFragment", "can't sort chapters mChapterAdapter is null");
                 item.setChecked(true);
                 break;
 
             case R.id.sort_number_asc:
                 pm.edit().putInt(CHAPTERS_ORDER, 2).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
+                if (mChapterAdapter != null)
+                    mChapterAdapter.sort_chapters(Chapter.Comparators.NUMBERS_ASC);
+                else
+                    Log.e("MangaFragment", "can't sort chapters mChapterAdapter is null");
                 item.setChecked(true);
                 break;
 
             case R.id.sort_title:
                 pm.edit().putInt(CHAPTERS_ORDER, 3).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DESC);
+                if (mChapterAdapter != null)
+                    mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_DESC);
+                else
+                    Log.e("MangaFragment", "can't sort chapters mChapterAdapter is null");
                 item.setChecked(true);
                 break;
 
             case R.id.sort_title_asc:
                 pm.edit().putInt(CHAPTERS_ORDER, 4).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
+                if (mChapterAdapter != null)
+                    mChapterAdapter.sort_chapters(Chapter.Comparators.TITLE_ASC);
+                else
+                    Log.e("MangaFragment", "can't sort chapters mChapterAdapter is null");
                 item.setChecked(true);
                 break;
 
             case R.id.sort_as_added_to_db_asc_chapters:
                 pm.edit().putInt(CHAPTERS_ORDER, 5).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_ASC);
+                if (mChapterAdapter != null)
+                    mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_ASC);
+                else
+                    Log.e("MangaFragment", "can't sort chapters mChapterAdapter is null");
                 item.setChecked(true);
                 break;
 
             case R.id.sort_as_added_to_db_desc_chapters:
                 pm.edit().putInt(CHAPTERS_ORDER, 0).apply();
-                mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_DESC);
+                if (mChapterAdapter != null)
+                    mChapterAdapter.sort_chapters(Chapter.Comparators.DATABASE_ADDED_DESC);
+                else
+                    Log.e("MangaFragment", "can't sort chapters mChapterAdapter is null");
                 item.setChecked(true);
                 break;
         }

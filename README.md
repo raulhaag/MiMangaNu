@@ -31,6 +31,24 @@ Downloads
 ![separator](/images/separador.png)[![Download Travis](/images/downloadTravis.png)](http://mimanganu.byethost5.com/?order=modified&sort=desc)
 
 
+Changelog
+---------
+Cambios en v1.56:
+* Fix LeoManga.
+* Agregada fecha de ultima atulización del manga (basada en el ultimo update encotrado por MMN).
+* Agregada preferencia para importar mangas de un directorio automaticamnete al buscar actualizaciones.
+* ASgregada opcion para importar todas las carpetas como mangas.
+* Corregidos varios errores y mejoras realizadas.
+
+Changes in v1.56:
+* Fix LeoManga.
+* Show time of last update (based on the last time a chapter was added).
+* Add setting to auto import folders as Mangas in a specified folder after the manual update finishes.
+* Add setting to import all sub-folders as Mangas.
+* Bug fixes and performance improvements.
+
+
+
 The MIT License (MIT)
 
      Copyright &#169; 2014 rulosoft (Raul Haag)
@@ -64,4 +82,3 @@ We are not explicitly endorsed by any of them.
 Contribuciones de Dostoi, TheSniperFan, xtj-9182, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
 
 Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.
-
