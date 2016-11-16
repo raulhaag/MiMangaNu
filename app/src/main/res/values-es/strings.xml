@@ -222,4 +222,15 @@
     <string name="one_more_chapter_not_displayed_here">y un capítulo que no pudo ser mostrado &#8230;</string>
     <string name="vibrate">Vibrar</string>
     <string name="x_more_chapters_not_displayed_here">y más capítulos que no pudieron ser mostrados &#8230;</string>
+    <string name="adding_folders_as_mangas">Agragar carpetas como Mangas</string>
+    <string name="auto_import_path_subtitle">Auto impotar mangas del directorio seleccionado</string>
+    <string name="auto_import_path_title">Ruta al directorio para importar</string>
+    <string name="auto_import_subtitle">Auto impotar mangas del directorio seleccionado al buscar actualizaciones</string>
+    <string name="auto_import_title">Auto importar mangas</string>
+    <string name="chapter_download_errors">Descarga de capítulo fallida</string>
+    <string name="error_database_is_read_only"></string>
+    <string name="last_update">Ultima Actulización</string>
+    <string name="multi_import_subtitle">Cuando se agrega manga por medio de FromFolder todos lo directorio seran importados.</string>
+    <string name="use_only_wifi_updates_subtitle">Solo para actulizaciones (Previene el uso de plan de datos).</string>
+    <string name="multi_import_title">Multi importar</string>
 </resources>
