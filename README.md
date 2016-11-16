@@ -34,10 +34,17 @@ Downloads
 Changelog
 ---------
 Changes in v1.56:
-* Show time of last update (based on the last time a chapter was added)
-* Add setting to auto import folders as Mangas in a specified folder 
-after the manual update finishes.
-* Add setting to import all sub-folders as Mangas
+* Fix LeoManga.
+* Agregada fecha de ultima atulización del manga (basada en el ultimo update encotrado por MMN).
+* Agregada preferencia para importar mangas de un directorio automaticamnete al buscar actualizaciones.
+* ASgregada opcion para importar todas las carpetas como mangas.
+* Corregidos varios errores y mejoras realizadas.
+
+Changes in v1.56:
+* Fix LeoManga.
+* Show time of last update (based on the last time a chapter was added).
+* Add setting to auto import folders as Mangas in a specified folder after the manual update finishes.
+* Add setting to import all sub-folders as Mangas.
 * Bug fixes and performance improvements.
 
 Cambios en v1.55:
