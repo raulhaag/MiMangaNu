@@ -49,7 +49,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     int serverID;
     private boolean mStart = true;
     private ServerBase serverBase;
-    private RecyclerView grid;
+    private RecyclerView recyclerViewGrid;
     private ProgressBar loading;
     private MangaRecAdapterBase mAdapter;
     private boolean newTask = false;
@@ -133,7 +133,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         if (filters == null) {
             filters = serverBase.getBasicFilter(getActivity());
         }
-        grid = (RecyclerView) getView().findViewById(R.id.grilla);
+        recyclerViewGrid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         DisplayMetrics outMetrics = new DisplayMetrics();
@@ -147,11 +147,11 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             columnas = 2;
         else if (columnas > 6)
             columnas = 6;
-        grid.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
+        recyclerViewGrid.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
         if (mAdapter != null) {
             mAdapter.setOnCreateContextMenuListener(this);
-            grid.setAdapter(mAdapter);
-            grid.getLayoutManager().scrollToPosition(firstVisibleItem);
+            recyclerViewGrid.setAdapter(mAdapter);
+            recyclerViewGrid.getLayoutManager().scrollToPosition(firstVisibleItem);
             loading.setVisibility(View.INVISIBLE);
         } else {
             loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
@@ -173,7 +173,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
     @Override
     public void onPause() {
-        firstVisibleItem = ((GridLayoutManager) grid.getLayoutManager()).findFirstVisibleItemPosition();
+        firstVisibleItem = ((GridLayoutManager) recyclerViewGrid.getLayoutManager()).findFirstVisibleItemPosition();
         super.onPause();
     }
 
@@ -284,7 +284,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                 Util.getInstance().toast(getContext(), error);
             } else {
                 page++;
-                if (result != null && result.size() != 0 && grid != null) {
+                if (result != null && result.size() != 0 && recyclerViewGrid != null) {
                     if (isAdded()) {
                         if (mAdapter == null) {
                             if (serverBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
@@ -295,7 +295,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                             mAdapter.setOnCreateContextMenuListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setMangaClickListener(ServerFilteredNavigationFragment.this);
-                            grid.setAdapter(mAdapter);
+                            recyclerViewGrid.setAdapter(mAdapter);
                         } else {
                             mAdapter.addAll(result);
                         }

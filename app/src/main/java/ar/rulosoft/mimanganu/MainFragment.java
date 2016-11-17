@@ -228,6 +228,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                setListManga(false);
                 mMenu.findItem(R.id.action_view_download).setVisible(true);
                 mMenu.findItem(R.id.submenu).setVisible(true);
                 return false;
@@ -243,19 +244,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
             @Override
             public boolean onQueryTextChange(String value) {
-                ArrayList<Manga> mangaList;
-                if (value.contains("'"))
-                    value = value.replaceAll("'", "''");
-                try {
-                    mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
-                            "SELECT id " +
-                            "FROM manga " +
-                            "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                    adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                    grid.setAdapter(adapter);
-                } catch (Exception e) {
-                    Log.e("MF", "Exception", e);
-                    ACRA.getErrorReporter().handleException(e);
+                if(!value.isEmpty()) {
+                    ArrayList<Manga> mangaList;
+                    if (value.contains("'"))
+                        value = value.replaceAll("'", "''");
+                    try {
+                        mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                                "SELECT id " +
+                                "FROM manga " +
+                                "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
+                        adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                        grid.setAdapter(adapter);
+                    } catch (Exception e) {
+                        Log.e("MF", "Exception", e);
+                        ACRA.getErrorReporter().handleException(e);
+                    }
                 }
                 return false;
             }
