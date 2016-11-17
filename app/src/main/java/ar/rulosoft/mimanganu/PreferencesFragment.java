@@ -27,6 +27,7 @@ import ar.rulosoft.custompref.ColorListDialogPref;
 import ar.rulosoft.custompref.PreferenceListDirFragment;
 import ar.rulosoft.custompref.PreferencesListDir;
 import ar.rulosoft.custompref.SeekBarCustomPreference;
+import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -326,6 +327,25 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 Preference resetServerListToDefaults = getPreferenceManager().findPreference("reset_server_list_to_defaults");
                 resetServerListToDefaults.setEnabled(false);
                 prefs.edit().putString("unused_servers", "").apply();
+                return true;
+            }
+        });
+
+        final Preference prefVacuumDatabase = getPreferenceManager().findPreference("vacuum_database");
+        prefVacuumDatabase.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Preference vacuumDatabase = getPreferenceManager().findPreference("vacuum_database");
+                vacuumDatabase.setEnabled(false);
+                Thread t0 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.getInstance().createNotificationWithProgressbar(getContext(), 70, getString(R.string.vacuum_database_notification_text), "");
+                        Database.vacuumDatabase(getContext());
+                        Util.getInstance().cancelNotification(70);
+                    }
+                });
+                t0.start();
                 return true;
             }
         });

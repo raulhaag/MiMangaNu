@@ -21,7 +21,8 @@ public class R2LPagedReader extends HorizontalPagedReader {
                     readerListener.onPageChanged(transformPage(position));
                 }
                 currentPage = position;
-                mPageAdapter.setCurrentPage(position);
+                if (mPageAdapter != null)
+                    mPageAdapter.setCurrentPage(position);
             }
 
             @Override

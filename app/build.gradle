@@ -45,7 +45,7 @@ android {
 }
 
 dependencies {
-    final ANDROID_SUPPORT = '25.0.0'
+    final ANDROID_SUPPORT = '25.0.1'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.android.support:support-v4:$ANDROID_SUPPORT"
     compile "com.android.support:design:$ANDROID_SUPPORT"

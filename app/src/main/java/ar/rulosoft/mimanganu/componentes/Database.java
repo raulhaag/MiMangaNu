@@ -113,9 +113,6 @@ public class Database extends SQLiteOpenHelper {
             new File(database_path).mkdirs();
         if ((localDB == null) || !localDB.isOpen()) {
             try {
-                //File outFile = new File(database_path, database_name);
-                //outFile.setWritable(true);
-                //localDB = SQLiteDatabase.openDatabase(outFile.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
                 localDB = new Database(context).getWritableDatabase(); // Now it's writable! I think.
             } catch (SQLiteDatabaseCorruptException sqldce) {
                 Log.e("Database", "SQLiteDatabaseCorruptException", sqldce);
@@ -844,5 +841,14 @@ public class Database extends SQLiteOpenHelper {
             cursor.close();
         }
         return false;
+    }
+
+    public static void vacuumDatabase(Context context) {
+        SQLiteDatabase database = getDatabase(context);
+        try {
+            database.execSQL("VACUUM");
+        } catch (Exception e) {
+            Log.e("Database", "Exception", e);
+        }
     }
 }
