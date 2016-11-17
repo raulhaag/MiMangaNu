@@ -301,11 +301,13 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             if (nextChapter != null) {
                 if (!nextChapter.isDownloaded()) {
                     if (pm.getBoolean("download_next_chapter_automatically", false)) {
-                        try {
-                            DownloadPoolService.addChapterDownloadPool(getActivity(), nextChapter, false);
-                            Util.getInstance().toast(getActivity(), getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
-                        } catch (Exception e) {
-                            Log.e("ServB", "Download add pool error", e);
+                        if (DownloadPoolService.isNewDownload(nextChapter.getId())) {
+                            try {
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), nextChapter, false);
+                                Util.getInstance().toast(getActivity(), getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
+                            } catch (Exception e) {
+                                Log.e("ServB", "Download add pool error", e);
+                            }
                         }
                     }
                 }
