@@ -14,6 +14,7 @@ import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -379,6 +380,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             editor.putString("connection_timeout", "10").apply();
             editor.putString("write_timeout", "10").apply();
             editor.putString("read_timeout", "30").apply();
+            int tmpGridColumns = getGridColumnSizeFromWidth();
+            editor.putString("grid_columns", "" + tmpGridColumns).apply();
+            final SeekBarCustomPreference tmpSeekBar = (SeekBarCustomPreference) getPreferenceManager().findPreference("grid_columns");
+            tmpSeekBar.setProgress(tmpGridColumns);
         }
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
     }
@@ -396,6 +401,18 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         final SeekBarCustomPreference tmpSeekBar = (SeekBarCustomPreference) getPreferenceManager().findPreference(preference);
         tmpSeekBar.setProgress(threads);
+    }
+
+    private int getGridColumnSizeFromWidth() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float dpWidth = displayMetrics.widthPixels / getResources().getDisplayMetrics().density;
+        int columnSize = (int) (dpWidth / 150);
+        if (columnSize < 2)
+            columnSize = 2;
+        else if (columnSize > 6)
+            columnSize = 6;
+        return columnSize;
     }
 
     @Override

@@ -238,4 +238,6 @@
     <string name="vacuum_database_title">Vacuum Database</string>
     <string name="vacuum_database_subtitle">Tap here to vacuum the database. This will clean up the database and shrink it\'s file size. Please don\'t interrupt this operation while it\'s running.</string>
     <string name="vacuum_database_notification_text">Cleaning up Database</string>
+    <string name="grid_columns_title">Grid Columns</string>
+    <string name="grid_columns_subtitle">Grid Columns: %s</string>
 </resources>
