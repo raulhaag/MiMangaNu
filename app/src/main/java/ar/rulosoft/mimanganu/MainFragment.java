@@ -22,7 +22,6 @@ import android.support.v7.widget.SearchView;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -228,6 +227,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         searchView.setOnCloseListener(new SearchView.OnCloseListener() {
             @Override
             public boolean onClose() {
+                setListManga(false);
                 mMenu.findItem(R.id.action_view_download).setVisible(true);
                 mMenu.findItem(R.id.submenu).setVisible(true);
                 return false;
@@ -243,19 +243,21 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
             @Override
             public boolean onQueryTextChange(String value) {
-                ArrayList<Manga> mangaList;
-                if (value.contains("'"))
-                    value = value.replaceAll("'", "''");
-                try {
-                    mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
-                            "SELECT id " +
-                            "FROM manga " +
-                            "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                    adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                    grid.setAdapter(adapter);
-                } catch (Exception e) {
-                    Log.e("MF", "Exception", e);
-                    ACRA.getErrorReporter().handleException(e);
+                if(!value.isEmpty()) {
+                    ArrayList<Manga> mangaList;
+                    if (value.contains("'"))
+                        value = value.replaceAll("'", "''");
+                    try {
+                        mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
+                                "SELECT id " +
+                                "FROM manga " +
+                                "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
+                        adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                        grid.setAdapter(adapter);
+                    } catch (Exception e) {
+                        Log.e("MF", "Exception", e);
+                        ACRA.getErrorReporter().handleException(e);
+                    }
                 }
                 return false;
             }
@@ -510,6 +512,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         return super.onContextItemSelected(item);
     }
 
+    private int getGridColumnSizeFromWidth() {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float dpWidth = displayMetrics.widthPixels / getResources().getDisplayMetrics().density;
+        int columnSize = (int) (dpWidth / 150);
+        if (columnSize < 2)
+            columnSize = 2;
+        else if (columnSize > 6)
+            columnSize = 6;
+        return columnSize;
+    }
+
     public ViewGroup getMMView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_mis_mangas, container, false);
@@ -523,17 +537,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 updateListTask.execute();
             }
         });
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float density = getResources().getDisplayMetrics().density;
-        float dpWidth = outMetrics.widthPixels / density;
-        int columnas = (int) (dpWidth / 150);
-        if (columnas < 2)
-            columnas = 2;
-        else if (columnas > 6)
-            columnas = 6;
-        grid.setNumColumns(columnas);
+        int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
+        Log.i("MF", "columnSize: " + columnSize);
+        if (columnSize == -1)
+            columnSize = getGridColumnSizeFromWidth();
+        grid.setNumColumns(columnSize);
         if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
             swipeReLayout.post(new Runnable() {
                 @Override

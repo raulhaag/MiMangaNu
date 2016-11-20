@@ -301,11 +301,13 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             if (nextChapter != null) {
                 if (!nextChapter.isDownloaded()) {
                     if (pm.getBoolean("download_next_chapter_automatically", false)) {
-                        try {
-                            DownloadPoolService.addChapterDownloadPool(getActivity(), nextChapter, false);
-                            Util.getInstance().toast(getActivity(), getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
-                        } catch (Exception e) {
-                            Log.e("ServB", "Download add pool error", e);
+                        if (DownloadPoolService.isNewDownload(nextChapter.getId())) {
+                            try {
+                                DownloadPoolService.addChapterDownloadPool(getActivity(), nextChapter, false);
+                                Util.getInstance().toast(getActivity(), getResources().getString(R.string.downloading) + " " + nextChapter.getTitle());
+                            } catch (Exception e) {
+                                Log.e("ServB", "Download add pool error", e);
+                            }
                         }
                     }
                 }
@@ -336,15 +338,14 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private void hideSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             if (pm.getBoolean("show_status_bar", false)) {
-                getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
             } else {
                 getActivity().getWindow().getDecorView().setSystemUiVisibility(
                         View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
             }
         }

@@ -206,13 +206,15 @@ public class MangaFolderSelect extends DialogFragment {
         @Override
         protected void onPreExecute() {
             mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
-            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
+            if(isAdded())
+                Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
             super.onPreExecute();
         }
 
         @Override
         protected void onProgressUpdate(final Integer... values) {
-            Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
+            if(isAdded())
+                Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
             super.onProgressUpdate(values);
         }
 

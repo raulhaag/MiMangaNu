@@ -122,7 +122,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         }
     }
 
-    private static boolean isNewDownload(int cid) {
+    public static boolean isNewDownload(int cid) {
         boolean result = true;
         for (ChapterDownload dc : chapterDownloads) {
             if (dc.chapter.getId() == cid) {
