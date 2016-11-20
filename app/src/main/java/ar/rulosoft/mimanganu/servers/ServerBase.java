@@ -145,6 +145,7 @@ public abstract class ServerBase {
     }
 
     public static Navigator getNavigator() {
+        Navigator.navigator.flushParameter();//remove old post parameters
         return Navigator.navigator;
     }
 

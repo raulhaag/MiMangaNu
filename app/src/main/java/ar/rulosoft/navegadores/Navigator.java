@@ -26,11 +26,11 @@ import okhttp3.ResponseBody;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navigator {
+    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     public static Navigator navigator;
-    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
 
@@ -210,6 +210,10 @@ public class Navigator {
             }
         }
         return ParametrosForm;
+    }
+
+    public void flushParameter() {
+        parameters = new ArrayList<>();
     }
 
     public OkHttpClient getHttpClient() {

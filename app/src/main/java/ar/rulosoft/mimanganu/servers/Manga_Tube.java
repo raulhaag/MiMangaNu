@@ -12,6 +12,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by Raul on 02/12/2015.
@@ -57,8 +58,9 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        getNavigator().addPost("adult","true");
-        String source = getNavigator().post(manga.getPath());
+        Navigator nav = getNavigator();
+        nav.addPost("adult", "true");
+        String source = nav.post(manga.getPath());
         // Front
         manga.setImages(getFirstMatchDefault("<img src=\"(http://www.manga-tube.com/content/comics\\/.+?)\"", source, ""));
         // Summary
@@ -85,15 +87,17 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        getNavigator().addPost("adult","true");
-        String source = getNavigator().post(getPagesNumber(chapter,page));
+        Navigator nav = getNavigator();
+        nav.addPost("adult", "true");
+        String source = nav.post(getPagesNumber(chapter, page));
         return getFirstMatch("<img class=\"open\" src=\"(.+?)\"",source,"Error getting image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        getNavigator().addPost("adult","true");
-        String source = getNavigator().post(chapter.getPath());
+        Navigator nav = getNavigator();
+        nav.addPost("adult", "true");
+        String source = nav.post(chapter.getPath());
         int pages = Integer.parseInt(getFirstMatch("<div class=\"tbtitle dropdown_parent dropdown_right\"><div class=\"text\">(\\d+)",source,"Error"));
         chapter.setPages(pages);
     }

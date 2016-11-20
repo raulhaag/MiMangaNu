@@ -11,6 +11,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 public class KissManga extends ServerBase {
 
@@ -80,12 +81,13 @@ public class KissManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         // make use of AdvanceSearch, more data is then needed
-        getNavigator().addPost("authorArtist", "");
-        getNavigator().addPost("mangaName", term);
-        getNavigator().addPost("status", "");
-        getNavigator().addPost("genres", "");
+        Navigator nav = getNavigator();
+        nav.addPost("authorArtist", "");
+        nav.addPost("mangaName", term);
+        nav.addPost("status", "");
+        nav.addPost("genres", "");
 
-        String source = getNavigator().post(IP, "/AdvanceSearch", HOST);
+        String source = nav.post(IP, "/AdvanceSearch", HOST);
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);

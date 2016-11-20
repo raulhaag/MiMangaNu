@@ -11,6 +11,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 public class ReadComicOnline extends ServerBase {
 
@@ -59,9 +60,9 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        getNavigator().addPost("keyword", term);
-        String source = getNavigator().post("http://" + HOST + "/Search/Comic");
-
+        Navigator nav = getNavigator();
+        nav.addPost("keyword", term);
+        String source = nav.post("http://" + HOST + "/Search/Comic");
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
         Matcher m = p.matcher(source);
