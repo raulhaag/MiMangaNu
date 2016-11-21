@@ -226,7 +226,7 @@
             android:summary="@string/grid_columns_subtitle"
             android:title="@string/grid_columns_title"
             app:val_max="6"
-            app:val_min="2" />
+            app:val_min="1" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/misc_settings">

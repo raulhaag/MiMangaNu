@@ -57,14 +57,14 @@ public class MangaEden extends ServerBase {
     };
 
     private static String[] order = new String[]{
-            "Manga Title", "Views", "Chapters"
+            "Views", "Manga Title", "Chapters"
     };
     private static String[] orderV = new String[]{
-            "&order=-0", "&order=1", "&order=2"
+            "&order=1", "&order=-0", "&order=2"
     };
 
 
-    public MangaEden() {
+    MangaEden() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangaeden);
         this.setServerName("MangaEden");

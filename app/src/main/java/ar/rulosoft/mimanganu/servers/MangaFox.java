@@ -21,14 +21,7 @@ public class MangaFox extends ServerBase {
             "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life", "Smut", "Sports",
             "Supernatural", "Tragedy", "Webtoons", "Yuri"
     };
-    private static final String[] genreV = {
-            "action", "adult", "adventure", "comedy", "doujinshi", "Drama", "ecchi",
-            "fantasy", "gender-bender", "harem", "historical", "horror", "josei", "martial-arts",
-            "mecha", "mystery", "one_shot", "psychological", "romance", "school-life", "sci-fi",
-            "seinen", "shoujo", "shoujo-Ai", "shounen", "slice-of-life", "smut", "sports",
-            "supernatural", "tragedy", "webtoons", "yuri"
-    };
-    private static final String PATRON_CAPS_VIS = "<a class=\"manga_img\" href=\"(.+?)\".+?src=\"(.+?)\".+?(<em class=\"tag_completed\"></em>						</a>|</a>).+?rel=\".+?\">(.+?)<";
+    //private static final String PATRON_CAPS_VIS = "<a class=\"manga_img\" href=\"(.+?)\".+?src=\"(.+?)\".+?(<em class=\"tag_completed\"></em>						</a>|</a>).+?rel=\".+?\">(.+?)<";
     private static final String PATTERN_SERIE = "<li><a href=\"(.+?)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">(.+?)</a></li>";
     private static final String SEGMENTO = "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
     private static final String PATRON_PORTADA = "<div class=\"cover\">.+?src=\"(.+?)\"";
@@ -49,16 +42,14 @@ public class MangaFox extends ServerBase {
             "&is_completed=", "&is_completed=1", "&is_completed=0"
     };
     private static String[] order = new String[]{
-            "Manga Title", "Views", "Chapters"
+            "Views", "Manga Title", "Chapters"
     };
     private static String[] orderV = new String[]{
-            "&sort=name&order=az", "&sort=views&order=za", "&sort=total_chapters&order=za"
+            "&sort=views&order=za", "&sort=name&order=az", "&sort=total_chapters&order=za"
     };
-    private static String[] orden = {"Popularity", "A - Z", "Rating", "Last Update"};
-    private static String[] ordenM = {"", "?az", "?rating", "?latest"};
-    long last_search;
+    private long last_search;
 
-    public MangaFox() {
+    MangaFox() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangafox_icon);
         this.setServerName("MangaFox");

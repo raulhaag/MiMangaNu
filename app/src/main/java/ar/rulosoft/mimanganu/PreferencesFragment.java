@@ -99,7 +99,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         /** Set summary for Reader preference + seamless chapter transitions summary **/
         // true: Paged Reader; false: Continuous Reader
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         Boolean readType = prefs.getBoolean("reader_type", false);
         Preference reader_type = getPreferenceManager().findPreference("reader_type");
         Preference seamlessChapterTransitionsPref = getPreferenceManager().findPreference("seamless_chapter_transitions");
@@ -288,7 +287,30 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         seekBarReadTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d("PF","rt: "+Integer.parseInt(prefs.getString("read_timeout", "30")));
                 Navigator.readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
+                return true;
+            }
+        });
+
+        Preference gridColumnsPref = getPreferenceManager().findPreference("grid_columns");
+        if (Integer.parseInt(prefs.getString("grid_columns", "2")) == 1) {
+            gridColumnsPref.setSummary("Automatic Detection");
+        } else {
+            gridColumnsPref.setSummary(getString(R.string.grid_columns_subtitle));
+        }
+        final SeekBarCustomPreference seekBarGridColumns = (SeekBarCustomPreference) getPreferenceManager().findPreference("grid_columns");
+        seekBarGridColumns.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d("PF","onPrefChange");
+                Preference gridColumnsPref = getPreferenceManager().findPreference("grid_columns");
+                Log.d("PF", "gridColumns: " + Integer.parseInt(prefs.getString("grid_columns", "2")));
+                if (Integer.parseInt(prefs.getString("grid_columns", "2")) == 1) {
+                    gridColumnsPref.setSummary("Automatic Detection");
+                } else {
+                    gridColumnsPref.setSummary(getString(R.string.grid_columns_subtitle));
+                }
                 return true;
             }
         });

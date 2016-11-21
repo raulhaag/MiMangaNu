@@ -24,15 +24,6 @@ public class MangaPanda extends ServerBase {
             "<a href=\"([^\"]+)\">([^\"]+?)</a>.:([^\"]+?)</td>";
     private static final String PATTERN_CHAPTER_WEB =
             "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
-    private static final String[] genreV = {
-            "action", "adventure", "comedy", "demons", "drama", "ecchi",
-            "fantasy", "gender-bender", "harem", "historical", "horror",
-            "josei", "magic", "martial-arts", "mature", "mecha", "military",
-            "mystery", "one-shot", "psychological", "romance", "school-life",
-            "sci-fi", "seinen", "shoujo", "shoujoai", "shounen", "shounenai",
-            "slice-of-life", "smut", "sports", "super-power", "supernatural",
-            "tragedy", "vampire", "yaoi", "yuri"
-    };
     private static String HOST = "http://www.mangapanda.com";
     private static String[] genre = new String[]{
             "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
@@ -61,21 +52,21 @@ public class MangaPanda extends ServerBase {
     };
 
     private static String[] order = new String[]{
-            "Alphavetical", "Popularity", "Similarity"
+            "Popularity", "Alphabetical", "Similarity"
     };
     private static String[] orderV = new String[]{
-            "&order=1", "&order=2", "&order="
+            "&order=2", "&order=1", "&order="
     };
 
 
-    public MangaPanda() {
+    MangaPanda() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangapanda_icon);
         this.setServerName("Mangapanda.com");
         setServerID(ServerBase.MANGAPANDA);
     }
 
-    protected void SetHost(String new_host) {
+    void SetHost(String new_host) {
         HOST = new_host;
     }
 
@@ -176,7 +167,7 @@ public class MangaPanda extends ServerBase {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Manga Type", type, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Manga Status", status, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Soeting Order", order, ServerFilter.FilterType.SINGLE)};
+                new ServerFilter("Sorting Order", order, ServerFilter.FilterType.SINGLE)};
     }
 
     ///search/?w=&rd=0&status=0&order=0&genre=1000010000000000000000000000000000000&p=0
