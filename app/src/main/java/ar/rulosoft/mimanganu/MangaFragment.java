@@ -392,12 +392,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 ((MainActivity) getActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
                 break;
             }
-            case R.id.action_descargar_no_leidos: {
+            case R.id.action_download_unread: {
                 Snackbar confirm = Snackbar.make(getView(), R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
                 confirm.setAction(android.R.string.yes, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " < 1", true);
+                        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
                         for (Chapter c : chapters) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);

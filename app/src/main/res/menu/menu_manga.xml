@@ -64,7 +64,7 @@
                 android:id="@+id/action_download_remaining"
                 android:title="@string/descargarestantes" />
             <item
-                android:id="@+id/action_descargar_no_leidos"
+                android:id="@+id/action_download_unread"
                 android:title="@string/descarga_no_leidos" />
             <item
                 android:id="@+id/mark_all_as_unread"

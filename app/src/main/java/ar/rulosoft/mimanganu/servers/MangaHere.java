@@ -41,14 +41,14 @@ public class MangaHere extends ServerBase {
     private static final String PATRON_LAST = ">(\\d+)</option>[^<]+?</select>";
     private static final String PATRON_IMAGEN = "src=\"([^\"]+?/manga/.+?.(jpg|gif|jpeg|png|bmp).*?)\"";
     private static String HOST = "http://www.mangahere.co";
-    private static String[] orden = {
+    private static String[] order = {
             "Views", "A - Z", "Rating", "Last Update"
     };
-    private static String[] ordenM = {
+    private static String[] orderM = {
             "?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"
     };
 
-    public MangaHere() {
+    MangaHere() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangahere_icon);
         this.setServerName("MangaHere");
@@ -131,13 +131,13 @@ public class MangaHere extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", orden, ServerFilter.FilterType.SINGLE)};
+                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String web = HOST + "/" + genreV[filters[0][0]] + "/" + pageNumber + ".htm" + ordenM[filters[1][0]];
+        String web = HOST + "/" + genreV[filters[0][0]] + "/" + pageNumber + ".htm" + orderM[filters[1][0]];
         String data = getNavigator().get(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher m = p.matcher(data);
