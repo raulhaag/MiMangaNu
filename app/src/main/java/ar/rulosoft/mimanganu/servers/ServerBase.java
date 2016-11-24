@@ -144,8 +144,8 @@ public abstract class ServerBase {
         return serverBase;
     }
 
-    public static Navigator getNavigator() {
-        Navigator.navigator.flushParameter();//remove old post parameters
+    public static Navigator getNavigator() { //FIXME rename to indicate new behaviour
+        Navigator.navigator.flushParameter(); // remove old post parameters
         return Navigator.navigator;
     }
 
@@ -338,14 +338,14 @@ public abstract class ServerBase {
         this.serverName = serverName;
     }
 
-    public ArrayList<String> getAllMatch(String patron, String source) throws Exception {
-        Pattern p = Pattern.compile(patron);
+    public ArrayList<String> getAllMatches(String pattern, String source) throws Exception {
+        Pattern p = Pattern.compile(pattern);
         Matcher m = p.matcher(source);
-        ArrayList<String> matches = new ArrayList<>();
-        if (m.find()) {
-            matches.add(m.group(1));
+        ArrayList<String> tmpMatches = new ArrayList<>();
+        while (m.find()) {
+            tmpMatches.add(m.group(1));
         }
-        return matches;
+        return tmpMatches;
     }
 
     public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {

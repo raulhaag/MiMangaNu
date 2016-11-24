@@ -48,24 +48,6 @@ public class KissManga extends ServerBase {
     private static String[] order = {"Popularity", "Latest Update", "New Manga", "a-z"};
     private static String[] orderV = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
 
-    /**
-     * multi
-     **/
-    private static String[] genreM = new String[]{
-            "Action", "Adult", "Adventure", "Comedy", "Comic", "Cooking", "Doujinshi", "Drama",
-            "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Lolicon",
-            "Manga", "Manhua", "Manhwa", "Martial Arts", "Mature", "Mecha", "Medical", "Music",
-            "Mystery", "One shot", "Psychological", "Romance", "School Life", "Sci-fi", "Seinen",
-            "Shotacon", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut",
-            "Sports", "Supernatural", "Tragedy", "Webtoon", "Yaoi", "Yuri"
-    };
-    private static String[] state = new String[]{
-            "Any", "Ongoing", "Completed"
-    };
-    private static String[] stateV = new String[]{
-            "", "Ongoing", "Completed"
-    };
-
     public KissManga() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.kissmanga_icon);
@@ -124,10 +106,10 @@ public class KissManga extends ServerBase {
         }
 
         // Author
-        manga.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
+        manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Author:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim());
 
         // Genre
-        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
+        manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim());
 
         manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
 

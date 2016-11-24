@@ -177,6 +177,7 @@ public class DetailsFragment extends Fragment {
             try {
                 serverBase.loadMangaInformation(manga, true);
             } catch (Exception e) {
+                e.printStackTrace();
                 error = Log.getStackTraceString(e);
             }
             return null;
