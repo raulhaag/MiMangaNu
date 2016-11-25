@@ -63,7 +63,7 @@ public class KissManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         // make use of AdvanceSearch, more data is then needed
-        Navigator nav = getNavigator();
+        Navigator nav = getNavigatorAndFlushParameters();
         nav.addPost("authorArtist", "");
         nav.addPost("mangaName", term);
         nav.addPost("status", "");
@@ -92,7 +92,7 @@ public class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(IP, manga.getPath(), HOST);
+        String source = getNavigatorAndFlushParameters().get(IP, manga.getPath(), HOST);
 
         // Summary
         manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
@@ -132,7 +132,7 @@ public class KissManga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavigator().post(IP, chapter.getPath(), HOST);
+            String source = getNavigatorAndFlushParameters().post(IP, chapter.getPath(), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -151,7 +151,7 @@ public class KissManga extends ServerBase {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavigator().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
+            String source = getNavigatorAndFlushParameters().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -195,7 +195,7 @@ public class KissManga extends ServerBase {
         /*if (pageNumber > 1) {
             return new ArrayList<>();
         } else {
-            Navigator nav = getNavigator();
+            Navigator nav = getNavigatorAndFlushParameters();
             nav.addPost("mangaName", "");
             nav.addPost("authorArtist", "");
             if (filters[0].length == 0) {
@@ -223,7 +223,7 @@ public class KissManga extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavigator().post(IP, web, HOST);
+        String source = getNavigatorAndFlushParameters().post(IP, web, HOST);
         return getMangasSource(source);
     }
 }

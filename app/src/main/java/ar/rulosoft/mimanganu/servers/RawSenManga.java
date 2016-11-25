@@ -37,7 +37,7 @@ public class RawSenManga extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigator().get(HOST + "Manga/?order=text-version");
+        String data = getNavigatorAndFlushParameters().get(HOST + "Manga/?order=text-version");
         Pattern p = Pattern.compile("<td><a href=\"(.+?)\">(.+?)<\\/a><\\/td><td><(a|b)");
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -50,7 +50,7 @@ public class RawSenManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String web = HOST + "Search.php?q=" + URLEncoder.encode(term,"UTF-8");
-        String data = getNavigator().get(web);
+        String data = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile("<div class='search-results'>.+?<a href='(.+?)' title='(.+?)'");
         Matcher m = p.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -64,7 +64,7 @@ public class RawSenManga extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
-            String data = getNavigator().get(manga.getPath());
+            String data = getNavigatorAndFlushParameters().get(manga.getPath());
             String data2 = getFirstMatchDefault("<div class=\"series_desc\">(.+?)<\\/div>", data, "");
             manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault("<div itemprop=\"description\">(.+?)<", data2, defaultSynopsis)).toString());
             manga.setImages(HOST + getFirstMatchDefault("image\" src=\"(.+?)\"", data, ""));
@@ -95,7 +95,7 @@ public class RawSenManga extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null) {
-            String data = getNavigator().get(chapter.getPath());
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
             chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
         }
         return HOST + chapter.getExtra() + page;
@@ -103,7 +103,7 @@ public class RawSenManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigator().get(chapter.getPath());
+        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
         String number = getFirstMatch("</select> of (\\d+)", data, "Can't retrieve page quantity");
         chapter.setPages(Integer.parseInt(number));
         chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
@@ -130,7 +130,7 @@ public class RawSenManga extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + generosV[filters[0][0]] + "?page=" + pageNumber;
-        String data = getNavigator().get(web);
+        String data = getNavigatorAndFlushParameters().get(web);
         return getMangasFromData(data);
     }
 

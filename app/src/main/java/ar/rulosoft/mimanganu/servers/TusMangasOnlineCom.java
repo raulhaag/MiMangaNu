@@ -90,7 +90,7 @@ public class TusMangasOnlineCom extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(manga.getPath(), TIMEOUT);
+        String source = getNavigatorAndFlushParameters().get(manga.getPath(), TIMEOUT);
         // sinopsis
         String sinopsis = getFirstMatchDefault("(<p itemprop=\"description\".+?</p></div>)",
                 source, "Sin sinopsis");
@@ -128,7 +128,7 @@ public class TusMangasOnlineCom extends ServerBase {
             if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
                 getExtraWeb(chapter);
             }
-            String source = getNavigator().get(chapter.getExtra(), TIMEOUT);
+            String source = getNavigatorAndFlushParameters().get(chapter.getExtra(), TIMEOUT);
             Pattern p = Pattern.compile(
                     "<input id=\"\\d+\" hidden=\"true\" value=\"(.+?);(.+?);(.+?);(.+?);(.+?)\"");
             Matcher m = p.matcher(source);
@@ -155,7 +155,7 @@ public class TusMangasOnlineCom extends ServerBase {
     private void getExtraWeb(Chapter c) throws Exception {
         String cId = getFirstMatch("idCapitulo=([^&]+)", c.getPath(), "Error al iniciar Capítulo");
         String mId = getFirstMatch("idManga=([^&]+)", c.getPath(), "Error al iniciar Capítulo");
-        Navigator nav = getNavigator();
+        Navigator nav = getNavigatorAndFlushParameters();
         nav.addPost("idManga", mId);
         nav.addPost("idCapitulo", cId);
         String source = nav.post("http://www.tumangaonline.com/index.php?option=com_controlmanga&view=capitulos&format=raw");
@@ -169,7 +169,7 @@ public class TusMangasOnlineCom extends ServerBase {
         if (!(chapter.getExtra() != null && chapter.getExtra().length() > 1)) {
             getExtraWeb(chapter);
         }
-        String source = getNavigator().get(chapter.getExtra());
+        String source = getNavigatorAndFlushParameters().get(chapter.getExtra());
         String paginas = getFirstMatch(
                 "<input id=\"totalPaginas\" hidden=\"true\" value=\"(\\d+)\">",
                 source, "Error al iniciar Capítulo");

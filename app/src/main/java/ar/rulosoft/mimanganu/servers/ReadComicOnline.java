@@ -60,7 +60,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        Navigator nav = getNavigator();
+        Navigator nav = getNavigatorAndFlushParameters();
         nav.addPost("keyword", term);
         String source = nav.post("http://" + HOST + "/Search/Comic");
         ArrayList<Manga> searchList;
@@ -84,7 +84,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get("http://" + HOST + manga.getPath());
+        String source = getNavigatorAndFlushParameters().get("http://" + HOST + manga.getPath());
 
         // Summary
         manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
@@ -123,7 +123,7 @@ public class ReadComicOnline extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigator().post("http://" + HOST + chapter.getPath());
+            String source = getNavigatorAndFlushParameters().post("http://" + HOST + chapter.getPath());
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -139,7 +139,7 @@ public class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigator().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""), "http://" + HOST + chapter.getPath());
+            String source = getNavigatorAndFlushParameters().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""), "http://" + HOST + chapter.getPath());
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
             String images = "";
@@ -175,7 +175,7 @@ public class ReadComicOnline extends ServerBase {
         /*if (pageNumber > 1) {
             return new ArrayList<>();
         } else {
-            Navigator nav = getNavigator();
+            Navigator nav = getNavigatorAndFlushParameters();
             nav.addPost("comicName", "");
             if (filters[0].length == 0) {
                 for (int i = 1; i < genre.length; i++) {
@@ -203,7 +203,7 @@ public class ReadComicOnline extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavigator().get("http://" + HOST + web);
+        String source = getNavigatorAndFlushParameters().get("http://" + HOST + web);
         return getMangasSource(source);
     }
 

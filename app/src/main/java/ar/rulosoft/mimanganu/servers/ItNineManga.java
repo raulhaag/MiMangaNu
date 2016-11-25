@@ -68,7 +68,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigator().get(
+        String source = getNavigatorAndFlushParameters().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
@@ -88,7 +88,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(manga.getPath() + "?waring=1");
+        String source = getNavigatorAndFlushParameters().get(manga.getPath() + "?waring=1");
         // portada
         manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // sinopsis
@@ -126,7 +126,7 @@ public class ItNineManga extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigator().get(
+        String source = getNavigatorAndFlushParameters().get(
                 chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
@@ -139,7 +139,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigator().get(chapter.getPath());
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Error al obtener el n�mero de p�ginas");
@@ -161,7 +161,7 @@ public class ItNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String source = getNavigator().get(
+        String source = getNavigatorAndFlushParameters().get(
                 HOST + ItNineManga.orderV[filters[1][0]] +
                         generosV[filters[0][0]].replace("_", "_" + pageNumber));
         return getMangasFromSource(source);
