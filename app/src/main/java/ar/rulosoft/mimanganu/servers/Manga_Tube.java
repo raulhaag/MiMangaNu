@@ -2,8 +2,13 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,12 +25,12 @@ import ar.rulosoft.navegadores.Navigator;
 public class Manga_Tube extends ServerBase {
 
     private static String[] genre = new String[]{
-            "0-9",
+            "Alle", "0-9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
     private static String[] genreV = new String[]{
-            "",
+            "", "#",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
@@ -45,8 +50,21 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigator().get("http://search-api.swiftype.com/api/v1/public/engines/search.embed?callback=jQuery181052988676800162_1449080309096&spelling=strict&per_page=50&page=1&q="+ URLEncoder.encode(term,"UTF-8")+"&engine_key=4YUjBG1L2kEywrZY1_RV&_=1449080411607");
-        return getMangasFromSource(source);
+        Navigator nav = getNavigator();
+        nav.addPost("action", "search_query");
+        nav.addPost("parameter[query]", URLEncoder.encode(term, "UTF-8"));
+        JSONArray jsonArray = new JSONObject(nav.post("https://manga-tube.me/ajax")).getJSONArray("suggestions");
+        ArrayList<Manga> result = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject object = jsonArray.getJSONObject(i);
+                Manga m = new Manga(MANGATUBE, object.getString("value"), "https://manga-tube.me/series/" + object.getString("manga_slug"), false);
+                result.add(m);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
 
@@ -59,22 +77,26 @@ public class Manga_Tube extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         Navigator nav = getNavigator();
-        nav.addPost("adult", "true");
         String source = nav.post(manga.getPath());
         // Front
-        manga.setImages(getFirstMatchDefault("<img src=\"(http://www.manga-tube.com/content/comics\\/.+?)\"", source, ""));
+        manga.setImages(getFirstMatchDefault("data-original=\"(.+?)\"", source, ""));
         // Summary
-        String summary = getFirstMatchDefault("<li><b>Beschreibung</b>:(.*?)</li>",
+        String summary = getFirstMatchDefault("<h4>Beschreibung</h4>\\s+<p>(.+?)</p>",
                 source, defaultSynopsis).replaceAll("<.+?>", "");
         manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceFirst("Zusammenfassung:", "")).toString());
-
+        //Author
+        manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("<b>Autor:<\\/b>&nbsp;(.+?)<\\/li>", source, "N/A")).toString().replaceAll("\\s+", "").trim());
+        //Finished
+        manga.setFinished(getFirstMatchDefault("<b>Status \\(Scanlation\\):</b>(.+?)</li>", source, "laufend").contains("abgeschlossen"));
+        //Genres
+        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li><b>Genre:</b>&nbsp;(.+?)</ul>", source, "").replaceAll("</a></li>", "</a></li>,")).toString().replaceAll("\\s+", "").replaceAll(",", ", ").trim()));
         // Chapter
         Pattern p = Pattern.compile(
-                "<a href=\"(http://www.manga-tube.com/reader/read.+?)\"[^>]+>(.+?)<");
+                "(manga-tube.me[^\"]+?read.+?)\">.+?<b>(.+?)</b>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
+            chapters.add(0, new Chapter(matcher.group(2), "http://" + matcher.group(1)));
         }
         manga.setChapters(chapters);
     }
@@ -82,52 +104,69 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath() + "page/"+ page;
+        return chapter.getPath() + "page/" + page;
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        Navigator nav = getNavigator();
-        nav.addPost("adult", "true");
-        String source = nav.post(getPagesNumber(chapter, page));
-        return getFirstMatch("<img class=\"open\" src=\"(.+?)\"",source,"Error getting image");
+        String[] d1 = chapter.getExtra().split("\\|");
+        return d1[page];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         Navigator nav = getNavigator();
-        nav.addPost("adult", "true");
-        String source = nav.post(chapter.getPath());
-        int pages = Integer.parseInt(getFirstMatch("<div class=\"tbtitle dropdown_parent dropdown_right\"><div class=\"text\">(\\d+)",source,"Error"));
-        chapter.setPages(pages);
-    }
-
-    private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("<img class=\"preview\" src=\"(http:\\/\\/www.manga-tube.com\\/content\\/.+?)\".+?title\"><a href=\"(.+?)\".+?>(.+?)<");
-        Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<>();
-        while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
-            manga.setImages(m.group(1));
-            mangas.add(manga);
+        String source = nav.get(chapter.getPath());
+        String img_path = getFirstMatch("img_path: '(.+?)'", source, "can't initialize the chapter");
+        source = getFirstMatch("pages:\\s\\[(.+?)\\]", source, "can't initialize the chapter 2");
+        ArrayList<String> pages = getAllMatch("\"file_name\":\"(.+?)\"", source);
+        chapter.setPages(pages.size());
+        String images = "";
+        for (String d : pages) {
+            images = images + "|" + img_path + d;
         }
-        return mangas;
+        chapter.setExtra(images);
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filter, int pageNumber) throws Exception {
         if (no_more_pages != filter[0][0]) {
-            String source = getNavigator().get("http://www.manga-tube.com/reader/list/" + genreV[filter[0][0]]);
-            no_more_pages = filter[0][0];
-            return getMangasFromSource(source);
+            Navigator nav = getNavigator();
+            nav.addPost("action", "load_series_list_entries");
+            nav.addPost("parameter[letter]", genreV[filter[0][0]]);
+            nav.addPost("parameter[order]", "asc");
+            nav.addPost("parameter[page]", "" + pageNumber);
+            nav.addPost("parameter[sortby]", "popularity");
+            JSONObject object = new JSONObject(nav.post("https://manga-tube.me/ajax"));
+            try {
+                return getMangasFromJson(object.getJSONObject("success"));
+            } catch (Exception e) {
+                no_more_pages = filter[0][0];
+                return new ArrayList<>();
+            }
         } else {
             return new ArrayList<>();
         }
     }
 
+    public ArrayList<Manga> getMangasFromJson(JSONObject jSO) throws Exception {
+        ArrayList<Manga> result = new ArrayList<>();
+        Iterator<?> keys = jSO.keys();
+        while (keys.hasNext()) {
+            String key = (String) keys.next();
+            if (jSO.get(key) instanceof JSONObject) {
+                JSONObject manObj = jSO.getJSONObject(key);
+                Manga m = new Manga(MANGATUBE, manObj.getString("manga_title"), "https://manga-tube.me/series/" + manObj.getString("manga_slug"), false);
+                m.setImages(manObj.getJSONArray("covers").getJSONObject(0).getString("img_name"));
+                result.add(m);
+            }
+        }
+        return result;
+    }
+
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE)};//Sortiert nach Beliebtheit
     }
 
     @Override

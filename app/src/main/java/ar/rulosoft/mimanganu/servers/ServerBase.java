@@ -342,7 +342,7 @@ public abstract class ServerBase {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
         ArrayList<String> matches = new ArrayList<>();
-        if (m.find()) {
+        while (m.find()) {
             matches.add(m.group(1));
         }
         return matches;
