@@ -287,7 +287,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         seekBarReadTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Log.d("PF","rt: "+Integer.parseInt(prefs.getString("read_timeout", "30")));
+                Log.d("PF", "rt: " + Integer.parseInt(prefs.getString("read_timeout", "30")));
                 Navigator.readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
                 return true;
             }

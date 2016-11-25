@@ -24,6 +24,21 @@ import ar.rulosoft.navegadores.Navigator;
  */
 public class Manga_Tube extends ServerBase {
 
+    public static String[] sort = new String[]{
+            "dem Alphabet", "Beliebtheit", "Aufrufen", "Erstveröffentlichung", "Bewertung"
+    };
+    public static String[] sortV = new String[]{
+            "alphabetic", "popularity", "hits", "date", "rating"
+    };
+
+    public static String[] order = new String[]{
+            "↓", "↑"
+    };
+    public static String[] orderV = new String[]{
+            "asc", "desc"
+    };
+
+
     private static String[] genre = new String[]{
             "Alle", "0-9",
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
@@ -34,7 +49,7 @@ public class Manga_Tube extends ServerBase {
             "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
     };
-    int no_more_pages = -1;
+    int[][] no_more_pages;
 
     public Manga_Tube() {
         this.setFlag(R.drawable.flag_de);
@@ -50,7 +65,7 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        Navigator nav = getNavigator();
+        Navigator nav = getNavigatorAndFlushParameters();
         nav.addPost("action", "search_query");
         nav.addPost("parameter[query]", URLEncoder.encode(term, "UTF-8"));
         JSONArray jsonArray = new JSONObject(nav.post("https://manga-tube.me/ajax")).getJSONArray("suggestions");
@@ -76,7 +91,7 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        Navigator nav = getNavigator();
+        Navigator nav = getNavigatorAndFlushParameters();
         String source = nav.post(manga.getPath());
         // Front
         manga.setImages(getFirstMatchDefault("data-original=\"(.+?)\"", source, ""));
@@ -115,7 +130,7 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        Navigator nav = getNavigator();
+        Navigator nav = getNavigatorAndFlushParameters();
         String source = nav.get(chapter.getPath());
         String img_path = getFirstMatch("img_path: '(.+?)'", source, "can't initialize the chapter");
         source = getFirstMatch("pages:\\s\\[(.+?)\\]", source, "can't initialize the chapter 2");
@@ -130,18 +145,18 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filter, int pageNumber) throws Exception {
-        if (no_more_pages != filter[0][0]) {
-            Navigator nav = getNavigator();
+        if (no_more_pages != filter) {
+            Navigator nav = getNavigatorAndFlushParameters();
             nav.addPost("action", "load_series_list_entries");
             nav.addPost("parameter[letter]", genreV[filter[0][0]]);
-            nav.addPost("parameter[order]", "asc");
+            nav.addPost("parameter[order]", orderV[filter[2][0]]);
             nav.addPost("parameter[page]", "" + pageNumber);
-            nav.addPost("parameter[sortby]", "popularity");
+            nav.addPost("parameter[sortby]", sortV[filter[1][0]]);
             JSONObject object = new JSONObject(nav.post("https://manga-tube.me/ajax"));
             try {
                 return getMangasFromJson(object.getJSONObject("success"));
             } catch (Exception e) {
-                no_more_pages = filter[0][0];
+                no_more_pages = filter;
                 return new ArrayList<>();
             }
         } else {
@@ -166,7 +181,9 @@ public class Manga_Tube extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE)};//Sortiert nach Beliebtheit
+        return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Sortiert nach", sort, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Bestellen", order, ServerFilter.FilterType.SINGLE)};
     }
 
     @Override

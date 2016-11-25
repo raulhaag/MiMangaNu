@@ -125,9 +125,9 @@
             android:key="scroll_speed"
             android:summary="%sx"
             android:title="@string/scroll_speed"
-            app:val_step="0.25"
-            app:val_min_float="0.5"
             app:val_max_float="5"
+            app:val_min_float="0.5"
+            app:val_step="0.25"
             app:val_type="1" />
         <ListPreference
             android:defaultValue="2048"

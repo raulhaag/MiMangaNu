@@ -76,7 +76,7 @@ public class MangaEdenIt extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigatorAndFlushParameters().get("http://www.mangaeden.com/it/it-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
+        String source = getNavigatorAndFlushParameters().get("http://www.mangaeden.com/it/it-directory/?title=" + URLEncoder.encode(term, "UTF-8") + "&author=&artist=&releasedType=0&released=");
         return getMangasFromSource(source);
     }
 

@@ -85,7 +85,7 @@ public class SubManga extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
             String data;
-            data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
             data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, null);
         return data;
     }
