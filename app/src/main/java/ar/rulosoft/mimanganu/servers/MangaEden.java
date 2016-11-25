@@ -57,14 +57,14 @@ public class MangaEden extends ServerBase {
     };
 
     private static String[] order = new String[]{
-            "Manga Title", "Views", "Chapters"
+            "Views", "Manga Title", "Chapters"
     };
     private static String[] orderV = new String[]{
-            "&order=-0", "&order=1", "&order=2"
+            "&order=1", "&order=-0", "&order=2"
     };
 
 
-    public MangaEden() {
+    MangaEden() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangaeden);
         this.setServerName("MangaEden");
@@ -78,7 +78,7 @@ public class MangaEden extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigator().get("http://www.mangaeden.com/en/en-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
+        String source = getNavigatorAndFlushParameters().get("http://www.mangaeden.com/en/en-directory/?title="+ URLEncoder.encode(term, "UTF-8")+"&author=&artist=&releasedType=0&released=");
         return getMangasFromSource(source);
     }
 
@@ -90,7 +90,7 @@ public class MangaEden extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(manga.getPath());
+        String source = getNavigatorAndFlushParameters().get(manga.getPath());
         // Front
         String image = getFirstMatchDefault("<div class=\"mangaImage2\"><img src=\"(.+?)\"", source, "");
         if(image.length() > 2)
@@ -125,7 +125,7 @@ public class MangaEden extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigator().get(chapter.getPath());
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
             Matcher matcher = pattern.matcher(source);
             String images = "";
@@ -141,7 +141,7 @@ public class MangaEden extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigator().get(chapter.getPath());
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
             Matcher matcher = pattern.matcher(source);
             String images = "";
@@ -187,7 +187,7 @@ public class MangaEden extends ServerBase {
             web = web + typeV[filters[0][i]];
         }
         web = web + orderV[filters[3][0]] + "&page=" + pageNumber;
-        String source = getNavigator().get(web);
+        String source = getNavigatorAndFlushParameters().get(web);
         return getMangasFromSource(source);
     }
 

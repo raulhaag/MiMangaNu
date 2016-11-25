@@ -539,7 +539,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         });
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
         Log.i("MF", "columnSize: " + columnSize);
-        if (columnSize == -1)
+        if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
             columnSize = getGridColumnSizeFromWidth();
         grid.setNumColumns(columnSize);
         if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {

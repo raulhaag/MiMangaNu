@@ -240,4 +240,6 @@
     <string name="vacuum_database_notification_text">Cleaning up Database</string>
     <string name="grid_columns_title">Grid Columns</string>
     <string name="grid_columns_subtitle">Grid Columns: %s</string>
+    <string name="grid_columns_automatic_detection_title">Autodetect Grid Columns</string>
+    <string name="grid_columns_automatic_detection_subtitle">Automatically detects optimal grid columns based on your screen size.</string>
 </resources>

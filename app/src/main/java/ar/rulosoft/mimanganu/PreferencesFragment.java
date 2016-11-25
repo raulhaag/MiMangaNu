@@ -99,7 +99,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         /** Set summary for Reader preference + seamless chapter transitions summary **/
         // true: Paged Reader; false: Continuous Reader
-        final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
         Boolean readType = prefs.getBoolean("reader_type", false);
         Preference reader_type = getPreferenceManager().findPreference("reader_type");
         Preference seamlessChapterTransitionsPref = getPreferenceManager().findPreference("seamless_chapter_transitions");
@@ -288,7 +287,29 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         seekBarReadTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Log.d("PF","rt: "+Integer.parseInt(prefs.getString("read_timeout", "30")));
                 Navigator.readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
+                return true;
+            }
+        });
+
+        Preference gridColumnsPref = getPreferenceManager().findPreference("grid_columns");
+        if (prefs.getBoolean("grid_columns_automatic_detection", true)) {
+            gridColumnsPref.setEnabled(false);
+        } else {
+            gridColumnsPref.setEnabled(true);
+        }
+        final SwitchPreferenceCompat gridColumnsAutomaticDetectionSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("grid_columns_automatic_detection");
+        gridColumnsAutomaticDetectionSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Preference gridColumns = getPreferenceManager().findPreference("grid_columns");
+                if (prefs.getBoolean("grid_columns_automatic_detection", true)) {
+                    gridColumns.setEnabled(true);
+                } else {
+                    gridColumns.setEnabled(false);
+                }
                 return true;
             }
         });

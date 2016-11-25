@@ -24,15 +24,6 @@ public class MangaPanda extends ServerBase {
             "<a href=\"([^\"]+)\">([^\"]+?)</a>.:([^\"]+?)</td>";
     private static final String PATTERN_CHAPTER_WEB =
             "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
-    private static final String[] genreV = {
-            "action", "adventure", "comedy", "demons", "drama", "ecchi",
-            "fantasy", "gender-bender", "harem", "historical", "horror",
-            "josei", "magic", "martial-arts", "mature", "mecha", "military",
-            "mystery", "one-shot", "psychological", "romance", "school-life",
-            "sci-fi", "seinen", "shoujo", "shoujoai", "shounen", "shounenai",
-            "slice-of-life", "smut", "sports", "super-power", "supernatural",
-            "tragedy", "vampire", "yaoi", "yuri"
-    };
     private static String HOST = "http://www.mangapanda.com";
     private static String[] genre = new String[]{
             "Action", "Adventure", "Comedy", "Demons", "Drama", "Ecchi",
@@ -61,28 +52,28 @@ public class MangaPanda extends ServerBase {
     };
 
     private static String[] order = new String[]{
-            "Alphavetical", "Popularity", "Similarity"
+            "Popularity", "Alphabetical", "Similarity"
     };
     private static String[] orderV = new String[]{
-            "&order=1", "&order=2", "&order="
+            "&order=2", "&order=1", "&order="
     };
 
 
-    public MangaPanda() {
+    MangaPanda() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangapanda_icon);
         this.setServerName("Mangapanda.com");
         setServerID(ServerBase.MANGAPANDA);
     }
 
-    protected void SetHost(String new_host) {
+    void SetHost(String new_host) {
         HOST = new_host;
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigator().get(HOST + "/alphabetical");
+        String data = getNavigatorAndFlushParameters().get(HOST + "/alphabetical");
         Pattern p = Pattern.compile(PATTERN_SUB);
         Matcher m = p.matcher(data);
         if (m.find()) {
@@ -100,7 +91,7 @@ public class MangaPanda extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigator().get(HOST + "/actions/search/?q=" + term + "&limit=100");
+        String data = getNavigatorAndFlushParameters().get(HOST + "/actions/search/?q=" + term + "&limit=100");
         Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -118,7 +109,7 @@ public class MangaPanda extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = getNavigator().get(manga.getPath());
+        String data = getNavigatorAndFlushParameters().get(manga.getPath());
         Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER);
         Matcher m = p.matcher(data);
         if (m.find()) {
@@ -158,14 +149,14 @@ public class MangaPanda extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = getNavigator().get(this.getPagesNumber(chapter, page));
+        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data, "Error: Could not get the link to the image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = getNavigator().get(chapter.getPath());
+        data = getNavigatorAndFlushParameters().get(chapter.getPath());
         String pages =
                 getFirstMatch("of (\\d+)</div>", data, "Error: Could not get the number of pages");
         chapter.setPages(Integer.parseInt(pages));
@@ -176,7 +167,7 @@ public class MangaPanda extends ServerBase {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Manga Type", type, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Manga Status", status, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Soeting Order", order, ServerFilter.FilterType.SINGLE)};
+                new ServerFilter("Sorting Order", order, ServerFilter.FilterType.SINGLE)};
     }
 
     ///search/?w=&rd=0&status=0&order=0&genre=1000010000000000000000000000000000000&p=0
@@ -193,7 +184,7 @@ public class MangaPanda extends ServerBase {
         }
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/search/?w=" + typeV[filters[1][0]] + statusV[filters[2][0]] + orderV[filters[3][0]] + "&genre=" + gens + "&p=" + ((pageNumber - 1) * 30);
-        String data = getNavigator().get(web);
+        String data = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile("(http:[^']+/cover/.+?)'.+?<h3><a href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(data);
         while (m.find()) {

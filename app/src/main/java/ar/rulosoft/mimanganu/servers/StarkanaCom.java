@@ -49,7 +49,7 @@ public class StarkanaCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        String source = getNavigator().get("http://starkana.com/manga/list");
+        String source = getNavigatorAndFlushParameters().get("http://starkana.com/manga/list");
         Pattern p = Pattern.compile("http://starkana.(jp|com)/img/icons/tick_(.+?).png\".+?href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -67,7 +67,7 @@ public class StarkanaCom extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigator().get(
+        String source = getNavigatorAndFlushParameters().get(
                 "http://starkana.com/manga/search?k=" +
                         URLEncoder.encode(term, "UTF-8"));
         return getMangasFromSource(source);
@@ -81,7 +81,7 @@ public class StarkanaCom extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(manga.getPath());
+        String source = getNavigatorAndFlushParameters().get(manga.getPath());
         // Title
         String portada = getFirstMatchDefault("<img class=\"a_img\" src=\"(.+?)\"", source, "");
         manga.setImages(portada);
@@ -114,7 +114,7 @@ public class StarkanaCom extends ServerBase {
     }
 
     private void setExtra(Chapter c) throws Exception {
-        String source = getNavigator().get(c.getPath() + "?scroll");
+        String source = getNavigatorAndFlushParameters().get(c.getPath() + "?scroll");
         Pattern p = Pattern.compile("<img src=\"([^\"]+)\" alt=\"[^\"]*\" class=\"dyn\">");
         Matcher m = p.matcher(source);
         String imagenes = "";
@@ -126,7 +126,7 @@ public class StarkanaCom extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigator().get(chapter.getPath());
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         chapter.setPages(Integer.parseInt(getFirstMatch("of <strong>(\\d+)</strong>", source, "Error al buscar número de páginas")));
     }
 

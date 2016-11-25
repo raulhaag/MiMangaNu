@@ -77,7 +77,7 @@ public class LeoManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String web = "http://" + HOST + "/buscar?s=" + URLEncoder.encode(term, "UTF-8");
-        String data = getNavigator().get(web);
+        String data = getNavigatorAndFlushParameters().get(web);
         Pattern pattern = Pattern.compile("<td onclick='window.location=\"(.+?)\"'>.+?<img src=\"(.+?)\"[^>]alt=\"(.+?)\"");
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -96,7 +96,7 @@ public class LeoManga extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
 
-            String data = getNavigator().get(manga.getPath());
+            String data = getNavigatorAndFlushParameters().get(manga.getPath());
             manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, defaultSynopsis));
             String image = getFirstMatchDefault("<img data-original=\"(.+?)\"", data, "");
             if (image.length() > 4) {
@@ -130,9 +130,9 @@ public class LeoManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigator().get(chapter.getPath());
+        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
         String web = "http://" + HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error obteniendo paginas 1");
-        data = getNavigator().get(web);
+        data = getNavigatorAndFlushParameters().get(web);
         String sub = "http://" + HOST + getFirstMatch("id=\"read-chapter\" data-name=\"(.+?)\"", data, "Error obteniendo paginas 3");
         String[] pos = getFirstMatch("pos=\"(.+?)\"", data, "Error obteniendo paginas 4").split(";");
         chapter.setPages(pos.length);
@@ -162,7 +162,7 @@ public class LeoManga extends ServerBase {
         web = web + estadoV[filters[2][0]];
         //orden
         web = web + ordenM[filters[3][0]];
-        String data = getNavigator().get(web);
+        String data = getNavigatorAndFlushParameters().get(web);
         return getMangasFromSource(data);
     }
 

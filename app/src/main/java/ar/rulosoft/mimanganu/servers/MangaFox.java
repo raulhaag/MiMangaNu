@@ -21,14 +21,7 @@ public class MangaFox extends ServerBase {
             "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life", "Smut", "Sports",
             "Supernatural", "Tragedy", "Webtoons", "Yuri"
     };
-    private static final String[] genreV = {
-            "action", "adult", "adventure", "comedy", "doujinshi", "Drama", "ecchi",
-            "fantasy", "gender-bender", "harem", "historical", "horror", "josei", "martial-arts",
-            "mecha", "mystery", "one_shot", "psychological", "romance", "school-life", "sci-fi",
-            "seinen", "shoujo", "shoujo-Ai", "shounen", "slice-of-life", "smut", "sports",
-            "supernatural", "tragedy", "webtoons", "yuri"
-    };
-    private static final String PATRON_CAPS_VIS = "<a class=\"manga_img\" href=\"(.+?)\".+?src=\"(.+?)\".+?(<em class=\"tag_completed\"></em>						</a>|</a>).+?rel=\".+?\">(.+?)<";
+    //private static final String PATRON_CAPS_VIS = "<a class=\"manga_img\" href=\"(.+?)\".+?src=\"(.+?)\".+?(<em class=\"tag_completed\"></em>						</a>|</a>).+?rel=\".+?\">(.+?)<";
     private static final String PATTERN_SERIE = "<li><a href=\"(.+?)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">(.+?)</a></li>";
     private static final String SEGMENTO = "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
     private static final String PATRON_PORTADA = "<div class=\"cover\">.+?src=\"(.+?)\"";
@@ -49,16 +42,14 @@ public class MangaFox extends ServerBase {
             "&is_completed=", "&is_completed=1", "&is_completed=0"
     };
     private static String[] order = new String[]{
-            "Manga Title", "Views", "Chapters"
+            "Views", "Manga Title", "Chapters"
     };
     private static String[] orderV = new String[]{
-            "&sort=name&order=az", "&sort=views&order=za", "&sort=total_chapters&order=za"
+            "&sort=views&order=za", "&sort=name&order=az", "&sort=total_chapters&order=za"
     };
-    private static String[] orden = {"Popularity", "A - Z", "Rating", "Last Update"};
-    private static String[] ordenM = {"", "?az", "?rating", "?latest"};
-    long last_search;
+    private long last_search;
 
-    public MangaFox() {
+    MangaFox() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangafox_icon);
         this.setServerName("MangaFox");
@@ -68,7 +59,7 @@ public class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigator().get("http://mangafox.me/manga/");
+        String data = getNavigatorAndFlushParameters().get("http://mangafox.me/manga/");
         data = getFirstMatch(SEGMENTO, data, "no se ha obtenido el segmento");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
@@ -87,7 +78,7 @@ public class MangaFox extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
-            String data = getNavigator().get((manga.getPath()));
+            String data = getNavigatorAndFlushParameters().get((manga.getPath()));
 
             // Title
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
@@ -138,14 +129,14 @@ public class MangaFox extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = getNavigator().get(this.getPagesNumber(chapter, page));
+        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
         return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = getNavigator().get(chapter.getPath());
+        data = getNavigatorAndFlushParameters().get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas) - 1);//last page is for comments
     }
@@ -158,7 +149,7 @@ public class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigator()
+        String data = getNavigatorAndFlushParameters()
                 .get("http://mangafox.me/search.php?name_method=cw&name="
                         + term
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");
@@ -198,7 +189,7 @@ public class MangaFox extends ServerBase {
                 "&author_method=cw&author=&artist_method=cw&artist=" + gens +
                 "&released_method=eq&released=&rating_method=eq&rating=" + statusV[filters[2][0]] +
                 "&advopts=1" + orderV[filters[3][0]] + "&page=" + pageNumber;
-        String data = getNavigator().get(web);
+        String data = getNavigatorAndFlushParameters().get(web);
         last_search = System.currentTimeMillis();
         long ctime = last_search / 1000;
         Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?rel=\"(\\d+)\">(.+?)<");

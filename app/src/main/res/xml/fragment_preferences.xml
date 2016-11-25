@@ -219,6 +219,11 @@
             android:key="reader_bg_col"
             android:summary="@string/color_reader_sub"
             android:title="@string/color_reader" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="grid_columns_automatic_detection"
+            android:summary="@string/grid_columns_automatic_detection_subtitle"
+            android:title="@string/grid_columns_automatic_detection_title" />
         <ar.rulosoft.custompref.SeekBarCustomPreference
             android:defaultValue="2"
             android:dialogTitle="@string/grid_columns_title"
