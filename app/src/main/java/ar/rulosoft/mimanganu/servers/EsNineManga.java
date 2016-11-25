@@ -66,7 +66,7 @@ public class EsNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigator().get(
+        String source = getNavigatorAndFlushParameters().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
@@ -86,7 +86,7 @@ public class EsNineManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigator().get(manga.getPath() + "?waring=1");
+        String source = getNavigatorAndFlushParameters().get(manga.getPath() + "?waring=1");
         // portada
         manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
         // sinopsis
@@ -124,7 +124,7 @@ public class EsNineManga extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigator().get(
+        String source = getNavigatorAndFlushParameters().get(
                 chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
@@ -137,7 +137,7 @@ public class EsNineManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigator().get(chapter.getPath());
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         String nop = getFirstMatch(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Error al obtener el número de páginas");
@@ -159,7 +159,7 @@ public class EsNineManga extends ServerBase {
             }
         }
         String web = "http://es.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + categories + "&out_category_id=&completed_series=" + completeV[filters[1][0]] + "&type=high&page=" + pageNumber + ".html";
-        String source = getNavigator().get(web);
+        String source = getNavigatorAndFlushParameters().get(web);
         Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();

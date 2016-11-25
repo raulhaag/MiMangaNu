@@ -262,6 +262,7 @@ public class Util {
         searchingForUpdatesNotificationBuilder.setContentIntent(contentPendingIntent);
         searchingForUpdatesNotificationBuilder.setAutoCancel(true);
         searchingForUpdatesNotificationBuilder.addAction(R.drawable.ic_action_x_light, context.getResources().getString(R.string.cancel), cancelPendingIntent);
+        searchingForUpdatesNotificationBuilder.setGroup("searchingForUpdates");
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
             searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(context.getResources().getString(R.string.searching_for_updates)));

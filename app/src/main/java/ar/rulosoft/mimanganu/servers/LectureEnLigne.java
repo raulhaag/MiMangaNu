@@ -22,7 +22,7 @@ public class LectureEnLigne extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String source = getNavigator().get(HOST);
+        String source = getNavigatorAndFlushParameters().get(HOST);
         Pattern p = Pattern.compile("<option value=\"([^\"]+)\">(.+?)</option>");
         Matcher m = p.matcher(source);
         while (m.find()) {
@@ -45,7 +45,7 @@ public class LectureEnLigne extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = getNavigator().get((manga.getPath()));// :</p><p>(.+?)</p>
+        String data = getNavigatorAndFlushParameters().get((manga.getPath()));// :</p><p>(.+?)</p>
 
         manga.setSynopsis(getFirstMatchDefault("</p>[\\s]+<p>(.+?)</p>", data, defaultSynopsis));
         manga.setImages(getFirstMatchDefault("<img src=\"([^\"]+)\" alt=\"[^\"]+\" class=\"imagemanga\"", data, ""));
@@ -73,13 +73,13 @@ public class LectureEnLigne extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data = getNavigator().get(this.getPagesNumber(chapter, page));
+        String data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("<img id='image' src='(.+?)'", data, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigator().get(chapter.getPath());
+        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
         String paginas = getFirstMatch("<select class=\"pages\">.+?(\\d+)</option>[\\s]*</select>", data, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas));
     }

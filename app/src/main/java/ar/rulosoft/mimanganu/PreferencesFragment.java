@@ -294,22 +294,21 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         Preference gridColumnsPref = getPreferenceManager().findPreference("grid_columns");
-        if (Integer.parseInt(prefs.getString("grid_columns", "2")) == 1) {
-            gridColumnsPref.setSummary("Automatic Detection");
+        if (prefs.getBoolean("grid_columns_automatic_detection", true)) {
+            gridColumnsPref.setEnabled(false);
         } else {
-            gridColumnsPref.setSummary(getString(R.string.grid_columns_subtitle));
+            gridColumnsPref.setEnabled(true);
         }
-        final SeekBarCustomPreference seekBarGridColumns = (SeekBarCustomPreference) getPreferenceManager().findPreference("grid_columns");
-        seekBarGridColumns.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        final SwitchPreferenceCompat gridColumnsAutomaticDetectionSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("grid_columns_automatic_detection");
+        gridColumnsAutomaticDetectionSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                Log.d("PF","onPrefChange");
-                Preference gridColumnsPref = getPreferenceManager().findPreference("grid_columns");
-                Log.d("PF", "gridColumns: " + Integer.parseInt(prefs.getString("grid_columns", "2")));
-                if (Integer.parseInt(prefs.getString("grid_columns", "2")) == 1) {
-                    gridColumnsPref.setSummary("Automatic Detection");
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getContext());
+                Preference gridColumns = getPreferenceManager().findPreference("grid_columns");
+                if (prefs.getBoolean("grid_columns_automatic_detection", true)) {
+                    gridColumns.setEnabled(true);
                 } else {
-                    gridColumnsPref.setSummary(getString(R.string.grid_columns_subtitle));
+                    gridColumns.setEnabled(false);
                 }
                 return true;
             }
