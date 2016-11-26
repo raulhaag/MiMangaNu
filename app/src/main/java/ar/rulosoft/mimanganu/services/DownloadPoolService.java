@@ -126,6 +126,10 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         boolean result = true;
         for (ChapterDownload dc : chapterDownloads) {
             if (dc.chapter.getId() == cid) {
+                if (dc.status == DownloadStatus.DOWNLOADED) {
+                    chapterDownloads.remove(dc);
+                    return true;
+                }
                 result = false;
                 break;
             }
