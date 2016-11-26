@@ -791,6 +791,11 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             }
     }
 
+    @Override
+    public void onStatusChanged(ChapterDownload chapterDownload) {
+        //can be used to inform download complete but i think is no needed
+    }
+
     public void reDownloadCurrentImage() {
         ReDownloadImage r = new ReDownloadImage();
         r.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

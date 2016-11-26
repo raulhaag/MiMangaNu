@@ -290,6 +290,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             } else {
                 if (mActivity != null)
                     mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder));
+                DownloadPoolService.setStateChangeListener(mChapterAdapter);
             }
             if (mListView != null) {
                 mListView.setAdapter(mChapterAdapter);
@@ -303,6 +304,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     public void onPause() {
         int first = mListView.getFirstVisiblePosition();
         Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
+        DownloadPoolService.setStateChangeListener(null);
         super.onPause();
         if (swipeReLayout != null)
             swipeReLayout.clearAnimation();
@@ -476,6 +478,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         ((MainActivity) getActivity()).setTitle(mManga.getTitle());
         Chapter.Comparators.setManga_title(mManga.getTitle());
         new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        if (mChapterAdapter != null) {
+            DownloadPoolService.setStateChangeListener(mChapterAdapter);
+        }
     }
 
     @Override

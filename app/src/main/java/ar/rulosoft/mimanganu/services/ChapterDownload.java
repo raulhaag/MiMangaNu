@@ -25,11 +25,14 @@ public class ChapterDownload implements StateChangeListener {
         for (int i = 0; i < pagesStatus.length; i++) {
             pagesStatus[i] = Status.QUEUED;
         }
-        status = DownloadStatus.QUEUED;
+        changeStatus(DownloadStatus.QUEUED);
     }
 
     private void changeStatus(DownloadStatus newStatus) {
         this.status = newStatus;
+        if (changeListener != null) {
+            changeListener.onStatusChanged(this);
+        }
     }
 
     int getNext() {
@@ -126,6 +129,11 @@ public class ChapterDownload implements StateChangeListener {
             Database.updateChapterDownloaded(DownloadPoolService.actual, chapter.getId(), 1);
             changeStatus(DownloadStatus.DOWNLOADED);
         }
+    }
+
+    @Override
+    public void onStatusChanged(ChapterDownload chapterDownload) {
+        //nothing to do here
     }
 
     @Override

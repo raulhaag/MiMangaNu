@@ -38,6 +38,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
     public static DownloadsChangesListener mDownloadsChangesListener;
+    public static StateChangeListener mChapterStateChangeListener;
     public static int errors = 0;
     private static boolean intentPending = false;
     private static DownloadListener downloadListener = null;
@@ -52,53 +53,54 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     private int mNotifyID = (int) System.currentTimeMillis();
 
     public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception {
-        if (activity == null)
+        if (activity == null) {
             Log.d("DPS", "null");
-
-        if (!chapter.isDownloaded() && NetworkUtilsAndReceiver.isConnected(activity)) {
-            if (isNewDownload(chapter.getId())) {
-                ChapterDownload dc = new ChapterDownload(chapter);
-                if (mDownloadsChangesListener != null) {
-                    mDownloadsChangesListener.onChapterAdded(lectura, dc);
-                }
-                if (lectura) {
-                    chapterDownloads.add(0, dc);
+        } else {
+            if (!chapter.isDownloaded() && NetworkUtilsAndReceiver.isConnected(activity)) {
+                if (isNewDownload(chapter.getId())) {
+                    ChapterDownload dc = new ChapterDownload(chapter);
+                    if (mDownloadsChangesListener != null) {
+                        mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                    }
+                    if (lectura) {
+                        chapterDownloads.add(0, dc);
+                    } else {
+                        chapterDownloads.add(dc);
+                    }
                 } else {
-                    chapterDownloads.add(dc);
-                }
-            } else {
-                for (int i = 0; i < chapterDownloads.size(); i++) {
-                    ChapterDownload dc = chapterDownloads.get(i);
-                    if (dc.chapter.getId() == chapter.getId()) {
-                        if (dc.status == DownloadStatus.ERROR) {
-                            dc.chapter.deleteImages(activity);
-                            chapterDownloads.remove(dc);
-                            dc = null;
-                            ChapterDownload ndc = new ChapterDownload(chapter);
-                            if (mDownloadsChangesListener != null) {
-                                mDownloadsChangesListener.onChapterRemoved(i);
-                                mDownloadsChangesListener.onChapterAdded(lectura, dc);
-                            }
-                            if (lectura) {
-                                chapterDownloads.add(0, ndc);
-                            } else {
-                                chapterDownloads.add(ndc);
-                            }
-                        } else {
-                            if (lectura) {
+                    for (int i = 0; i < chapterDownloads.size(); i++) {
+                        ChapterDownload dc = chapterDownloads.get(i);
+                        if (dc.chapter.getId() == chapter.getId()) {
+                            if (dc.status == DownloadStatus.ERROR) {
+                                dc.chapter.deleteImages(activity);
                                 chapterDownloads.remove(dc);
+                                dc = null;
+                                ChapterDownload ndc = new ChapterDownload(chapter);
                                 if (mDownloadsChangesListener != null) {
                                     mDownloadsChangesListener.onChapterRemoved(i);
                                     mDownloadsChangesListener.onChapterAdded(lectura, dc);
                                 }
-                                chapterDownloads.add(0, dc);
+                                if (lectura) {
+                                    chapterDownloads.add(0, ndc);
+                                } else {
+                                    chapterDownloads.add(ndc);
+                                }
+                            } else {
+                                if (lectura) {
+                                    chapterDownloads.remove(dc);
+                                    if (mDownloadsChangesListener != null) {
+                                        mDownloadsChangesListener.onChapterRemoved(i);
+                                        mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                                    }
+                                    chapterDownloads.add(0, dc);
+                                }
                             }
+                            break;
                         }
-                        break;
                     }
                 }
+                initValues(activity);
             }
-            initValues(activity);
         }
     }
 
@@ -316,6 +318,10 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         DownloadPoolService.mDownloadsChangesListener = mDownloadsChangesListener;
     }
 
+    public static void setStateChangeListener(StateChangeListener mChapterStateChangeListener) {
+        DownloadPoolService.mChapterStateChangeListener = mChapterStateChangeListener;
+    }
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return START_STICKY;
@@ -350,6 +356,13 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         }
         if (mDownloadsChangesListener != null) {
             mDownloadsChangesListener.onStatusChanged(chapterDownloads.indexOf(singleDownload.cd), singleDownload.cd);
+        }
+    }
+
+    @Override
+    public void onStatusChanged(ChapterDownload chapterDownload) {
+        if (mChapterStateChangeListener != null) {
+            mChapterStateChangeListener.onStatusChanged(chapterDownload);
         }
     }
 

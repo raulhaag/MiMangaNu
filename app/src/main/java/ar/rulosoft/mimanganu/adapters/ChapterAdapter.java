@@ -23,11 +23,14 @@ import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
+import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class ChapterAdapter extends ArrayAdapter<Chapter> {
+public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChangeListener {
     private static int COLOR_READ = Color.parseColor("#b2b2b2");
     private static int COLOR_READING = Color.parseColor("#121212");
     private static int COLOR_SELECTED = Color.parseColor("#33B5E5");
@@ -259,6 +262,28 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> {
             chapters[j] = getItem(selected.keyAt(j));
         }
         return chapters;
+    }
+
+    @Override
+    public void onChange(SingleDownload singleDownload) {
+
+    }
+
+    @Override
+    public void onStatusChanged(ChapterDownload chapterDownload) {
+        if (chapterDownload.status == ChapterDownload.DownloadStatus.DOWNLOADED) {
+            for (final Chapter chapter : chapters) {
+                if (chapter.getId() == chapterDownload.getChapter().getId()) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            chapter.setDownloaded(true);
+                            notifyDataSetChanged();
+                        }
+                    });
+                }
+            }
+        }
     }
 
     public static class ViewHolder {
