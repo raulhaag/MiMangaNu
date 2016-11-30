@@ -21,7 +21,6 @@ class KissManga extends ServerBase {
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
     private static String IP = "93.174.95.110";
     private static String HOST = "kissmanga.com";
-    //FIXME mart arts is broken
     private static String[] genre = new String[]{ //"All"
             "Action", "Adult", "Adventure", "Comedy",
             "Comic", "Cooking", "Doujinshi", "Drama",
