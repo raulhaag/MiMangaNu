@@ -56,7 +56,7 @@ public class FromFolder extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         manga.setImages(manga.getPath() + "cover.jpg");
-        ArrayList<String> folders = Util.dirList(manga.getPath());
+        ArrayList<String> folders = Util.getInstance().dirList(manga.getPath());
         ArrayList<Chapter> chapters = new ArrayList<>();
         folders.remove(0);//remove "."
         for(String folder:folders){
@@ -85,7 +85,7 @@ public class FromFolder extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        ArrayList<String> images = Util.imageList(chapter.getPath());
+        ArrayList<String> images = Util.getInstance().imageList(chapter.getPath());
         chapter.setPages(images.size());
         Collections.sort(images,NUMBERS_ASC);
         String save = "";

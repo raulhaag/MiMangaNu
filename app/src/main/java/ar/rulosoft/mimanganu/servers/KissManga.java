@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
-public class KissManga extends ServerBase {
+class KissManga extends ServerBase {
 
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
@@ -21,34 +21,25 @@ public class KissManga extends ServerBase {
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
     private static String IP = "93.174.95.110";
     private static String HOST = "kissmanga.com";
-
-    /**
-     * single
-     **/
-    private static String[] genre = new String[]{
-            "All", "Action", "Adult", "Adventure", "Comedy", "Comic",
-            "Doujinshi", "Drama", "Ecchi", "Fantasy", "Harem", "Historical",
-            "Horror", "Lolicon", "Manga", "Manhua", "Manhwa", "Mature", "Mecha",
-            "Mystery", "Psychological", "Romance", "Sci-fi", "Seinen",
-            "Shotacon", "Shoujo", "Shounen", "Smut", "Sports", "Supernatural",
-            "Webtoon", "Yuri"
+    //FIXME mart arts is broken
+    private static String[] genre = new String[]{ //"All"
+            "Action", "Adult", "Adventure", "Comedy",
+            "Comic", "Cooking", "Doujinshi", "Drama",
+            "Ecchi", "Fantasy", "Gender Bender", "Harem",
+            "Historical", "Horror", "Josei", "Lolicon",
+            "Manga", "Manhua", "Manhwa", "Martial-Arts",
+            "Mature", "Mecha", "Medical", "Music",
+            "Mystery", "One-shot", "Psychological", "Romance",
+            "School-Life", "Sci-fi", "Seinen", "Shotacon",
+            "Shoujo", "Shoujo-Ai", "Shounen", "Shounen-Ai",
+            "Slice-of-Life", "Smut", "Sports", "Supernatural",
+            "Tragedy", "Webtoon", "Yaoi", "Yuri"
     };
-    private static String[] genreV = new String[]{
-            "/MangaList", "/Genre/Action", "/Genre/Adult", "/Genre/Adventure",
-            "/Genre/Comedy", "/Genre/Comic", "/Genre/Doujinshi", "/Genre/Drama",
-            "/Genre/Ecchi", "/Genre/Fantasy", "/Genre/Harem",
-            "/Genre/Historical", "/Genre/Horror", "/Genre/Lolicon",
-            "/Genre/Manga", "/Genre/Manhua", "/Genre/Manhwa", "/Genre/Mature",
-            "/Genre/Mecha", "/Genre/Mystery", "/Genre/Psychological",
-            "/Genre/Romance", "/Genre/Sci-fi", "/Genre/Seinen",
-            "/Genre/Shotacon", "/Genre/Shoujo", "/Genre/Shounen", "/Genre/Smut",
-            "/Genre/Sports", "/Genre/Supernatural", "/Genre/Webtoon",
-            "/Genre/Yuri"
-    };
+    private static String genreVV = "/Genre/";
     private static String[] order = {"Popularity", "Latest Update", "New Manga", "a-z"};
     private static String[] orderV = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
 
-    public KissManga() {
+    KissManga() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.kissmanga_icon);
         this.setServerName("KissManga");
@@ -186,40 +177,52 @@ public class KissManga extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{new ServerFilter("Included Genre(s) (multiple no order)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Excluded Genre(s) (multiple no order)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Order (only applied on single genre selection)", order, ServerFilter.FilterType.SINGLE)};
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        /*if (pageNumber > 1) {
+        if (pageNumber > 1) {
             return new ArrayList<>();
         } else {
-            Navigator nav = getNavigatorAndFlushParameters();
-            nav.addPost("mangaName", "");
-            nav.addPost("authorArtist", "");
-            if (filters[0].length == 0) {
-                for (int i = 1; i < genreM.length; i++) {
-                    nav.addPost("genres", "0");
-                }
-            } else {
-                for (int i = 0; i < genreM.length; i++) {
+            if (filters[0].length == 0 && filters[1].length == 0) { // on first load
+                return getMangasFiltered(0, 0, pageNumber);
+            } else if (filters[0].length == 1) { // single genre selection
+                String web = genreVV + genre[0] + orderV[0];
+                for (int i = 0; i < genre.length; i++) {
                     if (contains(filters[0], i)) {
-
+                        web = genreVV + genre[i] + orderV[filters[2][0]];
+                        if (pageNumber > 1) {
+                            web = web + "?page=" + pageNumber;
+                        }
+                    }
+                }
+                String source = getNavigatorAndFlushParameters().post(IP, web, HOST);
+                return getMangasSource(source);
+            } else { // multiple genre selection
+                Navigator nav = getNavigatorAndFlushParameters();
+                nav.addPost("mangaName", "");
+                nav.addPost("authorArtist", "");
+                for (int i = 0; i < genre.length; i++) {
+                    if (contains(filters[0], i)) {
                         nav.addPost("genres", "1");
+                    } else if (contains(filters[1], i)) {
+                        nav.addPost("genres", "2");
                     } else {
                         nav.addPost("genres", "0");
                     }
                 }
+                nav.addPost("status", ""); //stateV[filters[1][0]])
+                String source = nav.post(IP, "/AdvanceSearch", HOST);
+                return getMangasSource(source);
             }
-            nav.addPost("status", stateV[filters[1][0]]);
-            String source = nav.post(IP, "/AdvanceSearch", HOST);
-            return getMangasSource(source);*/
-        return getMangasFiltered(filters[0][0], filters[1][0], pageNumber);
+        }
     }
 
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String web = genreV[category] + orderV[order];
+        String web = genreVV + genre[category] + orderV[order];
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }

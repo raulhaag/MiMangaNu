@@ -57,12 +57,12 @@ public class MangaEden extends ServerBase {
     };
 
     private static String[] order = new String[]{
-            "Views", "Manga Title", "Chapters"
-    };
-    private static String[] orderV = new String[]{
-            "&order=1", "&order=-0", "&order=2"
+            "Views", "Latest Chapter", "Manga Title", "Chapters"
     };
 
+    private static String[] orderV = new String[]{
+            "&order=1", "&order=3", "&order=-0", "&order=2"
+    };
 
     MangaEden() {
         this.setFlag(R.drawable.flag_en);
@@ -176,17 +176,20 @@ public class MangaEden extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + "en/en-directory/?author=&title=";
-        for (int i = 0; i < filters[2].length; i++) {
-            web = web + statusV[filters[2][i]];
+        for (int i = 0; i < filters[3].length; i++) {
+            web = web + statusV[filters[3][i]];
         }
         for (int i = 0; i < filters[1].length; i++) {
             web = web + "&categoriesInc=" + genreV[filters[1][i]];
+        }
+        for (int i = 0; i < filters[2].length; i++) {
+            web = web + "&categoriesExcl=" + genreV[filters[2][i]];
         }
         web = web + "&artist=";
         for (int i = 0; i < filters[0].length; i++) {
             web = web + typeV[filters[0][i]];
         }
-        web = web + orderV[filters[3][0]] + "&page=" + pageNumber;
+        web = web + orderV[filters[4][0]] + "&page=" + pageNumber;
         String source = getNavigatorAndFlushParameters().get(web);
         return getMangasFromSource(source);
     }
@@ -194,7 +197,8 @@ public class MangaEden extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{new ServerFilter("Type", type, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Genres", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Status", status, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
         };

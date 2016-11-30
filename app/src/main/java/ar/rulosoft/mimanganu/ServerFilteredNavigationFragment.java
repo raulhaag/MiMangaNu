@@ -234,7 +234,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             fragment.setArguments(b);
             ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
         } else if (item.getItemId() == R.id.filter) {
-
             FilterViewGenerator mFilter = new FilterViewGenerator(getActivity(), "Filter", serverBase.getServerFilters(getActivity()), filters, colors[0]);
             mFilter.getDialog().show();
             mFilter.setFilterListener(this);

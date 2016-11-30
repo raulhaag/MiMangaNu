@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -16,28 +17,35 @@ import ar.rulosoft.mimanganu.utils.Util;
 /**
  * Created by Raul on 29/11/2015.
  */
-public class RuNineManga extends ServerBase {
+class RuNineManga extends ServerBase {
     public static String HOST = "http://ru.ninemanga.com";
     private static String[] genre = new String[]{
-            "арт","боевик","боевыеискусства","вампиры","гарем","гендернаяинтрига","героическоефэнтези","детектив","дзёсэй","додзинси","драма","игра","история","кодомо","комедия","махо-сёдзё","меха","мистика","научнаяфантастика","повседневность","постапокалиптика","приключения","психология","романтика","самурайскийбоевик","сверхъестественное","сёдзё","сёдзё-ай","сёнэн","сёнэн-ай","спорт","сэйнэн","трагедия","триллер","ужасы","фантастика","фэнтези","школа","этти","юри"
+            "арт", "боевик", "боевыеискусства", "вампиры", "гарем",
+            "гендернаяинтрига", "героическоефэнтези", "детектив", "дзёсэй", "додзинси",
+            "драма", "игра", "история", "кодомо", "комедия",
+            "махо-сёдзё", "меха", "мистика", "научнаяфантастика", "повседневность",
+            "постапокалиптика", "приключения", "психология", "романтика", "самурайскийбоевик",
+            "сверхъестественное", "сёдзё", "сёдзё-ай", "сёнэн", "сёнэн-ай",
+            "спорт", "сэйнэн", "трагедия", "триллер", "ужасы",
+            "фантастика", "фэнтези", "школа", "этти", "юри"
     };
     private static String[] genreV = new String[]{
-            "/category/%D0%B0%D1%80%D1%82_.html","/category/%D0%B1%D0%BE%D0%B5%D0%B2%D0%B8%D0%BA_.html","/category/%D0%B1%D0%BE%D0%B5%D0%B2%D1%8B%D0%B5+%D0%B8%D1%81%D0%BA%D1%83%D1%81%D1%81%D1%82%D0%B2%D0%B0_.html"
-            ,"/category/%D0%B2%D0%B0%D0%BC%D0%BF%D0%B8%D1%80%D1%8B_.html","/category/%D0%B3%D0%B0%D1%80%D0%B5%D0%BC_.html","/category/%D0%B3%D0%B5%D0%BD%D0%B4%D0%B5%D1%80%D0%BD%D0%B0%D1%8F+%D0%B8%D0%BD%D1%82%D1%80%D0%B8%D0%B3%D0%B0_.html"
-            ,"/category/%D0%B3%D0%B5%D1%80%D0%BE%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%BE%D0%B5+%D1%84%D1%8D%D0%BD%D1%82%D0%B5%D0%B7%D0%B8_.html","/category/%D0%B4%D0%B5%D1%82%D0%B5%D0%BA%D1%82%D0%B8%D0%B2_.html"
-            ,"/category/%D0%B4%D0%B7%D1%91%D1%81%D1%8D%D0%B9_.html","/category/%D0%B4%D0%BE%D0%B4%D0%B7%D0%B8%D0%BD%D1%81%D0%B8_.html","/category/%D0%B4%D1%80%D0%B0%D0%BC%D0%B0_.html"
-            ,"/category/%D0%B8%D0%B3%D1%80%D0%B0_.html","/category/%D0%B8%D1%81%D1%82%D0%BE%D1%80%D0%B8%D1%8F_.html","/category/%D0%BA%D0%BE%D0%B4%D0%BE%D0%BC%D0%BE_.html","/category/%D0%BA%D0%BE%D0%BC%D0%B5%D0%B4%D0%B8%D1%8F_.html"
-            ,"/category/%D0%BC%D0%B0%D1%85%D0%BE-%D1%81%D1%91%D0%B4%D0%B7%D1%91_.html","/category/%D0%BC%D0%B5%D1%85%D0%B0_.html","/category/%D0%BC%D0%B8%D1%81%D1%82%D0%B8%D0%BA%D0%B0_.html"
-            ,"/category/%D0%BD%D0%B0%D1%83%D1%87%D0%BD%D0%B0%D1%8F+%D1%84%D0%B0%D0%BD%D1%82%D0%B0%D1%81%D1%82%D0%B8%D0%BA%D0%B0_.html","/category/%D0%BF%D0%BE%D0%B2%D1%81%D0%B5%D0%B4%D0%BD%D0%B5%D0%B2%D0%BD%D0%BE%D1%81%D1%82%D1%8C_.html"
-            ,"/category/%D0%BF%D0%BE%D1%81%D1%82%D0%B0%D0%BF%D0%BE%D0%BA%D0%B0%D0%BB%D0%B8%D0%BF%D1%82%D0%B8%D0%BA%D0%B0_.html","/category/%D0%BF%D1%80%D0%B8%D0%BA%D0%BB%D1%8E%D1%87%D0%B5%D0%BD%D0%B8%D1%8F_.html"
-            ,"/category/%D0%BF%D1%81%D0%B8%D1%85%D0%BE%D0%BB%D0%BE%D0%B3%D0%B8%D1%8F_.html","/category/%D1%80%D0%BE%D0%BC%D0%B0%D0%BD%D1%82%D0%B8%D0%BA%D0%B0_.html","/category/%D1%81%D0%B0%D0%BC%D1%83%D1%80%D0%B0%D0%B9%D1%81%D0%BA%D0%B8%D0%B9+%D0%B1%D0%BE%D0%B5%D0%B2%D0%B8%D0%BA_.html"
-            ,"/category/%D1%81%D0%B2%D0%B5%D1%80%D1%85%D1%8A%D0%B5%D1%81%D1%82%D0%B5%D1%81%D1%82%D0%B2%D0%B5%D0%BD%D0%BD%D0%BE%D0%B5_.html","/category/%D1%81%D1%91%D0%B4%D0%B7%D1%91_.html","/category/%D1%81%D1%91%D0%B4%D0%B7%D1%91-%D0%B0%D0%B9_.html"
-            ,"/category/%D1%81%D1%91%D0%BD%D1%8D%D0%BD_.html","/category/%D1%81%D1%91%D0%BD%D1%8D%D0%BD-%D0%B0%D0%B9_.html","/category/%D1%81%D0%BF%D0%BE%D1%80%D1%82_.html","/category/%D1%81%D1%8D%D0%B9%D0%BD%D1%8D%D0%BD_.html"
-            ,"/category/%D1%82%D1%80%D0%B0%D0%B3%D0%B5%D0%B4%D0%B8%D1%8F_.html","/category/%D1%82%D1%80%D0%B8%D0%BB%D0%BB%D0%B5%D1%80_.html","/category/%D1%83%D0%B6%D0%B0%D1%81%D1%8B_.html","/category/%D1%84%D0%B0%D0%BD%D1%82%D0%B0%D1%81%D1%82%D0%B8%D0%BA%D0%B0_.html"
-            ,"/category/%D1%84%D1%8D%D0%BD%D1%82%D0%B5%D0%B7%D0%B8_.html","/category/%D1%88%D0%BA%D0%BE%D0%BB%D0%B0_.html","/category/%D1%8D%D1%82%D1%82%D0%B8_.html","/category/%D1%8E%D1%80%D0%B8_.html"
+            "90", "53", "58", "85", "73",
+            "81", "68", "72", "64", "62",
+            "51", "76", "75", "89", "57",
+            "88", "84", "71", "79", "65",
+            "87", "59", "54", "61", "82",
+            "55", "67", "78", "52", "63",
+            "69", "74", "70", "83", "86",
+            "77", "56", "66", "60", "80"
     };
 
-    public RuNineManga() {
+    private static String[] orderV = {"/list/Hot-Book/", "/list/New-Update/", "/category/", "/list/New-Book/"};
+    private static String[] order = {"Топ манга", "Последние", "Каталог манги", "новая книга"};
+    private static String[] complete = new String[]{"или", "Да", "Нет"};
+    private static String[] completeV = new String[]{"either", "yes", "no"};
+
+    RuNineManga() {
         this.setFlag(R.drawable.flag_ru);
         this.setIcon(R.drawable.ninemanga);
         this.setServerName("RuNineManga");
@@ -82,7 +90,7 @@ public class RuNineManga extends ServerBase {
         manga.setFinished(false);//not supported by server
         // Author
         manga.setAuthor(getFirstMatchDefault("itemprop=\"author\".+?>(.+?)<", source, ""));
-        //Genre
+        // Genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // Chapter
         Pattern p = Pattern.compile(
@@ -142,14 +150,46 @@ public class RuNineManga extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters(Context context) {
         return new ServerFilter[]{
-                new ServerFilter("Интересное Манга по жанрам", genre, ServerFilter.FilterType.SINGLE)
+                new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
         };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(HOST + genreV[filters[0][0]].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
+        String includedGenres = "";
+        if (filters[0].length > 0) {
+            for (int i = 0; i < filters[0].length; i++) {
+                includedGenres = includedGenres + genreV[filters[0][i]] + "%2C"; // comma
+            }
+        }
+        String excludedGenres = "";
+        if (filters[1].length > 0) {
+            for (int i = 0; i < filters[1].length; i++) {
+                excludedGenres = excludedGenres + genreV[filters[1][i]] + "%2C"; // comma
+            }
+        }
+        String web;
+        if(filters[0].length < 1 && filters[1].length < 1)
+            web = HOST + orderV[filters[3][0]];
+        else
+            web = "http://ru.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+        Log.d("NM","web: "+web);
+        String source = getNavigatorAndFlushParameters().get(web);
+        // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
+        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
+        Matcher matcher = pattern.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        while (matcher.find()) {
+            /*Log.d("NM","(2): "+matcher.group(2));
+            Log.d("NM","(1): "+matcher.group(1));*/
+            Manga m = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
+            m.setImages(matcher.group(2));
+            mangas.add(m);
+        }
+        return mangas;
     }
 
     @Override

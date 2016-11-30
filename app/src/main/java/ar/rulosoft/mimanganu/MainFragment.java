@@ -538,7 +538,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
         });
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
-        Log.i("MF", "columnSize: " + columnSize);
+        //Log.i("MF", "columnSize: " + columnSize);
         if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
             columnSize = getGridColumnSizeFromWidth();
         grid.setNumColumns(columnSize);
@@ -835,7 +835,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             onDb = true;
                     }
                     if (!onDb) {
-                        String title = Util.getLastStringInPathDontRemoveLastChar(directory);
+                        String title = Util.getInstance().getLastStringInPathDontRemoveLastChar(directory);
                         manga = new Manga(FromFolder.FROMFOLDER, title, directory, true);
                         manga.setImages("");
 

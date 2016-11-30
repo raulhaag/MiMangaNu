@@ -48,7 +48,7 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
         actual = pm.getString(parent.getKey(), Environment.getExternalStorageDirectory().getPath() + "/");
         dirs = (ListView) view.findViewById(R.id.dirList);
         dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
-        ArrayList<String> dirList = Util.dirList(actual);
+        ArrayList<String> dirList = Util.getInstance().dirList(actual);
         context = getActivity();
         ArrayAdapter<String> adap = new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
         dirs_path.setText(actual);
@@ -57,13 +57,13 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 String item = (String) dirs.getItemAtPosition(arg2);
-                if (item != "..") {
+                if (!item.equals("..")) {
                     actual += item + "/";
                 } else {
                     actual = actual.substring(0, actual.lastIndexOf("/"));
                     actual = actual.substring(0, actual.lastIndexOf("/") + 1);
                 }
-                ArrayList<String> dirList = Util.dirList(actual);
+                ArrayList<String> dirList = Util.getInstance().dirList(actual);
                 ArrayAdapter<String> adap =
                         new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
                 dirs_path.setText(actual);
