@@ -104,7 +104,10 @@ class ReadComicOnline extends ServerBase {
         // Author
         String artist = getFirstMatchDefault("Artist:.+?\">(.+?)</a>", source, "");
         String writer = getFirstMatchDefault("Writer:.+?\">(.+?)</a>", source, "");
-        manga.setAuthor(artist+", "+writer);
+        if (artist.equals(writer))
+            manga.setAuthor(artist);
+        else
+            manga.setAuthor(artist + ", " + writer);
 
         // Genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
