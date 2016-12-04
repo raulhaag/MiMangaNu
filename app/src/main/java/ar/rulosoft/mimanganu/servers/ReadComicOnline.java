@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
-public class ReadComicOnline extends ServerBase {
+class ReadComicOnline extends ServerBase {
 
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[^>]*>([^\"]+)</a>[\\s]*</td>";
@@ -31,13 +31,17 @@ public class ReadComicOnline extends ServerBase {
             "Western", "Zombies"
     };
     private static String[] genreV = new String[]{
-            "/ComicList", "/Genre/Action", "/Genre/Adventure", "/Genre/Anthology", "/Genre/Anthropomorphic", "/Genre/Biography", "/Genre/Comedy", "/Genre/Crime", "/Genre/Drama", "/Genre/Family", "/Genre/Fantasy", "/Genre/Fighting", "/Genre/Graphic-Novels", "/Genre/Historical", "/Genre/Horror", "/Genre/Leading-Ladies", "/Genre/Literature", "/Genre/Manga", "/Genre/Martial-Arts", "/Genre/Mature", "/Genre/Military", "/Genre/Movies-TV", "/Genre/Mystery", "/Genre/Mythology", "/Genre/Political", "/Genre/Post-Apocalyptic", "/Genre/Psychological", "/Genre/Pulp", "/Genre/Robots", "/Genre/Romance", "/Genre/Sci-Fi", "/Genre/Spy", "/Genre/Superhero", "/Genre/Supernatural", "/Genre/Suspense", "/Genre/Thriller", "/Genre/Vampires", "/Genre/Video-Games", "/Genre/War", "/Genre/Western", "/Genre/Zombies"
+            "/ComicList", "/Genre/Action", "/Genre/Adventure", "/Genre/Anthology", "/Genre/Anthropomorphic", "/Genre/Biography", "/Genre/Children", "/Genre/Comedy",
+            "/Genre/Crime", "/Genre/Drama", "/Genre/Family", "/Genre/Fantasy", "/Genre/Fighting", "/Genre/Graphic-Novels", "/Genre/Historical", "/Genre/Horror",
+            "/Genre/Leading-Ladies", "/Genre/LGBTQ", "/Genre/Literature", "/Genre/Manga", "/Genre/Martial-Arts", "/Genre/Mature", "/Genre/Military",
+            "/Genre/Movies-TV", "/Genre/Mystery", "/Genre/Mythology", "/Genre/Personal", "/Genre/Political", "/Genre/Post-Apocalyptic",
+            "/Genre/Psychological", "/Genre/Pulp", "/Genre/Robots", "/Genre/Romance", "/Genre/School-Life", "/Genre/Sci-Fi", "/Genre/Slice-of-Life",
+            "/Genre/Spy", "/Genre/Superhero", "/Genre/Supernatural", "/Genre/Suspense", "/Genre/Thriller", "/Genre/Vampires", "/Genre/Video-Games", "/Genre/War",
+            "/Genre/Western", "/Genre/Zombies"
     };
 
     private static String[] order = {"Popularity", "Latest Update", "New Manga", "a-z"};
-    private static String[] orderV = new String[]{
-            "/MostPopular", "/LatestUpdate", "/Newest", ""
-    };
+    private static String[] orderV = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
 
     private static String[] state = new String[]{
             "Any", "Ongoing", "Completed"
@@ -46,7 +50,7 @@ public class ReadComicOnline extends ServerBase {
             "", "Ongoing", "Completed"
     };
 
-    public ReadComicOnline() {
+    ReadComicOnline() {
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.readcomiconline);
         this.setServerName("ReadComicOnline");
@@ -98,7 +102,12 @@ public class ReadComicOnline extends ServerBase {
         }
 
         // Author
-        manga.setAuthor(getFirstMatchDefault("href=\"/AuthorArtist/.+?>(.+?)<", source, ""));
+        String artist = getFirstMatchDefault("Artist:.+?\">(.+?)</a>", source, "");
+        String writer = getFirstMatchDefault("Writer:.+?\">(.+?)</a>", source, "");
+        if (artist.equals(writer))
+            manga.setAuthor(artist);
+        else
+            manga.setAuthor(artist + ", " + writer);
 
         // Genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
@@ -166,7 +175,7 @@ public class ReadComicOnline extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
+        return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
     }
 

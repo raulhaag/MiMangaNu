@@ -17,17 +17,38 @@ import ar.rulosoft.mimanganu.utils.Util;
 /**
  * Created by Raul on 03/02/2016.
  */
-public class RawSenManga extends ServerBase {
+class RawSenManga extends ServerBase {
 
     public static String HOST = "http://raw.senmanga.com/";
 
-    private static String[] generos = new String[]{
-            "All", "Action", "Adult", "Adventure", "Comedy", "Cooking", "Drama", "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Light Novel", "Martial Arts", "Mature", "Music", "Mystery", "Psychological", "Romance", "School Life", "Sci-Fi", "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut", "Sports", "Supernatural", "Tragedy", "Webtoons", "Yuri"
+    private static String[] genre = new String[]{
+            "All",
+            "Action", "Adult", "Adventure", "Comedy",
+            "Cooking", "Drama", "Ecchi", "Fantasy",
+            "Gender Bender", "Harem", "Historical", "Horror",
+            "Josei", "Light Novel", "Martial Arts", "Mature",
+            "Music", "Mystery", "Psychological", "Romance",
+            "School Life", "Sci-Fi", "Seinen", "Shoujo",
+            "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life",
+            "Smut", "Sports", "Supernatural", "Tragedy",
+            "Webtoons", "Yuri"
     };
-    private static String[] generosV = new String[]{"Manga/", "directory/category/Action/", "directory/category/Adult/", "directory/category/Adventure/", "directory/category/Comedy/", "directory/category/Cooking/", "directory/category/Drama/", "directory/category/Ecchi/", "directory/category/Fantasy/", "directory/category/Gender-Bender/", "directory/category/Harem/", "directory/category/Historical/", "directory/category/Horror/", "directory/category/Josei/", "directory/category/Light_Novel/", "directory/category/Martial_Arts/", "directory/category/Mature/", "directory/category/Music/", "directory/category/Mystery/", "directory/category/Psychological/", "directory/category/Romance/", "directory/category/School_Life/", "directory/category/Sci-Fi/", "directory/category/Seinen/", "directory/category/Shoujo/", "directory/category/Shoujo-Ai/", "directory/category/Shounen/", "directory/category/Shounen-Ai/", "directory/category/Slice_of_Life/", "directory/category/Smut/", "directory/category/Sports/", "directory/category/Supernatural/", "directory/category/Tragedy/", "directory/category/Webtoons/", "directory/category/Yuri/"
+    private static String[] genreV = new String[]{
+            "Manga/",
+            "directory/category/Action/", "directory/category/Adult/", "directory/category/Adventure/", "directory/category/Comedy/",
+            "directory/category/Cooking/", "directory/category/Drama/", "directory/category/Ecchi/", "directory/category/Fantasy/",
+            "directory/category/Gender-Bender/", "directory/category/Harem/", "directory/category/Historical/", "directory/category/Horror/",
+            "directory/category/Josei/", "directory/category/Light_Novel/", "directory/category/Martial_Arts/", "directory/category/Mature/",
+            "directory/category/Music/", "directory/category/Mystery/", "directory/category/Psychological/", "directory/category/Romance/",
+            "directory/category/School_Life/", "directory/category/Sci-Fi/", "directory/category/Seinen/", "directory/category/Shoujo/",
+            "directory/category/Shoujo-Ai/", "directory/category/Shounen/", "directory/category/Shounen-Ai/", "directory/category/Slice_of_Life/",
+            "directory/category/Smut/", "directory/category/Sports/", "directory/category/Supernatural/", "directory/category/Tragedy/",
+            "directory/category/Webtoons/", "directory/category/Yuri/"
     };
+    private static String[] order = {"Most Popular", "Rating", "Title"};
+    private static String[] orderV = {"Manga/?order=popular", "Manga/?order=rating", "Manga/?order=title"};
 
-    public RawSenManga() {
+    RawSenManga() {
         this.setFlag(R.drawable.flag_raw);
         this.setIcon(R.drawable.senmanga);
         this.setServerName("SenManga");
@@ -38,7 +59,7 @@ public class RawSenManga extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "Manga/?order=text-version");
-        Pattern p = Pattern.compile("<td><a href=\"(.+?)\">(.+?)<\\/a><\\/td><td><(a|b)");
+        Pattern p = Pattern.compile("<td><a href=\"(.+?)\">(.+?)</a></td><td><(a|b)");
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(2),HOST + m.group(1), false);
@@ -110,9 +131,9 @@ public class RawSenManga extends ServerBase {
     }
 
     @NonNull
-    private ArrayList<Manga> getMangasFromData(String data) {
-        Pattern p = Pattern.compile("<div class=\"cover\"><a href=\"\\/(.+?)\" title=\"(.+?)\"><img src=\"\\/(.+?)\"");
-        Matcher m = p.matcher(data);
+    private ArrayList<Manga> getMangasFromSource(String source) {
+        Pattern p = Pattern.compile("<div class=\"cover\"><a href=\"/(.+?)\" title=\"(.+?)\"><img src=\"/(.+?)\"");
+        Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()){
             Manga manga = new Manga(getServerID(),m.group(2),HOST + m.group(1),false);
@@ -124,14 +145,18 @@ public class RawSenManga extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Genre", generos, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = HOST + generosV[filters[0][0]] + "?page=" + pageNumber;
-        String data = getNavigatorAndFlushParameters().get(web);
-        return getMangasFromData(data);
+        String web = HOST + genreV[filters[0][0]] + "?page=" + pageNumber;
+        if (genre[filters[0][0]].equals("All"))
+            web = HOST + orderV[filters[1][0]] + "&page=" + pageNumber;
+        String source = getNavigatorAndFlushParameters().get(web);
+        return getMangasFromSource(source);
     }
 
     @Override

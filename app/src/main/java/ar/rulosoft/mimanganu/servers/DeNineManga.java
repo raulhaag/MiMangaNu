@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -13,30 +14,32 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class DeNineManga extends ServerBase {
+class DeNineManga extends ServerBase {
     private static String HOST = "http://de.ninemanga.com";
-
-    // As you can guess, "V" is missing, but this is the fault of the website, somehow
     private static String[] genre = new String[]{
-            "Alle", "0-9",
-            "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-            "N", "O", "P", "Q", "R", "S", "T", "U", "W", "X", "Y", "Z"
+            "Abenteuer", "Action", "Alltagsdrama", "DäMonen", "Drama",
+            "Ecchi", "Erotik", "Fantasy", "Gender Bender", "Harem",
+            "Historisch", "Horror", "Josei", "Kampfsport", "Kartenspiel",
+            "KomöDie", "Magie", "Mecha", "MilitäR", "Musik",
+            "Mystery", "Romanze", "Schule", "Sci-Fi", "Shoujo",
+            "Shounen", "Spiel", "Sport", "Super KräFte", "Thriller",
+            "Vampire", "Videospiel", "Yaoi"
     };
     private static String[] genreV = new String[]{
-            "index_.html", "0-9_.html",
-            "A_.html", "B_.html", "C_.html", "D_.html", "E_.html", "F_.html", "G_.html",
-            "H_.html", "I_.html", "J_.html", "K_.html", "L_.html", "M_.html", "N_.html",
-            "O_.html", "P_.html", "Q_.html", "R_.html", "S_.html", "T_.html", "U_.html",
-            "W_.html", "X_.html", "Y_.html", "Z_.html"
+            "63", "64", "82", "76", "65",
+            "79", "88", "66", "91", "73",
+            "84", "72", "95", "81", "78",
+            "67", "68", "89", "90", "83",
+            "69", "74", "70", "86", "85",
+            "75", "92", "87", "80", "94",
+            "71", "77", "93"
     };
-    private static String[] orderV = new String[]{
-            "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
-    };
-    private static String[] order = new String[]{
-            "Manga Liste", "Updates", "Beliebte Manga", "Neue Manga"
-    };
+    private static String[] orderV = new String[]{"/list/Hot-Book/", "/list/New-Update/", "/category/", "/list/New-Book/"};
+    private static String[] order = new String[]{"Beliebte Manga", "Updates", "Manga Liste", "Neue Manga"};
+    private static String[] complete = new String[]{"Entweder", "Ja", "Nein"};
+    private static String[] completeV = new String[]{"either", "yes", "no"};
 
-    public DeNineManga() {
+    DeNineManga() {
         this.setFlag(R.drawable.flag_de);
         this.setIcon(R.drawable.ninemanga);
         this.setServerName("DeNineManga");
@@ -81,6 +84,8 @@ public class DeNineManga extends ServerBase {
         manga.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Laufende"));
         // Author
         manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
+        // Genre
+        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // Chapter
         Pattern p = Pattern.compile(
                 "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
@@ -141,15 +146,44 @@ public class DeNineManga extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(
-                HOST + DeNineManga.orderV[filters[1][0]] + genreV[filters[0][0]].replace("_", "_" + pageNumber));
-        return getMangasFromSource(source);
+        String includedGenres = "";
+        if (filters[0].length > 0) {
+            for (int i = 0; i < filters[0].length; i++) {
+                includedGenres = includedGenres + genreV[filters[0][i]] + "%2C"; // comma
+            }
+        }
+        String excludedGenres = "";
+        if (filters[1].length > 0) {
+            for (int i = 0; i < filters[1].length; i++) {
+                excludedGenres = excludedGenres + genreV[filters[1][i]] + "%2C"; // comma
+            }
+        }
+        String web;
+        if(filters[0].length < 1 && filters[1].length < 1)
+            web = HOST + orderV[filters[3][0]];
+        else
+            web = "http://de.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+        Log.d("NM","web: "+web);
+        String source = getNavigatorAndFlushParameters().get(web);
+        // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
+        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
+        Matcher matcher = pattern.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        while (matcher.find()) {
+            Manga m = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
+            m.setImages(matcher.group(2));
+            mangas.add(m);
+        }
+        return mangas;
     }
 
     @Override

@@ -81,7 +81,7 @@ public class MangaFolderSelect extends DialogFragment {
         actual = pm.getString("directorio", Environment.getExternalStorageDirectory().getPath() + "/MiMangaNu/");
         dirs = (ListView) view.findViewById(R.id.dirList);
         dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
-        ArrayList<String> dirList = Util.dirList(actual);
+        ArrayList<String> dirList = Util.getInstance().dirList(actual);
         context = getActivity();
         ArrayAdapter<String> adap = new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
         dirs_path.setText(actual);
@@ -96,7 +96,7 @@ public class MangaFolderSelect extends DialogFragment {
                     actual = actual.substring(0, actual.lastIndexOf("/"));
                     actual = actual.substring(0, actual.lastIndexOf("/") + 1);
                 }
-                ArrayList<String> dirList = Util.dirList(actual);
+                ArrayList<String> dirList = Util.getInstance().dirList(actual);
                 ArrayAdapter<String> adap =
                         new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
                 dirs_path.setText(actual);
@@ -128,7 +128,7 @@ public class MangaFolderSelect extends DialogFragment {
 
         @Override
         protected Void doInBackground(String... params) {
-            String title = Util.getLastStringInPath(params[0]);
+            String title = Util.getInstance().getLastStringInPath(params[0]);
             List<Manga> mangas = Database.getFromFolderMangas(getContext());
             onDb = false;
             for (Manga m : mangas) {
@@ -237,7 +237,7 @@ public class MangaFolderSelect extends DialogFragment {
                             onDb = true;
                     }
                     if (!onDb) {
-                        String title = Util.getLastStringInPathDontRemoveLastChar(directory);
+                        String title = Util.getInstance().getLastStringInPathDontRemoveLastChar(directory);
                         manga = new Manga(FromFolder.FROMFOLDER, title, directory, true);
                         manga.setImages("");
 

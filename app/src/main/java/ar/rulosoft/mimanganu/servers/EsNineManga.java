@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -13,9 +14,9 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class EsNineManga extends ServerBase {
+class EsNineManga extends ServerBase {
     private static String HOST = "http://es.ninemanga.com";
-    private static String[] generos = new String[]{
+    private static String[] genre = new String[]{
             "4-Koma", "AccióN", "Action", "Adult", "Adulto", "Adventure", "ApocalíPtico",
             "Artes Marciales", "Aventura", "Aventuras", "Ciencia FiccióN", "Comedia", "Comedy",
             "Cotidiano", "Cyberpunk", "Delincuentes", "Demonios", "Deporte", "Deportes", "Drama", "Ecchi",
@@ -32,8 +33,8 @@ public class EsNineManga extends ServerBase {
             "Tragedy", "Transexual", "Vampiros", "Vida Cotidiana", "Vida Escolar", "Vida Escolar.",
             "Webcomic", "Webtoon", "Yura", "Yuri"
     };
-    private static String[] generosV = new String[]{
-            "", "201", "69", "177", "193", "86", "179", "202", "66", "64", "120", "93", "75", "178", "110", "199",
+    private static String[] genreV = new String[]{
+            "201", "69", "177", "193", "86", "179", "202", "66", "64", "120", "93", "75", "178", "110", "199",
             "125", "126", "76", "111", "79", "65", "81", "100", "70", "180", "175", "108", "78", "82", "83", "190",
             "95", "99", "112", "113", "72", "90", "172", "102", "103", "94", "114", "189", "181", "115", "205",
             "88", "121", "197", "187", "71", "184", "195", "91", "198", "208", "109", "96", "192", "196", "169",
@@ -41,18 +42,12 @@ public class EsNineManga extends ServerBase {
             "173", "68", "185", "118", "182", "183", "74", "188", "124", "206", "116", "119", "203", "171", "106",
             "107", "204", "97", "87", "191", "117", "209", "84", "170", "122", "92", "200", "101", "127"
     };
-    private static String[] orderV = new String[]{
-            "/category/", "/list/New-Update/", "/list/Hot-Book/", "/list/New-Book/"
-    };
+    private static String[] orderV = {"/list/Hot-Book/", "/list/New-Update/", "/category/", "/list/New-Book/"};
+    private static String[] orders = new String[]{"Popular", "Recientes", "Lista de Manga", "Manga Nueva"};
+    private static String[] complete = new String[]{"O", "Si", "No"};
+    private static String[] completeV = new String[]{"either", "yes", "no"};
 
-    private static String[] orders = new String[]{"Lista de Manga", "Recientes", "Popular", "Manga Nueva"};
-
-    private static String[] complete = new String[]{"Todos", "En curso", "Completa"};
-
-    private static String[] completeV = new String[]{"yes", "no", "Completa"};
-
-
-    public EsNineManga() {
+    EsNineManga() {
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.ninemanga);
         this.setServerName("EsNineManga");
@@ -97,7 +92,7 @@ public class EsNineManga extends ServerBase {
         manga.setFinished(getFirstMatchDefault("Estado(.+?)</a>", source, "").contains("Completado"));
         // autor
         manga.setAuthor(getFirstMatchDefault("Autor.+?\">(.+?)<", source, ""));
-        // generos
+        // genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // capitulos
         Pattern p = Pattern.compile(
@@ -146,25 +141,39 @@ public class EsNineManga extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Generos", generos, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Orden", orders, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{new ServerFilter("Incluido Genero(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Excluido Genero(s)", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Series Completado", complete, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Orden", orders, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String categories = "";
+        String includedGenres = "";
         if (filters[0].length > 0) {
             for (int i = 0; i < filters[0].length; i++) {
-                categories = categories + generosV[filters[0][i]] + "%2C";//coma
+                includedGenres = includedGenres + genreV[filters[0][i]] + "%2C"; // comma
             }
         }
-        String web = "http://es.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + categories + "&out_category_id=&completed_series=" + completeV[filters[1][0]] + "&type=high&page=" + pageNumber + ".html";
+        String excludedGenres = "";
+        if (filters[1].length > 0) {
+            for (int i = 0; i < filters[1].length; i++) {
+                excludedGenres = excludedGenres + genreV[filters[1][i]] + "%2C"; // comma
+            }
+        }
+        String web;
+        if(filters[0].length < 1 && filters[1].length < 1)
+            web = HOST + orderV[filters[3][0]];
+        else
+            web = "http://es.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+        Log.d("NM","web: "+web);
         String source = getNavigatorAndFlushParameters().get(web);
         Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga m = new Manga(ESNINEMANGA, matcher.group(3), HOST + matcher.group(1), false);
+            Manga m = new Manga(getServerID(), matcher.group(3), HOST + matcher.group(1), false);
             m.setImages(matcher.group(2));
             mangas.add(m);
         }

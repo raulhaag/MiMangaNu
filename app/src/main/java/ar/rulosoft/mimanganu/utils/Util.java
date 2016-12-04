@@ -30,19 +30,23 @@ public class Util {
     private static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
     private static NotificationCompat.Builder notificationWithProgressbarBuilder;
     private static NotificationManager notificationManager;
-    private static Util utilInstance = null;
 
     private Util() {
     }
 
-    public static Util getInstance() {
-        if (utilInstance == null) {
-            utilInstance = new Util();
-        }
-        return utilInstance;
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
     }
 
-    public static ArrayList<String> dirList(String directory) {
+    public static Util getInstance() {
+        return LazyHolder.utilInstance;
+    }
+
+    public Object clone() throws CloneNotSupportedException {
+        throw new CloneNotSupportedException();
+    }
+
+    public ArrayList<String> dirList(String directory) {
         ArrayList<String> list = new ArrayList<>();
         if (directory.length() != 1) {
             list.add("..");
@@ -58,7 +62,7 @@ public class Util {
         return list;
     }
 
-    public static ArrayList<String> imageList(String directory) {
+    public ArrayList<String> imageList(String directory) {
         ArrayList<String> list = new ArrayList<>();
         File dir = new File(directory);
         if (dir.listFiles() != null) {
@@ -72,13 +76,13 @@ public class Util {
         return list;
     }
 
-    public static String getLastStringInPath(String path) {
+    public String getLastStringInPath(String path) {
         path = path.substring(0, path.length() - 1);
         int idx = path.lastIndexOf("/");
         return path.substring(idx + 1);
     }
 
-    public static String getLastStringInPathDontRemoveLastChar(String path) {
+    public String getLastStringInPathDontRemoveLastChar(String path) {
         path = path.substring(0, path.length());
         int idx = path.lastIndexOf("/");
         return path.substring(idx + 1);
