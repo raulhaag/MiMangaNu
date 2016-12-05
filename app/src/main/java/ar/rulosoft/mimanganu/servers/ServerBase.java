@@ -50,6 +50,7 @@ public abstract class ServerBase {
     static final int LEOMANGA = 25;
 
     static final int READCOMICONLINE = 1000;
+    static final int READCOMICSTV = 1002;
     public boolean hasMore = true;
     protected String defaultSynopsis = "N/A";
     private String serverName;
@@ -135,6 +136,9 @@ public abstract class ServerBase {
             case LEOMANGA:
                 serverBase = new LeoManga();
                 break;
+            case READCOMICSTV:
+                serverBase = new ReadComicsTV();
+                break;
             case FROMFOLDER:
                 serverBase = new FromFolder();
                 break;
@@ -182,6 +186,7 @@ public abstract class ServerBase {
                 new Manga_Tube(),
                 new RawSenManga(),
                 new ReadComicOnline(),
+                new ReadComicsTV(),
                 new FromFolder()
         });
     }

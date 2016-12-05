@@ -21,17 +21,17 @@ class KissManga extends ServerBase {
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
     private static String IP = "93.174.95.110";
     private static String HOST = "kissmanga.com";
-    private static String[] genre = new String[]{ //"All"
+    private static String[] genre = new String[]{
             "Action", "Adult", "Adventure", "Comedy",
             "Comic", "Cooking", "Doujinshi", "Drama",
             "Ecchi", "Fantasy", "Gender Bender", "Harem",
             "Historical", "Horror", "Josei", "Lolicon",
-            "Manga", "Manhua", "Manhwa", "Martial-Arts",
+            "Manga", "Manhua", "Manhwa", "Martial Arts",
             "Mature", "Mecha", "Medical", "Music",
-            "Mystery", "One-shot", "Psychological", "Romance",
-            "School-Life", "Sci-fi", "Seinen", "Shotacon",
-            "Shoujo", "Shoujo-Ai", "Shounen", "Shounen-Ai",
-            "Slice-of-Life", "Smut", "Sports", "Supernatural",
+            "Mystery", "One shot", "Psychological", "Romance",
+            "School Life", "Sci-fi", "Seinen", "Shotacon",
+            "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai",
+            "Slice of Life", "Smut", "Sports", "Supernatural",
             "Tragedy", "Webtoon", "Yaoi", "Yuri"
     };
     private static String genreVV = "/Genre/";
@@ -189,10 +189,10 @@ class KissManga extends ServerBase {
             if (filters[0].length == 0 && filters[1].length == 0) { // on first load
                 return getMangasFiltered(0, 0, pageNumber);
             } else if (filters[0].length == 1) { // single genre selection
-                String web = genreVV + genre[0] + orderV[0];
+                String web = genreVV + genre[0].replaceAll(" ","-") + orderV[0];
                 for (int i = 0; i < genre.length; i++) {
                     if (contains(filters[0], i)) {
-                        web = genreVV + genre[i] + orderV[filters[2][0]];
+                        web = genreVV + genre[i].replaceAll(" ","-") + orderV[filters[2][0]];
                         if (pageNumber > 1) {
                             web = web + "?page=" + pageNumber;
                         }
@@ -221,7 +221,7 @@ class KissManga extends ServerBase {
     }
 
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String web = genreVV + genre[category] + orderV[order];
+        String web = genreVV + genre[category].replaceAll(" ","-") + orderV[order];
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
