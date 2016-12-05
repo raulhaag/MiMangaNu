@@ -42,10 +42,10 @@ public class MangaFox extends ServerBase {
             "&is_completed=", "&is_completed=1", "&is_completed=0"
     };
     private static String[] order = new String[]{
-            "Views", "Manga Title", "Chapters"
+            "Views", "Rating", "Latest Chapter", "Manga Title", "Chapters"
     };
     private static String[] orderV = new String[]{
-            "&sort=views&order=za", "&sort=name&order=az", "&sort=total_chapters&order=za"
+            "&sort=views", "&sort=rating", "&sort=last_chapter_time", "&sort=name&order=az", "&sort=total_chapters&order=za"
     };
     private long last_search;
 

@@ -119,8 +119,7 @@ class NineManga extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(
-                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher matcher = p.matcher(source);
         String images = "";
@@ -139,12 +138,12 @@ class NineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
+    @Deprecated
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher matcher = p.matcher(source);
         while (matcher.find()) {
-            Log.d("NM","t: "+Util.getInstance().fromHtml(matcher.group(3)).toString());
             Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
             manga.setImages(matcher.group(2));
             mangas.add(manga);
@@ -188,9 +187,9 @@ class NineManga extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga m = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
-            m.setImages(matcher.group(2));
-            mangas.add(m);
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
+            manga.setImages(matcher.group(2));
+            mangas.add(manga);
         }
         return mangas;
     }
