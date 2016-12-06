@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -139,7 +138,7 @@ public class MangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/" + genreV[filters[0][0]] + "/" + pageNumber + ".htm" + orderM[filters[1][0]];
-        Log.d("MH","web: "+web);
+        //Log.d("MH","web: "+web);
         String source = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile("<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"");
         Matcher m = p.matcher(source);
