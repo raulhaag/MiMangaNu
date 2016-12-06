@@ -138,13 +138,14 @@ public class MangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/" + genreV[filters[0][0]] + "/" + pageNumber + ".htm" + orderM[filters[1][0]];
-        String data = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile(PATRON_CAPS_VIS);
-        Matcher m = p.matcher(data);
+        //Log.d("MH","web: "+web);
+        String source = getNavigatorAndFlushParameters().get(web);
+        Pattern p = Pattern.compile("<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"");
+        Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga =
                     new Manga(getServerID(), m.group(2), m.group(3), false);
-            manga.setImages(m.group(1).replace("thumb_", ""));
+            manga.setImages(m.group(1));//.replace("thumb_", ""));
             mangas.add(manga);
         }
         hasMore = !mangas.isEmpty();

@@ -12,24 +12,24 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class MangaFox extends ServerBase {
-
+class MangaFox extends ServerBase {
+    private static String HOST = "http://mangafox.me";
     private static final String[] genre = {
+            "All",
             "Action", "Adult", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi",
             "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Martial Arts",
             "Mecha", "Mystery", "One Shot", "Psychological", "Romance", "School Life", "Sci-fi",
-            "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Slice of Life", "Smut", "Sports",
-            "Supernatural", "Tragedy", "Webtoons", "Yuri"
+            "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut", "Sports",
+            "Supernatural", "Tragedy", "Webtoons", "Yaoi", "Yuri"
     };
-    //private static final String PATRON_CAPS_VIS = "<a class=\"manga_img\" href=\"(.+?)\".+?src=\"(.+?)\".+?(<em class=\"tag_completed\"></em>						</a>|</a>).+?rel=\".+?\">(.+?)<";
+    private static String genreVV = "/directory/";
     private static final String PATTERN_SERIE = "<li><a href=\"(.+?)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">(.+?)</a></li>";
     private static final String SEGMENTO = "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
     private static final String PATRON_PORTADA = "<div class=\"cover\">.+?src=\"(.+?)\"";
     private static final String PATRON_SINOPSIS = "<p class=\"summary\">(.+?)</p>";
     private static final String PATTERN_CAPITULOS = "<h\\d>[\\s]+<a href=\"([^\"]+)\".+?>([^<]+)([^\"]+<span class=\"title nowrap\">(.+?)<)?";
     private static final String PATRON_LAST = "(\\d+)</option>					<option value=\"0\"";
-    private static final String PATRON_IMAGEN = "><img src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))";
-    private static String[] type = new String[]{
+    /*private static String[] type = new String[]{
             "Any", "Japanese Manga", "Korean Manhwa", "Chinese Manhua"
     };
     private static String[] typeV = new String[]{
@@ -40,14 +40,19 @@ public class MangaFox extends ServerBase {
     };
     private static String[] statusV = new String[]{
             "&is_completed=", "&is_completed=1", "&is_completed=0"
-    };
+    };*/
     private static String[] order = new String[]{
+            "Popularity", "Rating", "Latest Chapter", "Alphabetical"
+    };
+    private static String[] orderV = new String[]{
+            "", "?rating", "?latest", "?az"
+    };
+    /*private static String[] order = new String[]{
             "Views", "Rating", "Latest Chapter", "Manga Title", "Chapters"
     };
     private static String[] orderV = new String[]{
             "&sort=views", "&sort=rating", "&sort=last_chapter_time", "&sort=name&order=az", "&sort=total_chapters&order=za"
-    };
-    private long last_search;
+    };*/
 
     MangaFox() {
         this.setFlag(R.drawable.flag_en);
@@ -129,8 +134,12 @@ public class MangaFox extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
+        //Log.d("Mfox","getIF url: "+this.getPagesNumber(chapter, page));
         data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-        return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
+        //><img src="([^"]+?.(jpg|gif|jpeg|png|bmp))
+        String img = getFirstMatch(">[\\s]*<img src=\"(.+?)\"", data, "Error: no se pudo obtener el enlace a la imagen");
+        //Log.d("Mfox","img: "+img);
+        return img;
     }
 
     @Override
@@ -161,43 +170,28 @@ public class MangaFox extends ServerBase {
         return mangas;
     }
 
-    //http://mangafox.me/search.php?name_method=cw&name=&type=&author_method=cw&author=&artist_method=cw&artist=
-    // &genres%5BAction%5D=1&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=1&genres%5BEcchi%5D=0
-    // &genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0
-    // &genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0
-    // &genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=1&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0
-    // &genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0
-    // &genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0
-    // &released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1&sort=total_chapters&order=za
-
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String gens = "";
-        long diff = System.currentTimeMillis() - last_search;
-        if (diff < 5000) {
-            Thread.sleep(diff);
-        }
-        for (int i = 0; i < genre.length; i++) {
-            if (contains(filters[1], i)) {
-                gens = gens + "&genres%5B" + genre[i].replaceAll(" ", "+") + "%5D=1";
-            } else {
-                gens = gens + "&genres%5B" + genre[i].replaceAll(" ", "+") + "%5D=0";
-            }
-        }
-
-        String web = "http://mangafox.me/search.php?name_method=cw&name=" + typeV[filters[0][0]] +
-                "&author_method=cw&author=&artist_method=cw&artist=" + gens +
-                "&released_method=eq&released=&rating_method=eq&rating=" + statusV[filters[2][0]] +
-                "&advopts=1" + orderV[filters[3][0]] + "&page=" + pageNumber;
-        String data = getNavigatorAndFlushParameters().get(web);
-        last_search = System.currentTimeMillis();
-        long ctime = last_search / 1000;
-        Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?rel=\"(\\d+)\">(.+?)<");
-        Matcher m = p.matcher(data);
+        String web;
+        if (genre[filters[0][0]].equals("All")) {
+            if (pageNumber == 1)
+                web = HOST + genreVV + orderV[filters[1][0]];
+            else
+                web = HOST + genreVV + pageNumber + ".htm" + orderV[filters[1][0]];
+        } else
+            web = HOST + genreVV + genre[filters[0][0]].toLowerCase().replaceAll(" ", "-") + "/" + pageNumber + ".htm" + orderV[filters[1][0]];
+        //Log.d("Mfox","web: "+web);
+        String source = getNavigatorAndFlushParameters().get(web);
+        Pattern p = Pattern.compile("<img src=\"(http://h\\.mfcdn\\.net/store/manga/.+?)\".+?<a class=\"title\" href=\"(.+?)\" rel=\"\\d+\">(.+?)</a>");
+        Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
+        //Log.d("Mfox","prematch");
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3).trim(), m.group(1), false);
-            manga.setImages("http://h.mfcdn.net/store/manga/" + m.group(2) + "/cover.jpg?v=" + ctime);
+            /*Log.d("Mfox","(1): "+m.group(1));
+            Log.d("Mfox","(2): "+m.group(2));
+            Log.d("Mfox","(3): "+m.group(3));*/
+            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
+            manga.setImages(m.group(1));
             mangas.add(manga);
         }
         return mangas;
@@ -205,9 +199,9 @@ public class MangaFox extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters(Context context) {
-        return new ServerFilter[]{new ServerFilter("Type", type, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Genres", genre, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Completed Series", status, ServerFilter.FilterType.SINGLE),
+        return new ServerFilter[]{//new ServerFilter("Type", type, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
+                //new ServerFilter("Completed Series", status, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
     }
 }
