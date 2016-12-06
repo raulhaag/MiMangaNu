@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -29,11 +28,6 @@ class ReadComicsTV extends ServerBase {
             "Robots", "Romance", "Science Fiction", "Sports", "Spy",
             "Supernatural", "Suspense", "Tragedy"
     };
-    //private static String genreVV = "/category/";
-    /*private static String[] orderV = {"/popular-comic/"};
-    private static String[] order = {"Popular Comics"};*/
-    /*private static String[] complete = new String[]{"Either", "Yes", "No"};
-    private static String[] completeV = new String[]{"either", "yes", "no"};*/
 
     ReadComicsTV() {
         this.setFlag(R.drawable.flag_en);
@@ -74,16 +68,13 @@ class ReadComicsTV extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String source = getNavigatorAndFlushParameters().get(manga.getPath());
-        //Log.d("RCTV","p: "+manga.getPath());
 
         // Front
         String img = getFirstMatchDefault("<div class=\"manga-image\"><img src=\"(.+?)\" id=\"", source, "");
-        //Log.d("RCTV","img: "+img);
         manga.setImages(img);
 
         // Summary
         String summary = getFirstMatchDefault("<p class=\"pdesc\">(.+?)</p>", source, "");
-        //Log.d("RMT","su: "+summary.trim());
         manga.setSynopsis(summary.trim());
 
         // Status
@@ -92,12 +83,10 @@ class ReadComicsTV extends ServerBase {
 
         // Author
         String author = getFirstMatchDefault("<td><span>Author:</span></td>[\\s]*<td>[\\s]*(.+?)</td>", source, "");
-        //Log.d("RMT","au: "+author.trim());
         manga.setAuthor(author.trim());
 
         // Genre
         String genre = Util.getInstance().fromHtml(getFirstMatchDefault("<td><span>Genre:</span></td>[\\s]*<td>(.+?)[\\s]*</td>", source, "")).toString().trim();
-        //Log.d("RMT","au: "+genre);
         manga.setGenre(genre);
 
         // Chapters
@@ -131,7 +120,6 @@ class ReadComicsTV extends ServerBase {
         Matcher matcher = p.matcher(source);
         String images = "";
         while (matcher.find()) {
-            //Log.d("RCTV","(1): "+matcher.group(1));
             images = images + "|" + matcher.group(1);
         }
         chapter.setExtra(images);
@@ -151,8 +139,6 @@ class ReadComicsTV extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
-                //new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),
-                //new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
         };
     }
 
