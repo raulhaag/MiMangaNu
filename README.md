@@ -33,6 +33,22 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.57:
+* Agregado ReadComicsTV (EN).
+* Fix MangaFox.
+* Mejorados la seleccion por genero para KissManga, NineManga (Todos) and MangaEden (Todos).
+* Nueva version manga_tube(No compatible, con anterior).
+* Agregado selecion de tamaño de grilla.
+* Bug fixes y mejoras.
+
+Changes in v1.57:
+* Add ReadComicsTV (EN).
+* Fix MangaFox.
+* Improve multiple genre selection for KissManga, NineManga (All) and MangaEden (All).
+* New version manga_tube(No compatible, they just changed host and system).
+* Added grid size option.
+* Bug fixes and performance improvements.
+
 Cambios en v1.56:
 * Fix LeoManga.
 * Agregada fecha de ultima atulización del manga (basada en el ultimo update encotrado por MMN).
