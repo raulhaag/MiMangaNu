@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +83,8 @@ class ReadComicsTV extends ServerBase {
         manga.setFinished(status);
 
         // Author
-        String author = getFirstMatchDefault("<td><span>Author:</span></td>[\\s]*<td>[\\s]*(.+?)</td>", source, "");
+        // <td><span>Author:</span></td>[\s]*<td>[\s]*(.+?)</td>
+        String author = getFirstMatchDefault("<td><span>Author:</span></td>[\\s]*<td>[\\s]*([^/<>]+)</td>", source, "");
         manga.setAuthor(author.trim());
 
         // Genre
@@ -94,10 +96,11 @@ class ReadComicsTV extends ServerBase {
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            //Log.d("RMT", "(2): " + matcher.group(2));
-            //Log.d("RMT", "(1): " + matcher.group(1));
+            //Log.d("RCTV", "(2): " + matcher.group(2));
+            //Log.d("RCTV", "(1): " + matcher.group(1));
             chapters.add(0, new Chapter(matcher.group(2).trim(), matcher.group(1)));
         }
+        Collections.reverse(chapters); // original is #1 to #7, we want #7 to #1
         manga.setChapters(chapters);
     }
 
