@@ -394,20 +394,23 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 displayMenu.setVisible(false);
             }
         }
+        mActionBar.setNavigationIcon(R.drawable.ic_back);
+        mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().onBackPressed();
+            }
+        });
         mActionBar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 return ReaderFragment.this.onMenuItemClick(item);
             }
         });
-        mActionBar.setNavigationIcon(R.drawable.ic_back);
     }
 
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                getActivity().onBackPressed();
-                return true;
             case R.id.action_ajustar: {
                 mScreenFit = mScreenFit.getNext();
                 SharedPreferences.Editor editor = pm.edit();
