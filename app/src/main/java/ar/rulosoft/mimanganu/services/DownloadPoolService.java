@@ -436,9 +436,13 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         }
                     }
                     if (lcId != dc.chapter.getId()) {
-                        lcId = dc.chapter.getId();
-                        path = generateBasePath(s, manga, dc.chapter, getApplicationContext());
-                        new File(path).mkdirs();
+                        try {
+                            lcId = dc.chapter.getId();
+                            path = generateBasePath(s, manga, dc.chapter, getApplicationContext());
+                            new File(path).mkdirs();
+                        } catch (Exception e) {
+                            dc.status = DownloadStatus.ERROR;
+                        }
                     }
                     try {
                         if (errors < 1)
@@ -446,10 +450,10 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         else {
                             Util.getInstance().changeNotificationWithProgressbar(dc.getChapter().getPages(), sig, mNotifyID, getResources().getString(R.string.x_of_y_chapters_downloaded, (n - 1), chapterDownloads.size()), "(" + getResources().getString(R.string.chapter_download_errors) + " " + errors + ")\n" + getResources().getString(R.string.downloading) + " " + dc.getChapter().getTitle(), true);
                         }
-                        String origen = s.getImageFrom(dc.chapter, sig);
-                        String destino = path + "/" + sig + ".jpg";
+                        String source_file = s.getImageFrom(dc.chapter, sig);
+                        String save_file = path + "/" + sig + ".jpg";
                         SingleDownload des;
-                        des = new SingleDownload(origen, destino, sig - 1, dc.chapter.getId(), dc, s.needRefererForImages());
+                        des = new SingleDownload(source_file, save_file, sig - 1, dc.chapter.getId(), dc, s.needRefererForImages());
                         des.setChangeListener(dc);
                         dc.setChangeListener(this);
                         new Thread(des).start();
