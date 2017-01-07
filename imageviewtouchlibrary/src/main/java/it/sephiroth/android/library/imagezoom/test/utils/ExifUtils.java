@@ -151,7 +151,10 @@ public class ExifUtils {
             try {
                 provider = context.getContentResolver().acquireContentProviderClient(uri);
             } catch (SecurityException e) {
-                return 0;
+                if (provider != null) {
+					provider.release();
+				}
+				return 0;
             }
 
             if (provider != null) {
@@ -192,6 +195,9 @@ public class ExifUtils {
                 }
             }
         }
+		if (provider != null) {
+			provider.release();
+		}
         return 0;
     }
 }
