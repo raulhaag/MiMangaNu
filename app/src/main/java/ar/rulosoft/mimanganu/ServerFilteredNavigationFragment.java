@@ -131,7 +131,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
         serverBase = ServerBase.getServer(serverID);
         if (filters == null) {
-            filters = serverBase.getBasicFilter(getActivity());
+            filters = serverBase.getBasicFilter();
         }
         recyclerViewGrid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
@@ -234,7 +234,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             fragment.setArguments(b);
             ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
         } else if (item.getItemId() == R.id.filter) {
-            FilterViewGenerator mFilter = new FilterViewGenerator(getActivity(), "Filter", serverBase.getServerFilters(getActivity()), filters, colors[0]);
+            FilterViewGenerator mFilter = new FilterViewGenerator(getActivity(), "Filter", serverBase.getServerFilters(), filters, colors[0]);
             mFilter.getDialog().show();
             mFilter.setFilterListener(this);
         }

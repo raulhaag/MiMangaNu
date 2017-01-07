@@ -98,6 +98,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             chapterId = savedInstanceState.getInt(MangaFragment.CHAPTER_ID);
         }
         mChapter = Database.getChapter(getActivity(), chapterId);
+        if (mChapter == null) {
+            //can't get chapter
+            return;
+        }
         mManga = Database.getFullManga(getActivity(), mChapter.getMangaID());
         mServerBase = ServerBase.getServer(mManga.getServerId());
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -249,6 +253,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             Database.updateChapter(getActivity(), mChapter);
         }
         mChapter = nChapter;
+        if (mChapter == null) {
+            return;
+        }
         if (!mChapter.isDownloaded()) {
             try {
                 DownloadPoolService.addChapterDownloadPool(getActivity(), mChapter, true);
@@ -573,7 +580,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ((MainActivity) getActivity()).getSupportActionBar().show();
         ((MainActivity) getActivity()).setColorToBars();
-        if(getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
+        if (getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
         return false;
     }
@@ -872,7 +879,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 // ignore error
             }
             if (error != null && error.length() > 1) {
-                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
+                Util.getInstance().toast(getActivity(), error);
             } else {
                 try {
                     Database.updateChapter(getActivity(), result);

@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -67,7 +65,7 @@ public class MyMangaIo extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        return getMangasFiltered(getBasicFilter(null), 0);
+        return getMangasFiltered(getBasicFilter(), 0);
     }
 
     @Override
@@ -180,7 +178,7 @@ public class MyMangaIo extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter("Type", type, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Statut", statut, ServerFilter.FilterType.MULTI),

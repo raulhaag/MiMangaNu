@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -174,7 +172,7 @@ class ReadComicOnline extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
     }

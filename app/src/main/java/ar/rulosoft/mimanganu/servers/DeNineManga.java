@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
 import android.util.Log;
 
 import java.net.URLEncoder;
@@ -145,7 +144,7 @@ class DeNineManga extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),

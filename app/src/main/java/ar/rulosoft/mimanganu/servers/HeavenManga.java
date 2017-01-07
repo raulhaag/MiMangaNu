@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -197,7 +195,7 @@ public class HeavenManga extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Generos", generos, ServerFilter.FilterType.SINGLE)};
     }
 

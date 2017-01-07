@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -175,7 +173,7 @@ class KissManga extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Included Genre(s) (multiple no order)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Excluded Genre(s) (multiple no order)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Order (only applied on single genre selection)", order, ServerFilter.FilterType.SINGLE)};

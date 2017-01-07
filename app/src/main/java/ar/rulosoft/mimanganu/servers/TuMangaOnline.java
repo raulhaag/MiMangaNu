@@ -19,7 +19,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 /**
  * Created by Raul on 05/04/2016.
  */
-class TuMangaOnline extends ServerBase {
+public class TuMangaOnline extends ServerBase {
 
     public static String[] type = new String[]{
             "Todos", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
@@ -76,7 +76,7 @@ class TuMangaOnline extends ServerBase {
 
     private static int lastPage = 10000;
 
-    TuMangaOnline() {
+    public TuMangaOnline() {
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.tumangaonline_icon);
         this.setServerName("TuMangaOnline");
@@ -282,7 +282,7 @@ class TuMangaOnline extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter("Tipo", type, ServerFilter.FilterType.SINGLE),//0
                 new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),//1

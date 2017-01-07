@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -179,7 +177,7 @@ public class LeoManga extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Genero", genres, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),

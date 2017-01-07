@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +11,6 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaFox extends ServerBase {
-    private static String HOST = "http://mangafox.me";
     private static final String[] genre = {
             "All",
             "Action", "Adult", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi",
@@ -22,13 +19,14 @@ class MangaFox extends ServerBase {
             "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut", "Sports",
             "Supernatural", "Tragedy", "Webtoons", "Yaoi", "Yuri"
     };
-    private static String genreVV = "/directory/";
     private static final String PATTERN_SERIE = "<li><a href=\"(.+?)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">(.+?)</a></li>";
     private static final String SEGMENTO = "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
     private static final String PATRON_PORTADA = "<div class=\"cover\">.+?src=\"(.+?)\"";
     private static final String PATRON_SINOPSIS = "<p class=\"summary\">(.+?)</p>";
     private static final String PATTERN_CAPITULOS = "<h\\d>[\\s]+<a href=\"([^\"]+)\".+?>([^<]+)([^\"]+<span class=\"title nowrap\">(.+?)<)?";
     private static final String PATRON_LAST = "(\\d+)</option>					<option value=\"0\"";
+    private static String HOST = "http://mangafox.me";
+    private static String genreVV = "/directory/";
     /*private static String[] type = new String[]{
             "Any", "Japanese Manga", "Korean Manhwa", "Chinese Manhua"
     };
@@ -198,7 +196,7 @@ class MangaFox extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{//new ServerFilter("Type", type, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
                 //new ServerFilter("Completed Series", status, ServerFilter.FilterType.SINGLE),

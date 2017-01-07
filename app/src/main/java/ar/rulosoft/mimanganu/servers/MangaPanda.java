@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -163,7 +161,7 @@ public class MangaPanda extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Manga Type", type, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Manga Status", status, ServerFilter.FilterType.SINGLE),

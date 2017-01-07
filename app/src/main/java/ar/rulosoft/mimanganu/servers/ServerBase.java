@@ -375,12 +375,12 @@ public abstract class ServerBase {
         return FilteredType.VISUAL;
     }
 
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{};
     }
 
-    public int[][] getBasicFilter(Context context) {
-        ServerFilter[] filters = getServerFilters(context);
+    public int[][] getBasicFilter() {
+        ServerFilter[] filters = getServerFilters();
         int[][] result = new int[filters.length][];
         for (int i = 0; i < filters.length; i++) {
             if (filters[i].getFilterType() == ServerFilter.FilterType.SINGLE) {

@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 
 import java.net.URLEncoder;
@@ -144,7 +143,7 @@ class RawSenManga extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)
         };

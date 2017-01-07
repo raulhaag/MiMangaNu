@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -191,7 +189,7 @@ public class MangaEdenIt extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Type", type, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),

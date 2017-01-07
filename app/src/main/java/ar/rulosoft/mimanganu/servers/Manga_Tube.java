@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu.servers;
 
-import android.content.Context;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -180,7 +178,7 @@ public class Manga_Tube extends ServerBase {
     }
 
     @Override
-    public ServerFilter[] getServerFilters(Context context) {
+    public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{new ServerFilter("Index", genre, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Sortiert nach", sort, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Bestellen", order, ServerFilter.FilterType.SINGLE)};

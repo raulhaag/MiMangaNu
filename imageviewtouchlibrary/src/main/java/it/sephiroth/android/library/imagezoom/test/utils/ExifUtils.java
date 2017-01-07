@@ -6,6 +6,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore.Images;
 
@@ -152,9 +153,13 @@ public class ExifUtils {
                 provider = context.getContentResolver().acquireContentProviderClient(uri);
             } catch (SecurityException e) {
                 if (provider != null) {
-					provider.release();
-				}
-				return 0;
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                        provider.close();
+                    } else {
+                        provider.release();
+                    }
+                }
+                return 0;
             }
 
             if (provider != null) {
@@ -195,9 +200,13 @@ public class ExifUtils {
                 }
             }
         }
-		if (provider != null) {
-			provider.release();
-		}
+        if (provider != null) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                provider.close();
+            } else {
+                provider.release();
+            }
+        }
         return 0;
     }
 }
