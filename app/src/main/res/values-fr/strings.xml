@@ -130,14 +130,14 @@
     <string name="mar_and_di">Marquer comme lu et supprimer les images</string>
     <string name="select_begin">Sélectionner depuis le début</string>
     <string name="select_end">Sélectionner jusqu\'à la fin</string>
-    <string name="continuous_reader">Lecteur continue</string>
-    <string name="paged_reader">Lecteur paginée</string>
+    <string name="continuous_reader">Lecteur continu</string>
+    <string name="paged_reader">Lecteur paginé</string>
     <string name="pause_all_downloads">Pause téléchargements</string>
     <string name="paused">(Pause)</string>
     <string name="remove_all">Enlever tout</string>
     <string name="remove_downloaded">Retirer téléchargé</string>
     <string name="resume_downloads">Reprendre les téléchargements</string>
-    <string name="retry_errors">Réessayez erreurs</string>
+    <string name="retry_errors">Réessayez : erreurs</string>
     <string name="update_complete">Mise à jour terminée</string>
     <string name="close">Fermer</string>
     <string name="retry">Réessayer</string>
@@ -167,7 +167,7 @@
     <string name="download_next_chapter_automatically_subtitle">Le chapitre suivant sera téléchargé automatiquement en lisant</string>
     <string name="download_next_chapter_automatically_title">Télécharger le chapitre suivant</string>
     <string name="use_only_wifi_subtitle">Pour éviter d\'utiliser la data de l\'opérateur</string>
-    <string name="use_only_wifi_title">Utilisez uniquement le WiFi</string>
+    <string name="use_only_wifi_title">Utiliser uniquement le WiFi</string>
     <string name="sort_number_asc">Trier par numéro de chapitre</string>
     <string name="sort_number">Trier par numéro de chapitre (9–0)</string>
     <string name="seamless_chapter_transitions_delete_read_title">Supprimer le chapitre après l\'avoir lu</string>
@@ -180,7 +180,7 @@
     <string name="misc_settings">Paramètres Divers</string>
     <string name="edit_server_list">Modifier la liste des serveurs</string>
     <string name="downloading">Téléchargement: </string>
-    <string name="use_only_wifi_title_update">Utilisez uniquement WiFi (pour les mises à jour)</string>
+    <string name="use_only_wifi_title_update">Utiliser uniquement WiFi (pour les mises à jour)</string>
     <string name="update_search_cancelled">Mise à jour recherche annulée</string>
     <string name="search_result">résultat pour \"%s\" sur</string>
     <string name="include_finished_manga_title">Inclure Manga Fini</string>
@@ -192,8 +192,8 @@
     <string name="fast_update_title">Mises à jour rapides</string>
     <string name="fast_update_subtitle">Seulement comparer dernier 20 chapitre du serveur</string>
     <string name="new_chapters">Nouveaux chapitres de %s</string>
-    <string name="chapters">chapitres</string>
-    <string name="cancel">annuler</string>
+    <string name="chapters">Chapitres</string>
+    <string name="cancel">Annuler</string>
     <string name="deleting_empty_directories">Suppression de répertoires vides …</string>
     <string name="reader_type_subtitle">Appuyez ici pour changer le type de lecteur</string>
     <string name="write_timeout_title">Ecrire délai</string>
