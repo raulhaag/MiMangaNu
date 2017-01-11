@@ -52,7 +52,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     public int slots = SLOTS;
     private int mNotifyID = (int) System.currentTimeMillis();
 
-    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean lectura) throws Exception {
+    public static void addChapterDownloadPool(Activity activity, Chapter chapter, boolean reading) throws Exception {
         if (activity == null) {
             Log.d("DPS", "null");
         } else {
@@ -60,9 +60,9 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                 if (isNewDownload(chapter.getId())) {
                     ChapterDownload dc = new ChapterDownload(chapter);
                     if (mDownloadsChangesListener != null) {
-                        mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                        mDownloadsChangesListener.onChapterAdded(reading, dc);
                     }
-                    if (lectura) {
+                    if (reading) {
                         chapterDownloads.add(0, dc);
                     } else {
                         chapterDownloads.add(dc);
@@ -78,19 +78,19 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                                 ChapterDownload ndc = new ChapterDownload(chapter);
                                 if (mDownloadsChangesListener != null) {
                                     mDownloadsChangesListener.onChapterRemoved(i);
-                                    mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                                    mDownloadsChangesListener.onChapterAdded(reading, dc);
                                 }
-                                if (lectura) {
+                                if (reading) {
                                     chapterDownloads.add(0, ndc);
                                 } else {
                                     chapterDownloads.add(ndc);
                                 }
                             } else {
-                                if (lectura) {
+                                if (reading) {
                                     chapterDownloads.remove(dc);
                                     if (mDownloadsChangesListener != null) {
                                         mDownloadsChangesListener.onChapterRemoved(i);
-                                        mDownloadsChangesListener.onChapterAdded(lectura, dc);
+                                        mDownloadsChangesListener.onChapterAdded(reading, dc);
                                     }
                                     chapterDownloads.add(0, dc);
                                 }
@@ -417,6 +417,9 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                                     d.status = DownloadStatus.ERROR;
                             }
                         Database.updateChapter(getApplicationContext(), d.chapter);
+                    }
+                    if (d.getPagesStatusLength() == 0) {
+                        d.reset();
                     }
                     if (d.status != DownloadStatus.ERROR && d.status != DownloadStatus.PAUSED) {
                         sig = d.getNext();

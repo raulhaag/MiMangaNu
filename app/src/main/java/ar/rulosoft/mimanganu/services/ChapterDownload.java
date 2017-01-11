@@ -152,6 +152,10 @@ public class ChapterDownload implements StateChangeListener {
         }
     }
 
+    public int getPagesStatusLength() {
+        return pagesStatus.length;
+    }
+
     public enum DownloadStatus {
         QUEUED, DOWNLOADING, DOWNLOADED, PAUSED, ERROR
     }
