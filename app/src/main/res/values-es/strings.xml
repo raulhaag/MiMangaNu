@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.57:\n\t* Agregado ReadComicsTV (EN). \n\t* Fix MangaFox. \n\t* Mejorados la selección por genero para KissManga, NineManga (Todos) and MangaEden (Todos). \n\t* Nueva version manga_tube(No compatible, con anterior).\n\t* Agregado selección de tamaño de grilla. \n\t* Bug fixes y mejoras.</string>
+    <string name="update_message">Cambios en v1.58:\n\t* Fix servers. \n\t* Fix el administrador de descarga. \n\t* Arreglos menores y mejoras. </string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
