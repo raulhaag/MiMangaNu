@@ -24,8 +24,9 @@ import ar.rulosoft.navegadores.Navigator;
 public abstract class ServerBase {
 
     public static final int FROMFOLDER = 1001;
+    public static final int ESMANGAHERE = 3;
+    public static final int RAWSENMANGA = 21;
     static final int MANGAPANDA = 1;
-    static final int ESMANGAHERE = 3;
     static final int MANGAHERE = 4;
     static final int MANGAFOX = 5;
     static final int SUBMANGA = 6;
@@ -43,7 +44,6 @@ public abstract class ServerBase {
     static final int MANGATUBE = 18;
     static final int MANGAEDENIT = 19;
     static final int MYMANGAIO = 20;
-    static final int RAWSENMANGA = 21;
     static final int TUMANGAONLINE = 22;
     static final int NINEMANGA = 23;
     static final int MANGAEDEN = 24;
@@ -178,7 +178,6 @@ public abstract class ServerBase {
                 new MangaEden(),
                 new NineManga(),
                 new RuNineManga(),
-                new LectureEnLigne(),
                 new MyMangaIo(),
                 new ItNineManga(),
                 new MangaEdenIt(),

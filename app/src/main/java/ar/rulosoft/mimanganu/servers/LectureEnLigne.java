@@ -8,6 +8,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
+@Deprecated //server dead
 public class LectureEnLigne extends ServerBase {
 
     public static String HOST = "http://www.lecture-en-ligne.com/";

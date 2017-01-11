@@ -125,9 +125,9 @@ public class EsMangaHere extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        chapter.setPages(Integer.parseInt(paginas));
+        data = getNavigatorAndFlushParameters().get(chapter.getPath(), chapter.getPath());
+        String pages = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
+        chapter.setPages(Integer.parseInt(pages));
     }
 
     @Override

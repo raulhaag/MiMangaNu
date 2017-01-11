@@ -10,6 +10,7 @@ android {
         targetSdkVersion 25
         versionCode 57
         versionName "1.57"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
@@ -45,7 +46,7 @@ android {
 }
 
 dependencies {
-    final ANDROID_SUPPORT = '25.0.1'
+    final ANDROID_SUPPORT = '25.1.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.android.support:support-v4:$ANDROID_SUPPORT"
     compile "com.android.support:design:$ANDROID_SUPPORT"
@@ -62,4 +63,7 @@ dependencies {
     compile 'com.squareup.duktape:duktape-android:1.1.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.0'
     compile 'ch.acra:acra:4.9.1'
+    androidTestCompile 'com.android.support:support-annotations:25.1.0'
+    androidTestCompile 'com.android.support.test:runner:0.5'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
 }

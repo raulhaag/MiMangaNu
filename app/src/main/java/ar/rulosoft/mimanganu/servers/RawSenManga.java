@@ -58,7 +58,7 @@ class RawSenManga extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "Manga/?order=text-version");
-        Pattern p = Pattern.compile("<td><a href=\"(.+?)\">(.+?)</a></td><td><(a|b)");
+        Pattern p = Pattern.compile("\\d</td><td><a href=\"([^\"]+)\"\\s*>([^<]+)");
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(2),HOST + m.group(1), false);

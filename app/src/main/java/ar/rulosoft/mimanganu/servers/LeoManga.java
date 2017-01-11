@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 /**
  * Created by Raul on 17/07/2016.
  */
-public class LeoManga extends ServerBase {
+class LeoManga extends ServerBase {
 
     public static String HOST = "leomanga.com";
 
@@ -60,7 +60,7 @@ public class LeoManga extends ServerBase {
             "Todos", "Manga", "Manhwa", "Manhua"
     };
 
-    public LeoManga() {
+    LeoManga() {
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.leomanga);
         this.setServerName("LeoManga");

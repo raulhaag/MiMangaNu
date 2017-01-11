@@ -105,7 +105,7 @@ public class Manga_Tube extends ServerBase {
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li><b>Genre:</b>&nbsp;(.+?)</ul>", source, "").replaceAll("</a></li>", "</a></li>,")).toString().replaceAll("\\s+", "").replaceAll(",", ", ").trim()));
         // Chapter
         Pattern p = Pattern.compile(
-                "(manga-tube.me[^\"]+?read.+?)\">.+?<b>(.+?)</b>");
+                "(manga-tube.me[^\"]+?read[^\"]+?)\".+?\">.+?<b>(.+?)</b>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -129,7 +129,7 @@ public class Manga_Tube extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
-        String source = nav.get(chapter.getPath());
+        String source = nav.get(chapter.getPath(), chapter.getPath());
         String img_path = getFirstMatch("img_path: '(.+?)'", source, "can't initialize the chapter");
         source = getFirstMatch("pages:\\s\\[(.+?)\\]", source, "can't initialize the chapter 2");
         ArrayList<String> pages = getAllMatch("\"file_name\":\"(.+?)\"", source);
