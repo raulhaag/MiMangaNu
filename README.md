@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.58:
+* Fix servers.
+* Fix el administrador de descarga.
+* Arreglos menores y mejoras.
+
+Changes in v1.58:
+* Fix servers.
+* Fix download pool error.
+* Minor fix and improves.
+
 Cambios en v1.57:
 * Agregado ReadComicsTV (EN).
 * Fix MangaFox.
