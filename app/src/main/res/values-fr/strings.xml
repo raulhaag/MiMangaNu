@@ -201,4 +201,5 @@
     <string name="searching">A la recherche de \"%s\" sont</string>
     <string name="delete_confirm">Etes-vous sûr de supprimer ces chapitres?</string>
     <string name="thanks">remerciements</string>
+    <string name="_update_at_start_up"></string>
 </resources>

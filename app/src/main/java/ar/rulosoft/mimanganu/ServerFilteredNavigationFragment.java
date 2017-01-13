@@ -13,10 +13,8 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.SearchView.OnQueryTextListener;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -135,19 +133,11 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         }
         recyclerViewGrid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        DisplayMetrics outMetrics = new DisplayMetrics();
-        display.getMetrics(outMetrics);
-        float density = getResources().getDisplayMetrics().density;
-        float dpWidth = outMetrics.widthPixels / density;
-        int columnas = (int) (dpWidth / 150);
-        if (serverBase.getFilteredType() == ServerBase.FilteredType.TEXT)
-            columnas = 1;
-        else if (columnas == 0)
-            columnas = 2;
-        else if (columnas > 6)
-            columnas = 6;
-        recyclerViewGrid.setLayoutManager(new GridLayoutManager(getActivity(), columnas));
+        int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
+        //Log.i("MF", "columnSize: " + columnSize);
+        if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
+            columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());
+        recyclerViewGrid.setLayoutManager(new GridLayoutManager(getActivity(), columnSize));
         if (mAdapter != null) {
             mAdapter.setOnCreateContextMenuListener(this);
             recyclerViewGrid.setAdapter(mAdapter);
@@ -157,6 +147,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
         }
     }
+
 
     @Override
     public void onRequestedLastItem() {

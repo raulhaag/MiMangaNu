@@ -19,7 +19,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -512,17 +511,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         return super.onContextItemSelected(item);
     }
 
-    private int getGridColumnSizeFromWidth() {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        getActivity().getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
-        float dpWidth = displayMetrics.widthPixels / getResources().getDisplayMetrics().density;
-        int columnSize = (int) (dpWidth / 150);
-        if (columnSize < 2)
-            columnSize = 2;
-        else if (columnSize > 6)
-            columnSize = 6;
-        return columnSize;
-    }
+
 
     public ViewGroup getMMView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
@@ -538,9 +527,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
         });
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
-        //Log.i("MF", "columnSize: " + columnSize);
         if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
-            columnSize = getGridColumnSizeFromWidth();
+            columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());
         grid.setNumColumns(columnSize);
         if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
             swipeReLayout.post(new Runnable() {

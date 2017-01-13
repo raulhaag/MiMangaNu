@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.utils;
 
+import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -32,10 +34,6 @@ public class Util {
     private static NotificationManager notificationManager;
 
     private Util() {
-    }
-
-    private static class LazyHolder {
-        private static final Util utilInstance = new Util();
     }
 
     public static Util getInstance() {
@@ -390,6 +388,22 @@ public class Util {
         } else {
             return Html.fromHtml(source);
         }
+    }
+
+    public int getGridColumnSizeFromWidth(Activity activity) {
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        activity.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        float dpWidth = displayMetrics.widthPixels / activity.getResources().getDisplayMetrics().density;
+        int columnSize = (int) (dpWidth / 150);
+        if (columnSize < 2)
+            columnSize = 2;
+        else if (columnSize > 6)
+            columnSize = 6;
+        return columnSize;
+    }
+
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
     }
 
 }
