@@ -51,7 +51,7 @@ public class MisMangasAdapter extends ArrayAdapter<Manga> {
         Manga m = getItem(position);
         holder.serie.setText(m.getTitle());
         imageLoader.displayImg(m.getImages(), holder.serie);
-        ServerBase server = ServerBase.getServer(m.getServerId());
+        ServerBase server = ServerBase.getServer(m.getServerId(), getContext());
         holder.server.setImageResource(server.getIcon());
         if (m.getNews() > 0) {
             holder.notif.setVisibility(ImageView.VISIBLE);

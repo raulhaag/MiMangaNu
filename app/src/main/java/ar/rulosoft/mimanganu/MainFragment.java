@@ -242,7 +242,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
             @Override
             public boolean onQueryTextChange(String value) {
-                if(!value.isEmpty()) {
+                if (!value.isEmpty()) {
                     ArrayList<Manga> mangaList;
                     if (value.contains("'"))
                         value = value.replaceAll("'", "''");
@@ -371,25 +371,29 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
         final RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(), pm, getActivity());
+        serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(getContext()), pm, getActivity());
         serverRecAdapter.setEndActionModeListener(this);
         server_list.setAdapter(serverRecAdapter);
         serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
             public void onServerClick(ServerBase server) {
                 if (!(server instanceof FromFolder)) {
-                    if (server.hasFilteredNavigation()) {
-                        ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
-                        Bundle b = new Bundle();
-                        b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                        fragment.setArguments(b);
-                        ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
+                    if (server.hasCredentials()) {
+                        if (server.hasFilteredNavigation()) {
+                            ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
+                            Bundle b = new Bundle();
+                            b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                            fragment.setArguments(b);
+                            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
+                        } else {
+                            ServerListFragment fragment = new ServerListFragment();
+                            Bundle b = new Bundle();
+                            b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                            fragment.setArguments(b);
+                            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
+                        }
                     } else {
-                        ServerListFragment fragment = new ServerListFragment();
-                        Bundle b = new Bundle();
-                        b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                        fragment.setArguments(b);
-                        ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
+                        Util.getInstance().showFastSnackBar("This server need login, set account on settings.", getView(), getContext());
                     }
                 } else {
                     MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
@@ -487,7 +491,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 @Override
                 public void onClick(View view) {
                     DownloadPoolService.forceStop(manga.getId());
-                    ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+                    ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
                     String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
                     Util.getInstance().deleteRecursive(new File(path));
                     Database.deleteManga(getActivity(), manga.getId());
@@ -510,7 +514,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
         return super.onContextItemSelected(item);
     }
-
 
 
     public ViewGroup getMMView(ViewGroup container) {
@@ -681,7 +684,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         protected Integer doInBackground(Void... params) {
             if (context != null && error.isEmpty()) {
                 ticket = threads;
-                
+
                 if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
                     mangaList = fromFolderMangaList;
                 }
@@ -706,7 +709,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             @Override
                             public void run() {
                                 Manga mManga = mangaList.get(idxNow);
-                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
                                 boolean fast = pm.getBoolean("fast_update", true);
                                 publishProgress(idxNow);
                                 try {
@@ -763,9 +766,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
 
             if (pm.getBoolean("auto_import", false)) {
-                String autoImportPath = pm.getString("auto_import_path","-1");
-                Log.d("MF","auto: "+autoImportPath);
-                if(!autoImportPath.equals("-1"))
+                String autoImportPath = pm.getString("auto_import_path", "-1");
+                Log.d("MF", "auto: " + autoImportPath);
+                if (!autoImportPath.equals("-1"))
                     new AddAllMangaInDirectoryTask().execute(autoImportPath);
             }
         }
@@ -787,7 +790,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
         String error = "";
         int max = 0;
-        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
+        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER, getContext());
         Manga manga;
 
         @Override

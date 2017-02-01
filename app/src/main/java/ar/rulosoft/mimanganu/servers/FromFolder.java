@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,7 +38,8 @@ public class FromFolder extends ServerBase {
         }
     };
 
-    FromFolder(){
+    FromFolder(Context context) {
+        super(context);
         this.setFlag(R.drawable.noimage);
         this.setIcon(R.drawable.from_folder);
         this.setServerName("FromFolder");

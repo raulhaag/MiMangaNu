@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,7 +48,8 @@ public class MangaHere extends ServerBase {
             "?views.za", "?name.az", "?rating.za", "?last_chapter_time.az"
     };
 
-    MangaHere() {
+    MangaHere(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangahere_icon);
         this.setServerName("MangaHere");

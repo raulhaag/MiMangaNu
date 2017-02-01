@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 
 import java.net.URLEncoder;
@@ -47,7 +48,8 @@ class RawSenManga extends ServerBase {
     private static String[] order = {"Most Popular", "Rating", "Title"};
     private static String[] orderV = {"Manga/?order=popular", "Manga/?order=rating", "Manga/?order=title"};
 
-    RawSenManga() {
+    RawSenManga(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_raw);
         this.setIcon(R.drawable.senmanga);
         this.setServerName("SenManga");

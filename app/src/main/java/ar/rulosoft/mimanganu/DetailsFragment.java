@@ -130,7 +130,7 @@ public class DetailsFragment extends Fragment {
             ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
         manga = new Manga(id, title, path, false);
-        serverBase = ServerBase.getServer(id);
+        serverBase = ServerBase.getServer(id, getContext());
         imageLoader = new ImageLoader(getContext());
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override

@@ -19,6 +19,7 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by jtx on 15.09.2016.
  */
 public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
+    public static int mNotifyID = (int) System.currentTimeMillis();
     private ArrayList<Manga> mangaList;
     private ArrayList<Manga> fromFolderMangaList;
     private int threads = 2;
@@ -29,7 +30,6 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private Context context;
     private SharedPreferences pm;
     private View view;
-    public static int mNotifyID = (int) System.currentTimeMillis();
 
     public AutomaticUpdateTask(Context context, View view, SharedPreferences pm) {
         this.context = context;
@@ -95,7 +95,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                             try {
                                 if (!isCancelled()) {
                                     Manga manga = mangaList.get(idxNow);
-                                    ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+                                    ServerBase serverBase = ServerBase.getServer(manga.getServerId(), context);
                                     publishProgress(idxNow);
                                     serverBase.loadChapters(manga, false);
                                     result += serverBase.searchForNewChapters(manga.getId(), context, fast);

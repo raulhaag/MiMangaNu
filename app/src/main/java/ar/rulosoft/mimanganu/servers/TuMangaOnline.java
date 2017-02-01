@@ -76,7 +76,8 @@ public class TuMangaOnline extends ServerBase {
 
     private static int lastPage = 10000;
 
-    public TuMangaOnline() {
+    public TuMangaOnline(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.tumangaonline_icon);
         this.setServerName("TuMangaOnline");

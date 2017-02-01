@@ -77,7 +77,7 @@ public class SearchResultsFragment extends Fragment {
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        int position = ((AdapterView.AdapterContextMenuInfo)menuInfo).position;
+        int position = ((AdapterView.AdapterContextMenuInfo) menuInfo).position;
         final Manga manga = (Manga) list.getAdapter().getItem(position);
         longClickedManga = manga;
 
@@ -134,7 +134,7 @@ public class SearchResultsFragment extends Fragment {
         super.onResume();
         if (searchPerformed) {
             loading.setVisibility(ProgressBar.INVISIBLE);
-            ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + ServerBase.getServer(serverId).getServerName());
+            ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + ServerBase.getServer(serverId, getContext()).getServerName());
         }
     }
 
@@ -152,7 +152,7 @@ public class SearchResultsFragment extends Fragment {
         protected void onPreExecute() {
             if (isAdded()) {
                 loading.setVisibility(ProgressBar.VISIBLE);
-                ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.searching, search_term) + " " + ServerBase.getServer(serverId).getServerName());
+                ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.searching, search_term) + " " + ServerBase.getServer(serverId, getContext()).getServerName());
             }
         }
 
@@ -160,7 +160,7 @@ public class SearchResultsFragment extends Fragment {
         protected ArrayList<Manga> doInBackground(Void... params) {
             ArrayList<Manga> mangas = new ArrayList<>();
             if (isAdded()) {
-                ServerBase serverBase = ServerBase.getServer(serverId);
+                ServerBase serverBase = ServerBase.getServer(serverId, getContext());
                 try {
                     mangas = serverBase.search(search_term);
                 } catch (Exception e) {
@@ -174,7 +174,7 @@ public class SearchResultsFragment extends Fragment {
         protected void onPostExecute(ArrayList<Manga> result) {
             if (isAdded()) {
                 loading.setVisibility(ProgressBar.INVISIBLE);
-                ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + ServerBase.getServer(serverId).getServerName());
+                ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.search_result, search_term) + " " + ServerBase.getServer(serverId, getContext()).getServerName());
                 if (error != null) {
                     if (error.length() < 2) {
                         if (result != null && !result.isEmpty() && list != null) {
@@ -183,10 +183,10 @@ public class SearchResultsFragment extends Fragment {
                                 mangasFromSearch.clear();
                             mangasFromSearch.addAll(result);
                         } else if (result == null || result.isEmpty()) {
-                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.busquedanores), getView(),getContext());
+                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.busquedanores), getView(), getContext());
                         }
                     } else {
-                        Util.getInstance().showFastSnackBar(error, getView(),getContext());
+                        Util.getInstance().showFastSnackBar(error, getView(), getContext());
                     }
                 }
             }

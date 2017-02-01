@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -12,7 +14,8 @@ import ar.rulosoft.mimanganu.utils.Util;
 
 public class SubManga extends ServerBase {
 
-    public SubManga() {
+    public SubManga(Context context) {
+        super(context);
         setServerID(SUBMANGA);
         setIcon(R.drawable.submanga_icon);
         this.setServerName("SubManga");

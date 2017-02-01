@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,7 +59,8 @@ public class MangaPanda extends ServerBase {
     };
 
 
-    MangaPanda() {
+    MangaPanda(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangapanda_icon);
         this.setServerName("Mangapanda.com");

@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +30,8 @@ class ReadComicsTV extends ServerBase {
             "Supernatural", "Suspense", "Tragedy"
     };
 
-    ReadComicsTV() {
+    ReadComicsTV(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.readcomicstv);
         this.setServerName("ReadComicsTV");

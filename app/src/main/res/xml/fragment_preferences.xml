@@ -13,6 +13,10 @@
             android:title="@string/escondergaleria" />
     </android.support.v7.preference.PreferenceCategory>
 
+    <android.support.v7.preference.PreferenceCategory
+        android:key="account"
+        android:title="@string/accounts" />
+
     <PreferenceCategory android:title="@string/connection_settings">
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"

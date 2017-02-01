@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -56,7 +58,8 @@ public class MyMangaIo extends ServerBase {
             "Alphabétique"
     };
 
-    public MyMangaIo() {
+    public MyMangaIo(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_fr);
         this.setIcon(R.drawable.mymanga);
         this.setServerName("MyMangaIo");

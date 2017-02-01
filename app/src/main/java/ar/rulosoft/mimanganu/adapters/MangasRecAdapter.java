@@ -21,10 +21,12 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class MangasRecAdapter extends MangaRecAdapterBase {
     protected ImageLoader imageLoader;
+    Context context;
 
     public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
         super(lista,context,darkTheme);
         imageLoader = new ImageLoader(context);
+        this.context = context;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
                 }
             }
         });
-        ServerBase server = ServerBase.getServer(m.getServerId());
+        ServerBase server = ServerBase.getServer(m.getServerId(), context);
         mHolder.server.setImageResource(server.getIcon());
         if (m.getNews() > 0) {
             mHolder.notif.setVisibility(ImageView.VISIBLE);

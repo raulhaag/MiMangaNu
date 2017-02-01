@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -40,7 +42,8 @@ public class StarkanaCom extends ServerBase {
             "/manga/Y", "/manga/Z"
     };
 
-    public StarkanaCom() {
+    public StarkanaCom(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.rip);
         this.setServerName("Starkana");

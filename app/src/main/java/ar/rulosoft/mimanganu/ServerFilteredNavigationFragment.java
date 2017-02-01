@@ -113,7 +113,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     public void onActivityCreated(Bundle savedState) {
         super.onActivityCreated(savedState);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        int[] colors = ThemeColors.getColors(pm);
+        colors = ThemeColors.getColors(pm);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setTitle(getResources()
@@ -125,18 +125,17 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             window.setNavigationBarColor(colors[0]);
             window.setStatusBarColor(colors[4]);
         }
-
-
-        serverBase = ServerBase.getServer(serverID);
+        serverBase = ServerBase.getServer(serverID, getContext());
         if (filters == null) {
             filters = serverBase.getBasicFilter();
         }
         recyclerViewGrid = (RecyclerView) getView().findViewById(R.id.grilla);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
-        //Log.i("MF", "columnSize: " + columnSize);
         if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
             columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());
+        if (serverBase.getFilteredType() == ServerBase.FilteredType.TEXT)
+            columnSize = 1;
         recyclerViewGrid.setLayoutManager(new GridLayoutManager(getActivity(), columnSize));
         if (mAdapter != null) {
             mAdapter.setOnCreateContextMenuListener(this);

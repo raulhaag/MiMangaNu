@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu;
 
+import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 
@@ -36,7 +37,7 @@ public class TestServers {
 
     @Parameterized.Parameters(name = "{index}: ServerTest - {0}")
     public static Object[] data() {
-        return ServerBase.getServers();
+        return ServerBase.getServers(InstrumentationRegistry.getContext());
     }
 
     @Test

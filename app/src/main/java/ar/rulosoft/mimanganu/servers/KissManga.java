@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,7 +38,8 @@ class KissManga extends ServerBase {
     private static String[] order = {"Popularity", "Latest Update", "New Manga", "a-z"};
     private static String[] orderV = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
 
-    KissManga() {
+    KissManga(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.kissmanga_icon);
         this.setServerName("KissManga");

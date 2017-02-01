@@ -115,7 +115,7 @@ public class MangaFolderSelect extends DialogFragment {
         ProgressDialog adding = new ProgressDialog(getActivity());
         String error = "";
         int max = 0;
-        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
+        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER, context);
         Manga manga;
         boolean onDb;
 
@@ -200,7 +200,7 @@ public class MangaFolderSelect extends DialogFragment {
     public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
         String error = "";
         int max = 0;
-        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER);
+        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER, context);
         Manga manga;
 
         @Override

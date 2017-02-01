@@ -407,7 +407,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                             try {
                                 ServerBase server;
                                 Manga m = Database.getManga(getApplicationContext(), d.chapter.getMangaID());
-                                server = ServerBase.getServer(m.getServerId());
+                                server = ServerBase.getServer(m.getServerId(), getApplicationContext());
                                 server.chapterInit(d.chapter);
                                 d.reset();
                             } catch (Exception e) {
@@ -433,7 +433,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                     if (manga == null || manga.getId() != dc.chapter.getMangaID()) {
                         try {
                             manga = Database.getManga(actual.getApplicationContext(), dc.chapter.getMangaID());
-                            s = ServerBase.getServer(manga.getServerId());
+                            s = ServerBase.getServer(manga.getServerId(), getApplicationContext());
                         } catch (Exception e) {
                             dc.status = DownloadStatus.ERROR;
                         }

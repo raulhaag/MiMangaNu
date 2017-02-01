@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -60,7 +62,8 @@ class LeoManga extends ServerBase {
             "Todos", "Manga", "Manhwa", "Manhua"
     };
 
-    LeoManga() {
+    LeoManga(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.leomanga);
         this.setServerName("LeoManga");

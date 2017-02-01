@@ -49,7 +49,7 @@ public class ServerListFragment extends Fragment {
         super.onStart();
         if (id == -1)
             id = getArguments().getInt(MainFragment.SERVER_ID);
-        serverBase = ServerBase.getServer(id);
+        serverBase = ServerBase.getServer(id, getContext());
         list = (ListView) getView().findViewById(R.id.lista_de_mangas);
         loading = (ProgressBar) getView().findViewById(R.id.loading);
         if (adapter == null) {

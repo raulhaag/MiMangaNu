@@ -50,7 +50,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        ServerBase serverBase = ServerBase.getServer(manga.getServerId());
+        ServerBase serverBase = ServerBase.getServer(manga.getServerId(), mActivity);
         try {
             if(loadMangaInformation)
                 serverBase.loadMangaInformation(manga, false);

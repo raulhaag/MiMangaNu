@@ -15,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import okhttp3.FormBody;
+import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,24 +27,46 @@ import okhttp3.ResponseBody;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navigator {
-    static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:42.0) Gecko/20100101 Firefox/42.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0";
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     public static Navigator navigator;
+    private static ClearableCookieJar cookieJar;
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
+    private ArrayList<Parameter> headers = new ArrayList<>();
 
     public Navigator(Context context) throws Exception {
-        ClearableCookieJar cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
-        httpClient = new OkHttpClientConnectionChecker.Builder()
-                .addInterceptor(new CFInterceptor())
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .cookieJar(cookieJar)
-                .addNetworkInterceptor(new UserAgentInterceptor(USER_AGENT))
-                .build();
+        if (httpClient == null) {
+            cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
+            httpClient = new OkHttpClientConnectionChecker.Builder()
+                    //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
+                    .addInterceptor(new CFInterceptor())
+                    .connectTimeout(10, TimeUnit.SECONDS)
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .cookieJar(cookieJar)
+                    .build();
+        }
+    }
+
+    public static HashMap<String, String> getFormParamsFromSource(String inSource) throws Exception {
+        HashMap<String, String> ParametrosForm = new HashMap<>();
+        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>");
+        Matcher m = p.matcher(inSource);
+        while (m.find()) {
+            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]");
+            Matcher m1 = p1.matcher(m.group());
+            while (m1.find()) {
+                ParametrosForm.put(m1.group(1), m1.group(2));
+            }
+        }
+        return ParametrosForm;
+    }
+
+    public static ClearableCookieJar getCookieJar() {
+        return cookieJar;
     }
 
     public String get(String web) throws Exception {
@@ -60,8 +83,7 @@ public class Navigator {
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
 
-        Response response = copy.newCall(new Request.Builder().url(web).build()).execute();
-
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
@@ -70,13 +92,46 @@ public class Navigator {
         }
     }
 
-    public String get(String web, String referer ) throws Exception {
+    public String get(String web, String referer, Interceptor interceptor) throws Exception {
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .addNetworkInterceptor(interceptor)
+                .build();
+        addHeader("Referer", referer);
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        if (response.isSuccessful()) {
+            return formatResponseBody(response.body());
+        } else {
+            response.body().close();
+            return "";
+        }
+    }
+
+    public String get(String web, Interceptor interceptor) throws Exception {
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .addNetworkInterceptor(interceptor)
+                .build();
+        addHeader("Content-Encoding", "deflate");
+        addHeader("Accept-Encoding", "deflate");
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        if (response.isSuccessful()) {
+            return formatResponseBody(response.body());
+        } else {
+            response.body().close();
+            return "";
+        }
+    }
+
+    public String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
-
-        Response response = copy.newCall(new Request.Builder().url(web).header("Referer",referer).build()).execute();
+        addHeader("Referer", referer);
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
 
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
@@ -109,10 +164,11 @@ public class Navigator {
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
+        addHeader("Host", host);
 
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
-                .addHeader("Host", host)
+                .headers(getHeaders())
                 .build();
         Response response = copy.newCall(request).execute();
 
@@ -133,7 +189,30 @@ public class Navigator {
 
         Request request = new Request.Builder()
                 .url(web)
+                .headers(getHeaders())
                 .method("POST", getPostParams())
+                .build();
+        Response response = copy.newCall(request).execute();
+
+        if (response.isSuccessful()) {
+            return formatResponseBody(response.body());
+        } else {
+            response.body().close();
+            return "";
+        }
+    }
+
+    public String post(String web, RequestBody formParams) throws Exception {
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(web)
+                .headers(getHeaders())
+                .method("POST", formParams)
                 .build();
         Response response = copy.newCall(request).execute();
 
@@ -151,10 +230,10 @@ public class Navigator {
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
-
+        addHeader("Host", host);
         Request request = new Request.Builder()
                 .url("http://" + ip + path)
-                .addHeader("Host", host)
+                .headers(getHeaders())
                 .method("POST", getPostParams())
                 .build();
         Response response = copy.newCall(request).execute();
@@ -167,8 +246,8 @@ public class Navigator {
         }
     }
 
-    private String formatResponseBody(ResponseBody responseBody) throws IOException {
-        return responseBody.string().replaceAll("(\n|\r)","");
+    public String formatResponseBody(ResponseBody responseBody) throws IOException {
+        return responseBody.string().replaceAll("(\n|\r)", "");
     }
 
     private RequestBody getPostParams() throws Exception {
@@ -186,10 +265,10 @@ public class Navigator {
     public HashMap<String, String> getFormParams(String url) throws Exception {
         String source = this.get(url);
         HashMap<String, String> ParametrosForm = new HashMap<>();
-        Pattern p = Pattern.compile("<[F|f]orm[^$]*</[F|f]orm>");
+        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=\"([^\"]*)\" value=\"([^\"]*)\">");
+            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]");
             Matcher m1 = p1.matcher(m.group());
             while (m1.find()) {
                 ParametrosForm.put(m1.group(1), m1.group(2));
@@ -198,19 +277,20 @@ public class Navigator {
         return ParametrosForm;
     }
 
-    public HashMap<String, String> getFormParamsFromSource(String inSource) throws Exception {
-        HashMap<String, String> ParametrosForm = new HashMap<>();
-        Pattern p = Pattern.compile("<[F|f]orm[^$]*</[F|f]orm>");
-        Matcher m = p.matcher(inSource);
-        while (m.find()) {
-            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=\"([^\"]*)\" value=\"([^\"]*)\">");
-            Matcher m1 = p1.matcher(m.group());
-            while (m1.find()) {
-                ParametrosForm.put(m1.group(1), m1.group(2));
-            }
+    public Headers getHeaders() {
+        Headers.Builder builder = new Headers.Builder();
+        builder.add("User-Agent", USER_AGENT);//this is used all the time
+        for (Parameter p : headers) {
+            builder.add(p.getKey(), p.getValue());
         }
-        return ParametrosForm;
+        headers.clear();//and those are volatile
+        return builder.build();
     }
+
+    public void addHeader(String key, String value) {
+        headers.add(new Parameter(key, value));
+    }
+
 
     public void flushParameter() {
         parameters = new ArrayList<>();
@@ -220,7 +300,7 @@ public class Navigator {
         return httpClient;
     }
 
-    public void dropAllCalls(){
+    public void dropAllCalls() {
         httpClient.dispatcher().cancelAll();
     }
 }
@@ -232,7 +312,7 @@ class UserAgentInterceptor implements Interceptor {
 
     private String userAgent;
 
-    UserAgentInterceptor(String userAgent) {
+    public UserAgentInterceptor(String userAgent) {
         this.userAgent = userAgent;
     }
 

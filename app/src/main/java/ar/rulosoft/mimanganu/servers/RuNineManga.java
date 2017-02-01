@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.net.URLEncoder;
@@ -12,6 +13,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by Raul on 29/11/2015.
@@ -44,7 +46,8 @@ class RuNineManga extends ServerBase {
     private static String[] complete = new String[]{"или", "Да", "Нет"};
     private static String[] completeV = new String[]{"either", "yes", "no"};
 
-    RuNineManga() {
+    RuNineManga(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_ru);
         this.setIcon(R.drawable.ninemanga);
         this.setServerName("RuNineManga");
@@ -58,7 +61,7 @@ class RuNineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(
+        String source = getNavigatorWithNeededHeader().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
@@ -78,7 +81,7 @@ class RuNineManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(manga.getPath() + "?waring=1");
+        String source = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
         // Front
         manga.setImages(getFirstMatchDefault("<img itemprop=\"image\".+?src=\"(.+?)\"", source, ""));
         // Summary
@@ -116,7 +119,7 @@ class RuNineManga extends ServerBase {
     }
 
     private void setExtra(Chapter c) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(
+        String source = getNavigatorWithNeededHeader().get(
                 c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
@@ -129,7 +132,7 @@ class RuNineManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        String source = getNavigatorWithNeededHeader().get(chapter.getPath());
         String nop = getFirstMatch("\\d+/(\\d+)</option>[\\s]*</select>", source, "Не удалось получить количество страниц");
         chapter.setPages(Integer.parseInt(nop));
     }
@@ -176,7 +179,7 @@ class RuNineManga extends ServerBase {
         else
             web = "http://ru.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
         Log.d("NM","web: "+web);
-        String source = getNavigatorAndFlushParameters().get(web);
+        String source = getNavigatorWithNeededHeader().get(web);
         // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
         Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
         Matcher matcher = pattern.matcher(source);
@@ -189,6 +192,12 @@ class RuNineManga extends ServerBase {
             mangas.add(m);
         }
         return mangas;
+    }
+
+    public Navigator getNavigatorWithNeededHeader() throws Exception {
+        Navigator nav = new Navigator(context);
+        nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
+        return nav;
     }
 
     @Override

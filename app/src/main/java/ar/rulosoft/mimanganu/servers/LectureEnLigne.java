@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,7 +15,8 @@ public class LectureEnLigne extends ServerBase {
 
     public static String HOST = "http://www.lecture-en-ligne.com/";
 
-    public LectureEnLigne() {
+    public LectureEnLigne(Context context) {
+        super(context);
         setServerID(LECTUREENLIGNE);
         setIcon(R.drawable.lectureenligne_icon);
         this.setServerName("LectureEnLigne");

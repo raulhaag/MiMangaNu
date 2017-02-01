@@ -242,4 +242,12 @@
     <string name="grid_columns_subtitle">Grid Columns: %s</string>
     <string name="grid_columns_automatic_detection_title">Autodetect Grid Columns</string>
     <string name="grid_columns_automatic_detection_subtitle">Automatically detects optimal grid columns based on your screen size.</string>
+    <string name="password">Password</string>
+    <string name="user">User</string>
+    <string name="login_in">"Login in "</string>
+    <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
+    <string name="login">Login</string>
+    <string name="accounts">Accounts</string>
+
 </resources>

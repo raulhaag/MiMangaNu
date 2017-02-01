@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -69,7 +71,8 @@ public class HeavenManga extends ServerBase {
             "v.html", "w.html", "x.html", "y.html", "z.html"
     };
 
-    public HeavenManga() {
+    public HeavenManga(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.heavenmanga);
         this.setServerName("HeavenManga");

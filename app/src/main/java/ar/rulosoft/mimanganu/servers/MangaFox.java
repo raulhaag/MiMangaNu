@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +54,8 @@ class MangaFox extends ServerBase {
             "&sort=views", "&sort=rating", "&sort=last_chapter_time", "&sort=name&order=az", "&sort=total_chapters&order=za"
     };*/
 
-    MangaFox() {
+    MangaFox(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangafox_icon);
         this.setServerName("MangaFox");
@@ -145,7 +148,7 @@ class MangaFox extends ServerBase {
         String data;
         data = getNavigatorAndFlushParameters().get(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        chapter.setPages(Integer.parseInt(paginas) - 1);//last page is for comments
+        chapter.setPages(Integer.parseInt(paginas));//last page is for comments
     }
 
     @Override

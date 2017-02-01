@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -28,7 +30,8 @@ public class EsManga extends ServerBase {
             "/genero/vida-cotidiana", "/genero/yuri"
     };
 
-    public EsManga() {
+    public EsManga(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.esmanga);
         this.setServerName("EsManga");

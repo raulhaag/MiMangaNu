@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
+import android.support.v7.preference.PreferenceGroup;
 import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.DisplayMetrics;
@@ -29,6 +30,8 @@ import ar.rulosoft.custompref.PreferenceListDirFragment;
 import ar.rulosoft.custompref.PreferencesListDir;
 import ar.rulosoft.custompref.SeekBarCustomPreference;
 import ar.rulosoft.mimanganu.componentes.Database;
+import ar.rulosoft.mimanganu.componentes.LoginDialog;
+import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -63,6 +66,23 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return false;
             }
         });
+        PreferenceGroup preferenceGroup = (PreferenceGroup) findPreference("account");
+        ServerBase[] servers = ServerBase.getServers(getContext());
+        for (final ServerBase sb : servers) {
+            if (sb.needLogin()) {
+                SwitchPreferenceCompat preference = new SwitchPreferenceCompat(getContext());
+                preference.setTitle(sb.getServerName());
+                preference.setSelectable(true);
+                preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                    @Override
+                    public boolean onPreferenceClick(Preference preference) {
+                        new LoginDialog(getContext(), sb).show();
+                        return false;
+                    }
+                });
+                preferenceGroup.addPreference(preference);
+            }
+        }
 
         /** Once, create necessary Data */
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -153,9 +173,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
-
-        /** enable / disable auto_import_path depending on the state of auto_import **/
         Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+        /** enable / disable auto_import_path depending on the state of auto_import **/
         if (prefs.getBoolean("auto_import", false)) {
             autoImportPath.setEnabled(true);
         } else {

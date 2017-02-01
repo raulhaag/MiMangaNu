@@ -48,99 +48,108 @@ public abstract class ServerBase {
     static final int NINEMANGA = 23;
     static final int MANGAEDEN = 24;
     static final int LEOMANGA = 25;
+    static final int BATOTO = 26;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
     public boolean hasMore = true;
     protected String defaultSynopsis = "N/A";
+    Context context;
     private String serverName;
     private int icon;
     private int flag;
     private int serverID;
 
-    public static ServerBase getServer(int id) {
+    public ServerBase(Context context) {
+        this.context = context;
+    }
+
+    public static ServerBase getServer(int id, Context context) {
         ServerBase serverBase = null;
         switch (id) {
             case MANGAPANDA:
-                serverBase = new MangaPanda();
+                serverBase = new MangaPanda(context);
                 break;
             case ESMANGAHERE:
-                serverBase = new EsMangaHere();
+                serverBase = new EsMangaHere(context);
                 break;
             case MANGAHERE:
-                serverBase = new MangaHere();
+                serverBase = new MangaHere(context);
                 break;
             case MANGAFOX:
-                serverBase = new MangaFox();
+                serverBase = new MangaFox(context);
                 break;
             case SUBMANGA:
-                serverBase = new SubManga();
+                serverBase = new SubManga(context);
                 break;
             case ESMANGA:
-                serverBase = new EsManga();
+                serverBase = new EsManga(context);
                 break;
             case HEAVENMANGACOM:
-                serverBase = new HeavenManga();
+                serverBase = new HeavenManga(context);
                 break;
             case MANGAREADER:
-                serverBase = new MangaReader();
+                serverBase = new MangaReader(context);
                 break;
             case ESNINEMANGA:
-                serverBase = new EsNineManga();
+                serverBase = new EsNineManga(context);
                 break;
             case LECTUREENLIGNE:
-                serverBase = new LectureEnLigne();
+                serverBase = new LectureEnLigne(context);
                 break;
             case KISSMANGA:
-                serverBase = new KissManga();
+                serverBase = new KissManga(context);
                 break;
             case ITNINEMANGA:
-                serverBase = new ItNineManga();
+                serverBase = new ItNineManga(context);
                 break;
             case TUMANGAONLINE:
-                serverBase = new TuMangaOnline();
+                serverBase = new TuMangaOnline(context);
                 break;
             case TUSMANGAS:
-                serverBase = new TusMangasOnlineCom();
+                serverBase = new TusMangasOnlineCom(context);
                 break;
             case STARKANACOM:
-                serverBase = new StarkanaCom();
+                serverBase = new StarkanaCom(context);
                 break;
             case DENINEMANGA:
-                serverBase = new DeNineManga();
+                serverBase = new DeNineManga(context);
                 break;
             case RUNINEMANGA:
-                serverBase = new RuNineManga();
+                serverBase = new RuNineManga(context);
                 break;
             case MANGATUBE:
-                serverBase = new Manga_Tube();
+                serverBase = new Manga_Tube(context);
                 break;
             case MANGAEDENIT:
-                serverBase = new MangaEdenIt();
+                serverBase = new MangaEdenIt(context);
                 break;
             case MYMANGAIO:
-                serverBase = new MyMangaIo();
+                serverBase = new MyMangaIo(context);
                 break;
             case RAWSENMANGA:
-                serverBase = new RawSenManga();
+                serverBase = new RawSenManga(context);
                 break;
             case MANGAEDEN:
-                serverBase = new MangaEden();
+                serverBase = new MangaEden(context);
                 break;
             case NINEMANGA:
-                serverBase = new NineManga();
+                serverBase = new NineManga(context);
                 break;
             case READCOMICONLINE:
-                serverBase = new ReadComicOnline();
+                serverBase = new ReadComicOnline(context);
                 break;
             case LEOMANGA:
-                serverBase = new LeoManga();
+                serverBase = new LeoManga(context);
+                break;
+            case BATOTO:
+                serverBase = new BatoTo(context);
                 break;
             case READCOMICSTV:
-                serverBase = new ReadComicsTV();
+                serverBase = new ReadComicsTV(context);
                 break;
             case FROMFOLDER:
-                serverBase = new FromFolder();
+                serverBase = new FromFolder(context);
                 break;
             default:
                 break;
@@ -162,31 +171,32 @@ public abstract class ServerBase {
         throw new Exception(errorMsj);
     }
 
-    public static ServerBase[] getServers() {
+    public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
-                new TuMangaOnline(),
-                new HeavenManga(),
-                new SubManga(),
-                new EsNineManga(),
-                new EsMangaHere(),
-                new LeoManga(),
-                new MangaPanda(),
-                new MangaReader(),
-                new MangaHere(),
-                new MangaFox(),
-                new KissManga(),
-                new MangaEden(),
-                new NineManga(),
-                new RuNineManga(),
-                new MyMangaIo(),
-                new ItNineManga(),
-                new MangaEdenIt(),
-                new DeNineManga(),
-                new Manga_Tube(),
-                new RawSenManga(),
-                new ReadComicOnline(),
-                new ReadComicsTV(),
-                new FromFolder()
+                new TuMangaOnline(context),
+                new HeavenManga(context),
+                new SubManga(context),
+                new EsNineManga(context),
+                new EsMangaHere(context),
+                new LeoManga(context),
+                new MangaPanda(context),
+                new MangaReader(context),
+                new MangaHere(context),
+                new MangaFox(context),
+                new KissManga(context),
+                new MangaEden(context),
+                new NineManga(context),
+                new RuNineManga(context),
+                new MyMangaIo(context),
+                new ItNineManga(context),
+                new MangaEdenIt(context),
+                new DeNineManga(context),
+                new Manga_Tube(context),
+                new RawSenManga(context),
+                new BatoTo(context),
+                new ReadComicOnline(context),
+                new ReadComicsTV(context),
+                new FromFolder(context)
         });
     }
 
@@ -392,6 +402,18 @@ public abstract class ServerBase {
         return result;
     }
 
+    public boolean needLogin() {
+        return false;
+    }
+
+    public boolean hasCredentials() {
+        return true;
+    }
+
+    public boolean testLogin(String user, String passwd) throws Exception {
+        return false;
+    }
+
     public boolean contains(int[] array, int value) {
         for (int i : array) {
             if (i == value) {
@@ -462,7 +484,6 @@ public abstract class ServerBase {
                     Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleListSize + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), largeContentText);
                 }
             }
-
             return null;
         }
 

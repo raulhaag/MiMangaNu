@@ -103,7 +103,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             return;
         }
         mManga = Database.getFullManga(getActivity(), mChapter.getMangaID());
-        mServerBase = ServerBase.getServer(mManga.getServerId());
+        mServerBase = ServerBase.getServer(mManga.getServerId(), getContext());
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
@@ -856,7 +856,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         @Override
         protected Chapter doInBackground(Chapter... arg0) {
             Chapter c = arg0[0];
-            ServerBase s = ServerBase.getServer(ReaderFragment.this.mManga.getServerId());
+            ServerBase s = ServerBase.getServer(ReaderFragment.this.mManga.getServerId(), getContext());
             try {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {

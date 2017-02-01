@@ -100,7 +100,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             getActivity().onBackPressed();
         }
         mManga = Database.getManga(getActivity(), mMangaId);
-        mServerBase = ServerBase.getServer(mManga.getServerId());
+        mServerBase = ServerBase.getServer(mManga.getServerId(), getContext());
         readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
         if (mManga.getReaderType() != 0) {
             readerType = mManga.getReaderType();
@@ -168,7 +168,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             @Override
             public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
                 final SparseBooleanArray selection = mChapterAdapter.getSelection();
-                final ServerBase serverBase = ServerBase.getServer(mManga.getServerId());
+                final ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
                 boolean finish = true;
                 switch (item.getItemId()) {
                     case R.id.select_all:
@@ -263,7 +263,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             }
             mInfo.setStatus(infoExtra);
             mInfo.setSynopsis(manga.getSynopsis());
-            mInfo.setServer(ServerBase.getServer(manga.getServerId()).getServerName());
+            mInfo.setServer(ServerBase.getServer(manga.getServerId(), getContext()).getServerName());
             if (manga.getAuthor().length() > 1) {
                 mInfo.setAuthor(manga.getAuthor());
             } else {
@@ -585,7 +585,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected Chapter doInBackground(Chapter... arg0) {
             Chapter c = arg0[0];
-            ServerBase s = ServerBase.getServer(mManga.getServerId());
+            ServerBase s = ServerBase.getServer(mManga.getServerId(), getContext());
             try {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {
@@ -671,7 +671,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         @Override
         protected Integer doInBackground(Void[] params) {
             int result = 0;
-            ServerBase s = ServerBase.getServer(mManga.getServerId());
+            ServerBase s = ServerBase.getServer(mManga.getServerId(), getContext());
             mangaId = mManga.getId();
             try {
                 int diff = s.searchForNewChapters(mManga.getId(), getActivity(), false);//always full update

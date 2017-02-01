@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import ar.rulosoft.mimanganu.R;
 
 public class MangaReader extends MangaPanda {
@@ -12,7 +14,8 @@ public class MangaReader extends MangaPanda {
      * <p/>
      * Previously, this code was the same as MangaPanda either way..
      */
-    public MangaReader() {
+    public MangaReader(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangareader);
         this.setServerName("Mangareader.net");

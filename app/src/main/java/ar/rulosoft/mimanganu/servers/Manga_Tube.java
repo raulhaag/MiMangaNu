@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -49,7 +51,8 @@ public class Manga_Tube extends ServerBase {
     };
     int[][] no_more_pages;
 
-    public Manga_Tube() {
+    public Manga_Tube(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_de);
         this.setIcon(R.drawable.mangatube);
         this.setServerName("Manga-tube");

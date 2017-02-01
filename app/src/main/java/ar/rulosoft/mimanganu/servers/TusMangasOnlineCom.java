@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -65,7 +67,8 @@ public class TusMangasOnlineCom extends ServerBase {
     private static String HOST = "http://www.tumangaonline.com";
 
 
-    public TusMangasOnlineCom() {
+    public TusMangasOnlineCom(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.tumangaonline_icon);
         this.setServerName("TusMangasOnline");

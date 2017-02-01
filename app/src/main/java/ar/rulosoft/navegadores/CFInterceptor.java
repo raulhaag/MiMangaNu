@@ -20,6 +20,14 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"");
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"");
 
+    public static String getFirstMatch(Pattern p, String source) {
+        Matcher m = p.matcher(source);
+        if (m.find()) {
+            return m.group(1);
+        }
+        return null;
+    }
+
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
@@ -59,7 +67,6 @@ public class CFInterceptor implements Interceptor {
 
         String answer = String.valueOf(result + domain.length());
 
-
         String url = new HttpUrl.Builder().scheme("http").host(domain)
                 .addPathSegment("cdn-cgi").addPathSegment("l").addPathSegment("chk_jschl")
                 .addEncodedQueryParameter("jschl_vc", challenge)
@@ -78,14 +85,5 @@ public class CFInterceptor implements Interceptor {
         response.body().close();
         response = chain.proceed(request.newBuilder().build());
         return response;
-    }
-
-
-    public static String getFirstMatch(Pattern p, String source) {
-        Matcher m = p.matcher(source);
-        if (m.find()) {
-            return m.group(1);
-        }
-        return null;
     }
 }

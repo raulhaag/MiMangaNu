@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.adapters.CompoundAdapter;
 
 import static android.view.Gravity.CENTER;
@@ -127,8 +128,8 @@ public class FilterViewGenerator {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setCustomTitle(nTextView);
         dialogBuilder.setView(rootLayout);
-        dialogBuilder.setPositiveButton("Apply", null);
-        dialogBuilder.setNeutralButton("Reset", null);
+        dialogBuilder.setPositiveButton(R.string.apply, null);
+        dialogBuilder.setNeutralButton(R.string.reset, null);
         dialogBuilder.setNegativeButton(context.getString(android.R.string.cancel), null);
 
         dialog = dialogBuilder.create();
@@ -137,7 +138,6 @@ public class FilterViewGenerator {
 
             @Override
             public void onShow(final DialogInterface dialog) {
-
                 Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
                 accept.setOnClickListener(new View.OnClickListener() {
 
@@ -147,7 +147,7 @@ public class FilterViewGenerator {
                             int[][] result = new int[filters.length][];
                             int j = 0;
                             for (CompoundButton[] cbs : compoundButtons) {
-                                ArrayList<Integer> checked = new ArrayList<Integer>();
+                                ArrayList<Integer> checked = new ArrayList<>();
                                 for (int k = 0; k < cbs.length; k++) {
                                     if (cbs[k].isChecked()) {
                                         checked.add(k);

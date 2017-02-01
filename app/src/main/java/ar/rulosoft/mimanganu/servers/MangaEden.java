@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
+import android.content.Context;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -62,7 +64,8 @@ public class MangaEden extends ServerBase {
             "&order=1", "&order=3", "&order=-0", "&order=2"
     };
 
-    MangaEden() {
+    MangaEden(Context context) {
+        super(context);
         this.setFlag(R.drawable.flag_en);
         this.setIcon(R.drawable.mangaeden);
         this.setServerName("MangaEden");
