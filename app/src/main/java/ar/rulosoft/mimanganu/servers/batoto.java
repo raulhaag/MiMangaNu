@@ -29,7 +29,7 @@ import okhttp3.ResponseBody;
  * Created by Raul on 13/01/2017.
  */
 
-public class BatoTo extends ServerBase {
+class BatoTo extends ServerBase {
 
     private static String[] genre = new String[]{
             "4-Koma", "Action", "Adventure", "Award Winning", "Comedy", "Cooking", "Doujinshi", "Drama",
@@ -46,7 +46,7 @@ public class BatoTo extends ServerBase {
             "25", "26", "28", "36", "29", "31", "44"
     };
 
-    public BatoTo(Context context) {
+    BatoTo(Context context) {
         super(context);
         this.setFlag(R.drawable.noimage);
         this.setIcon(R.drawable.batoto);
