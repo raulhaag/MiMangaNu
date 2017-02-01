@@ -7,6 +7,7 @@ import android.support.v7.preference.PreferenceManager;
 import android.text.Html;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
@@ -36,15 +37,39 @@ class BatoTo extends ServerBase {
             "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Martial Arts",
             "Mecha", "Medical", "Music", "Mystery", "Oneshot", "Psychological", "Romance", "School Life",
             "Sci-fi", "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut",
-            "Sports", "Supernatural", "Tragedy", "Webtoon", "Yaoi", "Yuri", "[no chapters]"
+            "Sports", "Supernatural", "Tragedy", "Webtoon", "Yaoi", "Yuri", "[no chapters]", "[chapters]"
     };
     private static String[] genreV = new String[]{
-            "40", "1", "2", "39", "3", "41", "9", "10",
-            "12", "13", "15", "17", "20", "22", "34", "27",
-            "30", "42", "37", "4", "38", "5", "6", "7",
-            "8", "32", "35", "16", "33", "19", "21", "23",
-            "25", "26", "28", "36", "29", "31", "44"
+            "i40", "i1", "i2", "i39", "i3", "i41", "i9", "i10",
+            "i12", "i13", "i15", "i17", "i20", "i22", "i34", "i27",
+            "i30", "i42", "i37", "i4", "i38", "i5", "i6", "i7",
+            "i8", "i32", "i35", "i16", "i33", "i19", "i21", "i23",
+            "i25", "i26", "i28", "i36", "i29", "i31", "i44", "e44"
     };
+
+    private static String[] completed = new String[]{"Any", "Completed", "Incomplete"};
+    private static String[] completedV = new String[]{"", "&completed=c", "&completed=i"};
+
+
+    private static String[] im = new String[]{"Yes", "No"};
+    private static String[] imV = new String[]{"", "&mature=n"};
+
+
+    private static String[] type = new String[]{"Any", "Manga(JP)", "Manhwa(Kr)", "Manhua(Cn)",
+            "Artbook", "Other"};
+    private static String[] typeV = new String[]{"", "&type=jp", "&type=kr", "&type=cn", "&type=ar",
+            "&type=ot"};
+
+
+    private static String[] orderBy = new String[]{"Title", "Author", "Artist", "Rating", "Views",
+            "Last Update"};
+    private static String[] orderByV = new String[]{"&order_cond=title", "&order_cond=author",
+            "&order_cond=artist", "&order_cond=rating", "&order_cond=views", "&order_cond=update"};
+
+
+    private static String[] orderDir = new String[]{"Ascending", "Descending"};
+    private static String[] orderDirV = new String[]{"&order=asc", "&order=desc"};
+
 
     BatoTo(Context context) {
         super(context);
@@ -62,13 +87,18 @@ class BatoTo extends ServerBase {
             for (int filter : filters[0]) {
                 genres = genres + ";" + genreV[filter];
             }
-            web = web + "&" + genres;
+            web = web + "&genres=" + genres + "&genre_cond=and";
         }
-
-        ArrayList<Manga> mangas = new ArrayList<>();
+        web = web + completedV[filters[1][0]] + imV[filters[2][0]] + typeV[filters[3][0]]
+                + orderByV[filters[4][0]] + orderDirV[filters[5][0]];
         String data = getNavigatorAndFlushParameters().get(web);
+        return getMangasFromSource(data);
+    }
+
+    private ArrayList<Manga> getMangasFromSource(String source) {
+        ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"([^\"]+)\">[^>]+(book_open|book).+?>(.+?)<");
-        Matcher m = p.matcher(data);
+        Matcher m = p.matcher(source);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             while (m.find()) {
                 mangas.add(new Manga(getServerID(), Html.fromHtml(m.group(3), Html.FROM_HTML_MODE_LEGACY).toString(), m.group(1), m.group(2).length() == 4));
@@ -83,7 +113,14 @@ class BatoTo extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI)};
+        return new ServerFilter[]{
+                new ServerFilter("Genre", genre, ServerFilter.FilterType.MULTI),
+                new ServerFilter("Completed series", completed, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Include mature", im, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Type", type, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Oder by", orderBy, ServerFilter.FilterType.SINGLE),
+                new ServerFilter("Order direction", orderDir, ServerFilter.FilterType.SINGLE)
+        };
     }
 
     @Override
@@ -93,7 +130,9 @@ class BatoTo extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        return null;
+        String web = "http://bato.to/search_ajax?name=" + URLEncoder.encode(term, "UTF-8") + "&name_cond=c&p=1";
+        String data = getNavigatorAndFlushParameters().get(web);
+        return getMangasFromSource(data);
     }
 
     @Override
