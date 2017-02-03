@@ -2,13 +2,17 @@ package ar.rulosoft.mimanganu;
 
 import android.app.ActionBar;
 import android.content.SharedPreferences;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -280,6 +284,11 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                                 mAdapter = new MangasRecAdapter(result, getActivity(), MainActivity.darkTheme);
                             } else {
                                 mAdapter = new MangasRecAdapterText(result, getActivity(), MainActivity.darkTheme);
+                                DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+                                Drawable sd = ContextCompat.getDrawable(getContext(), R.drawable.divider);
+                                sd.setColorFilter(colors[0], PorterDuff.Mode.DARKEN);
+                                divider.setDrawable(sd);
+                                recyclerViewGrid.addItemDecoration(divider);
                             }
                             mAdapter.setOnCreateContextMenuListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);

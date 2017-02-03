@@ -89,7 +89,7 @@ public class Util {
     public void showFastSnackBar(String message, View view, Context context) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
-            if(MainActivity.colors != null)
+            if (MainActivity.colors != null)
                 snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
@@ -102,7 +102,7 @@ public class Util {
     public void showSlowSnackBar(String message, View view, Context context) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
-            if(MainActivity.colors != null)
+            if (MainActivity.colors != null)
                 snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
@@ -183,7 +183,8 @@ public class Util {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
+                if (context != null)
+                    Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -193,12 +194,13 @@ public class Util {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context, toast, length).show();
+                if (context != null)
+                    Toast.makeText(context, toast, length).show();
             }
         });
     }
 
-    private int getCorrectIcon(){
+    private int getCorrectIcon() {
         int icon;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             icon = R.drawable.ic_launcher_white;
@@ -221,8 +223,8 @@ public class Util {
         notificationBuilder.setContentIntent(contentPendingIntent);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setDeleteIntent(deletePendingIntent);
-        if(MainActivity.pm != null) {
-            if(MainActivity.pm.getBoolean("update_sound", false))
+        if (MainActivity.pm != null) {
+            if (MainActivity.pm.getBoolean("update_sound", false))
                 notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         }
         ++n;
@@ -240,8 +242,8 @@ public class Util {
         } else {
             notification.flags = Notification.FLAG_AUTO_CANCEL;
         }
-        if(MainActivity.pm != null) {
-            if(MainActivity.pm.getBoolean("update_vibrate", false))
+        if (MainActivity.pm != null) {
+            if (MainActivity.pm.getBoolean("update_vibrate", false))
                 notification.defaults |= Notification.DEFAULT_VIBRATE;
         }
         notificationManager.notify(id, notification);
