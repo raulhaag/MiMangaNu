@@ -49,6 +49,8 @@ public abstract class ServerBase {
     static final int MANGAEDEN = 24;
     static final int LEOMANGA = 25;
     static final int BATOTO = 26;
+    static final int BATOTOES = 27;
+
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
@@ -145,6 +147,9 @@ public abstract class ServerBase {
             case BATOTO:
                 serverBase = new BatoTo(context);
                 break;
+            case BATOTOES:
+                serverBase = new BatoToEs(context);
+                break;
             case READCOMICSTV:
                 serverBase = new ReadComicsTV(context);
                 break;
@@ -174,6 +179,7 @@ public abstract class ServerBase {
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
                 new TuMangaOnline(context),
+                new BatoToEs(context),
                 new HeavenManga(context),
                 new SubManga(context),
                 new EsNineManga(context),
