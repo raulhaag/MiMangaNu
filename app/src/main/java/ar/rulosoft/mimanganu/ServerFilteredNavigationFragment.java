@@ -134,6 +134,13 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             filters = serverBase.getBasicFilter();
         }
         recyclerViewGrid = (RecyclerView) getView().findViewById(R.id.grilla);
+        if (serverBase.getFilteredType() == ServerBase.FilteredType.TEXT) {
+            DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
+            Drawable sd = ContextCompat.getDrawable(getContext(), R.drawable.divider);
+            sd.setColorFilter(colors[0], PorterDuff.Mode.DARKEN);
+            divider.setDrawable(sd);
+            recyclerViewGrid.addItemDecoration(divider);
+        }
         loading = (ProgressBar) getView().findViewById(R.id.loading);
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
         if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
@@ -284,11 +291,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                                 mAdapter = new MangasRecAdapter(result, getActivity(), MainActivity.darkTheme);
                             } else {
                                 mAdapter = new MangasRecAdapterText(result, getActivity(), MainActivity.darkTheme);
-                                DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
-                                Drawable sd = ContextCompat.getDrawable(getContext(), R.drawable.divider);
-                                sd.setColorFilter(colors[0], PorterDuff.Mode.DARKEN);
-                                divider.setDrawable(sd);
-                                recyclerViewGrid.addItemDecoration(divider);
                             }
                             mAdapter.setOnCreateContextMenuListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);

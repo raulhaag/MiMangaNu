@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.59:
+* Agergado Bato.to y filtro Español.
+* Arreglados los servers de ninemanga.
+* Arreglos menores, mejoras y opciones agregadas.
+
+Changes in v1.59:
+* Added Bato.to and ES filter.
+* Fix ninemanga servers.
+* Minor fix, improves and features added.
+
 Cambios en v1.58:
 * Fix servers.
 * Fix el administrador de descarga.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.58:\n\t* Fix servers. \n\t* Fix el administrador de descarga. \n\t* Arreglos menores y mejoras. </string>
+    <string name="update_message">Cambios en v1.59:\n\t* Agergado Bato.to y filtro Español. \n\t* Arreglados los servers de ninemanga.\n\t* Arreglos menores, mejoras y opciones agregadas. </string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
@@ -242,5 +242,12 @@
     <string name="vacuum_database_notification_text">Limpiando base de datos</string>
     <string name="vacuum_database_subtitle">Limpiar y reordenar base de datos.</string>
     <string name="vacuum_database_title">Limpia base de datos</string>
+    <string name="accounts">Cuentas</string>
+    <string name="apply">Aplicar</string>
+    <string name="login_in">Conectado</string>
+    <string name="login">Conectar</string>
+    <string name="password">Contraseña</string>
+    <string name="reset">Resetiar</string>
+    <string name="user">Usuario</string>
 </resources>
 
