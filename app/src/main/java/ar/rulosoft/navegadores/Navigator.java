@@ -96,7 +96,7 @@ public class Navigator {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .addNetworkInterceptor(interceptor)
+                .addInterceptor(interceptor)
                 .build();
         addHeader("Referer", referer);
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
@@ -112,7 +112,7 @@ public class Navigator {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .addNetworkInterceptor(interceptor)
+                .addInterceptor(interceptor)
                 .build();
         addHeader("Content-Encoding", "deflate");
         addHeader("Accept-Encoding", "deflate");

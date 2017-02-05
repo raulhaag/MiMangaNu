@@ -157,7 +157,7 @@ class BatoTo extends ServerBase {
             data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
-                chapters.add(new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
+                chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
             }
             manga.setChapters(chapters);
         }
@@ -254,7 +254,13 @@ class BatoTo extends ServerBase {
                             .addFormDataPart("referer", "https://bato.to/forums/")
                             .addFormDataPart("rememberMe", "1")
                             .build();
-                    Request request0 = new Request.Builder().url("https://bato.to/forums/index.php?app=core&module=global&section=login&do=process")
+                    String loginWeb;
+                    if (request.isHttps()) {
+                        loginWeb = "https://bato.to/forums/index.php?app=core&module=global&section=login&do=process";
+                    } else {
+                        loginWeb = "http://bato.to/forums/index.php?app=core&module=global&section=login&do=process";
+                    }
+                    Request request0 = new Request.Builder().url(loginWeb)
                             .method("POST", requestBody)
                             .header("User-Agent", Navigator.USER_AGENT)
                             .build();

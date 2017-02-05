@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.60:
+* Corregido orden de capítulos en Bato.to.
+
+Changes in v1.60:
+* Correct bato.to chapters load order.
+
 Cambios en v1.59:
 * Agergado Bato.to y filtro Español.
 * Arreglados los servers de ninemanga.
