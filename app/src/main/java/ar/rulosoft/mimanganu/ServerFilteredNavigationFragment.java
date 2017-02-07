@@ -75,9 +75,11 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             public void run() {
                 try {
                     List<Manga> mangas = Database.getMangas(getContext(), null, true);
-                    for (Manga m : mangas) {
-                        if (m.getPath().equals(mAdapter.getItem(lastContextMenuIndex).getPath()))
-                            mangaAlreadyAdded = true;
+                    if (mAdapter != null) {
+                        for (Manga m : mangas) {
+                            if (m.getPath().equals(mAdapter.getItem(lastContextMenuIndex).getPath()))
+                                mangaAlreadyAdded = true;
+                        }
                     }
                 } catch (Exception e) {
                     Log.e("SFNF", "Exception", e);
@@ -89,7 +91,9 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.menu_manga_item_server_nav, menu);
-        menu.setHeaderTitle(mAdapter.getItem((int) v.getTag()).getTitle());
+        if (mAdapter != null) {
+            menu.setHeaderTitle(mAdapter.getItem((int) v.getTag()).getTitle());
+        }
         lastContextMenuIndex = (int) v.getTag();
     }
 
