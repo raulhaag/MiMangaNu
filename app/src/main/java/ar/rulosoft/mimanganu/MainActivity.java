@@ -181,6 +181,13 @@ public class MainActivity extends AppCompatActivity {
     public void replaceFragmentAllowStateLoss(Fragment fragment, String tag) {
         backListener = null;
         keyUpListener = null;
+        // introduced in support lib v25.1.0
+        // setAllowOptimization(false)
+        // fA -> fB
+        // fA.onStop -> fB.onStart
+        // setAllowOptimization(true) (new default)
+        // fA -> fB
+        // fB.onStart -> fA.onStop
         getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
     }
