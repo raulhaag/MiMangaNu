@@ -169,7 +169,7 @@ class EsNineManga extends ServerBase {
             web = HOST + orderV[filters[3][0]];
         else
             web = "http://es.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
-        Log.d("NM","web: "+web);
+        //Log.d("NM","web: "+web);
         String source = getNavigatorWithNeededHeader().get(web);
         Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
         Matcher matcher = pattern.matcher(source);

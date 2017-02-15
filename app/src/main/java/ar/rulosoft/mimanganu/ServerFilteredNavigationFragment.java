@@ -162,7 +162,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         }
     }
 
-
     @Override
     public void onRequestedLastItem() {
         if (serverBase.hasMore && !loading.isShown() && !mStart)
@@ -194,6 +193,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         bundle.putInt(MainFragment.SERVER_ID, serverBase.getServerID());
         bundle.putString(DetailsFragment.TITLE, manga.getTitle());
         bundle.putString(DetailsFragment.PATH, manga.getPath());
+        bundle.putString(DetailsFragment.IMG, manga.getImages());
         DetailsFragment detailsFragment = new DetailsFragment();
         detailsFragment.setArguments(bundle);
         ((MainActivity) getActivity()).replaceFragment(detailsFragment, "DetailsFragment");

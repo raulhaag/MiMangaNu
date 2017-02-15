@@ -38,8 +38,9 @@ public class DetailsFragment extends Fragment {
 
     public static final String TITLE = "titulo_m";
     public static final String PATH = "path_m";
+    public static final String IMG = "img";
     private static final String TAG = "DetailsFragment";
-    private String title, path;
+    private String title, path, img;
     private int id;
     private ImageLoader imageLoader;
     private ControlInfo data;
@@ -55,6 +56,7 @@ public class DetailsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         title = getArguments().getString(TITLE);
         path = getArguments().getString(PATH);
+        img = getArguments().getString(IMG);
         id = getArguments().getInt(MainFragment.SERVER_ID);
         setHasOptionsMenu(true);
         return inflater.inflate(R.layout.fragment_details, container, false);
@@ -130,6 +132,7 @@ public class DetailsFragment extends Fragment {
             ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.datosde) + " " + title);
         }
         manga = new Manga(id, title, path, false);
+        manga.setImages(img);
         serverBase = ServerBase.getServer(id, getContext());
         imageLoader = new ImageLoader(getContext());
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {

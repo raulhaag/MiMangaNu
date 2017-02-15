@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -55,11 +56,11 @@ public class MangaEdenIt extends ServerBase {
     };
 
     private static String[] order = new String[]{
-            "Views", "Latest Chapter", "Manga Title", "Chapters"
+            "Front page", "Views", "Latest Chapter", "Manga Title", "Chapters"
     };
 
     private static String[] orderV = new String[]{
-            "&order=1", "&order=3", "&order=-0", "&order=2"
+            "", "&order=1", "&order=3", "&order=-0", "&order=2"
     };
 
     MangaEdenIt(Context context) {
@@ -165,9 +166,24 @@ public class MangaEdenIt extends ServerBase {
         return mangas;
     }
 
-    @Override
-    public FilteredType getFilteredType() {
-        return FilteredType.TEXT;
+    private ArrayList<Manga> getMangasFromFrontpage(String source) {
+        Pattern pattern1 = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/it/it-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>");
+        Matcher matcher1 = pattern1.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        int i = 0;
+        while (matcher1.find()) {
+            i++;
+            /*Log.d("ME", "(1): " + "http:" + matcher1.group(1));
+            Log.d("ME", "(2): " + matcher1.group(2));
+            Log.d("ME", "(3): " + matcher1.group(3));*/
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher1.group(3)).toString(), HOST + matcher1.group(2), false);
+            manga.setImages("http:" + matcher1.group(1));
+            mangas.add(manga);
+            //Log.d("ME", "i: " + i);
+            if (i == 40) //47 43 44
+                break;
+        }
+        return mangas;
     }
 
     @Override
@@ -186,9 +202,15 @@ public class MangaEdenIt extends ServerBase {
         for (int i = 0; i < filters[0].length; i++) {
             web = web + typeV[filters[0][i]];
         }
-        web = web + orderV[filters[4][0]] + "&page=" + pageNumber;
-        String source = getNavigatorAndFlushParameters().get(web);
-        return getMangasFromSource(source);
+        if (orderV[filters[4][0]].equals("")) {
+            web = "http://www.mangaeden.com/it/";
+            String source = getNavigatorAndFlushParameters().get(web);
+            return getMangasFromFrontpage(source);
+        } else {
+            web = web + orderV[filters[4][0]] + "&page=" + pageNumber;
+            String source = getNavigatorAndFlushParameters().get(web);
+            return getMangasFromSource(source);
+        }
     }
 
     @Override

@@ -2,9 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
-import android.text.Html;
 
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -17,6 +15,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
@@ -99,14 +98,8 @@ class BatoTo extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"([^\"]+)\">[^>]+(book_open|book).+?>(.+?)<");
         Matcher m = p.matcher(source);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            while (m.find()) {
-                mangas.add(new Manga(getServerID(), Html.fromHtml(m.group(3), Html.FROM_HTML_MODE_LEGACY).toString(), m.group(1), m.group(2).length() == 4));
-            }
-        } else {
-            while (m.find()) {
-                mangas.add(new Manga(getServerID(), Html.fromHtml(m.group(3)).toString(), m.group(1), m.group(2).length() == 4));
-            }
+        while (m.find()) {
+            mangas.add(new Manga(getServerID(), Util.getInstance().fromHtml(m.group(3)).toString(), m.group(1), m.group(2).length() == 4));
         }
         return mangas;
     }
@@ -206,7 +199,7 @@ class BatoTo extends ServerBase {
         nav.addPost("rememberMe", "1");
         nav.post("https://bato.to/forums/index.php?app=core&module=global&section=login&do=process");
         data = getNavigatorAndFlushParameters().get("https://bato.to/myfollows/");
-        return data.contains("-" + user);
+        return data.contains("-" + user.toLowerCase());
     }
 
     @Override

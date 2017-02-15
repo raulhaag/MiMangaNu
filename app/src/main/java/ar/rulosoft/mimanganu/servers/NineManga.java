@@ -70,7 +70,13 @@ class NineManga extends ServerBase {
         Pattern pattern = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(2)).toString(), HOST + matcher.group(1), false);
+            String title = Util.getInstance().fromHtml(matcher.group(2)).toString();
+            //Log.d("NM","t0: "+title);
+            if (title.equals(title.toUpperCase())) {
+                title = Util.getInstance().toCamelCase(title.toLowerCase());
+                //Log.d("NM","t1: "+title);
+            }
+            Manga manga = new Manga(getServerID(), title, HOST + matcher.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -97,7 +103,7 @@ class NineManga extends ServerBase {
         manga.setAuthor(getFirstMatchDefault("author.+?\">(.+?)<", source, ""));
         // Genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
-        // Chapter
+        // Chapters
         Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
@@ -182,14 +188,20 @@ class NineManga extends ServerBase {
             web = HOST + orderV[filters[3][0]];
         else
             web = "http://ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
-        Log.d("NM","web: "+web);
+        //Log.d("NM","web: "+web);
         String source = getNavigatorWithNeededHeader().get(web);
         // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
         Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
+            String title = Util.getInstance().fromHtml(matcher.group(3)).toString();
+            //Log.d("NM","t0: "+title);
+            if (title.equals(title.toUpperCase())) {
+                title = Util.getInstance().toCamelCase(title.toLowerCase());
+                //Log.d("NM","t1: "+title);
+            }
+            Manga manga = new Manga(getServerID(), title, HOST + matcher.group(1), false);
             manga.setImages(matcher.group(2));
             mangas.add(manga);
         }
