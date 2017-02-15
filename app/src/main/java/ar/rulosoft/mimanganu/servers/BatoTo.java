@@ -139,7 +139,7 @@ class BatoTo extends ServerBase {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String user = prefs.getString("username_" + getServerName(), "");
             String password = prefs.getString("dwp_" + getServerName(), "");
-            String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginIntercetor(user, password));
+            String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginInterceptor(user, password));
             manga.setSynopsis(getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis));
             manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
             manga.setAuthor(getFirstMatch("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
@@ -215,11 +215,11 @@ class BatoTo extends ServerBase {
         return !(user.isEmpty() && password.isEmpty());
     }
 
-    public class BatotoLoginIntercetor implements Interceptor {
+    public class BatotoLoginInterceptor implements Interceptor {
         String user;
         String passWord;
 
-        public BatotoLoginIntercetor(String user, String passWord) {
+        public BatotoLoginInterceptor(String user, String passWord) {
             this.user = user;
             this.passWord = passWord;
         }
@@ -233,7 +233,7 @@ class BatoTo extends ServerBase {
             String content = response.body().string();
             String domain = request.url().toString();
             MediaType contentType = response.body().contentType();
-            if (content.contains("-" + user)) {//check if user is log in (need to find a better way to do it)
+            if (content.contains("-" + user.toLowerCase())) {//check if user is log in (need to find a better way to do it)
                 ResponseBody body = ResponseBody.create(contentType, content);//needed just because body only can be consumed once
                 return response.newBuilder().body(body).build();
             } else {

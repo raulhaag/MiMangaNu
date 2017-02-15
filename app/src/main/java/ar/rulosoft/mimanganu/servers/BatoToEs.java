@@ -31,7 +31,7 @@ public class BatoToEs extends BatoTo {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             String user = prefs.getString("username_" + getServerName(), "");
             String password = prefs.getString("dwp_" + getServerName(), "");
-            String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginIntercetor(user, password));
+            String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginInterceptor(user, password));
             manga.setSynopsis(getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis));
             manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
             manga.setAuthor(getFirstMatch("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
