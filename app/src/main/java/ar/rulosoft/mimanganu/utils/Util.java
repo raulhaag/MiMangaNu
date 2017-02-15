@@ -36,6 +36,10 @@ public class Util {
     private Util() {
     }
 
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
+    }
+
     public static Util getInstance() {
         return LazyHolder.utilInstance;
     }
@@ -185,6 +189,8 @@ public class Util {
             public void run() {
                 if (context != null)
                     Toast.makeText(context, toast, Toast.LENGTH_LONG).show();
+                else
+                    Log.e("Util", "Failed to deliver toast! Context was null. Message was: " + toast);
             }
         });
     }
@@ -196,6 +202,8 @@ public class Util {
             public void run() {
                 if (context != null)
                     Toast.makeText(context, toast, length).show();
+                else
+                    Log.e("Util", "Failed to deliver toast! Context was null. Message was: " + toast);
             }
         });
     }
@@ -404,8 +412,19 @@ public class Util {
         return columnSize;
     }
 
-    private static class LazyHolder {
-        private static final Util utilInstance = new Util();
+    public String toCamelCase(String input) {
+        StringBuilder camelCase = new StringBuilder();
+        boolean nextCamelCase = true;
+        for (char c : input.toCharArray()) {
+            if (!Character.isLetterOrDigit(c) && c != '\'') { //Character.isSpaceChar(c)
+                nextCamelCase = true;
+            } else if (nextCamelCase) {
+                c = Character.toTitleCase(c);
+                nextCamelCase = false;
+            }
+            camelCase.append(c);
+        }
+        return camelCase.toString();
     }
 
 }

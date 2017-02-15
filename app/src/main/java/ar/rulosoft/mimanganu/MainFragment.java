@@ -393,7 +393,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
                         }
                     } else {
-                        Util.getInstance().showFastSnackBar("This server need login, set account on settings.", getView(), getContext());
+                        Util.getInstance().showFastSnackBar(getString(R.string.this_server_needs_an_account), getView(), getContext());
                     }
                 } else {
                     MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();

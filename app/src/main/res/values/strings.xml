@@ -249,5 +249,6 @@
     <string name="reset">Reset</string>
     <string name="login">Login</string>
     <string name="accounts">Accounts</string>
+    <string name="this_server_needs_an_account">This server needs a login. Set an account in the settings.</string>
 
 </resources>
