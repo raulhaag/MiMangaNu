@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+
+Changes in v1.61:
+* Add gogocomic (en)
+* Add viewcomic/view-comic (en)
+* Add japscan (fr)
+* Add readmangatoday (en)
+* fix MangaFox downloads
+* fix batoto usernames with UPPERCASE letters login fail
+* Add setting to only add chapters in the device's language from batoto
+
 Cambios en v1.60:
 * Corregido orden de capítulos en Bato.to.
 
@@ -48,46 +58,6 @@ Changes in v1.59:
 * Added Bato.to and ES filter.
 * Fix ninemanga servers.
 * Minor fix, improves and features added.
-
-Cambios en v1.58:
-* Fix servers.
-* Fix el administrador de descarga.
-* Arreglos menores y mejoras.
-
-Changes in v1.58:
-* Fix servers.
-* Fix download pool error.
-* Minor fix and improves.
-
-Cambios en v1.57:
-* Agregado ReadComicsTV (EN).
-* Fix MangaFox.
-* Mejorados la seleccion por genero para KissManga, NineManga (Todos) and MangaEden (Todos).
-* Nueva version manga_tube(No compatible, con anterior).
-* Agregado selecion de tamaño de grilla.
-* Bug fixes y mejoras.
-
-Changes in v1.57:
-* Add ReadComicsTV (EN).
-* Fix MangaFox.
-* Improve multiple genre selection for KissManga, NineManga (All) and MangaEden (All).
-* New version manga_tube(No compatible, they just changed host and system).
-* Added grid size option.
-* Bug fixes and performance improvements.
-
-Cambios en v1.56:
-* Fix LeoManga.
-* Agregada fecha de ultima atulización del manga (basada en el ultimo update encotrado por MMN).
-* Agregada preferencia para importar mangas de un directorio automaticamnete al buscar actualizaciones.
-* ASgregada opcion para importar todas las carpetas como mangas.
-* Corregidos varios errores y mejoras realizadas.
-
-Changes in v1.56:
-* Fix LeoManga.
-* Show time of last update (based on the last time a chapter was added).
-* Add setting to auto import folders as Mangas in a specified folder after the manual update finishes.
-* Add setting to import all sub-folders as Mangas.
-* Bug fixes and performance improvements.
 
 
 
