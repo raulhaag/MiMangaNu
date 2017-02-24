@@ -50,10 +50,14 @@ public abstract class ServerBase {
     static final int LEOMANGA = 25;
     static final int BATOTO = 26;
     static final int BATOTOES = 27;
+    static final int JAPSCAN = 28;
+    static final int READMANGATODAY = 29;
 
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
+    static final int GOGOCOMIC = 1003;
+    static final int VIEWCOMIC = 1004;
     public boolean hasMore = true;
     protected String defaultSynopsis = "N/A";
     Context context;
@@ -150,8 +154,20 @@ public abstract class ServerBase {
             case BATOTOES:
                 serverBase = new BatoToEs(context);
                 break;
+            case JAPSCAN:
+                serverBase = new JapScan(context);
+                break;
+            case READMANGATODAY:
+                serverBase = new ReadMangaToday(context);
+                break;
             case READCOMICSTV:
                 serverBase = new ReadComicsTV(context);
+                break;
+            case GOGOCOMIC:
+                serverBase = new GoGoComic(context);
+                break;
+            case VIEWCOMIC:
+                serverBase = new ViewComic(context);
                 break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
@@ -192,16 +208,19 @@ public abstract class ServerBase {
                 new KissManga(context),
                 new MangaEden(context),
                 new NineManga(context),
+                new ReadMangaToday(context),
                 new RuNineManga(context),
                 new MyMangaIo(context),
+                new JapScan(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
                 new DeNineManga(context),
-                new Manga_Tube(context),
                 new RawSenManga(context),
                 new BatoTo(context),
                 new ReadComicOnline(context),
                 new ReadComicsTV(context),
+                new GoGoComic(context),
+                new ViewComic(context),
                 new FromFolder(context)
         });
     }

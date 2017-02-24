@@ -17,6 +17,14 @@
         android:key="account"
         android:title="@string/accounts" />
 
+    <PreferenceCategory android:title="@string/batoto_settings">
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="batoto_lang"
+            android:summary="@string/native_chapters_subtitle"
+            android:title="@string/native_chapters_title" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/connection_settings">
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"

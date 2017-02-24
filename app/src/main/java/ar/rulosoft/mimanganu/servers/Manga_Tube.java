@@ -22,6 +22,9 @@ import ar.rulosoft.navegadores.Navigator;
 /**
  * Created by Raul on 02/12/2015.
  */
+
+// this site still exists but our current class is outdated ~xtj-9182 (23.02.17)
+@Deprecated
 public class Manga_Tube extends ServerBase {
 
     public static String[] sort = new String[]{

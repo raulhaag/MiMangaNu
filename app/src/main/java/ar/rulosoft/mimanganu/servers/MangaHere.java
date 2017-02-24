@@ -10,6 +10,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaHere extends ServerBase {
 
@@ -85,9 +86,8 @@ public class MangaHere extends ServerBase {
             // Chapter
             Pattern p = Pattern.compile(PATTERN_CAPITULOS);
             Matcher m = p.matcher(data);
-
             while (m.find()) {
-                Chapter mc = new Chapter(m.group(2).trim(), m.group(1));
+                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -144,8 +144,7 @@ public class MangaHere extends ServerBase {
         Pattern p = Pattern.compile("<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga =
-                    new Manga(getServerID(), m.group(2), m.group(3), false);
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), m.group(3), false);
             manga.setImages(m.group(1));//.replace("thumb_", ""));
             mangas.add(manga);
         }

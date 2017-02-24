@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,7 +69,7 @@ class BatoTo extends ServerBase {
 
     private static String[] orderDir = new String[]{"Ascending", "Descending"};
     private static String[] orderDirV = new String[]{"&order=asc", "&order=desc"};
-
+    private SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
 
     BatoTo(Context context) {
         super(context);
@@ -140,7 +141,8 @@ class BatoTo extends ServerBase {
             String user = prefs.getString("username_" + getServerName(), "");
             String password = prefs.getString("dwp_" + getServerName(), "");
             String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginInterceptor(user, password));
-            manga.setSynopsis(getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis));
+            String synopsis = getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis);
+            manga.setSynopsis(Util.getInstance().fromHtml(synopsis).toString());
             manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
             manga.setAuthor(getFirstMatch("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
             manga.setGenre(getFirstMatch("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
@@ -149,8 +151,18 @@ class BatoTo extends ServerBase {
             Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
             data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
             Matcher matcher = pattern.matcher(data);
+            boolean batoto_lang = false;
+            String lang = "";
+            if (pm != null) {
+                batoto_lang = pm.getBoolean("batoto_lang", false);
+                lang = Locale.getDefault().getDisplayLanguage();
+            }
             while (matcher.find()) {
-                chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
+                if (batoto_lang && !lang.isEmpty()) {
+                    if (matcher.group(3).contains(lang))
+                        chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
+                } else
+                    chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
             }
             manga.setChapters(chapters);
         }
@@ -217,11 +229,11 @@ class BatoTo extends ServerBase {
 
     public class BatotoLoginInterceptor implements Interceptor {
         String user;
-        String passWord;
+        String password;
 
-        public BatotoLoginInterceptor(String user, String passWord) {
+        public BatotoLoginInterceptor(String user, String password) {
             this.user = user;
-            this.passWord = passWord;
+            this.password = password;
         }
 
         @Override
@@ -242,7 +254,7 @@ class BatoTo extends ServerBase {
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
                             .addFormDataPart("auth_key", params.get("auth_key"))
-                            .addFormDataPart("ips_password", passWord)
+                            .addFormDataPart("ips_password", password)
                             .addFormDataPart("ips_username", user)
                             .addFormDataPart("referer", "https://bato.to/forums/")
                             .addFormDataPart("rememberMe", "1")

@@ -1,6 +1,7 @@
 package ar.rulosoft.navegadores;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -87,8 +88,34 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
+        }
+    }
+
+    public String getAndReturnResponseCodeOnFailure(String web) throws Exception {
+        return this.getAndReturnResponseCodeOnFailure(web, connectionTimeout, writeTimeout, readTimeout);
+    }
+
+    public String getAndReturnResponseCodeOnFailure(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
+        // copy will share the connection pool with httpclient
+        // NEVER create new okhttp clients that aren't sharing the same connection pool
+        // see: https://github.com/square/okhttp/issues/2636
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        if (response.isSuccessful()) {
+            return formatResponseBody(response.body());
+        } else {
+            String responseCode = "" + response.code();
+            Log.e("Nav", "response unsuccessful: " + responseCode + " web: " + web);
+            response.body().close();
+            return responseCode;
         }
     }
 
@@ -103,6 +130,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -120,6 +148,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -136,6 +165,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -153,6 +183,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -175,6 +206,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code());
             response.body().close();
             return "";
         }
@@ -197,6 +229,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -219,6 +252,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -241,6 +275,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
+            Log.e("Nav", "response unsuccessful: " + response.code());
             response.body().close();
             return "";
         }

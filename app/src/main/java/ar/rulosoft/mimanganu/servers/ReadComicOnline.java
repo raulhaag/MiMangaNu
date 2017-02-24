@@ -95,11 +95,14 @@ class ReadComicOnline extends ServerBase {
         manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 defaultSynopsis)).toString());
-        // Title
-        String pictures = getFirstMatchDefault(
-                "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
-        if (pictures != null) {
-            manga.setImages(pictures);
+        // Cover Image
+        //Log.d("RCO", "m.gI: " + manga.getImages());
+        if (manga.getImages() == null || manga.getImages().isEmpty()) {
+            String coverImage = getFirstMatchDefault("rel=\"image_src\" href=\"(.+?)\" + \"\"", source, "");
+            //Log.d("RCO", "cI: " + coverImage);
+            if (!coverImage.isEmpty()) {
+                manga.setImages(coverImage);
+            }
         }
 
         // Author
@@ -167,6 +170,9 @@ class ReadComicOnline extends ServerBase {
         Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
+            /*Log.d("RCO", "1: " + m.group(1));
+            Log.d("RCO", "2: " + m.group(2));
+            Log.d("RCO", "3: " + m.group(3));*/
             Manga manga = new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
@@ -213,6 +219,7 @@ class ReadComicOnline extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
+        //Log.d("RCO", "web: "+"http://" + HOST + web);
         String source = getNavigatorAndFlushParameters().get("http://" + HOST + web);
         return getMangasSource(source);
     }
