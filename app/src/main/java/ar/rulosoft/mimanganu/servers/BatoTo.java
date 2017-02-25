@@ -69,7 +69,6 @@ class BatoTo extends ServerBase {
 
     private static String[] orderDir = new String[]{"Ascending", "Descending"};
     private static String[] orderDirV = new String[]{"&order=asc", "&order=desc"};
-    private SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
 
     BatoTo(Context context) {
         super(context);
@@ -136,35 +135,35 @@ class BatoTo extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters().size() == 0 || forceReload) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-            String user = prefs.getString("username_" + getServerName(), "");
-            String password = prefs.getString("dwp_" + getServerName(), "");
-            String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginInterceptor(user, password));
-            String synopsis = getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis);
-            manga.setSynopsis(Util.getInstance().fromHtml(synopsis).toString());
-            manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
-            manga.setAuthor(getFirstMatch("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
-            manga.setGenre(getFirstMatch("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
-            manga.setFinished(!getFirstMatchDefault("Status:<\\/td>\\s+<td>([^<]+)", data, "").contains("Ongoing"));
-            ArrayList<Chapter> chapters = new ArrayList<>();
-            Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
-            data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
-            Matcher matcher = pattern.matcher(data);
-            boolean batoto_lang = false;
-            String lang = "";
-            if (pm != null) {
-                batoto_lang = pm.getBoolean("batoto_lang", false);
-                lang = Locale.getDefault().getDisplayLanguage();
-            }
-            while (matcher.find()) {
-                if (batoto_lang && !lang.isEmpty()) {
-                    if (matcher.group(3).contains(lang))
+        try {
+            if (manga.getChapters().size() == 0 || forceReload) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+                String user = prefs.getString("username_" + getServerName(), "");
+                String password = prefs.getString("dwp_" + getServerName(), "");
+                String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginInterceptor(user, password));
+                String synopsis = getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis);
+                manga.setSynopsis(Util.getInstance().fromHtml(synopsis).toString());
+                manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
+                manga.setAuthor(getFirstMatch("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
+                manga.setGenre(getFirstMatch("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
+                manga.setFinished(!getFirstMatchDefault("Status:<\\/td>\\s+<td>([^<]+)", data, "").contains("Ongoing"));
+                ArrayList<Chapter> chapters = new ArrayList<>();
+                Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
+                data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
+                Matcher matcher = pattern.matcher(data);
+                boolean batoto_lang = prefs.getBoolean("batoto_lang", false);
+                String lang = Locale.getDefault().getDisplayLanguage();
+                while (matcher.find()) {
+                    if (batoto_lang && !lang.isEmpty()) {
+                        if (matcher.group(3).contains(lang))
+                            chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
+                    } else
                         chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
-                } else
-                    chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
+                }
+                manga.setChapters(chapters);
             }
-            manga.setChapters(chapters);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

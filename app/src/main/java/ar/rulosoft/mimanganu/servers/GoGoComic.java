@@ -165,7 +165,7 @@ class GoGoComic extends ServerBase {
         int i = 0;
         while (matcher.find()) {
             i++;
-            //sLog.d("GO", "(1_0): " + matcher.group(1));
+            //Log.d("GO", "(1_0): " + matcher.group(1));
             images = images + "|" + matcher.group(1);
         }
 
