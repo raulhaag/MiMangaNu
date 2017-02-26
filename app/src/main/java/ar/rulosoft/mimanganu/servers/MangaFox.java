@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -134,21 +135,43 @@ class MangaFox extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data;
-        //Log.d("Mfox","getIF url: "+this.getPagesNumber(chapter, page));
-        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-        //><img src="([^"]+?.(jpg|gif|jpeg|png|bmp))
-        String img = getFirstMatch(">[\\s]*<img src=\"(.+?)\"", data, "Error: no se pudo obtener el enlace a la imagen");
-        //Log.d("Mfox","img: "+img);
+        //Log.d("Mfox", "getIF url: " + this.getPagesNumber(chapter, page));
+        String source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+        int i = 0;
+        int timeout = 250;
+        while (source.isEmpty()) {
+            Log.i("Mfox", "source is empty, waiting for " + timeout + " ms before retrying ...");
+            i++;
+            Thread.sleep(timeout);
+            source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+            if (!source.isEmpty())
+                Log.i("Mfox", "timeout of " + timeout + " ms worked got a source");
+            timeout += 250;
+            if (i == 4) {
+                Log.i("Mfox", "couldn't get a source from MangaFox :(");
+                break;
+            }
+        }
+        //Log.d("Mfox", "source: " + source);
+        String img = "";
+        if (!source.isEmpty()) {
+            try {
+                //><img src="([^"]+?.(jpg|gif|jpeg|png|bmp))
+                img = getFirstMatch(">[\\s]*<img src=\"(.+?)\"", source, "Error getting image link");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            //Log.d("Mfox", "img: " + img);
+        }
         return img;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String paginas = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
-        chapter.setPages(Integer.parseInt(paginas));//last page is for comments
+        String source;
+        source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        String paginas = getFirstMatch(PATRON_LAST, source, "Error: no se pudo obtener el numero de paginas");
+        chapter.setPages(Integer.parseInt(paginas)); //last page is for comments
     }
 
     @Override

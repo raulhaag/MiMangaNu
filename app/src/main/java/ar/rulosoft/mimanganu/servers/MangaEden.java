@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -17,7 +16,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 /**
  * Created by jtx on 07.05.2016.
  */
-public class MangaEden extends ServerBase {
+class MangaEden extends ServerBase {
 
     public static String HOST = "http://www.mangaeden.com/";
 
@@ -109,12 +108,13 @@ public class MangaEden extends ServerBase {
         // Genres
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
         // Chapters
-        Pattern pattern = Pattern.compile(
-                "<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a");
+        Pattern pattern = Pattern.compile("<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            chapters.add(0, new Chapter(Util.getInstance().fromHtml(matcher.group(2)).toString(), HOST + matcher.group(1)));
+            /*Log.d("ME", "1: " + matcher.group(1));
+            Log.d("ME", "2: " + matcher.group(2));*/
+            chapters.add(0, new Chapter(Util.getInstance().fromHtml(matcher.group(2).replaceAll("Chapter", " Ch ")).toString(), HOST + matcher.group(1)));
         }
         manga.setChapters(chapters);
     }
@@ -127,33 +127,32 @@ public class MangaEden extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
-            Matcher matcher = pattern.matcher(source);
-            String images = "";
-            while (matcher.find()) {
-                images = images + "|" + "http:" + matcher.group(1);
-            }
-            chapter.setExtra(images);
+            setExtra(chapter);
         }
         return chapter.getExtra().split("\\|")[page];
     }
 
+    private int setExtra(Chapter chapter) throws Exception {
+        int pages = 0;
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
+        Matcher matcher = pattern.matcher(source);
+        String images = "";
+        while (matcher.find()) {
+            pages++;
+            //Log.d("ME", "1: " + "http:" + matcher.group(1));
+            images = images + "|" + "http:" + matcher.group(1);
+        }
+        chapter.setExtra(images);
+        return pages;
+    }
+
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
-            Matcher matcher = pattern.matcher(source);
-            String images = "";
-            while (matcher.find()) {
-                pages++;
-                images = images + "|" + "http:" + matcher.group(1);
-            }
-            chapter.setExtra(images);
-        }
-        chapter.setPages(pages);
+            chapter.setPages(setExtra(chapter));
+        } else
+            chapter.setPages(0);
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
@@ -168,8 +167,20 @@ public class MangaEden extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromFrontpage(String source) {
+        String newSource = "";
+        try {
+            newSource = getFirstMatchDefault("<ul id=\"news\"(.+?)</ul>", source, "");
+            //Log.d("ME","nS: "+newSource);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Pattern pattern1 = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/en/en-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>");
-        Matcher matcher1 = pattern1.matcher(source);
+        Matcher matcher1;
+        if (newSource.isEmpty())
+            matcher1 = pattern1.matcher(source);
+        else
+            matcher1 = pattern1.matcher(newSource);
         ArrayList<Manga> mangas = new ArrayList<>();
         int i = 0;
         while (matcher1.find()) {
@@ -181,8 +192,9 @@ public class MangaEden extends ServerBase {
             manga.setImages("http:" + matcher1.group(1));
             mangas.add(manga);
             //Log.d("ME", "i: " + i);
-            if (i == 60) //66 65 73
-                break;
+            if (newSource.isEmpty())
+                if (i == 60)
+                    break;
         }
         return mangas;
     }
