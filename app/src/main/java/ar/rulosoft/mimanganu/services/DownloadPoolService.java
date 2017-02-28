@@ -391,6 +391,8 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                     ChapterDownload d = chapterDownloads.get(idx);
                     idx++;
                     // start notification code
+                    if (n > chapterDownloads.size())
+                        n = idx;
                     if (n < idx)
                         n = idx;
                     if (resetN) {

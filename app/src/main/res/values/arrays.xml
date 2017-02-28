@@ -64,4 +64,17 @@
         <item>172800000</item>
         <item>604800000</item>
     </string-array>
+    <string-array name="batoto_lang_array">
+        <item>Automatic</item>
+        <item>All</item>
+        <item>Custom</item>
+        <item>English</item>
+        <item>Spanish</item>
+        <item>German</item>
+        <item>French</item>
+        <item>Italian</item>
+        <item>Russian</item>
+        <item>Japanese</item>
+        <item>Chinese</item>
+    </string-array>
 </resources>

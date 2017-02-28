@@ -250,8 +250,8 @@
     <string name="login">Login</string>
     <string name="accounts">Accounts</string>
     <string name="this_server_needs_an_account">This server needs a login. Set an account in the settings.</string>
-    <string name="batoto_settings">Batoto Settings</string>
-    <string name="native_chapters_title">Only add native chapters</string>
-    <string name="native_chapters_subtitle">Only chapters from this device\'s language will be added from Batoto</string>
+    <string name="extra_server_settings">Extra Server Settings</string>
+    <string name="batoto_lang_chapters_title">Batoto chapters language</string>
+    <string name="batoto_lang_chapters_subtitle">Batoto: Only chapters in the selected language will be added. Selection: %s</string>
 
 </resources>

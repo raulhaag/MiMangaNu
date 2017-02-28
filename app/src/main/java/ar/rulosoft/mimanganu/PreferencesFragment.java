@@ -1,5 +1,8 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -17,7 +20,11 @@ import android.support.v7.preference.PreferenceManager;
 import android.support.v7.preference.SwitchPreferenceCompat;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.fedorvlasov.lazylist.FileCache;
 
@@ -244,6 +251,49 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
                 if(time < 0)
                     MainActivity.coldStart = false;
+
+                return true;
+            }
+        });
+
+        /** This is for Custom language selection */
+        final ListPreference listPrefBatotoLang = (ListPreference) getPreferenceManager().findPreference("batoto_lang_selection");
+        listPrefBatotoLang.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                if (newValue.equals("Custom")) {
+                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View rootView = inflater.inflate(R.layout.batoto_custom_lang_dialog, null);
+                    final EditText CustomLang = (EditText) rootView.findViewById(R.id.txtCustomLang);
+                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                    dialogBuilder.setTitle("Custom language");
+                    dialogBuilder.setView(rootView);
+                    dialogBuilder.setPositiveButton("Ok", null);
+                    dialogBuilder.setNegativeButton("Cancel", null);
+                    AlertDialog dialog = dialogBuilder.create();
+                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                        @Override
+                        public void onShow(final DialogInterface dialog) {
+                            Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                            accept.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    prefs.edit().putString("batoto_custom_lang", CustomLang.getText().toString()).apply();
+                                    Util.getInstance().toast(getContext(), "Custom Language: " + CustomLang.getText().toString());
+                                    dialog.dismiss();
+                                }
+                            });
+                            Button cancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                            cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    dialog.dismiss();
+                                }
+                            });
+                        }
+                    });
+                    dialog.show();
+                }
 
                 return true;
             }
