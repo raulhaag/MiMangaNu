@@ -233,6 +233,6 @@
     <string name="multi_import_title">Mehrfaches importieren</string>
     <string name="multi_import_subtitle">Werden Manga mit FromFolder importiert, werden alle darin vorhandenen Ordner hinzugefügt.</string>
     <string name="this_server_needs_an_account">Diese Seite benötigt einen Account. Siehe die Account Einstellungen.</string>
-    <string name="native_chapters_title">Füge nur native Kapitel hinzu</string>
-    <string name="native_chapters_subtitle">Nur Kapitel die der Sprache des Gerätes entsprechen werden von Batoto hinzugefügt</string>
+    <string name="batoto_lang_chapters_title">Batoto Kapitel Sprache</string>
+    <string name="batoto_lang_chapters_subtitle">Nur Kapitel die der ausgewählten Sprache entsprechen werden von Batoto hinzugefügt. Auswahl: %s</string>
 </resources>

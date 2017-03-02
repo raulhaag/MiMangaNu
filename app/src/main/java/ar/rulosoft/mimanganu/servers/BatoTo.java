@@ -151,13 +151,19 @@ class BatoTo extends ServerBase {
                 Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
                 data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
                 Matcher matcher = pattern.matcher(data);
-                boolean batoto_lang = prefs.getBoolean("batoto_lang", false);
-                String lang = Locale.getDefault().getDisplayLanguage();
+                String lang_selection, lang = "";
+                lang_selection = prefs.getString("batoto_lang_selection", "Automatic");
+                if (lang_selection.equals("Automatic"))
+                    lang = Locale.getDefault().getDisplayLanguage();
+                else if (lang_selection.equals("Custom"))
+                    lang = prefs.getString("batoto_custom_lang", "");
+                else
+                    lang = lang_selection;
                 while (matcher.find()) {
-                    if (batoto_lang && !lang.isEmpty()) {
+                    if (!lang_selection.equals("All") && !lang.isEmpty()) {
                         if (matcher.group(3).contains(lang))
                             chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
-                    } else
+                    } else if (lang_selection.equals("All"))
                         chapters.add(0, new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
                 }
                 manga.setChapters(chapters);

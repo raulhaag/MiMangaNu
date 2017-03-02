@@ -1,5 +1,7 @@
 package ar.rulosoft.navegadores;
 
+import android.util.Log;
+
 import com.squareup.duktape.Duktape;
 
 import java.io.IOException;
@@ -32,12 +34,12 @@ public class CFInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
         if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
-            return resolveOverCF(chain,response);
+            return resolveOverCF(chain, response);
         }
         return response;
     }
 
-    public Response resolveOverCF(Chain chain, Response response) throws IOException{
+    public Response resolveOverCF(Chain chain, Response response) throws IOException {
         try {
             Thread.sleep(4000);
         } catch (InterruptedException e) {
@@ -51,8 +53,10 @@ public class CFInterceptor implements Interceptor {
         String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
         String challengePass = getFirstMatch(PASS_PATTERN, content);
 
-        if (rawOperation == null || challengePass == null || challenge == null)
-            return null;
+        if (rawOperation == null || challengePass == null || challenge == null) {
+            Log.e("CFI", "couldn't resolve over cloudflare");
+            return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
+        }
 
         String operation = rawOperation.replaceAll("a\\.value =(.+?) \\+ .+?;.*", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
         String js = operation.replace("\n", "");
@@ -61,6 +65,8 @@ public class CFInterceptor implements Interceptor {
         try {
             String res = (String) duktape.evaluate(js + ".toString()");
             result = Integer.parseInt(res);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             duktape.close();
         }
@@ -71,7 +77,7 @@ public class CFInterceptor implements Interceptor {
                 .addPathSegment("cdn-cgi").addPathSegment("l").addPathSegment("chk_jschl")
                 .addEncodedQueryParameter("jschl_vc", challenge)
                 .addEncodedQueryParameter("pass", challengePass)
-                .addEncodedQueryParameter("jschl_answer",answer)
+                .addEncodedQueryParameter("jschl_answer", answer)
                 .build().toString();
 
         Request request1 = new Request.Builder()
