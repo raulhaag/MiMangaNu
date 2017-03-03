@@ -117,16 +117,18 @@ class RuNineManga extends ServerBase {
         return images[page];
     }
 
-    private void setExtra(Chapter c) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(
-                c.getPath().replace(".html", "-" + c.getPages() + "-1.html"));
+    private void setExtra(Chapter chapter) throws Exception {
+        Navigator nav = getNavigatorWithNeededHeader();
+        nav.addHeader("Referer", chapter.getPath());
+        String source = nav.get(
+                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher m = p.matcher(source);
         String images = "";
         while (m.find()) {
             images = images + "|" + m.group(1);
         }
-        c.setExtra(images);
+        chapter.setExtra(images);
     }
 
     @Override
@@ -173,7 +175,7 @@ class RuNineManga extends ServerBase {
             }
         }
         String web;
-        if(filters[0].length < 1 && filters[1].length < 1)
+        if (filters[0].length < 1 && filters[1].length < 1)
             web = HOST + orderV[filters[3][0]];
         else
             web = "http://ru.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";

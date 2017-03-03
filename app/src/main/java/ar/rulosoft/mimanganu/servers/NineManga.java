@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -127,7 +126,9 @@ class NineManga extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        Navigator nav = getNavigatorWithNeededHeader();
+        nav.addHeader("Referer", chapter.getPath());
+        String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
         Matcher matcher = p.matcher(source);
         String images = "";
