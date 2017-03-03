@@ -34,14 +34,21 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.61:
+* Agregados gogocomic (en), viewcomic/view-comic (en), japscan (fr), readmangatoday (en).
+* Fix descargas de MangaFox.
+* Fix batoto usuarios con mayusculas.
+* Fix servidores ninemanga.
+
 Changes in v1.61:
-* Add gogocomic (en)
-* Add viewcomic/view-comic (en)
-* Add japscan (fr)
-* Add readmangatoday (en)
-* fix MangaFox downloads
-* fix batoto usernames with UPPERCASE letters login fail
-* Add setting to only add chapters in the device's language from batoto
+* Add gogocomic (en).
+* Add viewcomic/view-comic (en).
+* Add japscan (fr).
+* Add readmangatoday (en).
+* Fix MangaFox downloads.
+* Fix batoto usernames with UPPERCASE letters login fail.
+* Add setting to only add chapters in the device's language from batoto.
+
 
 Cambios en v1.60:
 * Corregido orden de capítulos en Bato.to.

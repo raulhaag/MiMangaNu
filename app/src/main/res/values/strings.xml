@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.61:\n\t* add gogocomic (en) \n\t* add viewcomic/view-comic (en) \n\t* add japscan (fr) \n\t* add readmangatoday (en) \n\t* fix MangaFox downloads \n\t* fix batoto usernames with UPPERCASE letters login fail</string>
+    <string name="update_message">Changes in v1.61:\n\t* Added gogocomic(en).\n\t* Added viewcomic/view-comic(en).\n\t* Added japscan(fr).\n\t* Added readmangatoday(en).\n\t* Fix MangaFox downloads.\n\t* Fix batoto usernames with UPPERCASE letters login fail.\n\t* Fix ninemanga servers.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

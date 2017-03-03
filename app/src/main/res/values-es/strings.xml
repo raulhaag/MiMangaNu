@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.60:\n\t* Corregido orden de capítulos en Bato.to.\nCambios en v1.59:\n\t* Agergado Bato.to y filtro Español. \n\t* Arreglados los servers de ninemanga.\n\t* Arreglos menores, mejoras y opciones agregadas. </string>
+    <string name="update_message">Cambios en v1.61:\n\t* Agregados gogocomic (en), viewcomic/view-comic (en), japscan (fr), readmangatoday (en).\n\t* Fix descargas de MangaFox .\n\t* Fix batoto usuarios con mayusculas.\n\t* Fix servidores ninemanga.</string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
