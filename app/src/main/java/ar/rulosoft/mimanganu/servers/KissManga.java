@@ -2,6 +2,8 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import com.squareup.duktape.Duktape;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -143,13 +145,27 @@ class KissManga extends ServerBase {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
             String source = getNavigatorAndFlushParameters().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
-
-            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
+            String ca = getNavigatorAndFlushParameters().get(IP, "/Scripts/ca.js", HOST);
+            String lo = getNavigatorAndFlushParameters().get(IP, "/Scripts/lo.js", HOST);
+            Duktape duktape = Duktape.create();
+            duktape.evaluate(ca);
+            duktape.evaluate(lo);
+            Pattern p = Pattern.compile(" <script type=\"text\\/javascript\">(.+?)<");
             Matcher m = p.matcher(source);
+            while (m.find()) {
+                if (m.group(1).contains("CryptoJS")) {
+                    duktape.evaluate(m.group(1));
+                }
+            }
+
+            p = Pattern.compile("lstImages.push\\((.+?\\))\\)");
+            m = p.matcher(source);
             String images = "";
+            String image;
             while (m.find()) {
                 pages++;
-                images = images + "|" + m.group(1);
+                image = (String) duktape.evaluate(m.group(1) + ".toString()");
+                images = images + "|" + image;
             }
             chapter.setExtra(images);
         }
@@ -184,47 +200,47 @@ class KissManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-            if (filters[0].length == 0 && filters[1].length == 0) { // on first load
-                return getMangasFiltered(0, 0, pageNumber);
-            } else if (filters[0].length == 1) { // single genre selection
-                String web = genreVV + genre[0].replaceAll(" ","-") + orderV[0];
-                for (int i = 0; i < genre.length; i++) {
-                    if (contains(filters[0], i)) {
-                        web = genreVV + genre[i].replaceAll(" ","-") + orderV[filters[2][0]];
-                        if (pageNumber > 1) {
-                            web = web + "?page=" + pageNumber;
-                        }
+        if (filters[0].length == 0 && filters[1].length == 0) { // on first load
+            return getMangasFiltered(0, 0, pageNumber);
+        } else if (filters[0].length == 1) { // single genre selection
+            String web = genreVV + genre[0].replaceAll(" ", "-") + orderV[0];
+            for (int i = 0; i < genre.length; i++) {
+                if (contains(filters[0], i)) {
+                    web = genreVV + genre[i].replaceAll(" ", "-") + orderV[filters[2][0]];
+                    if (pageNumber > 1) {
+                        web = web + "?page=" + pageNumber;
                     }
-                }
-                String source = getNavigatorAndFlushParameters().post(IP, web, HOST);
-                return getMangasSource(source);
-            } else {
-                // multiple genre selection
-                if (pageNumber > 1) {
-                    return new ArrayList<>();
-                } else {
-                    Navigator nav = getNavigatorAndFlushParameters();
-                    nav.addPost("mangaName", "");
-                    nav.addPost("authorArtist", "");
-                    for (int i = 0; i < genre.length; i++) {
-                        if (contains(filters[0], i)) {
-                            nav.addPost("genres", "1");
-                        } else if (contains(filters[1], i)) {
-                            nav.addPost("genres", "2");
-                        } else {
-                            nav.addPost("genres", "0");
-                        }
-                    }
-                    nav.addPost("status", ""); //stateV[filters[1][0]])
-                    String source = nav.post(IP, "/AdvanceSearch", HOST);
-                    return getMangasSource(source);
                 }
             }
+            String source = getNavigatorAndFlushParameters().post(IP, web, HOST);
+            return getMangasSource(source);
+        } else {
+            // multiple genre selection
+            if (pageNumber > 1) {
+                return new ArrayList<>();
+            } else {
+                Navigator nav = getNavigatorAndFlushParameters();
+                nav.addPost("mangaName", "");
+                nav.addPost("authorArtist", "");
+                for (int i = 0; i < genre.length; i++) {
+                    if (contains(filters[0], i)) {
+                        nav.addPost("genres", "1");
+                    } else if (contains(filters[1], i)) {
+                        nav.addPost("genres", "2");
+                    } else {
+                        nav.addPost("genres", "0");
+                    }
+                }
+                nav.addPost("status", ""); //stateV[filters[1][0]])
+                String source = nav.post(IP, "/AdvanceSearch", HOST);
+                return getMangasSource(source);
+            }
+        }
 
     }
 
     public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String web = genreVV + genre[category].replaceAll(" ","-") + orderV[order];
+        String web = genreVV + genre[category].replaceAll(" ", "-") + orderV[order];
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
