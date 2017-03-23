@@ -128,7 +128,7 @@ class DeNineManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorWithNeededHeader().get(chapter.getPath());
-        String nop = getFirstMatch(
+        String nop = getFirstMatchDefault(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "Es versäumt, die Anzahl der Seiten zu bekommen");
         chapter.setPages(Integer.parseInt(nop));

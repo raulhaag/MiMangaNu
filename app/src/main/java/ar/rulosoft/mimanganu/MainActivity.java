@@ -40,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getApplicationContext());
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
@@ -56,7 +57,6 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
-        new InitGlobals().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, getApplicationContext());
     }
 
     @Override

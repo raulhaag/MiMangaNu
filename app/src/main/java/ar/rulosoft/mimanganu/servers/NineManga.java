@@ -141,7 +141,7 @@ class NineManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorWithNeededHeader().get(chapter.getPath());
-        String nop = getFirstMatch(
+        String nop = getFirstMatchDefault(
                 "\\d+/(\\d+)</option>[\\s]*</select>", source,
                 "failed to get the number of pages");
         chapter.setPages(Integer.parseInt(nop));

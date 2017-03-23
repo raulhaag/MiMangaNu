@@ -1,16 +1,16 @@
 package ar.rulosoft.mimanganu;
 
 import android.animation.ObjectAnimator;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
@@ -40,6 +40,7 @@ import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
+import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
@@ -136,22 +137,37 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.keyUpListener = this;
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
         if (!is_server_list_open && getView() != null) {
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
+            ObjectAnimator anim = ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
             anim.setDuration(0);
             anim.start();
         }
 
         if (MainActivity.coldStart) {
+            // Manga Updates
             long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
             if (updateInterval < 0) {
                 updateAtStartUp(updateInterval);
             }
+
+            // App Update
+            boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
+            if(onLatestAppVersion) {
+                long last_check = pm.getLong("last_app_update", 0);
+                long diff = System.currentTimeMillis() - last_check;
+                Log.i("MF", "diff: " + diff);
+                if (diff > 604800000) {
+                    pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
+                    Util.getInstance().checkAppUpdates(getContext());
+                }
+            } else {
+                Util.getInstance().checkAppUpdates(getContext());
+            }
+
+            MainActivity.coldStart = false;
         }
     }
 
     private void updateAtStartUp(long updateInterval) {
-        MainActivity.coldStart = false;
         if (updateInterval == -2) {
             updateInterval = 21600000; //180000
         } else if (updateInterval == -3) {
@@ -163,10 +179,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         if (updateInterval < 0) { // update at start up (with no time)
             startUpdate();
         } else { // update at start up (with specific time)
-            long last_check = pm.getLong("last_check_update", 0);
-            long dif = System.currentTimeMillis() - last_check;
-            Log.i("MF", "dif: " + dif);
-            if (dif > updateInterval) {
+            long last_check = pm.getLong(LAST_CHECK, 0);
+            long diff = System.currentTimeMillis() - last_check;
+            Log.i("MF", "diff: " + diff);
+            if (diff > updateInterval) {
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                 startUpdate();
             }
@@ -211,7 +227,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         inflater.inflate(R.menu.view_mismangas, menu);
         final Menu mMenu = menu;
 
-        /** Local Search **/
+        /* Local Search */
         MenuItem search = menu.findItem(R.id.action_search_local);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
 
@@ -262,11 +278,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
         });
 
-        /** Set hide/unhide checkbox */
+        /* Set hide/unhide checkbox */
         boolean checkedRead = pm.getInt(SELECT_MODE, MODE_SHOW_ALL) > 0;
         menu.findItem(R.id.action_hide_read).setChecked(checkedRead);
 
-        /** Set sort mode */
+        /* Set sort mode */
         int sortList[] = {
                 R.id.sort_last_read, R.id.sort_last_read_desc,
                 R.id.sort_name, R.id.sort_name_desc,
@@ -409,7 +425,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public void setListManga(boolean force) {
         if (grid != null) {
             ArrayList<Manga> mangaList = new ArrayList<>();
-            /**
+            /*
              * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
              *                  all odd numbers are asc, even numbers are desc
              *
@@ -484,26 +500,32 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
         if (item.getItemId() == R.id.delete) {
-            final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
-            Snackbar confirm = Snackbar.make(getView(), getString(R.string.manga_delete_confirm, manga.getTitle()), Snackbar.LENGTH_INDEFINITE);
-            confirm.setAction(android.R.string.yes, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    DownloadPoolService.forceStop(manga.getId());
-                    ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
-                    String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
-                    Util.getInstance().deleteRecursive(new File(path));
-                    Database.deleteManga(getActivity(), manga.getId());
-                    adapter.remove(manga);
-                    Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
-                }
-            });
-            confirm.getView().setBackgroundColor(MainActivity.colors[0]);
-            confirm.setActionTextColor(Color.WHITE);
-            confirm.show();
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.app_name)
+                    .setMessage(getString(R.string.manga_delete_confirm, manga.getTitle()))
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DownloadPoolService.forceStop(manga.getId());
+                            ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
+                            String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
+                            Util.getInstance().deleteRecursive(new File(path));
+                            Database.deleteManga(getActivity(), manga.getId());
+                            adapter.remove(manga);
+                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         } else if (item.getItemId() == R.id.noupdate) {
-            Manga manga = (Manga) grid.getAdapter().getItem(info.position);
             if (manga.isFinished()) {
                 manga.setFinished(false);
                 Database.setUpgradable(getActivity(), manga.getId(), false);
@@ -511,6 +533,31 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 manga.setFinished(true);
                 Database.setUpgradable(getActivity(), manga.getId(), true);
             }
+        } else if (item.getItemId() == R.id.download_all_chapters) {
+            new AlertDialog.Builder(getContext())
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.download_remain_confirmation)
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ArrayList<Chapter> chapters = Database.getChapters(getActivity(), manga.getId(), Database.COL_CAP_DOWNLOADED + " != 1", true);
+                            for (Chapter chapter : chapters) {
+                                try {
+                                    DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Download add pool error", e);
+                                }
+                            }
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
         return super.onContextItemSelected(item);
     }

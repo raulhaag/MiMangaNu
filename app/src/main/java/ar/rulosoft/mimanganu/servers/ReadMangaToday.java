@@ -163,7 +163,7 @@ class ReadMangaToday extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         //Log.d("RMT","p: "+chapter.getPath());
-        String pagenumber = getFirstMatch("\">(\\d+)</option>[\\s]*</select>", source,
+        String pagenumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
                 "failed to get the number of pages");
         //Log.d("RMT","pa: "+pagenumber);
         chapter.setPages(Integer.parseInt(pagenumber));

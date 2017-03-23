@@ -6,9 +6,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.NotificationCompat;
@@ -23,9 +27,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.navegadores.Navigator;
 
 public class Util {
     public static int n = 0;
@@ -425,6 +432,69 @@ public class Util {
             camelCase.append(c);
         }
         return camelCase.toString();
+    }
+
+    public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {
+        Pattern p = Pattern.compile(patron);
+        Matcher m = p.matcher(source);
+        if (m.find()) {
+            return m.group(1);
+        } else {
+            return mDefault;
+        }
+    }
+
+    public void checkAppUpdates(Context context) {
+        new CheckForAppUpdates(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
+        private String error = "";
+        private Context context;
+
+        CheckForAppUpdates(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+                Navigator.navigator.flushParameter();
+                String source = Navigator.navigator.get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
+                int onlineVersionMinor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));
+                int onlineVersionMajor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"(\\d+)\\.\\d+\"", source, ""));
+                //String body = getFirstMatchDefault("\"body\": \"(.+?)\"", source, "").replaceAll("\\\\r\\\\n","").trim().replaceAll("  "," ");
+                String downloadurl = getFirstMatchDefault("\"browser_download_url\": \"(.+?)\"", source, "");
+                String currentVersionTmp = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+                int currentVersionMinor = Integer.parseInt(getFirstMatchDefault("\\d+\\.(\\d+)", currentVersionTmp, ""));
+                int currentVersionMajor = Integer.parseInt(getFirstMatchDefault("(\\d+)\\.\\d+", currentVersionTmp, ""));
+                if (currentVersionMinor != onlineVersionMinor || currentVersionMajor != onlineVersionMajor) {
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), new Intent(Intent.ACTION_VIEW, Uri.parse(downloadurl)), context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + onlineVersionMajor + "." + onlineVersionMinor + " " + context.getString(R.string.is_available));
+                    pm.edit().putBoolean("on_latest_app_version", false).apply();
+                } else {
+                    pm.edit().putBoolean("on_latest_app_version", true).apply();
+                    Log.i("Util", "App is up to date. No update necessary");
+                }
+            } catch (Exception e) {
+                Log.e("Util", "checkAppUpdates Exception");
+                e.printStackTrace();
+                error = Log.getStackTraceString(e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            if (!error.isEmpty())
+                Log.e("Util", error);
+            super.onPostExecute(result);
+        }
     }
 
 }

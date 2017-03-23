@@ -1,9 +1,10 @@
 package ar.rulosoft.mimanganu;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,7 +12,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -198,11 +198,19 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         break;
                     case R.id.remove_chapter:
                         finish = false;
-                        Snackbar confirm = Snackbar.make(getView(), R.string.delete_confirm, Snackbar.LENGTH_INDEFINITE)
-                                .setAction(android.R.string.yes, new View.OnClickListener() {
+                        new AlertDialog.Builder(getContext())
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.delete_confirm)
+                                .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(View view) {
-                                        if(selection.size() < 8) {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (selection.size() < 8) {
                                             // Remove chapters on UI Thread
                                             for (int i = selection.size() - 1; i >= 0; i--) {
                                                 Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
@@ -214,11 +222,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                                             removeChapters = new RemoveChapters(serverBase, selection.size(), mode);
                                             removeChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                         }
+                                        dialog.dismiss();
                                     }
-                                });
-                        confirm.getView().setBackgroundColor(MainActivity.colors[0]);
-                        confirm.setActionTextColor(Color.WHITE);
-                        confirm.show();
+                                })
+                                .show();
                         break;
                     case R.id.reset_chapter:
                         resetChapters = new ResetChapters(serverBase, selection.size());
@@ -326,23 +333,30 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 getActivity().onBackPressed();
                 return true;
             case R.id.action_download_remaining: {
-                Snackbar confirm = Snackbar.make(getView(), R.string.download_remain_confirmation, Snackbar.LENGTH_INDEFINITE);
-                confirm.setAction(android.R.string.yes, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
-                        for (Chapter chapter : chapters) {
-                            try {
-                                DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Download add pool error", e);
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.download_remain_confirmation)
+                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
                             }
-                        }
-                    }
-                });
-                confirm.getView().setBackgroundColor(MainActivity.colors[0]);
-                confirm.setActionTextColor(Color.WHITE);
-                confirm.show();
+                        })
+                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
+                                for (Chapter chapter : chapters) {
+                                    try {
+                                        DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "Download add pool error", e);
+                                    }
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
             }
             break;
             case R.id.mark_all_as_read: {
@@ -395,23 +409,30 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 break;
             }
             case R.id.action_download_unread: {
-                Snackbar confirm = Snackbar.make(getView(), R.string.download_unread_confirmation, Snackbar.LENGTH_INDEFINITE);
-                confirm.setAction(android.R.string.yes, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
-                        for (Chapter c : chapters) {
-                            try {
-                                DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
-                            } catch (Exception e) {
-                                Log.e(TAG, "Download add pool error", e);
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.app_name)
+                        .setMessage(R.string.download_unread_confirmation)
+                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
                             }
-                        }
-                    }
-                });
-                confirm.getView().setBackgroundColor(MainActivity.colors[0]);
-                confirm.setActionTextColor(Color.WHITE);
-                confirm.show();
+                        })
+                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
+                                for (Chapter c : chapters) {
+                                    try {
+                                        DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
+                                    } catch (Exception e) {
+                                        Log.e(TAG, "Download add pool error", e);
+                                    }
+                                }
+                                dialog.dismiss();
+                            }
+                        })
+                        .show();
                 break;
             }
             case R.id.sort_number:

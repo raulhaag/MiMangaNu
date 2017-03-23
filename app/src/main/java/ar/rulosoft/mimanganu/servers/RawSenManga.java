@@ -118,7 +118,7 @@ class RawSenManga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-            chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
+            chapter.setExtra(getFirstMatchDefault("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
         }
         return HOST + chapter.getExtra() + page;
     }
@@ -126,9 +126,9 @@ class RawSenManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String number = getFirstMatch("</select> of (\\d+)", data, "Can't retrieve page quantity");
+        String number = getFirstMatchDefault("</select> of (\\d+)", data, "Can't retrieve page quantity");
         chapter.setPages(Integer.parseInt(number));
-        chapter.setExtra(getFirstMatch("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
+        chapter.setExtra(getFirstMatchDefault("<img src=\".(vi.+?/)[^/]+?\"", data, "can't get image base"));
     }
 
     @NonNull

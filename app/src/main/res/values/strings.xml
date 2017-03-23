@@ -253,5 +253,7 @@
     <string name="extra_server_settings">Extra Server Settings</string>
     <string name="batoto_lang_chapters_title">Batoto chapters language</string>
     <string name="batoto_lang_chapters_subtitle">Batoto: Only chapters in the selected language will be added. Selection: %s</string>
-
+    <string name="download_all_chapters">Download all chapters</string>
+    <string name="app_update">App update</string>
+    <string name="is_available">is available</string>
 </resources>
