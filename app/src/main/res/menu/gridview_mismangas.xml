@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item
-    android:id="@+id/delete"
-    android:title="@string/borrar" />
-<item
-    android:id="@+id/noupdate"
-    android:title="@string/nobuscarupdate" />
+    <item
+        android:id="@+id/delete"
+        android:title="@string/borrar" />
+    <item
+        android:id="@+id/noupdate"
+        android:title="@string/nobuscarupdate" />
+    <item
+        android:id="@+id/download_all_chapters"
+        android:title="@string/download_all_chapters" />
 </menu>

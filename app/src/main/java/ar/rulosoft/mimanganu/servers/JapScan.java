@@ -107,7 +107,7 @@ class JapScan extends ServerBase {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
         String img = "";
         try {
-            img = getFirstMatch("src=\"(http://cdn.japscan.com/[^\"]+?)\"/>", source, "Error getting image");
+            img = getFirstMatchDefault("src=\"(http://cdn.japscan.com/[^\"]+?)\"/>", source, "Error getting image");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -119,7 +119,7 @@ class JapScan extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         //Log.d("JS", "p: " + chapter.getPath());
-        String pagenumber = getFirstMatch("Page (\\d+)</option>[\\s]*</select>", source, "failed to get the number of pages");
+        String pagenumber = getFirstMatchDefault("Page (\\d+)</option>[\\s]*</select>", source, "failed to get the number of pages");
         //Log.d("JS", "pa: " + pagenumber);
         chapter.setPages(Integer.parseInt(pagenumber));
     }

@@ -150,7 +150,7 @@ class KissManga extends ServerBase {
             Duktape duktape = Duktape.create();
             duktape.evaluate(ca);
             duktape.evaluate(lo);
-            Pattern p = Pattern.compile(" <script type=\"text\\/javascript\">(.+?)<");
+            Pattern p = Pattern.compile(" <script type=\"text/javascript\">(.+?)<");
             Matcher m = p.matcher(source);
             while (m.find()) {
                 if (m.group(1).contains("CryptoJS")) {

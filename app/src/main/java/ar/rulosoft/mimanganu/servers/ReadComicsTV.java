@@ -132,7 +132,7 @@ class ReadComicsTV extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pagenumber = getFirstMatch(
+        String pagenumber = getFirstMatchDefault(
                 "<div class=\"label\">of.(\\d+)</div>", source,
                 "failed to get the number of pages");
         chapter.setPages(Integer.parseInt(pagenumber));

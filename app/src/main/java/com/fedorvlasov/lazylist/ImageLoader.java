@@ -35,7 +35,7 @@ public class ImageLoader {
 
         mMemCache = MemCache.getInstance();
         mFileCache = new FileCache(context);
-        imgThreadPool = Executors.newFixedThreadPool(3);
+        imgThreadPool = Executors.newFixedThreadPool(4);
     }
 
     public void displayImg(String url, Imaginable imageView) {

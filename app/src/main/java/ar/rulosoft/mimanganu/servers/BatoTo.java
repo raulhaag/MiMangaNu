@@ -144,8 +144,8 @@ class BatoTo extends ServerBase {
                 String synopsis = getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, defaultSynopsis);
                 manga.setSynopsis(Util.getInstance().fromHtml(synopsis).toString());
                 manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
-                manga.setAuthor(getFirstMatch("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
-                manga.setGenre(getFirstMatch("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
+                manga.setAuthor(getFirstMatchDefault("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
+                manga.setGenre(getFirstMatchDefault("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
                 manga.setFinished(!getFirstMatchDefault("Status:<\\/td>\\s+<td>([^<]+)", data, "").contains("Ongoing"));
                 ArrayList<Chapter> chapters = new ArrayList<>();
                 Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
@@ -181,14 +181,14 @@ class BatoTo extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + page, "http://bato.to/reader");
-        return getFirstMatch("img id=\"comic_page\"[^>]+src=\"([^\"]+)", data, "Error getting images");
+        return getFirstMatchDefault("img id=\"comic_page\"[^>]+src=\"([^\"]+)", data, "Error getting images");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         chapter.setExtra("http://bato.to/areader?id=" + chapter.getPath().split("#")[1] + "&p=");
         String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + "1", "http://bato.to/reader");
-        String pages = getFirstMatch("page\\s+(\\d+)</option>\\s+</select>", data, "Can't init the chapter");
+        String pages = getFirstMatchDefault("page\\s+(\\d+)</option>\\s+</select>", data, "Can't init the chapter");
         chapter.setPages(Integer.parseInt(pages));
     }
 
