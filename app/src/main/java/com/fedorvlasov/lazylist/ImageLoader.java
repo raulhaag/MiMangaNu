@@ -12,13 +12,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.mimanganu.componentes.Imaginable;
 import ar.rulosoft.navegadores.Navigator;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =
@@ -69,28 +65,8 @@ public class ImageLoader {
         Bitmap imgFile = decodeFile(f);
         if (imgFile != null)
             return imgFile;
-
-        // Last, if locally nothing works, try to get image from web
         try {
-            String host = null;
-            {
-                int idx;
-                if ((idx = url.indexOf("|")) > 0) {
-                    host = url.substring(idx + 1);
-                    url = url.substring(0, idx);
-                }
-            }
-            OkHttpClient copy = Navigator.navigator.getHttpClient().newBuilder()
-                    .connectTimeout(5, TimeUnit.SECONDS)
-                    .readTimeout(5, TimeUnit.SECONDS)
-                    .build();
-            Request.Builder builder = new Request.Builder().url(url);
-            if (host != null) {
-                builder.header("Host", host);
-            }
-            Response response = copy.newCall(builder.build()).execute();
-            FileCache.writeFile(response.body().byteStream(), f);
-            response.body().close();
+            FileCache.writeFile(Navigator.navigator.getStream(url), f);
             return decodeFile(f);
         } catch (Throwable ex) {
             if (ex instanceof OutOfMemoryError)

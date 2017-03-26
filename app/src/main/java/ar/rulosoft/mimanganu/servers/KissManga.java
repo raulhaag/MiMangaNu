@@ -21,9 +21,10 @@ class KissManga extends ServerBase {
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
-    private static String IP = "93.174.95.110";
-    private static String HOST = "kissmanga.com";
-    private static String[] genre = new String[]{
+    private static final String IP = "93.174.95.110";
+    private static final String HOST = "kissmanga.com";
+    private static final String PAGE_BASE = "http://kissmanga.com/";
+    private static final String[] genre = new String[]{
             "Action", "Adult", "Adventure", "Comedy",
             "Comic", "Cooking", "Doujinshi", "Drama",
             "Ecchi", "Fantasy", "Gender Bender", "Harem",
@@ -62,7 +63,7 @@ class KissManga extends ServerBase {
         nav.addPost("status", "");
         nav.addPost("genres", "");
 
-        String source = nav.post(IP, "/AdvanceSearch", HOST);
+        String source = nav.post(PAGE_BASE + "/AdvanceSearch");
 
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH);
@@ -85,7 +86,7 @@ class KissManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(IP, manga.getPath(), HOST);
+        String source = getNavigatorAndFlushParameters().get(PAGE_BASE + manga.getPath());
 
         // Summary
         manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
@@ -95,7 +96,7 @@ class KissManga extends ServerBase {
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
         if (pictures != null) {
-            manga.setImages("http://" + IP + pictures.replace("http://kissmanga.com", "") + "|" + HOST);
+            manga.setImages(pictures);
         }
 
         // Author
@@ -125,7 +126,7 @@ class KissManga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavigatorAndFlushParameters().post(IP, chapter.getPath(), HOST);
+            String source = getNavigatorAndFlushParameters().post(PAGE_BASE + chapter.getPath());
 
             Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
             Matcher m = p.matcher(source);
@@ -144,13 +145,13 @@ class KissManga extends ServerBase {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
 
-            String source = getNavigatorAndFlushParameters().get(IP, chapter.getPath().replaceAll("[^!-z]+", ""), HOST);
-            String ca = getNavigatorAndFlushParameters().get(IP, "/Scripts/ca.js", HOST);
-            String lo = getNavigatorAndFlushParameters().get(IP, "/Scripts/lo.js", HOST);
+            String source = getNavigatorAndFlushParameters().get(PAGE_BASE + chapter.getPath().replaceAll("[^!-z]+", ""));
+            String ca = getNavigatorAndFlushParameters().get(PAGE_BASE + "/Scripts/ca.js");
+            String lo = getNavigatorAndFlushParameters().get(PAGE_BASE + "/Scripts/lo.js");
             Duktape duktape = Duktape.create();
             duktape.evaluate(ca);
             duktape.evaluate(lo);
-            Pattern p = Pattern.compile(" <script type=\"text/javascript\">(.+?)<");
+            Pattern p = Pattern.compile("javascript\">(.+?)<");
             Matcher m = p.matcher(source);
             while (m.find()) {
                 if (m.group(1).contains("CryptoJS")) {
@@ -180,7 +181,7 @@ class KissManga extends ServerBase {
         while (m.find()) {
             Manga manga =
                     new Manga(KISSMANGA, m.group(3), m.group(2), false);
-            manga.setImages("http://" + IP + m.group(1).replace("http://kissmanga.com", "") + "|" + HOST);
+            manga.setImages(m.group(1));
             mangas.add(manga);
         }
         return mangas;
@@ -212,7 +213,7 @@ class KissManga extends ServerBase {
                     }
                 }
             }
-            String source = getNavigatorAndFlushParameters().post(IP, web, HOST);
+            String source = getNavigatorAndFlushParameters().post(PAGE_BASE + web);
             return getMangasSource(source);
         } else {
             // multiple genre selection
@@ -232,7 +233,7 @@ class KissManga extends ServerBase {
                     }
                 }
                 nav.addPost("status", ""); //stateV[filters[1][0]])
-                String source = nav.post(IP, "/AdvanceSearch", HOST);
+                String source = nav.post(PAGE_BASE + "/AdvanceSearch");
                 return getMangasSource(source);
             }
         }
@@ -244,7 +245,7 @@ class KissManga extends ServerBase {
         if (pageNumber > 1) {
             web = web + "?page=" + pageNumber;
         }
-        String source = getNavigatorAndFlushParameters().post(IP, web, HOST);
+        String source = getNavigatorAndFlushParameters().post(PAGE_BASE + web);
         return getMangasSource(source);
     }
 }

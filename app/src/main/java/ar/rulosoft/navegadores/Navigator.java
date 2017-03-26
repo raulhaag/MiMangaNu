@@ -9,6 +9,7 @@ import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -91,6 +92,26 @@ public class Navigator {
             Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
             response.body().close();
             return "";
+        }
+    }
+
+    public InputStream getStream(String web) throws Exception {
+        // copy will share the connection pool with httpclient
+        // NEVER create new okhttp clients that aren't sharing the same connection pool
+        // see: https://github.com/square/okhttp/issues/2636
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        if (response.isSuccessful()) {
+            return response.body().byteStream();
+        } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            response.body().close();
+            throw new Exception("Can't get stream");
         }
     }
 
