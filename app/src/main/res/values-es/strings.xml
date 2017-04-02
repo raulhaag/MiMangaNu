@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.61:\n\t* Agregados gogocomic (en), viewcomic/view-comic (en), japscan (fr), readmangatoday (en).\n\t* Fix descargas de MangaFox .\n\t* Fix batoto usuarios con mayusculas.\n\t* Fix servidores ninemanga.</string>
+    <string name="update_message">Cambios en v1.62:\n\t* Fix kissmanga.\n\t* Fix ninemanga servers de nuevo. \n\t* Agregado bajar todo desde el menu principal (long press). \n\t* Agregado busqueda de actualizaciones del app.</string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
@@ -249,5 +249,12 @@
     <string name="password">Contraseña</string>
     <string name="reset">Resetiar</string>
     <string name="user">Usuario</string>
+    <string name="app_update">"Actualizaciones "</string>
+    <string name="batoto_lang_chapters_subtitle">Batoto: solo los capitulos con el lenguaje seleccionado seran agregados. Elegido: %s</string>
+    <string name="batoto_lang_chapters_title">Bototo idioma de capítulos</string>
+    <string name="download_all_chapters">Descargar todos los capítulos</string>
+    <string name="extra_server_settings">Otras configuraciones de servidores</string>
+    <string name="is_available">si esta disponible</string>
+    <string name="this_server_needs_an_account">Este servidor necesita una cuenta. Agregala en ajustes.</string>
 </resources>
 

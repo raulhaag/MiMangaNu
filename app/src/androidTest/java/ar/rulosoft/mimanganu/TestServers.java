@@ -3,7 +3,6 @@ package ar.rulosoft.mimanganu;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
-import android.util.Log;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.navegadores.Navigator;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -43,33 +41,22 @@ public class TestServers {
     }
 
     @Test
-    public void test1img() {
-        try {
-            String data = Navigator.navigator.get("http://kissmanga.com/Uploads/Etc/8-24-2011/5569412cover.jpg");
-            Log.i("img", data);
-        } catch (Exception e) {
-            e.printStackTrace();
+    public void testServer() throws Exception {
+        if (serverBase.getServerID() != ServerBase.FROMFOLDER) {
+            if (serverBase.hasFilteredNavigation()) {
+                testGetMangas();
+            }
+            if (serverBase.hasList()) {
+                testGetMangas2();
+            }
+            testLoadManga();
+            if (serverBase.getServerID() == ServerBase.ESMANGAHERE) {
+                Thread.sleep(5000);//to avoid the server kick
+            }
+            testInitAndGetImage();
         }
     }
 
-    /*
-        @Test
-        public void testServer() throws Exception {
-            if (serverBase.getServerID() != ServerBase.FROMFOLDER) {
-                if (serverBase.hasFilteredNavigation()) {
-                    testGetMangas();
-                }
-                if (serverBase.hasList()) {
-                    testGetMangas2();
-                }
-                testLoadManga();
-                if (serverBase.getServerID() == ServerBase.ESMANGAHERE) {
-                    Thread.sleep(5000);//to avoid the server kick
-                }
-                testInitAndGetImage();
-            }
-        }
-    /*/
     public void testGetMangas() throws Exception {
         ArrayList<Manga> mangas;
         mangas = serverBase.getMangasFiltered(serverBase.getBasicFilter(), 1);

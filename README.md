@@ -34,6 +34,18 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.62:
+* Fix kissmanga.
+* Fix ninemanga servers de nuevo.
+* Agregado bajar todo desde el menu principal (long press).
+* Agregado busqueda de actualizaciones del app.
+
+Changes in v1.62:
+* Fix kissmanga.
+* Fix ninemanga servers again.
+* Added an option to download all chapters on long press manga menu. 
+* Added check for updates.
+
 Cambios en v1.61:
 * Agregados gogocomic (en), viewcomic/view-comic (en), japscan (fr), readmangatoday (en).
 * Fix descargas de MangaFox.

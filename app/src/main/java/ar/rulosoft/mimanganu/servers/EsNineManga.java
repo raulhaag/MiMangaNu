@@ -14,7 +14,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
-class EsNineManga extends ServerBase {
+public class EsNineManga extends ServerBase {
     private static String HOST = "http://es.ninemanga.com";
     private static String[] genre = new String[]{
             "4-Koma", "AccióN", "Action", "Adult", "Adulto", "Adventure", "ApocalíPtico",
@@ -47,7 +47,7 @@ class EsNineManga extends ServerBase {
     private static String[] complete = new String[]{"O", "Si", "No"};
     private static String[] completeV = new String[]{"either", "yes", "no"};
 
-    EsNineManga(Context context) {
+    public EsNineManga(Context context) {
         super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.ninemanga);
@@ -122,6 +122,7 @@ class EsNineManga extends ServerBase {
     private void setExtra(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
+        nav.get(HOST + "/show_ads/google/");
         String source = nav.get(
                 chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
@@ -186,6 +187,7 @@ class EsNineManga extends ServerBase {
     public Navigator getNavigatorWithNeededHeader() throws Exception {
         Navigator nav = new Navigator(context);
         nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
+        //  nav.addHeader("Cookie","__cfduid=d1b616b5af8f9abad30c386fd665214b71491076097; PHPSESSID=285ookfopvauiuh1mf6b9h3862; ninemanga_country_code=AR; ninemanga_history_view=d551459521083783ba75d159acc6cbfa; SomaSession=e906af62-3df6-1f06-d718-13cc08c42c4d; SomaUser=6a37d979-352e-b0a2-eb7d-29c702f9a699; __unam=3855076-15b2b0e3bd8-62d9061d-36; Hm_lvt_234e86251ffdf39196872b04a27c6f72=1491076005; Hm_lpvt_234e86251ffdf39196872b04a27c6f72=1491076315; ninemanga_history_list=19281%23%23%23%3Cli%3E%3Cdl%3E%3Cdt%3E%3Ca%20href%3D%22%23%22%20class%3D%22close_cell%22%20cur%3D%2219281%22%20onclick%3D%22return%20false%22%3E%3C/a%3E%3C/dt%3E%3Cdd%3E%3Ca%20href%3D%22http%3A//es.ninemanga.com/manga/Wo%2520Jia%2520Dashi%2520Xiong%2520Naozi%2520You%2520Keng.html%22%3EWo%20Jia%20Dashi%20Xiong%20Naozi%20You%20Keng%3C/a%3E%3C/dd%3E%3Cdd%3E%3Cspan%3EWo%20Jia%20Dashi%20Xiong%20Naozi%20You%20Keng%20Cap%EDtulo%2053%20p%E1gina%201%3C/span%3E%3Ca%20href%3D%22http%3A//es.ninemanga.com/chapter/Wo%2520Jia%2520Dashi%2520Xiong%2520Naozi%2520You%2520Keng/569165-1.html%22%3Ego%20on%3C/a%3E%3C/dd%3E%3C/dl%3E%3C/li%3E%7C%7C%7C1128%23%23%23%3Cli%3E%3Cdl%3E%3Cdt%3E%3Ca%20href%3D%22%23%22%20class%3D%22close_cell%22%20cur%3D%221128%22%20onclick%3D%22return%20false%22%3E%3C/a%3E%3C/dt%3E%3Cdd%3E%3Ca%20href%3D%22http%3A//es.ninemanga.com/manga/Shokugeki%2520no%2520Soma.html%22%3EShokugeki%20no%20Soma%3C/a%3E%3C/dd%3E%3Cdd%3E%3Cspan%3EShokugeki%20no%20Soma%20Cap%EDtulo%20202%20p%E1gina%201%3C/span%3E%3Ca%20href%3D%22http%3A//es.ninemanga.com/chapter/Shokugeki%2520no%2520Soma/554849-1.html%22%3Ego%20on%3C/a%3E%3C/dd%3E%3C/dl%3E%3C/li%3E; ninemanga_juan_view_es_569165=29; __utma=127180185.593054749.1491076016.1491076016.1491076016.1; __utmb=127180185.7.9.1491076319977; __utmc=127180185; __utmz=127180185.1491076016.1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); ninemanga_manga_juan_views_55830=1; ninemanga_juan_view_es_557422=3810; ninemanga_juan_view_es_556429=3049; ninemanga_juan_view_es_554849=4092");
         return nav;
     }
 

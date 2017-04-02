@@ -122,6 +122,7 @@ class ItNineManga extends ServerBase {
     private void setExtra(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
+        nav.get(HOST + "/show_ads/google/");
         String source = nav.get(
                 chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
@@ -170,7 +171,7 @@ class ItNineManga extends ServerBase {
             }
         }
         String web;
-        if(filters[0].length < 1 && filters[1].length < 1)
+        if (filters[0].length < 1 && filters[1].length < 1)
             web = HOST + orderV[filters[3][0]];
         else
             web = "http://it.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";

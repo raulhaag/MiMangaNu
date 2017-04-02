@@ -114,6 +114,7 @@ class DeNineManga extends ServerBase {
     private void setExtra(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
+        nav.get(HOST + "/show_ads/google/");
         String source = nav.get(
                 chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
