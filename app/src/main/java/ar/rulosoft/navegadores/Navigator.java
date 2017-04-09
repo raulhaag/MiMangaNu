@@ -3,7 +3,6 @@ package ar.rulosoft.navegadores;
 import android.content.Context;
 import android.util.Log;
 
-import com.franmontiel.persistentcookiejar.ClearableCookieJar;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
@@ -16,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
@@ -34,7 +34,7 @@ public class Navigator {
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     public static Navigator navigator;
-    private static ClearableCookieJar cookieJar;
+    private static CookieJar cookieJar;
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
@@ -67,8 +67,20 @@ public class Navigator {
         return ParametrosForm;
     }
 
-    public static ClearableCookieJar getCookieJar() {
+    public static CookieJar getCookieJar() {
         return cookieJar;
+    }
+
+    public void setCookieJar(CookieJar cookieJar) {
+        httpClient = new OkHttpClientConnectionChecker.Builder()
+                //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
+                .addInterceptor(new CFInterceptor())
+                .connectTimeout(10, TimeUnit.SECONDS)
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .cookieJar(cookieJar)
+                .build();
+        Navigator.cookieJar = cookieJar;
     }
 
     public String get(String web) throws Exception {

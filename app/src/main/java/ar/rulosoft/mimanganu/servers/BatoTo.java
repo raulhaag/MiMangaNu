@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,13 +19,15 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
+import ar.rulosoft.navegadores.VolatileCookieJar;
+import okhttp3.Cookie;
+import okhttp3.CookieJar;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
-import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * Created by Raul on 13/01/2017.
@@ -206,6 +209,9 @@ class BatoTo extends ServerBase {
     @Override
     public boolean testLogin(String user, String password) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
+        CookieJar ccj = nav.getHttpClient().cookieJar();
+        VolatileCookieJar cj = new VolatileCookieJar();
+        nav.setCookieJar(cj);
         String data = nav.get("https://bato.to/forums/index.php?app=core&amp;module=global&amp;section=login");
         HashMap<String, String> params = Navigator.getFormParamsFromSource(data);
         nav = getNavigatorAndFlushParameters();
@@ -215,8 +221,9 @@ class BatoTo extends ServerBase {
         nav.addPost("referer", "https://bato.to/forums/");
         nav.addPost("rememberMe", "1");
         nav.post("https://bato.to/forums/index.php?app=core&module=global&section=login&do=process");
-        data = getNavigatorAndFlushParameters().get("https://bato.to/myfollows/");
-        return data.contains("-" + user.toLowerCase());
+        List<Cookie> cookies = Navigator.getCookieJar().loadForRequest(HttpUrl.parse("https://bato.to"));
+        nav.setCookieJar(ccj);
+        return cj.contain("member_id");
     }
 
     @Override
@@ -243,18 +250,23 @@ class BatoTo extends ServerBase {
 
         @Override
         public Response intercept(Chain chain) throws IOException {
+            boolean needLogin = true;
+            List<Cookie> cookies = Navigator.getCookieJar().loadForRequest(HttpUrl.parse("https://bato.to"));
+            for (Cookie c : cookies) {
+                if (c.name().contains("member_id")) {
+                    needLogin = false;
+                }
+            }
             Response response = chain.proceed(chain.request());
             if (response.code() != 200)
                 return response;
-            Request request = response.request();
-            String content = response.body().string();
-            String domain = request.url().toString();
-            MediaType contentType = response.body().contentType();
-            if (content.contains("-" + user.toLowerCase())) {//check if user is log in (need to find a better way to do it)
-                ResponseBody body = ResponseBody.create(contentType, content);//needed just because body only can be consumed once
-                return response.newBuilder().body(body).build();
+            if (!needLogin) {
+                return response;
             } else {
                 try {
+                    Request request = response.request();
+                    String content = response.body().string();
+                    String domain = request.url().toString();
                     HashMap<String, String> params = Navigator.getFormParamsFromSource(content);
                     RequestBody requestBody = new MultipartBody.Builder()
                             .setType(MultipartBody.FORM)
