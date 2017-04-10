@@ -543,9 +543,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 }
             }
             if (chapters.size() > 1)
-                Util.getInstance().showFastSnackBar("Downloading " + chapters.size() + " chapters", getView(), getContext());
+                Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapters), getView(), getContext());
             else
-                Util.getInstance().showFastSnackBar("Downloading " + chapters.size() + " chapter", getView(), getContext());
+                Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapter), getView(), getContext());
         }
         return super.onContextItemSelected(item);
     }

@@ -91,12 +91,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         }
 
-        /** Once, create necessary Data */
+        /* Once, create necessary Data */
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         final String current_filepath = prefs.getString("directorio",
                 Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
 
-        /** This enables to hide downloaded images from gallery, just a toggle */
+        /* This enables to hide downloaded images from gallery, just a toggle */
         final SwitchPreferenceCompat cBoxPref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("mostrar_en_galeria");
         cBoxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -124,7 +124,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** Set summary for Reader preference + seamless chapter transitions summary **/
+        /* Set summary for Reader preference + seamless chapter transitions summary */
         // true: Paged Reader; false: Continuous Reader
         Boolean readType = prefs.getBoolean("reader_type", false);
         Preference reader_type = getPreferenceManager().findPreference("reader_type");
@@ -155,7 +155,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** enable / disable seamless_chapter_transitions_delete_read depending on the state of seamless_chapter_transitions **/
+        /* enable / disable seamless_chapter_transitions_delete_read depending on the state of seamless_chapter_transitions */
         Preference seamlessChapterTransitionsDeleteReadPreference = getPreferenceManager().findPreference("seamless_chapter_transitions_delete_read");
         if (prefs.getBoolean("seamless_chapter_transitions", false)) {
             seamlessChapterTransitionsDeleteReadPreference.setEnabled(true);
@@ -181,7 +181,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
         Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
-        /** enable / disable auto_import_path depending on the state of auto_import **/
+        /* enable / disable auto_import_path depending on the state of auto_import */
         if (prefs.getBoolean("auto_import", false)) {
             autoImportPath.setEnabled(true);
         } else {
@@ -202,7 +202,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** This sets the download threads (parallel downloads) */
+        /* This sets the download threads (parallel downloads) */
         final SeekBarCustomPreference listPreferenceDT = (SeekBarCustomPreference) getPreferenceManager().findPreference("download_threads");
         listPreferenceDT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -216,7 +216,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** This sets the maximum number of errors to tolerate */
+        /* This sets the maximum number of errors to tolerate */
         final SeekBarCustomPreference listPrefET = (SeekBarCustomPreference) getPreferenceManager().findPreference("error_tolerancia");
         listPrefET.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -226,7 +226,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** This sets the number of retries to fetch images */
+        /* This sets the number of retries to fetch images */
         SeekBarCustomPreference listPrefRT = (SeekBarCustomPreference) getPreferenceManager().findPreference("reintentos");
         listPrefRT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -236,7 +236,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** This sets the Update Interval of the mangas (i.e. once per week) */
+        /* This sets the Update Interval of the mangas (i.e. once per week) */
         final ListPreference listPrefCU = (ListPreference) getPreferenceManager().findPreference("update_interval");
         listPrefCU.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -256,7 +256,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** This is for Custom language selection */
+        /* This is for Custom language selection */
         final ListPreference listPrefBatotoLang = (ListPreference) getPreferenceManager().findPreference("batoto_lang_selection");
         listPrefBatotoLang.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
@@ -266,10 +266,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     View rootView = inflater.inflate(R.layout.batoto_custom_lang_dialog, null);
                     final EditText CustomLang = (EditText) rootView.findViewById(R.id.txtCustomLang);
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                    dialogBuilder.setTitle("Custom language");
+                    dialogBuilder.setTitle(getString(R.string.custom_language));
                     dialogBuilder.setView(rootView);
                     dialogBuilder.setPositiveButton("Ok", null);
-                    dialogBuilder.setNegativeButton("Cancel", null);
+                    dialogBuilder.setNegativeButton(getString(R.string.cancel), null);
                     AlertDialog dialog = dialogBuilder.create();
                     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                         @Override
@@ -279,7 +279,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                                 @Override
                                 public void onClick(View view) {
                                     prefs.edit().putString("batoto_custom_lang", CustomLang.getText().toString()).apply();
-                                    Util.getInstance().toast(getContext(), "Custom Language: " + CustomLang.getText().toString());
+                                    Util.getInstance().toast(getContext(), getString(R.string.custom_language) + ": " + CustomLang.getText().toString());
                                     dialog.dismiss();
                                 }
                             });
@@ -299,11 +299,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /** This sets the Version Number, that's all */
+        /* This sets the Version Number, that's all */
         final Preference prefAbout = getPreferenceManager().findPreference("about_text");
         prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 
-        /** This will check how much storage is taken by the mangas */
+        /* This will check how much storage is taken by the mangas */
         new calcStorage().execute(current_filepath);
 
         final Preference prefLicense = getPreferenceManager().findPreference("license_view");

@@ -196,6 +196,7 @@
     <string name="add">Add</string>
     <string name="fast_update_title">Fast update</string>
     <string name="fast_update_subtitle">Only compares the latest 20 chapters from server</string>
+    <string name="chapter">chapter</string>
     <string name="chapters">chapters</string>
     <string name="write_timeout_title">Write timeout</string>
     <string name="read_timeout_title">Read timeout</string>
@@ -256,4 +257,5 @@
     <string name="download_all_chapters">Download all chapters</string>
     <string name="app_update">App update</string>
     <string name="is_available">is available</string>
+    <string name="custom_language">Custom language</string>
 </resources>
