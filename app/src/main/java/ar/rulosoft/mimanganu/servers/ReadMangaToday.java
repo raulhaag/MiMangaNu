@@ -72,21 +72,34 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
+        ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://www.readmanga.today/manga-list/";
         if (Character.isLetter(search.charAt(0)))
             web = web + search.toLowerCase().charAt(0);
-        //Log.d("RMT", "web: " + web);
-        String source = getNavigatorAndFlushParameters().get(web);
-        Pattern pattern = Pattern.compile("<a href=\"(http://www.readmanga.today/[^\"]+?)\">(.+?)</a>");
-        Matcher matcher = pattern.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<>();
-        while (matcher.find()) {
-            if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
-                /*Log.d("RMT", "1: " + matcher.group(1));
-                Log.d("RMT", "2: " + matcher.group(2));*/
-                Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-                mangas.add(manga);
+        int count = -1;
+        String[] alphabet = {"t", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "v", "w", "x", "y", "z"};
+        while (mangas.isEmpty()) {
+            //Log.d("RMT", "web: " + web);
+            String source = getNavigatorAndFlushParameters().get(web);
+            Pattern pattern = Pattern.compile("<a href=\"(http://www.readmanga.today/[^\"]+?)\">(.+?)</a>");
+            Matcher matcher = pattern.matcher(source);
+            while (matcher.find()) {
+                if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
+                    /*Log.d("RMT", "1: " + matcher.group(1));
+                    Log.d("RMT", "2: " + matcher.group(2));*/
+                    Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
+                    mangas.add(manga);
+                }
             }
+            if (count == alphabet.length)
+                break;
+            if (count == -1)
+                web = "http://www.readmanga.today/manga-list/";
+            else {
+                web = "http://www.readmanga.today/manga-list/";
+                web = web + alphabet[count];
+            }
+            count++;
         }
         return mangas;
     }
@@ -101,7 +114,7 @@ class ReadMangaToday extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String source = getNavigatorAndFlushParameters().get(manga.getPath());
 
-        // Front
+        // Cover
         String img = getFirstMatchDefault("<div class=\"col-md-3\">.+?<img src=\"(.+?)\" alt=", source, "");
         manga.setImages(img);
 
@@ -114,11 +127,26 @@ class ReadMangaToday extends ServerBase {
         manga.setFinished(status);
 
         // Author
-        String author = getFirstMatchDefault("<li class=\"director\">.+?<li><a href=\".+?\">(.+?)</a>", source, "");
+        String author = "";
+        //String author = getFirstMatchDefault("<li class=\"director\">.+?<li><a href=\".+?\">(.+?)</a>", source, "");
+        Pattern p1 = Pattern.compile("<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>");
+        Matcher matcher1 = p1.matcher(source);
+        while (matcher1.find()) {
+            //Log.d("RMT", "(1): " + matcher1.group(1));
+            if (!author.equals(matcher1.group(1) + ", ")) {
+                author += matcher1.group(1);
+                author += ", ";
+            }
+        }
+        if (author.endsWith(", "))
+            author = author.substring(0, author.length() - 2);
         manga.setAuthor(author);
 
         // Genre
-        String genre = Util.getInstance().fromHtml(getFirstMatchDefault("<dt>Categories:</dt>.+?<dd>(.+?)</dd>", source, "")).toString().trim().replaceAll(" ", ", ");
+        String genre = Util.getInstance().fromHtml(getFirstMatchDefault("<dt>Categories:</dt>.+?<dd>(.+?)</dd>", source, "").replaceAll("</a>", ",</a>")).toString().trim();
+        //Log.d("RMT", "g: " + genre);
+        if (genre.endsWith(","))
+            genre = genre.substring(0, genre.length() - 1);
         manga.setGenre(genre);
 
         // Chapters
