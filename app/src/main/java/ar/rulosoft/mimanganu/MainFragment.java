@@ -534,30 +534,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 Database.setUpgradable(getActivity(), manga.getId(), true);
             }
         } else if (item.getItemId() == R.id.download_all_chapters) {
-            new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.app_name)
-                    .setMessage(R.string.download_remain_confirmation)
-                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ArrayList<Chapter> chapters = Database.getChapters(getActivity(), manga.getId(), Database.COL_CAP_DOWNLOADED + " != 1", true);
-                            for (Chapter chapter : chapters) {
-                                try {
-                                    DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Download add pool error", e);
-                                }
-                            }
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
+            ArrayList<Chapter> chapters = Database.getChapters(getActivity(), manga.getId(), Database.COL_CAP_DOWNLOADED + " != 1", true);
+            for (Chapter chapter : chapters) {
+                try {
+                    DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
+                } catch (Exception e) {
+                    Log.e(TAG, "Download add pool error", e);
+                }
+            }
+            if (chapters.size() > 1)
+                Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapters), getView(), getContext());
+            else
+                Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapter), getView(), getContext());
         }
         return super.onContextItemSelected(item);
     }

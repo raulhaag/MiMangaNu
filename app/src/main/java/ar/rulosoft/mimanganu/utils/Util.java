@@ -465,6 +465,8 @@ public class Util {
         protected Void doInBackground(Void... params) {
             try {
                 SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+                if (Navigator.navigator == null)
+                    Navigator.navigator = new Navigator(context);
                 Navigator.navigator.flushParameter();
                 String source = Navigator.navigator.get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
                 int onlineVersionMinor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));
