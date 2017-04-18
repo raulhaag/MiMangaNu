@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -86,11 +87,12 @@ public class MyMangaIo extends ServerBase {
             // Genre
             manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genre\\s*:\\s*(.+?)</tr>", data, "")).toString());
             // Chapter
-            Pattern p = Pattern.compile("<div class=clearfix>.+?<a href=\"(http://www.mymanga.io/[^\"]+)\".+?chapter>(.+?)<");
+            Pattern p = Pattern.compile("<div class=\"clearfix\">.+?href=\"(http://www\\.mymanga\\.io/[^\"]+?)\" title=\"([^\"]+?)\""); //<div class=clearfix>.+?<a href="(http://www.mymanga.io/[^"]+)".+?chapter>(.+?)<
             Matcher m = p.matcher(data);
-
             while (m.find()) {
-                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/mangas/", "http://www.topmanga.eu/"));
+                Log.d("MyMIO", "1: " + m.group(1));
+                Log.d("MyMIO", "2: " + m.group(2));
+                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/", "http://www.hitmanga.eu/"));
                 mc.addChapterFirst(manga);
             }
         }
