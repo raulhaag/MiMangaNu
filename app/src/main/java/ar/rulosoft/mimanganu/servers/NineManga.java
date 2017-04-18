@@ -15,10 +15,10 @@ import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
- * Created by jtx on 09.05.2016.
+ * Created by xtj-9182 on 11.04.2017.
  */
 class NineManga extends ServerBase {
-    private static String HOST = "http://ninemanga.com";
+    private static String HOST = "http://www.taadd.com";
 
     private static String[] genre = new String[]{
             "4-Koma", "Action", "Adult", "Adventure", "Anime", "Award Winning",
@@ -63,22 +63,9 @@ class NineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(
-                HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern pattern = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
-        Matcher matcher = pattern.matcher(source);
-        while (matcher.find()) {
-            String title = Util.getInstance().fromHtml(matcher.group(2)).toString();
-            //Log.d("NM","t0: "+title);
-            if (title.equals(title.toUpperCase())) {
-                title = Util.getInstance().toCamelCase(title.toLowerCase());
-                //Log.d("NM","t1: "+title);
-            }
-            Manga manga = new Manga(getServerID(), title, HOST + matcher.group(1), false);
-            mangas.add(manga);
-        }
-        return mangas;
+        //http://my.taadd.com/search/es/?wd=naru
+        String source = getNavigatorWithNeededHeader().get("http://my.taadd.com/search/es/?wd=" + URLEncoder.encode(term, "UTF-8"));
+        return getMangasFromSource(source);
     }
 
     @Override
@@ -89,76 +76,79 @@ class NineManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
-        // Front
-        manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
+
+        // replace old ninemanga links with new taadd links
+        if (manga.getPath().contains("ninemanga")) {
+            String path = manga.getPath().replace("http://ninemanga.com/manga/", "http://www.taadd.com/book/");
+            path = path.replace("https://ninemanga.com/manga/", "https://www.taadd.com/book/");
+            path = path.replaceAll("%20", "+");
+            manga.setPath(path);
+        }
+
+        String source = getNavigatorWithNeededHeader().get(manga.getPath()+ "?waring=1");
+        //Log.d("NM","m.p: "+manga.getPath()+ "?waring=1");
+
+        // Cover
+        //FIXME check for cover reuse
+        String img = getFirstMatchDefault("src=\"(http://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
+        //Log.d("TD", "img: " + img);
+        manga.setImages(img);
+
         // Summary
-        String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
-                source, defaultSynopsis).replaceAll("<.+?>", "");
-        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceFirst("Summary:", "")).toString());
+        String summary = getFirstMatchDefault("Summary(.+?)</td>",source, defaultSynopsis);
+        //Log.d("TD","s: "+summary);
+        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceAll("</b><br/>", "")).toString());
+
         // Status
-        manga.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Ongoing"));
+        //Log.d("TD","finished: "+getFirstMatchDefault("<td>Status:(.+?)</a>", source, "").contains("Completed"));
+        manga.setFinished(getFirstMatchDefault("<td>Status:(.+?)</a>", source, "").contains("Completed"));
+
         // Author
-        manga.setAuthor(getFirstMatchDefault("author.+?\">(.+?)<", source, ""));
+        manga.setAuthor(getFirstMatchDefault("author-(.+?).html\">", source, ""));
+
         // Genre
-        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
+        //FIXME fix genres spacing
+        String genre = Util.getInstance().fromHtml(getFirstMatchDefault("Categories:(.+?)</td>", source, "").replaceAll("</a>", ",</a>")).toString();
+        //Log.d("TD", "g: " + genre.replaceAll("￼", ""));
+        if (genre.endsWith(","))
+            genre = genre.substring(2, genre.length() - 1);
+        manga.setGenre(genre.replaceAll("￼", ""));
+
         // Chapters
-        Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>");
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
+            /*Log.d("TD", "1: " + matcher.group(1));
+            Log.d("TD", "2: " + matcher.group(2));*/
+            chapters.add(0, new Chapter(matcher.group(2), HOST + matcher.group(1)));
         }
         manga.setChapters(chapters);
     }
 
     @Override
     public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath().replace(".html", "-" + page + ".html");
+        return null;
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null)
-            setExtra(chapter);
-        String[] images = chapter.getExtra().split("\\|");
-        return images[page];
-    }
-
-    private void setExtra(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
-        nav.get(HOST + "/show_ads/google/");
-        String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
-        Matcher matcher = p.matcher(source);
-        String images = "";
-        while (matcher.find()) {
-            images = images + "|" + matcher.group(1);
-        }
-        chapter.setExtra(images);
+        String source = nav.get(chapter.getPath() + "-" + page + ".html");
+        //Log.d("TD", "web: " + chapter.getPath() + "-" + page + ".html");
+        String img = getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source, "Error getting image");
+        //Log.d("TD", "img: " + img);
+        return img;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorWithNeededHeader().get(chapter.getPath());
-        String nop = getFirstMatchDefault(
-                "\\d+/(\\d+)</option>[\\s]*</select>", source,
+        String pageNumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
                 "failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(nop));
-    }
-
-    @Deprecated
-    private ArrayList<Manga> getMangasFromSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
-        Matcher matcher = p.matcher(source);
-        while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
-            manga.setImages(matcher.group(2));
-            mangas.add(manga);
-        }
-        return mangas;
+        //Log.d("TD", "p: " + pagenumber);
+        chapter.setPages(Integer.parseInt(pageNumber));
     }
 
     @Override
@@ -169,6 +159,27 @@ class NineManga extends ServerBase {
                 new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),
                 new ServerFilter("Order (only applied when no genre is selected)", order, ServerFilter.FilterType.SINGLE)
         };
+    }
+
+    private ArrayList<Manga> getMangasFromSource(String source) {
+        Pattern pattern = Pattern.compile("<a href=\"([^\"]+?)\"><img src=\"([^\"]+?)\" alt=\"([^\"]+?)\"");
+        Matcher matcher = pattern.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        while (matcher.find()) {
+            /*Log.d("TD", "1: " + matcher.group(1));
+            Log.d("TD", "2: " + matcher.group(2));
+            Log.d("TD", "3: " + matcher.group(3));*/
+            String title = Util.getInstance().fromHtml(matcher.group(3)).toString();
+            //Log.d("TD","t0: "+title);
+            if (title.equals(title.toUpperCase())) {
+                title = Util.getInstance().toCamelCase(title.toLowerCase());
+                //Log.d("TD","t1: "+title);
+            }
+            Manga manga = new Manga(getServerID(), title, matcher.group(1), false);
+            manga.setImages(matcher.group(2));
+            mangas.add(manga);
+        }
+        return mangas;
     }
 
     @Override
@@ -189,25 +200,10 @@ class NineManga extends ServerBase {
         if (filters[0].length < 1 && filters[1].length < 1)
             web = HOST + orderV[filters[3][0]];
         else
-            web = "http://ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
-        //Log.d("NM","web: "+web);
+            web = "http://taadd.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+        //Log.d("TD","web: "+web);
         String source = getNavigatorWithNeededHeader().get(web);
-        // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
-        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
-        Matcher matcher = pattern.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<>();
-        while (matcher.find()) {
-            String title = Util.getInstance().fromHtml(matcher.group(3)).toString();
-            //Log.d("NM","t0: "+title);
-            if (title.equals(title.toUpperCase())) {
-                title = Util.getInstance().toCamelCase(title.toLowerCase());
-                //Log.d("NM","t1: "+title);
-            }
-            Manga manga = new Manga(getServerID(), title, HOST + matcher.group(1), false);
-            manga.setImages(matcher.group(2));
-            mangas.add(manga);
-        }
-        return mangas;
+        return getMangasFromSource(source);
     }
 
     public Navigator getNavigatorWithNeededHeader() throws Exception {
