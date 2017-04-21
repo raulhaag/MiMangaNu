@@ -211,7 +211,6 @@ public abstract class ServerBase {
                 new MangaFox(context),
                 new KissManga(context),
                 new MangaEden(context),
-                new NineManga(context),
                 new Taadd(context),
                 new ReadMangaToday(context),
                 new RuNineManga(context),

@@ -101,7 +101,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -121,7 +121,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return response.body().byteStream();
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             throw new Exception("Can't get stream");
         }
@@ -146,7 +146,7 @@ public class Navigator {
             return formatResponseBody(response.body());
         } else {
             String responseCode = "" + response.code();
-            Log.e("Nav", "response unsuccessful: " + responseCode + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + responseCode + " " + response.message() + " web: " + web);
             response.body().close();
             return responseCode;
         }
@@ -163,7 +163,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -181,7 +181,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -198,7 +198,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -216,7 +216,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -239,7 +239,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code());
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message());
             response.body().close();
             return "";
         }
@@ -262,7 +262,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -285,7 +285,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " web: " + web);
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
         }
@@ -308,7 +308,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             return formatResponseBody(response.body());
         } else {
-            Log.e("Nav", "response unsuccessful: " + response.code());
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message());
             response.body().close();
             return "";
         }

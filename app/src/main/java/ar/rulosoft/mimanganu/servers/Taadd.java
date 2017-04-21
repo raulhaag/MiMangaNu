@@ -78,21 +78,22 @@ class Taadd extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
 
         // replace old ninemanga links with new taadd links
-        if (manga.getPath().contains("ninemanga")) {
+        /*if (manga.getPath().contains("ninemanga")) {
             String path = manga.getPath().replace("http://ninemanga.com/manga/", "http://www.taadd.com/book/");
             path = path.replace("https://ninemanga.com/manga/", "https://www.taadd.com/book/");
             path = path.replaceAll("%20", "+");
             manga.setPath(path);
-        }
+        }*/
 
         String source = getNavigatorWithNeededHeader().get(manga.getPath()+ "?waring=1");
         //Log.d("NM","m.p: "+manga.getPath()+ "?waring=1");
 
         // Cover
-        //FIXME check for cover reuse
-        String img = getFirstMatchDefault("src=\"(http://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
-        //Log.d("TD", "img: " + img);
-        manga.setImages(img);
+        if (manga.getImages() == null || manga.getImages().isEmpty()) {
+            String img = getFirstMatchDefault("src=\"(http://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
+            //Log.d("TD", "img: " + img);
+            manga.setImages(img);
+        }
 
         // Summary
         String summary = getFirstMatchDefault("Summary(.+?)</td>",source, defaultSynopsis);
