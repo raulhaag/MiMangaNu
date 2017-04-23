@@ -1,8 +1,12 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -112,11 +116,16 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(manga.getPath());
+        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(manga.getPath());
+        if (source.equals("400")) {
+            removeCookies();
+        }
 
         // Cover
-        String img = getFirstMatchDefault("<div class=\"col-md-3\">.+?<img src=\"(.+?)\" alt=", source, "");
-        manga.setImages(img);
+        if (manga.getImages() == null || manga.getImages().isEmpty() || manga.getImages().contains("thumb")) {
+            String img = getFirstMatchDefault("<div class=\"col-md-3\">.+?<img src=\"(.+?)\" alt=", source, "");
+            manga.setImages(img);
+        }
 
         // Summary
         String summary = getFirstMatchDefault("<li class=\"list-group-item movie-detail\">(.+?)</li>", source, "");
@@ -176,7 +185,11 @@ class ReadMangaToday extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath() + "/all-pages");
+        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath() + "/all-pages");
+        if (source.equals("400")) {
+            removeCookies();
+        }
+        //Log.d("RMT", "s: " + source);
         Pattern p = Pattern.compile("<img src=\"([^\"]+)\" class=\"img-responsive-2\">");
         Matcher matcher = p.matcher(source);
         String images = "";
@@ -189,12 +202,15 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath());
+        if (source.equals("400")) {
+            removeCookies();
+        }
         //Log.d("RMT","p: "+chapter.getPath());
-        String pagenumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
+        String pageNumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
                 "failed to get the number of pages");
-        //Log.d("RMT","pa: "+pagenumber);
-        chapter.setPages(Integer.parseInt(pagenumber));
+        //Log.d("RMT","pa: "+pageNumber);
+        chapter.setPages(Integer.parseInt(pageNumber));
     }
 
     @Override
@@ -202,6 +218,25 @@ class ReadMangaToday extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter("Genre(s)", genre, ServerFilter.FilterType.SINGLE),
         };
+    }
+
+    private void removeCookies() {
+        // ReadMangaToday returns 400 Bad Request sometimes
+        // deleting it's cookies will usually get rid of the error
+        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
+        Map cookieMap = cookies.getAll();
+        Iterator entries = cookieMap.entrySet().iterator();
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            Object key = entry.getKey();
+            //Object value = entry.getValue();
+            if (key.toString().contains("http://readmanga.today/")) {
+                /*Log.d("RMT", "k: " + key.toString());
+                Log.d("RMT", "v: " + value.toString());*/
+                cookies.edit().remove(key.toString()).apply();
+            }
+        }
+        Log.i("RMT", "deleted ReadMangaToday's cookies");
     }
 
     @Override
@@ -216,7 +251,10 @@ class ReadMangaToday extends ServerBase {
         else
             web = HOST + genreVV + genre[filters[0][0]].toLowerCase().replaceAll(" ","-") +"/"+ pageNumber;
         //Log.d("RMT", "web: " + web);
-        String source = getNavigatorAndFlushParameters().get(web);
+        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(web);
+        if (source.equals("400")) {
+            removeCookies();
+        }
         // regex to generate genre ids: <li>.+?title="All Categories - (.+?)">
         Pattern pattern = Pattern.compile("<div class=\"left\">.+?<a href=\"(.+?)\" title=\"(.+?)\"><img src=\"(.+?)\" alt=\"");
         Matcher matcher = pattern.matcher(source);
@@ -226,7 +264,8 @@ class ReadMangaToday extends ServerBase {
             Log.d("RMT","(1): "+matcher.group(1));
             Log.d("RMT","(3): "+matcher.group(3));*/
             Manga m = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-            m.setImages(matcher.group(3));
+            //Log.d("RMT","img: "+matcher.group(3).replace("thumb/",""));
+            m.setImages(matcher.group(3).replace("thumb/",""));
             mangas.add(m);
         }
         return mangas;

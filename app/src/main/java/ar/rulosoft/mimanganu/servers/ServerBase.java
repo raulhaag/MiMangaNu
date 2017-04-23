@@ -52,6 +52,7 @@ public abstract class ServerBase {
     static final int BATOTOES = 27;
     static final int JAPSCAN = 28;
     static final int READMANGATODAY = 29;
+    static final int TAADD = 30;
 
 
     static final int READCOMICONLINE = 1000;
@@ -142,6 +143,9 @@ public abstract class ServerBase {
             case NINEMANGA:
                 serverBase = new NineManga(context);
                 break;
+            case TAADD:
+                serverBase = new Taadd(context);
+                break;
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
@@ -207,7 +211,7 @@ public abstract class ServerBase {
                 new MangaFox(context),
                 new KissManga(context),
                 new MangaEden(context),
-                new NineManga(context),
+                new Taadd(context),
                 new ReadMangaToday(context),
                 new RuNineManga(context),
                 new MyMangaIo(context),
@@ -387,7 +391,7 @@ public abstract class ServerBase {
         return matches;
     }
 
-    public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {
+    public String getFirstMatchDefault(String patron, String source, String mDefault) {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
         if (m.find()) {

@@ -86,11 +86,12 @@ public class MyMangaIo extends ServerBase {
             // Genre
             manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genre\\s*:\\s*(.+?)</tr>", data, "")).toString());
             // Chapter
-            Pattern p = Pattern.compile("<div class=clearfix>.+?<a href=\"(http://www.mymanga.io/[^\"]+)\".+?chapter>(.+?)<");
+            Pattern p = Pattern.compile("<div class=\"clearfix\">.+?href=\"(http://www\\.mymanga\\.io/[^\"]+?)\" title=\"([^\"]+?)\""); //<div class=clearfix>.+?<a href="(http://www.mymanga.io/[^"]+)".+?chapter>(.+?)<
             Matcher m = p.matcher(data);
-
             while (m.find()) {
-                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/mangas/", "http://www.topmanga.eu/"));
+                /*Log.d("MyMIO", "1: " + m.group(1));
+                Log.d("MyMIO", "2: " + m.group(2));*/
+                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/", "http://www.hitmanga.eu/"));
                 mc.addChapterFirst(manga);
             }
         }
@@ -122,8 +123,7 @@ public class MyMangaIo extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         String data;
         data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pages =
-                getFirstMatch("(\\d+)</option></select></span>", data, "Error: Could not get the number of pages");
+        String pages = getFirstMatch("(\\d+)</option></select></span>", data, "Error: Could not get the number of pages");
         chapter.setPages(Integer.parseInt(pages));
     }
 
@@ -132,8 +132,7 @@ public class MyMangaIo extends ServerBase {
         Pattern p = Pattern.compile("<a href=\"(mangas/[^\"]+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga =
-                    new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             manga.setImages("http://www.mymanga.io/images/mangas_thumb/" + getFirstMatchDefault("mangas/(.+?)/", manga.getPath(), "") + ".jpg");
             mangas.add(manga);
         }
