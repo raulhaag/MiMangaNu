@@ -32,6 +32,7 @@ android {
         release {
             lintOptions {
                 disable 'MissingTranslation'
+                disable 'NewApi' //Avoid problems in Android Studio 2.4 preview 6
             }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

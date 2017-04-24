@@ -258,4 +258,8 @@
     <string name="app_update">App update</string>
     <string name="is_available">is available</string>
     <string name="custom_language">Custom language</string>
+    <string name="new_version">New Version</string>
+    <string name="download">Download</string>
+    <string name="downloading_update">Downloading...</string>
+    <string name="update_error">Error downloading update</string>
 </resources>

@@ -256,5 +256,9 @@
     <string name="extra_server_settings">Otras configuraciones de servidores</string>
     <string name="is_available">si esta disponible</string>
     <string name="this_server_needs_an_account">Este servidor necesita una cuenta. Agregala en ajustes.</string>
+    <string name="new_version">Nueva Versión</string>
+    <string name="download">Descargar</string>
+    <string name="downloading_update">Descargando...</string>
+    <string name="update_error">Error al descargar actualización</string>
 </resources>
 
