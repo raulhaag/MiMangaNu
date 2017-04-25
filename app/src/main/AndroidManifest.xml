@@ -55,5 +55,13 @@
             </intent-filter>
         </receiver>
         <service android:name=".services.DownloadPoolService" />
+        <receiver
+            android:name=".utils.UpdateSystem.UpdateAlarm"
+            android:directBootAware="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="ar.rulosoft.mimanganu.START_ALARM"/>
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

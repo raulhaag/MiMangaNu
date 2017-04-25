@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.utils;
+package ar.rulosoft.mimanganu.utils.UpdateSystem;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,8 @@ import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -52,7 +55,7 @@ public class UpdateUtil {
                         Response response = client.newCall(new Request.Builder().url(LATEST_RELEASE_URL).build()).execute();
                         final JSONObject object = new JSONObject(response.body().string());
                         String version_name = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-                        if (!version_name.equals(object.getString("tag_name"))) {
+                        if (!version_name.equals(object.getString("tag_name"))) {            //Test <-----
                             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                             View rootView = inflater.inflate(R.layout.dialog_update, null);
                             final TextView desc = (TextView) rootView.findViewById(R.id.descrption);
@@ -117,6 +120,40 @@ public class UpdateUtil {
                     return null;
                 }
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    static void checkNotification(final Context context) {
+        new AsyncTask<Void,Void,Void>(){
+            @Override
+            protected Void doInBackground(Void... voids) {
+                if (NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
+                    try {
+                        final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
+                                .connectTimeout(3, TimeUnit.SECONDS)
+                                .readTimeout(3, TimeUnit.SECONDS)
+                                .build();
+                        Response response = client.newCall(new Request.Builder().url(LATEST_RELEASE_URL).build()).execute();
+                        final JSONObject object = new JSONObject(response.body().string());
+                        String version_name = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+                        String last_update_notification = PreferenceManager.getDefaultSharedPreferences(context).getString("last_update_name", "1.0.0");
+                        if (!version_name.equals(object.getString("tag_name")) && !last_update_notification.equals(object.getString("tag_name"))) {            //Test <-----
+                            Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName()).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + object.getString("tag_name") + " " + context.getString(R.string.is_available));
+                            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("last_update_name",object.getString("tag_name")).apply();
+                        } else {
+                            if (last_update_notification.equals(object.getString("tag_name"))) {
+                                Log.i(TAG, "Update already notified");
+                            } else {
+                                Log.i(TAG, "App is up to date!!!!");
+                            }
+                        }
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error while searching for new update", e);
+                    }
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private static void download(final AppCompatActivity activity, final String url, final ProgressBar bar, final TextView desc, final DialogInterface dialog) {

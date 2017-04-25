@@ -150,7 +150,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
 
             // App Update
-            boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
+            /*boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
             if(onLatestAppVersion) {
                 long last_check = pm.getLong("last_app_update", 0);
                 long diff = System.currentTimeMillis() - last_check;
@@ -161,7 +161,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 }
             } else {
                 Util.getInstance().checkAppUpdates(getContext());
-            }
+            }*/
 
             MainActivity.coldStart = false;
         }

@@ -249,12 +249,12 @@
     <string name="password">Contraseña</string>
     <string name="reset">Resetiar</string>
     <string name="user">Usuario</string>
-    <string name="app_update">"Actualizaciones "</string>
+    <string name="app_update">Actualizacion</string>
     <string name="batoto_lang_chapters_subtitle">Batoto: solo los capitulos con el lenguaje seleccionado seran agregados. Elegido: %s</string>
     <string name="batoto_lang_chapters_title">Bototo idioma de capítulos</string>
     <string name="download_all_chapters">Descargar todos los capítulos</string>
     <string name="extra_server_settings">Otras configuraciones de servidores</string>
-    <string name="is_available">si esta disponible</string>
+    <string name="is_available">esta disponible</string>
     <string name="this_server_needs_an_account">Este servidor necesita una cuenta. Agregala en ajustes.</string>
     <string name="new_version">Nueva Versión</string>
     <string name="download">Descargar</string>
