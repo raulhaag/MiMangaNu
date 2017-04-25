@@ -39,7 +39,7 @@ import okhttp3.Response;
 public class UpdateUtil {
     private static final String TAG = "UpdateUtils";
     private static final String LATEST_RELEASE_URL = "https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest";
-    private static final File UPDATE_FILE_CACHE = new File(Environment.getExternalStorageDirectory() + "/download", "update.apk");
+    private static File UPDATE_FILE_CACHE = new File(Environment.getExternalStorageDirectory() + "/download", "update.apk");
     private static int prog = 0;
 
     public static void check(final Context context) {
@@ -161,6 +161,7 @@ public class UpdateUtil {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
+                    UPDATE_FILE_CACHE = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/","update.apk");
                     if (UPDATE_FILE_CACHE.exists()) UPDATE_FILE_CACHE.delete();
                     final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)
