@@ -148,9 +148,6 @@ public abstract class ServerBase {
             case TAADD:
                 serverBase = new Taadd(context);
                 break;
-            case MANGARUSSIA:
-                serverBase = new Mangarussia(context);
-                break;
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
@@ -165,9 +162,6 @@ public abstract class ServerBase {
                 break;
             case JAPSCAN:
                 serverBase = new JapScan(context);
-                break;
-            case WIEMANGA:
-                serverBase = new Wiemanga(context);
                 break;
             case READMANGATODAY:
                 serverBase = new ReadMangaToday(context);
@@ -222,13 +216,11 @@ public abstract class ServerBase {
                 new Taadd(context),
                 new ReadMangaToday(context),
                 new RuNineManga(context),
-                new Mangarussia(context),
                 new MyMangaIo(context),
                 new JapScan(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
                 new DeNineManga(context),
-                new Wiemanga(context),
                 new RawSenManga(context),
                 new BatoTo(context),
                 new ReadComicOnline(context),
