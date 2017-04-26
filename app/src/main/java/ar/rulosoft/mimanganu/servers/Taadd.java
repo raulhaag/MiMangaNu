@@ -51,7 +51,7 @@ class Taadd extends ServerBase {
     Taadd(Context context) {
         super(context);
         this.setFlag(R.drawable.flag_en);
-        this.setIcon(R.drawable.ninemanga);
+        this.setIcon(R.drawable.taadd);
         this.setServerName("Taadd");
         setServerID(ServerBase.TAADD);
     }
@@ -138,9 +138,7 @@ class Taadd extends ServerBase {
         nav.addHeader("Referer", chapter.getPath());
         String source = nav.get(chapter.getPath() + "-" + page + ".html");
         //Log.d("TD", "web: " + chapter.getPath() + "-" + page + ".html");
-        String img = getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source, "Error getting image");
-        //Log.d("TD", "img: " + img);
-        return img;
+        return getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source, "Error getting image");
     }
 
     @Override

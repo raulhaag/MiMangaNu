@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +54,8 @@ public abstract class ServerBase {
     static final int JAPSCAN = 28;
     static final int READMANGATODAY = 29;
     static final int TAADD = 30;
-
+    static final int MANGARUSSIA = 31;
+    static final int WIEMANGA = 32;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
@@ -146,6 +148,9 @@ public abstract class ServerBase {
             case TAADD:
                 serverBase = new Taadd(context);
                 break;
+            case MANGARUSSIA:
+                serverBase = new Mangarussia(context);
+                break;
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
@@ -160,6 +165,9 @@ public abstract class ServerBase {
                 break;
             case JAPSCAN:
                 serverBase = new JapScan(context);
+                break;
+            case WIEMANGA:
+                serverBase = new Wiemanga(context);
                 break;
             case READMANGATODAY:
                 serverBase = new ReadMangaToday(context);
@@ -214,11 +222,13 @@ public abstract class ServerBase {
                 new Taadd(context),
                 new ReadMangaToday(context),
                 new RuNineManga(context),
+                new Mangarussia(context),
                 new MyMangaIo(context),
                 new JapScan(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
                 new DeNineManga(context),
+                new Wiemanga(context),
                 new RawSenManga(context),
                 new BatoTo(context),
                 new ReadComicOnline(context),
@@ -334,7 +344,7 @@ public abstract class ServerBase {
         }
 
         if (!simpleList.isEmpty()) {
-            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
             Date date = new Date();
             String lastUpdate = dateFormat.format(date);
             if (!mangaDb.getLastUpdate().equals(lastUpdate)) {
