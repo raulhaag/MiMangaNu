@@ -54,8 +54,6 @@ public abstract class ServerBase {
     static final int JAPSCAN = 28;
     static final int READMANGATODAY = 29;
     static final int TAADD = 30;
-    static final int MANGARUSSIA = 31;
-    static final int WIEMANGA = 32;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
