@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu.utils.UpdateSystem;
+package ar.rulosoft.mimanganu.utils;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -24,9 +25,8 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
 
+import ar.rulosoft.mimanganu.MessageActivity;
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -56,19 +56,23 @@ public class UpdateUtil {
                         final JSONObject object = new JSONObject(response.body().string());
                         String version_name = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
                         if (!version_name.equals(object.getString("tag_name"))) {            //Test <-----
-                            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View rootView = inflater.inflate(R.layout.dialog_update, null);
-                            final TextView desc = (TextView) rootView.findViewById(R.id.descrption);
-                            final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
-                            desc.setText(object.getString("body"));
-                            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                            dialogBuilder.setTitle(context.getString(R.string.new_version) + " " + object.getString("tag_name"));
-                            dialogBuilder.setView(rootView);
-                            dialogBuilder.setPositiveButton(context.getString(R.string.download), null);
-                            dialogBuilder.setNegativeButton(context.getString(R.string.close), null);
                             ((AppCompatActivity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
+                                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                    View rootView = inflater.inflate(R.layout.dialog_update, null);
+                                    final TextView desc = (TextView) rootView.findViewById(R.id.descrption);
+                                    final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
+                                    final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                                    try {
+                                        desc.setText(object.getString("body"));
+                                        dialogBuilder.setTitle(context.getString(R.string.new_version) + " " + object.getString("tag_name"));
+                                    } catch (JSONException e) {
+                                        Log.e(TAG, "Error reading source");
+                                    }
+                                    dialogBuilder.setView(rootView);
+                                    dialogBuilder.setPositiveButton(context.getString(R.string.download), null);
+                                    dialogBuilder.setNegativeButton(context.getString(R.string.close), null);
                                     AlertDialog dialog = dialogBuilder.create();
                                     dialog.setOnShowListener(new DialogInterface.OnShowListener() {
                                         @Override
@@ -78,6 +82,9 @@ public class UpdateUtil {
                                                 @Override
                                                 public void onClick(View view) {
                                                     dialog.dismiss();
+                                                    if (context instanceof MessageActivity) {
+                                                        ((MessageActivity) context).onBackPressed();
+                                                    }
                                                 }
                                             });
                                             final Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
@@ -109,6 +116,7 @@ public class UpdateUtil {
                                     });
                                     dialog.show();
                                 }
+
                             });
                         } else {
                             Log.i(TAG, "App is up to date!!!!");
@@ -123,7 +131,7 @@ public class UpdateUtil {
     }
 
     static void checkNotification(final Context context) {
-        new AsyncTask<Void,Void,Void>(){
+        new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... voids) {
                 if (NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
@@ -139,7 +147,7 @@ public class UpdateUtil {
                         if (!version_name.equals(object.getString("tag_name")) && !last_update_notification.equals(object.getString("tag_name"))) {            //Test <-----
                             Intent intent = context.getPackageManager().getLaunchIntentForPackage(context.getPackageName()).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + object.getString("tag_name") + " " + context.getString(R.string.is_available));
-                            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("last_update_name",object.getString("tag_name")).apply();
+                            PreferenceManager.getDefaultSharedPreferences(context).edit().putString("last_update_name", object.getString("tag_name")).apply();
                         } else {
                             if (last_update_notification.equals(object.getString("tag_name"))) {
                                 Log.i(TAG, "Update already notified");
@@ -161,7 +169,7 @@ public class UpdateUtil {
             @Override
             protected Void doInBackground(Void... voids) {
                 try {
-                    UPDATE_FILE_CACHE = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/","update.apk");
+                    UPDATE_FILE_CACHE = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
                     if (UPDATE_FILE_CACHE.exists()) UPDATE_FILE_CACHE.delete();
                     final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)

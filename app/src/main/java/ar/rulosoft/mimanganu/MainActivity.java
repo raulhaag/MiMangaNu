@@ -24,8 +24,6 @@ import android.view.Window;
 
 import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.mimanganu.utils.UpdateSystem.UpdateAlarm;
-import ar.rulosoft.mimanganu.utils.UpdateSystem.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class MainActivity extends AppCompatActivity {
@@ -59,8 +57,6 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
-        UpdateAlarm.SetAlarm(this);
-        UpdateUtil.check(this);
     }
 
     @Override

@@ -7,7 +7,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Handler;
@@ -31,6 +30,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.MainActivity;
+import ar.rulosoft.mimanganu.MessageActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -41,10 +41,6 @@ public class Util {
     private static NotificationManager notificationManager;
 
     private Util() {
-    }
-
-    private static class LazyHolder {
-        private static final Util utilInstance = new Util();
     }
 
     public static Util getInstance() {
@@ -448,6 +444,10 @@ public class Util {
         new CheckForAppUpdates(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
+    }
+
     private class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
         private String error = "";
         private Context context;
@@ -477,7 +477,9 @@ public class Util {
                 int currentVersionMinor = Integer.parseInt(getFirstMatchDefault("\\d+\\.(\\d+)", currentVersionTmp, ""));
                 int currentVersionMajor = Integer.parseInt(getFirstMatchDefault("(\\d+)\\.\\d+", currentVersionTmp, ""));
                 if (currentVersionMinor != onlineVersionMinor || currentVersionMajor != onlineVersionMajor) {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), new Intent(Intent.ACTION_VIEW, Uri.parse(downloadurl)), context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + onlineVersionMajor + "." + onlineVersionMinor + " " + context.getString(R.string.is_available));
+                    Intent intent = new Intent(context, MessageActivity.class);
+                    intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + onlineVersionMajor + "." + onlineVersionMinor + " " + context.getString(R.string.is_available));
                     pm.edit().putBoolean("on_latest_app_version", false).apply();
                 } else {
                     pm.edit().putBoolean("on_latest_app_version", true).apply();

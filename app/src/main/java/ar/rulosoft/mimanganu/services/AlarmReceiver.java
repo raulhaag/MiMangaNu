@@ -11,7 +11,6 @@ import android.preference.PreferenceManager;
 
 import ar.rulosoft.mimanganu.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
-import ar.rulosoft.mimanganu.utils.UpdateSystem.UpdateAlarm;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -61,7 +60,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                 automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
             NetworkUtilsAndReceiver.reset();
-            UpdateAlarm.init(context);
         } catch (Exception ignore) { //next time on connection go to update
             ignore.printStackTrace();
         }
