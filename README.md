@@ -33,6 +33,19 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.63:
+* Mejorado el backend y la actualizacion del app.
+* Agregado MangaStream, Taadd.
+* Arreglado ReadMangaToday, MyMangaIo.
+* Permetir mover a almacenamiento externo.
+* Otros fixes.
+
+Changes in v1.63:
+* Improve backend and update manager.
+* Added MangaStream, Taadd.
+* Fix ReadMangaToday, MyMangaIo.
+* Allow to move to external storage.
+* Others fixes. 
 
 Cambios en v1.62:
 * Fix kissmanga.

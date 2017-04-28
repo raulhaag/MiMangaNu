@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.62:\n\t* Fix kissmanga.\n\t* Fix ninemanga servers de nuevo. \n\t* Agregado bajar todo desde el menu principal (long press). \n\t* Agregado busqueda de actualizaciones del app.</string>
+    <string name="update_message">Cambios en v1.63:\n\t* Mejorado el backend y la actualizacion del app. \n\t* Agregado MangaStream, Taadd. \n\t* Arreglado ReadMangaToday, MyMangaIo. \n\t* Permetir mover a almacenamiento externo. \n\t* Otros fixes.</string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
