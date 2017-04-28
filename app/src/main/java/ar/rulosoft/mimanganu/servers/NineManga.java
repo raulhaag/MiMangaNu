@@ -17,7 +17,6 @@ import ar.rulosoft.navegadores.Navigator;
 /**
  * Created by xtj-9182 on 11.04.2017.
  */
-@Deprecated
 class NineManga extends ServerBase {
     private static String HOST = "http://ninemanga.com";
 
@@ -131,7 +130,7 @@ class NineManga extends ServerBase {
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
         String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
+        Pattern p = Pattern.compile("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\""); //<img class="manga_pic.+?src="([^"]+)
         Matcher matcher = p.matcher(source);
         String images = "";
         while (matcher.find()) {

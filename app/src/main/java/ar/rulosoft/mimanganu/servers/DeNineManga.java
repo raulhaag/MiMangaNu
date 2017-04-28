@@ -115,9 +115,8 @@ class DeNineManga extends ServerBase {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
-        String source = nav.get(
-                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
+        String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        Pattern p = Pattern.compile("src=\"(http://www\\.wiemanga\\.com/comics/pic/[^\"]+?)\""); //<img class="manga_pic.+?src="([^"]+)
         Matcher m = p.matcher(source);
         String images = "";
         while (m.find()) {

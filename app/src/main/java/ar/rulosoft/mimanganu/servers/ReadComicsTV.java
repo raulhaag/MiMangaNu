@@ -15,8 +15,9 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
- * Created by jtx on 04.12.2016.
+ * Created by xtj-9182 on 04.12.2016.
  */
+@Deprecated
 class ReadComicsTV extends ServerBase {
     private static String HOST = "http://readcomics.tv";
 

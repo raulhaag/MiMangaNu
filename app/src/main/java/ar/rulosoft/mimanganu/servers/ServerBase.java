@@ -54,6 +54,8 @@ public abstract class ServerBase {
     static final int JAPSCAN = 28;
     static final int READMANGATODAY = 29;
     static final int TAADD = 30;
+    static final int MANGASTREAM = 31;
+
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
@@ -146,6 +148,9 @@ public abstract class ServerBase {
             case TAADD:
                 serverBase = new Taadd(context);
                 break;
+            case MANGASTREAM:
+                serverBase = new MangaStream(context);
+                break;
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
@@ -211,7 +216,9 @@ public abstract class ServerBase {
                 new MangaFox(context),
                 new KissManga(context),
                 new MangaEden(context),
+                new MangaStream(context),
                 new Taadd(context),
+                new NineManga(context),
                 new ReadMangaToday(context),
                 new RuNineManga(context),
                 new MyMangaIo(context),
@@ -222,8 +229,6 @@ public abstract class ServerBase {
                 new RawSenManga(context),
                 new BatoTo(context),
                 new ReadComicOnline(context),
-                new ReadComicsTV(context),
-                new GoGoComic(context),
                 new ViewComic(context),
                 new FromFolder(context)
         });
