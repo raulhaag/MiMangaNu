@@ -258,7 +258,8 @@
     <string name="this_server_needs_an_account">Este servidor necesita una cuenta. Agregala en ajustes.</string>
     <string name="new_version">Nueva Versión</string>
     <string name="download">Descargar</string>
-    <string name="downloading_update">Descargando...</string>
+    <string name="downloading_update">Descargando&#8230;</string>
     <string name="update_error">Error al descargar actualización</string>
+    <string name="server_dead_message">No hay nada que hacer aquí, este servidor esta muerto.</string>
 </resources>
 

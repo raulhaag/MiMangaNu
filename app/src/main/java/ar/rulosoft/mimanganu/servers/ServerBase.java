@@ -74,7 +74,8 @@ public abstract class ServerBase {
     }
 
     public static ServerBase getServer(int id, Context context) {
-        ServerBase serverBase = null;
+        //before remove deprecated add info on DeadServer
+        ServerBase serverBase;
         switch (id) {
             case MANGAPANDA:
                 serverBase = new MangaPanda(context);
@@ -91,9 +92,6 @@ public abstract class ServerBase {
             case SUBMANGA:
                 serverBase = new SubManga(context);
                 break;
-            case ESMANGA:
-                serverBase = new EsManga(context);
-                break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga(context);
                 break;
@@ -102,9 +100,6 @@ public abstract class ServerBase {
                 break;
             case ESNINEMANGA:
                 serverBase = new EsNineManga(context);
-                break;
-            case LECTUREENLIGNE:
-                serverBase = new LectureEnLigne(context);
                 break;
             case KISSMANGA:
                 serverBase = new KissManga(context);
@@ -115,20 +110,11 @@ public abstract class ServerBase {
             case TUMANGAONLINE:
                 serverBase = new TuMangaOnline(context);
                 break;
-            case TUSMANGAS:
-                serverBase = new TusMangasOnlineCom(context);
-                break;
-            case STARKANACOM:
-                serverBase = new StarkanaCom(context);
-                break;
             case DENINEMANGA:
                 serverBase = new DeNineManga(context);
                 break;
             case RUNINEMANGA:
                 serverBase = new RuNineManga(context);
-                break;
-            case MANGATUBE:
-                serverBase = new Manga_Tube(context);
                 break;
             case MANGAEDENIT:
                 serverBase = new MangaEdenIt(context);
@@ -169,12 +155,6 @@ public abstract class ServerBase {
             case READMANGATODAY:
                 serverBase = new ReadMangaToday(context);
                 break;
-            case READCOMICSTV:
-                serverBase = new ReadComicsTV(context);
-                break;
-            case GOGOCOMIC:
-                serverBase = new GoGoComic(context);
-                break;
             case VIEWCOMIC:
                 serverBase = new ViewComic(context);
                 break;
@@ -182,6 +162,7 @@ public abstract class ServerBase {
                 serverBase = new FromFolder(context);
                 break;
             default:
+                serverBase = new DeadServer(context);
                 break;
         }
         return serverBase;

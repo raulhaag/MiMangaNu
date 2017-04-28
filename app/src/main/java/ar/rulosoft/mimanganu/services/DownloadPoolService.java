@@ -5,7 +5,6 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.preference.PreferenceManager;
@@ -14,7 +13,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -26,14 +24,10 @@ import ar.rulosoft.mimanganu.services.SingleDownload.Status;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
+import static ar.rulosoft.mimanganu.utils.Paths.generateBasePath;
+
 public class DownloadPoolService extends Service implements StateChangeListener {
 
-    private final static int[] illegalChars = {
-            34, 60, 62, 124,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-            58, 42, 63, 92, 47
-    };
     public static int SLOTS = 2;
     public static DownloadPoolService actual = null;
     public static ArrayList<ChapterDownload> chapterDownloads = new ArrayList<>();
@@ -45,9 +39,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
     private static boolean resetN;
     private static boolean resetE;
 
-    static {
-        Arrays.sort(illegalChars);
-    }
 
     public int slots = SLOTS;
     private int mNotifyID = (int) System.currentTimeMillis();
@@ -74,12 +65,12 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                             if (dc.status == DownloadStatus.ERROR) {
                                 dc.chapter.deleteImages(activity);
                                 chapterDownloads.remove(dc);
-                                dc = null;
-                                ChapterDownload ndc = new ChapterDownload(chapter);
                                 if (mDownloadsChangesListener != null) {
                                     mDownloadsChangesListener.onChapterRemoved(i);
                                     mDownloadsChangesListener.onChapterAdded(reading, dc);
                                 }
+                                dc = null;
+                                ChapterDownload ndc = new ChapterDownload(chapter);
                                 if (reading) {
                                     chapterDownloads.add(0, ndc);
                                 } else {
@@ -90,7 +81,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                                     chapterDownloads.remove(dc);
                                     if (mDownloadsChangesListener != null) {
                                         mDownloadsChangesListener.onChapterRemoved(i);
-                                        mDownloadsChangesListener.onChapterAdded(reading, dc);
+                                        mDownloadsChangesListener.onChapterAdded(true, dc);
                                     }
                                     chapterDownloads.add(0, dc);
                                 }
@@ -173,33 +164,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
 
     public static void detachListener(int cid) {
         attachListener(null, cid);
-    }
-
-    public static String generateBasePath(ServerBase serverBase, Manga manga, Chapter chapter, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String dir = prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(serverBase.getServerName()) + "/" +
-                cleanFileName(manga.getTitle()).trim() + "/" + cleanFileName(chapter.getTitle()).trim();
-    }
-
-    public static String generateBasePath(ServerBase serverBase, Manga manga, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        String dir = prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath());
-        return dir + "/MiMangaNu/" + cleanFileName(serverBase.getServerName()).trim() + "/" +
-                cleanFileName(manga.getTitle()).trim();
-    }
-
-    private static String cleanFileName(String badFileName) {
-        StringBuilder cleanName = new StringBuilder();
-        for (int i = 0; i < badFileName.length(); i++) {
-            int c = (int) badFileName.charAt(i);
-            if (Arrays.binarySearch(illegalChars, c) < 0) {
-                cleanName.append((char) c);
-            }
-        }
-        return cleanName.toString();
     }
 
     public static void setDownloadListener(DownloadListener nDownloadListener) {
@@ -503,4 +467,6 @@ public class DownloadPoolService extends Service implements StateChangeListener 
         }
         return false;
     }
+
+
 }

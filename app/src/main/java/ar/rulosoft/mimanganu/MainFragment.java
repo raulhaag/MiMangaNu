@@ -49,6 +49,7 @@ import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
+import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -516,7 +517,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                         public void onClick(DialogInterface dialog, int which) {
                             DownloadPoolService.forceStop(manga.getId());
                             ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
-                            String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
+                            String path = Paths.generateBasePath(serverBase, manga, getActivity());
                             Util.getInstance().deleteRecursive(new File(path));
                             Database.deleteManga(getActivity(), manga.getId());
                             adapter.remove(manga);

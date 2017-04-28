@@ -50,6 +50,7 @@ import ar.rulosoft.mimanganu.services.DownloadListener;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.StateChangeListener;
+import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
@@ -276,7 +277,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             ArrayList<String> pages = new ArrayList<>();
             if (!(mServerBase instanceof FromFolder)) {
                 for (int i = 0; i < mChapter.getPages(); i++) {
-                    pages.add(DownloadPoolService.generateBasePath(mServerBase, mManga, mChapter, getActivity()) + "/" + (i + 1) + ".jpg");
+                    pages.add(Paths.generateBasePath(mServerBase, mManga, mChapter, getActivity()) + "/" + (i + 1) + ".jpg");
                 }
             } else {
                 for (int i = 0; i < mChapter.getPages(); i++) {

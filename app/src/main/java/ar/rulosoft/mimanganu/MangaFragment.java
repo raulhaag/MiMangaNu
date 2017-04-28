@@ -613,7 +613,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             try {
                 if (c.getPages() < 1) s.chapterInit(c);
             } catch (Exception e) {
-                error = Log.getStackTraceString(e);
+                if (e.getMessage() != null) {
+                    error = e.getMessage();
+                } else {
+                    error = "NullPointerException";
+                }
                 Log.e(TAG, "ChapterInit error", e);
             } finally {
                 publishProgress();
@@ -654,7 +658,11 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
                     } catch (Exception e) {
                         Log.e(TAG, "Exception", e);
-                        error = Log.getStackTraceString(e);
+                        if (e.getMessage() != null) {
+                            error = e.getMessage();
+                        } else {
+                            error = "NullPointerException";
+                        }
                         Util.getInstance().toast(getContext(), error);
                     }
                 }
