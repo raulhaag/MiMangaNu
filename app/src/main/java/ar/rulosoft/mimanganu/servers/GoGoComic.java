@@ -16,6 +16,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 /**
  * Created by xtj-9182 on 13.02.2016.
  */
+@Deprecated
 class GoGoComic extends ServerBase {
     private static String HOST = "http://gogocomic.net";
     private static String[] genre = new String[]{

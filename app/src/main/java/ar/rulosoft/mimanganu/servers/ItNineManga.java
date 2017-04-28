@@ -123,9 +123,8 @@ class ItNineManga extends ServerBase {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
-        String source = nav.get(
-                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
+        String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        Pattern p = Pattern.compile("src=\"(http://img\\.it\\.ninemanga\\.com/it_manga/[^\"]+?)\"");
         Matcher m = p.matcher(source);
         String imagenes = "";
         while (m.find()) {
@@ -143,10 +142,10 @@ class ItNineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
+    @Deprecated
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile(
-                "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
+        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
         Matcher matcher = p.matcher(source);
         while (matcher.find()) {
             Manga manga = new Manga(ITNINEMANGA, matcher.group(3), HOST + matcher.group(1), false);

@@ -85,7 +85,7 @@ class ReadMangaToday extends ServerBase {
         while (mangas.isEmpty()) {
             //Log.d("RMT", "web: " + web);
             String source = getNavigatorAndFlushParameters().get(web);
-            Pattern pattern = Pattern.compile("<a href=\"(http://www.readmanga.today/[^\"]+?)\">(.+?)</a>");
+            Pattern pattern = Pattern.compile("<a href=\"(http://www\\.readmanga\\.today/[^\"]+?)\">(.+?)</a>");
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
                 if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {

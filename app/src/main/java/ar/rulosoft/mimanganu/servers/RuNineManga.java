@@ -121,9 +121,8 @@ class RuNineManga extends ServerBase {
         Navigator nav = getNavigatorWithNeededHeader();
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
-        String source = nav.get(
-                chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("<img class=\"manga_pic.+?src=\"([^\"]+)");
+        String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        Pattern p = Pattern.compile("src=\"(http://www\\.mangarussia\\.com/comics/[^\"]+?)\"");
         Matcher m = p.matcher(source);
         String images = "";
         while (m.find()) {
@@ -139,6 +138,7 @@ class RuNineManga extends ServerBase {
         chapter.setPages(Integer.parseInt(nop));
     }
 
+    @Deprecated
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
