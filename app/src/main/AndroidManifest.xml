@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ar.rulosoft.mimanganu">
+    package="ar.rulosoft.mimanganu"
+    android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -36,8 +37,8 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".utils.NotificationDeleteIntentReceiver"></receiver>
-        <receiver android:name=".utils.CancelIntentReceiver"></receiver>
+        <receiver android:name=".utils.NotificationDeleteIntentReceiver" />
+        <receiver android:name=".utils.CancelIntentReceiver" />
         <receiver android:name=".utils.NetworkUtilsAndReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
@@ -58,7 +59,7 @@
 
         <activity
             android:name=".MessageActivity"
-            android:theme="@style/Theme.Transparent"></activity>
+            android:theme="@style/Theme.Transparent" />
     </application>
 
 </manifest>
