@@ -245,6 +245,9 @@ public abstract class ServerBase {
         manga.setId(mangaDb.getId());
         this.loadMangaInformation(manga, true);
         this.loadChapters(manga, false);
+        if (fast && manga.getChapters().size() > 21) {
+            manga.getChapters().subList(0, manga.getChapters().size() - 20).clear();
+        }
         manga.getChapters().removeAll(mangaDb.getChapters());
         ArrayList<Chapter> simpleList = manga.getChapters();
         for (Chapter chapter : simpleList) {
