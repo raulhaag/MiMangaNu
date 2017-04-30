@@ -124,7 +124,7 @@ public class EsNineManga extends ServerBase {
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
         String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("src=\"(http://es\\.taadd\\.com/es_manga/[^\"]+?)\"");
+        Pattern p = Pattern.compile("src=\"(http://[^\"]+taadd\\.com/es_manga/[^\"]+?)\"");
         Matcher m = p.matcher(source);
         String imagenes = "";
         while (m.find()) {
