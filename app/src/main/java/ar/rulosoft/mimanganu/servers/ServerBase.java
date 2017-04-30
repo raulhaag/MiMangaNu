@@ -8,7 +8,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -246,34 +245,8 @@ public abstract class ServerBase {
         manga.setId(mangaDb.getId());
         this.loadMangaInformation(manga, true);
         this.loadChapters(manga, false);
-        ArrayList<Chapter> simpleList = new ArrayList<>();
-        if (fast && manga.getChapters().size() > 20) {
-            int chapters = manga.getChapters().size();
-            List<Chapter> f20 = manga.getChapters().subList(chapters - 20, chapters);
-            for (Chapter chapter : f20) {
-                boolean add = true;
-                for (Chapter chapterDB : mangaDb.getChapters()) {
-                    if (chapter.getPath().equals(chapterDB.getPath())) {
-                        add = false;
-                        break;
-                    }
-                }
-                if (add)
-                    simpleList.add(chapter);
-            }
-        } else {
-            for (Chapter chapter : manga.getChapters()) {
-                boolean add = true;
-                for (Chapter chapterDB : mangaDb.getChapters()) {
-                    if (chapter.getPath().equals(chapterDB.getPath())) {
-                        add = false;
-                        break;
-                    }
-                }
-                if (add)
-                    simpleList.add(chapter);
-            }
-        }
+        manga.getChapters().removeAll(mangaDb.getChapters());
+        ArrayList<Chapter> simpleList = manga.getChapters();
         for (Chapter chapter : simpleList) {
             chapter.setMangaID(mangaDb.getId());
             chapter.setReadStatus(Chapter.NEW);

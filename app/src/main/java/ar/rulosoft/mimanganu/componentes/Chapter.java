@@ -88,6 +88,11 @@ public class Chapter {
         return title;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Chapter) && this.path.equalsIgnoreCase(((Chapter) obj).path);
+    }
+
     public int getPagesRead() {
         return pagesRead;
     }
@@ -275,5 +280,6 @@ public class Chapter {
         public static void setManga_title(String title) {
             manga_title = title;
         }
+
     }
 }
