@@ -243,8 +243,12 @@ public abstract class ServerBase {
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
-        this.loadMangaInformation(manga, true);
-        this.loadChapters(manga, false);
+        try {
+            this.loadMangaInformation(manga, true);
+            this.loadChapters(manga, false);
+        } catch (Exception e) {
+            return 0;
+        }
         if (fast && manga.getChapters().size() > 21) {
             manga.getChapters().subList(0, manga.getChapters().size() - 20).clear();
         }
