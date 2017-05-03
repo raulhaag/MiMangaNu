@@ -107,6 +107,55 @@ public class Navigator {
         }
     }
 
+    public String getWithTimeout(String web) throws Exception {
+        return this.getWithTimeout(web, "", connectionTimeout, writeTimeout, readTimeout);
+    }
+
+    public String getWithTimeout(String web, String referer) throws Exception {
+        return this.getWithTimeout(web, referer, connectionTimeout, writeTimeout, readTimeout);
+    }
+
+    private String getWithTimeout(String web, String referer, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
+        // copy will share the connection pool with httpclient
+        // NEVER create new okhttp clients that aren't sharing the same connection pool
+        // see: https://github.com/square/okhttp/issues/2636
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+        if (!referer.isEmpty()) {
+            addHeader("Referer", referer);
+        }
+
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        int i = 0;
+        int timeout = 250;
+        while (!response.isSuccessful()) {
+            Log.i("Nav", "source is empty, waiting for " + timeout + " ms before retrying ...");
+            i++;
+            Thread.sleep(timeout);
+            response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+            if (i < 5)
+                timeout += 250;
+            else
+                timeout += 500;
+            if (i == 8) {
+                Log.i("Nav", "couldn't get a source from " + web + " :(");
+                break;
+            }
+        }
+        if (response.isSuccessful()) {
+            Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
+            return formatResponseBody(response.body());
+        }
+        else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+            response.body().close();
+            return "";
+        }
+    }
+
     public InputStream getStream(String web) throws Exception {
         // copy will share the connection pool with httpclient
         // NEVER create new okhttp clients that aren't sharing the same connection pool
@@ -131,7 +180,7 @@ public class Navigator {
         return this.getAndReturnResponseCodeOnFailure(web, connectionTimeout, writeTimeout, readTimeout);
     }
 
-    public String getAndReturnResponseCodeOnFailure(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
+    private String getAndReturnResponseCodeOnFailure(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
         // copy will share the connection pool with httpclient
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
@@ -205,23 +254,6 @@ public class Navigator {
     }
 
     @Deprecated
-    public String get(String web, int timeout) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(timeout, TimeUnit.SECONDS)
-                .readTimeout(timeout, TimeUnit.SECONDS)
-                .build();
-
-        Response response = copy.newCall(new Request.Builder().url(web).build()).execute();
-
-        if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
-        }
-    }
-
     public String get(String ip, String path, String host) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
@@ -291,6 +323,7 @@ public class Navigator {
         }
     }
 
+    @Deprecated
     public String post(String ip, String path, String host) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
