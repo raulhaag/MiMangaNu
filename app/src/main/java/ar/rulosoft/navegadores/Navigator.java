@@ -119,22 +119,15 @@ public class Navigator {
         // copy will share the connection pool with httpclient
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
-        OkHttpClient copy;
-        if (referer.isEmpty()) {
-            copy = httpClient.newBuilder()
-                    .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                    .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                    .readTimeout(readTimeout, TimeUnit.SECONDS)
-                    .build();
-        } else {
-            copy = httpClient.newBuilder()
-                    .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                    .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                    .readTimeout(readTimeout, TimeUnit.SECONDS)
-                    .build();
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+        if (!referer.isEmpty()) {
             addHeader("Referer", referer);
         }
-
+        
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         int i = 0;
         int timeout = 250;
