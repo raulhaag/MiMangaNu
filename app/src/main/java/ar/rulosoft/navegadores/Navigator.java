@@ -127,7 +127,7 @@ public class Navigator {
         if (!referer.isEmpty()) {
             addHeader("Referer", referer);
         }
-        
+
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         int i = 0;
         int timeout = 250;
@@ -254,23 +254,6 @@ public class Navigator {
     }
 
     @Deprecated
-    public String get(String web, int timeout) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(timeout, TimeUnit.SECONDS)
-                .readTimeout(timeout, TimeUnit.SECONDS)
-                .build();
-
-        Response response = copy.newCall(new Request.Builder().url(web).build()).execute();
-
-        if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
-        }
-    }
-
     public String get(String ip, String path, String host) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
@@ -340,6 +323,7 @@ public class Navigator {
         }
     }
 
+    @Deprecated
     public String post(String ip, String path, String host) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
