@@ -60,7 +60,7 @@ public class EsMangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get("http://es.mangahere.co/mangalist/");
+        String data = getNavigatorAndFlushParameters().getWithTimeout("http://es.mangahere.co/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
@@ -74,7 +74,7 @@ public class EsMangaHere extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher matcher;
-            String data = getNavigatorAndFlushParameters().get((manga.getPath()));
+            String data = getNavigatorAndFlushParameters().getWithTimeout((manga.getPath()));
 
             // portada
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
@@ -121,31 +121,14 @@ public class EsMangaHere extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source;
-        source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-        int i = 0;
-        int timeout = 250;
-        while (source.isEmpty()) {
-            Log.i("ESMH", "source is empty, waiting for " + timeout + " ms before retrying ...");
-            i++;
-            Thread.sleep(timeout);
-            source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-            if (!source.isEmpty())
-                Log.i("ESMH", "timeout of " + timeout + " ms worked got a source");
-            timeout += 250;
-            if (i == 4) {
-                Log.i("ESMH", "couldn't get a source from EsMangaHere :(");
-                break;
-            }
-        }
+        String source = getNavigatorAndFlushParameters().getWithTimeout(this.getPagesNumber(chapter, page));
         return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp).*?)\"", source, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath(), chapter.getPath());
-        String pages = getFirstMatch(PATRON_LAST, data, "Error: no se pudo obtener el numero de paginas");
+        String source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath(), chapter.getPath());
+        String pages = getFirstMatch(PATRON_LAST, source, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(pages));
     }
 
@@ -157,7 +140,7 @@ public class EsMangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get("http://es.mangahere.co/site/search?name=" + term);
+        String data = getNavigatorAndFlushParameters().getWithTimeout("http://es.mangahere.co/site/search?name=" + term);
         Pattern p = Pattern.compile("<dt>		<a href=\"(http://es.mangahere.co/manga/.+?)\".+?'>(.+?)<");
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
@@ -170,7 +153,7 @@ public class EsMangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = "http://es.mangahere.co/" + categoriasV[filters[0][0]] + pageNumber + ".htm" + ordenM[filters[1][0]];
-        String data = getNavigatorAndFlushParameters().get(web);
+        String data = getNavigatorAndFlushParameters().getWithTimeout(web);
         Pattern p = Pattern.compile(PATRON_CAPS_VIS);
         Matcher matcher = p.matcher(data);
         while (matcher.find()) {
