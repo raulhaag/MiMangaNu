@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -120,9 +121,24 @@ public class EsMangaHere extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-        return getFirstMatch(PATRON_IMAGEN, data, "Error: no se pudo obtener el enlace a la imagen");
+        String source;
+        source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+        int i = 0;
+        int timeout = 250;
+        while (source.isEmpty()) {
+            Log.i("ESMH", "source is empty, waiting for " + timeout + " ms before retrying ...");
+            i++;
+            Thread.sleep(timeout);
+            source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+            if (!source.isEmpty())
+                Log.i("ESMH", "timeout of " + timeout + " ms worked got a source");
+            timeout += 250;
+            if (i == 4) {
+                Log.i("ESMH", "couldn't get a source from EsMangaHere :(");
+                break;
+            }
+        }
+        return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp).*?)\"", source, "Error: no se pudo obtener el enlace a la imagen");
     }
 
     @Override

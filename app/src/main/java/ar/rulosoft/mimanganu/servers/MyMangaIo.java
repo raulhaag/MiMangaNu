@@ -91,7 +91,7 @@ public class MyMangaIo extends ServerBase {
             while (m.find()) {
                 /*Log.d("MyMIO", "1: " + m.group(1));
                 Log.d("MyMIO", "2: " + m.group(2));*/
-                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/", "http://www.hitmanga.eu/"));
+                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/mangas/", "http://www.hitmanga.eu/"));
                 mc.addChapterFirst(manga);
             }
         }
@@ -121,9 +121,10 @@ public class MyMangaIo extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pages = getFirstMatch("(\\d+)</option></select></span>", data, "Error: Could not get the number of pages");
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        /*Log.d("MYIO", "web: " + chapter.getPath());
+        Log.d("MYIO", "source: " + source);*/
+        String pages = getFirstMatch("<span>sur (\\d+)</span>", source, "Error: Could not get the number of pages"); //(\d+)</option></select></span>
         chapter.setPages(Integer.parseInt(pages));
     }
 
@@ -132,7 +133,7 @@ public class MyMangaIo extends ServerBase {
         Pattern p = Pattern.compile("<a href=\"(mangas/[^\"]+?)\">(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), HOST + m.group(1), false);
             manga.setImages("http://www.mymanga.io/images/mangas_thumb/" + getFirstMatchDefault("mangas/(.+?)/", manga.getPath(), "") + ".jpg");
             mangas.add(manga);
         }
