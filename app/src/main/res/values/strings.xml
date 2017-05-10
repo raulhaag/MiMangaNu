@@ -68,8 +68,6 @@
     <string name="max_texture_title">Maximum texture size</string>
     <string name="mejor_ajuste">Best fit</string>
     <string name="mitlic">MIT License</string>
-    <string name="new_manga_found">New manga found</string>
-    <string name="new_mangas_found">New mangas found</string>
     <string name="nobuscarupdate">Don\'t search for updates</string>
     <string name="nodisponible">N/A</string>
     <string name="no_scale">Original size</string>
@@ -94,7 +92,6 @@
     <string name="State_New">New</string>
     <string name="stay_awake_off">Stay awake off</string>
     <string name="stay_awake_on">Stay awake on</string>
-    <string name="title_activity_activity_lector">Reader</string>
     <string name="unwritable_folder">Unwritable folder.</string>
     <string name="update_settings_title">Update Settings</string>
     <string name="update_title">Update interval</string>
@@ -120,11 +117,9 @@
     <string name="more_options">More options</string>
     <string name="color_reader">Reader Color</string>
     <string name="color_reader_sub">The color in the reader mode</string>
-    <string name="title_activity_vertical_reader">Reader</string>
     <string name="read_next">Do you want to open the next chapter?</string>
     <string name="last_chapter">Currently this is the last chapter</string>
     <string name="genre">Genre</string>
-    <string name="search_for_updates">Search for updates</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>
     <string name="connection_timeout_summary">%s seconds</string>
@@ -147,7 +142,6 @@
     <string name="error_downloading_image">Error unable to download image</string>
     <string name="used_space">Storage size used by mangas</string>
     <string name="delete_on_chapter_change">Delete images?</string>
-    <string name="update_complete">Update complete</string>
     <string name="mgs_update_found">New chapters were found (%s)</string>
     <string name="close">Close</string>
     <string name="retry">Retry</string>
@@ -167,6 +161,7 @@
     <string name="download_next_chapter_automatically_title">Download next chapter</string>
     <string name="download_next_chapter_automatically_subtitle">While reading next chapter will be downloaded automatically</string>
     <string name="deleted">Deleted: %s</string>
+    <string name="deleted_no_var">Deleted</string>
     <string name="clear_cache_title">Clear cache</string>
     <string name="clear_cache_subtitle">Tap here to clear the cache. All cover images have to be redownloaded again.</string>
     <string name="misc_settings">Misc Settings</string>
@@ -235,7 +230,6 @@
     <string name="auto_import_path_title">Auto Import Path</string>
     <string name="auto_import_path_subtitle">Automatically import folders in the selected path as Mangas</string>
     <string name="chapter_download_errors">Chapter download errors:</string>
-    <string name="use_only_wifi_title_update">Use only Wifi for updates</string>
     <string name="vacuum_database_title">Vacuum Database</string>
     <string name="vacuum_database_subtitle">Tap here to vacuum the database. This will clean up the database and shrink it\'s file size. Please don\'t interrupt this operation while it\'s running.</string>
     <string name="vacuum_database_notification_text">Cleaning up Database</string>
@@ -258,9 +252,13 @@
     <string name="app_update">App update</string>
     <string name="is_available">is available</string>
     <string name="custom_language">Custom language</string>
-    <string name="new_version">New Version</string>
     <string name="download">Download</string>
-    <string name="downloading_update">Downloading...</string>
     <string name="update_error">Error downloading update</string>
     <string name="server_dead_message">There is nothing to do here, this server is dead.</string>
+    <string name="clear_specific_cookies_title">Clear specific cookies</string>
+    <string name="clear_specific_cookies_subtitle">Tap here to clear cookies that contain a given word</string>
+    <string name="clear_all_cookies_title">Clear all cookies</string>
+    <string name="clear_all_cookies_subtitle">Tap here to clear all cookies. Keep in mind that for sites that require authentication like Batoto you\'ll need to login again.</string>
+    <string name="disable_internet_detection_title">Disable internet detection</string>
+    <string name="disable_internet_detection_subtitle">By default MiMangaNu will try to detect if there\'s an Internet connection and disable some functionality if it thinks that there is no internet.</string>
 </resources>

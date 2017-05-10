@@ -71,7 +71,6 @@
     <string name="sentido_lectura">Leserichtung</string>
     <string name="server">Server</string>
     <string name="sinopsis">Zusammenfassung</string>
-    <string name="title_activity_activity_lector">Reader</string>
     <string name="unwritable_folder">Nicht beschreibbarer Ordner.</string>
     <string name="vercomolista">Als Liste anzeigen</string>
     <string name="vertical">Vertikal</string>
@@ -85,8 +84,6 @@
     <string name="keep_on">Halte Bildschirm wach</string>
     <string name="lock_on_landscape">Bildschirm auf Querformat gesperrt</string>
     <string name="lock_on_portrait">Bildschirm auf Hochformat gesperrt</string>
-    <string name="new_manga_found">Neue Manga gefunden.</string>
-    <string name="new_mangas_found">Neue Mangas gefunden.</string>
     <string name="no_update">Nicht auf Updates überprüfen</string>
     <string name="nodisponible">N/A</string>
     <string name="notification_sound_subtitle">Bei neu gefundener Kapitel</string>
@@ -120,7 +117,6 @@
     <string name="genre">Genre</string>
     <string name="read_next">Nächstes Kapitel öffnen?</string>
     <string name="last_chapter">Dies ist zurzeit das letzte Kapitel</string>
-    <string name="search_for_updates">Nach neuen Kapiteln suchen</string>
     <string name="update_thread_background_title">Update Threads (Hintergrund)</string>
     <string name="update_thread_manual_title">Update Threads (Manuell)</string>
     <string name="update_threads_background_summary">Anzahl Threads im Hintergrund: %s</string>
@@ -138,7 +134,6 @@
     <string name="remove_downloaded">Heruntergeladene entfernen</string>
     <string name="resume_downloads">Download fortsetzen</string>
     <string name="retry_errors">Retry Fehler</string>
-    <string name="update_complete">Update abgeschlossen</string>
     <string name="mgs_update_found">Neue Kapitel wurden gefunden (%s)</string>
     <string name="close">Schließen</string>
     <string name="retry">Wiederholen</string>
@@ -151,7 +146,6 @@
     <string name="used_space">Speicherbedarf der Mangas</string>
     <string name="sort_as_added_to_db_asc">Wie in DB hinzugefügt (asc)</string>
     <string name="sort_as_added_to_db_desc">Wie in DB hinzugefügt (desc)</string>
-    <string name="title_activity_vertical_reader">Reader</string>
     <string name="error_while_adding_chapter_or_manga_to_db">Fehler beim Hinzufügen von \"%s\" zur Datenbank</string>
     <string name="error_while_updating_chapter_or_manga_in_db">Fehler beim Aktualisieren von \"%s\" in Datenbank</string>
     <string name="seamless_chapter_transitions_title">Nahtlose Übergänge</string>
@@ -181,7 +175,6 @@
     <string name="already_on_db">Manga bereits hinzugefügt</string>
     <string name="downloading">Lade herunter: </string>
     <string name="finishing_update">Beende Update &#8230;</string>
-    <string name="use_only_wifi_title_update">Verwende nur WiFi (für Updates)</string>
     <string name="update_search_cancelled">Update-Suche abgebrochen</string>
     <string name="search_result">Such Resultat für \"%s\" auf</string>
     <string name="include_finished_manga_title">Beendete einbeziehen</string>
@@ -235,4 +228,22 @@
     <string name="this_server_needs_an_account">Diese Seite benötigt einen Account. Siehe die Account Einstellungen.</string>
     <string name="batoto_lang_chapters_title">Batoto Kapitel Sprache</string>
     <string name="batoto_lang_chapters_subtitle">Nur Kapitel die der ausgewählten Sprache entsprechen werden von Batoto hinzugefügt. Auswahl: %s</string>
+    <string name="accounts">Accounts</string>
+    <string name="app_update">App update</string>
+    <string name="apply">Anwenden</string>
+    <string name="chapter">Kapitel</string>
+    <string name="custom_language">Spezifische Sprache</string>
+    <string name="deleted_no_var">Gelöscht</string>
+    <string name="download_all_chapters">Lade alle Kapitel herunter</string>
+    <string name="extra_server_settings">Zusätzliche Server Einstellungen</string>
+    <string name="is_available">ist verfügbar</string>
+    <string name="last_update"></string>
+    <string name="password">Passwort</string>
+    <string name="reset">Zurücksetzen</string>
+    <string name="server_dead_message">Dieser Server ist tod. Es gibt nichts zu tun.</string>
+    <string name="update_error">Fehler beim herunterladen des updates</string>
+    <string name="user">Nutzer</string>
+    <string name="vacuum_database_notification_text">Säubere Datenbank</string>
+    <string name="vacuum_database_subtitle"></string>
+    <string name="vacuum_database_title">Säubere Datenbank</string>
 </resources>

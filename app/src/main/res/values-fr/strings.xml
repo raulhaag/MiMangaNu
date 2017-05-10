@@ -1,7 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Mi Manga Nu</string>
-    <string name="title_activity_activity_lector">Lecteur</string>
     <string name="action_ajustar_a">Ajuster</string>
     <string name="descargas">Téléchargements</string>
     <string name="datosde">Détails</string>
@@ -76,8 +75,6 @@
     <string name="nodisponible">N/D</string>
     <string name="sinopsis">Synopsis</string>
     <string name="State_New">Nouveau</string>
-    <string name="new_manga_found">Nouveau manga trouvé.</string>
-    <string name="new_mangas_found">Nouveaux mangas trouvés.</string>
     <string name="keep_on">Garder l\'écran allumé</string>
     <string name="rotation">Rotation</string>
     <string name="no_update">Ne pas rechercher de mises à jour</string>
@@ -120,7 +117,6 @@
     <string name="genre">Genre</string>
     <string name="read_next">Voulez-vous lire le chapitre suivant ?</string>
     <string name="last_chapter">C\'est le dernier chapitre actuellement.</string>
-    <string name="search_for_updates">Rechercher des mises à jour</string>
     <string name="update_thread_manual_title">Mise à jour (Manuel)</string>
     <string name="update_thread_background_title">Mise à jour (Automatique)</string>
     <string name="update_threads_background_summary">Nombre de mises à jour simultanées : %s</string>
@@ -138,12 +134,10 @@
     <string name="remove_downloaded">Retirer téléchargé</string>
     <string name="resume_downloads">Reprendre les téléchargements</string>
     <string name="retry_errors">Réessayez : erreurs</string>
-    <string name="update_complete">Mise à jour terminée</string>
     <string name="close">Fermer</string>
     <string name="retry">Réessayer</string>
     <string name="storage_permission_denied">Stockage L\'autorisation est requise pour MiMangaNu fonctionnent correctement</string>
     <string name="no_new_updates_found">Aucun nouveau chapitre trouvé :(</string>
-    <string name="title_activity_vertical_reader">Lecteur</string>
     <string name="delete_on_chapter_change">Supprimez les images ?</string>
     <string name="error_downloading_image">Erreur Impossible de télécharger l\'image</string>
     <string name="mgs_update_found">De nouveaux chapitres ont été trouvés (%s)</string>
@@ -180,7 +174,6 @@
     <string name="misc_settings">Paramètres Divers</string>
     <string name="edit_server_list">Modifier la liste des serveurs</string>
     <string name="downloading">Téléchargement: </string>
-    <string name="use_only_wifi_title_update">Utiliser uniquement WiFi (pour les mises à jour)</string>
     <string name="update_search_cancelled">Mise à jour recherche annulée</string>
     <string name="search_result">résultat pour \"%s\" sur</string>
     <string name="include_finished_manga_title">Inclure Manga Fini</string>
