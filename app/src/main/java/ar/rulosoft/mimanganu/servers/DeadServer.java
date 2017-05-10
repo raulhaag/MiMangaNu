@@ -1,9 +1,9 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.SparseArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -22,16 +22,16 @@ public class DeadServer extends ServerBase {
     }
 
     public static String getServerName(Manga m) {
-        // before remove deprecated add the correct id/name here
-        HashMap<Integer, String> deathServers = new HashMap<>();
-        deathServers.put(LECTUREENLIGNE, "LectureEnLigne");
-        deathServers.put(ESMANGA, "EsManga");
-        deathServers.put(GOGOCOMIC, "GoGoComic");
-        deathServers.put(MANGATUBE, "Manga-tube");
-        deathServers.put(READCOMICSTV, "ReadComicsTV");
-        deathServers.put(STARKANACOM, "Starkana");
-        deathServers.put(TUSMANGAS, "TusMangasOnline");
-        return deathServers.get(m.getServerId());
+        // before removing deprecated Servers add the correct id/name here
+        SparseArray<String> deadServers = new SparseArray<>();
+        deadServers.put(LECTUREENLIGNE, "LectureEnLigne");
+        deadServers.put(ESMANGA, "EsManga");
+        deadServers.put(GOGOCOMIC, "GoGoComic");
+        deadServers.put(MANGATUBE, "Manga-tube");
+        deadServers.put(READCOMICSTV, "ReadComicsTV");
+        deadServers.put(STARKANACOM, "Starkana");
+        deadServers.put(TUSMANGAS, "TusMangasOnline");
+        return deadServers.get(m.getServerId());
     }
 
     @Override

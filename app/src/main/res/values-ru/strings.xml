@@ -68,8 +68,6 @@
     <string name="max_texture_title">Максимальный размер текстур</string>
     <string name="mejor_ajuste">Заполнять автоматически</string>
     <string name="mitlic">MIT Лицензия</string>
-    <string name="new_manga_found">Найдена новая манга.</string>
-    <string name="new_mangas_found">Найдены новые манги</string>
     <string name="no_scale">Оригинальный размер</string>
     <string name="no_update">Не проверять обновления</string>
     <string name="nobuscarupdate">Не искать обновления</string>
@@ -93,7 +91,6 @@
     <string name="sinopsis">Содержимое</string>
     <string name="stay_awake_off">Не выключать</string>
     <string name="stay_awake_on">Выключать</string>
-    <string name="title_activity_activity_lector">Чтение</string>
     <string name="ui_settings">Настройки интерфейса</string>
     <string name="unwritable_folder">Директория только для чтения</string>
     <string name="update_settings_title">Настройки обновления</string>
@@ -120,7 +117,6 @@
     <string name="genre">жанр</string>
     <string name="last_chapter">В настоящее время это последняя глава</string>
     <string name="read_next">Вы хотите, чтобы открыть следующую главу?</string>
-    <string name="search_for_updates">В поисках новых глав</string>
     <string name="update_thread_background_title">Обновление темы (фон)</string>
     <string name="update_thread_manual_title">Обновление темы (ручные)</string>
     <string name="update_threads_background_summary">Сумма обновления нитей: %s</string>
@@ -138,12 +134,10 @@
     <string name="remove_downloaded">Удалить загруженных</string>
     <string name="resume_downloads">Резюме скачивали</string>
     <string name="retry_errors">Повторите ошибки</string>
-    <string name="update_complete">Обновление завершено</string>
     <string name="close">близко</string>
     <string name="retry">Повторить попытку</string>
     <string name="storage_permission_denied">Разрешение хранения требуется для MiMangaNu для правильной работы</string>
     <string name="no_new_updates_found">Ни одна новая глава не найдено :(</string>
-    <string name="title_activity_vertical_reader">Чтение</string>
     <string name="delete_on_chapter_change">Удаление изображений ?</string>
     <string name="error_downloading_image">Ошибка не удалось загрузить изображение</string>
     <string name="mgs_update_found">Новые главы были найдены (%s)</string>
@@ -180,7 +174,6 @@
     <string name="misc_settings">Настройки Разное</string>
     <string name="edit_server_list">Редактирование списка серверов</string>
     <string name="downloading">Скачивание: </string>
-    <string name="use_only_wifi_title_update">Используйте только WiFi (для обновления)</string>
     <string name="update_search_cancelled">поиск Обновление отменено</string>
     <string name="search_result">результат для \"%s\" на</string>
     <string name="include_finished_manga_title">Включить Конец Манга</string>

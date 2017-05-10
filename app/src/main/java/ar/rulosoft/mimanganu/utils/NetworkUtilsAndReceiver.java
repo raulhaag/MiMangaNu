@@ -26,73 +26,82 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 public class NetworkUtilsAndReceiver extends BroadcastReceiver {
 
     public enum ConnectionStatus {UNCHECKED, NO_INET_CONNECTED, NO_WIFI_CONNECTED, CONNECTED}
-
     public static ConnectionStatus connectionStatus = ConnectionStatus.UNCHECKED; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
     public static boolean ONLY_WIFI;
 
     public static boolean isConnectedNonDestructive(@NonNull Context context) {
-        boolean result;
-        switch (connectionStatus) {
-            case UNCHECKED:
-                if (ONLY_WIFI) {
-                    result = isWifiConnected(context);
-                    if (result) {
-                        connectionStatus = ConnectionStatus.CONNECTED;
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!pm.getBoolean("disable_internet_detection", false)) {
+            boolean result;
+            switch (connectionStatus) {
+                case UNCHECKED:
+                    if (ONLY_WIFI) {
+                        result = isWifiConnected(context);
+                        if (result) {
+                            connectionStatus = ConnectionStatus.CONNECTED;
+                        } else {
+                            connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
+                        }
+                        return result;
                     } else {
-                        connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
+                        result = _isConnected(context);
+                        if (result) {
+                            connectionStatus = ConnectionStatus.CONNECTED;
+                        } else {
+                            connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
+                        }
+                        return result;
                     }
-                    return result;
-                } else {
-                    result = _isConnected(context);
-                    if (result) {
-                        connectionStatus = ConnectionStatus.CONNECTED;
-                    } else {
-                        connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
-                    }
-                    return result;
-                }
-            case NO_WIFI_CONNECTED:
-                return false;
-            case NO_INET_CONNECTED:
-                return false;
-            case CONNECTED:
-                return true;
-            default:
-                return true;
+                case NO_WIFI_CONNECTED:
+                    return false;
+                case NO_INET_CONNECTED:
+                    return false;
+                case CONNECTED:
+                    return true;
+                default:
+                    return true;
+            }
+        } else {
+            return true;
         }
     }
 
     public static boolean isConnected(@NonNull Context context) throws Exception {
-        boolean result;
-        switch (connectionStatus) {
-            case UNCHECKED:
-                if (ONLY_WIFI) {
-                    result = isWifiConnected(context);
-                    if (result) {
-                        connectionStatus = ConnectionStatus.CONNECTED;
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+        if (!pm.getBoolean("disable_internet_detection", false)) {
+            boolean result;
+            switch (connectionStatus) {
+                case UNCHECKED:
+                    if (ONLY_WIFI) {
+                        result = isWifiConnected(context);
+                        if (result) {
+                            connectionStatus = ConnectionStatus.CONNECTED;
+                        } else {
+                            connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
+                            throw new NoWifiException(context);
+                        }
+                        return result;
                     } else {
-                        connectionStatus = ConnectionStatus.NO_WIFI_CONNECTED;
-                        throw new NoWifiException(context);
+                        result = _isConnected(context);
+                        if (result) {
+                            connectionStatus = ConnectionStatus.CONNECTED;
+                        } else {
+                            connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
+                            throw new NoConnectionException(context);
+                        }
+                        return result;
                     }
-                    return result;
-                } else {
-                    result = _isConnected(context);
-                    if (result) {
-                        connectionStatus = ConnectionStatus.CONNECTED;
-                    } else {
-                        connectionStatus = ConnectionStatus.NO_INET_CONNECTED;
-                        throw new NoConnectionException(context);
-                    }
-                    return result;
-                }
-            case NO_WIFI_CONNECTED:
-                throw new NoWifiException(context);
-            case NO_INET_CONNECTED:
-                throw new NoConnectionException(context);
-            case CONNECTED:
-                return true;
-            default:
-                return true;
+                case NO_WIFI_CONNECTED:
+                    throw new NoWifiException(context);
+                case NO_INET_CONNECTED:
+                    throw new NoConnectionException(context);
+                case CONNECTED:
+                    return true;
+                default:
+                    return true;
+            }
+        } else {
+            return true;
         }
     }
 
@@ -169,19 +178,24 @@ public class NetworkUtilsAndReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+        SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
         connectionStatus = ConnectionStatus.UNCHECKED;
 
-        if (isWifiConnected(context) || isMobileConnected(context)) {
-            Log.d("NUAR", "onRec Connected");
-            MainActivity.isConnected = true;
+        if (!pm.getBoolean("disable_internet_detection", false)) {
+            if (isWifiConnected(context) || isMobileConnected(context)) {
+                Log.d("NUAR", "onRec Connected");
+                MainActivity.isConnected = true;
+            } else {
+                Log.d("NUAR", "onRec Disconnected");
+                MainActivity.isConnected = false;
+            }
         } else {
-            Log.d("NUAR", "onRec Disconnected");
-            MainActivity.isConnected = false;
+            MainActivity.isConnected = true;
         }
 
         try {
             if (isConnected(context)) {
-                SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
+                //SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
                 long last_check = pm.getLong(AlarmReceiver.LAST_CHECK, 0);
                 long current_time = System.currentTimeMillis();
                 long interval = Long.parseLong(pm.getString("update_interval", "0"));
