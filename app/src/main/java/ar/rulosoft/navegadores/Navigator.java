@@ -136,17 +136,18 @@ public class Navigator {
             i++;
             Thread.sleep(timeout);
             response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-            if (i < 5)
+            if (i < 3)
                 timeout += 250;
             else
                 timeout += 500;
-            if (i == 8) {
+            if (i == 5) {
                 Log.i("Nav", "couldn't get a source from " + web + " :(");
                 break;
             }
         }
         if (response.isSuccessful()) {
-            Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
+            if(timeout > 250)
+                Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
             return formatResponseBody(response.body());
         }
         else {

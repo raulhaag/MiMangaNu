@@ -2,7 +2,6 @@
 <resources>
 
     <string name="app_name">Mi Manga Nu</string>
-    <string name="title_activity_activity_lector">Lettore</string>
     <string name="action_ajustar_a">Adatta</string>
     <string name="descargas">Scaricati</string>
     <string name="datosde">Dettagli</string>
@@ -66,8 +65,6 @@
     <string name="quitar_seleccion">Nessuna selezione</string>
     <string name="quitar_descarga">Impossibile annullare lo scaricamento attivo</string>
     <string name="estado">Stato</string>
-    <string name="new_manga_found">Nuovi manga trovati.</string>
-    <string name="new_mangas_found">Nuovi manga trovati.</string>
     <string name="scroll_speed">Velocità di scorrimento</string>
     <string name="theme_title">Utilizzare tema scuro</string>
     <string name="autor">Autore</string>
@@ -121,7 +118,6 @@
     <string name="genre">Genere</string>
     <string name="last_chapter">Attualmente questo è l\'ultimo capitolo</string>
     <string name="read_next">Si vuole aprire il prossimo capitolo?</string>
-    <string name="search_for_updates">Alla ricerca di nuovi capitoli</string>
     <string name="update_thread_manual_title">Aggiornamenti paralleli (manuale)</string>
     <string name="update_thread_background_title">Aggiornamenti paralleli (sfondo)</string>
     <string name="update_threads_background_summary">Numero di thread di aggiornamento: %s</string>
@@ -139,12 +135,10 @@
     <string name="remove_downloaded">Rimuovere scaricato</string>
     <string name="resume_downloads">Riprendere gli scaricamenti</string>
     <string name="retry_errors">Riprova errori</string>
-    <string name="update_complete">Aggiornamento completo</string>
     <string name="close">vicino</string>
     <string name="retry">Riprova</string>
     <string name="storage_permission_denied">Il permesso di archiviazione è necessario per MiMangaNu per funzionare correttamente</string>
     <string name="no_new_updates_found">Nessun nuovo capitolo trovato :(</string>
-    <string name="title_activity_vertical_reader">Lettore</string>
     <string name="delete_on_chapter_change">Eliminare le immagini ?</string>
     <string name="error_downloading_image">Errore in grado di scaricare immagine</string>
     <string name="mgs_update_found">Nuovi capitoli sono stati trovati (%s)</string>
@@ -181,8 +175,6 @@
     <string name="misc_settings">Impostazioni varie</string>
     <string name="edit_server_list">Modifica elenco dei server</string>
     <string name="downloading">Scaricando: </string>
-    <string name="use_only_wifi_title_update"> Utilizzare solo WiFi (per gli aggiornamenti)</string>
-    <string name="update_message"></string>
     <string name="update_search_cancelled">Aggiornamento della ricerca annullato</string>
     <string name="search_result">risultato per \"%s\" su</string>
     <string name="include_finished_manga_title">Includi Manga Finito</string>

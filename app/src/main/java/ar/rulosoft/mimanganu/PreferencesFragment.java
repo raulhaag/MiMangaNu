@@ -180,8 +180,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return true;
             }
         });
-        Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+
         /* enable / disable auto_import_path depending on the state of auto_import */
+        Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
         if (prefs.getBoolean("auto_import", false)) {
             autoImportPath.setEnabled(true);
         } else {
@@ -263,7 +264,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (newValue.equals("Custom")) {
                     LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View rootView = inflater.inflate(R.layout.batoto_custom_lang_dialog, null);
+                    View rootView = inflater.inflate(R.layout.simple_input_dialog, null);
                     final EditText CustomLang = (EditText) rootView.findViewById(R.id.txtCustomLang);
                     AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                     dialogBuilder.setTitle(getString(R.string.custom_language));
@@ -406,6 +407,73 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
                 t0.start();
                 t1.start();
+                return true;
+            }
+        });
+
+        final Preference prefClearSpecificCookies = getPreferenceManager().findPreference("clear_specific_cookies");
+        prefClearSpecificCookies.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Preference clearSpecificCookies = getPreferenceManager().findPreference("clear_specific_cookies");
+                clearSpecificCookies.setEnabled(false);
+
+                LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View rootView = inflater.inflate(R.layout.simple_input_dialog, null);
+                final EditText SpecificCookiesToClear = (EditText) rootView.findViewById(R.id.txtCustomLang);
+                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
+                dialogBuilder.setTitle("Cookies to clear contain");
+                dialogBuilder.setView(rootView);
+                dialogBuilder.setPositiveButton("Ok", null);
+                dialogBuilder.setNegativeButton(getString(R.string.cancel), null);
+                AlertDialog dialog = dialogBuilder.create();
+                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(final DialogInterface dialog) {
+                        Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                        accept.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Thread t0 = new Thread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Util.getInstance().removeSpecificCookies(getContext(), SpecificCookiesToClear.getText().toString());
+                                    }
+                                });
+                                t0.start();
+
+                                dialog.dismiss();
+                            }
+                        });
+                        Button cancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                        cancel.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                dialog.dismiss();
+                            }
+                        });
+                    }
+                });
+                dialog.show();
+
+                return true;
+            }
+        });
+
+        final Preference prefClearAllCookies = getPreferenceManager().findPreference("clear_all_cookies");
+        prefClearAllCookies.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Preference clearAllCookies = getPreferenceManager().findPreference("clear_all_cookies");
+                clearAllCookies.setEnabled(false);
+                Thread t0 = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Util.getInstance().removeAllCookies(getContext());
+                    }
+                });
+                t0.start();
+
                 return true;
             }
         });
