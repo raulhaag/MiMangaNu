@@ -237,13 +237,11 @@
     <string name="download_all_chapters">Lade alle Kapitel herunter</string>
     <string name="extra_server_settings">Zusätzliche Server Einstellungen</string>
     <string name="is_available">ist verfügbar</string>
-    <string name="last_update"></string>
     <string name="password">Passwort</string>
     <string name="reset">Zurücksetzen</string>
     <string name="server_dead_message">Dieser Server ist tod. Es gibt nichts zu tun.</string>
     <string name="update_error">Fehler beim herunterladen des updates</string>
     <string name="user">Nutzer</string>
     <string name="vacuum_database_notification_text">Säubere Datenbank</string>
-    <string name="vacuum_database_subtitle"></string>
     <string name="vacuum_database_title">Säubere Datenbank</string>
 </resources>
