@@ -63,12 +63,75 @@ public class Util {
     private Util() {
     }
 
-    private static class LazyHolder {
-        private static final Util utilInstance = new Util();
-    }
-
     public static Util getInstance() {
         return LazyHolder.utilInstance;
+    }
+
+    private static void downloadAppUpdate(final AppCompatActivity activity, final String url, final ProgressBar bar, final TextView desc, final DialogInterface dialog) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    File updateFileCache = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
+                    if (updateFileCache.exists()) updateFileCache.delete();
+                    final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
+                            .connectTimeout(3, TimeUnit.SECONDS)
+                            .readTimeout(3, TimeUnit.SECONDS)
+                            .build();
+                    Response response = client.newCall(new Request.Builder().url(url).build()).execute();
+                    InputStream inputStream = response.body().byteStream();
+                    FileOutputStream outputStream = new FileOutputStream(updateFileCache);
+                    long lengthOfFile = response.body().contentLength();
+                    int count;
+                    byte data[] = new byte[1024 * 6];
+                    long total = 0;
+                    while ((count = inputStream.read(data)) != -1) {
+                        total += count;
+                        int tProgress = (int) ((total * 100) / lengthOfFile);
+                        if (tProgress > appUpdateDownloadProgress) {
+                            appUpdateDownloadProgress = tProgress;
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String downloading_text = activity.getString(R.string.downloading) + " " + appUpdateDownloadProgress + "%";
+                                    desc.setText(downloading_text);
+                                    bar.setIndeterminate(false);
+                                    bar.setProgress(appUpdateDownloadProgress);
+                                }
+                            });
+                        }
+                        outputStream.write(data, 0, count);
+                        outputStream.flush();
+                    }
+                    outputStream.close();
+                    inputStream.close();
+                    activity.startActivity(getUpdateIntent(updateFileCache));
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.dismiss();
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("Util", "Error while downloading update");
+                    e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity, R.string.update_error, Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private static Intent getUpdateIntent(File updateFileCache) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(updateFileCache), "application/vnd.android.package-archive");
+        return intent;
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -468,6 +531,86 @@ public class Util {
         new CheckForAppUpdates(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    public void removeSpecificCookies(Context context, String cookie) {
+        int count = 0, subCount = 0, n = 0;
+        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
+        Map cookieMap = cookies.getAll();
+        Iterator entries = cookieMap.entrySet().iterator();
+        String[] cookiesForToast = {"", "", "", "", ""}; // 125 cookies ought to be enough for anyone. ~Bill Gates
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            Object key = entry.getKey();
+            //Object value = entry.getValue();
+            if (key.toString().contains(cookie)) {
+                /*Log.d("Util", "k: " + key.toString());
+                Log.d("Util", "v: " + value.toString());*/
+                if (subCount > 24) {
+                    n++;
+                    if (n > 4)
+                        n = 4;
+                    subCount = 0;
+                }
+                cookiesForToast[n] = cookiesForToast[n] + key.toString() + "\n";
+                cookies.edit().remove(key.toString()).apply();
+                count++;
+                subCount++;
+            }
+        }
+        if (count > 0)
+            for (int i = 0; i <= n; i++) {
+                toast(context, context.getString(R.string.deleted_no_var) + ": \n" + cookiesForToast[i]);
+            }
+        if (count == 1)
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookie");
+        else
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
+        try {
+            new Navigator(context);// to refresh cookies on navigator
+        } catch (Exception e) {
+            //todo
+        }
+    }
+
+    public void removeAllCookies(Context context) {
+        int count = 0, subCount = 0, n = 0;
+        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
+        Map cookieMap = cookies.getAll();
+        Iterator entries = cookieMap.entrySet().iterator();
+        String[] cookiesForToast = {"", "", "", "", ""}; // 125 cookies ought to be enough for anyone. ~Bill Gates
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            Object key = entry.getKey();
+            if (subCount > 24) {
+                n++;
+                if (n > 4)
+                    n = 4;
+                subCount = 0;
+            }
+            cookiesForToast[n] = cookiesForToast[n] + key.toString() + "\n";
+            cookies.edit().remove(key.toString()).apply();
+            count++;
+            subCount++;
+        }
+        if (count > 0)
+            for (int i = 0; i <= n; i++) {
+                toast(context, context.getString(R.string.deleted_no_var) + ": \n" + cookiesForToast[i]);
+            }
+        if (count == 1)
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookie");
+        else
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
+
+        try {
+            new Navigator(context);// to refresh cookies navigator
+        } catch (Exception e) {
+            //todo
+        }
+    }
+
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
+    }
+
     private class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
         private String error = "";
         private Context context;
@@ -580,141 +723,6 @@ public class Util {
                 Log.e("Util", error);
             super.onPostExecute(result);
         }
-    }
-
-    private static void downloadAppUpdate(final AppCompatActivity activity, final String url, final ProgressBar bar, final TextView desc, final DialogInterface dialog) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    File updateFileCache = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
-                    if (updateFileCache.exists()) updateFileCache.delete();
-                    final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
-                            .connectTimeout(3, TimeUnit.SECONDS)
-                            .readTimeout(3, TimeUnit.SECONDS)
-                            .build();
-                    Response response = client.newCall(new Request.Builder().url(url).build()).execute();
-                    InputStream inputStream = response.body().byteStream();
-                    FileOutputStream outputStream = new FileOutputStream(updateFileCache);
-                    long lengthOfFile = response.body().contentLength();
-                    int count;
-                    byte data[] = new byte[1024 * 6];
-                    long total = 0;
-                    while ((count = inputStream.read(data)) != -1) {
-                        total += count;
-                        int tProgress = (int) ((total * 100) / lengthOfFile);
-                        if (tProgress > appUpdateDownloadProgress) {
-                            appUpdateDownloadProgress = tProgress;
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    String downloading_text = activity.getString(R.string.downloading) + " " + appUpdateDownloadProgress + "%";
-                                    desc.setText(downloading_text);
-                                    bar.setIndeterminate(false);
-                                    bar.setProgress(appUpdateDownloadProgress);
-                                }
-                            });
-                        }
-                        outputStream.write(data, 0, count);
-                        outputStream.flush();
-                    }
-                    outputStream.close();
-                    inputStream.close();
-                    activity.startActivity(getUpdateIntent(updateFileCache));
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dialog.dismiss();
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e("Util", "Error while downloading update");
-                    e.printStackTrace();
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(activity, R.string.update_error, Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        }
-                    });
-                }
-                return null;
-            }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    private static Intent getUpdateIntent(File updateFileCache) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(updateFileCache), "application/vnd.android.package-archive");
-        return intent;
-    }
-
-    public void removeSpecificCookies(Context context, String cookie) {
-        int count = 0, subCount = 0, n = 0;
-        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
-        Map cookieMap = cookies.getAll();
-        Iterator entries = cookieMap.entrySet().iterator();
-        String[] cookiesForToast = {"", "", "", "", ""}; // 125 cookies ought to be enough for anyone. ~Bill Gates
-        while (entries.hasNext()) {
-            Map.Entry entry = (Map.Entry) entries.next();
-            Object key = entry.getKey();
-            //Object value = entry.getValue();
-            if (key.toString().contains(cookie)) {
-                /*Log.d("Util", "k: " + key.toString());
-                Log.d("Util", "v: " + value.toString());*/
-                if (subCount > 24) {
-                    n++;
-                    if (n > 4)
-                        n = 4;
-                    subCount = 0;
-                }
-                cookiesForToast[n] = cookiesForToast[n] + key.toString() + "\n";
-                cookies.edit().remove(key.toString()).apply();
-                count++;
-                subCount++;
-            }
-        }
-        if (count > 0)
-            for (int i = 0; i <= n; i++) {
-                toast(context, context.getString(R.string.deleted_no_var) + ": \n" + cookiesForToast[i]);
-            }
-        if (count == 1)
-            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookie");
-        else
-            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
-    }
-
-    public void removeAllCookies(Context context) {
-        int count = 0, subCount = 0, n = 0;
-        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
-        Map cookieMap = cookies.getAll();
-        Iterator entries = cookieMap.entrySet().iterator();
-        String[] cookiesForToast = {"", "", "", "", ""}; // 125 cookies ought to be enough for anyone. ~Bill Gates
-        while (entries.hasNext()) {
-            Map.Entry entry = (Map.Entry) entries.next();
-            Object key = entry.getKey();
-            //Object value = entry.getValue();
-            /*Log.d("Util", "k: " + key.toString());
-            Log.d("Util", "v: " + value.toString());*/
-            if (subCount > 24) {
-                n++;
-                if (n > 4)
-                    n = 4;
-                subCount = 0;
-            }
-            cookiesForToast[n] = cookiesForToast[n] + key.toString() + "\n";
-            cookies.edit().remove(key.toString()).apply();
-            count++;
-            subCount++;
-        }
-        if (count > 0)
-            for (int i = 0; i <= n; i++) {
-                toast(context, context.getString(R.string.deleted_no_var) + ": \n" + cookiesForToast[i]);
-            }
-        if (count == 1)
-            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookie");
-        else
-            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
     }
 
 }
