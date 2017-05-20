@@ -76,7 +76,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
-    private MisMangasAdapter adapter;
+    private MisMangasAdapter mMAdapter;
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
@@ -263,8 +263,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                 "SELECT id " +
                                 "FROM manga " +
                                 "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                        adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                        grid.setAdapter(adapter);
+                        mMAdapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                        grid.setAdapter(mMAdapter);
                     } catch (Exception e) {
                         Log.e("MF", "Exception", e);
                         ACRA.getErrorReporter().handleException(e);
@@ -471,9 +471,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 default:
                     break;
             }
-            if (adapter == null || sort_val < 2 || mangaList.size() > adapter.getCount() || force) {
-                adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                grid.setAdapter(adapter);
+            if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getCount() || force) {
+                mMAdapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                grid.setAdapter(mMAdapter);
             }
         } else {
             Log.i(TAG, "grid was null");
@@ -486,7 +486,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         inflater.inflate(R.menu.gridview_mismangas, menu);
         MenuItem m = menu.findItem(R.id.noupdate);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (adapter.getItem(info.position).isFinished()) {
+        if (mMAdapter.getItem(info.position).isFinished()) {
             m.setTitle(getActivity().getResources().getString(R.string.buscarupdates));
         } else {
             m.setTitle(getActivity().getResources().getString(R.string.nobuscarupdate));
@@ -515,7 +515,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             String path = Paths.generateBasePath(serverBase, manga, getActivity());
                             Util.getInstance().deleteRecursive(new File(path));
                             Database.deleteManga(getActivity(), manga.getId());
-                            adapter.remove(manga);
+                            mMAdapter.remove(manga);
                             Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
                             dialog.dismiss();
                         }
@@ -577,7 +577,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (serverRecAdapter.actionMode == null) {
                     Bundle bundle = new Bundle();
-                    bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
+                    bundle.putInt(MainFragment.MANGA_ID, mMAdapter.getItem(position).getId());
                     MangaFragment mangaFragment = new MangaFragment();
                     mangaFragment.setArguments(bundle);
                     //In rare cases State loss occurs
