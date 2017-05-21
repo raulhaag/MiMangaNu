@@ -1,6 +1,5 @@
 package ar.rulosoft.mimanganu;
 
-import android.support.test.InstrumentationRegistry;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
@@ -10,8 +9,6 @@ import org.junit.Test;
 
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.servers.EsNineManga;
-import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -27,16 +24,18 @@ public class testNine {
 
     @Test
     public void testImages() throws Exception {
-        Chapter c = new Chapter("ss", "http://es.ninemanga.com/chapter/Shokugeki%20no%20Soma/559993.html");
-        ServerBase s = new EsNineManga(InstrumentationRegistry.getContext());
         Navigator nav = Navigator.navigator;
+        //nav.addHeader("Referer", "");
+        //nav.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0");
+        nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        nav.addHeader("Referer", c.getPath());
-        String r = Navigator.navigator.get("http://es.ninemanga.com/show_ads/google/");
-        s.chapterInit(c);
-        String st = s.getImageFrom(c, 1);
-        Log.i("Aaaaaaaaaaaa", st);
-
+        //nav.addHeader("Accept-Encoding", "deflate");
+        //nav.addHeader("Cookie", "counter=YToyOntzOjU6ImFib3V0IjtpOjE0OTUzNzY1MDY7czoyNzoic2hpbmlnYW1pc2FtYXRvNG5pbm5va2Fub2pvIjtpOjE0OTUzNzY3NTY7fQ%3D%3D; PHPSESSID=ouk65c56jdhghsn7porasee3o3; _ga=GA1.2.2020475924.1495373987; _gid=GA1.2.1567975044.1495376588; newsMM=1; cookieconsent_dismissed=yes");
+        //nav.addHeader("DNT", "1");
+        //nav.addHeader("Connection", "keep-alive");
+        //nav.addHeader("Upgrade-Insecure-Requests", "1");
+        String r = nav.get("http://www.mymanga.io/mangas/shinigamisamato4ninnokanojo/");
+        Log.i("Aaaaaaaaaaaa", r);
     }
 
 }

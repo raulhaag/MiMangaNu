@@ -2,6 +2,10 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -12,6 +16,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by Raul on 04/12/2015.
@@ -74,11 +79,11 @@ public class MyMangaIo extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().size() == 0 || forceReload) {
-            String data = getNavigatorAndFlushParameters().get(manga.getPath());
+            String data = getNavigatorWithNeededHeader().get(manga.getPath());
             // Front
             manga.setImages("http://www.mymanga.io/" + getFirstMatchDefault("<img src=\"(images/mangas_thumb/.+?)\"", data, ""));
             // Summary
-            manga.setSynopsis(getFirstMatchDefault("Synopsis</h1><p>(.+?)</p>", data, defaultSynopsis).replaceAll("<.+?>", ""));
+            manga.setSynopsis(getFirstMatchDefault("Synopsis</h1>\\s+<p>(.+?)</p>", data, defaultSynopsis).replaceAll("<.+?>", ""));
             // Status
             manga.setFinished(!data.contains("en cours</a>"));
             // Author
@@ -86,12 +91,12 @@ public class MyMangaIo extends ServerBase {
             // Genre
             manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genre\\s*:\\s*(.+?)</tr>", data, "")).toString());
             // Chapter
-            Pattern p = Pattern.compile("<div class=\"clearfix\">.+?href=\"(http://www\\.mymanga\\.io/[^\"]+?)\" title=\"([^\"]+?)\""); //<div class=clearfix>.+?<a href="(http://www.mymanga.io/[^"]+)".+?chapter>(.+?)<
+            Pattern p = Pattern.compile("href=\"([^\"]+)\"[^>]+title=\"Li.+?<span class=\"chapter\">(.+?)<");
             Matcher m = p.matcher(data);
             while (m.find()) {
                 /*Log.d("MyMIO", "1: " + m.group(1));
                 Log.d("MyMIO", "2: " + m.group(2));*/
-                Chapter mc = new Chapter(m.group(2).trim(), m.group(1).replace("http://www.mymanga.io/mangas/", "http://www.hitmanga.eu/"));
+                Chapter mc = new Chapter(m.group(2).trim(), m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -115,13 +120,13 @@ public class MyMangaIo extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+        data = getNavigatorWithNeededHeader().get(this.getPagesNumber(chapter, page));
         return getFirstMatch("<img src=\"(.+?)\"", data, "Error: Could not get the link to the image");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        String source = getNavigatorWithNeededHeader().get(chapter.getPath());
         /*Log.d("MYIO", "web: " + chapter.getPath());
         Log.d("MYIO", "source: " + source);*/
         String pages = getFirstMatch("<span>sur (\\d+)</span>", source, "Error: Could not get the number of pages"); //(\d+)</option></select></span>
@@ -148,7 +153,7 @@ public class MyMangaIo extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String web = "http://www.mymanga.io/search?name=" + URLEncoder.encode(term, "UTF-8");
-        String data = getNavigatorAndFlushParameters().get(web);
+        String data = getNavigatorWithNeededHeader().get(web);
         return getMangasFromSource(data);
     }
 
@@ -176,8 +181,25 @@ public class MyMangaIo extends ServerBase {
             web = web + subGenreV[filters[3][i]];
         }
         web = web + "&chapter_span=0&chapter_count=&last_update=&like_span=0&like=&dislike_span=0&dislike=&search=Rechercher";
-        String source = getNavigatorAndFlushParameters().get(web);
-        return getMangasFromSource(source);
+        Navigator nav = getNavigatorWithNeededHeader();
+        nav.addHeader("Referer", web);
+        JSONArray jsonArray = new JSONArray(getNavigatorAndFlushParameters().get("http://www.mymanga.io/js/search-data.js").replaceAll("(var\\s[^\\[]+)", ""));
+        return getMangasJsonArray(jsonArray);
+    }
+
+    ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
+        ArrayList<Manga> result = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject object = jsonArray.getJSONObject(i);
+                Manga m = new Manga(getServerID(), object.getString("label"), object.getString("value"), false);
+                m.setImages("http://www.mymanga.io/images/mangas_thumb/" + getFirstMatchDefault("mangas/(.+?)/", m.getPath(), "") + ".jpg");
+                result.add(m);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
     }
 
     @Override
@@ -189,4 +211,11 @@ public class MyMangaIo extends ServerBase {
                 new ServerFilter("Sous-Genres", subGenre, ServerFilter.FilterType.MULTI)
         };
     }
+
+    public Navigator getNavigatorWithNeededHeader() throws Exception {
+        Navigator nav = new Navigator(context);
+        nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        return nav;
+    }
+
 }

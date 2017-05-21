@@ -16,8 +16,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 /**
  * Created by xtj-9182 on 21.02.2017.
  */
-/*Je suis Charlie
-* L'Assassin court toujours*/
+
 class JapScan extends ServerBase {
 
     public static String HOST = "http://www.japscan.com";

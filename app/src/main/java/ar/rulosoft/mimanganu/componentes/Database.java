@@ -92,7 +92,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 14;
+    private static int database_version = 15;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -776,6 +776,15 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
+    public static void vacuumDatabase(Context context) {
+        SQLiteDatabase database = getDatabase(context);
+        try {
+            database.execSQL("VACUUM");
+        } catch (Exception e) {
+            Log.e("Database", "Exception", e);
+        }
+    }
+
     @Override
     public void onCreate(SQLiteDatabase db) {
         if (context.getDatabasePath("mangas.db").exists() && !(doesTableExist(db, TABLE_MANGA))) {
@@ -805,6 +814,9 @@ public class Database extends SQLiteOpenHelper {
         }
         if(oldVersion < 14){
             db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_LAST_UPDATE + " TEXT DEFAULT 'N/A'");
+        }
+        if (oldVersion < 15) {
+            db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE INSTR(" + COL_CAP_PATH + ", 'hitmanga.eu') > 0");
         }
     }
 
@@ -841,14 +853,5 @@ public class Database extends SQLiteOpenHelper {
             cursor.close();
         }
         return false;
-    }
-
-    public static void vacuumDatabase(Context context) {
-        SQLiteDatabase database = getDatabase(context);
-        try {
-            database.execSQL("VACUUM");
-        } catch (Exception e) {
-            Log.e("Database", "Exception", e);
-        }
     }
 }
