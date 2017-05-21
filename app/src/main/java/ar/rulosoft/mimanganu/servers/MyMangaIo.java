@@ -46,13 +46,13 @@ public class MyMangaIo extends ServerBase {
             "Yaoi", "Yuri"
     };
     private static final String[] subGenreV = {
-            "&subgenre%5B5%5D=1", "&subgenre%5B23%5D=1", "&subgenre%5B3%5D=1", "&subgenre%5B10%5D=1",
-            "&subgenre%5B12%5D=1", "&subgenre%5B2%5D=1", "&subgenre%5B20%5D=1", "&subgenre%5B25%5D=1",
-            "&subgenre%5B19%5D=1", "&subgenre%5B6%5D=1", "&subgenre%5B30%5D=1", "&subgenre%5B26%5D=1",
-            "&subgenre%5B15%5D=1", "&subgenre%5B22%5D=1", "&subgenre%5B8%5D=1", "&subgenre%5B13%5D=1",
-            "&subgenre%5B1%5D=1", "&subgenre%5B21%5D=1", "&subgenre%5B29%5D=1", "&subgenre%5B17%5D=1",
-            "&subgenre%5B9%5D=1", "&subgenre%5B18%5D=1", "&subgenre%5B16%5D=1", "&subgenre%5B27%5D=1",
-            "&subgenre%5B11%5D=1", "&subgenre%5B28%5D=1", "&subgenre%5B24%5D=1"
+            "&subgenre%5B4%5D=1", "&subgenre%5B5%5D=1", "&subgenre%5B23%5D=1", "&subgenre%5B3%5D=1",
+            "&subgenre%5B10%5D=1", "&subgenre%5B12%5D=1", "&subgenre%5B2%5D=1", "&subgenre%5B20%5D=1",
+            "&subgenre%5B25%5D=1", "&subgenre%5B19%5D=1", "&subgenre%5B6%5D=1", "&subgenre%5B30%5D=1",
+            "&subgenre%5B26%5D=1", "&subgenre%5B15%5D=1", "&subgenre%5B22%5D=1", "&subgenre%5B8%5D=1",
+            "&subgenre%5B13%5D=1", "&subgenre%5B1%5D=1", "&subgenre%5B21%5D=1", "&subgenre%5B29%5D=1",
+            "&subgenre%5B17%5D=1", "&subgenre%5B9%5D=1", "&subgenre%5B18%5D=1", "&subgenre%5B16%5D=1",
+            "&subgenre%5B27%5D=1", "&subgenre%5B11%5D=1", "&subgenre%5B28%5D=1", "&subgenre%5B24%5D=1"
     };
     private static String HOST = "http://www.mymanga.io/";
     private static String[] orden = {
@@ -171,7 +171,7 @@ public class MyMangaIo extends ServerBase {
             web = web + statutV[filters[1][i]];
         }
         for (int i = 0; i < filters[2].length; i++) {
-            web = web + genre[filters[2][i]];
+            web = web + genreV[filters[2][i]];
         }
         for (int i = 0; i < filters[3].length; i++) {
             web = web + subGenreV[filters[3][i]];
