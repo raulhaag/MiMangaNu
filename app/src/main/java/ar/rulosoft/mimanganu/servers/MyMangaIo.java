@@ -2,10 +2,6 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -180,26 +176,10 @@ public class MyMangaIo extends ServerBase {
         for (int i = 0; i < filters[3].length; i++) {
             web = web + subGenreV[filters[3][i]];
         }
-        web = web + "&chapter_span=0&chapter_count=&last_update=&like_span=0&like=&dislike_span=0&dislike=&search=Rechercher";
         Navigator nav = getNavigatorWithNeededHeader();
-        nav.addHeader("Referer", web);
-        JSONArray jsonArray = new JSONArray(getNavigatorAndFlushParameters().get("http://www.mymanga.io/js/search-data.js").replaceAll("(var\\s[^\\[]+)", ""));
-        return getMangasJsonArray(jsonArray);
-    }
-
-    ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
-        ArrayList<Manga> result = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject object = jsonArray.getJSONObject(i);
-                Manga m = new Manga(getServerID(), object.getString("label"), object.getString("value"), false);
-                m.setImages("http://www.mymanga.io/images/mangas_thumb/" + getFirstMatchDefault("mangas/(.+?)/", m.getPath(), "") + ".jpg");
-                result.add(m);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
+        web = web + "&chapter_span=0&chapter_count=&last_update=&like_span=0&like=&dislike_span=0&dislike=&search=Rechercher";
+        String source = nav.get(web);
+        return getMangasFromSource(source);
     }
 
     @Override
