@@ -114,6 +114,7 @@ public class MangaPanda extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER);
         Matcher m = p.matcher(data);
         if (m.find()) {
+            manga.getChapters().clear();
             Pattern p1 = Pattern.compile(PATTERN_CHAPTER);
             Matcher m1 = p1.matcher(m.group(1));
             while (m1.find()) {
