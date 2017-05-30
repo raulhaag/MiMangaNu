@@ -40,7 +40,7 @@ class MangaKawaii extends ServerBase {
     public ArrayList<Manga> search(String search) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = "https://www.mangakawaii.com/liste-mangas-texte";
-        String source = getNavigatorAndFlushParameters().getWithServerClient(web);
+        String source = getNavigatorAndFlushParameters().get(web);
         Pattern pattern = Pattern.compile("href=\"(https://www\\.mangakawaii\\.com/manga/[^\"]+?)\" style=\"display: inline-block\"><h6 style=\"margin: 0\">([^\"]+?)</h6></a>"); //manga-list(.+?)</ul>
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {

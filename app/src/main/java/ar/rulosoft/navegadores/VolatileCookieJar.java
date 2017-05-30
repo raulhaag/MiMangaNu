@@ -10,7 +10,7 @@ import okhttp3.HttpUrl;
 
 public class VolatileCookieJar implements CookieJar {
     private final HashMap<HttpUrl, List<Cookie>> cookieStore = new HashMap<>();
-    private final ArrayList<Cookie> cookies = new ArrayList(); // just because only for login
+    private final ArrayList<Cookie> cookies = new ArrayList<>(); // just because only for login
 
     public boolean contain(String key) {
         for (Cookie c : cookies) {
