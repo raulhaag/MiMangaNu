@@ -95,10 +95,11 @@ class ReadComicOnline extends ServerBase {
         manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 defaultSynopsis)).toString());
+
         // Cover Image
         //Log.d("RCO", "m.gI: " + manga.getImages());
         if (manga.getImages() == null || manga.getImages().isEmpty()) {
-            String coverImage = getFirstMatchDefault("rel=\"image_src\" href=\"(.+?)\" + \"\"", source, "");
+            String coverImage = getFirstMatchDefault("src=\"(http[s]?://readcomiconline.to/Uploads/[^\"]+?|http[s]?://\\d+.bp.blogspot.com/[^\"]+?)\"", source, "");
             //Log.d("RCO", "cI: " + coverImage);
             if (!coverImage.isEmpty()) {
                 manga.setImages(coverImage);
