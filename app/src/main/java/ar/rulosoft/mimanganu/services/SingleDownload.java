@@ -58,19 +58,18 @@ public class SingleDownload implements Runnable {
                 long contentLength;
                 try {
                     OkHttpClient copy;
-                    if(referer){
-                        copy = Navigator.navigator.getHttpClient().newBuilder()
-                                .connectTimeout(3, TimeUnit.SECONDS)
-                                .readTimeout(3, TimeUnit.SECONDS)
-                                .addNetworkInterceptor(new RefererInterceptor(cd.chapter.getPath()))
-                                .build();
+                    Request request;
+                    copy = Navigator.navigator.getHttpClient().newBuilder()
+                            .connectTimeout(3, TimeUnit.SECONDS)
+                            .readTimeout(3, TimeUnit.SECONDS)
+                            .addNetworkInterceptor(new RefererInterceptor(cd.chapter.getPath()))
+                            .build();
+                    if (referer) {
+                        request = new Request.Builder().url(fromURL).addHeader("Referer", cd.chapter.getPath()).build();
                     } else {
-                        copy = Navigator.navigator.getHttpClient().newBuilder()
-                                .connectTimeout(3, TimeUnit.SECONDS)
-                                .readTimeout(3, TimeUnit.SECONDS)
-                                .build();
+                        request = new Request.Builder().url(fromURL).build();
                     }
-                    response = copy.newCall(new Request.Builder().url(fromURL).build()).execute();
+                    response = copy.newCall(request).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
                             changeStatus(Status.ERROR_404);
@@ -93,7 +92,8 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.RETRY);
                         try {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e1) {}
+                        } catch (InterruptedException e1) {
+                        }
                         continue;
                     } else {
                         changeStatus(Status.ERROR_WRITING_FILE);
@@ -106,7 +106,8 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.RETRY);
                         try {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e1) {}
+                        } catch (InterruptedException e1) {
+                        }
                         continue;
                     } else {
                         changeStatus(Status.ERROR_OPENING_FILE);
@@ -135,7 +136,8 @@ public class SingleDownload implements Runnable {
                     }
                     try {
                         Thread.sleep(3000);
-                    } catch (InterruptedException e1) {}
+                    } catch (InterruptedException e1) {
+                    }
                     Log.e("SingleDownload", "ERROR_TIMEOUT");
                 } finally {
                     boolean flaggedOk = false;
