@@ -273,7 +273,6 @@ public abstract class ServerBase {
 
         if (!simpleList.isEmpty())
             new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
         returnValue = simpleList.size();
 
         boolean changes = false;

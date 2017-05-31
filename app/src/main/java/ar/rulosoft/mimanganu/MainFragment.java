@@ -723,7 +723,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 for (int idx = 0; idx < mangaList.size(); idx++) {
                     if (MainActivity.isCancelled || Util.n > (48 - threads))
                         cancel(true);
-                    try {
+
                         final int idxNow = idx;
                         // If there is no ticket, sleep for 1 second and ask again
                         while (ticket < 1) {
@@ -733,7 +733,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                 Log.e(TAG, "Update sleep failure", e);
                             }
                         }
-                        ticket--;
+                    ticket--;
+                    try {
 
                         // If tickets were passed, create new requests
                         new Thread(new Runnable() {
@@ -759,6 +760,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
                     } catch (Exception e) {
                         error = Log.getStackTraceString(e);
+                    } finally {
+                        ticket++;
                     }
                 }
 

@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu;
+package ar.rulosoft.mimanganu.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -9,6 +9,8 @@ import android.view.View;
 
 import java.util.ArrayList;
 
+import ar.rulosoft.mimanganu.MainActivity;
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -66,6 +68,8 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     @Override
     protected Integer doInBackground(Void... params) {
         if (context != null && error.isEmpty()) {
+
+
             final boolean fast = pm.getBoolean("fast_update", true);
             ticket = threads;
 
@@ -76,7 +80,6 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
                     cancel(true);
-                try {
                     final int idxNow = idx;
                     // If there is no ticket, sleep for 1 second and ask again
                     while (ticket < 1) {
@@ -86,8 +89,8 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                             Log.e("ULT", "Update sleep failure", e);
                         }
                     }
-                    ticket--;
-
+                ticket--;
+                try {
                     // If tickets were passed, create new requests
                     new Thread(new Runnable() {
                         @Override
@@ -107,9 +110,10 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                             }
                         }
                     }).start();
-
                 } catch (Exception e) {
                     error = Log.getStackTraceString(e);
+                } finally {
+                    ticket++;
                 }
             }
 
