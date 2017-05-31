@@ -54,6 +54,7 @@ public abstract class ServerBase {
     static final int READMANGATODAY = 29;
     static final int TAADD = 30;
     static final int MANGASTREAM = 31;
+    static final int MANGAKAWAII = 32;
 
 
     static final int READCOMICONLINE = 1000;
@@ -151,6 +152,9 @@ public abstract class ServerBase {
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
+            case MANGAKAWAII:
+                serverBase = new MangaKawaii(context);
+                break;
             case READMANGATODAY:
                 serverBase = new ReadMangaToday(context);
                 break;
@@ -203,6 +207,7 @@ public abstract class ServerBase {
                 new RuNineManga(context),
                 new MyMangaIo(context),
                 new JapScan(context),
+                new MangaKawaii(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
                 new DeNineManga(context),
@@ -247,6 +252,7 @@ public abstract class ServerBase {
             this.loadMangaInformation(manga, true);
             this.loadChapters(manga, false);
         } catch (Exception e) {
+            e.printStackTrace();
             return 0;
         }
         if (fast && manga.getChapters().size() > 21) {
