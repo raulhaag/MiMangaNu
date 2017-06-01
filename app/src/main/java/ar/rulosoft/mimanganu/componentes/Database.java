@@ -816,7 +816,7 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_LAST_UPDATE + " TEXT DEFAULT 'N/A'");
         }
         if (oldVersion < 15) {
-            db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE INSTR(" + COL_CAP_PATH + ", 'hitmanga.eu') > 0");
+            db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_PATH + " LIKE '%hitmanga.eu%'");
         }
     }
 
