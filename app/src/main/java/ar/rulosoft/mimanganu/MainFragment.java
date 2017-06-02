@@ -52,6 +52,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 
 import static ar.rulosoft.mimanganu.services.AlarmReceiver.LAST_CHECK;
@@ -152,14 +153,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
 
             // App Update
-            long last_check = pm.getLong("last_app_update", 0);
-            long diff = System.currentTimeMillis() - last_check;
-            Log.i("MF", "diff: " + diff);
-            if (diff > 129600000) { // 36 Hours
-                pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
-                Util.getInstance().checkAppUpdates(getContext());
+            boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
+            if (onLatestAppVersion) {
+                long last_check = pm.getLong("last_app_update", 0);
+                long diff = System.currentTimeMillis() - last_check;
+                Log.i("MF", "diff: " + diff);
+                if (diff > 129600000) {
+                    pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
+                    UpdateUtil.checkAppUpdates(getContext());
+                }
+            } else {
+                UpdateUtil.checkAppUpdates(getContext());
             }
-
             MainActivity.coldStart = false;
         }
     }

@@ -243,6 +243,7 @@
     <string name="reset">Resetiar</string>
     <string name="user">Usuario</string>
     <string name="app_update">Actualizacion</string>
+    <string name="new_version">Nueva Versión</string>
     <string name="batoto_lang_chapters_subtitle">Batoto: solo los capitulos con el lenguaje seleccionado seran agregados. Elegido: %s</string>
     <string name="batoto_lang_chapters_title">Bototo idioma de capítulos</string>
     <string name="download_all_chapters">Descargar todos los capítulos</string>

@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -24,15 +23,10 @@ import android.text.Html;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,6 +46,8 @@ import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import static ar.rulosoft.mimanganu.MainActivity.pm;
 
 public class Util {
     public static int n = 0;
@@ -321,8 +317,8 @@ public class Util {
         notificationBuilder.setContentIntent(contentPendingIntent);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setDeleteIntent(deletePendingIntent);
-        if (MainActivity.pm != null) {
-            if (MainActivity.pm.getBoolean("update_sound", false))
+        if (pm != null) {
+            if (pm.getBoolean("update_sound", false))
                 notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         }
         ++n;
@@ -340,8 +336,8 @@ public class Util {
         } else {
             notification.flags = Notification.FLAG_AUTO_CANCEL;
         }
-        if (MainActivity.pm != null) {
-            if (MainActivity.pm.getBoolean("update_vibrate", false))
+        if (pm != null) {
+            if (pm.getBoolean("update_vibrate", false))
                 notification.defaults |= Notification.DEFAULT_VIBRATE;
         }
         notificationManager.notify(id, notification);
@@ -527,10 +523,6 @@ public class Util {
         }
     }
 
-    public void checkAppUpdates(Context context) {
-        new CheckForAppUpdates(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
     public void removeSpecificCookies(Context context, String cookie) {
         int count = 0, subCount = 0, n = 0;
         SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
@@ -610,119 +602,4 @@ public class Util {
     private static class LazyHolder {
         private static final Util utilInstance = new Util();
     }
-
-    private class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
-        private String error = "";
-        private Context context;
-
-        CheckForAppUpdates(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                if (Navigator.navigator == null)
-                    Navigator.navigator = new Navigator(context);
-                Navigator.navigator.flushParameter();
-                String source = Navigator.navigator.get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
-                final JSONObject jsonObject = new JSONObject(source);
-
-                int onlineVersionMinor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));
-                int onlineVersionMajor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"(\\d+)\\.\\d+\"", source, ""));
-                //String body = getFirstMatchDefault("\"body\": \"(.+?)\"", source, "").replaceAll("\\\\r\\\\n","").trim().replaceAll("  "," ");
-                final String download_url = getFirstMatchDefault("\"browser_download_url\": \"(.+?)\"", source, "");
-                String currentVersionTmp = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-                int currentVersionMinor = Integer.parseInt(getFirstMatchDefault("\\d+\\.(\\d+)", currentVersionTmp, ""));
-                int currentVersionMajor = Integer.parseInt(getFirstMatchDefault("(\\d+)\\.\\d+", currentVersionTmp, ""));
-
-                if (currentVersionMinor != onlineVersionMinor || currentVersionMajor != onlineVersionMajor) {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), new Intent(Intent.ACTION_VIEW, Uri.parse(download_url)), context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + onlineVersionMajor + "." + onlineVersionMinor + " " + context.getString(R.string.is_available));
-
-                    // displays update dialog
-                    ((AppCompatActivity) context).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                            View rootView = inflater.inflate(R.layout.dialog_update, null);
-                            final TextView desc = (TextView) rootView.findViewById(R.id.descrption);
-                            final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
-                            final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                            try {
-                                desc.setText(jsonObject.getString("body"));
-                                dialogBuilder.setTitle(context.getString(R.string.app_name) + " v" + jsonObject.getString("tag_name") + " " + context.getString(R.string.is_available)); //context.getString(R.string.new_version) + " " + jsonObject.getString("tag_name")
-                            } catch (JSONException e) {
-                                Log.e("Util", "Error reading source");
-                                e.printStackTrace();
-                            }
-                            dialogBuilder.setView(rootView);
-                            dialogBuilder.setPositiveButton(context.getString(R.string.download), null);
-                            dialogBuilder.setNegativeButton(context.getString(R.string.cancel), null);
-                            AlertDialog dialog = dialogBuilder.create();
-                            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                                @Override
-                                public void onShow(final DialogInterface dialog) {
-                                    final Button cancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                                    cancel.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            dialog.dismiss();
-                                        }
-                                    });
-                                    final Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                                    accept.setOnClickListener(new View.OnClickListener() {
-                                        @Override
-                                        public void onClick(View view) {
-                                            try {
-                                                AppCompatActivity activity = (AppCompatActivity) context;
-                                                activity.runOnUiThread(new Runnable() {
-                                                    @Override
-                                                    public void run() {
-                                                        ((AlertDialog) dialog).setCancelable(false);
-                                                        String init_download_text = context.getString(R.string.downloading) + " 0%";
-                                                        desc.setText(init_download_text);
-                                                        accept.setEnabled(false);
-                                                        cancel.setEnabled(false);
-                                                        progressBar.setVisibility(View.VISIBLE);
-                                                        progressBar.setIndeterminate(true);
-                                                    }
-                                                });
-                                                downloadAppUpdate(activity, download_url, progressBar, desc, dialog);
-                                            } catch (Exception e) {
-                                                Log.e("Util", "Error while starting download");
-                                                e.printStackTrace();
-                                            }
-                                        }
-                                    });
-                                }
-                            });
-                            dialog.show();
-                        }
-
-                    });
-
-                } else {
-                    Log.i("Util", "App is up to date. No update necessary");
-                }
-            } catch (Exception e) {
-                Log.e("Util", "checkAppUpdates Exception");
-                e.printStackTrace();
-                error = Log.getStackTraceString(e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if (!error.isEmpty())
-                Log.e("Util", error);
-            super.onPostExecute(result);
-        }
-    }
-
 }
