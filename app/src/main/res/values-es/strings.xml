@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.64:\n\t* Agregado MangaKawaii(fr).\n\t* Arreglado MyMangaIo.\n\t* Arreglado el contador de capitulos para algunos servers.\n\t* Arreglado imagen aleatoria cuando un cover no esta disponible.\n\t* Un monton de cambios en procesos de fondo.</string>
+    <string name="update_message">Cambios en v1.65:\n\t* Fix rápido se un error de la v1.64.\nCambios en v1.64:\n\t* Agregado MangaKawaii(fr).\n\t* Arreglado MyMangaIo.\n\t* Arreglado el contador de capitulos para algunos servers.\n\t* Arreglado imagen aleatoria cuando un cover no esta disponible.\n\t* Un monton de cambios en procesos de fondo.</string>
     <string name="app_name">Mi Manga Nu</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>

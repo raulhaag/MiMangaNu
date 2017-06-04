@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.64:\n\t* Added MangaKawaii(fr).\n\t* Fixed MyMangaIo.\n\t* Fixed Chapter counter for some servers.\n\t* Fixed random image problem on cover when cover unavailable.\n\t* Lot of background changes. </string>
+    <string name="update_message">Changes in v1.65:\n\t* Quick fix bug introduced in v1.64.\nChanges in v1.64:\n\t* Added MangaKawaii(fr).\n\t* Fixed MyMangaIo.\n\t* Fixed Chapter counter for some servers.\n\t* Fixed random image problem on cover when cover unavailable.\n\t* Lot of background changes. </string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

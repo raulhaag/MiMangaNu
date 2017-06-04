@@ -8,8 +8,8 @@ android {
         applicationId "ar.rulosoft.mimanganu"
         minSdkVersion 14
         targetSdkVersion 25
-        versionCode 64
-        versionName "1.64"
+        versionCode 65
+        versionName "1.65"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 

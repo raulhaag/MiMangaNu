@@ -33,7 +33,14 @@ Downloads
 
 Changelog
 ---------
-Changes in v1.64:
+
+Cambios en v1.65:
+* Fix rápido se un error de la v1.64.
+
+Changes in v1.65:
+* Quick fix bug introduced in v1.64.
+
+Cambios en v1.64:
 * Agregado MangaKawaii(fr).
 * Arreglado MyMangaIo.
 * Arreglado el contador de capitulos para algunos servers.
