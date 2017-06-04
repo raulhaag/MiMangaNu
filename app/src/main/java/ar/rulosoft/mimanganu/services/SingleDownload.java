@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.navegadores.Navigator;
-import ar.rulosoft.navegadores.RefererInterceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -62,7 +61,6 @@ public class SingleDownload implements Runnable {
                     copy = Navigator.navigator.getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)
                             .readTimeout(3, TimeUnit.SECONDS)
-                            .addNetworkInterceptor(new RefererInterceptor(cd.chapter.getPath()))
                             .build();
                     if (referer) {
                         request = new Request.Builder().url(fromURL).addHeader("Referer", cd.chapter.getPath()).build();
