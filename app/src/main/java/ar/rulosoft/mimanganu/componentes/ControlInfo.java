@@ -1,13 +1,17 @@
 package ar.rulosoft.mimanganu.componentes;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.support.annotation.UiThread;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
@@ -105,6 +109,20 @@ public class ControlInfo extends ScrollView implements Imaginable {
 
     public void setGenre(String genre) {
         this.genre.setText(genre);
+    }
+
+    @UiThread
+    public void enableTitleCopy(final Context context,final String name){
+        this.image.setClickable(true);
+        this.image.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("label", name);
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(context,R.string.title_copied,Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

@@ -255,6 +255,7 @@
     <string name="custom_language">Custom language</string>
     <string name="download">Download</string>
     <string name="update_error">Error downloading update</string>
+    <string name="title_copied">Title copied to clipboard</string>
     <string name="server_dead_message">There is nothing to do here, this server is dead.</string>
     <string name="clear_specific_cookies_title">Clear specific cookies</string>
     <string name="clear_specific_cookies_subtitle">Tap here to clear cookies that contain a given word</string>
