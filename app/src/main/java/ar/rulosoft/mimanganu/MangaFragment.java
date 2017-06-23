@@ -136,6 +136,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         mInfo = new ControlInfoNoScroll(getActivity());
         mListView.addHeaderView(mInfo);
         mInfo.setColor(MainActivity.darkTheme, colors[0]);
+        mInfo.enableTitleCopy(getActivity(),mManga.getTitle());
         ChapterAdapter.setColor(MainActivity.darkTheme, colors[1], colors[0]);
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override

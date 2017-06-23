@@ -262,4 +262,5 @@
     <string name="download">Download</string>
     <string name="downloading_update">Downloading...</string>
     <string name="update_error">Error downloading update</string>
+    <string name="title_copied">Title copied to clipboard</string>
 </resources>

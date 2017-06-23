@@ -260,5 +260,6 @@
     <string name="download">Descargar</string>
     <string name="downloading_update">Descargando...</string>
     <string name="update_error">Error al descargar actualización</string>
+    <string name="title_copied">Titulo copiado a portapapeles</string>
 </resources>
 

@@ -133,6 +133,7 @@ public class DetailsFragment extends Fragment {
         }
         manga = new Manga(id, title, path, false);
         manga.setImages(img);
+        data.enableTitleCopy(getActivity(),manga.getTitle());
         serverBase = ServerBase.getServer(id, getContext());
         imageLoader = new ImageLoader(getContext());
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
