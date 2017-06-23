@@ -5,50 +5,129 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.navegadores.Navigator;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static ar.rulosoft.mimanganu.MainActivity.pm;
 
 public class Util {
     public static int n = 0;
     private static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
     private static NotificationCompat.Builder notificationWithProgressbarBuilder;
     private static NotificationManager notificationManager;
+    private static int appUpdateDownloadProgress = 0;
 
     private Util() {
     }
 
-    private static class LazyHolder {
-        private static final Util utilInstance = new Util();
-    }
-
     public static Util getInstance() {
         return LazyHolder.utilInstance;
+    }
+
+    private static void downloadAppUpdate(final AppCompatActivity activity, final String url, final ProgressBar bar, final TextView desc, final DialogInterface dialog) {
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                try {
+                    File updateFileCache = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
+                    if (updateFileCache.exists()) updateFileCache.delete();
+                    final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
+                            .connectTimeout(3, TimeUnit.SECONDS)
+                            .readTimeout(3, TimeUnit.SECONDS)
+                            .build();
+                    Response response = client.newCall(new Request.Builder().url(url).build()).execute();
+                    InputStream inputStream = response.body().byteStream();
+                    FileOutputStream outputStream = new FileOutputStream(updateFileCache);
+                    long lengthOfFile = response.body().contentLength();
+                    int count;
+                    byte data[] = new byte[1024 * 6];
+                    long total = 0;
+                    while ((count = inputStream.read(data)) != -1) {
+                        total += count;
+                        int tProgress = (int) ((total * 100) / lengthOfFile);
+                        if (tProgress > appUpdateDownloadProgress) {
+                            appUpdateDownloadProgress = tProgress;
+                            activity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String downloading_text = activity.getString(R.string.downloading) + " " + appUpdateDownloadProgress + "%";
+                                    desc.setText(downloading_text);
+                                    bar.setIndeterminate(false);
+                                    bar.setProgress(appUpdateDownloadProgress);
+                                }
+                            });
+                        }
+                        outputStream.write(data, 0, count);
+                        outputStream.flush();
+                    }
+                    outputStream.close();
+                    inputStream.close();
+                    activity.startActivity(getUpdateIntent(updateFileCache));
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dialog.dismiss();
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e("Util", "Error while downloading update");
+                    e.printStackTrace();
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity, R.string.update_error, Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    });
+                }
+                return null;
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private static Intent getUpdateIntent(File updateFileCache) {
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(Uri.fromFile(updateFileCache), "application/vnd.android.package-archive");
+        return intent;
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -238,8 +317,8 @@ public class Util {
         notificationBuilder.setContentIntent(contentPendingIntent);
         notificationBuilder.setAutoCancel(true);
         notificationBuilder.setDeleteIntent(deletePendingIntent);
-        if (MainActivity.pm != null) {
-            if (MainActivity.pm.getBoolean("update_sound", false))
+        if (pm != null) {
+            if (pm.getBoolean("update_sound", false))
                 notificationBuilder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
         }
         ++n;
@@ -257,8 +336,8 @@ public class Util {
         } else {
             notification.flags = Notification.FLAG_AUTO_CANCEL;
         }
-        if (MainActivity.pm != null) {
-            if (MainActivity.pm.getBoolean("update_vibrate", false))
+        if (pm != null) {
+            if (pm.getBoolean("update_vibrate", false))
                 notification.defaults |= Notification.DEFAULT_VIBRATE;
         }
         notificationManager.notify(id, notification);
@@ -444,59 +523,83 @@ public class Util {
         }
     }
 
-    public void checkAppUpdates(Context context) {
-        new CheckForAppUpdates(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    private class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
-        private String error = "";
-        private Context context;
-
-        CheckForAppUpdates(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-                if (Navigator.navigator == null)
-                    Navigator.navigator = new Navigator(context);
-                Navigator.navigator.flushParameter();
-                String source = Navigator.navigator.get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
-                int onlineVersionMinor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));
-                int onlineVersionMajor = Integer.parseInt(getFirstMatchDefault("\"tag_name\": \"(\\d+)\\.\\d+\"", source, ""));
-                //String body = getFirstMatchDefault("\"body\": \"(.+?)\"", source, "").replaceAll("\\\\r\\\\n","").trim().replaceAll("  "," ");
-                String downloadurl = getFirstMatchDefault("\"browser_download_url\": \"(.+?)\"", source, "");
-                String currentVersionTmp = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-                int currentVersionMinor = Integer.parseInt(getFirstMatchDefault("\\d+\\.(\\d+)", currentVersionTmp, ""));
-                int currentVersionMajor = Integer.parseInt(getFirstMatchDefault("(\\d+)\\.\\d+", currentVersionTmp, ""));
-                if (currentVersionMinor != onlineVersionMinor || currentVersionMajor != onlineVersionMajor) {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), new Intent(Intent.ACTION_VIEW, Uri.parse(downloadurl)), context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + onlineVersionMajor + "." + onlineVersionMinor + " " + context.getString(R.string.is_available));
-                    pm.edit().putBoolean("on_latest_app_version", false).apply();
-                } else {
-                    pm.edit().putBoolean("on_latest_app_version", true).apply();
-                    Log.i("Util", "App is up to date. No update necessary");
+    public void removeSpecificCookies(Context context, String cookie) {
+        int count = 0, subCount = 0, n = 0;
+        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
+        Map cookieMap = cookies.getAll();
+        Iterator entries = cookieMap.entrySet().iterator();
+        String[] cookiesForToast = {"", "", "", "", ""}; // 125 cookies ought to be enough for anyone. ~Bill Gates
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            Object key = entry.getKey();
+            //Object value = entry.getValue();
+            if (key.toString().contains(cookie)) {
+                /*Log.d("Util", "k: " + key.toString());
+                Log.d("Util", "v: " + value.toString());*/
+                if (subCount > 24) {
+                    n++;
+                    if (n > 4)
+                        n = 4;
+                    subCount = 0;
                 }
-            } catch (Exception e) {
-                Log.e("Util", "checkAppUpdates Exception");
-                e.printStackTrace();
-                error = Log.getStackTraceString(e);
+                cookiesForToast[n] = cookiesForToast[n] + key.toString() + "\n";
+                cookies.edit().remove(key.toString()).apply();
+                count++;
+                subCount++;
             }
-            return null;
         }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            if (!error.isEmpty())
-                Log.e("Util", error);
-            super.onPostExecute(result);
+        if (count > 0)
+            for (int i = 0; i <= n; i++) {
+                toast(context, context.getString(R.string.deleted_no_var) + ": \n" + cookiesForToast[i]);
+            }
+        if (count == 1)
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookie");
+        else
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
+        try {
+            new Navigator(context);// to refresh cookies on navigator
+        } catch (Exception e) {
+            //todo
         }
     }
 
+    public void removeAllCookies(Context context) {
+        int count = 0, subCount = 0, n = 0;
+        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
+        Map cookieMap = cookies.getAll();
+        Iterator entries = cookieMap.entrySet().iterator();
+        String[] cookiesForToast = {"", "", "", "", ""}; // 125 cookies ought to be enough for anyone. ~Bill Gates
+        while (entries.hasNext()) {
+            Map.Entry entry = (Map.Entry) entries.next();
+            Object key = entry.getKey();
+            if (subCount > 24) {
+                n++;
+                if (n > 4)
+                    n = 4;
+                subCount = 0;
+            }
+            cookiesForToast[n] = cookiesForToast[n] + key.toString() + "\n";
+            cookies.edit().remove(key.toString()).apply();
+            count++;
+            subCount++;
+        }
+        if (count > 0)
+            for (int i = 0; i <= n; i++) {
+                toast(context, context.getString(R.string.deleted_no_var) + ": \n" + cookiesForToast[i]);
+            }
+        if (count == 1)
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookie");
+        else
+            toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
+
+        try {
+            new Navigator(context);// to refresh cookies navigator
+        } catch (Exception e) {
+            //todo
+        }
+    }
+
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
+    }
 }

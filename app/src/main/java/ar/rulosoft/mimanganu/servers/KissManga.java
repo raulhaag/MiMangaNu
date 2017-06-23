@@ -92,7 +92,8 @@ class KissManga extends ServerBase {
         manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
                 "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                 defaultSynopsis)).toString());
-        // Title
+
+        // Cover Image
         String pictures = getFirstMatchDefault(
                 "rel=\"image_src\" href=\"(.+?)" + "\"", source, null);
         if (pictures != null) {

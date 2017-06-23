@@ -34,6 +34,40 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.65:
+* Fix rápido se un error de la v1.64.
+
+Changes in v1.65:
+* Quick fix bug introduced in v1.64.
+
+Cambios en v1.64:
+* Agregado MangaKawaii(fr).
+* Arreglado MyMangaIo.
+* Arreglado el contador de capitulos para algunos servers.
+* Arreglado imagen aleatoria cuando un cover no esta disponible.
+* Un monton de cambios en procesos de fondo.
+
+Changes in v1.64:
+* Added MangaKawaii(fr).
+* Fixed MyMangaIo.
+* Fixed Chapter counter for some servers.
+* Fixed random image problem on cover when cover unavailable.
+* Lot of background changes.
+
+Cambios en v1.63:
+* Mejorado el backend y la actualizacion del app.
+* Agregado MangaStream, Taadd.
+* Arreglado ReadMangaToday, MyMangaIo.
+* Permetir mover a almacenamiento externo.
+* Otros fixes.
+
+Changes in v1.63:
+* Improve backend and update manager.
+* Added MangaStream, Taadd.
+* Fix ReadMangaToday, MyMangaIo.
+* Allow to move to external storage.
+* Others fixes. 
+
 Cambios en v1.62:
 * Fix kissmanga.
 * Fix ninemanga servers de nuevo.

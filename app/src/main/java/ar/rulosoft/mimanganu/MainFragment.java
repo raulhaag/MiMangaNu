@@ -47,9 +47,12 @@ import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
+import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
+import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 
 import static ar.rulosoft.mimanganu.services.AlarmReceiver.LAST_CHECK;
@@ -75,7 +78,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private GridView grid;
-    private MisMangasAdapter adapter;
+    private MisMangasAdapter mMAdapter;
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
@@ -150,19 +153,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
 
             // App Update
-            /*boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
-            if(onLatestAppVersion) {
+            boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
+            if (onLatestAppVersion) {
                 long last_check = pm.getLong("last_app_update", 0);
                 long diff = System.currentTimeMillis() - last_check;
                 Log.i("MF", "diff: " + diff);
-                if (diff > 604800000) {
+                if (diff > 129600000) {
                     pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
-                    Util.getInstance().checkAppUpdates(getContext());
+                    UpdateUtil.checkAppUpdates(getContext());
                 }
             } else {
-                Util.getInstance().checkAppUpdates(getContext());
-            }*/
-
+                UpdateUtil.checkAppUpdates(getContext());
+            }
             MainActivity.coldStart = false;
         }
     }
@@ -192,7 +194,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private void startUpdate() {
         try {
             if (NetworkUtilsAndReceiver.isConnected(getContext())) {
-                updateListTask = new UpdateListTask(getActivity());
+                updateListTask = new UpdateListTask(getActivity(), getView(), pm);
                 updateListTask.execute();
             }
         } catch (Exception e) {
@@ -267,8 +269,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                 "SELECT id " +
                                 "FROM manga " +
                                 "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                        adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                        grid.setAdapter(adapter);
+                        mMAdapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                        grid.setAdapter(mMAdapter);
                     } catch (Exception e) {
                         Log.e("MF", "Exception", e);
                         ACRA.getErrorReporter().handleException(e);
@@ -475,9 +477,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 default:
                     break;
             }
-            if (adapter == null || sort_val < 2 || mangaList.size() > adapter.getCount() || force) {
-                adapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                grid.setAdapter(adapter);
+            if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getCount() || force) {
+                mMAdapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
+                grid.setAdapter(mMAdapter);
             }
         } else {
             Log.i(TAG, "grid was null");
@@ -490,7 +492,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         inflater.inflate(R.menu.gridview_mismangas, menu);
         MenuItem m = menu.findItem(R.id.noupdate);
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (adapter.getItem(info.position).isFinished()) {
+        if (mMAdapter.getItem(info.position).isFinished()) {
             m.setTitle(getActivity().getResources().getString(R.string.buscarupdates));
         } else {
             m.setTitle(getActivity().getResources().getString(R.string.nobuscarupdate));
@@ -516,10 +518,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                         public void onClick(DialogInterface dialog, int which) {
                             DownloadPoolService.forceStop(manga.getId());
                             ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
-                            String path = DownloadPoolService.generateBasePath(serverBase, manga, getActivity());
+                            String path = Paths.generateBasePath(serverBase, manga, getActivity());
                             Util.getInstance().deleteRecursive(new File(path));
                             Database.deleteManga(getActivity(), manga.getId());
-                            adapter.remove(manga);
+                            mMAdapter.remove(manga);
                             Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
                             dialog.dismiss();
                         }
@@ -551,7 +553,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
 
-    public ViewGroup getMMView(ViewGroup container) {
+    public ViewGroup getMMView(final ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_mis_mangas, container, false);
         grid = (GridView) viewGroup.findViewById(R.id.grilla_mis_mangas);
@@ -560,7 +562,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateListTask = new UpdateListTask(getActivity());
+                updateListTask = new UpdateListTask(getActivity(), container, pm);
                 updateListTask.execute();
             }
         });
@@ -581,7 +583,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (serverRecAdapter.actionMode == null) {
                     Bundle bundle = new Bundle();
-                    bundle.putInt(MainFragment.MANGA_ID, adapter.getItem(position).getId());
+                    bundle.putInt(MainFragment.MANGA_ID, mMAdapter.getItem(position).getId());
                     MangaFragment mangaFragment = new MangaFragment();
                     mangaFragment.setArguments(bundle);
                     //In rare cases State loss occurs
@@ -678,23 +680,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
     }
 
-    public class UpdateListTask extends AsyncTask<Void, Integer, Integer> {
-        private ArrayList<Manga> mangaList;
-        private ArrayList<Manga> fromFolderMangaList;
-        private int threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString("update_threads_manual", "2"));
-        private int ticket = threads;
-        private int result = 0;
-        private int numNow = 0;
-        private String error = "";
+    public class UpdateListTask extends AutomaticUpdateTask {
         private Context context;
 
-        UpdateListTask(Context context) {
+        UpdateListTask(Context context, View view, SharedPreferences pm) {
+            super(context, view, pm);
             this.context = context;
-            if (pm.getBoolean("include_finished_manga", false))
-                mangaList = Database.getMangas(getContext(), null, true);
-            else
-                mangaList = Database.getMangasForUpdates(getContext());
-            fromFolderMangaList = Database.getFromFolderMangas(getContext());
         }
 
         @Override
@@ -704,78 +695,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 Util.getInstance().createSearchingForUpdatesNotification(getContext(), mNotifyID);
                 Util.getInstance().showFastSnackBar(getResources().getString(R.string.searching_for_updates), getView(), getContext());
             }
-        }
-
-        @Override
-        protected void onProgressUpdate(Integer... values) {
-            if (context != null) {
-                Util.getInstance().changeSearchingForUpdatesNotification(context, mangaList.size(), ++numNow, mNotifyID, context.getResources().getString(R.string.searching_for_updates), numNow + "/" + mangaList.size() + " - " +
-                        mangaList.get(values[0]).getTitle(), true);
-            }
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            if (context != null && error.isEmpty()) {
-                ticket = threads;
-
-                if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
-                    mangaList = fromFolderMangaList;
-                }
-
-                for (int idx = 0; idx < mangaList.size(); idx++) {
-                    if (MainActivity.isCancelled || Util.n > (48 - threads))
-                        cancel(true);
-                    try {
-                        final int idxNow = idx;
-                        // If there is no ticket, sleep for 1 second and ask again
-                        while (ticket < 1) {
-                            try {
-                                Thread.sleep(1000);
-                            } catch (InterruptedException e) {
-                                Log.e(TAG, "Update sleep failure", e);
-                            }
-                        }
-                        ticket--;
-
-                        // If tickets were passed, create new requests
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Manga mManga = mangaList.get(idxNow);
-                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
-                                boolean fast = pm.getBoolean("fast_update", true);
-                                publishProgress(idxNow);
-                                try {
-                                    if (!isCancelled()) {
-                                        int diff = serverBase.searchForNewChapters(mManga.getId(), getActivity(), fast);
-                                        result += diff;
-                                    }
-                                } catch (Exception e) {
-                                    Log.e(TAG, "Update server failure", e);
-                                } finally {
-                                    ticket++;
-                                }
-
-                            }
-                        }).start();
-
-                    } catch (Exception e) {
-                        error = Log.getStackTraceString(e);
-                    }
-                }
-
-                // After finishing the loop, wait for all threads to finish their task before ending
-                while (ticket < threads) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "After sleep failure", e);
-                    }
-                }
-            }
-            return result;
         }
 
         @Override
@@ -810,17 +729,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
         @Override
         protected void onCancelled() {
-            Util.getInstance().cancelNotification(mNotifyID);
-            if (context != null && isAdded()) {
-                Util.getInstance().toast(context, getString(R.string.update_search_cancelled));
-                if (Util.n > (48 - threads)) {
-                    Util.getInstance().toast(context, getString(R.string.notification_tray_is_full));
-                }
-            }
+            super.onCancelled();
             swipeReLayout.setRefreshing(false);
             MainActivity.isCancelled = false;
         }
     }
+
 
     public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
         String error = "";

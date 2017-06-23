@@ -179,6 +179,7 @@ public class DetailsFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                manga.getChapters().clear();
                 serverBase.loadMangaInformation(manga, true);
             } catch (Exception e) {
                 e.printStackTrace();

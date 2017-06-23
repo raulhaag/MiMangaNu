@@ -7,7 +7,7 @@ import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class Chapter {
@@ -88,6 +88,11 @@ public class Chapter {
         return title;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Chapter) && this.path.equalsIgnoreCase(((Chapter) obj).path);
+    }
+
     public int getPagesRead() {
         return pagesRead;
     }
@@ -140,7 +145,7 @@ public class Chapter {
     private void deleteImages(Context context, Manga manga, ServerBase serverBase) {
         String path;
         if (!(serverBase instanceof FromFolder))
-            path = DownloadPoolService.generateBasePath(serverBase, manga, this, context);
+            path = Paths.generateBasePath(serverBase, manga, this, context);
         else
             path = getPath();
 
@@ -150,7 +155,7 @@ public class Chapter {
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
-        String path = DownloadPoolService.generateBasePath(s, manga, this, context);
+        String path = Paths.generateBasePath(s, manga, this, context);
         File fpath = new File(path);
         if(fpath.exists())
             Util.getInstance().deleteRecursive(fpath);
@@ -275,5 +280,6 @@ public class Chapter {
         public static void setManga_title(String title) {
             manga_title = title;
         }
+
     }
 }

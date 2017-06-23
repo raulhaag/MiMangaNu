@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu;
+package ar.rulosoft.mimanganu.services;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,25 +8,30 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import ar.rulosoft.mimanganu.MainActivity;
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
+import static android.content.ContentValues.TAG;
+
 /**
  * Created by jtx on 15.09.2016.
  */
 public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     public static int mNotifyID = (int) System.currentTimeMillis();
+    public String error = "";
     private ArrayList<Manga> mangaList;
     private ArrayList<Manga> fromFolderMangaList;
     private int threads = 2;
-    private int ticket = threads;
     private int result = 0;
     private int numNow = 0;
-    private String error = "";
     private Context context;
     private SharedPreferences pm;
     private View view;
@@ -41,7 +46,6 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             mangaList = Database.getMangasForUpdates(context);
         fromFolderMangaList = Database.getFromFolderMangas(context);
         threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "2"));
-        ticket = threads;
         mNotifyID = (int) System.currentTimeMillis();
     }
 
@@ -66,8 +70,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     @Override
     protected Integer doInBackground(Void... params) {
         if (context != null && error.isEmpty()) {
-            final boolean fast = pm.getBoolean("fast_update", true);
-            ticket = threads;
+            ExecutorService executor = Executors.newFixedThreadPool(threads);
 
             if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
                 mangaList = fromFolderMangaList;
@@ -76,49 +79,15 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
                     cancel(true);
-                try {
-                    final int idxNow = idx;
-                    // If there is no ticket, sleep for 1 second and ask again
-                    while (ticket < 1) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            Log.e("ULT", "Update sleep failure", e);
-                        }
-                    }
-                    ticket--;
-
-                    // If tickets were passed, create new requests
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                if (!isCancelled()) {
-                                    Manga manga = mangaList.get(idxNow);
-                                    ServerBase serverBase = ServerBase.getServer(manga.getServerId(), context);
-                                    publishProgress(idxNow);
-                                    serverBase.loadChapters(manga, false);
-                                    result += serverBase.searchForNewChapters(manga.getId(), context, fast);
-                                }
-                            } catch (Exception e) {
-                                Log.e("ULT", "Update server failure", e);
-                            } finally {
-                                ticket++;
-                            }
-                        }
-                    }).start();
-
-                } catch (Exception e) {
-                    error = Log.getStackTraceString(e);
-                }
+                executor.execute(new SingleUpdateSerch(mangaList.get(idx), idx));
             }
-
+            executor.shutdown();
             // After finishing the loop, wait for all threads to finish their task before ending
-            while (ticket < threads) {
+            while (!executor.isTerminated()) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
-                    Log.e("ULT", "After sleep failure", e);
+                    Log.e(TAG, "After sleep failure", e);
                 }
             }
         }
@@ -152,6 +121,31 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             Util.getInstance().toast(context, context.getString(R.string.update_search_cancelled));
             if (Util.n > (48 - threads)) {
                 Util.getInstance().toast(context, context.getString(R.string.notification_tray_is_full));
+            }
+        }
+    }
+
+    private class SingleUpdateSerch implements Runnable {
+        Manga manga;
+        int idx;
+
+        public SingleUpdateSerch(Manga manga, int idx) {
+            this.manga = manga;
+            this.idx = idx;
+        }
+
+        @Override
+        public void run() {
+            ServerBase serverBase = ServerBase.getServer(manga.getServerId(), context);
+            boolean fast = pm.getBoolean("fast_update", true);
+            publishProgress(idx);
+            try {
+                if (!isCancelled()) {
+                    int diff = serverBase.searchForNewChapters(manga.getId(), context, fast);
+                    result += diff;
+                }
+            } catch (Exception e) {
+                //do nothing
             }
         }
     }

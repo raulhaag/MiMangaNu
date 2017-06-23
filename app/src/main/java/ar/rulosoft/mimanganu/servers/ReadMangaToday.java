@@ -1,12 +1,8 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -85,7 +81,7 @@ class ReadMangaToday extends ServerBase {
         while (mangas.isEmpty()) {
             //Log.d("RMT", "web: " + web);
             String source = getNavigatorAndFlushParameters().get(web);
-            Pattern pattern = Pattern.compile("<a href=\"(http://www.readmanga.today/[^\"]+?)\">(.+?)</a>");
+            Pattern pattern = Pattern.compile("<a href=\"(http://www\\.readmanga\\.today/[^\"]+?)\">(.+?)</a>");
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
                 if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
@@ -118,7 +114,9 @@ class ReadMangaToday extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(manga.getPath());
         if (source.equals("400")) {
-            removeCookies();
+            // ReadMangaToday returns 400 Bad Request sometimes
+            // deleting it's cookies will usually get rid of the error
+            Util.getInstance().removeSpecificCookies(context, HOST);
         }
 
         // Cover
@@ -173,7 +171,7 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath() + "/" + page;
+        return null;
     }
 
     @Override
@@ -187,7 +185,7 @@ class ReadMangaToday extends ServerBase {
     private void setExtra(Chapter chapter) throws Exception {
         String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath() + "/all-pages");
         if (source.equals("400")) {
-            removeCookies();
+            Util.getInstance().removeSpecificCookies(context, HOST);
         }
         //Log.d("RMT", "s: " + source);
         Pattern p = Pattern.compile("<img src=\"([^\"]+)\" class=\"img-responsive-2\">");
@@ -204,7 +202,7 @@ class ReadMangaToday extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath());
         if (source.equals("400")) {
-            removeCookies();
+            Util.getInstance().removeSpecificCookies(context, HOST);
         }
         //Log.d("RMT","p: "+chapter.getPath());
         String pageNumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
@@ -218,25 +216,6 @@ class ReadMangaToday extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter("Genre(s)", genre, ServerFilter.FilterType.SINGLE),
         };
-    }
-
-    private void removeCookies() {
-        // ReadMangaToday returns 400 Bad Request sometimes
-        // deleting it's cookies will usually get rid of the error
-        SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);
-        Map cookieMap = cookies.getAll();
-        Iterator entries = cookieMap.entrySet().iterator();
-        while (entries.hasNext()) {
-            Map.Entry entry = (Map.Entry) entries.next();
-            Object key = entry.getKey();
-            //Object value = entry.getValue();
-            if (key.toString().contains("http://readmanga.today/")) {
-                /*Log.d("RMT", "k: " + key.toString());
-                Log.d("RMT", "v: " + value.toString());*/
-                cookies.edit().remove(key.toString()).apply();
-            }
-        }
-        Log.i("RMT", "deleted ReadMangaToday's cookies");
     }
 
     @Override
@@ -253,7 +232,7 @@ class ReadMangaToday extends ServerBase {
         //Log.d("RMT", "web: " + web);
         String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(web);
         if (source.equals("400")) {
-            removeCookies();
+            Util.getInstance().removeSpecificCookies(context, HOST);
         }
         // regex to generate genre ids: <li>.+?title="All Categories - (.+?)">
         Pattern pattern = Pattern.compile("<div class=\"left\">.+?<a href=\"(.+?)\" title=\"(.+?)\"><img src=\"(.+?)\" alt=\"");

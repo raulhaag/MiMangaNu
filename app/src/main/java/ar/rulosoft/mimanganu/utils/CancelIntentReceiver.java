@@ -5,9 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import ar.rulosoft.mimanganu.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.MainFragment;
+import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
 
 /**
  * Created by jtx on 05.10.2016.

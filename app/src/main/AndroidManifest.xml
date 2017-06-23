@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ar.rulosoft.mimanganu">
+    package="ar.rulosoft.mimanganu"
+    android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:name=".MiMangaNuApplication"
@@ -35,11 +36,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".utils.NotificationDeleteIntentReceiver" >
-        </receiver>
-        <receiver android:name=".utils.CancelIntentReceiver" >
-        </receiver>
-        <receiver android:name=".utils.NetworkUtilsAndReceiver" >
+
+        <receiver android:name=".utils.NotificationDeleteIntentReceiver" />
+        <receiver android:name=".utils.CancelIntentReceiver" />
+        <receiver android:name=".utils.NetworkUtilsAndReceiver">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
@@ -54,14 +54,12 @@
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
+
         <service android:name=".services.DownloadPoolService" />
-        <receiver
-            android:name=".utils.UpdateSystem.UpdateAlarm"
-            android:directBootAware="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="ar.rulosoft.mimanganu.START_ALARM"/>
-            </intent-filter>
-        </receiver>
+
+        <activity
+            android:name=".MessageActivity"
+            android:theme="@style/Theme.Transparent" />
     </application>
+
 </manifest>

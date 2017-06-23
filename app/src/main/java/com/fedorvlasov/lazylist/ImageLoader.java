@@ -66,7 +66,14 @@ public class ImageLoader {
         if (imgFile != null)
             return imgFile;
         try {
-            FileCache.writeFile(Navigator.navigator.getStream(url), f);
+            if (url.indexOf("|") > 0) {
+                Navigator nav = Navigator.navigator;
+                String[] parts = url.split("\\|");
+                nav.addHeader("Referer", parts[1]);
+                FileCache.writeFile(nav.getStream(parts[0]), f);
+            } else {
+                FileCache.writeFile(Navigator.navigator.getStream(url), f);
+            }
             return decodeFile(f);
         } catch (Throwable ex) {
             if (ex instanceof OutOfMemoryError)

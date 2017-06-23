@@ -8,7 +8,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,6 +53,8 @@ public abstract class ServerBase {
     static final int JAPSCAN = 28;
     static final int READMANGATODAY = 29;
     static final int TAADD = 30;
+    static final int MANGASTREAM = 31;
+    static final int MANGAKAWAII = 32;
 
 
     static final int READCOMICONLINE = 1000;
@@ -72,7 +74,8 @@ public abstract class ServerBase {
     }
 
     public static ServerBase getServer(int id, Context context) {
-        ServerBase serverBase = null;
+        //before remove deprecated add info on DeadServer
+        ServerBase serverBase;
         switch (id) {
             case MANGAPANDA:
                 serverBase = new MangaPanda(context);
@@ -89,9 +92,6 @@ public abstract class ServerBase {
             case SUBMANGA:
                 serverBase = new SubManga(context);
                 break;
-            case ESMANGA:
-                serverBase = new EsManga(context);
-                break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga(context);
                 break;
@@ -100,9 +100,6 @@ public abstract class ServerBase {
                 break;
             case ESNINEMANGA:
                 serverBase = new EsNineManga(context);
-                break;
-            case LECTUREENLIGNE:
-                serverBase = new LectureEnLigne(context);
                 break;
             case KISSMANGA:
                 serverBase = new KissManga(context);
@@ -113,20 +110,11 @@ public abstract class ServerBase {
             case TUMANGAONLINE:
                 serverBase = new TuMangaOnline(context);
                 break;
-            case TUSMANGAS:
-                serverBase = new TusMangasOnlineCom(context);
-                break;
-            case STARKANACOM:
-                serverBase = new StarkanaCom(context);
-                break;
             case DENINEMANGA:
                 serverBase = new DeNineManga(context);
                 break;
             case RUNINEMANGA:
                 serverBase = new RuNineManga(context);
-                break;
-            case MANGATUBE:
-                serverBase = new Manga_Tube(context);
                 break;
             case MANGAEDENIT:
                 serverBase = new MangaEdenIt(context);
@@ -146,6 +134,9 @@ public abstract class ServerBase {
             case TAADD:
                 serverBase = new Taadd(context);
                 break;
+            case MANGASTREAM:
+                serverBase = new MangaStream(context);
+                break;
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
@@ -161,14 +152,11 @@ public abstract class ServerBase {
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
+            case MANGAKAWAII:
+                serverBase = new MangaKawaii(context);
+                break;
             case READMANGATODAY:
                 serverBase = new ReadMangaToday(context);
-                break;
-            case READCOMICSTV:
-                serverBase = new ReadComicsTV(context);
-                break;
-            case GOGOCOMIC:
-                serverBase = new GoGoComic(context);
                 break;
             case VIEWCOMIC:
                 serverBase = new ViewComic(context);
@@ -177,6 +165,7 @@ public abstract class ServerBase {
                 serverBase = new FromFolder(context);
                 break;
             default:
+                serverBase = new DeadServer(context);
                 break;
         }
         return serverBase;
@@ -211,19 +200,20 @@ public abstract class ServerBase {
                 new MangaFox(context),
                 new KissManga(context),
                 new MangaEden(context),
+                new MangaStream(context),
                 new Taadd(context),
+                new NineManga(context),
                 new ReadMangaToday(context),
                 new RuNineManga(context),
                 new MyMangaIo(context),
                 new JapScan(context),
+                new MangaKawaii(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
                 new DeNineManga(context),
                 new RawSenManga(context),
                 new BatoTo(context),
                 new ReadComicOnline(context),
-                new ReadComicsTV(context),
-                new GoGoComic(context),
                 new ViewComic(context),
                 new FromFolder(context)
         });
@@ -258,36 +248,18 @@ public abstract class ServerBase {
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
-        this.loadMangaInformation(manga, true);
-        this.loadChapters(manga, false);
-        ArrayList<Chapter> simpleList = new ArrayList<>();
-        if (fast && manga.getChapters().size() > 20) {
-            int chapters = manga.getChapters().size();
-            List<Chapter> f20 = manga.getChapters().subList(chapters - 20, chapters);
-            for (Chapter chapter : f20) {
-                boolean add = true;
-                for (Chapter chapterDB : mangaDb.getChapters()) {
-                    if (chapter.getPath().equals(chapterDB.getPath())) {
-                        add = false;
-                        break;
-                    }
-                }
-                if (add)
-                    simpleList.add(chapter);
-            }
-        } else {
-            for (Chapter chapter : manga.getChapters()) {
-                boolean add = true;
-                for (Chapter chapterDB : mangaDb.getChapters()) {
-                    if (chapter.getPath().equals(chapterDB.getPath())) {
-                        add = false;
-                        break;
-                    }
-                }
-                if (add)
-                    simpleList.add(chapter);
-            }
+        try {
+            this.loadMangaInformation(manga, true);
+            this.loadChapters(manga, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
+        if (fast && manga.getChapters().size() > 21) {
+            manga.getChapters().subList(0, manga.getChapters().size() - 20).clear();
+        }
+        manga.getChapters().removeAll(mangaDb.getChapters());
+        ArrayList<Chapter> simpleList = manga.getChapters();
         for (Chapter chapter : simpleList) {
             chapter.setMangaID(mangaDb.getId());
             chapter.setReadStatus(Chapter.NEW);
@@ -301,7 +273,6 @@ public abstract class ServerBase {
 
         if (!simpleList.isEmpty())
             new CreateGroupByMangaNotificationsTask(simpleList, manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
         returnValue = simpleList.size();
 
         boolean changes = false;
@@ -334,7 +305,7 @@ public abstract class ServerBase {
         }
 
         if (!simpleList.isEmpty()) {
-            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
             Date date = new Date();
             String lastUpdate = dateFormat.format(date);
             if (!mangaDb.getLastUpdate().equals(lastUpdate)) {

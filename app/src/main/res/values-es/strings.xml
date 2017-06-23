@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.62:\n\t* Fix kissmanga.\n\t* Fix ninemanga servers de nuevo. \n\t* Agregado bajar todo desde el menu principal (long press). \n\t* Agregado busqueda de actualizaciones del app.</string>
+    <string name="update_message">Cambios en v1.65:\n\t* Fix rápido se un error de la v1.64.\nCambios en v1.64:\n\t* Agregado MangaKawaii(fr).\n\t* Arreglado MyMangaIo.\n\t* Arreglado el contador de capitulos para algunos servers.\n\t* Arreglado imagen aleatoria cuando un cover no esta disponible.\n\t* Un monton de cambios en procesos de fondo.</string>
     <string name="app_name">Mi Manga Nu</string>
-    <string name="title_activity_activity_lector">Lector</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -78,7 +77,6 @@
     <string name="sinopsis">Sinopsis</string>
     <string name="State_New">Nuevo</string>
     <string name="markSelectedUnread">Marcar seleccion como no leído</string>
-    <string name="new_manga_found">Nuevo manga encontrado.</string>
     <string name="keep_on">Mantener pantalla encendida</string>
     <string name="rotation">Rotación</string>
     <string name="action_settings">Ajustes</string>
@@ -89,7 +87,6 @@
     <string name="_7day">1 Semana</string>
     <string name="lock_on_landscape">Pantalla bloqueada en modo paisaje</string>
     <string name="lock_on_portrait">Pantalla bloqueada en modo portarretrato</string>
-    <string name="new_mangas_found">Nuevos mangas encontrados.</string>
     <string name="rotation_no_locked">Rotación de pantalla libre</string>
     <string name="no_update">No buscar actualizaciones</string>
     <string name="stay_awake_off">Mantener despierta la pantalla desactivado</string>
@@ -121,7 +118,6 @@
     <string name="read_next">Quieres abrir el siguiente capítulo?</string>
     <string name="last_chapter">Actualmente este es el último capitulo</string>
     <string name="genre">Genero</string>
-    <string name="search_for_updates">Buscando nuevos capítulos</string>
     <string name="update_thread_background_title">Hilos para buscar capítulos (Automático)</string>
     <string name="update_thread_manual_title">Hilos para buscar capítulos (Manual)</string>
     <string name="update_threads_background_summary">Cantidad de hilos: %s</string>
@@ -141,7 +137,6 @@
     <string name="retry_errors">Reintentar erróneas</string>
     <string name="error_downloading_image">Error descargando imagen</string>
     <string name="used_space">Espacio usado por tus mangas</string>
-    <string name="update_complete">Búsqueda completa</string>
     <string name="retry">Reintentar</string>
     <string name="mgs_update_found">Nuevos capítulos encontrados (%s)</string>
     <string name="delete_on_chapter_change">¿Borrar imágenes?</string>
@@ -150,7 +145,6 @@
     <string name="sort_number_asc">Ordenar por número de capítulo</string>
     <string name="storage_permission_denied">Se requiere permiso de almacenamiento para MiMangaNu funcionen correctamente</string>
     <string name="no_new_updates_found">No se encontró nuevo capítulo :(</string>
-    <string name="title_activity_vertical_reader">Lector</string>
     <string name="error_while_adding_chapter_or_manga_to_db">Se produjo un error al intentar añadir  \"%s\" a la base de datos</string>
     <string name="error_while_updating_chapter_or_manga_in_db">Error occurred while trying to update \"%s\" in database</string>
     <string name="seamless_chapter_transitions_title">Seamless Chapter Transitions</string>
@@ -183,7 +177,6 @@
     <string name="downloading">Descargando: </string>
     <string name="finishing_update">Finalizando búsqueda …</string>
     <string name="search_result">Resultados para \"%s\" en</string>
-    <string name="use_only_wifi_title_update">Usar solo WiFi (para updates)</string>
     <string name="hide_sensitivity_scrollbar_subtitle">Esconde barra de sensibilidad fuera de la pantalla completa</string>
     <string name="hide_sensitivity_scrollbar_title">Esconde barra de sensibilidad</string>
     <string name="include_finished_manga_subtitle">Esto incluirá mangas finalizados (por extras, etc.)</string>
@@ -250,16 +243,16 @@
     <string name="reset">Resetiar</string>
     <string name="user">Usuario</string>
     <string name="app_update">Actualizacion</string>
+    <string name="new_version">Nueva Versión</string>
     <string name="batoto_lang_chapters_subtitle">Batoto: solo los capitulos con el lenguaje seleccionado seran agregados. Elegido: %s</string>
     <string name="batoto_lang_chapters_title">Bototo idioma de capítulos</string>
     <string name="download_all_chapters">Descargar todos los capítulos</string>
     <string name="extra_server_settings">Otras configuraciones de servidores</string>
     <string name="is_available">esta disponible</string>
     <string name="this_server_needs_an_account">Este servidor necesita una cuenta. Agregala en ajustes.</string>
-    <string name="new_version">Nueva Versión</string>
     <string name="download">Descargar</string>
-    <string name="downloading_update">Descargando...</string>
     <string name="update_error">Error al descargar actualización</string>
     <string name="title_copied">Titulo copiado a portapapeles</string>
+    <string name="server_dead_message">No hay nada que hacer aquí, este servidor esta muerto.</string>
 </resources>
 

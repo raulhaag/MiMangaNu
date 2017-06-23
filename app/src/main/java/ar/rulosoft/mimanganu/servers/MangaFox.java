@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -66,7 +65,7 @@ class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get("http://mangafox.me/manga/");
+        String data = getNavigatorAndFlushParameters().getWithTimeout("http://mangafox.me/manga/");
         data = getFirstMatch(SEGMENTO, data, "no se ha obtenido el segmento");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
@@ -85,7 +84,7 @@ class MangaFox extends ServerBase {
         if (manga.getChapters().size() == 0 || forceReload) {
             Pattern p;
             Matcher m;
-            String data = getNavigatorAndFlushParameters().get((manga.getPath()));
+            String data = getNavigatorAndFlushParameters().getWithTimeout((manga.getPath()));
 
             // Title
             manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
@@ -136,22 +135,7 @@ class MangaFox extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         //Log.d("Mfox", "getIF url: " + this.getPagesNumber(chapter, page));
-        String source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-        int i = 0;
-        int timeout = 250;
-        while (source.isEmpty()) {
-            Log.i("Mfox", "source is empty, waiting for " + timeout + " ms before retrying ...");
-            i++;
-            Thread.sleep(timeout);
-            source = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-            if (!source.isEmpty())
-                Log.i("Mfox", "timeout of " + timeout + " ms worked got a source");
-            timeout += 250;
-            if (i == 4) {
-                Log.i("Mfox", "couldn't get a source from MangaFox :(");
-                break;
-            }
-        }
+        String source = getNavigatorAndFlushParameters().getWithTimeout(this.getPagesNumber(chapter, page));
         //Log.d("Mfox", "source: " + source);
         String img = "";
         if (!source.isEmpty()) {
@@ -169,7 +153,7 @@ class MangaFox extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String source;
-        source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath());
         String paginas = getFirstMatch(PATRON_LAST, source, "Error: no se pudo obtener el numero de paginas");
         chapter.setPages(Integer.parseInt(paginas)); //last page is for comments
     }
@@ -183,7 +167,7 @@ class MangaFox extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters()
-                .get("http://mangafox.me/search.php?name_method=cw&name="
+                .getWithTimeout("http://mangafox.me/search.php?name_method=cw&name="
                         + term
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");
         Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?\">(.+?)<");
@@ -205,7 +189,7 @@ class MangaFox extends ServerBase {
         } else
             web = HOST + genreVV + genre[filters[0][0]].toLowerCase().replaceAll(" ", "-") + "/" + pageNumber + ".htm" + orderV[filters[1][0]];
         //Log.d("Mfox","web: "+web);
-        String source = getNavigatorAndFlushParameters().get(web);
+        String source = getNavigatorAndFlushParameters().getWithTimeout(web);
         Pattern p = Pattern.compile("<img src=\"(http://h\\.mfcdn\\.net/store/manga/.+?)\".+?<a class=\"title\" href=\"(.+?)\" rel=\"\\d+\">(.+?)</a>");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();

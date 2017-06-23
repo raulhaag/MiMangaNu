@@ -209,19 +209,7 @@ public class TuMangaOnline extends ServerBase {
         this.loadMangaInformation(manga, true);
         loadChapters(manga, false, true);
 
-        ArrayList<Chapter> notAdd = new ArrayList<>();
-
-        for (Chapter c : manga.getChapters()) {
-            for (Chapter csl : mangaDb.getChapters()) {
-                if (c.getPath().equalsIgnoreCase(csl.getPath())) {
-                    notAdd.add(c);
-                    break;
-                }
-            }
-        }
-
-        manga.getChapters().removeAll(notAdd);
-
+        manga.getChapters().removeAll(mangaDb.getChapters());
         for (Chapter chapter : manga.getChapters()) {
             chapter.setMangaID(mangaDb.getId());
             chapter.setReadStatus(Chapter.NEW);

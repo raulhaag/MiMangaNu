@@ -50,7 +50,11 @@ public class MisMangasAdapter extends ArrayAdapter<Manga> {
         }
         Manga m = getItem(position);
         holder.serie.setText(m.getTitle());
-        imageLoader.displayImg(m.getImages(), holder.serie);
+        if (m.getImages() == null || m.getImages().equals("")) {
+            holder.serie.setImageBitmap(null);
+        } else {
+            imageLoader.displayImg(m.getImages(), holder.serie);
+        }
         ServerBase server = ServerBase.getServer(m.getServerId(), getContext());
         holder.server.setImageResource(server.getIcon());
         if (m.getNews() > 0) {
