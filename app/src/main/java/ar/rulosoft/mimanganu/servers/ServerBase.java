@@ -55,7 +55,7 @@ public abstract class ServerBase {
     static final int TAADD = 30;
     static final int MANGASTREAM = 31;
     static final int MANGAKAWAII = 32;
-
+    static final int KUMANGA = 33;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
@@ -100,6 +100,9 @@ public abstract class ServerBase {
                 break;
             case ESNINEMANGA:
                 serverBase = new EsNineManga(context);
+                break;
+            case KUMANGA:
+                serverBase = new Kumanga(context);
                 break;
             case KISSMANGA:
                 serverBase = new KissManga(context);
@@ -194,6 +197,7 @@ public abstract class ServerBase {
                 new EsNineManga(context),
                 new EsMangaHere(context),
                 new LeoManga(context),
+                new Kumanga(context),
                 new MangaPanda(context),
                 new MangaReader(context),
                 new MangaHere(context),
