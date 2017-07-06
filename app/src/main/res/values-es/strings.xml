@@ -254,5 +254,16 @@
     <string name="update_error">Error al descargar actualización</string>
     <string name="title_copied">Titulo copiado a portapapeles</string>
     <string name="server_dead_message">No hay nada que hacer aquí, este servidor esta muerto.</string>
+    <string name="app_update_subtitle">No para usuarios de F-droid.</string>
+    <string name="app_update_title">Buscar actualizaciones de la aplicasión.</string>
+    <string name="chapter">capítulos</string>
+    <string name="clear_all_cookies_subtitle">Tap aquí para borrar todas las Cookies.</string>
+    <string name="clear_all_cookies_title">Borror cookies</string>
+    <string name="clear_specific_cookies_subtitle">Tap aquí para borrar las Cookies que contengan.</string>
+    <string name="clear_specific_cookies_title">Borrar cookie especifica</string>
+    <string name="custom_language">Lenguaje personalizado.</string>
+    <string name="deleted_no_var">Borrar</string>
+    <string name="disable_internet_detection_title">Desactivar deteccion de estado de internet.</string>
+    <string name="disable_internet_detection_subtitle">Para dispositivos en los que esta cause problemas.</string>
 </resources>
 

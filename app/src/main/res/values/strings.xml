@@ -263,4 +263,6 @@
     <string name="clear_all_cookies_subtitle">Tap here to clear all cookies. Keep in mind that for sites that require authentication like Batoto you\'ll need to login again.</string>
     <string name="disable_internet_detection_title">Disable internet detection</string>
     <string name="disable_internet_detection_subtitle">By default MiMangaNu will try to detect if there\'s an Internet connection and disable some functionality if it thinks that there is no internet.</string>
+    <string name="app_update_title">Find app updates</string>
+    <string name="app_update_subtitle">Find app updates for not F-Droid users.</string>
 </resources>

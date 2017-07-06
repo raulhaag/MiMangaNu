@@ -24,7 +24,7 @@ Screenshots
 
 Downloads
 ---------
-![separator](/images/separador.png)[![Download F-droid](/images/downloadFdroid.png)](https://f-droid.org/repository/browse/?fdfilter=mimanganu&fdid=ar.rulosoft.mimanganu)
+![separator](/images/separador.png)[![Download F-droid](/images/downloadFdroid.png)](https://f-droid.org/packages/ar.rulosoft.mimanganu/)
 
 ![separator](/images/separador.png)[![Download GitHub](/images/downloadGithub.png)](https://github.com/raulhaag/MiMangaNu/releases/latest)
 
