@@ -63,9 +63,14 @@ public class SingleDownload implements Runnable {
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();
                     if (referer) {
-                        request = new Request.Builder().url(fromURL).addHeader("Referer", cd.chapter.getPath()).build();
+                        request = new Request.Builder().url(fromURL)
+                                .addHeader("User-Agent", Navigator.USER_AGENT)
+                                .addHeader("Referer", cd.chapter.getPath())
+                                .build();
                     } else {
-                        request = new Request.Builder().url(fromURL).build();
+                        request = new Request.Builder().url(fromURL)
+                                .addHeader("User-Agent", Navigator.USER_AGENT)
+                                .build();
                     }
                     response = copy.newCall(request).execute();
                     if (!response.isSuccessful()) {

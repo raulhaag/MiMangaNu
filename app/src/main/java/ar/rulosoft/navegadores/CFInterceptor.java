@@ -61,10 +61,10 @@ public class CFInterceptor implements Interceptor {
         String operation = rawOperation.replaceAll("a\\.value =(.+?) \\+ .+?;.*", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
         String js = operation.replace("\n", "");
         Duktape duktape = Duktape.create();
-        int result = 0;
+        long result = 0;
         try {
             String res = (String) duktape.evaluate(js + ".toString()");
-            result = Integer.parseInt(res);
+            result = Long.parseLong(res);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

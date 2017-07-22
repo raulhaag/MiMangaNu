@@ -56,11 +56,13 @@ public abstract class ServerBase {
     static final int MANGASTREAM = 31;
     static final int MANGAKAWAII = 32;
     static final int KUMANGA = 33;
+    static final int MANGAPEDIA = 34;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
     static final int GOGOCOMIC = 1003;
     static final int VIEWCOMIC = 1004;
+
     public boolean hasMore = true;
     protected String defaultSynopsis = "N/A";
     Context context;
@@ -155,6 +157,9 @@ public abstract class ServerBase {
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
+            case MANGAPEDIA:
+                serverBase = new Mangapedia(context);
+                break;
             case MANGAKAWAII:
                 serverBase = new MangaKawaii(context);
                 break;
@@ -211,6 +216,7 @@ public abstract class ServerBase {
                 new RuNineManga(context),
                 new MyMangaIo(context),
                 new JapScan(context),
+                new Mangapedia(context),
                 new MangaKawaii(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),

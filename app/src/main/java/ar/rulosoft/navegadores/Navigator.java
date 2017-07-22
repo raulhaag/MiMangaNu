@@ -393,6 +393,13 @@ public class Navigator {
         headers.add(new Parameter(key, value));
     }
 
+    public static String getNewBoundary(){
+        String boundary = "---------------------------";
+        boundary += Math.floor(Math.random()*32768);
+        boundary += Math.floor(Math.random()*32768);
+        boundary += Math.floor(Math.random()*32768);
+        return boundary;
+    }
 
     public void flushParameter() {
         parameters = new ArrayList<>();
