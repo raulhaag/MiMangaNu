@@ -132,7 +132,7 @@ public class Mangapedia extends ServerBase {
     }
 
     @Override
-        public ServerFilter[] getServerFilters() {
+    public ServerFilter[] getServerFilters() {
         return  new ServerFilter[]{
                 new ServerFilter("Genres", genre, ServerFilter.FilterType.MULTI),
                 new ServerFilter("Sub Genre", subGenre, ServerFilter.FilterType.MULTI),
@@ -154,13 +154,13 @@ public class Mangapedia extends ServerBase {
         mBodyBuilder.addFormDataPart("searchTerm","");
         mBodyBuilder.addFormDataPart("searchByLetter","");
         for(int i = 0; i < genreV.length; i++){
-                mBodyBuilder.addFormDataPart(genreV[i],"0");
+            mBodyBuilder.addFormDataPart(genreV[i],"0");
         }
         for(int i = 0; i < subGenreV.length; i++){
-                mBodyBuilder.addFormDataPart(subGenreV[i],"0");
+            mBodyBuilder.addFormDataPart(subGenreV[i],"0");
         }
         for(int i = 0; i < typeV.length; i++){
-                mBodyBuilder.addFormDataPart(typeV[i],"0");
+            mBodyBuilder.addFormDataPart(typeV[i],"0");
 
         }
         mBodyBuilder.addFormDataPart("sortBy", "0");

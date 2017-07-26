@@ -85,10 +85,14 @@ public class CFInterceptor implements Interceptor {
                 .header("User-Agent", Navigator.USER_AGENT)
                 .header("Referer", request.url().toString())
                 .build();
-
         response.body().close();
         response = chain.proceed(request1);//generate the cookie
         response.body().close();
+        try {
+            Thread.sleep(1000); //give it a time and complete the 5 seconds
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         response = chain.proceed(request.newBuilder().build());
         return response;
     }

@@ -34,6 +34,16 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.66:
+* Agregada la opción para desactivar búsqueda de actualizaciones de la app (especial para usuarios de F-droid).
+* Agregado Kumanga(ES) y Mangapedia(FR).
+* Un par de mejoras y arreglos.
+
+Changes in v1.66:
+* Added an option to disable app updates (usefull for F-droid users).
+* Added Kumanga(ES) and Mangapedia(FR).
+* A couple of fixes and improves.
+
 Cambios en v1.65:
 * Fix rápido se un error de la v1.64.
 
