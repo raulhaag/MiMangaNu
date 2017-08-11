@@ -145,7 +145,6 @@ class KissManga extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-
             String source = getNavigatorAndFlushParameters().get(PAGE_BASE + chapter.getPath().replaceAll("[^!-z]+", ""));
             String ca = getNavigatorAndFlushParameters().get(PAGE_BASE + "/Scripts/ca.js");
             String lo = getNavigatorAndFlushParameters().get(PAGE_BASE + "/Scripts/lo.js");
@@ -181,7 +180,7 @@ class KissManga extends ServerBase {
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p =
-                Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
+                Pattern.compile("(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=.+?(/.anga[^&|\"]+).+?>(.+?)<");
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga =
