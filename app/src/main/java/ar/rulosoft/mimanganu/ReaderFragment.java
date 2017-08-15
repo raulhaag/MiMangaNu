@@ -758,7 +758,12 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                             if (pm != null)
                                 pm.edit().putBoolean("delete_images", del_images).apply();
                             if (del_images) {
-                                tmpChapter.freeSpace(getActivity());
+                                try {
+                                    tmpChapter.freeSpace(getActivity());
+                                }catch (Exception e){
+                                    //TODO catch context lost if user close while freeSpace is working (need to add a little service for this)
+                                    //
+                                }
                             }
                             if (mDialog != null)
                                 mDialog.dismiss();

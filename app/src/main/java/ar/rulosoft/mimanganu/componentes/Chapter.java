@@ -144,20 +144,21 @@ public class Chapter {
 
     private void deleteImages(Context context, Manga manga, ServerBase serverBase) {
         String path;
-        if (!(serverBase instanceof FromFolder))
+        if (!(serverBase instanceof FromFolder)) {
             path = Paths.generateBasePath(serverBase, manga, this, context);
-        else
+        } else {
             path = getPath();
-
-        File fpath = new File(path);
-        if(fpath.exists())
-            Util.getInstance().deleteRecursive(fpath);
+        }
+        File fPath = new File(path);
+        if (fPath.exists()) {
+            Util.getInstance().deleteRecursive(fPath);
+        }
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = Paths.generateBasePath(s, manga, this, context);
         File fpath = new File(path);
-        if(fpath.exists())
+        if (fpath.exists())
             Util.getInstance().deleteRecursive(fpath);
         //setPages(0); // this breaks "Sexual Hunter Riot" from KissManga no idea why
         setDownloaded(false);
@@ -232,15 +233,15 @@ public class Chapter {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if (c1.volatile_order == -1){
-                        String str1 = c1.getTitle().replace(manga_title,"");
+                    if (c1.volatile_order == -1) {
+                        String str1 = c1.getTitle().replace(manga_title, "");
                         str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str1 = str1.replaceAll(STRING_END_PATTERN, " ");
                         str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
                         c1.volatile_order = Float.parseFloat(str1);
                     }
                     if (c2.volatile_order == -1) {
-                        String str2 = c2.getTitle().replace(manga_title,"");
+                        String str2 = c2.getTitle().replace(manga_title, "");
                         str2 = str2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str2 = str2.replaceAll(STRING_END_PATTERN, " ");
                         str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
@@ -256,15 +257,15 @@ public class Chapter {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if (c1.volatile_order == -1){
-                        String str1 = c1.getTitle().replace(manga_title,"");
+                    if (c1.volatile_order == -1) {
+                        String str1 = c1.getTitle().replace(manga_title, "");
                         str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str1 = str1.replaceAll(STRING_END_PATTERN, " ");
                         str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "");
                         c1.volatile_order = Float.parseFloat(str1);
                     }
                     if (c2.volatile_order == -1) {
-                        String str2 = c2.getTitle().replace(manga_title,"");
+                        String str2 = c2.getTitle().replace(manga_title, "");
                         str2 = str2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                         str2 = str2.replaceAll(STRING_END_PATTERN, " ");
                         str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "");
