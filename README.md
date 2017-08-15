@@ -33,6 +33,13 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.67:
+* Arreglado Kissmanga.
+* Fixes rapidos.
+
+Changes in v1.67:
+* Fix Kissmanga.
+* Quick fixes.
 
 Cambios en v1.66:
 * Agregada la opción para desactivar búsqueda de actualizaciones de la app (especial para usuarios de F-droid).
