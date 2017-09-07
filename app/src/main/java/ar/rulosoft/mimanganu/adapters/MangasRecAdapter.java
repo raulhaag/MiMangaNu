@@ -29,12 +29,14 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
         this.context = context;
     }
 
+    public void shutdown(){
+        imageLoader.clearMem();
+    }
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Manga m = mangas.get(position);
         MangasHolder mHolder = (MangasHolder)holder;
-
-        mHolder.serie.setImageBitmap(null);
         mHolder.serie.setText(m.getTitle());
         imageLoader.displayImg(m.getImages(), mHolder.serie);
         mHolder.v.setTag(position);

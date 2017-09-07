@@ -769,7 +769,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                                 mDialog.dismiss();
                             controlVisible = true; //just to close
                             mDialog = null;
-                            getActivity().onBackPressed();
+                            if(getActivity() != null)
+                                getActivity().onBackPressed();
                         }
                     })
                     .show();

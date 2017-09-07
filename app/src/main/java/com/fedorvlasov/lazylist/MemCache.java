@@ -27,6 +27,14 @@ public class MemCache {
                 int bitmapByteCount = value.getRowBytes() * value.getHeight();
                 return bitmapByteCount / 1024;
             }
+
+            @Override
+            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
+                if(oldValue != null && evicted){
+                    oldValue.recycle();
+                }
+                super.entryRemoved(evicted, key, oldValue, newValue);
+            }
         };
     }
 

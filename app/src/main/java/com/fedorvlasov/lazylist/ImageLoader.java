@@ -40,7 +40,7 @@ public class ImageLoader {
 
             // First, try to fetch image from memory
             Bitmap bitmap = mMemCache.getImageInMem(url);
-            if (bitmap != null) {
+            if (bitmap != null && !bitmap.isRecycled()) {
                 imageView.setImageBitmap(bitmap);
             } else {
                 queuePhoto(url, imageView);
@@ -166,5 +166,9 @@ public class ImageLoader {
             }
             imageViews.remove(imageView);
         }
+    }
+
+    public void clearMem(){
+        mMemCache.clearMem();
     }
 }

@@ -249,6 +249,7 @@ public abstract class PagedReader extends Reader implements TapListener {
             }
             imageLoaded = false;
             loadingImage = false;
+            //System.gc();
         }
 
         public void setImage() {
