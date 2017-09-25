@@ -67,7 +67,7 @@ public class FromFolder extends ServerBase {
             chapter.setDownloaded(true);
             chapters.add(chapter);
         }
-        Collections.sort(chapters,Chapter.Comparators.NUMBERS_DESC);
+        Collections.sort(chapters,Chapter.Comparators.NUMBERS_ASC);
         manga.setChapters(chapters);
     }
 
