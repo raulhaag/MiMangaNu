@@ -74,6 +74,7 @@ public class FromFolder extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         loadChapters(manga,forceReload);
+        manga.setFinished(true);
     }
 
     @Override
