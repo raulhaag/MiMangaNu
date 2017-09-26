@@ -7,6 +7,9 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -71,7 +74,14 @@ public class ImageLoader {
                 String[] parts = url.split("\\|");
                 nav.addHeader("Referer", parts[1]);
                 FileCache.writeFile(nav.getStream(parts[0]), f);
-            } else {
+            } else if (url.startsWith("/")) {
+                // FromFolder sets url as an absolute local path, so load file directly
+                InputStream is;
+                is = new FileInputStream(url);
+                FileCache.writeFile(is, f);
+                is.close();
+            }
+            else {
                 FileCache.writeFile(Navigator.navigator.getStream(url), f);
             }
             return decodeFile(f);
