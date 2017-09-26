@@ -43,36 +43,15 @@ public class MangaFolderSelect extends DialogFragment {
     private TextView dirs_path;
     private MainFragment mainFragment;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
+    private AlertDialog dialog;
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setPositiveButton(getActivity().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-                if (MainActivity.pm != null) {
-                    if (MainActivity.pm.getBoolean("multi_import", false)) {
-                        new AddAllMangaInDirectoryTask().execute(actual);
-                    } else {
-                        new AddMangaTask().execute(actual);
-                    }
-                } else {
-                    new AddMangaTask().execute(actual);
-                }
-
-            }
-        });
-
-        builder.setNegativeButton(getActivity().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        builder.setPositiveButton(getActivity().getString(android.R.string.ok), null);
+        builder.setNegativeButton(getActivity().getString(android.R.string.cancel), null);
 
         LayoutInflater i = getActivity().getLayoutInflater();
 
@@ -104,7 +83,34 @@ public class MangaFolderSelect extends DialogFragment {
             }
         });
         builder.setView(view);
-        return builder.create();
+        dialog = builder.create();
+
+        // override the onClick action for the 'ok' button to keep the dialog open (the default action
+        // is to dismiss() the dialog on positive or negative button press automatically)
+        // if it would be closed directly, the activity would be detached during the time the tasks
+        // are running (i.e. getActivity() called at that time would return null)
+        // so let the tasks themselves dismiss() the dialog in their onPostExecute() callbacks
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(DialogInterface dialog) {
+                ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (MainActivity.pm != null) {
+                            if (MainActivity.pm.getBoolean("multi_import", false)) {
+                                new AddAllMangaInDirectoryTask().execute(actual);
+                            } else {
+                                new AddMangaTask().execute(actual);
+                            }
+                        } else {
+                            new AddMangaTask().execute(actual);
+                        }
+                    }
+                });
+            }
+        });
+
+        return dialog;
     }
 
     public void setMainFragment(MainFragment mainFragment) {
@@ -165,34 +171,34 @@ public class MangaFolderSelect extends DialogFragment {
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-            if (isAdded()) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (adding != null) {
-                            adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + max);
-                        }
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (adding != null) {
+                        adding.setMessage(getResources().getString(R.string.adding_to_db) + " " + values[0] + "/" + max);
                     }
-                });
-            }
+                }
+            });
         }
 
         @Override
         protected void onPostExecute(Void result) {
             adding.dismiss();
-            if (isAdded()) {
-                if(!onDb)
-                    Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-                else
-                    Toast.makeText(getContext(), getContext().getString(R.string.dir_already_on_db), Toast.LENGTH_LONG).show();
-                if (!error.isEmpty()) {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-                }
-                if (mainFragment != null) {
-                    mainFragment.setListManga(true);
-                }
-                getActivity().onBackPressed();
+
+            if(!onDb)
+                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(getContext(), getContext().getString(R.string.dir_already_on_db), Toast.LENGTH_LONG).show();
+            if (!error.isEmpty()) {
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
+            if (mainFragment != null) {
+                mainFragment.setListManga(true);
+            }
+
+            dialog.dismiss();
+            getActivity().onBackPressed();
+
             super.onPostExecute(result);
         }
     }
@@ -206,15 +212,13 @@ public class MangaFolderSelect extends DialogFragment {
         @Override
         protected void onPreExecute() {
             mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
-            if(isAdded())
-                Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
+            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "");
             super.onPreExecute();
         }
 
         @Override
         protected void onProgressUpdate(final Integer... values) {
-            if(isAdded())
-                Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
+            Util.getInstance().changeNotificationWithProgressbar(max, values[0], mNotifyID_AddAllMangaInDirectory, getResources().getString(R.string.adding_folders_as_mangas), "" + values[0] + " / " + max, true);
             super.onProgressUpdate(values);
         }
 
@@ -263,17 +267,18 @@ public class MangaFolderSelect extends DialogFragment {
 
         @Override
         protected void onPostExecute(Void result) {
-            if (isAdded()) {
-                Util.getInstance().cancelNotification(mNotifyID_AddAllMangaInDirectory);
-                Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
-                if (!error.isEmpty()) {
-                    Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-                }
-                if (mainFragment != null) {
-                    mainFragment.setListManga(true);
-                }
-                //getActivity().onBackPressed();
+            Util.getInstance().cancelNotification(mNotifyID_AddAllMangaInDirectory);
+            Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
+            if (!error.isEmpty()) {
+                Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
+            if (mainFragment != null) {
+                mainFragment.setListManga(true);
+            }
+
+            dialog.dismiss();
+            //getActivity().onBackPressed();
+
             super.onPostExecute(result);
         }
     }
