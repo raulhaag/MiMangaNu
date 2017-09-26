@@ -33,6 +33,15 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.68:
+* Arreglado TusMangasOnline.
+* Mejorado el uso de memoria.
+
+Changes in v1.68:
+* Fix TusMangasOnline.
+* Memory usage improve.
+
 Cambios en v1.67:
 * Arreglado Kissmanga.
 * Fixes rapidos.
