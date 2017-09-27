@@ -166,7 +166,7 @@
     <string name="clear_cache_subtitle">Löscht den Cache. Alle Cover Bilder müssen danach erneut heruntergeladen werden.</string>
     <string name="misc_settings">Sonstige Einstellungen</string>
     <string name="seamless_chapter_transitions_delete_read_title">Lösche nach Übergang</string>
-    <string name="seamless_chapter_transitions_delete_read_subtitle">Dies löscht das aktuelle Kapitel, wenn auf das nächste Kapitel übergegangen wird.</string>
+    <string name="seamless_chapter_transitions_delete_read_subtitle">Löscht das aktuelle Kapitel, sobald das nächste Kapitel begonnen wird.</string>
     <string name="new_chapter">Neues Kapitel von %s</string>
     <string name="new_chapters">Neue Kapitel von %s</string>
     <string name="dir_already_on_db">Verzeichnis bereits hinzugefügt</string>
@@ -224,11 +224,11 @@
     <string name="last_update">Letzte Aktualisierung</string>
     <string name="adding_folders_as_mangas">Füge Ordner als Manga hinzu</string>
     <string name="multi_import_title">Mehrfaches Importieren</string>
-    <string name="multi_import_subtitle">Werden Manga mit FromFolder importiert, werden alle darin vorhandenen Ordner hinzugefügt.</string>
+    <string name="multi_import_subtitle">Beim Import über FromFolder, werden alle im Importpfad enthaltenen Ordner als eigenständiges Manga hinzugefügt.</string>
     <string name="auto_import_title">Importiere Manga automatisch</string>
-    <string name="auto_import_subtitle">Importiere Ordner automatisch zur angegebenen Pfad als Manga, sobald der Aktualisierungsprozess abgeschlossen ist.</string>
-    <string name="auto_import_path_title">Importiere Pfad automatisch</string>
-    <string name="auto_import_path_subtitle">Importiere Ordner automatisch zur angegebenen Pfad als Manga.</string>
+    <string name="auto_import_subtitle">Importiere Ordner automatisch vom angegebenen Pfad, sobald der reguläre Aktualisierungsprozess abgeschlossen ist.</string>
+    <string name="auto_import_path_title">Pfad für automatischen Import</string>
+    <string name="auto_import_path_subtitle">Importiere Ordner automatisch vom angegebenen Pfad als Manga.</string>
     <string name="chapter_download_errors">Kapitel Download Fehler:</string>
     <string name="vacuum_database_title">Säubere Datenbank</string>
     <string name="vacuum_database_subtitle">Tippen um die Datenbank zu säubern. Die Datenbank wird bereinigt und verkleinert.\nDer Vorgang darf nicht unterbrochen werden!</string>
@@ -257,7 +257,7 @@
     <string name="update_error">Fehler beim Herunterladen der Aktualisierung</string>
     <string name="title_copied">Titel in die Zwischenablage kopiert</string>
     <string name="server_dead_message">Dieser Server ist tot. Es gibt nichts zu tun.</string>
-    <string name="clear_specific_cookies_title">Lösche spezifische Cookies</string>
+    <string name="clear_specific_cookies_title">Lösche bestimmte Cookies</string>
     <string name="clear_specific_cookies_subtitle">Lösche alle Cookies die einen bestimmten Ausdruck enthalten.</string>
     <string name="clear_all_cookies_title">Cookies löschen</string>
     <string name="clear_all_cookies_subtitle">Lösche alle Cookies. Für Seiten die eine Anmeldung benötigen (wie z.B. Batoto) muß eine erneute Anmeldung durchgeführt werden.</string>
