@@ -284,13 +284,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                                     dialog.dismiss();
                                 }
                             });
-                            Button cancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                            cancel.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    dialog.dismiss();
-                                }
-                            });
                         }
                     });
                     dialog.show();
