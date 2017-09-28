@@ -262,6 +262,7 @@ public abstract class ServerBase {
             this.loadMangaInformation(manga, true);
             this.loadChapters(manga, false);
         } catch (Exception e) {
+            Util.getInstance().toast(context, context.getResources().getString(R.string.update_search_failed, mangaDb.getTitle(), getServerName()));
             e.printStackTrace();
             return 0;
         }

@@ -276,4 +276,5 @@
     <string name="batoto_lang_russian">Russisch</string>
     <string name="batoto_lang_japanese">Japanisch</string>
     <string name="batoto_lang_chinese">Chinesisch</string>
+    <string name="update_search_failed">Suche nach neuen Kapiteln für %1$s auf %2$s fehlgeschlagen.</string>
 </resources>
