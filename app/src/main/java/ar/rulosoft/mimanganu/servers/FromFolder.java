@@ -67,13 +67,14 @@ public class FromFolder extends ServerBase {
             chapter.setDownloaded(true);
             chapters.add(chapter);
         }
-        Collections.sort(chapters,Chapter.Comparators.NUMBERS_DESC);
+        Collections.sort(chapters,Chapter.Comparators.NUMBERS_ASC);
         manga.setChapters(chapters);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         loadChapters(manga,forceReload);
+        manga.setFinished(true);
     }
 
     @Override

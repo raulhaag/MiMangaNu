@@ -265,4 +265,15 @@
     <string name="disable_internet_detection_subtitle">By default MiMangaNu will try to detect if there\'s an Internet connection and disable some functionality if it thinks that there is no internet.</string>
     <string name="app_update_title">Find app updates</string>
     <string name="app_update_subtitle">Find app updates for not F-Droid users.</string>
+    <string name="batoto_lang_auto">Automatic</string>
+    <string name="batoto_lang_all">All</string>
+    <string name="batoto_lang_custom">Custom</string>
+    <string name="batoto_lang_english">English</string>
+    <string name="batoto_lang_spanish">Spanish</string>
+    <string name="batoto_lang_german">German</string>
+    <string name="batoto_lang_french">French</string>
+    <string name="batoto_lang_italian">Italian</string>
+    <string name="batoto_lang_russian">Russian</string>
+    <string name="batoto_lang_japanese">Japanese</string>
+    <string name="batoto_lang_chinese">Chinese</string>
 </resources>

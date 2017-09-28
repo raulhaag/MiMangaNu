@@ -65,6 +65,19 @@
         <item>604800000</item>
     </string-array>
     <string-array name="batoto_lang_array">
+        <item>@string/batoto_lang_auto</item>
+        <item>@string/batoto_lang_all</item>
+        <item>@string/batoto_lang_custom</item>
+        <item>@string/batoto_lang_english</item>
+        <item>@string/batoto_lang_spanish</item>
+        <item>@string/batoto_lang_german</item>
+        <item>@string/batoto_lang_french</item>
+        <item>@string/batoto_lang_italian</item>
+        <item>@string/batoto_lang_russian</item>
+        <item>@string/batoto_lang_japanese</item>
+        <item>@string/batoto_lang_chinese</item>
+    </string-array>
+	<string-array name="batoto_lang_array_values">
         <item>Automatic</item>
         <item>All</item>
         <item>Custom</item>

@@ -22,7 +22,7 @@
             android:defaultValue="Automatic"
             android:dialogTitle="@string/batoto_lang_chapters_title"
             android:entries="@array/batoto_lang_array"
-            android:entryValues="@array/batoto_lang_array"
+            android:entryValues="@array/batoto_lang_array_values"
             android:key="batoto_lang_selection"
             android:summary="@string/batoto_lang_chapters_subtitle"
             android:title="@string/batoto_lang_chapters_title" />
