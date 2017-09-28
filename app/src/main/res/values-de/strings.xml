@@ -166,8 +166,6 @@
     <string name="misc_settings">Sonstige Einstellungen</string>
     <string name="seamless_chapter_transitions_delete_read_title">Lösche nach Übergang</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">Löscht das aktuelle Kapitel sobald das nächste Kapitel begonnen wird.</string>
-    <string name="new_chapter">Neues Kapitel von %s</string>
-    <string name="new_chapters">Neue Kapitel von %s</string>
     <string name="dir_already_on_db">Verzeichnis bereits hinzugefügt</string>
     <string name="already_on_db">Manga bereits hinzugefügt</string>
     <string name="edit_server_list">Serverliste bearbeiten</string>
@@ -213,8 +211,6 @@
     <string name="error_while_trying_to_open_db">Fehler beim Öffnen der Datenbank!</string>
     <string name="error_while_trying_to_update_db">Fehler beim Aktualisieren der Datenbank!</string>
     <string name="dont_spam_redownload_button">Mehrmals auf die Taste drücken macht den Download nicht schneller.</string>
-    <string name="one_more_chapter_not_displayed_here">weiteres Kapitel hier nicht angezeigt …</string>
-    <string name="x_more_chapters_not_displayed_here">weitere Kapitel hier nicht angezeigt …</string>
     <string name="vibrate">Vibrieren</string>
     <string name="thanks">Danke</string>
     <string name="_update_at_start_up_6hours">Update beim Start wenn 6 Stunden vergangen sind</string>
@@ -276,4 +272,12 @@
     <string name="batoto_lang_japanese">Japanisch</string>
     <string name="batoto_lang_chinese">Chinesisch</string>
     <string name="update_search_failed">Suche nach neuen Kapiteln für %1$s auf %2$s fehlgeschlagen.</string>
+    <plurals name="more_chapters_not_displayed_here">
+        <item quantity="one">%d weiteres Kapitel wird hier nicht angezeigt…</item>
+        <item quantity="other">%d weitere Kapitel werden hier nicht angezeigt…</item>
+    </plurals>
+    <plurals name="new_chapter">
+        <item quantity="one">%1$d neues Kapitel von %2$s</item>
+        <item quantity="other">%1$d neue Kapitel von %2$s</item>
+    </plurals>
 </resources>

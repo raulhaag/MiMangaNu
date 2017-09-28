@@ -154,7 +154,6 @@
     <string name="sort_as_added_to_db_desc">As added to db (desc)</string>
     <string name="download_next_chapter_automatically_subtitle">Bajar capítulo siguiente automaticamente</string>
     <string name="download_next_chapter_automatically_title">Bajar capítulo siguiente</string>
-    <string name="new_chapter">Nuevo capítulo de %s</string>
     <string name="already_on_db">El manga ya estaba agregado</string>
     <string name="dir_already_on_db">El directorio ya estaba agregado</string>
     <string name="edit_server_list">Editar lista de servidores</string>
@@ -184,7 +183,6 @@
     <string name="add">Agregar</string>
     <string name="fast_update_title">Actualizaciones rápidas</string>
     <string name="fast_update_subtitle">Solo compara los últimos 20 capítulos</string>
-    <string name="new_chapters">Nuevo capítulos de %s</string>
     <string name="searching">Búsqueda para \"%s\" en</string>
     <string name="chapters">capítulos</string>
     <string name="cancel">Cancelar</string>
@@ -211,9 +209,7 @@
     <string name="_update_at_start_up_1day">Buscar actualizaciones al iniciar si paso 1 día</string>
     <string name="_update_at_start_up_6hours">Buscar actualizaciones al iniciar si pasaron 6 horas</string>
     <string name="dont_spam_redownload_button">Aun descargando, espera a que termine</string>
-    <string name="one_more_chapter_not_displayed_here">y un capítulo que no pudo ser mostrado &#8230;</string>
     <string name="vibrate">Vibrar</string>
-    <string name="x_more_chapters_not_displayed_here">y más capítulos que no pudieron ser mostrados &#8230;</string>
     <string name="adding_folders_as_mangas">Agragar carpetas como Mangas</string>
     <string name="auto_import_path_subtitle">Auto impotar mangas del directorio seleccionado</string>
     <string name="auto_import_path_title">Ruta al directorio para importar</string>
@@ -264,5 +260,12 @@
     <string name="deleted_no_var">Borrar</string>
     <string name="disable_internet_detection_title">Desactivar deteccion de estado de internet.</string>
     <string name="disable_internet_detection_subtitle">Para dispositivos en los que esta cause problemas.</string>
+    <plurals name="more_chapters_not_displayed_here">
+        <item quantity="one">%d y más capítulos que no pudieron ser mostrados…</item>
+        <item quantity="other">%d y un capítulo que no pudo ser mostrado…</item>
+    </plurals>
+    <plurals name="new_chapter">
+        <item quantity="one">%1$d nuevo capítulo de %2$s</item>
+        <item quantity="other">%1$d nuevo capítulos de %2$s</item>
+    </plurals>
 </resources>
-
