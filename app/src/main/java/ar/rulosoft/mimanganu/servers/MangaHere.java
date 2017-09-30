@@ -87,7 +87,7 @@ public class MangaHere extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CAPITULOS);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), m.group(1));
+                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), "http:" + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
