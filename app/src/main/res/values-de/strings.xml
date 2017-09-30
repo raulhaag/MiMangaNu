@@ -16,7 +16,6 @@
     <string name="ajuste_ancho">An Breite anpassen</string>
     <string name="ajuste_imagen">Standard Bildanpassung</string>
     <string name="apachelic">Apache Lizenz</string>
-    <string name="app_name">Mi Manga Nu</string>
     <string name="autor">Autor</string>
     <string name="borrado_imagenes">Bilder gelöscht</string>
     <string name="borrarcap">Lösche Kapitel</string>
@@ -147,8 +146,8 @@
     <string name="retry">Wiederholen</string>
     <string name="sort_number">Kapitelnummer (abstg.)</string>
     <string name="sort_number_asc">Kapitelnummer (aufstg.)</string>
-    <string name="delete_confirm">Das/diese Kapitel wirklich löschen?</string>
-    <string name="storage_permission_denied">Die Berechtigung für den Speicherzugriff wird benötigt, damit MiMangaNu korrekt funktionieren kann.</string>
+    <string name="delete_confirm">Kapitel wirklich löschen?</string>
+    <string name="storage_permission_denied">Die Berechtigung für den Speicherzugriff wird benötigt damit MiMangaNu korrekt funktionieren kann.</string>
     <string name="no_new_updates_found">Keine neuen Kapitel gefunden :(</string>
     <string name="sort_as_added_to_db_asc">Wie in DB hinzugefügt (aufstg.)</string>
     <string name="sort_as_added_to_db_desc">Wie in DB hinzugefügt (abstg.)</string>
@@ -163,12 +162,10 @@
     <string name="deleted">Gelöscht: %s</string>
     <string name="deleted_no_var">Gelöscht</string>
     <string name="clear_cache_title">Cache löschen</string>
-    <string name="clear_cache_subtitle">Löscht den Cache. Alle Cover Bilder müssen danach erneut heruntergeladen werden.</string>
+    <string name="clear_cache_subtitle">Löscht den Cache. Cover Bilder müssen danach erneut heruntergeladen werden.</string>
     <string name="misc_settings">Sonstige Einstellungen</string>
     <string name="seamless_chapter_transitions_delete_read_title">Lösche nach Übergang</string>
-    <string name="seamless_chapter_transitions_delete_read_subtitle">Löscht das aktuelle Kapitel, sobald das nächste Kapitel begonnen wird.</string>
-    <string name="new_chapter">Neues Kapitel von %s</string>
-    <string name="new_chapters">Neue Kapitel von %s</string>
+    <string name="seamless_chapter_transitions_delete_read_subtitle">Löscht das aktuelle Kapitel sobald das nächste Kapitel begonnen wird.</string>
     <string name="dir_already_on_db">Verzeichnis bereits hinzugefügt</string>
     <string name="already_on_db">Manga bereits hinzugefügt</string>
     <string name="edit_server_list">Serverliste bearbeiten</string>
@@ -187,7 +184,7 @@
     <string name="include_finished_manga_title">Beendete Manga einbeziehen</string>
     <string name="include_finished_manga_subtitle">Es werden auch bereits beendete Manga bei der Update-Suche mit einbezogen. Sonst werden nur laufende Manga berücksichtigt.</string>
     <string name="hide_sensitivity_scrollbar_title">Ausblenden der Empfindlichkeits-Scrollbar</string>
-    <string name="hide_sensitivity_scrollbar_subtitle">Die Empfindlichkeit-Scrollbar wird ausgeblendet, wenn nicht im Vollbild-Modus gelesen wird.</string>
+    <string name="hide_sensitivity_scrollbar_subtitle">Die Empfindlichkeit-Scrollbar wird ausgeblendet wenn nicht im Vollbild-Modus gelesen wird.</string>
     <string name="add">Hinzufügen</string>
     <string name="fast_update_title">Schnelles Update</string>
     <string name="fast_update_subtitle">Vergleiche nur die neuesten 20 Kapitel vom Server.</string>
@@ -204,7 +201,7 @@
     <string name="show_status_bar_title">Einblenden des Statusbalkens</string>
     <string name="show_status_bar_subtitle">Der Statusbalken wird beim Lesen eingeblendet.</string>
     <string name="hide_actionbar_title">Ausblenden des Aktionsbalkens</string>
-    <string name="hide_actionbar_subtitle">Der Aktionsbalken wird ausgeblendet, wenn nicht im Vollbild-Modus gelesen wird.</string>
+    <string name="hide_actionbar_subtitle">Der Aktionsbalken wird ausgeblendet wenn nicht im Vollbild-Modus gelesen wird.</string>
     <string name="marking_as_read">Markiere als gelesen …</string>
     <string name="marking_as_unread">Markiere als ungelesen …</string>
     <string name="deleting">Lösche …</string>
@@ -214,8 +211,6 @@
     <string name="error_while_trying_to_open_db">Fehler beim Öffnen der Datenbank!</string>
     <string name="error_while_trying_to_update_db">Fehler beim Aktualisieren der Datenbank!</string>
     <string name="dont_spam_redownload_button">Mehrmals auf die Taste drücken macht den Download nicht schneller.</string>
-    <string name="one_more_chapter_not_displayed_here">weiteres Kapitel nicht angezeigt …</string>
-    <string name="x_more_chapters_not_displayed_here">weitere Kapitel nicht angezeigt …</string>
     <string name="vibrate">Vibrieren</string>
     <string name="thanks">Danke</string>
     <string name="_update_at_start_up_6hours">Update beim Start wenn 6 Stunden vergangen sind</string>
@@ -226,7 +221,7 @@
     <string name="multi_import_title">Mehrfaches Importieren</string>
     <string name="multi_import_subtitle">Beim Import über FromFolder, werden alle im Importpfad enthaltenen Ordner als eigenständiges Manga hinzugefügt.</string>
     <string name="auto_import_title">Importiere Manga automatisch</string>
-    <string name="auto_import_subtitle">Importiere Ordner automatisch vom angegebenen Pfad, sobald der reguläre Aktualisierungsprozess abgeschlossen ist.</string>
+    <string name="auto_import_subtitle">Importiere Ordner automatisch vom angegebenen Pfad sobald der reguläre Aktualisierungsprozess abgeschlossen ist.</string>
     <string name="auto_import_path_title">Pfad für automatischen Import</string>
     <string name="auto_import_path_subtitle">Importiere Ordner automatisch vom angegebenen Pfad als Manga.</string>
     <string name="chapter_download_errors">Kapitel Download Fehler:</string>
@@ -276,4 +271,13 @@
     <string name="batoto_lang_russian">Russisch</string>
     <string name="batoto_lang_japanese">Japanisch</string>
     <string name="batoto_lang_chinese">Chinesisch</string>
+    <string name="update_search_failed">Suche nach neuen Kapiteln für %1$s auf %2$s fehlgeschlagen.</string>
+    <plurals name="more_chapters_not_displayed_here">
+        <item quantity="one">%d weiteres Kapitel wird hier nicht angezeigt…</item>
+        <item quantity="other">%d weitere Kapitel werden hier nicht angezeigt…</item>
+    </plurals>
+    <plurals name="new_chapter">
+        <item quantity="one">%1$d neues Kapitel von %2$s</item>
+        <item quantity="other">%1$d neue Kapitel von %2$s</item>
+    </plurals>
 </resources>

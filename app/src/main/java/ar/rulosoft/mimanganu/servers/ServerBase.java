@@ -262,6 +262,7 @@ public abstract class ServerBase {
             this.loadMangaInformation(manga, true);
             this.loadChapters(manga, false);
         } catch (Exception e) {
+            Util.getInstance().toast(context, context.getResources().getString(R.string.update_search_failed, mangaDb.getTitle(), getServerName()));
             e.printStackTrace();
             return 0;
         }
@@ -463,10 +464,7 @@ public abstract class ServerBase {
                 for (int i = simpleListSize - 1; i > -1; i--) {
                     if (simpleListSize > 10 && n == x) { // last element if 10+ chapters
                         int tmp = simpleListSize - x;
-                        if (tmp == 1)
-                            largeContentText = largeContentText + tmp + " " + context.getString(R.string.one_more_chapter_not_displayed_here);
-                        else
-                            largeContentText = largeContentText + tmp + " " + context.getString(R.string.x_more_chapters_not_displayed_here);
+                        largeContentText += context.getResources().getQuantityString(R.plurals.more_chapters_not_displayed_here, tmp, tmp);
                     } else if (simpleListSize <= 10 && n == x) { // last element if <= 10 chapters
                         largeContentText = largeContentText + simpleList.get(i).getTitle();
                     } else { // every element that isn't the last element
@@ -488,11 +486,8 @@ public abstract class ServerBase {
                 Intent intent = new Intent(context, MainActivity.class);
                 intent.putExtra("manga_id", simpleList.get(0).getMangaID());
                 intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                if (simpleListSize > 1) {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleListSize + " " + context.getResources().getString(R.string.new_chapters, manga.getTitle()), largeContentText);
-                } else {
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, simpleListSize + " " + context.getResources().getString(R.string.new_chapter, manga.getTitle()), largeContentText);
-                }
+
+                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getQuantityString(R.plurals.new_chapter, simpleListSize, simpleListSize, manga.getTitle()), largeContentText);
             }
             return null;
         }

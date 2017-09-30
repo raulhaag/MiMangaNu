@@ -16,7 +16,7 @@
     <string name="ajuste_ancho">Fit to width</string>
     <string name="ajuste_imagen">Image fit by default</string>
     <string name="apachelic">Apache License</string>
-    <string name="app_name">Mi Manga Nu</string>
+    <string name="app_name" translatable="false">Mi Manga Nu</string>
     <string name="autor">Author</string>
     <string name="borrado_imagenes">Images deleted</string>
     <string name="borrarcap">Remove chapter</string>
@@ -167,8 +167,6 @@
     <string name="misc_settings">Misc Settings</string>
     <string name="seamless_chapter_transitions_delete_read_title">Delete after reading</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">This deletes the current chapter when transitioning to the next chapter</string>
-    <string name="new_chapter">New Chapter of %s</string>
-    <string name="new_chapters">New Chapters of %s</string>
     <string name="dir_already_on_db">Directory already added</string>
     <string name="already_on_db">Manga already added</string>
     <string name="edit_server_list">Edit server list</string>
@@ -214,8 +212,6 @@
     <string name="error_while_trying_to_open_db">Error while trying to open database!</string>
     <string name="error_while_trying_to_update_db">Error while trying to update database!</string>
     <string name="dont_spam_redownload_button">Please wait for the current image to finish downloading!</string>
-    <string name="one_more_chapter_not_displayed_here">more chapter not displayed here &#8230;</string>
-    <string name="x_more_chapters_not_displayed_here">more chapters not displayed here &#8230;</string>
     <string name="vibrate">Vibrate</string>
     <string name="thanks">Thanks</string>
     <string name="_update_at_start_up_6hours">Update at start up if 6 hours have passed</string>
@@ -276,4 +272,13 @@
     <string name="batoto_lang_russian">Russian</string>
     <string name="batoto_lang_japanese">Japanese</string>
     <string name="batoto_lang_chinese">Chinese</string>
+    <string name="update_search_failed">Failed to search for new chapters of %1$s on %2$s.</string>
+    <plurals name="more_chapters_not_displayed_here">
+        <item quantity="one">%d more chapter not displayed here…</item>
+        <item quantity="other">%d more chapters not displayed here…</item>
+    </plurals>
+    <plurals name="new_chapter">
+        <item quantity="one">%1$d new chapter of %2$s</item>
+        <item quantity="other">%1$d new chapters of %2$s</item>
+    </plurals>
 </resources>
