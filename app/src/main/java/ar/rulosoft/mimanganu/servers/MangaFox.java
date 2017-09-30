@@ -102,13 +102,13 @@ class MangaFox extends ServerBase {
             // Chapter
             p = Pattern.compile(PATTERN_CAPITULOS);
             m = p.matcher(data);
-
             while (m.find()) {
                 Chapter mc;
+
                 if (m.group(4) != null)
-                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), m.group(1).replace("1.html", ""));
+                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), "http:" + m.group(1).replace("1.html", ""));
                 else
-                    mc = new Chapter(m.group(2).trim(), m.group(1).replace("1.html", ""));
+                    mc = new Chapter(m.group(2).trim(), "http:" + m.group(1).replace("1.html", ""));
                 mc.addChapterFirst(manga);
             }
         }
@@ -190,7 +190,7 @@ class MangaFox extends ServerBase {
             web = HOST + genreVV + genre[filters[0][0]].toLowerCase().replaceAll(" ", "-") + "/" + pageNumber + ".htm" + orderV[filters[1][0]];
         //Log.d("Mfox","web: "+web);
         String source = getNavigatorAndFlushParameters().getWithTimeout(web);
-        Pattern p = Pattern.compile("<img src=\"(http://h\\.mfcdn\\.net/store/manga/.+?)\".+?<a class=\"title\" href=\"(.+?)\" rel=\"\\d+\">(.+?)</a>");
+        Pattern p = Pattern.compile("\"([^\"]+store.manga.+?)\".+?href=\"([^\"]+)[^>]+>([^<]+)");
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         //Log.d("Mfox","prematch");
@@ -198,7 +198,7 @@ class MangaFox extends ServerBase {
             /*Log.d("Mfox","(1): "+m.group(1));
             Log.d("Mfox","(2): "+m.group(2));
             Log.d("Mfox","(3): "+m.group(3));*/
-            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
+            Manga manga = new Manga(getServerID(), m.group(3), "http:" + m.group(2), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
         }

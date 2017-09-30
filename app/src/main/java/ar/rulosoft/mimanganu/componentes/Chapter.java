@@ -90,8 +90,7 @@ public class Chapter {
 
     @Override
     public boolean equals(Object obj) {
-        // FIXME chapter comparison uses URL/path - might break if sites transition from HTTP to HTTPS
-        return (obj instanceof Chapter) && this.path.equalsIgnoreCase(((Chapter) obj).path);
+        return (obj instanceof Chapter) && this.path.replaceAll("https?","").equalsIgnoreCase(((Chapter) obj).path.replaceAll("https?",""));
     }
 
     public int getPagesRead() {

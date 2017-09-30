@@ -103,7 +103,10 @@ public class TuMangaOnline extends ServerBase {
 
     public void loadChapters(Manga manga, boolean forceReload, boolean last) throws Exception {
         ArrayList<Chapter> result = new ArrayList<>();
-        String data = getNavWithNeededHeaders().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + 1 + "&tomo=-1");
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addHeader("Cache-mode", "no-cache");
+        nav.addHeader("Referer", "http://www.tumangaonline.com/biblioteca/mangas/" + manga.getPath() + "/" + URLEncoder.encode(manga.getTitle(), "UTF-8"));
+        String data = nav.get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + 1 + "&tomo=-1");
         if (data != null && data.length() > 3) {
             JSONObject object = new JSONObject(data);
             int last_page = object.getInt("last_page");
@@ -111,7 +114,7 @@ public class TuMangaOnline extends ServerBase {
             if (!last)
                 for (int i = 2; i <= last_page; i++) {
                     try {
-                        data = getNavWithNeededHeaders().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + i + "&tomo=-1");
+                        data = nav.get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + i + "&tomo=-1");
                         if (data != null && data.length() > 3) {
                             object = new JSONObject(data);
                             result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
@@ -125,19 +128,31 @@ public class TuMangaOnline extends ServerBase {
 
     private ArrayList<Chapter> getChaptersJsonArray(JSONArray jsonArray, String mid) {
         ArrayList<Chapter> result = new ArrayList<>();
+
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
                 JSONObject object = jsonArray.getJSONObject(i);
                 Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), getServerID() + "_" + mid + "_" + object.getString("numCapitulo"));
-                c.setExtra(mid +
-                        "/" + object.getString("numCapitulo") + "/" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "|" +
-                        object.getJSONArray("subidas").getJSONObject(0).getString("imagenes"));
+                //https://www.tumangaonline.com/api/v1/imagenes?idManga=31067&idScanlation=7602&numeroCapitulo=0.00&visto=false
+                c.setExtra("https://www.tumangaonline.com/api/v1/imagenes?idManga=" + mid + "&idScanlation=" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "&numeroCapitulo=" + object.getString("numCapitulo") + "&visto=false");
                 result.add(0, c);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
         return result;
+    }
+
+    public void initImages(Chapter chapter) throws Exception {
+        JSONObject object = new JSONObject(getNavWithNeededHeaders().get(chapter.getExtra()));
+        String webBase = object.getJSONObject("capitulo").getJSONObject("tomo").getString("idManga")+
+                "/"+ object.getJSONObject("capitulo").getString("numCapitulo") +
+                "/" + object.getString("idScan") + "/";
+        String imgs = object.getString("imagenes");
+        imgs = imgs.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"","").replaceAll(",","|");
+        chapter.setPages(imgs.split("\\|").length);
+        imgs = "|" + webBase + imgs.replace("|", "|" + webBase);
+        chapter.setExtra(imgs);
     }
 
     @Override
@@ -176,14 +191,18 @@ public class TuMangaOnline extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String[] d1 = chapter.getExtra().split("\\|");
-        String[] d2 = (d1[1].replace("[", "").replace("]", "").replaceAll("\"", "")).split(",");
-        chapter.setPages(d2.length);
-        String images = "";
-        for (String d : d2) {
-            images = images + "|" + d1[0] + "/" + d;
+        if (!chapter.getExtra().contains(".jpg")) {
+            initImages(chapter);
+        } else {
+            String[] d1 = chapter.getExtra().split("\\|");
+            String[] d2 = (d1[1].replace("[", "").replace("]", "").replaceAll("\"", "")).split(",");
+            chapter.setPages(d2.length);
+            String images = "";
+            for (String d : d2) {
+                images = images + "|" + d1[0] + "/" + d;
+            }
+            chapter.setExtra(images);
         }
-        chapter.setExtra(images);
     }
 
     ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
@@ -321,8 +340,8 @@ public class TuMangaOnline extends ServerBase {
 
     private Navigator getNavWithNeededHeaders() {
         Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Cache-mode","no-cache");
-        nav.addHeader("Referer","https://www.tumangaonline.com/biblioteca");
+        nav.addHeader("Cache-mode", "no-cache");
+        nav.addHeader("Referer", "https://www.tumangaonline.com/biblioteca");
         return nav;
     }
 }

@@ -63,8 +63,13 @@ public class MangaHere extends ServerBase {
         String data = getNavigatorAndFlushParameters().get(HOST + "/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE);
         Matcher m = p.matcher(data);
+        String path;
         while (m.find()) {
-            mangas.add(new Manga(ServerBase.ESMANGAHERE, m.group(1), m.group(2), false));
+            if(!m.group(2).contains("http"))
+                path = "https:" + m.group(2);
+            else
+                path = m.group(2);
+            mangas.add(new Manga(ServerBase.ESMANGAHERE, m.group(1), path, false));
         }
         return mangas;
     }
@@ -143,8 +148,13 @@ public class MangaHere extends ServerBase {
         String source = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile("<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"");
         Matcher m = p.matcher(source);
+        String path;
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), m.group(3), false);
+            if(!m.group(3).contains("http"))
+                path = "http:" + m.group(3);
+            else
+                path = m.group(3);
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), path, false);
             manga.setImages(m.group(1));//.replace("thumb_", ""));
             mangas.add(manga);
         }

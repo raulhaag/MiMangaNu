@@ -50,6 +50,7 @@ public class Navigator {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .cookieJar(cookieJar)
                     .build();
+
         }
     }
 
