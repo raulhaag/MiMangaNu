@@ -1,6 +1,5 @@
 package ar.rulosoft.navegadores;
 
-import android.app.KeyguardManager;
 import android.content.Context;
 import android.util.Log;
 
@@ -11,7 +10,6 @@ import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersisto
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -25,9 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -59,11 +55,14 @@ public class Navigator {
 
     public Navigator(Context context) throws Exception {
         if (httpClient == null) {
+            TrustManager[] trustManagers = getTrustManagers(context);
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, trustManagers, null);
             cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
                     //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
                     .addInterceptor(new CFInterceptor())
-                    .sslSocketFactory(getSslSocketFactory(context))
+                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
@@ -434,7 +433,7 @@ public class Navigator {
 
 
     //Explained on https://developer.android.com/training/articles/security-ssl.html
-    public SSLSocketFactory getSslSocketFactory(Context context) {
+    public TrustManager[] getTrustManagers(Context context) {
         try {
             //get system certs
             KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -455,10 +454,8 @@ public class Navigator {
             keyStore_n.setCertificateEntry("mangaherecoImages", loadCertificateFromRaw(R.raw.mangaherecoimages, context));
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore_n);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, tmf.getTrustManagers(), null);
-            return sslContext.getSocketFactory();
-        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
+            return tmf.getTrustManagers();
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException e) {
             e.printStackTrace();
         }
         return null;
