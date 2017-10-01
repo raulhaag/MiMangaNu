@@ -34,6 +34,20 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.70:
+* Arreglado JapScan.
+* Arreglado MangaKawaii.
+* Arreglado Bato.to login y idioma automatico.
+* Agregados certificados ca para MangaHere y MangaFox.
+* Retirado EsMangaHere porque desaparecio.
+
+Changes in v1.70:
+* Fix JapScan.
+* Fix MangaKawaii.
+* Fix Bato.to login and auto language selection.
+* Added ca certificates for MangaHere and MangaFox.
+* Removed EsMangaHere just because they disappears.
+
 Cambios en v1.69:
 * Arreglado TusMangasOnline de nuevo.
 * Arreglado MangaHere.

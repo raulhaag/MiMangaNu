@@ -82,9 +82,6 @@ public abstract class ServerBase {
             case MANGAPANDA:
                 serverBase = new MangaPanda(context);
                 break;
-            case ESMANGAHERE:
-                serverBase = new EsMangaHere(context);
-                break;
             case MANGAHERE:
                 serverBase = new MangaHere(context);
                 break;
@@ -200,7 +197,6 @@ public abstract class ServerBase {
                 new HeavenManga(context),
                 new SubManga(context),
                 new EsNineManga(context),
-                new EsMangaHere(context),
                 new LeoManga(context),
                 new Kumanga(context),
                 new MangaPanda(context),
