@@ -157,7 +157,7 @@ class MangaKawaii extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("<div class=\"img\">(.+?)</a>");
+        Pattern pattern = Pattern.compile("(<img w.+? (class=\"thumbnail\">|inline-block;\"))");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
