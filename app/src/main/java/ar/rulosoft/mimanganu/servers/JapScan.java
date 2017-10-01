@@ -106,7 +106,7 @@ class JapScan extends ServerBase {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
         String img = "";
         try {
-            img = getFirstMatchDefault("src=\"(http://cdn.japscan.com/[^\"]+?)\"/>", source, "Error getting image");
+            img = getFirstMatchDefault("src=\"(http://cdn[^\"]+)", source, "Error getting image");
         } catch (Exception e) {
             e.printStackTrace();
         }
