@@ -157,7 +157,7 @@ class BatoTo extends ServerBase {
                 String lang_selection, lang = "";
                 lang_selection = prefs.getString("batoto_lang_selection", "Automatic");
                 if (lang_selection.equals("Automatic"))
-                    lang = Locale.getDefault().getDisplayLanguage();
+                    lang = Locale.getDefault().getDisplayLanguage(new Locale("eng"));
                 else if (lang_selection.equals("Custom"))
                     lang = prefs.getString("batoto_custom_lang", "");
                 else
@@ -252,10 +252,17 @@ class BatoTo extends ServerBase {
         public Response intercept(Chain chain) throws IOException {
             boolean needLogin = true;
             List<Cookie> cookies = Navigator.getCookieJar().loadForRequest(HttpUrl.parse("https://bato.to"));
+            int credentials = 0;
             for (Cookie c : cookies) {
                 if (c.name().contains("member_id")) {
-                    needLogin = false;
+                    credentials++;
                 }
+                if (c.name().contains("pass_hash")) {
+                    credentials++;
+                }
+            }
+            if(credentials == 2){
+                needLogin = false;
             }
             Response response = chain.proceed(chain.request());
             if (response.code() != 200)
