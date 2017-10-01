@@ -1,5 +1,6 @@
 package ar.rulosoft.navegadores;
 
+import android.app.KeyguardManager;
 import android.content.Context;
 import android.util.Log;
 
@@ -7,14 +8,31 @@ import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
 
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.Certificate;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.KeyManager;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
+import ar.rulosoft.mimanganu.R;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -45,6 +63,7 @@ public class Navigator {
             httpClient = new OkHttpClientConnectionChecker.Builder()
                     //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
                     .addInterceptor(new CFInterceptor())
+                    .sslSocketFactory(getSslSocketFactory(context))
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
@@ -147,11 +166,10 @@ public class Navigator {
             }
         }
         if (response.isSuccessful()) {
-            if(timeout > 250)
+            if (timeout > 250)
                 Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
             return formatResponseBody(response.body());
-        }
-        else {
+        } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
             return "";
@@ -394,11 +412,11 @@ public class Navigator {
         headers.add(new Parameter(key, value));
     }
 
-    public static String getNewBoundary(){
+    public static String getNewBoundary() {
         String boundary = "---------------------------";
-        boundary += Math.floor(Math.random()*32768);
-        boundary += Math.floor(Math.random()*32768);
-        boundary += Math.floor(Math.random()*32768);
+        boundary += Math.floor(Math.random() * 32768);
+        boundary += Math.floor(Math.random() * 32768);
+        boundary += Math.floor(Math.random() * 32768);
         return boundary;
     }
 
@@ -413,6 +431,61 @@ public class Navigator {
     public void dropAllCalls() {
         httpClient.dispatcher().cancelAll();
     }
+
+
+    //Explained on https://developer.android.com/training/articles/security-ssl.html
+    public SSLSocketFactory getSslSocketFactory(Context context) {
+        try {
+            //get system certs
+            KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
+            keyStore.load(null, null);
+            KeyStore keyStore_n = KeyStore.getInstance(KeyStore.getDefaultType());
+            keyStore_n.load(null, null);
+            Enumeration<String> aliases = keyStore.aliases();
+            //creating a copy because original can't be modified
+            while (aliases.hasMoreElements())
+            {
+                String alias = aliases.nextElement();
+                java.security.cert.X509Certificate cert = (java.security.cert.X509Certificate) keyStore.getCertificate(alias);
+                keyStore_n.setCertificateEntry(alias, cert);
+            }
+            //then add my key ;-P
+            keyStore_n.setCertificateEntry("mangahereco", loadCertificateFromRaw(R.raw.mangahereco,context));
+            keyStore_n.setCertificateEntry("mangafoxme", loadCertificateFromRaw(R.raw.mangafoxme,context));
+            keyStore_n.setCertificateEntry("mangaherecoImages", loadCertificateFromRaw(R.raw.mangaherecoimages, context));
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(keyStore_n);
+            SSLContext sslContext = SSLContext.getInstance("TLS");
+            sslContext.init(null, tmf.getTrustManagers(), null);
+            return sslContext.getSocketFactory();
+        } catch (KeyStoreException | CertificateException | IOException | NoSuchAlgorithmException | KeyManagementException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Certificate loadCertificateFromRaw(int rawId, Context context) {
+        Certificate certificate = null;
+        InputStream certInput = null;
+        try {
+            CertificateFactory cf = CertificateFactory.getInstance("X.509");
+            certInput = new BufferedInputStream(context.getResources().openRawResource(rawId));
+            certificate = cf.generateCertificate(certInput);
+        } catch (CertificateException e) {
+            Log.e("MMN Certificates", "Fail to load certificates");
+        } finally {
+            if (certInput != null) {
+                try {
+                    certInput.close();
+                } catch (IOException e) {
+                    //dion't mind
+                }
+            }
+        }
+        return certificate;
+    }
+
+
 }
 
 /**
