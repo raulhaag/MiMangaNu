@@ -166,8 +166,7 @@ public class MangaHere extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + term);
-        Pattern p = Pattern.compile("<dt>				<a href=\"(" + HOST +
-                "/manga/.+?)\".+?\">(.+?)<");
+        Pattern p = Pattern.compile("<dt>\\s+<a href=\"([^\"]+/manga[^\"]+).+?>(.+?)<");
         Matcher m = p.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(2).trim(), m.group(1), false));
