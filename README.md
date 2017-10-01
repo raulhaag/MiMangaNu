@@ -34,6 +34,18 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.69:
+* Arreglado TusMangasOnline de nuevo.
+* Arreglado MangaHere.
+* Arreglado MangaFox.
+* Otros arreglos por parte tempura-san.
+
+Changes in v1.69:
+* Fix TusMangasOnline again.
+* Fix MangaHere.
+* Fix MangaFox.
+* Other fixes form tempura-san.
+
 Cambios en v1.68:
 * Arreglado TusMangasOnline.
 * Mejorado el uso de memoria.

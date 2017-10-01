@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.68:\n\t* Arreglado TusMangasOnline.\n\t* Mejorado el uso de memoria.</string>
+    <string name="update_message">Cambios en v1.69:\n\t* Arreglado TusMangasOnline de nuevo. \n\t* Arreglado MangaHere. \n\t* Arreglado MangaFox. \n\t* Otros arreglos por parte tempura-san.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
