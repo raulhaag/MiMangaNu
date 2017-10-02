@@ -162,7 +162,8 @@ public class VerticalReader extends ReaderContinuous {
 
     @Override
     public void postLayout() {
-        absoluteScroll(xScroll, getPagePosition(currentPage));
+        if(yScroll == 0)
+            absoluteScroll(xScroll, getPagePosition(currentPage));
         generateDrawPool();
         if (readerListener != null) {
             readerListener.onPageChanged(transformPage(currentPage));
