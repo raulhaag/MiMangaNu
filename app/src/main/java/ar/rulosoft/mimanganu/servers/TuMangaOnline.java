@@ -114,6 +114,9 @@ public class TuMangaOnline extends ServerBase {
             if (!last)
                 for (int i = 2; i <= last_page; i++) {
                     try {
+                        nav = getNavigatorAndFlushParameters();
+                        nav.addHeader("Cache-mode", "no-cache");
+                        nav.addHeader("Referer", "http://www.tumangaonline.com/biblioteca/mangas/" + manga.getPath() + "/" + URLEncoder.encode(manga.getTitle(), "UTF-8"));
                         data = nav.get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + i + "&tomo=-1");
                         if (data != null && data.length() > 3) {
                             object = new JSONObject(data);
