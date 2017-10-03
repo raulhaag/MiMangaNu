@@ -65,11 +65,11 @@ public class MangaHere extends ServerBase {
         Matcher m = p.matcher(data);
         String path;
         while (m.find()) {
-            if(!m.group(2).contains("http"))
+            if(!m.group(2).startsWith("http"))
                 path = "https:" + m.group(2);
             else
                 path = m.group(2);
-            mangas.add(new Manga(ServerBase.ESMANGAHERE, m.group(1), path, false));
+            mangas.add(new Manga(getServerID(), m.group(1), path, false));
         }
         return mangas;
     }
