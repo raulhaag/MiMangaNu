@@ -24,9 +24,9 @@ import ar.rulosoft.navegadores.Navigator;
 public abstract class ServerBase {
 
     public static final int FROMFOLDER = 1001;
-    public static final int ESMANGAHERE = 3;
     public static final int RAWSENMANGA = 21;
     static final int MANGAPANDA = 1;
+    static final int ESMANGAHERE = 3;
     static final int MANGAHERE = 4;
     static final int MANGAFOX = 5;
     static final int SUBMANGA = 6;
