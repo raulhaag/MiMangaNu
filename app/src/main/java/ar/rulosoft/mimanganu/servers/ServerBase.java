@@ -60,6 +60,7 @@ public abstract class ServerBase {
     static final int MANGAKAWAII = 32;
     static final int KUMANGA = 33;
     static final int MANGAPEDIA = 34;
+    static final int MANGATOWN = 35;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
@@ -182,6 +183,9 @@ public abstract class ServerBase {
             case VIEWCOMIC:
                 serverBase = new ViewComic(context);
                 break;
+            case MANGATOWN:
+                serverBase = new MangaTown(context);
+                break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
                 break;
@@ -261,6 +265,7 @@ public abstract class ServerBase {
                 new BatoTo(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
+                new MangaTown(context),
                 new FromFolder(context)
         });
     }
