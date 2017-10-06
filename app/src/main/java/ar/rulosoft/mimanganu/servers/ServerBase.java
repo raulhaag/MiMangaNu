@@ -658,22 +658,6 @@ public abstract class ServerBase {
     }
 
 	/**
-	 * Checks if a given integer is present in an array of integers.
-	 *
-	 * @param array the array for checking
-	 * @param value the value to look for
-	 * @return <code>true</code> if value is contained in array
-	 */
-    public boolean contains(int[] array, int value) {
-        for (int i : array) {
-            if (i == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-	/**
 	 * An enumeration for the type of filtering supported.
 	 */
     public enum FilteredType {VISUAL, TEXT}

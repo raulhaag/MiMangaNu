@@ -599,6 +599,15 @@ public class Util {
         }
     }
 
+    public boolean contains(int[] array, int value) {
+        for (int i : array) {
+            if (i == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static class LazyHolder {
         private static final Util utilInstance = new Util();
     }

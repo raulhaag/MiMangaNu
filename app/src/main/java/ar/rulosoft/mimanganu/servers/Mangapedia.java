@@ -94,21 +94,21 @@ public class Mangapedia extends ServerBase {
         mBodyBuilder.addFormDataPart("searchTerm","");
         mBodyBuilder.addFormDataPart("searchByLetter","");
         for(int i = 0; i < genreV.length; i++){
-            if(contains(filters[0],i)){
+            if(Util.getInstance().contains(filters[0],i)){
                 mBodyBuilder.addFormDataPart(genreV[i],"1");
             }else{
                 mBodyBuilder.addFormDataPart(genreV[i],"0");
             }
         }
         for(int i = 0; i < subGenreV.length; i++){
-            if(contains(filters[1],i)){
+            if(Util.getInstance().contains(filters[1],i)){
                 mBodyBuilder.addFormDataPart(subGenreV[i],"1");
             }else{
                 mBodyBuilder.addFormDataPart(subGenreV[i],"0");
             }
         }
         for(int i = 0; i < typeV.length; i++){
-            if(contains(filters[2],i)){
+            if(Util.getInstance().contains(filters[2],i)){
                 mBodyBuilder.addFormDataPart(typeV[i],"1");
             }else{
                 mBodyBuilder.addFormDataPart(typeV[i],"0");
