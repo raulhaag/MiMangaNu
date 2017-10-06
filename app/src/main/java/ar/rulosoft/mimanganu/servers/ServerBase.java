@@ -197,33 +197,35 @@ public abstract class ServerBase {
     }
 
 	/**
-	 * Return a clean Navigator instance with old parameters flushed.
+	 * Return a clean Navigator instance with old POST parameters flushed.
 	 *
 	 * @return the Navigator object
 	 */
     public static Navigator getNavigatorAndFlushParameters() {
-        Navigator.navigator.flushParameter();//remove old post parameters
+        Navigator.navigator.flushParameter();
         return Navigator.navigator;
     }
 
 	/**
 	 * Returns the first regular expression match on a string, or throws an Exception.
 	 * If the pattern is found in the source string, the first match group is returned. In case no
-	 * match can be done, an Exception is raised with the passed errorMsj string as payload.
+	 * match can be done, an Exception is raised with the passed errorMsg string as payload.
 	 *
 	 * @param patron   the regular expression pattern to match
 	 * @param source   the string to check the pattern for
-	 * @param errorMsj the descriptive error message string for the Exception raised if not match
+	 * @param errorMsg the descriptive error message string for the Exception raised if not match
 	 *                 could be found
 	 * @return         the first match group
 	 */
-    public static String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
+    public static String getFirstMatch(String patron, String source, String errorMsg) throws Exception {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
         if (m.find()) {
             return m.group(1);
         }
-        throw new Exception(errorMsj);
+        else {
+            throw new Exception(errorMsg);
+        }
     }
 
 	/**
@@ -316,7 +318,7 @@ public abstract class ServerBase {
 
     /**
 	 * Returns the URL for the given page in a Chapter.
-	 * Some sanitiy checking should be done in the override function, like non-negativity and that
+	 * Some sanity checking should be done in the override function, like non-negativity and that
 	 * page lies within the available page numbers of the given Chapter.
 	 *
 	 * @param chapter a Chapter object to get the page URL for
@@ -327,7 +329,7 @@ public abstract class ServerBase {
 
 	/**
 	 * Returns the URL for the image on a given Chapter page.
-	 * Some sanitiy checking should be done in the override function, like non-negativity and that
+	 * Some sanity checking should be done in the override function, like non-negativity and that
 	 * page lies within the available page numbers of the given Chapter.
 	 *
 	 * @param chapter    a Chapter object to get the page image URL for
@@ -350,6 +352,13 @@ public abstract class ServerBase {
 	 * There might be more than one result page, so pageNumber is used to get a certain result page.
 	 * If more information is available, the hasMore variable shall be set to <code>true</code> to
 	 * indicate this condition to the caller in order to fetch the next page.
+     *
+     * The filter parameter contains the current selection. The first index is given by the order
+     * of filters returned by <code>getServerFilters()</code>. The second index indicates the
+     * current selection for the criteria given in the first index.
+     *
+     * So if the ordering of the filter criteria is changed, make sure to reflect the change in this
+     * function as well.
 	 *
 	 * @param filters    the filter set to use
 	 * @param pageNumber the result page number for a given filter
@@ -554,11 +563,10 @@ public abstract class ServerBase {
 	/**
 	 * Returns the first match for a given pattern and string or a default text.
 	 *
-	 * @param patron     the pattern to search for
-	 * @param source     the string to search
-	 * @param mDefault   the default string to return in case no match was found
-	 * @return           the first match or the value defined by mDefault
-	 * @throws Exception if an error occurred
+	 * @param patron   the pattern to search for
+	 * @param source   the string to search
+	 * @param mDefault the default string to return in case no match was found
+	 * @return         the first match or the value defined by mDefault
 	 */
     public String getFirstMatchDefault(String patron, String source, String mDefault) {
         Pattern p = Pattern.compile(patron);
