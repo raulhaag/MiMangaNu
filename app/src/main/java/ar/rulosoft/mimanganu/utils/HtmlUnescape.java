@@ -15,6 +15,7 @@ public class HtmlUnescape {
         put("<br\\s*/?>", "\n");
         put("&quot;", "\"");
         put("&amp;", "&");
+        put("&#039;", "'");
 
         // End of definitions
     }};

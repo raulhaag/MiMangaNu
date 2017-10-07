@@ -21,12 +21,15 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
+/**
+ * The base class for all online Manga servers supported by this application.
+ */
 public abstract class ServerBase {
 
     public static final int FROMFOLDER = 1001;
-    public static final int ESMANGAHERE = 3;
     public static final int RAWSENMANGA = 21;
     static final int MANGAPANDA = 1;
+    static final int ESMANGAHERE = 3;
     static final int MANGAHERE = 4;
     static final int MANGAFOX = 5;
     static final int SUBMANGA = 6;
@@ -57,6 +60,7 @@ public abstract class ServerBase {
     static final int MANGAKAWAII = 32;
     static final int KUMANGA = 33;
     static final int MANGAPEDIA = 34;
+    static final int MANGATOWN = 35;
 
     static final int READCOMICONLINE = 1000;
     static final int READCOMICSTV = 1002;
@@ -71,12 +75,25 @@ public abstract class ServerBase {
     private int flag;
     private int serverID;
 
+	/**
+	 * Construct a new ServerBase object.
+	 *
+	 * @param context the context for this object
+	 */
     public ServerBase(Context context) {
         this.context = context;
     }
 
+	/**
+	 * Get a new ServerBase object via the given identifier.
+	 * If the passed identifier is not known, a DeadServer instance is returned. This mechanism can
+	 * also be used for servers which wen out of commission (like EsMangaHere).
+	 *
+	 * @param  id      the identifier of the server
+	 * @param  context the context for this object
+	 * @return         a ServerBase object or a DeadServer object
+	 */
     public static ServerBase getServer(int id, Context context) {
-        //before remove deprecated add info on DeadServer
         ServerBase serverBase;
         switch (id) {
             case MANGAPANDA:
@@ -166,6 +183,9 @@ public abstract class ServerBase {
             case VIEWCOMIC:
                 serverBase = new ViewComic(context);
                 break;
+            case MANGATOWN:
+                serverBase = new MangaTown(context);
+                break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
                 break;
@@ -176,20 +196,46 @@ public abstract class ServerBase {
         return serverBase;
     }
 
+	/**
+	 * Return a clean Navigator instance with old POST parameters flushed.
+	 *
+	 * @return the Navigator object
+	 */
     public static Navigator getNavigatorAndFlushParameters() {
-        Navigator.navigator.flushParameter();//remove old post parameters
+        Navigator.navigator.flushParameter();
         return Navigator.navigator;
     }
 
-    public static String getFirstMatch(String patron, String source, String errorMsj) throws Exception {
+	/**
+	 * Returns the first regular expression match on a string, or throws an Exception.
+	 * If the pattern is found in the source string, the first match group is returned. In case no
+	 * match can be done, an Exception is raised with the passed errorMsg string as payload.
+	 *
+	 * @param patron   the regular expression pattern to match
+	 * @param source   the string to check the pattern for
+	 * @param errorMsg the descriptive error message string for the Exception raised if not match
+	 *                 could be found
+	 * @return         the first match group
+	 */
+    public static String getFirstMatch(String patron, String source, String errorMsg) throws Exception {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
         if (m.find()) {
             return m.group(1);
         }
-        throw new Exception(errorMsj);
+        else {
+            throw new Exception(errorMsg);
+        }
     }
 
+	/**
+	 * Returns a list of registered servers.
+	 * Returns an array of all possible server objects (except DeadServer of course) with a given
+	 * context.
+	 *
+	 * @param context the context for this object
+	 * @return        an array containing ServerBase instances - for each registered server
+	 */
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
                 new TuMangaOnline(context),
@@ -221,34 +267,134 @@ public abstract class ServerBase {
                 new BatoTo(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
+                new MangaTown(context),
                 new FromFolder(context)
         });
     }
 
-    // server
+    /**
+	 * Returns the list of Manga found on the server.
+	 *
+	 * @return           an ArrayList of Manga objects
+	 * @throws Exception if an error occurred
+	 */
     public abstract ArrayList<Manga> getMangas() throws Exception;
-
+	/**
+	 * Returns a list of Manga filtered by a given search term.
+	 *
+	 * @param term       a term to search for
+	 * @return           an ArrayList of Manga objects
+	 * @throws Exception if an error occurred
+	 */
     public abstract ArrayList<Manga> search(String term) throws Exception;
 
-    // chapter
+    /**
+	 * Load all available chapters for a given Manga.
+	 *
+	 * @param manga       the Manga to find chapters for
+	 * @param forceReload force new retrieval of chapter information
+	 * @throws Exception  if an error occurred
+	 * @see               Chapter
+	 */
     public abstract void loadChapters(Manga manga, boolean forceReload) throws Exception;
-
+	/**
+	 * Load available information for a given Manga.
+	 * Load and add information to a given Manga, like:
+	 * <ul>
+	 * <li>cover image
+	 * <li>summary
+	 * <li>ongoing/finished
+	 * <li>genre
+	 * <li>chapters
+	 * </ul>
+	 *
+	 * @param manga       the Manga to find information for
+	 * @param forceReload force new retrieval of Manga information
+	 * @throws Exception  if an error occurred
+	 * @see               Manga
+	 * @see               Chapter
+	 */
     public abstract void loadMangaInformation(Manga manga, boolean forceReload) throws Exception;
 
-    // manga
+    /**
+	 * Returns the URL for the given page in a Chapter.
+	 * Some sanity checking should be done in the override function, like non-negativity and that
+	 * page lies within the available page numbers of the given Chapter.
+	 *
+	 * @param chapter a Chapter object to get the page URL for
+	 * @param page    the page number
+	 * @return        the URL to the given page of the Chapter
+	 */
     public abstract String getPagesNumber(Chapter chapter, int page);
 
+	/**
+	 * Returns the URL for the image on a given Chapter page.
+	 * Some sanity checking should be done in the override function, like non-negativity and that
+	 * page lies within the available page numbers of the given Chapter.
+	 *
+	 * @param chapter    a Chapter object to get the page image URL for
+	 * @param page       the page number
+	 * @return           the URL to the image on the given page of the Chapter
+	 * @throws Exception if an error occurred
+	 */
     public abstract String getImageFrom(Chapter chapter, int page) throws Exception;
 
+	/**
+	 * Initialise the Chapter information, basically the number of pages.
+	 *
+	 * @param chapter    the Chapter object to do the initialisation for
+	 * @throws Exception if an error occurred
+	 */
     public abstract void chapterInit(Chapter chapter) throws Exception;
 
-    // server visual
+    /**
+	 * Returns a list of Manga filtered by the given filter set.
+	 * There might be more than one result page, so pageNumber is used to get a certain result page.
+	 * If more information is available, the hasMore variable shall be set to <code>true</code> to
+	 * indicate this condition to the caller in order to fetch the next page.
+     *
+     * The filter parameter contains the current selection. The first index is given by the order
+     * of filters returned by <code>getServerFilters()</code>. The second index indicates the
+     * current selection for the criteria given in the first index.
+     *
+     * So if the ordering of the filter criteria is changed, make sure to reflect the change in this
+     * function as well.
+	 *
+	 * @param filters    the filter set to use
+	 * @param pageNumber the result page number for a given filter
+	 * @return           a list of Manga matching the filter criteria
+	 * @throws Exception if an error occurred
+	 */
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         return new ArrayList<>();
     }
 
+	/**
+	 * Returns information if the server provides a Manga listing.
+     * If <code>true</code> is returned, getMangas() must be implemented properly.
+	 *
+	 * @return <code>true</code> if the server provides a list of Manga, <code>false</code>
+	 *         otherwise
+	 */
     public abstract boolean hasList();
 
+	/**
+	 * Searches for new chapters for a given Manga.
+	 * Loads information from the database and fetches the current state from the server. Afterwards
+	 * the server information is compared to the local information to check if new chapters are
+	 * available.
+	 *
+	 * A fast check can be triggered to reduce load and compare time by checking only the last 20
+	 * chapters for differences.
+	 *
+	 * All detected changes are also stored in the database.
+	 *
+	 * @param id         the Manga id to check new chapters for
+	 * @param context    the Context object to use for checking
+	 * @param fast       <code>true</code> to perform a fast check (first 20 chapters only)
+	 * @return           the count of new chapters found
+	 * @throws Exception if an error occurred
+	 */
     public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {
         int returnValue;
         Manga mangaDb = Database.getFullManga(context, id);
@@ -328,38 +474,82 @@ public abstract class ServerBase {
         return returnValue;
     }
 
+	/**
+	 * Returns the server icon resource identifier.
+	 *
+	 * @return the server icon resource identifier
+	 */
     public int getIcon() {
         return icon;
     }
-
+	/**
+	 * Sets the server icon resource identifier.
+	 *
+	 * @param icon the server icon resource identifier to set
+	 */
     public void setIcon(int icon) {
         this.icon = icon;
     }
 
+	/**
+	 * Returns the flag icon resource identifier.
+	 *
+	 * @return the flag icon resource identifier
+	 */
     public int getFlag() {
         return flag;
     }
-
+	/**
+	 * Sets the flag icon resource identifier.
+	 *
+	 * @param flag the flag icon resource identifier to set
+	 */
     public void setFlag(int flag) {
         this.flag = flag;
     }
 
+	/**
+	 * Returns the server resource identifier.
+	 *
+	 * @return the server resource identifier
+	 */
     public int getServerID() {
         return serverID;
     }
-
+	/**
+	 * Sets the server identifier.
+	 *
+	 * @param serverID the server identifier to set
+	 */
     public void setServerID(int serverID) {
         this.serverID = serverID;
     }
 
+	/**
+	 * Returns the server name.
+	 *
+	 * @return the server name
+	 */
     public String getServerName() {
         return serverName;
     }
-
+	/**
+	 * Sets the server name.
+	 *
+	 * @param serverName the server name to set
+	 */
     public void setServerName(String serverName) {
         this.serverName = serverName;
     }
 
+	/**
+	 * Returns a list of matches for a given pattern and string.
+	 *
+	 * @param patron     the pattern to search for
+	 * @param source     the string to search
+	 * @return           a list of matches (may be empty)
+	 * @throws Exception if an error occurred
+	 */
     public ArrayList<String> getAllMatch(String patron, String source) throws Exception {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
@@ -370,6 +560,14 @@ public abstract class ServerBase {
         return matches;
     }
 
+	/**
+	 * Returns the first match for a given pattern and string or a default text.
+	 *
+	 * @param patron   the pattern to search for
+	 * @param source   the string to search
+	 * @param mDefault the default string to return in case no match was found
+	 * @return         the first match or the value defined by mDefault
+	 */
     public String getFirstMatchDefault(String patron, String source, String mDefault) {
         Pattern p = Pattern.compile(patron);
         Matcher m = p.matcher(source);
@@ -380,22 +578,48 @@ public abstract class ServerBase {
         }
     }
 
+	/**
+	 * Returns information if a referrer is needed for image loading.
+	 *
+	 * @return <code>true</code> if a referrer is needed
+	 */
     public boolean needRefererForImages() {
         return true;
     }
 
+	/**
+	 * Returns information if the server offers filtered navigation.
+	 * If <code>true</code> is returned, getMangasFiltered() must be implemented properly.
+     *
+	 * @return <code>true</code> if filtered navigation is offered
+	 */
     public boolean hasFilteredNavigation() {
         return true;
     }
 
+	/**
+	 * Returns the type of filtering supported.
+	 *
+	 * @return either VISUAL or TEXT
+	 */
     public FilteredType getFilteredType() {
         return FilteredType.VISUAL;
     }
 
+	/**
+	 * Returns the supported server filters for this server.
+	 *
+	 * @return a list of ServerFilter supported by this server
+	 */
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{};
     }
 
+	/**
+	 * Returns the most basic filter set for this server.
+     *
+     * @return the basic filter for this server
+	 */
     public int[][] getBasicFilter() {
         ServerFilter[] filters = getServerFilters();
         int[][] result = new int[filters.length][];
@@ -410,27 +634,40 @@ public abstract class ServerBase {
         return result;
     }
 
+	/**
+	 * Returns information the server needs a login.
+	 *
+	 * @return <code>true</code> if a login is needed
+	 */
     public boolean needLogin() {
         return false;
     }
 
+	/**
+	 * Returns information if credentials are present.
+	 * Should return <code>true</code> to disable querying credentials.
+	 *
+	 * @return <code>true</code> if credentials are present
+	 */
     public boolean hasCredentials() {
         return true;
     }
 
+	/**
+	 * Tests if the given login data is working.
+	 *
+	 * @param user the user to log in
+	 * @param passwd the password to use for logging in
+	 * @return <code>true</code> if the login succeeded, <code>false</code> otherwise
+	 * @throws Exception if an error occurred
+	 */
     public boolean testLogin(String user, String passwd) throws Exception {
         return false;
     }
 
-    public boolean contains(int[] array, int value) {
-        for (int i : array) {
-            if (i == value) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+	/**
+	 * An enumeration for the type of filtering supported.
+	 */
     public enum FilteredType {VISUAL, TEXT}
 
     class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
@@ -494,5 +731,4 @@ public abstract class ServerBase {
             super.onPostExecute(result);
         }
     }
-
 }

@@ -50,9 +50,6 @@ public class TestServers {
                 testGetMangas2();
             }
             testLoadManga();
-            if (serverBase.getServerID() == ServerBase.ESMANGAHERE) {
-                Thread.sleep(5000);//to avoid the server kick
-            }
             testInitAndGetImage();
         }
     }

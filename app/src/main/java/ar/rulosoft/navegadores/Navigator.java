@@ -452,6 +452,7 @@ public class Navigator {
             keyStore_n.setCertificateEntry("mangahereco", loadCertificateFromRaw(R.raw.mangahereco,context));
             keyStore_n.setCertificateEntry("mangafoxme", loadCertificateFromRaw(R.raw.mangafoxme,context));
             keyStore_n.setCertificateEntry("mangaherecoImages", loadCertificateFromRaw(R.raw.mangaherecoimages, context));
+            keyStore_n.setCertificateEntry("mangatowncom", loadCertificateFromRaw(R.raw.mangatowncom,context));
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore_n);
             return tmf.getTrustManagers();

@@ -204,7 +204,7 @@ class KissManga extends ServerBase {
         } else if (filters[0].length == 1) { // single genre selection
             String web = genreVV + genre[0].replaceAll(" ", "-") + orderV[0];
             for (int i = 0; i < genre.length; i++) {
-                if (contains(filters[0], i)) {
+                if (Util.getInstance().contains(filters[0], i)) {
                     web = genreVV + genre[i].replaceAll(" ", "-") + orderV[filters[2][0]];
                     if (pageNumber > 1) {
                         web = web + "?page=" + pageNumber;
@@ -222,9 +222,9 @@ class KissManga extends ServerBase {
                 nav.addPost("mangaName", "");
                 nav.addPost("authorArtist", "");
                 for (int i = 0; i < genre.length; i++) {
-                    if (contains(filters[0], i)) {
+                    if (Util.getInstance().contains(filters[0], i)) {
                         nav.addPost("genres", "1");
-                    } else if (contains(filters[1], i)) {
+                    } else if (Util.getInstance().contains(filters[1], i)) {
                         nav.addPost("genres", "2");
                     } else {
                         nav.addPost("genres", "0");

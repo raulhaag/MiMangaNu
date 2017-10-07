@@ -178,7 +178,7 @@ public class MangaPanda extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String gens = "";
         for (int i = 0; i < genre.length; i++) {
-            if (contains(filters[0], i)) {
+            if (Util.getInstance().contains(filters[0], i)) {
                 gens = gens + "1";
             } else {
                 gens = gens + "0";
