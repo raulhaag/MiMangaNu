@@ -665,6 +665,20 @@ public abstract class ServerBase {
         return false;
     }
 
+    /**
+     * Build an array of translated strings from an array of resource identifiers.
+     *
+     * @param resId an array containing the resource identifiers
+     * @return an array of translated strings
+     */
+    protected String[] buildTranslatedStringArray(int[] resId) {
+        String[] result = new String[resId.length];
+        for (int i = 0; i < resId.length; i++) {
+            result[i] = context.getString(resId[i]);
+        }
+        return result;
+    }
+
 	/**
 	 * An enumeration for the type of filtering supported.
 	 */

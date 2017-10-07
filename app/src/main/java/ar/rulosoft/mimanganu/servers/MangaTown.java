@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,28 +37,67 @@ class MangaTown extends ServerBase {
             "<a class=\"manga_cover\" href=\"(.+?)\" title=\"(.+?)\">\\s*<img src=\"(.+?)\"";
 
     // filter by status /0-0-0-X-0-0/
-    private static String[] fltStatus = {
-            "All", "New", "Ongoing", "Completed"
+    private static int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_new,
+            R.string.flt_status_ongoing,
+            R.string.flt_status_completed
     };
     private static String[] valStatus = {
             "0", "new", "ongoing", "completed"
     };
 
     // filter by demographic /X-0-0-0-0-0/
-    private static String[] fltDemographic = {
-            "All", "Josei", "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Yaoi", "Yuri"
+    private static int[] fltDemographic = {
+            R.string.flt_demographic_all,
+            R.string.flt_demographic_josei,
+            R.string.flt_demographic_seinen,
+            R.string.flt_demographic_shoujo,
+            R.string.flt_demographic_shoujo_ai,
+            R.string.flt_demographic_shounen,
+            R.string.flt_demographic_shounen_ai,
+            R.string.flt_demographic_yaoi,
+            R.string.flt_demographic_yuri
     };
     private static String[] valDemographic = {
             "0", "josei", "seinen", "shoujo", "shoujo_ai", "shounen", "shounen_ai", "yaoi", "yuri"
     };
 
     // filter by genre /0-X-0-0-0-0/
-    private static String[] fltGenre = {
-            "All", "4 Koma", "Action", "Adventure", "Comedy", "Cooking", "Doujinshi", "Drama",
-            "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Martial Arts",
-            "Mature", "Mecha", "Music", "Mystery", "One Shot", "Psychological", "Reverse Harem",
-            "Romance", "School Life", "Sci Fi", "Slice Of Life", "Sports", "Supernatural",
-            "Suspense", "Tragedy", "Vampire", "Webtoons", "Youkai"
+    private static int[] fltGenre = {
+            R.string.flt_genre_all,
+            R.string.flt_genre_4_koma,
+            R.string.flt_genre_action,
+            R.string.flt_genre_adventure,
+            R.string.flt_genre_comedy,
+            R.string.flt_genre_cooking,
+            R.string.flt_genre_doujinshi,
+            R.string.flt_genre_drama,
+            R.string.flt_genre_ecchi,
+            R.string.flt_genre_fantasy,
+            R.string.flt_genre_gender_bender,
+            R.string.flt_genre_harem,
+            R.string.flt_genre_historical,
+            R.string.flt_genre_horror,
+            R.string.flt_genre_martial_arts,
+            R.string.flt_genre_mature,
+            R.string.flt_genre_mecha,
+            R.string.flt_genre_music,
+            R.string.flt_genre_mystery,
+            R.string.flt_genre_one_shot,
+            R.string.flt_genre_psychological,
+            R.string.flt_genre_reverse_harem,
+            R.string.flt_genre_romance,
+            R.string.flt_genre_school_life,
+            R.string.flt_genre_sci_fi,
+            R.string.flt_genre_slice_of_life,
+            R.string.flt_genre_sports,
+            R.string.flt_genre_supernatural,
+            R.string.flt_genre_suspense,
+            R.string.flt_genre_tragedy,
+            R.string.flt_genre_vampire,
+            R.string.flt_genre_webtoons,
+            R.string.flt_genre_youkai
     };
     private static String[] valGenre = {
             "0", "4_koma", "action", "adventure", "comedy", "cooking", "doujinshi", "drama",
@@ -68,16 +108,22 @@ class MangaTown extends ServerBase {
     };
 
     // filter by type /0-0-0-0-0-X/
-    private static String[] fltType = {
-            "All", "Manga", "Manhwa", "Manhua"
+    private static int[] fltType = {
+            R.string.flt_type_all,
+            R.string.flt_type_manga,
+            R.string.flt_type_manhwa,
+            R.string.flt_type_manhua
     };
     private static String[] valType = {
             "0", "manga", "manhwa", "manhua"
     };
 
     // filter by order /0-0-0-0-0-0/?
-    private static String[] fltOrder = {
-            "Views", "Rating", "A - Z", "Last Update"
+    private static int[] fltOrder = {
+            R.string.flt_order_views,
+            R.string.flt_order_rating,
+            R.string.flt_order_alpha,
+            R.string.flt_order_last_update
     };
     private static String[] valOrder = {
             "?views.za", "?rating.za", "?name.az", "last_chapter_time.za"
@@ -160,7 +206,8 @@ class MangaTown extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + term);
+        String data = getNavigatorAndFlushParameters().get(
+                HOST + "/search.php?name=" + URLEncoder.encode(term, "UTF-8"));
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
@@ -187,11 +234,21 @@ class MangaTown extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[] {
-                new ServerFilter("Status", fltStatus, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Demographic", fltDemographic, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Genre", fltGenre, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Type", fltType, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", fltOrder, ServerFilter.FilterType.SINGLE)
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_demographic),
+                        buildTranslatedStringArray(fltDemographic), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_type),
+                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_order),
+                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
 
