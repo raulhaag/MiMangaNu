@@ -60,7 +60,7 @@ class RawSenManga extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "Manga/?order=text-version");
-        Pattern p = Pattern.compile("\\d</td><td><a href=\"([^\"]+)\"\\s*>([^<]+)");
+        Pattern p = Pattern.compile("\\d</td><td><a href=\"([^\"]+)\"\\s*>([^<]+)", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(2),HOST + m.group(1), false);
@@ -73,7 +73,7 @@ class RawSenManga extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         String web = HOST + "Search.php?q=" + URLEncoder.encode(term,"UTF-8");
         String data = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile("<div class='search-results'>.+?<a href='(.+?)' title='(.+?)'");
+        Pattern p = Pattern.compile("<div class='search-results'>.+?<a href='(.+?)' title='(.+?)'", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()){
@@ -93,7 +93,7 @@ class RawSenManga extends ServerBase {
             manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, "N/A")).toString());
             manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "N/A")).toString().trim());
             manga.setFinished(data2.contains("Complete"));
-            Pattern p = Pattern.compile("<td><a href=\"(/.+?)\" title=\"(.+?)\"");
+            Pattern p = Pattern.compile("<td><a href=\"(/.+?)\" title=\"(.+?)\"", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 Chapter mc = new Chapter(m.group(2).trim(), HOST + m.group(1));
@@ -133,7 +133,7 @@ class RawSenManga extends ServerBase {
 
     @NonNull
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("<div class=\"cover\"><a href=\"/(.+?)\" title=\"(.+?)\"><img src=\"/(.+?)\"");
+        Pattern p = Pattern.compile("<div class=\"cover\"><a href=\"/(.+?)\" title=\"(.+?)\"><img src=\"/(.+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()){

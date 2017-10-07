@@ -108,7 +108,7 @@ class MangaEden extends ServerBase {
         // Genres
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
         // Chapters
-        Pattern pattern = Pattern.compile("<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a");
+        Pattern pattern = Pattern.compile("<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -135,7 +135,7 @@ class MangaEden extends ServerBase {
     private int setExtra(Chapter chapter) throws Exception {
         int pages = 0;
         String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
+        Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         String images = "";
         while (matcher.find()) {
@@ -156,7 +156,7 @@ class MangaEden extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("<tr><td><a href=\"/en/en-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>");
+        Pattern pattern = Pattern.compile("<tr><td><a href=\"/en/en-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
@@ -175,7 +175,7 @@ class MangaEden extends ServerBase {
             e.printStackTrace();
         }
 
-        Pattern pattern1 = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/en/en-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>");
+        Pattern pattern1 = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/en/en-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher1;
         if (newSource.isEmpty())
             matcher1 = pattern1.matcher(source);

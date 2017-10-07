@@ -116,7 +116,7 @@ class MangaTown extends ServerBase {
                     getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible))
                     ).toString().trim());
             // chapter
-            Pattern p = Pattern.compile(PATTERN_CHAPTER);
+            Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), "http:" + m.group(1));
@@ -161,7 +161,7 @@ class MangaTown extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + term);
-        Pattern p = Pattern.compile(PATTERN_MANGA);
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2).trim()), "https:" + m.group(1), false));
@@ -211,7 +211,7 @@ class MangaTown extends ServerBase {
 
         String data = getNavigatorAndFlushParameters().get(
                 HOST + "/directory/" + filter + "/" + pageNumber + ".htm" + order);
-        Pattern p = Pattern.compile(PATTERN_MANGA);
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(

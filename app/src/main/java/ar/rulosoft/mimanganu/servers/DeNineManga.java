@@ -57,7 +57,7 @@ class DeNineManga extends ServerBase {
         String source = getNavigatorWithNeededHeader().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
+        Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
@@ -88,8 +88,7 @@ class DeNineManga extends ServerBase {
         // Genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // Chapter
-        Pattern p = Pattern.compile(
-                "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -116,7 +115,7 @@ class DeNineManga extends ServerBase {
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
         String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("src=\"(http://www\\.wiemanga\\.com/comics/pic/[^\"]+?)\""); //<img class="manga_pic.+?src="([^"]+)
+        Pattern p = Pattern.compile("src=\"(http://www\\.wiemanga\\.com/comics/pic/[^\"]+?)\"", Pattern.DOTALL); //<img class="manga_pic.+?src="([^"]+)
         Matcher m = p.matcher(source);
         String images = "";
         while (m.find()) {
@@ -136,8 +135,7 @@ class DeNineManga extends ServerBase {
 
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile(
-                "<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
+        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(1), false);
@@ -178,7 +176,7 @@ class DeNineManga extends ServerBase {
         //Log.d("NM","web: "+web);
         String source = getNavigatorWithNeededHeader().get(web);
         // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
-        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
+        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

@@ -39,7 +39,7 @@ class MangaStream extends ServerBase {
         String web = "http://mangastream.com/manga";
         String source = getNavigatorAndFlushParameters().get(web);
 
-        Pattern pattern = Pattern.compile("href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>");
+        Pattern pattern = Pattern.compile("href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
@@ -76,7 +76,7 @@ class MangaStream extends ServerBase {
         // no Genres
 
         // Chapters
-        Pattern p = Pattern.compile("href=\"(http://readms\\.net/[^\"]+?)\">([^\"]+?)</a>");
+        Pattern p = Pattern.compile("href=\"(http://readms\\.net/[^\"]+?)\">([^\"]+?)</a>", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         String latestChapterPath = "";
@@ -162,7 +162,7 @@ class MangaStream extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>");
+        Pattern pattern = Pattern.compile("href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>", Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         ArrayList<String> tmpMangaPathList = new ArrayList<>();

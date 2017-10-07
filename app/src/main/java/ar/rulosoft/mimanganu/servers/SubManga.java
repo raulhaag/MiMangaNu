@@ -27,7 +27,7 @@ public class SubManga extends ServerBase {
         // <td><a href="(http://submanga.com/.+?)".+?</b>(.+?)<
         ArrayList<Manga> mangas = new ArrayList<>();
         String source = getNavigatorAndFlushParameters().get("http://submanga.com/series");
-        Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<");
+        Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             String name = m.group(2);
@@ -50,7 +50,7 @@ public class SubManga extends ServerBase {
             Pattern p;
             Matcher m;
             String data = getNavigatorAndFlushParameters().get((manga.getPath() + "/completa"));
-            p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>");
+            p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>", Pattern.DOTALL);
             m = p.matcher(data);
 
             while (m.find()) {
@@ -67,7 +67,7 @@ public class SubManga extends ServerBase {
         Matcher m;
         String data = getNavigatorAndFlushParameters().get((manga.getPath()));
 
-        p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>");
+        p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>", Pattern.DOTALL);
         m = p.matcher(data);
 
         if (m.find()) {

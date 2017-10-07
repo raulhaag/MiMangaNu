@@ -66,7 +66,7 @@ class KissManga extends ServerBase {
         String source = nav.post(PAGE_BASE + "/AdvanceSearch");
 
         ArrayList<Manga> searchList;
-        Pattern p = Pattern.compile(PATTERN_SEARCH);
+        Pattern p = Pattern.compile(PATTERN_SEARCH, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
             searchList = new ArrayList<>();
@@ -109,7 +109,7 @@ class KissManga extends ServerBase {
         manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
 
         // Chapter
-        Pattern p = Pattern.compile(PATTERN_CHAPTER);
+        Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -140,7 +140,7 @@ class KissManga extends ServerBase {
         try {
             duktape.evaluate(ca);
             duktape.evaluate(lo);
-            Pattern p = Pattern.compile("javascript\">(.+?)<");
+            Pattern p = Pattern.compile("javascript\">(.+?)<", Pattern.DOTALL);
             Matcher m = p.matcher(source);
             while (m.find()) {
                 if (m.group(1).contains("CryptoJS")) {
@@ -148,7 +148,7 @@ class KissManga extends ServerBase {
                 }
             }
 
-            p = Pattern.compile("lstImages.push\\((.+?\\))\\)");
+            p = Pattern.compile("lstImages.push\\((.+?\\))\\)", Pattern.DOTALL);
             m = p.matcher(source);
             String images = "";
             String image;
@@ -174,7 +174,7 @@ class KissManga extends ServerBase {
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p =
-                Pattern.compile("(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=.+?(/.anga[^&|\"]+).+?>(.+?)<");
+                Pattern.compile("(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=.+?(/.anga[^&|\"]+).+?>(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga =

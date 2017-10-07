@@ -106,7 +106,7 @@ class MangaEdenIt extends ServerBase {
         // Genere
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genere</h4>(.+?)<h4>", source, "").replace("a><a", "a>, <a")).toString().trim()));
         // Chapters
-        Pattern p = Pattern.compile("<tr.+?href=\"(/it/it-manga/.+?)\".+?>(.+?)</a");
+        Pattern p = Pattern.compile("<tr.+?href=\"(/it/it-manga/.+?)\".+?>(.+?)</a", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -131,7 +131,7 @@ class MangaEdenIt extends ServerBase {
     private int setExtra(Chapter chapter) throws Exception {
         int pages = 0;
         String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"");
+        Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         String images = "";
         while (matcher.find()) {
@@ -152,7 +152,7 @@ class MangaEdenIt extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("<tr><td><a href=\"/it/it-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("<tr><td><a href=\"/it/it-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
@@ -171,7 +171,7 @@ class MangaEdenIt extends ServerBase {
             e.printStackTrace();
         }
 
-        Pattern pattern1 = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/it/it-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>");
+        Pattern pattern1 = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/it/it-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher1;
         if (newSource.isEmpty())
             matcher1 = pattern1.matcher(source);

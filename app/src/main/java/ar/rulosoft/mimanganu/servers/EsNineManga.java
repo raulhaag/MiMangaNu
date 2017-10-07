@@ -65,7 +65,7 @@ public class EsNineManga extends ServerBase {
         String source = getNavigatorWithNeededHeader().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
+        Pattern p = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(ESNINEMANGA, m.group(2), HOST + m.group(1), false);
@@ -96,8 +96,7 @@ public class EsNineManga extends ServerBase {
         // genre
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
         // capitulos
-        Pattern p = Pattern.compile(
-                "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -124,7 +123,7 @@ public class EsNineManga extends ServerBase {
         nav.addHeader("Referer", chapter.getPath());
         nav.get(HOST + "/show_ads/google/");
         String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("src=\"(http://[^\"]+[taadd|ninemanga]+\\.com/es_manga/[^\"]+?)\"");
+        Pattern p = Pattern.compile("src=\"(http://[^\"]+[taadd|ninemanga]+\\.com/es_manga/[^\"]+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         String imagenes = "";
         while (m.find()) {
@@ -172,7 +171,7 @@ public class EsNineManga extends ServerBase {
             web = "http://es.ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
         //Log.d("NM","web: "+web);
         String source = getNavigatorWithNeededHeader().get(web);
-        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
+        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

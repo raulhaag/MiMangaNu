@@ -41,7 +41,7 @@ class MangaKawaii extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = "https://www.mangakawaii.com/liste-mangas-texte";
         String source = getNavigatorAndFlushParameters().get(web);
-        Pattern pattern = Pattern.compile("href=\"(https://www\\.mangakawaii\\.com/manga/[^\"]+?)\" style=\"display: inline-block\"><h6 style=\"margin: 0\">([^\"]+?)</h6></a>"); //manga-list(.+?)</ul>
+        Pattern pattern = Pattern.compile("href=\"(https://www\\.mangakawaii\\.com/manga/[^\"]+?)\" style=\"display: inline-block\"><h6 style=\"margin: 0\">([^\"]+?)</h6></a>", Pattern.DOTALL); //manga-list(.+?)</ul>
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             /*Log.d("MKA", "1: " + matcher.group(1));
@@ -90,7 +90,7 @@ class MangaKawaii extends ServerBase {
         manga.setGenre(genre.replaceAll(",,",","));
 
         // Chapters
-        Pattern p = Pattern.compile("href=\"(https://www\\.mangakawaii\\.com/manga/[^\"]+?)\">([^\"]+?)</a>");
+        Pattern p = Pattern.compile("href=\"(https://www\\.mangakawaii\\.com/manga/[^\"]+?)\">([^\"]+?)</a>", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         ArrayList<String> tmpChapterList = new ArrayList<>();
@@ -129,7 +129,7 @@ class MangaKawaii extends ServerBase {
             e.printStackTrace();
         }
         String tmpImages = getFirstMatchDefault("<div id=\"all\"(.+?)</div>", source,"");
-        Pattern pattern = Pattern.compile("data-src='.(https://www\\.mangakawaii\\.com/uploads/[^\"]+?).'");
+        Pattern pattern = Pattern.compile("data-src='.(https://www\\.mangakawaii\\.com/uploads/[^\"]+?).'", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(tmpImages);
         String images = "";
         while (matcher.find()) {
@@ -157,7 +157,7 @@ class MangaKawaii extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("(<img w.+? (class=\"thumbnail\">|inline-block;\"))");
+        Pattern pattern = Pattern.compile("(<img w.+? (class=\"thumbnail\">|inline-block;\", Pattern.DOTALL))");
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

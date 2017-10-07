@@ -69,7 +69,7 @@ class ReadComicOnline extends ServerBase {
         nav.addPost("keyword", term);
         String source = nav.post("http://" + HOST + "/Search/Comic");
         ArrayList<Manga> searchList;
-        Pattern p = Pattern.compile(PATTERN_SEARCH);
+        Pattern p = Pattern.compile(PATTERN_SEARCH, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
             searchList = new ArrayList<>();
@@ -120,7 +120,7 @@ class ReadComicOnline extends ServerBase {
         manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
 
         // Chapter
-        Pattern p = Pattern.compile(PATTERN_CHAPTER);
+        Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -138,7 +138,7 @@ class ReadComicOnline extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
             String source = getNavigatorAndFlushParameters().post("http://" + HOST + chapter.getPath());
-            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
+            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"", Pattern.DOTALL);
             Matcher m = p.matcher(source);
             String images = "";
             while (m.find()) {
@@ -154,7 +154,7 @@ class ReadComicOnline extends ServerBase {
         int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
             String source = getNavigatorAndFlushParameters().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""), "http://" + HOST + chapter.getPath());
-            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"");
+            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"", Pattern.DOTALL);
             Matcher m = p.matcher(source);
             String images = "";
             while (m.find()) {
@@ -168,7 +168,7 @@ class ReadComicOnline extends ServerBase {
 
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<");
+        Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             /*Log.d("RCO", "1: " + m.group(1));

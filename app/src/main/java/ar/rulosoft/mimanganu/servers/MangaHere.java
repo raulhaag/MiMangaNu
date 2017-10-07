@@ -61,7 +61,7 @@ public class MangaHere extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "/mangalist/");
-        Pattern p = Pattern.compile(PATTERN_SERIE);
+        Pattern p = Pattern.compile(PATTERN_SERIE, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         String path;
         while (m.find()) {
@@ -89,7 +89,7 @@ public class MangaHere extends ServerBase {
             // Genre
             manga.setGenre(getFirstMatchDefault("<li><label>Genre\\(s\\):</label>(.+?)</li>", data, ""));
             // Chapter
-            Pattern p = Pattern.compile(PATTERN_CAPITULOS);
+            Pattern p = Pattern.compile(PATTERN_CAPITULOS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), "http:" + m.group(1));
@@ -146,7 +146,7 @@ public class MangaHere extends ServerBase {
         String web = HOST + "/" + genreV[filters[0][0]] + "/" + pageNumber + ".htm" + orderM[filters[1][0]];
         //Log.d("MH","web: "+web);
         String source = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile("<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"");
+        Pattern p = Pattern.compile("<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         String path;
         while (m.find()) {
@@ -166,7 +166,7 @@ public class MangaHere extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + term);
-        Pattern p = Pattern.compile("<dt>\\s+<a href=\"([^\"]+/manga[^\"]+).+?>(.+?)<");
+        Pattern p = Pattern.compile("<dt>\\s+<a href=\"([^\"]+/manga[^\"]+).+?>(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(2).trim(), m.group(1), false));

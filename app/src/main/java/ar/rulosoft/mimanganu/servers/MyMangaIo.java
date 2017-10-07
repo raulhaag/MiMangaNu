@@ -87,7 +87,7 @@ public class MyMangaIo extends ServerBase {
             // Genre
             manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("Genre\\s*:\\s*(.+?)</tr>", data, "")).toString());
             // Chapter
-            Pattern p = Pattern.compile("href=\"([^\"]+)\"[^>]+title=\"Li.+?<span class=\"chapter\">(.+?)<");
+            Pattern p = Pattern.compile("href=\"([^\"]+)\"[^>]+title=\"Li.+?<span class=\"chapter\">(.+?)<", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 /*Log.d("MyMIO", "1: " + m.group(1));
@@ -131,7 +131,7 @@ public class MyMangaIo extends ServerBase {
 
     public ArrayList<Manga> getMangasFromSource(String source) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"(mangas/[^\"]+?)\">(.+?)<");
+        Pattern p = Pattern.compile("<a href=\"(mangas/[^\"]+?)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), HOST + m.group(1), false);

@@ -67,7 +67,7 @@ class MangaFox extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().getWithTimeout("http://mangafox.me/manga/");
         data = getFirstMatch(SEGMENTO, data, "no se ha obtenido el segmento");
-        Pattern p = Pattern.compile(PATTERN_SERIE);
+        Pattern p = Pattern.compile(PATTERN_SERIE, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(ServerBase.MANGAFOX, m.group(3), "http:" + m.group(1), false);
@@ -100,7 +100,7 @@ class MangaFox extends ServerBase {
             manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("(<a href=\"//mangafox.me/search/genres/.+?</td>)", data, "")).toString());
 
             // Chapter
-            p = Pattern.compile(PATTERN_CAPITULOS);
+            p = Pattern.compile(PATTERN_CAPITULOS, Pattern.DOTALL);
             m = p.matcher(data);
             while (m.find()) {
                 Chapter mc;
@@ -170,7 +170,7 @@ class MangaFox extends ServerBase {
                 .getWithTimeout("https://mangafox.me/search.php?name_method=cw&name="
                         + term
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");
-        Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?\">(.+?)<");
+        Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(2).trim(), m.group(1), false));
@@ -190,7 +190,7 @@ class MangaFox extends ServerBase {
             web = HOST + genreVV + genre[filters[0][0]].toLowerCase().replaceAll(" ", "-") + "/" + pageNumber + ".htm" + orderV[filters[1][0]];
         //Log.d("Mfox","web: "+web);
         String source = getNavigatorAndFlushParameters().getWithTimeout(web);
-        Pattern p = Pattern.compile("\"([^\"]+store.manga.+?)\".+?href=\"([^\"]+)[^>]+>([^<]+)");
+        Pattern p = Pattern.compile("\"([^\"]+store.manga.+?)\".+?href=\"([^\"]+)[^>]+>([^<]+)", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         //Log.d("Mfox","prematch");
