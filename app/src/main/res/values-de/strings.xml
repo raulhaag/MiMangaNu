@@ -339,4 +339,19 @@
     <string name="flt_type_manga">Manga</string>
     <string name="flt_type_manhua">Manhua</string>
     <string name="flt_type_manhwa">Manhwa</string>
+    <string name="flt_include_tags">Tags (inkludiert)</string>
+    <string name="flt_genre_video_game">Videospiel</string>
+    <string name="flt_genre_thriller">Thriller</string>
+    <string name="flt_genre_super_powers">Superkräfte</string>
+    <string name="flt_genre_military">Militär</string>
+    <string name="flt_genre_magic">Magie</string>
+    <string name="flt_genre_kitchen_sink_drama">Alltagsdrama</string>
+    <string name="flt_genre_game">Spiel</string>
+    <string name="flt_genre_erotic">Erotik</string>
+    <string name="flt_genre_daemons">Dämonen</string>
+    <string name="flt_genre_card_game">Kartenspiel</string>
+    <string name="flt_exclude_tags">Tags (exkludiert)</string>
+    <string name="flt_category">Kategorie</string>
+    <string name="flt_type_latest_releases">Aktuelles Release</string>
+    <string name="flt_type_new">Neu</string>
 </resources>

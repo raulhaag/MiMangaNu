@@ -332,7 +332,7 @@
     <string name="flt_genre_romance">Romance</string>
     <string name="flt_genre_school_life">School Life</string>
     <string name="flt_genre_sci_fi">Sci Fi</string>
-    <string name="flt_genre_slice_of_life">Slice Of Life</string>
+    <string name="flt_genre_slice_of_life">Slice of Life</string>
     <string name="flt_genre_sports">Sports</string>
     <string name="flt_genre_supernatural">Supernatural</string>
     <string name="flt_genre_suspense">Suspense</string>
@@ -340,4 +340,19 @@
     <string name="flt_genre_vampire">Vampire</string>
     <string name="flt_genre_webtoons">Webtoons</string>
     <string name="flt_genre_youkai">Youkai</string>
+    <string name="flt_genre_daemons">Daemons</string>
+    <string name="flt_genre_erotic">Erotic</string>
+    <string name="flt_genre_military">Military</string>
+    <string name="flt_genre_super_powers">Super Powers</string>
+    <string name="flt_genre_thriller">Thriller</string>
+    <string name="flt_genre_game">Game</string>
+    <string name="flt_genre_video_game">Video Game</string>
+    <string name="flt_genre_magic">Magic</string>
+    <string name="flt_genre_card_game">Card Game</string>
+    <string name="flt_genre_kitchen_sink_drama">Kitchen-sink Drama</string>
+    <string name="flt_type_new">New</string>
+    <string name="flt_type_latest_releases">Latest Releases</string>
+    <string name="flt_category">Category</string>
+    <string name="flt_include_tags">Tags (included)</string>
+    <string name="flt_exclude_tags">Tags (excluded)</string>
 </resources>
