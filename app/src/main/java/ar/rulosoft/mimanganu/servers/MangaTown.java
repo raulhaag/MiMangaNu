@@ -49,15 +49,15 @@ class MangaTown extends ServerBase {
 
     // filter by demographic /X-0-0-0-0-0/
     private static int[] fltDemographic = {
-            R.string.flt_demographic_all,
-            R.string.flt_demographic_josei,
-            R.string.flt_demographic_seinen,
-            R.string.flt_demographic_shoujo,
-            R.string.flt_demographic_shoujo_ai,
-            R.string.flt_demographic_shounen,
-            R.string.flt_demographic_shounen_ai,
-            R.string.flt_demographic_yaoi,
-            R.string.flt_demographic_yuri
+            R.string.flt_tag_all,
+            R.string.flt_tag_josei,
+            R.string.flt_tag_seinen,
+            R.string.flt_tag_shoujo,
+            R.string.flt_tag_shoujo_ai,
+            R.string.flt_tag_shounen,
+            R.string.flt_tag_shounen_ai,
+            R.string.flt_tag_yaoi,
+            R.string.flt_tag_yuri
     };
     private static String[] valDemographic = {
             "0", "josei", "seinen", "shoujo", "shoujo_ai", "shounen", "shounen_ai", "yaoi", "yuri"
@@ -65,39 +65,39 @@ class MangaTown extends ServerBase {
 
     // filter by genre /0-X-0-0-0-0/
     private static int[] fltGenre = {
-            R.string.flt_genre_all,
-            R.string.flt_genre_4_koma,
-            R.string.flt_genre_action,
-            R.string.flt_genre_adventure,
-            R.string.flt_genre_comedy,
-            R.string.flt_genre_cooking,
-            R.string.flt_genre_doujinshi,
-            R.string.flt_genre_drama,
-            R.string.flt_genre_ecchi,
-            R.string.flt_genre_fantasy,
-            R.string.flt_genre_gender_bender,
-            R.string.flt_genre_harem,
-            R.string.flt_genre_historical,
-            R.string.flt_genre_horror,
-            R.string.flt_genre_martial_arts,
-            R.string.flt_genre_mature,
-            R.string.flt_genre_mecha,
-            R.string.flt_genre_music,
-            R.string.flt_genre_mystery,
-            R.string.flt_genre_one_shot,
-            R.string.flt_genre_psychological,
-            R.string.flt_genre_reverse_harem,
-            R.string.flt_genre_romance,
-            R.string.flt_genre_school_life,
-            R.string.flt_genre_sci_fi,
-            R.string.flt_genre_slice_of_life,
-            R.string.flt_genre_sports,
-            R.string.flt_genre_supernatural,
-            R.string.flt_genre_suspense,
-            R.string.flt_genre_tragedy,
-            R.string.flt_genre_vampire,
-            R.string.flt_genre_webtoons,
-            R.string.flt_genre_youkai
+            R.string.flt_tag_all,
+            R.string.flt_tag_4_koma,
+            R.string.flt_tag_action,
+            R.string.flt_tag_adventure,
+            R.string.flt_tag_comedy,
+            R.string.flt_tag_cooking,
+            R.string.flt_tag_doujinshi,
+            R.string.flt_tag_drama,
+            R.string.flt_tag_ecchi,
+            R.string.flt_tag_fantasy,
+            R.string.flt_tag_gender_bender,
+            R.string.flt_tag_harem,
+            R.string.flt_tag_historical,
+            R.string.flt_tag_horror,
+            R.string.flt_tag_martial_arts,
+            R.string.flt_tag_mature,
+            R.string.flt_tag_mecha,
+            R.string.flt_tag_music,
+            R.string.flt_tag_mystery,
+            R.string.flt_tag_one_shot,
+            R.string.flt_tag_psychological,
+            R.string.flt_tag_reverse_harem,
+            R.string.flt_tag_romance,
+            R.string.flt_tag_school_life,
+            R.string.flt_tag_sci_fi,
+            R.string.flt_tag_slice_of_life,
+            R.string.flt_tag_sports,
+            R.string.flt_tag_supernatural,
+            R.string.flt_tag_suspense,
+            R.string.flt_tag_tragedy,
+            R.string.flt_tag_vampire,
+            R.string.flt_tag_webtoon,
+            R.string.flt_tag_youkai
     };
     private static String[] valGenre = {
             "0", "4_koma", "action", "adventure", "comedy", "cooking", "doujinshi", "drama",
@@ -109,10 +109,10 @@ class MangaTown extends ServerBase {
 
     // filter by type /0-0-0-0-0-X/
     private static int[] fltType = {
-            R.string.flt_type_all,
-            R.string.flt_type_manga,
-            R.string.flt_type_manhwa,
-            R.string.flt_type_manhua
+            R.string.flt_tag_all,
+            R.string.flt_tag_manga,
+            R.string.flt_tag_manhwa,
+            R.string.flt_tag_manhua
     };
     private static String[] valType = {
             "0", "manga", "manhwa", "manhua"
