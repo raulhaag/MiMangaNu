@@ -138,7 +138,7 @@ class NineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        throw new UnsupportedOperationException("Error: getMangas() not implemented");
+        return null;
     }
 
     @Override

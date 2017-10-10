@@ -223,7 +223,7 @@ class MangaTown extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        throw new UnsupportedOperationException("Error: getMangas() not implemented for MangaTown");
+        return null;
     }
 
     @Override
