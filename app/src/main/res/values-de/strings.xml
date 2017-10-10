@@ -395,4 +395,8 @@
     <string name="flt_tag_shota">Shota</string>
     <string name="flt_tag_splatter">Splatter</string>
     <string name="flt_tag_collection">Sammlung</string>
+    <string name="flt_tag_art">Kunst</string>
+    <string name="flt_tag_detective">Detektiv</string>
+    <string name="flt_tag_kodomo">Kodomo</string>
+    <string name="flt_tag_maho_shoujo">Maho Shoujo</string>
 </resources>

@@ -20,7 +20,8 @@ class NineManga extends ServerBase {
             "bookname\" href=\"(/manga/[^\"]+)\">(.+?)<";
     private static final String PATTERN_MANGA_SEARCHED =
             "<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<";
-    private static final String PATTERN_COVER =
+    @SuppressWarnings("WeakerAccess")
+    protected String PATTERN_COVER =
             "Manga\" src=\"(.+?)\"";
     private static final String PATTERN_SUMMARY =
             "<p itemprop=\"description\">(.+?)</p>";
