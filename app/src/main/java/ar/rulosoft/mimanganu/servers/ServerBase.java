@@ -255,6 +255,7 @@ public abstract class ServerBase {
                 new Taadd(context),
                 new NineManga(context),
                 new ReadMangaToday(context),
+                new MangaTown(context),
                 new RuNineManga(context),
                 new MyMangaIo(context),
                 new JapScan(context),
@@ -267,7 +268,6 @@ public abstract class ServerBase {
                 new BatoTo(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
-                new MangaTown(context),
                 new FromFolder(context)
         });
     }
