@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.70:\n\t* Fix JapScan.\n\t* Fix MangaKawaii.\n\t* Fix Bato.to login and auto language selection.\n\t* Added ca certificates for MangaHere and MangaFox.\n\t* Removed EsMangaHere just because they disappears. </string>
+    <string name="update_message">Changes in v1.71:\n\t* Added MangaTown.\n\t* Fix search on MangaHere.\n\t* Fix chapters on TuMangaOnline.\n\t* Fix continuous reader in large image position.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

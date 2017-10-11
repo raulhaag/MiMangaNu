@@ -34,6 +34,18 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.71:
+* Agregado MangaTown.
+* Arreglado la búsqueda de MangaHere.
+* Arreglado los capítulos TuMangaOnline.
+* Fix en el lector contunuo para imagenes largas.
+
+Changes in v1.71:
+* Added MangaTown.
+* Fix search on MangaHere.
+* Fix chapters on TuMangaOnline.
+* Fix continuous reader in large image position.
+
 Cambios en v1.70:
 * Arreglado JapScan.
 * Arreglado MangaKawaii.

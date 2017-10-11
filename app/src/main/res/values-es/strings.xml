@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.70:\n\t* Arreglado JapScan.\n\t* Arreglado MangaKawaii.\n\t* Arreglado Bato.to login y idioma automatico.\n\t* Agregados certificados ca para MangaHere y MangaFox.\n\t* Retirado EsMangaHere porque desaparecio.</string>
+    <string name="update_message">Cambios en v1.71:\n\t* Agregado MangaTown.\n\t* Arreglado la búsqueda de MangaHere.\n\t* Arreglado los capítulos TuMangaOnline.\n\t* Fix en el lector contunuo para imagenes largas.
+</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
