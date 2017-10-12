@@ -74,10 +74,10 @@ public class Navigator {
 
     public static HashMap<String, String> getFormParamsFromSource(String inSource) throws Exception {
         HashMap<String, String> ParametrosForm = new HashMap<>();
-        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>");
+        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>", Pattern.DOTALL);
         Matcher m = p.matcher(inSource);
         while (m.find()) {
-            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]");
+            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]", Pattern.DOTALL);
             Matcher m1 = p1.matcher(m.group());
             while (m1.find()) {
                 ParametrosForm.put(m1.group(1), m1.group(2));
@@ -118,7 +118,7 @@ public class Navigator {
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -167,7 +167,7 @@ public class Navigator {
         if (response.isSuccessful()) {
             if (timeout > 250)
                 Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -211,7 +211,7 @@ public class Navigator {
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             String responseCode = "" + response.code();
             Log.e("Nav", "response unsuccessful: " + responseCode + " " + response.message() + " web: " + web);
@@ -229,7 +229,7 @@ public class Navigator {
         addHeader("Referer", referer);
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -247,7 +247,7 @@ public class Navigator {
         addHeader("Accept-Encoding", "deflate");
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -264,7 +264,7 @@ public class Navigator {
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
 
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -288,7 +288,7 @@ public class Navigator {
         Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message());
             response.body().close();
@@ -311,7 +311,7 @@ public class Navigator {
         Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -334,7 +334,7 @@ public class Navigator {
         Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -358,16 +358,12 @@ public class Navigator {
         Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
-            return formatResponseBody(response.body());
+            return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message());
             response.body().close();
             return "";
         }
-    }
-
-    public String formatResponseBody(ResponseBody responseBody) throws IOException {
-        return responseBody.string().replaceAll("(\n|\r)", "");
     }
 
     private RequestBody getPostParams() throws Exception {
@@ -385,10 +381,10 @@ public class Navigator {
     public HashMap<String, String> getFormParams(String url) throws Exception {
         String source = this.get(url);
         HashMap<String, String> ParametrosForm = new HashMap<>();
-        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>");
+        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]");
+            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]", Pattern.DOTALL);
             Matcher m1 = p1.matcher(m.group());
             while (m1.find()) {
                 ParametrosForm.put(m1.group(1), m1.group(2));

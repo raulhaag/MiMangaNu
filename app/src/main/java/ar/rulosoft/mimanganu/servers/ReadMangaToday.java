@@ -81,7 +81,7 @@ class ReadMangaToday extends ServerBase {
         while (mangas.isEmpty()) {
             //Log.d("RMT", "web: " + web);
             String source = getNavigatorAndFlushParameters().get(web);
-            Pattern pattern = Pattern.compile("<a href=\"(http://www\\.readmanga\\.today/[^\"]+?)\">(.+?)</a>");
+            Pattern pattern = Pattern.compile("<a href=\"(http://www\\.readmanga\\.today/[^\"]+?)\">(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
                 if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
@@ -136,7 +136,7 @@ class ReadMangaToday extends ServerBase {
         // Author
         String author = "";
         //String author = getFirstMatchDefault("<li class=\"director\">.+?<li><a href=\".+?\">(.+?)</a>", source, "");
-        Pattern p1 = Pattern.compile("<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>");
+        Pattern p1 = Pattern.compile("<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>", Pattern.DOTALL);
         Matcher matcher1 = p1.matcher(source);
         while (matcher1.find()) {
             //Log.d("RMT", "(1): " + matcher1.group(1));
@@ -158,7 +158,7 @@ class ReadMangaToday extends ServerBase {
 
         // Chapters
         //<li>.+?<a href="(.+?)">.+?<span class="val"><span class="icon-arrow-2"></span>(.+?)</span>
-        Pattern p = Pattern.compile("<li>[\\s]*<a href=\"([^\"]+?)\">[\\s]*<span class=\"val\"><span class=\"icon-arrow-.\"></span>(.+?)</span>");
+        Pattern p = Pattern.compile("<li>[\\s]*<a href=\"([^\"]+?)\">[\\s]*<span class=\"val\"><span class=\"icon-arrow-.\"></span>(.+?)</span>", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -188,7 +188,7 @@ class ReadMangaToday extends ServerBase {
             Util.getInstance().removeSpecificCookies(context, HOST);
         }
         //Log.d("RMT", "s: " + source);
-        Pattern p = Pattern.compile("<img src=\"([^\"]+)\" class=\"img-responsive-2\">");
+        Pattern p = Pattern.compile("<img src=\"([^\"]+)\" class=\"img-responsive-2\">", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         String images = "";
         while (matcher.find()) {
@@ -235,7 +235,7 @@ class ReadMangaToday extends ServerBase {
             Util.getInstance().removeSpecificCookies(context, HOST);
         }
         // regex to generate genre ids: <li>.+?title="All Categories - (.+?)">
-        Pattern pattern = Pattern.compile("<div class=\"left\">.+?<a href=\"(.+?)\" title=\"(.+?)\"><img src=\"(.+?)\" alt=\"");
+        Pattern pattern = Pattern.compile("<div class=\"left\">.+?<a href=\"(.+?)\" title=\"(.+?)\"><img src=\"(.+?)\" alt=\"", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

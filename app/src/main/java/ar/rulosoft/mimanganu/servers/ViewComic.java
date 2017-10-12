@@ -80,7 +80,7 @@ class ViewComic extends ServerBase {
         // Chapters
         //<select id(.+?)</select>
         String newSource = getFirstMatchDefault("<select id(.+?)</select>", source, "");
-        Pattern p = Pattern.compile("<option  value=\"(.+?)\">(.+?)</div>|<option selected value=\"(.+?)\">(.+?)</div>");
+        Pattern p = Pattern.compile("<option  value=\"(.+?)\">(.+?)</div>|<option selected value=\"(.+?)\">(.+?)</div>", Pattern.DOTALL);
         Matcher matcher;
         if(newSource.isEmpty())
             matcher = p.matcher(source);
@@ -116,7 +116,7 @@ class ViewComic extends ServerBase {
     private int setExtra(Chapter chapter) throws Exception {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         String images = "";
-        Pattern pattern = Pattern.compile("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\"");
+        Pattern pattern = Pattern.compile("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\"", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         int i = 0;
         while (matcher.find()) {
@@ -126,7 +126,7 @@ class ViewComic extends ServerBase {
         }
 
         if (i == 0) {
-            Pattern pattern1 = Pattern.compile("src=\"(//\\d+\\.bp\\.blogspot\\.com/.+?)\"");
+            Pattern pattern1 = Pattern.compile("src=\"(//\\d+\\.bp\\.blogspot\\.com/.+?)\"", Pattern.DOTALL);
             Matcher matcher1 = pattern1.matcher(source);
             while (matcher1.find()) {
                 i++;
@@ -192,7 +192,7 @@ class ViewComic extends ServerBase {
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
         //<div id=(.+?)</div>
-        Pattern pattern = Pattern.compile("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\".+?<a class=\"front-link\" href=\"(.+?)\">(.+?)</a>");
+        Pattern pattern = Pattern.compile("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\".+?<a class=\"front-link\" href=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             /*Log.d("VC", "(1): " + matcher.group(1));

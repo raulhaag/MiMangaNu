@@ -99,7 +99,7 @@ class BatoTo extends ServerBase {
 
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"([^\"]+)\">[^>]+(book_open|book).+?>(.+?)<");
+        Pattern p = Pattern.compile("<a href=\"([^\"]+)\">[^>]+(book_open|book).+?>(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), Util.getInstance().fromHtml(m.group(3)).toString(), m.group(1), m.group(2).length() == 4));
@@ -151,7 +151,7 @@ class BatoTo extends ServerBase {
                 manga.setGenre(getFirstMatchDefault("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
                 manga.setFinished(!getFirstMatchDefault("Status:<\\/td>\\s+<td>([^<]+)", data, "").contains("Ongoing"));
                 ArrayList<Chapter> chapters = new ArrayList<>();
-                Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
+                Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)", Pattern.DOTALL);
                 data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
                 Matcher matcher = pattern.matcher(data);
                 String lang_selection, lang = "";

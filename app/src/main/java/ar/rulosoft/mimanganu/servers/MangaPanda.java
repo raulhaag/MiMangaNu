@@ -75,11 +75,11 @@ public class MangaPanda extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "/alphabetical");
-        Pattern p = Pattern.compile(PATTERN_SUB);
+        Pattern p = Pattern.compile(PATTERN_SUB, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         if (m.find()) {
             String b = m.group(1);
-            Pattern p1 = Pattern.compile(PATTERN_SERIE);
+            Pattern p1 = Pattern.compile(PATTERN_SERIE, Pattern.DOTALL);
             Matcher m1 = p1.matcher(b);
             while (m1.find()) {
                 mangas.add(new Manga(this.getServerID(), m1.group(2),
@@ -93,7 +93,7 @@ public class MangaPanda extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters().get(HOST + "/actions/search/?q=" + term + "&limit=100");
-        Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+");
+        Pattern p = Pattern.compile("(.+?)\\|.+?\\|(/.+?)\\|\\d+", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(1).trim(),
@@ -111,16 +111,16 @@ public class MangaPanda extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String data = getNavigatorAndFlushParameters().get(manga.getPath());
-        Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER);
+        Pattern p = Pattern.compile(PATTERN_FRAG_CHAPTER, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         if (m.find()) {
             manga.getChapters().clear();
-            Pattern p1 = Pattern.compile(PATTERN_CHAPTER);
+            Pattern p1 = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m1 = p1.matcher(m.group(1));
             while (m1.find()) {
                 String web = m1.group(1);
                 if (web.matches(PATTERN_CHAPTER_WEB)) {
-                    Pattern p2 = Pattern.compile(PATTERN_CHAPTER_WEB);
+                    Pattern p2 = Pattern.compile(PATTERN_CHAPTER_WEB, Pattern.DOTALL);
                     Matcher m2 = p2.matcher(web);
                     if (m2.find()) web = m2.group(1) + "/" + m2.group(2);
                 }
@@ -187,7 +187,7 @@ public class MangaPanda extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/search/?w=" + typeV[filters[1][0]] + statusV[filters[2][0]] + orderV[filters[3][0]] + "&genre=" + gens + "&p=" + ((pageNumber - 1) * 30);
         String data = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile("(http:[^']+/cover/.+?)'.+?<h3><a href=\"(.+?)\">(.+?)<");
+        Pattern p = Pattern.compile("(http:[^']+/cover/.+?)'.+?<h3><a href=\"(.+?)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(2), false);

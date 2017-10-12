@@ -514,7 +514,7 @@ public class Util {
     }
 
     public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {
-        Pattern p = Pattern.compile(patron);
+        Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
             return m.group(1);

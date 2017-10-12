@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,28 +37,67 @@ class MangaTown extends ServerBase {
             "<a class=\"manga_cover\" href=\"(.+?)\" title=\"(.+?)\">\\s*<img src=\"(.+?)\"";
 
     // filter by status /0-0-0-X-0-0/
-    private static String[] fltStatus = {
-            "All", "New", "Ongoing", "Completed"
+    private static int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_new,
+            R.string.flt_status_ongoing,
+            R.string.flt_status_completed
     };
     private static String[] valStatus = {
             "0", "new", "ongoing", "completed"
     };
 
     // filter by demographic /X-0-0-0-0-0/
-    private static String[] fltDemographic = {
-            "All", "Josei", "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Yaoi", "Yuri"
+    private static int[] fltDemographic = {
+            R.string.flt_tag_all,
+            R.string.flt_tag_josei,
+            R.string.flt_tag_seinen,
+            R.string.flt_tag_shoujo,
+            R.string.flt_tag_shoujo_ai,
+            R.string.flt_tag_shounen,
+            R.string.flt_tag_shounen_ai,
+            R.string.flt_tag_yaoi,
+            R.string.flt_tag_yuri
     };
     private static String[] valDemographic = {
             "0", "josei", "seinen", "shoujo", "shoujo_ai", "shounen", "shounen_ai", "yaoi", "yuri"
     };
 
     // filter by genre /0-X-0-0-0-0/
-    private static String[] fltGenre = {
-            "All", "4 Koma", "Action", "Adventure", "Comedy", "Cooking", "Doujinshi", "Drama",
-            "Ecchi", "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Martial Arts",
-            "Mature", "Mecha", "Music", "Mystery", "One Shot", "Psychological", "Reverse Harem",
-            "Romance", "School Life", "Sci Fi", "Slice Of Life", "Sports", "Supernatural",
-            "Suspense", "Tragedy", "Vampire", "Webtoons", "Youkai"
+    private static int[] fltGenre = {
+            R.string.flt_tag_all,
+            R.string.flt_tag_4_koma,
+            R.string.flt_tag_action,
+            R.string.flt_tag_adventure,
+            R.string.flt_tag_comedy,
+            R.string.flt_tag_cooking,
+            R.string.flt_tag_doujinshi,
+            R.string.flt_tag_drama,
+            R.string.flt_tag_ecchi,
+            R.string.flt_tag_fantasy,
+            R.string.flt_tag_gender_bender,
+            R.string.flt_tag_harem,
+            R.string.flt_tag_historical,
+            R.string.flt_tag_horror,
+            R.string.flt_tag_martial_arts,
+            R.string.flt_tag_mature,
+            R.string.flt_tag_mecha,
+            R.string.flt_tag_music,
+            R.string.flt_tag_mystery,
+            R.string.flt_tag_one_shot,
+            R.string.flt_tag_psychological,
+            R.string.flt_tag_reverse_harem,
+            R.string.flt_tag_romance,
+            R.string.flt_tag_school_life,
+            R.string.flt_tag_sci_fi,
+            R.string.flt_tag_slice_of_life,
+            R.string.flt_tag_sports,
+            R.string.flt_tag_supernatural,
+            R.string.flt_tag_suspense,
+            R.string.flt_tag_tragedy,
+            R.string.flt_tag_vampire,
+            R.string.flt_tag_webtoon,
+            R.string.flt_tag_youkai
     };
     private static String[] valGenre = {
             "0", "4_koma", "action", "adventure", "comedy", "cooking", "doujinshi", "drama",
@@ -68,16 +108,22 @@ class MangaTown extends ServerBase {
     };
 
     // filter by type /0-0-0-0-0-X/
-    private static String[] fltType = {
-            "All", "Manga", "Manhwa", "Manhua"
+    private static int[] fltType = {
+            R.string.flt_tag_all,
+            R.string.flt_tag_manga,
+            R.string.flt_tag_manhwa,
+            R.string.flt_tag_manhua
     };
     private static String[] valType = {
             "0", "manga", "manhwa", "manhua"
     };
 
     // filter by order /0-0-0-0-0-0/?
-    private static String[] fltOrder = {
-            "Views", "Rating", "A - Z", "Last Update"
+    private static int[] fltOrder = {
+            R.string.flt_order_views,
+            R.string.flt_order_rating,
+            R.string.flt_order_alpha,
+            R.string.flt_order_last_update
     };
     private static String[] valOrder = {
             "?views.za", "?rating.za", "?name.az", "last_chapter_time.za"
@@ -116,7 +162,7 @@ class MangaTown extends ServerBase {
                     getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible))
                     ).toString().trim());
             // chapter
-            Pattern p = Pattern.compile(PATTERN_CHAPTER);
+            Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), "http:" + m.group(1));
@@ -160,8 +206,9 @@ class MangaTown extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + term);
-        Pattern p = Pattern.compile(PATTERN_MANGA);
+        String data = getNavigatorAndFlushParameters().get(
+                HOST + "/search.php?name=" + URLEncoder.encode(term, "UTF-8"));
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2).trim()), "https:" + m.group(1), false));
@@ -176,7 +223,7 @@ class MangaTown extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        throw new UnsupportedOperationException("Error: getMangas() not implemented for MangaTown");
+        return null;
     }
 
     @Override
@@ -187,11 +234,21 @@ class MangaTown extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[] {
-                new ServerFilter("Status", fltStatus, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Demographic", fltDemographic, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Genre", fltGenre, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Type", fltType, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", fltOrder, ServerFilter.FilterType.SINGLE)
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_demographic),
+                        buildTranslatedStringArray(fltDemographic), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_type),
+                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_order),
+                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
 
@@ -211,7 +268,7 @@ class MangaTown extends ServerBase {
 
         String data = getNavigatorAndFlushParameters().get(
                 HOST + "/directory/" + filter + "/" + pageNumber + ".htm" + order);
-        Pattern p = Pattern.compile(PATTERN_MANGA);
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(

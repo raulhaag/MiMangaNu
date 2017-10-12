@@ -1,5 +1,7 @@
 package ar.rulosoft.mimanganu.componentes;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.utils.HtmlUnescape;
@@ -81,6 +83,7 @@ public class Manga {
         this.synopsis = HtmlUnescape.Unescape(synopsis);
     }
 
+    @Nullable
     public String getImages() {
         return images;
     }

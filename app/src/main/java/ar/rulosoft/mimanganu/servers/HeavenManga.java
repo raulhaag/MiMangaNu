@@ -83,7 +83,7 @@ public class HeavenManga extends ServerBase {
     public ArrayList<Manga> getMangas() throws Exception {
         String source = getNavigatorAndFlushParameters().get("http://heavenmanga.com/");
         source = getFirstMatch("<span>Lista Completa(.+)", source, "Error al obtener la lista");
-        Pattern p = Pattern.compile("<li class=\"rpwe-clearfix\"><a href=\"(.+?)\" title=\"(.+?)\"");
+        Pattern p = Pattern.compile("<li class=\"rpwe-clearfix\"><a href=\"(.+?)\" title=\"(.+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
@@ -121,7 +121,7 @@ public class HeavenManga extends ServerBase {
         manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
 
         // capitulos
-        Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"");
+        Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -170,7 +170,7 @@ public class HeavenManga extends ServerBase {
 
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<article class=\"rel\"><a href=\"(http://heavenmanga.com/.+?)\"><header>(.+?)<.+?src=\"(.+?)\"");
+        Pattern p = Pattern.compile("<article class=\"rel\"><a href=\"(http://heavenmanga.com/.+?)\"><header>(.+?)<.+?src=\"(.+?)\"", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         while (matcher.find()) {
             Manga manga = new Manga(HEAVENMANGACOM, matcher.group(2), matcher.group(1), false);

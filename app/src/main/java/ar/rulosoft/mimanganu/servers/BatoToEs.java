@@ -42,7 +42,7 @@ public class BatoToEs extends BatoTo {
                 manga.setGenre(getFirstMatchDefault("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
                 manga.setFinished(!getFirstMatchDefault("Status:<\\/td>\\s+<td>([^<]+)", data, "").contains("Ongoing"));
                 ArrayList<Chapter> chapters = new ArrayList<>();
-                Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)");
+                Pattern pattern = Pattern.compile("<a href=\"([^\"]+)\" title=\"[^\"]+\">.+?>([^<]+).+?title=\"(.+?)\".+?<a[^>]+>([^<]+)", Pattern.DOTALL);
                 data = getFirstMatchDefault("ipb_table chapters_list\"([\\s\\S]+?)</table", data, "");
                 Matcher matcher = pattern.matcher(data);
                 String lang = "Spanish";

@@ -12,48 +12,129 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
-import ar.rulosoft.navegadores.Navigator;
 
-/**
- * Created by xtj-9182 on 11.04.2017.
- */
 class NineManga extends ServerBase {
-    private static String HOST = "http://ninemanga.com";
+    protected String HOST = "http://ninemanga.com";
 
-    private static String[] genre = new String[]{
-            "4-Koma", "Action", "Adult", "Adventure", "Anime", "Award Winning",
-            "Bara", "Comedy", "Cooking", "Demons", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender",
-            "Harem", "Historical", "Horror", "Josei", "Live Action", "Magic", "Manhua", "Manhwa",
-            "Martial Arts", "Matsumoto...", "Mature", "Mecha", "Medical", "Military", "Music",
-            "Mystery", "N/A", "None", "One Shot", "Oneshot", "Psychological", "Reverse Harem",
-            "Romance", "Romance Shoujo", "School Life", "Sci-Fi", "Seinen", "Shoujo", "Shoujo Ai",
-            "Shoujo-Ai", "Shoujoai", "Shounen", "Shounen Ai", "Shounen-Ai", "Shounenai", "Slice Of Life",
-            "Smut", "Sports", "Staff Pick", "Super Power", "Supernatural", "Suspense", "Tragedy",
-            "Vampire", "Webtoon", "Webtoons", "Yaoi", "Yuri", "[No Chapters]"
+    private static final String PATTERN_MANGA =
+            "bookname\" href=\"(/manga/[^\"]+)\">(.+?)<";
+    private static final String PATTERN_MANGA_SEARCHED =
+            "<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<";
+    @SuppressWarnings("WeakerAccess")
+    protected String PATTERN_COVER =
+            "Manga\" src=\"(.+?)\"";
+    private static final String PATTERN_SUMMARY =
+            "<p itemprop=\"description\">(.+?)</p>";
+    private static final String PATTERN_COMPLETED =
+            "<a class=\"red\" href=\"/category/completed.html\">";
+    private static final String PATTERN_AUTHOR =
+            "<a itemprop=\"author\"[^>]+>(.+?)</a>";
+    private static final String PATTERN_GENRE =
+            "<li itemprop=\"genre\".+?</b>(.+?)</li>";
+    private static final String PATTERN_CHAPTER =
+            "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>";
+    private static final String PATTERN_PAGES =
+            "\\d+/(\\d+)</option>[\\s]*</select>";
+    @SuppressWarnings("WeakerAccess")
+    protected String PATTERN_IMAGE =
+            "src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"";
+    @SuppressWarnings("WeakerAccess")
+    protected int[] fltGenre = {
+            R.string.flt_tag_4_koma,
+            R.string.flt_tag_action,
+            R.string.flt_tag_adult,
+            R.string.flt_tag_adventure,
+            R.string.flt_tag_anime,
+            R.string.flt_tag_award_winning,
+            R.string.flt_tag_bara,
+            R.string.flt_tag_comedy,
+            R.string.flt_tag_cooking,
+            R.string.flt_tag_daemons,
+            R.string.flt_tag_doujinshi,
+            R.string.flt_tag_drama,
+            R.string.flt_tag_ecchi,
+            R.string.flt_tag_fantasy,
+            R.string.flt_tag_gender_bender,
+            R.string.flt_tag_harem,
+            R.string.flt_tag_historical,
+            R.string.flt_tag_horror,
+            R.string.flt_tag_josei,
+            R.string.flt_tag_live_action,
+            R.string.flt_tag_magic,
+            R.string.flt_tag_manhua,
+            R.string.flt_tag_manhwa,
+            R.string.flt_tag_martial_arts,
+            R.string.flt_tag_matsumoto,
+            R.string.flt_tag_mature,
+            R.string.flt_tag_mecha,
+            R.string.flt_tag_medical,
+            R.string.flt_tag_military,
+            R.string.flt_tag_music,
+            R.string.flt_tag_mystery,
+            R.string.flt_tag_none, // 54,64
+            R.string.flt_tag_one_shot, // 22,57
+            R.string.flt_tag_psychological,
+            R.string.flt_tag_reverse_harem,
+            R.string.flt_tag_romance, // 24,38
+            R.string.flt_tag_school_life,
+            R.string.flt_tag_sci_fi,
+            R.string.flt_tag_seinen,
+            R.string.flt_tag_shoujo,
+            R.string.flt_tag_shoujo_ai, // 44,29,48
+            R.string.flt_tag_shounen,
+            R.string.flt_tag_shounen_ai, //42,31,46
+            R.string.flt_tag_slice_of_life,
+            R.string.flt_tag_smut,
+            R.string.flt_tag_sports,
+            R.string.flt_tag_staff_pick,
+            R.string.flt_tag_super_powers,
+            R.string.flt_tag_supernatural,
+            R.string.flt_tag_suspense,
+            R.string.flt_tag_tragedy,
+            R.string.flt_tag_vampire,
+            R.string.flt_tag_webtoon, // 58,50
+            R.string.flt_tag_yaoi,
+            R.string.flt_tag_yuri,
+            R.string.flt_tag_no_chapters
     };
-    private static String[] genreV = new String[]{
-            "56", "1", "39", "2", "3", "59",
-            "84", "4", "5", "49", "45", "6", "7", "8", "9",
-            "10", "11", "12", "13", "14", "47", "15", "16",
-            "17", "37", "36", "18", "19", "51", "20",
-            "21", "54", "64", "22", "57", "23", "55",
-            "24", "38", "25", "26", "27", "28", "44",
-            "29", "48", "30", "42", "31", "46", "32",
-            "41", "33", "60", "62", "34", "53", "35",
-            "52", "58", "50", "40", "43", "61"
+    @SuppressWarnings("WeakerAccess")
+    protected String[] valGenre = {
+            "56", "1", "39", "2", "3", "59", "84", "4", "5", "49", "45", "6", "7", "8", "9", "10",
+            "11", "12", "13", "14", "47", "15", "16", "17", "37", "36", "18", "19", "51", "20",
+            "21", "54%2C64", "22%2C57", "23", "55", "24%2C38", "25", "26", "27", "28",
+            "44%2C29%2C48", "30", "42%2C31%2C46", "32", "41", "33", "60", "62", "34", "53", "35",
+            "52", "58%2C50", "40", "43", "61"
     };
 
-    private static String[] orderV = {"/list/Hot-Book/", "/list/New-Update/", "/category/", "/list/New-Book/"};
-    private static String[] order = {"Popular Manga", "Latest Releases", "Manga Directory", "New Manga"};
-    private static String[] complete = new String[]{"Either", "Yes", "No"};
-    private static String[] completeV = new String[]{"either", "yes", "no"};
+    private static final int[] fltCategory = {
+            R.string.flt_category_all,
+            R.string.flt_category_hot,
+            R.string.flt_category_new,
+            R.string.flt_category_latest_release
+    };
+    private static final String[] valCategory = {
+            "/category/", "/list/Hot-Book/", "/list/New-Book/", "/list/New-Update/"
+    };
+
+    private static final int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_completed,
+            R.string.flt_status_ongoing
+    };
+    private static final String[] valStatus = {
+            "either", "yes", "no"};
 
     NineManga(Context context) {
         super(context);
-        this.setFlag(R.drawable.flag_en);
-        this.setIcon(R.drawable.ninemanga);
-        this.setServerName("NineManga");
+        setFlag(R.drawable.flag_en);
+        setIcon(R.drawable.ninemanga);
+        setServerName("NineManga");
         setServerID(ServerBase.NINEMANGA);
+    }
+
+    @Override
+    public boolean hasList() {
+        return false;
     }
 
     @Override
@@ -63,19 +144,13 @@ class NineManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(
-                HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern pattern = Pattern.compile("bookname\" href=\"(/manga/[^\"]+)\">(.+?)<");
-        Matcher matcher = pattern.matcher(source);
-        while (matcher.find()) {
-            String title = Util.getInstance().fromHtml(matcher.group(2)).toString();
-            //Log.d("NM","t0: "+title);
-            if (title.equals(title.toUpperCase())) {
-                title = Util.getInstance().toCamelCase(title.toLowerCase());
-                //Log.d("NM","t1: "+title);
-            }
-            Manga manga = new Manga(getServerID(), title, HOST + matcher.group(1), false);
+        String data = getNavigatorAndFlushParameters().get(
+                HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
+        Matcher m = p.matcher(data);
+        while (m.find()) {
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -83,91 +158,98 @@ class NineManga extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(manga, forceReload);
+        loadMangaInformation(manga, forceReload);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
-        // Front
-        manga.setImages(getFirstMatchDefault("Manga\" src=\"(.+?)\"", source, ""));
-        // Summary
-        String summary = getFirstMatchDefault("<p itemprop=\"description\">(.+?)</p>",
-                source, defaultSynopsis).replaceAll("<.+?>", "");
-        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceFirst("Summary:", "")).toString());
-        // Status
-        manga.setFinished(!getFirstMatchDefault("<b>Status:</b>(.+?)</a>", source, "").contains("Ongoing"));
-        // Author
-        manga.setAuthor(getFirstMatchDefault("author.+?\">(.+?)<", source, ""));
-        // Genre
-        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("<li itemprop=\"genre\".+?</b>(.+?)</li>", source, "").replace("a><a", "a>, <a") + ".").toString().trim()));
-        // Chapters
-        Pattern p = Pattern.compile("<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>");
-        Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<>();
-        while (matcher.find()) {
-            chapters.add(0, new Chapter(matcher.group(3), HOST + matcher.group(1)));
+        if (manga.getChapters().isEmpty() || forceReload) {
+            String data = getNavigatorAndFlushParameters().get(manga.getPath() + "?waring=1");
+
+            // cover image
+            manga.setImages(getFirstMatchDefault(PATTERN_COVER, data, ""));
+            // summary
+            manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(PATTERN_SUMMARY, data,
+                    context.getString(R.string.nodisponible))).toString().replaceFirst("^.+?: ", "").replace("\\", ""));
+            // ongoing or completed
+            manga.setFinished(data.contains(PATTERN_COMPLETED));
+            // author
+            manga.setAuthor(getFirstMatchDefault(PATTERN_AUTHOR, data,
+                    context.getString(R.string.nodisponible)));
+            // genre
+            manga.setGenre(Util.getInstance().fromHtml(
+                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible))
+            ).toString().trim().replace(" ", ", "));
+            // chapter
+            Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
+            Matcher m = p.matcher(data);
+            while (m.find()) {
+                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(3)).toString().trim(), HOST + m.group(1));
+                mc.addChapterFirst(manga);
+            }
         }
-        manga.setChapters(chapters);
     }
 
     @Override
     public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath().replace(".html", "-" + page + ".html");
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+
+        if (page == 1) {
+            return chapter.getPath();
+        }
+        else {
+            return chapter.getPath().replace(".html", "-" + page + ".html");
+        }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null)
+        if (chapter.getExtra() == null) {
             setExtra(chapter);
+        }
         String[] images = chapter.getExtra().split("\\|");
         return images[page];
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        Navigator nav = getNavigatorWithNeededHeader();
-        nav.addHeader("Referer", chapter.getPath());
-        nav.get(HOST + "/show_ads/google/");
-        String source = nav.get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\""); //<img class="manga_pic.+?src="([^"]+)
-        Matcher matcher = p.matcher(source);
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        Pattern p = Pattern.compile(PATTERN_IMAGE, Pattern.DOTALL);
+        Matcher m = p.matcher(source);
         String images = "";
-        while (matcher.find()) {
-            images = images + "|" + matcher.group(1);
+        while (m.find()) {
+            images = images + "|" + m.group(1);
         }
         chapter.setExtra(images);
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(chapter.getPath());
-        String nop = getFirstMatchDefault(
-                "\\d+/(\\d+)</option>[\\s]*</select>", source,
-                "failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(nop));
-    }
-
-    @Deprecated
-    private ArrayList<Manga> getMangasFromSource(String source) {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)\"><img src=\"(.+?)\".+?alt=\"([^\"]+)\"");
-        Matcher matcher = p.matcher(source);
-        while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(matcher.group(3)).toString(), HOST + matcher.group(1), false);
-            manga.setImages(matcher.group(2));
-            mangas.add(manga);
-        }
-        return mangas;
+        String data, pages;
+        data = getNavigatorAndFlushParameters().get(chapter.getPath());
+        pages = getFirstMatch(PATTERN_PAGES, data, "Error: failed to get the number of pages");
+        chapter.setPages(Integer.parseInt(pages));
     }
 
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order (only applied when no genre is selected)", order, ServerFilter.FilterType.SINGLE)
+                new ServerFilter(
+                        context.getString(R.string.flt_include_tags),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(
+                        context.getString(R.string.flt_exclude_tags),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_category),
+                        buildTranslatedStringArray(fltCategory), ServerFilter.FilterType.SINGLE)
         };
     }
 
@@ -176,49 +258,31 @@ class NineManga extends ServerBase {
         String includedGenres = "";
         if (filters[0].length > 0) {
             for (int i = 0; i < filters[0].length; i++) {
-                includedGenres = includedGenres + genreV[filters[0][i]] + "%2C"; // comma
+                includedGenres = includedGenres + valGenre[filters[0][i]] + "%2C"; // comma
             }
         }
         String excludedGenres = "";
         if (filters[1].length > 0) {
             for (int i = 0; i < filters[1].length; i++) {
-                excludedGenres = excludedGenres + genreV[filters[1][i]] + "%2C"; // comma
+                excludedGenres = excludedGenres + valGenre[filters[1][i]] + "%2C"; // comma
             }
         }
         String web;
-        if (filters[0].length < 1 && filters[1].length < 1)
-            web = HOST + orderV[filters[3][0]];
+        if(filters[0].length < 1 && filters[1].length < 1)
+            web = HOST + valCategory[filters[3][0]];
         else
-            web = "http://ninemanga.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
-        //Log.d("NM","web: "+web);
-        String source = getNavigatorWithNeededHeader().get(web);
-        // regex to generate genre ids: <li id="cate_.+?" cate_id="(.+?)" cur="none" class="cate_list"><label><a class="sub_clk cirmark">(.+?)</a></label></li>
-        Pattern pattern = Pattern.compile("<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<");
-        Matcher matcher = pattern.matcher(source);
+            web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valStatus[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+
+        String data = getNavigatorAndFlushParameters().get(web);
+        Pattern pattern = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
+        Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
-        while (matcher.find()) {
-            String title = Util.getInstance().fromHtml(matcher.group(3)).toString();
-            //Log.d("NM","t0: "+title);
-            if (title.equals(title.toUpperCase())) {
-                title = Util.getInstance().toCamelCase(title.toLowerCase());
-                //Log.d("NM","t1: "+title);
-            }
-            Manga manga = new Manga(getServerID(), title, HOST + matcher.group(1), false);
-            manga.setImages(matcher.group(2));
+        while (m.find()) {
+            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(3)).toString(), HOST + m.group(1), false);
+            manga.setImages(m.group(2));
             mangas.add(manga);
         }
+        hasMore = mangas.size() > 0;
         return mangas;
     }
-
-    public Navigator getNavigatorWithNeededHeader() throws Exception {
-        Navigator nav = new Navigator(context);
-        nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        return nav;
-    }
-
-    @Override
-    public boolean hasList() {
-        return false;
-    }
 }
-

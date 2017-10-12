@@ -116,7 +116,7 @@ class Taadd extends ServerBase {
         manga.setGenre(genre.replaceAll("￼", ""));
 
         // Chapters
-        Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>");
+        Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -161,7 +161,7 @@ class Taadd extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("<a href=\"([^\"]+?)\"><img src=\"([^\"]+?)\" alt=\"([^\"]+?)\"");
+        Pattern pattern = Pattern.compile("<a href=\"([^\"]+?)\"><img src=\"([^\"]+?)\" alt=\"([^\"]+?)\"", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

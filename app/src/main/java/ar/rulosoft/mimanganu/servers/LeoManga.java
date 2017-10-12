@@ -79,7 +79,7 @@ class LeoManga extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         String web = "http://" + HOST + "/buscar?s=" + URLEncoder.encode(term, "UTF-8");
         String data = getNavigatorAndFlushParameters().get(web);
-        Pattern pattern = Pattern.compile("<td onclick='window.location=\"(.+?)\"'>.+?<img src=\"(.+?)\"[^>]alt=\"(.+?)\"");
+        Pattern pattern = Pattern.compile("<td onclick='window.location=\"(.+?)\"'>.+?<img src=\"(.+?)\"[^>]alt=\"(.+?)\"", Pattern.DOTALL);
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
@@ -110,7 +110,7 @@ class LeoManga extends ServerBase {
             manga.setFinished(getFirstMatchDefault("curs-state\">(.+?)<", data, "").contains("Finalizado"));
 
             ArrayList<Chapter> chapters = new ArrayList<>();
-            Pattern pattern = Pattern.compile("<li>[\\s]*<a href=\"(/manga/.+?)\">(.+?)</a>");
+            Pattern pattern = Pattern.compile("<li>[\\s]*<a href=\"(/manga/.+?)\">(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
                 chapters.add(0,new Chapter(matcher.group(2).replaceAll("<.+?>", "").trim(), "http://" + HOST + matcher.group(1)));
@@ -169,7 +169,7 @@ class LeoManga extends ServerBase {
 
     private ArrayList<Manga> getMangasFromSource(String data) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"(/manga/.+?)\".+?src=\"(.+?)\" alt=\"(.+?)\"");
+        Pattern p = Pattern.compile("<a href=\"(/manga/.+?)\".+?src=\"(.+?)\" alt=\"(.+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(LEOMANGA, m.group(3), "http://" + HOST + m.group(1), false);

@@ -195,4 +195,23 @@
         <item quantity="one">%1$d nuovo capitolo di %2$s</item>
         <item quantity="other">%1$d nuovi capitoli di %2$s</item>
     </plurals>
+    <string name="flt_tag_collection">Raccolta</string>
+    <string name="flt_tag_romance">Romantico</string>
+    <string name="flt_tag_school_life">Scolastico</string>
+    <string name="flt_tag_reincarnation">Sentimentale</string>
+    <string name="flt_tag_supernatural">Sovrannaturale</string>
+    <string name="flt_tag_sports">Sportivo</string>
+    <string name="flt_tag_historical">Storico</string>
+    <string name="flt_tag_daily_life">Vita Quotidiana</string>
+    <string name="flt_tag_psychological">Psicologico</string>
+    <string name="flt_tag_music">Musica</string>
+    <string name="flt_tag_mystery">Misteri</string>
+    <string name="flt_tag_magic">Magico</string>
+    <string name="flt_tag_madness">Demenziale</string>
+    <string name="flt_tag_comedy">Commedia</string>
+    <string name="flt_tag_action">Azione</string>
+    <string name="flt_tag_adventure">Avventura</string>
+    <string name="flt_category_hot">Popolare</string>
+    <string name="flt_category_new">Nuovo</string>
+    <string name="flt_category_latest_release">Ultime uscite</string>
 </resources>

@@ -218,7 +218,7 @@ public abstract class ServerBase {
 	 * @return         the first match group
 	 */
     public static String getFirstMatch(String patron, String source, String errorMsg) throws Exception {
-        Pattern p = Pattern.compile(patron);
+        Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
             return m.group(1);
@@ -551,7 +551,7 @@ public abstract class ServerBase {
 	 * @throws Exception if an error occurred
 	 */
     public ArrayList<String> getAllMatch(String patron, String source) throws Exception {
-        Pattern p = Pattern.compile(patron);
+        Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<String> matches = new ArrayList<>();
         while (m.find()) {
@@ -569,7 +569,7 @@ public abstract class ServerBase {
 	 * @return         the first match or the value defined by mDefault
 	 */
     public String getFirstMatchDefault(String patron, String source, String mDefault) {
-        Pattern p = Pattern.compile(patron);
+        Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
             return m.group(1);
@@ -663,6 +663,20 @@ public abstract class ServerBase {
 	 */
     public boolean testLogin(String user, String passwd) throws Exception {
         return false;
+    }
+
+    /**
+     * Build an array of translated strings from an array of resource identifiers.
+     *
+     * @param resId an array containing the resource identifiers
+     * @return an array of translated strings
+     */
+    protected String[] buildTranslatedStringArray(int[] resId) {
+        String[] result = new String[resId.length];
+        for (int i = 0; i < resId.length; i++) {
+            result[i] = context.getString(resId[i]);
+        }
+        return result;
     }
 
 	/**

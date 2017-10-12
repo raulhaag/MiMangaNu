@@ -182,7 +182,7 @@ public class Kumanga extends ServerBase {
                     .contains("Activo"));
             //Capítulos
             manga.getChapters().clear();
-            Pattern pattern = Pattern.compile("<td><a href=\"(manga[^\"]+).+?>(.+?)</i>");
+            Pattern pattern = Pattern.compile("<td><a href=\"(manga[^\"]+).+?>(.+?)</i>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
                 manga.addChapter(new Chapter(matcher.group(2).trim().replaceAll("<.*?>", ""),

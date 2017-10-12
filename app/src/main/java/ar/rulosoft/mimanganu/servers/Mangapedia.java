@@ -121,7 +121,7 @@ public class Mangapedia extends ServerBase {
 
     private ArrayList<Manga> getMangasString(String data){
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("<a href=\"([^\"]+)\".+?src=\"([^\"]+)\"\\/>.+?>(.+?)<");
+        Pattern p = Pattern.compile("<a href=\"([^\"]+)\".+?src=\"([^\"]+)\"\\/>.+?>(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(3), m.group(1), false);
@@ -194,7 +194,7 @@ public class Mangapedia extends ServerBase {
                     .contains("en cours"));
             //Capítulos
             manga.getChapters().clear();
-            Pattern pattern = Pattern.compile("<a href=\"(http[s]*://mangapedia.fr/lel[^\"]+).+?\"nameChapter\">(.+?)<");
+            Pattern pattern = Pattern.compile("<a href=\"(http[s]*://mangapedia.fr/lel[^\"]+).+?\"nameChapter\">(.+?)<", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
                 manga.addChapter(new Chapter(matcher.group(2).trim().replaceAll("<.*?>", ""),
@@ -216,7 +216,7 @@ public class Mangapedia extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        Pattern p = Pattern.compile("['|\"](http[s]*://mangapedia.fr/project_code/script/image.php\\?path=.+?)['|\"]");
+        Pattern p = Pattern.compile("['|\"](http[s]*://mangapedia.fr/project_code/script/image.php\\?path=.+?)['|\"]", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         int i = 0;
         String images = "";

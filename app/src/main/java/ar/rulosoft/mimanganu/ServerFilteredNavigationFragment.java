@@ -206,9 +206,14 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.manga_server_visual, menu);
         MenuItem search = menu.findItem(R.id.action_search);
-        MenuItem vcl = menu.findItem(R.id.ver_como_lista);
-        if (!serverBase.hasList())
+        if (!serverBase.hasList()) {
+            MenuItem vcl = menu.findItem(R.id.ver_como_lista);
             vcl.setVisible(false);
+        }
+        if (serverBase.getServerFilters().length == 0) {
+            MenuItem flt = menu.findItem(R.id.filter);
+            flt.setVisible(false);
+        }
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {
 

@@ -18,7 +18,7 @@ public class FromFolder extends ServerBase {
 
     private static final String FLOAT_PATTERN = "([.,0123456789]+)";
     private static final String STRING_END_PATTERN = "[^\\d]\\.";
-    private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].{0,1}\\d+";
+    private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].?\\d+";
     private static Comparator<String> NUMBERS_ASC = new Comparator<String>() {
         @Override
         public int compare(String c1, String c2) {

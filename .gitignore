@@ -12,6 +12,7 @@
 .idea/gradle.xml
 .idea/misc.xml
 .idea/modules.xml
+.idea/inspectionProfiles/
 app/app.iml
 imageviewtouchlibrary/imageviewtouchlibrary.iml
 *.iml
