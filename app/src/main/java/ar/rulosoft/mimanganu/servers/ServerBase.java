@@ -431,13 +431,13 @@ public abstract class ServerBase {
 
         boolean changes = false;
         if (!mangaDb.getAuthor().equals(manga.getAuthor()) &&
-                manga.getAuthor().length() > 2) {
+                manga.getAuthor() != null && manga.getAuthor().length() > 2) {
             mangaDb.setAuthor(manga.getAuthor());
             changes = true;
         }
 
-        if (!mangaDb.getImages().equals(manga.getImages()) &&
-                manga.getImages().length() > 2) {
+        if (mangaDb.getImages() != null && !mangaDb.getImages().equals(manga.getImages()) &&
+                manga.getImages() != null && manga.getImages().length() > 2) {
             mangaDb.setImages(manga.getImages());
             changes = true;
         }
@@ -462,7 +462,7 @@ public abstract class ServerBase {
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
             Date date = new Date();
             String lastUpdate = dateFormat.format(date);
-            if (!mangaDb.getLastUpdate().equals(lastUpdate)) {
+            if (mangaDb.getLastUpdate() != null && !mangaDb.getLastUpdate().equals(lastUpdate)) {
                 mangaDb.setLastUpdate(lastUpdate);
                 changes = true;
             }
@@ -671,6 +671,7 @@ public abstract class ServerBase {
      * @param resId an array containing the resource identifiers
      * @return an array of translated strings
      */
+    @SuppressWarnings("WeakerAccess")
     protected String[] buildTranslatedStringArray(int[] resId) {
         String[] result = new String[resId.length];
         for (int i = 0; i < resId.length; i++) {
