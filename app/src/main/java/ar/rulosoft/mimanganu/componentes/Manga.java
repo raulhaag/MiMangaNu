@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.utils.HtmlUnescape;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class Manga {
     private int id;
@@ -29,26 +30,28 @@ public class Manga {
     public Manga(int serverId, String title, String path, boolean finished) {
         super();
         this.serverId = serverId;
-        this.title = title;
         this.path = path;
         this.author = "";
         this.genre = "";
         this.finished = finished;
+
+        setTitle(title);
     }
 
-    public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSentive, int readingDirection, int lastIndex, int news) {
+    public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSensitive, int readingDirection, int lastIndex, int news) {
         this.serverId = serverId;
         this.id = id;
-        this.title = title;
-        this.synopsis = synopsis;
         this.images = images;
         this.path = path;
-        this.author = author;
         this.finished = finished;
-        this.scrollSensitive = scrollSentive;
+        this.scrollSensitive = scrollSensitive;
         this.readingDirection = readingDirection;
         this.lastIndex = lastIndex;
         this.news = news;
+
+        setTitle(title);
+        setAuthor(author);
+        setSynopsis(synopsis);
     }
 
     public int getId() {
@@ -72,7 +75,7 @@ public class Manga {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = HtmlUnescape.Unescape(Util.getInstance().fromHtml(title).toString().trim());
     }
 
     public String getSynopsis() {
@@ -80,7 +83,7 @@ public class Manga {
     }
 
     public void setSynopsis(String synopsis) {
-        this.synopsis = HtmlUnescape.Unescape(synopsis);
+        this.synopsis = HtmlUnescape.Unescape(Util.getInstance().fromHtml(synopsis).toString().trim());
     }
 
     @Nullable
@@ -105,7 +108,7 @@ public class Manga {
     }
 
     public void setAuthor(String author) {
-        this.author = author;
+        this.author = HtmlUnescape.Unescape(Util.getInstance().fromHtml(author).toString().trim());
     }
 
     @Override
@@ -142,6 +145,7 @@ public class Manga {
         return news;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setNews(int news) {
         this.news = news;
     }
@@ -150,6 +154,7 @@ public class Manga {
         return lastIndex;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setLastIndex(int lastIndex) {
         this.lastIndex = lastIndex;
     }
@@ -174,6 +179,7 @@ public class Manga {
         return scrollSensitive;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setScrollSensitive(float scrollSensitive) {
         this.scrollSensitive = scrollSensitive;
     }
@@ -183,7 +189,7 @@ public class Manga {
     }
 
     public void setGenre(String genre) {
-        this.genre = genre;
+        this.genre = HtmlUnescape.Unescape(Util.getInstance().fromHtml(genre).toString().trim());
     }
 
     public int getReaderType(){
@@ -194,6 +200,7 @@ public class Manga {
         this.readerType = readerType;
     }
 
+    @Nullable
     public String getLastUpdate() {
         return lastUpdate;
     }
