@@ -724,9 +724,13 @@ public abstract class ServerBase {
     }
 
 	/**
-	 * Returns the type of filtering supported.
+	 * Returns the type of filtered list display supported.
+     *
+     * Determines the type of filtered list displayed. Either Manga can be presented as a nice grid
+     * with covers (<code>FilteredType.VISUAL</code>) or only as a plain textual list
+     * (<code>FilteredType.TEXT</code>).
 	 *
-	 * @return either VISUAL or TEXT
+	 * @return either <code>FilteredType.VISUAL</code> or <code>FilteredType.TEXT</code>
 	 */
     public FilteredType getFilteredType() {
         return FilteredType.VISUAL;
