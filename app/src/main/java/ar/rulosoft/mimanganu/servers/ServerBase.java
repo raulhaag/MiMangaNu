@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -396,10 +397,13 @@ public abstract class ServerBase {
 
     /**
 	 * Returns the list of Manga found on the server.
+     *
+     * This function shall only be called if <code>hasList</code> returns <code>true</code>.
 	 *
-	 * @return           an ArrayList of Manga objects
+	 * @return           an ArrayList of Manga objects or <code>null</code> if unsupported.
 	 * @throws Exception if an error occurred
 	 */
+    @Nullable
     public abstract ArrayList<Manga> getMangas() throws Exception;
 	/**
 	 * Returns a list of Manga filtered by a given search term.
