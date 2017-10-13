@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,8 +11,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.HtmlUnescape;
-import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaHere extends ServerBase {
     private static final String HOST = "https://www.mangahere.co";
@@ -163,7 +162,7 @@ class MangaHere extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), "http:" + m.group(1));
+                Chapter mc = new Chapter(m.group(2), "http:" + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -188,7 +187,7 @@ class MangaHere extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
-        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
+        data = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
         return getFirstMatch(PATTERN_IMAGE, data, "Error: failed to get the link to the image");
     }
 
@@ -221,7 +220,6 @@ class MangaHere extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/" + valGenre[filters[0][0]] + "/" + pageNumber + ".htm" + orderM[filters[1][0]];
-        //Log.d("MH","web: "+web);
         String source = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
@@ -233,8 +231,8 @@ class MangaHere extends ServerBase {
             else {
                 path = m.group(3);
             }
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), path, false);
-            manga.setImages(m.group(1));//.replace("thumb_", ""));
+            Manga manga = new Manga(getServerID(), m.group(2), path, false);
+            manga.setImages(m.group(1));
             mangas.add(manga);
         }
         hasMore = !mangas.isEmpty();
@@ -244,11 +242,11 @@ class MangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + term);
+        String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + URLEncoder.encode(term, "UTF-8"));
         Pattern p = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2).trim()), "http:" + m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(2), "http:" + m.group(1), false));
         }
         return mangas;
     }
