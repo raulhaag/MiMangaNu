@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.util.Comparator;
@@ -117,6 +118,7 @@ public class Chapter {
         this.downloaded = downloaded;
     }
 
+    @Nullable
     public String getExtra() {
         return extra;
     }
