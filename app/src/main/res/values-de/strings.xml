@@ -404,4 +404,7 @@
     <string name="flt_tag_lolicon">Lolicon</string>
     <string name="flt_tag_shotacon">Shotacon</string>
     <string name="flt_order_newest">Neueste</string>
+    <string name="flt_status_suspended">ausgesetzt</string>
+    <string name="flt_order_title">Titel</string>
+    <string name="flt_order_chapters">Kapitel</string>
 </resources>

@@ -405,4 +405,7 @@
     <string name="flt_tag_comic">Comic</string>
     <string name="flt_tag_lolicon">Lolicon</string>
     <string name="flt_tag_shotacon">Shotacon</string>
+    <string name="flt_status_suspended">Suspended</string>
+    <string name="flt_order_title">Title</string>
+    <string name="flt_order_chapters">Chapters</string>
 </resources>
