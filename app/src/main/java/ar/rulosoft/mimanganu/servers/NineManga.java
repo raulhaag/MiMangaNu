@@ -28,11 +28,11 @@ class NineManga extends ServerBase {
     private static final String PATTERN_COMPLETED =
             "<a class=\"red\" href=\"/category/completed.html\">";
     private static final String PATTERN_AUTHOR =
-            "<a itemprop=\"author\"[^>]+>(.+?)</a>";
+            "<a itemprop=\"author\"[^>]+>([^<]+)</a>";
     private static final String PATTERN_GENRE =
-            "<li itemprop=\"genre\".+?</b>(.+?)</li>";
+            "<li itemprop=\"genre\".+?</b>(.+?)</a>[^<]*</li>";
     private static final String PATTERN_CHAPTER =
-            "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>";
+            "<a class=\"chapter_list_a\" href=\"(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
     private static final String PATTERN_PAGES =
             "\\d+/(\\d+)</option>[\\s]*</select>";
     @SuppressWarnings("WeakerAccess")
@@ -178,8 +178,8 @@ class NineManga extends ServerBase {
                     context.getString(R.string.nodisponible)));
             // genre
             manga.setGenre(Util.getInstance().fromHtml(
-                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible))
-            ).toString().trim().replace(" ", ", "));
+                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)).replace("</a>", "</a>,")
+            ).toString().trim());
             // chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
@@ -209,7 +209,7 @@ class NineManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null) {
+        if ((chapter.getExtra() == null) || (chapter.getExtra().isEmpty())) {
             setExtra(chapter);
         }
         String[] images = chapter.getExtra().split("\\|");
