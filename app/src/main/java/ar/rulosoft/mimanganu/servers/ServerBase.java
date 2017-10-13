@@ -23,6 +23,128 @@ import ar.rulosoft.navegadores.Navigator;
 
 /**
  * The base class for all online Manga servers supported by this application.
+ *
+ * Any Manga service shall be based off this class. Please follow this guideline when providing a new
+ * server:
+ *
+ * <ul>
+ *     <li>Subclass the new server from <code>ServerBase</code> and implement it
+ *     <li>Add a new unique identifier to <code>ServerBase</code>
+ *     <li>Add the new server to <code>getServer</code>
+ *     <li>Add the new server to <code>getServers</code>
+ * </ul>
+ *
+ * Hints:
+ * <ul>
+ *     <li>optimize your regular expressions to avoid backtracking
+ *     <li>use the provided functionality from <code>ServerBase</code> as often as possible
+ *     <li>use <code>URLEncoder.encode</code>before passing search terms to the server
+ * </ul>
+ *
+ * Test the server implementation for the following use cases:
+ *
+ * <ul>
+ * <li>TC: Open the server list by clicking the '+' inside the circle.
+ * <li>EX: The server is listed by its name and the correct icon and language flag are shown.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Select the server from the list.
+ * <li>EX: The Manga grid is populated (showing covers and names). If the server supports filtering,
+ * the filter button is visible, if no filtering is possible, the button is hidden.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Scroll the list.
+ * <li>EX: New entries on the grid become visible. Verify that items are continuously fetched as you
+ * scroll.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Click the magnifying glass icon to search for a Manga. Search for 'world'.
+ * <li>EX: A non-empty list of search results is presented, all containing the search term. Special
+ * characters are displayed properly (e.g. apostrophes).
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Select a Manga from the list of search results.
+ * <li>EX: All supported fields contain content as expected (cover, author, genre, status, number of
+ * chapters, summary).
+ * </ul>
+ *
+ * Click the back button twice to return to the list.
+ *
+ * <ul>
+ * <li>TC: If the server supports listing, click the list icon.
+ * <li>EX: A non-empty list of manga is presented.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Select a Manga from the list.
+ * <li>EX: All supported fields contain content as expected (cover, author, genre, status, number of
+ * chapters, summary).
+ * </ul>
+ *
+ * Click the back button to return to the list.
+ *
+ * <ul>
+ * <li>TC: Click the magnifying glass icon to search for a Manga. Search for 'world'.
+ * <li>EX: A non-empty list of search results is presented, all containing the search term. Special
+ * characters are displayed properly (e.g. apostrophes).
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Select a Manga from the list of search results.
+ * <li>EX: All supported fields contain content as expected (cover, author, genre, status, number of
+ * chapters, summary).
+ * </ul>
+ *
+ * Click the back button to return to the filtered list.
+ *
+ * <ul>
+ * <li>TC: Open the filter view and change the default selection.
+ * <li>EX: The filtered view displays Manga matching the filter criteria.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Select a Manga from the list of search results.
+ * <li>EX: All supported fields contain content as expected (cover, author, genre, status, number of
+ * chapters, summary).
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Add the Manga to the database.
+ * <li>EX: No error message is displayed.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Return to the home screen and open the Manga which was just added.
+ * <li>EX: All supported fields contain content as expected (cover, author, genre, summary). The
+ * list of chapters is non-empty.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Pull the chapter list down to initiate a Manga update.
+ * <li>EX: All supported fields contain content as expected (cover, author, genre, summary). The
+ * list of chapters is non-empty.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Open a chapter.
+ * <li>EX: The first page is loaded and displayed.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Scroll through the chapter until the end and scroll further to load the next chapter.
+ * <li>EX: The first page of the next chapter is loaded and displayed. The order is as expected.
+ * </ul>
+ *
+ * <ul>
+ * <li>TC: Return to the home screen and remove the Manga.
+ * <li>EX: The Manga is no longer visible on the home screen.
+ * </ul>
+ *
+ * If all of steps work properly - congratulations, you made it. (o.O)/v
  */
 public abstract class ServerBase {
 
