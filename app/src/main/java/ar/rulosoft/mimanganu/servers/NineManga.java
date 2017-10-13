@@ -150,7 +150,7 @@ class NineManga extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -184,7 +184,7 @@ class NineManga extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(3)).toString().trim(), HOST + m.group(1));
+                Chapter mc = new Chapter(m.group(3), HOST + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -278,7 +278,7 @@ class NineManga extends ServerBase {
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(3)).toString(), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(1), false);
             manga.setImages(m.group(2));
             mangas.add(manga);
         }
