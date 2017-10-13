@@ -401,4 +401,8 @@
     <string name="flt_tag_kodomo">Kodomo</string>
     <string name="flt_tag_maho_shoujo">Maho Shoujo</string>
     <string name="flt_tag_light_novel">Light Novel</string>
+    <string name="flt_order_newest">Newest</string>
+    <string name="flt_tag_comic">Comic</string>
+    <string name="flt_tag_lolicon">Lolicon</string>
+    <string name="flt_tag_shotacon">Shotacon</string>
 </resources>
