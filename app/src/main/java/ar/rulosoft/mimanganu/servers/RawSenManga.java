@@ -127,7 +127,7 @@ class RawSenManga extends ServerBase {
         Pattern p = Pattern.compile("\\d</td><td><a href=\"([^\"]+)\"\\s*>([^<]+)", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2)), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -137,11 +137,11 @@ class RawSenManga extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         String web = HOST + "Search.php?q=" + URLEncoder.encode(term, "UTF-8");
         String data = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile("<div class='search-results'>.+?<a href='(.+?)' title='(.+?)'", Pattern.DOTALL);
+        Pattern p = Pattern.compile("<div class='search-results'>.+?<a href='([^']+)' title='([^']+)' ", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2)), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -151,16 +151,23 @@ class RawSenManga extends ServerBase {
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavigatorAndFlushParameters().get(manga.getPath());
-            String data2 = getFirstMatchDefault("<div class=\"series_desc\">(.+?)<\\/div>", data, "");
-            manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault("<div itemprop=\"description\">(.+?)<", data2, defaultSynopsis)).toString());
+            String data2 = getFirstMatchDefault("<div class=\"series_desc\">(.+?)</div>", data, "");
+
+            // summary
+            manga.setSynopsis(getFirstMatchDefault("<div itemprop=\"description\">(.+)", data2, context.getString(R.string.nodisponible)));
+            // cover
             manga.setImages(HOST + getFirstMatchDefault("image\" src=\"(.+?)\"", data, ""));
-            manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, "N/A")).toString());
-            manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, "N/A")).toString().trim());
+            //  author
+            manga.setAuthor(getFirstMatchDefault("Author:<\\/strong> <span class='desc'>(.+?)<\\/span>", data2, context.getString(R.string.nodisponible)));
+            // genre
+            manga.setGenre(getFirstMatchDefault("in:<\\/strong><\\/p> (.+?)<\\/p>", data2, context.getString(R.string.nodisponible)));
+            // status
             manga.setFinished(data2.contains("Complete"));
+            // chapters
             Pattern p = Pattern.compile("<td><a href=\"(/.+?)\" title=\"(.+?)\"", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(HtmlUnescape.Unescape(m.group(2).trim()), HOST + m.group(1));
+                Chapter mc = new Chapter(m.group(2), HOST + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -196,11 +203,11 @@ class RawSenManga extends ServerBase {
 
     @NonNull
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("<div class=\"cover\"><a href=\"/(.+?)\" title=\"(.+?)\"><img src=\"/(.+?)\"", Pattern.DOTALL);
+        Pattern p = Pattern.compile("<div class=\"cover\">[^<]*<a href=\"/(.+?)\" title=\"(.+?)\">[^<]*<img src=\"/(.+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2)), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             manga.setImages(HOST + m.group(3));
             mangas.add(manga);
         }
