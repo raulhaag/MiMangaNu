@@ -11,7 +11,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -20,40 +19,159 @@ import ar.rulosoft.navegadores.Navigator;
 class Taadd extends ServerBase {
     private static String HOST = "http://www.taadd.com";
 
-    private static String[] genre = new String[]{
-            "4-Koma", "Action", "Adult", "Adventure", "Anime", "Award Winning",
-            "Bara", "Comedy", "Cooking", "Demons", "Doujinshi", "Drama", "Ecchi", "Fantasy", "Gender Bender",
-            "Harem", "Historical", "Horror", "Josei", "Live Action", "Magic", "Manhua", "Manhwa",
-            "Martial Arts", "Matsumoto...", "Mature", "Mecha", "Medical", "Military", "Music",
-            "Mystery", "N/A", "None", "One Shot", "Oneshot", "Psychological", "Reverse Harem",
-            "Romance", "Romance Shoujo", "School Life", "Sci-Fi", "Seinen", "Shoujo", "Shoujo Ai",
-            "Shoujo-Ai", "Shoujoai", "Shounen", "Shounen Ai", "Shounen-Ai", "Shounenai", "Slice Of Life",
-            "Smut", "Sports", "Staff Pick", "Super Power", "Supernatural", "Suspense", "Tragedy",
-            "Vampire", "Webtoon", "Webtoons", "Yaoi", "Yuri", "[No Chapters]"
+    private static final int[] fltGenre = {
+            R.string.flt_tag_4_koma,
+            R.string.flt_tag_action,
+            R.string.flt_tag_adult,
+            R.string.flt_tag_adventure,
+            R.string.flt_tag_anime,
+            R.string.flt_tag_award_winning,
+            R.string.flt_tag_bara,
+            R.string.flt_tag_comedy,
+            R.string.flt_tag_cooking,
+            R.string.flt_tag_daemons,
+            R.string.flt_tag_doujinshi,
+            R.string.flt_tag_drama,
+            R.string.flt_tag_ecchi,
+            R.string.flt_tag_fantasy,
+            R.string.flt_tag_gender_bender,
+            R.string.flt_tag_harem,
+            R.string.flt_tag_historical,
+            R.string.flt_tag_horror,
+            R.string.flt_tag_josei,
+            R.string.flt_tag_live_action,
+            R.string.flt_tag_magic,
+            R.string.flt_tag_manhua,
+            R.string.flt_tag_manhwa,
+            R.string.flt_tag_martial_arts,
+            R.string.flt_tag_matsumoto,
+            R.string.flt_tag_mature,
+            R.string.flt_tag_mecha,
+            R.string.flt_tag_medical,
+            R.string.flt_tag_military,
+            R.string.flt_tag_music,
+            R.string.flt_tag_mystery,
+            R.string.flt_tag_none,
+            R.string.flt_tag_one_shot,
+            R.string.flt_tag_psychological,
+            R.string.flt_tag_reverse_harem,
+            R.string.flt_tag_romance,
+            R.string.flt_tag_school_life,
+            R.string.flt_tag_sci_fi,
+            R.string.flt_tag_seinen,
+            R.string.flt_tag_shoujo,
+            R.string.flt_tag_shoujo_ai,
+            R.string.flt_tag_shounen,
+            R.string.flt_tag_shounen_ai,
+            R.string.flt_tag_slice_of_life,
+            R.string.flt_tag_smut,
+            R.string.flt_tag_sports,
+            R.string.flt_tag_staff_pick,
+            R.string.flt_tag_super_powers,
+            R.string.flt_tag_supernatural,
+            R.string.flt_tag_suspense,
+            R.string.flt_tag_tragedy,
+            R.string.flt_tag_vampire,
+            R.string.flt_tag_webtoon,
+            R.string.flt_tag_yaoi,
+            R.string.flt_tag_yuri,
+            R.string.flt_tag_no_chapters
+
     };
-    private static String[] genreV = new String[]{
-            "56", "1", "39", "2", "3", "59",
-            "84", "4", "5", "49", "45", "6", "7", "8", "9",
-            "10", "11", "12", "13", "14", "47", "15", "16",
-            "17", "37", "36", "18", "19", "51", "20",
-            "21", "54", "64", "22", "57", "23", "55",
-            "24", "38", "25", "26", "27", "28", "44",
-            "29", "48", "30", "42", "31", "46", "32",
-            "41", "33", "60", "62", "34", "53", "35",
-            "52", "58", "50", "40", "43", "61"
+    private static final String[] valGenre = {
+            "56",
+            "1",
+            "39",
+            "2",
+            "3",
+            "59",
+            "84",
+            "4",
+            "5",
+            "49",
+            "45",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "47",
+            "15",
+            "16",
+            "17",
+            "37",
+            "36",
+            "18",
+            "19",
+            "51",
+            "20",
+            "21",
+            "54%2C64",
+            "22%2C57",
+            "23",
+            "55",
+            "24%2C38",
+            "25",
+            "26",
+            "27",
+            "28",
+            "44%2C29%2C48",
+            "30",
+            "42%2C31%2C46",
+            "32",
+            "41",
+            "33",
+            "60",
+            "62",
+            "34",
+            "53",
+            "35",
+            "52",
+            "58%2C50",
+            "40",
+            "43",
+            "61"
     };
 
-    private static String[] orderV = {"/list/Hot-Book/", "/list/New-Update/", "/category/", "/list/New-Book/"};
-    private static String[] order = {"Popular Manga", "Latest Releases", "Manga Directory", "New Manga"};
-    private static String[] complete = new String[]{"Either", "Yes", "No"};
-    private static String[] completeV = new String[]{"either", "yes", "no"};
+    private static final int[] fltOrder = {
+            R.string.flt_order_views,
+            R.string.flt_order_last_update,
+            R.string.flt_order_alpha,
+            R.string.flt_order_newest
+    };
+    private static final String[] valOrder = {
+            "/list/Hot-Book/",
+            "/list/New-Update/",
+            "/category/",
+            "/list/New-Book/"
+    };
+
+    private static final int[] fltComplete = {
+            R.string.flt_status_all,
+            R.string.flt_status_completed,
+            R.string.flt_status_ongoing
+    };
+    private static final String[] valComplete = {
+            "either",
+            "yes",
+            "no"
+    };
 
     Taadd(Context context) {
         super(context);
-        this.setFlag(R.drawable.flag_en);
-        this.setIcon(R.drawable.taadd);
-        this.setServerName("Taadd");
-        setServerID(ServerBase.TAADD);
+        setFlag(R.drawable.flag_en);
+        setIcon(R.drawable.taadd);
+        setServerName("Taadd");
+        setServerID(TAADD);
+    }
+
+    @Override
+    public boolean hasList() {
+        return false;
     }
 
     @Override
@@ -63,68 +181,50 @@ class Taadd extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        //http://my.taadd.com/search/es/?wd=naru
-        String source = getNavigatorWithNeededHeader().get("http://my.taadd.com/search/es/?wd=" + URLEncoder.encode(term, "UTF-8"));
+        term = URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8");
+        String source = getNavigatorAndFlushParameters()
+                .get("http://my.taadd.com/search/es/?wd=" + term);
         return getMangasFromSource(source);
     }
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters() == null || manga.getChapters().size() == 0 || forceReload)
-            loadMangaInformation(manga, forceReload);
+        loadMangaInformation(manga, forceReload);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload) {
+            String source = getNavigatorAndFlushParameters().get(manga.getPath() + "?waring=1");
 
-        // replace old ninemanga links with new taadd links
-        /*if (manga.getPath().contains("ninemanga")) {
-            String path = manga.getPath().replace("http://ninemanga.com/manga/", "http://www.taadd.com/book/");
-            path = path.replace("https://ninemanga.com/manga/", "https://www.taadd.com/book/");
-            path = path.replaceAll("%20", "+");
-            manga.setPath(path);
-        }*/
+            // Cover
+            if (manga.getImages() == null || manga.getImages().isEmpty()) {
+                String img = getFirstMatchDefault("src=\"(http://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
+                manga.setImages(img);
+            }
 
-        String source = getNavigatorWithNeededHeader().get(manga.getPath()+ "?waring=1");
-        //Log.d("NM","m.p: "+manga.getPath()+ "?waring=1");
+            // Summary
+            String summary = getFirstMatchDefault("Summary(.+?)</td>", source, context.getString(R.string.nodisponible));
+            manga.setSynopsis(summary);
 
-        // Cover
-        if (manga.getImages() == null || manga.getImages().isEmpty()) {
-            String img = getFirstMatchDefault("src=\"(http://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
-            //Log.d("TD", "img: " + img);
-            manga.setImages(img);
+            // Status
+            manga.setFinished(source.contains(">Completed</a>"));
+
+            // Author
+            manga.setAuthor(getFirstMatchDefault("author-(.+?).html\">", source, context.getString(R.string.nodisponible)));
+
+            // Genre
+            manga.setGenre(getFirstMatchDefault("Categories:(.+?)</a>[^<]*</td>", source, context.getString(R.string.nodisponible))
+                    .replaceAll("<img[^>]+>", "").replaceAll("&nbsp;", "").replaceAll("</a>", ","));
+
+            // Chapters
+            Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>", Pattern.DOTALL);
+            Matcher matcher = p.matcher(source);
+            while (matcher.find()) {
+                Chapter chapter = new Chapter(matcher.group(2), HOST + matcher.group(1));
+                chapter.addChapterFirst(manga);
+            }
         }
-
-        // Summary
-        String summary = getFirstMatchDefault("Summary(.+?)</td>",source, defaultSynopsis);
-        //Log.d("TD","s: "+summary);
-        manga.setSynopsis(Util.getInstance().fromHtml(summary.replaceAll("</b><br/>", "")).toString());
-
-        // Status
-        //Log.d("TD","finished: "+getFirstMatchDefault("<td>Status:(.+?)</a>", source, "").contains("Completed"));
-        manga.setFinished(getFirstMatchDefault("<td>Status:(.+?)</a>", source, "").contains("Completed"));
-
-        // Author
-        manga.setAuthor(getFirstMatchDefault("author-(.+?).html\">", source, ""));
-
-        // Genre
-        //FIXME fix genres spacing
-        String genre = Util.getInstance().fromHtml(getFirstMatchDefault("Categories:(.+?)</td>", source, "").replaceAll("</a>", ",</a>")).toString();
-        //Log.d("TD", "g: " + genre.replaceAll("￼", ""));
-        if (genre.endsWith(","))
-            genre = genre.substring(2, genre.length() - 1);
-        manga.setGenre(genre.replaceAll("￼", ""));
-
-        // Chapters
-        Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>", Pattern.DOTALL);
-        Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<>();
-        while (matcher.find()) {
-            /*Log.d("TD", "1: " + matcher.group(1));
-            Log.d("TD", "2: " + matcher.group(2));*/
-            chapters.add(0, new Chapter(matcher.group(2), HOST + matcher.group(1)));
-        }
-        manga.setChapters(chapters);
     }
 
     @Override
@@ -134,29 +234,35 @@ class Taadd extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        Navigator nav = getNavigatorWithNeededHeader();
+        Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Referer", chapter.getPath());
         String source = nav.get(chapter.getPath() + "-" + page + ".html");
-        //Log.d("TD", "web: " + chapter.getPath() + "-" + page + ".html");
-        return getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source, "Error getting image");
+        return getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source, "Error: failed to get image link");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(chapter.getPath());
+        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
         String pageNumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
-                "failed to get the number of pages");
-        //Log.d("TD", "p: " + pagenumber);
+                "Error: failed to get the number of pages");
         chapter.setPages(Integer.parseInt(pageNumber));
     }
 
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter("Included Genre(s)", genre, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Excluded Genre(s)", genre, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Completed Series", complete, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order (only applied when no genre is selected)", order, ServerFilter.FilterType.SINGLE)
+                new ServerFilter(
+                        context.getString(R.string.flt_include_tags),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(
+                        context.getString(R.string.flt_exclude_tags),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltComplete), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_order) + " (" + context.getString(R.string.flt_is_exclusive) + ")",
+                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
 
@@ -165,16 +271,7 @@ class Taadd extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            /*Log.d("TD", "1: " + matcher.group(1));
-            Log.d("TD", "2: " + matcher.group(2));
-            Log.d("TD", "3: " + matcher.group(3));*/
-            String title = Util.getInstance().fromHtml(matcher.group(3)).toString();
-            //Log.d("TD","t0: "+title);
-            if (title.equals(title.toUpperCase())) {
-                title = Util.getInstance().toCamelCase(title.toLowerCase());
-                //Log.d("TD","t1: "+title);
-            }
-            Manga manga = new Manga(getServerID(), title, matcher.group(1), false);
+            Manga manga = new Manga(getServerID(), matcher.group(3), matcher.group(1), false);
             manga.setImages(matcher.group(2));
             mangas.add(manga);
         }
@@ -186,34 +283,22 @@ class Taadd extends ServerBase {
         String includedGenres = "";
         if (filters[0].length > 0) {
             for (int i = 0; i < filters[0].length; i++) {
-                includedGenres = includedGenres + genreV[filters[0][i]] + "%2C"; // comma
+                includedGenres = includedGenres + valGenre[filters[0][i]] + "%2C"; // comma
             }
         }
         String excludedGenres = "";
         if (filters[1].length > 0) {
             for (int i = 0; i < filters[1].length; i++) {
-                excludedGenres = excludedGenres + genreV[filters[1][i]] + "%2C"; // comma
+                excludedGenres = excludedGenres + valGenre[filters[1][i]] + "%2C"; // comma
             }
         }
         String web;
-        if (filters[0].length < 1 && filters[1].length < 1)
-            web = HOST + orderV[filters[3][0]];
-        else
-            web = "http://taadd.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + completeV[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
-        //Log.d("TD","web: "+web);
-        String source = getNavigatorWithNeededHeader().get(web);
-        return getMangasFromSource(source);
-    }
-
-    public Navigator getNavigatorWithNeededHeader() throws Exception {
-        Navigator nav = new Navigator(context);
-        nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        return nav;
-    }
-
-    @Override
-    public boolean hasList() {
-        return false;
+        if (filters[0].length < 1 && filters[1].length < 1) {
+            web = HOST + valOrder[filters[3][0]];
+        }
+        else {
+            web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valComplete[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+        }
+        return getMangasFromSource(getNavigatorAndFlushParameters().get(web));
     }
 }
-

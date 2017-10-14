@@ -409,4 +409,5 @@
     <string name="flt_order_title">Title</string>
     <string name="flt_order_chapters">Chapters</string>
     <string name="flt_order_similar">Similar</string>
+    <string name="flt_is_exclusive">can only be used exclusively</string>
 </resources>
