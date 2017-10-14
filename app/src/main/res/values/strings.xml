@@ -408,4 +408,5 @@
     <string name="flt_status_suspended">Suspended</string>
     <string name="flt_order_title">Title</string>
     <string name="flt_order_chapters">Chapters</string>
+    <string name="flt_order_similar">Similar</string>
 </resources>

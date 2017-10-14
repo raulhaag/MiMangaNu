@@ -407,4 +407,5 @@
     <string name="flt_status_suspended">ausgesetzt</string>
     <string name="flt_order_title">Titel</string>
     <string name="flt_order_chapters">Kapitel</string>
+    <string name="flt_order_similar">Ähnliche</string>
 </resources>
