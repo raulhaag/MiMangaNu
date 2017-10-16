@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,64 +11,156 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaFox extends ServerBase {
-    private static final String[] genre = {
-            "All",
-            "Action", "Adult", "Adventure", "Comedy", "Doujinshi", "Drama", "Ecchi",
-            "Fantasy", "Gender Bender", "Harem", "Historical", "Horror", "Josei", "Martial Arts",
-            "Mecha", "Mystery", "One Shot", "Psychological", "Romance", "School Life", "Sci-fi",
-            "Seinen", "Shoujo", "Shoujo Ai", "Shounen", "Shounen Ai", "Slice of Life", "Smut", "Sports",
-            "Supernatural", "Tragedy", "Webtoons", "Yaoi", "Yuri"
+    private static final String HOST = "http://mangafox.me";
+
+    private static final String PATTERN_SERIES =
+            "<li><a href=\"([^\"]+)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">([^<]+)</a></li>";
+    private static final String PATTERN_SEGMENT =
+            "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
+    private static final String PATTERN_COVER =
+            "<div class=\"cover\">.+?src=\"([^\"]+)\"";
+    private static final String PATTERN_SUMMARY =
+            "<p class=\"summary\">(.+?)</p>";
+    private static final String PATTERN_CHAPTERS =
+            "<h\\d>[\\s]+<a href=\"([^\"]+)\".+?>([^<]+)([^\"]+<span class=\"title nowrap\">([^<]+)<)?";
+    private static final String PATTERN_LAST =
+            "(\\d+)</option>\\s*<option value=\"0\""; // last page is for comments
+    private static final String PATTERN_MANGA =
+            "\"([^\"]+store.manga.+?)\".+?href=\"([^\"]+)[^>]+>([^<]+)";
+
+    private static final int[] fltGenre = {
+            R.string.flt_tag_action,
+            R.string.flt_tag_adult,
+            R.string.flt_tag_adventure,
+            R.string.flt_tag_comedy,
+            R.string.flt_tag_doujinshi,
+            R.string.flt_tag_drama,
+            R.string.flt_tag_ecchi,
+            R.string.flt_tag_fantasy,
+            R.string.flt_tag_gender_bender,
+            R.string.flt_tag_harem,
+            R.string.flt_tag_historical,
+            R.string.flt_tag_horror,
+            R.string.flt_tag_josei,
+            R.string.flt_tag_martial_arts,
+            R.string.flt_tag_mecha,
+            R.string.flt_tag_mystery,
+            R.string.flt_tag_one_shot,
+            R.string.flt_tag_psychological,
+            R.string.flt_tag_romance,
+            R.string.flt_tag_school_life,
+            R.string.flt_tag_sci_fi,
+            R.string.flt_tag_seinen,
+            R.string.flt_tag_shoujo,
+            R.string.flt_tag_shoujo_ai,
+            R.string.flt_tag_shounen,
+            R.string.flt_tag_shounen_ai,
+            R.string.flt_tag_slice_of_life,
+            R.string.flt_tag_smut,
+            R.string.flt_tag_sports,
+            R.string.flt_tag_supernatural,
+            R.string.flt_tag_tragedy,
+            R.string.flt_tag_webtoon,
+            R.string.flt_tag_yaoi,
+            R.string.flt_tag_yuri
     };
-    private static final String PATTERN_SERIE = "<li><a href=\"(.+?)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">(.+?)</a></li>";
-    private static final String SEGMENTO = "<div class=\"manga_list\">(.+?)<div class=\"clear gap\">";
-    private static final String PATRON_PORTADA = "<div class=\"cover\">.+?src=\"(.+?)\"";
-    private static final String PATRON_SINOPSIS = "<p class=\"summary\">(.+?)</p>";
-    private static final String PATTERN_CAPITULOS = "<h\\d>[\\s]+<a href=\"([^\"]+)\".+?>([^<]+)([^\"]+<span class=\"title nowrap\">(.+?)<)?";
-    private static final String PATRON_LAST = "(\\d+)</option>					<option value=\"0\"";
-    private static String HOST = "http://mangafox.me";
-    private static String genreVV = "/directory/";
-    /*private static String[] type = new String[]{
-            "Any", "Japanese Manga", "Korean Manhwa", "Chinese Manhua"
+    private static final String[] valGenre = {
+            "&genres[Action]=",
+            "&genres[Adult]=",
+            "&genres[Adventure]=",
+            "&genres[Comedy]=",
+            "&genres[Doujinshi]=",
+            "&genres[Drama]=",
+            "&genres[Ecchi]=",
+            "&genres[Fantasy]=",
+            "&genres[Gender+Bender]=",
+            "&genres[Harem]=",
+            "&genres[Historical]=",
+            "&genres[Horror]=",
+            "&genres[Josei]=",
+            "&genres[Martial+Arts]=",
+            "&genres[Mecha]=",
+            "&genres[Mystery]=",
+            "&genres[One+Shot]=",
+            "&genres[Psychological]=",
+            "&genres[Romance]=",
+            "&genres[School+Life]=",
+            "&genres[Sci-fi]=",
+            "&genres[Seinen]=",
+            "&genres[Shoujo]=",
+            "&genres[Shoujo+Ai]=",
+            "&genres[Shounen]=",
+            "&genres[Shounen+Ai]=",
+            "&genres[Slice+of+Life]=",
+            "&genres[Smut]=",
+            "&genres[Sports]=",
+            "&genres[Supernatural]=",
+            "&genres[Tragedy]=",
+            "&genres[Webtoons]=",
+            "&genres[Yaoi]=",
+            "&genres[Yuri]=",
     };
-    private static String[] typeV = new String[]{
-            "&type=", "&type=1", "&type=2", "&type=3"
+
+    private static final int[] fltType = {
+            R.string.flt_tag_all,
+            R.string.flt_tag_manga,
+            R.string.flt_tag_manhwa,
+            R.string.flt_tag_manhua
     };
-    private static String[] status = new String[]{
-            "Either", "Ongoing", "Completed"
+    private static final String[] valType = {
+            "&type=",
+            "&type=1",
+            "&type=2",
+            "&type=3"
     };
-    private static String[] statusV = new String[]{
-            "&is_completed=", "&is_completed=1", "&is_completed=0"
-    };*/
-    private static String[] order = new String[]{
-            "Popularity", "Rating", "Latest Chapter", "Alphabetical"
+
+    private static final int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_ongoing,
+            R.string.flt_status_completed
     };
-    private static String[] orderV = new String[]{
-            "", "?rating", "?latest", "?az"
+    private static final String[] valStatus = {
+            "&is_completed=",
+            "&is_completed=1",
+            "&is_completed=0"
     };
-    /*private static String[] order = new String[]{
-            "Views", "Rating", "Latest Chapter", "Manga Title", "Chapters"
+
+    private static final int[] fltOrder = {
+            R.string.flt_order_views,
+            R.string.flt_order_rating,
+            R.string.flt_order_numchapters,
+            R.string.flt_order_last_update,
+            R.string.flt_order_alpha
     };
-    private static String[] orderV = new String[]{
-            "&sort=views", "&sort=rating", "&sort=last_chapter_time", "&sort=name&order=az", "&sort=total_chapters&order=za"
-    };*/
+    private static final String[] valOrder = {
+            "&sort=views&order=za",
+            "&sort=rating&order=za",
+            "&sort=total_chapters&order=az",
+            "&sort=last_chapter_time&order=za",
+            "&sort=name"
+    };
 
     MangaFox(Context context) {
         super(context);
-        this.setFlag(R.drawable.flag_en);
-        this.setIcon(R.drawable.mangafox_icon);
-        this.setServerName("MangaFox");
-        setServerID(ServerBase.MANGAFOX);
+        setFlag(R.drawable.flag_en);
+        setIcon(R.drawable.mangafox_icon);
+        setServerName("MangaFox");
+        setServerID(MANGAFOX);
+    }
+
+    @Override
+    public boolean hasList() {
+        return true;
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().getWithTimeout("http://mangafox.me/manga/");
-        data = getFirstMatch(SEGMENTO, data, "no se ha obtenido el segmento");
-        Pattern p = Pattern.compile(PATTERN_SERIE, Pattern.DOTALL);
+        String data = getNavigatorAndFlushParameters().getWithTimeout(HOST + "/manga/");
+        data = getFirstMatch(PATTERN_SEGMENT, data, "Error: failed to get segment");
+        Pattern p = Pattern.compile(PATTERN_SERIES, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(ServerBase.MANGAFOX, m.group(3), "http:" + m.group(1), false);
@@ -80,44 +173,44 @@ class MangaFox extends ServerBase {
     }
 
     @Override
-    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters().size() == 0 || forceReload) {
-            Pattern p;
-            Matcher m;
-            String data = getNavigatorAndFlushParameters().getWithTimeout((manga.getPath()));
-
-            // Title
-            manga.setImages(getFirstMatchDefault(PATRON_PORTADA, data, ""));
-            // Summary
-            manga.setSynopsis(getFirstMatchDefault(PATRON_SINOPSIS, data, defaultSynopsis));
-
-            manga.setFinished(data.contains("<h\\d>Status:</h\\d>    <span>        Completed"));
-
-            // Author
-            manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, ""));
-
-            // Genre
-            manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("(<a href=\"//mangafox.me/search/genres/.+?</td>)", data, "")).toString());
-
-            // Chapter
-            p = Pattern.compile(PATTERN_CAPITULOS, Pattern.DOTALL);
-            m = p.matcher(data);
-            while (m.find()) {
-                Chapter mc;
-
-                if (m.group(4) != null)
-                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), "http:" + m.group(1).replace("1.html", ""));
-                else
-                    mc = new Chapter(m.group(2).trim(), "http:" + m.group(1).replace("1.html", ""));
-                mc.addChapterFirst(manga);
-            }
-        }
+    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        loadChapters(manga, forceReload);
     }
 
     @Override
-    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters().isEmpty() || forceReload)
-            loadChapters(manga, forceReload);
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload) {
+            String data = getNavigatorAndFlushParameters().getWithTimeout((manga.getPath()));
+
+            // Cover
+            manga.setImages(getFirstMatchDefault(PATTERN_COVER, data, ""));
+
+            // Summary
+            manga.setSynopsis(getFirstMatchDefault(PATTERN_SUMMARY, data, context.getString(R.string.nodisponible)));
+
+            // Status
+            manga.setFinished(data.contains("<h\\d>Status:</h\\d>\\s*<span>\\s*Completed</span>"));
+
+            // Author
+            manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, context.getString(R.string.nodisponible)));
+
+            // Genre
+            manga.setGenre(getFirstMatchDefault("(<a href=\"//mangafox.me/search/genres/.+?</td>)", data, context.getString(R.string.nodisponible)));
+
+            // Chapter
+            Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
+            Matcher m = p.matcher(data);
+            while (m.find()) {
+                Chapter mc;
+                if (m.group(4) != null) {
+                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), "http:" + m.group(1).replace("1.html", ""));
+                }
+                else {
+                    mc = new Chapter(m.group(2).trim(), "http:" + m.group(1).replace("1.html", ""));
+                }
+                mc.addChapterFirst(manga);
+            }
+        }
     }
 
     @Override
@@ -129,38 +222,23 @@ class MangaFox extends ServerBase {
             chapter.setPath(chapter.getPath().substring(0, chapter.getPath().lastIndexOf("/") + 1));
         }
         return chapter.getPath() + page + ".html";
-
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        //Log.d("Mfox", "getIF url: " + this.getPagesNumber(chapter, page));
         String source = getNavigatorAndFlushParameters().getWithTimeout(this.getPagesNumber(chapter, page));
-        //Log.d("Mfox", "source: " + source);
         String img = "";
         if (!source.isEmpty()) {
-            try {
-                //><img src="([^"]+?.(jpg|gif|jpeg|png|bmp))
-                img = getFirstMatch(">[\\s]*<img src=\"(.+?)\"", source, "Error getting image link");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            //Log.d("Mfox", "img: " + img);
+            img = getFirstMatch(">[\\s]*<img src=\"(.+?)\"", source, "Error: failed to get image link");
         }
         return img;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source;
-        source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath());
-        String paginas = getFirstMatch(PATRON_LAST, source, "Error: no se pudo obtener el numero de paginas");
-        chapter.setPages(Integer.parseInt(paginas)); //last page is for comments
-    }
-
-    @Override
-    public boolean hasList() {
-        return true;
+        String source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath());
+        String pages = getFirstMatch(PATTERN_LAST, source, "Error: failed to get number of pages");
+        chapter.setPages(Integer.parseInt(pages));
     }
 
     @Override
@@ -168,48 +246,81 @@ class MangaFox extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters()
                 .getWithTimeout("https://mangafox.me/search.php?name_method=cw&name="
-                        + term
+                        + URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8")
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");
-        Pattern p = Pattern.compile("<td><a href=\"(http://mangafox.me/manga/.+?)\".+?\">(.+?)<", Pattern.DOTALL);
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(2).trim(), m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(3), "http:" + m.group(2), false));
         }
         return mangas;
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web;
-        if (genre[filters[0][0]].equals("All")) {
-            if (pageNumber == 1)
-                web = HOST + genreVV + orderV[filters[1][0]];
-            else
-                web = HOST + genreVV + pageNumber + ".htm" + orderV[filters[1][0]];
-        } else
-            web = HOST + genreVV + genre[filters[0][0]].toLowerCase().replaceAll(" ", "-") + "/" + pageNumber + ".htm" + orderV[filters[1][0]];
-        //Log.d("Mfox","web: "+web);
+        String web = "";
+        web += "https://mangafox.me/search.php?name_method=cw&name=";
+        web += valType[filters[0][0]];
+        web += "&author_method=cw&author=&artist_method=cw&artist=";
+        for(int i = 0; i < fltGenre.length; i++) {
+            // no preference
+            String selection = "0";
+            // include tag
+            for(int j = 0; j < filters[1].length; j++) {
+                if(filters[1][j] == i) {
+                    selection = "1";
+                    break;
+                }
+            }
+            // exclude tag (has precedence - for simplicity)
+            for(int j = 0; j < filters[2].length; j++) {
+                if(filters[2][j] == i) {
+                    selection = "2";
+                    break;
+                }
+            }
+
+            web += valGenre[i] + selection;
+        }
+        web += "&released_method=eq&released=";
+        web += "&rating_method=eq&rating=";
+        web += valStatus[filters[3][0]];
+        web += "&advopts=1";
+        web += valOrder[filters[4][0]];
+        web += "&page=" + pageNumber;
+
         String source = getNavigatorAndFlushParameters().getWithTimeout(web);
-        Pattern p = Pattern.compile("\"([^\"]+store.manga.+?)\".+?href=\"([^\"]+)[^>]+>([^<]+)", Pattern.DOTALL);
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
-        //Log.d("Mfox","prematch");
         while (m.find()) {
-            /*Log.d("Mfox","(1): "+m.group(1));
-            Log.d("Mfox","(2): "+m.group(2));
-            Log.d("Mfox","(3): "+m.group(3));*/
             Manga manga = new Manga(getServerID(), m.group(3), "http:" + m.group(2), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
         }
+
+        hasMore = !mangas.isEmpty();
         return mangas;
     }
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[]{//new ServerFilter("Type", type, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Genres", genre, ServerFilter.FilterType.SINGLE),
-                //new ServerFilter("Completed Series", status, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{
+            new ServerFilter(
+                    context.getString(R.string.flt_type),
+                    buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                    context.getString(R.string.flt_include_tags),
+                    buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                    context.getString(R.string.flt_exclude_tags),
+                    buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                    context.getString(R.string.flt_status),
+                    buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                    context.getString(R.string.flt_order),
+                    buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
+        };
     }
 }
