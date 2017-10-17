@@ -17,9 +17,9 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  */
 class MangaEden extends ServerBase {
 
-    private static final String HOST = "http://www.mangaeden.com/";
+    protected static final String HOST = "http://www.mangaeden.com/";
 
-    private static final int[] flgGenre = {
+    protected int[] fltGenre = {
             R.string.flt_tag_action,
             R.string.flt_tag_adult,
             R.string.flt_tag_adventure,
@@ -54,7 +54,7 @@ class MangaEden extends ServerBase {
             R.string.flt_tag_yaoi,
             R.string.flt_tag_yuri
     };
-    private static final String[] valGenre = {
+    protected String[] valGenre = {
             "4e70e91bc092255ef70016f8",
             "4e70e92fc092255ef7001b94",
             "4e70e918c092255ef700168e",
@@ -129,12 +129,22 @@ class MangaEden extends ServerBase {
             "&order=2"
     };
 
+    private String lang_2l;
+    private String lang_3l;
+
     MangaEden(Context context) {
         super(context);
         setFlag(R.drawable.flag_en);
         setIcon(R.drawable.mangaeden);
         setServerName("MangaEden");
         setServerID(MANGAEDEN);
+        setLanguage("en", "eng");
+    }
+
+    @SuppressWarnings("WeakerAccess")
+    protected void setLanguage(String l2l, String l3l) {
+        lang_2l = l2l;
+        lang_3l = l3l;
     }
 
     @Override
@@ -149,7 +159,7 @@ class MangaEden extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String source = getNavigatorAndFlushParameters().get("http://www.mangaeden.com/en/en-directory/?title=" + URLEncoder.encode(term, "UTF-8") + "&author=&artist=&releasedType=0&released=");
+        String source = getNavigatorAndFlushParameters().get(HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?title=" + URLEncoder.encode(term, "UTF-8") + "&author=&artist=&releasedType=0&released=");
         return getMangasFromSource(source);
     }
 
@@ -224,11 +234,11 @@ class MangaEden extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("<tr>[^<]*<td>[^<]*<a href=\"/en/en-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("<tr>[^<]*<td>[^<]*<a href=\"/" + lang_2l + "/" + lang_2l + "-manga/(.+?)\" class=\"(.+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(3), HOST + "en/en-manga/" +  matcher.group(1), matcher.group(2).contains("close"));
+            Manga manga = new Manga(getServerID(), matcher.group(3), HOST + "/" + lang_2l + "/" + lang_2l + "-manga/" +  matcher.group(1), matcher.group(2).contains("close"));
             mangas.add(manga);
         }
         return mangas;
@@ -242,7 +252,7 @@ class MangaEden extends ServerBase {
             e.printStackTrace();
         }
 
-        Pattern pattern = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/en/en-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("<img src=\"(//cdn\\.mangaeden\\.com/mangasimg/.+?)\".+?<div class=\"hottestInfo\">[\\s]*<a href=\"(/" + lang_2l + "/" + lang_2l + "-manga/[^\"<>]+?)\" class=.+?\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher;
         if (newSource.isEmpty()) {
             matcher = pattern.matcher(source);
@@ -271,7 +281,7 @@ class MangaEden extends ServerBase {
     // when filtering is active, the result will have no images. this can't be helped.
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = HOST + "en/en-directory/?author=&title=&artist=";
+        String web = HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?author=&title=&artist=";
         String nofilters = web;
         for (int i = 0; i < filters[3].length; i++) {
             web = web + valStatus[filters[3][i]];
@@ -287,7 +297,7 @@ class MangaEden extends ServerBase {
         }
         if (orderV[filters[4][0]].equals("") && web.equals(nofilters)) {
             // no filters are active - simply fetch the front page
-            web = HOST + "/eng/";
+            web = HOST + "/" + lang_3l + "/";
             String source = getNavigatorAndFlushParameters().get(web);
             return getMangasFromFrontpage(source);
         } else {
@@ -306,10 +316,10 @@ class MangaEden extends ServerBase {
                         buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
                 new ServerFilter(
                         context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(flgGenre), ServerFilter.FilterType.MULTI),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
                 new ServerFilter(
                         context.getString(R.string.flt_exclude_tags),
-                        buildTranslatedStringArray(flgGenre), ServerFilter.FilterType.MULTI),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI),
@@ -319,3 +329,4 @@ class MangaEden extends ServerBase {
         };
     }
 }
+
