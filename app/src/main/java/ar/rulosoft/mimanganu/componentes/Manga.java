@@ -189,7 +189,9 @@ public class Manga {
     }
 
     public void setGenre(String genre) {
-        this.genre = HtmlUnescape.Unescape(Util.getInstance().fromHtml(genre).toString().trim());
+        this.genre = HtmlUnescape.Unescape(
+                Util.getInstance().fromHtml(genre)
+                        .toString().trim().replaceAll("\\s+,\\s+", ", "));
     }
 
     public int getReaderType(){
