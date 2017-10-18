@@ -411,4 +411,6 @@
     <string name="flt_order_similar">Similar</string>
     <string name="flt_is_exclusive">can only be used exclusively</string>
     <string name="flt_order_numchapters">Number of Chapters</string>
+    <string name="flt_tag_automobiles">Automobiles</string>
+    <string name="flt_tag_outer_space">Outer Space</string>
 </resources>

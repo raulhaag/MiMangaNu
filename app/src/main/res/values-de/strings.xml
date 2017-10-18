@@ -410,4 +410,6 @@
     <string name="flt_order_similar">Ähnliche</string>
     <string name="flt_is_exclusive">kann nur exklusiv benutzt werden</string>
     <string name="flt_order_numchapters">Anzahl der Kapitel</string>
+    <string name="flt_tag_automobiles">Autos</string>
+    <string name="flt_tag_outer_space">Weltall</string>
 </resources>
