@@ -419,4 +419,10 @@
     <string name="flt_order_ascending">ascending</string>
     <string name="flt_order_descending">descending</string>
     <string name="flt_order_by">Order by</string>
+    <string name="flt_tag_magazine">Magazine</string>
+    <string name="flt_tag_manfra">Manfra</string>
+    <string name="flt_status_abandoned">Abandoned</string>
+    <string name="flt_status_one_shot">One Shot</string>
+    <string name="flt_tag_perverted">Perverted</string>
+    <string name="flt_tag_travel">Travel</string>
 </resources>

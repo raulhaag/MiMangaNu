@@ -418,4 +418,10 @@
     <string name="flt_order_author">Autor</string>
     <string name="flt_order_by">Ordnen nach</string>
     <string name="flt_order_descending">absteigend</string>
+    <string name="flt_status_abandoned">Aufgegeben</string>
+    <string name="flt_status_one_shot">Eintagsfliege</string>
+    <string name="flt_tag_magazine">Magazin</string>
+    <string name="flt_tag_manfra">Manfra</string>
+    <string name="flt_tag_perverted">Pervers</string>
+    <string name="flt_tag_travel">Reisen</string>
 </resources>
