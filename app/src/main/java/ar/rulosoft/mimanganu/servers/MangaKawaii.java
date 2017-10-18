@@ -38,6 +38,11 @@ class MangaKawaii extends ServerBase {
     }
 
     @Override
+    public boolean hasSearch() {
+        return false;
+    }
+
+    @Override
     public ArrayList<Manga> search(String search) throws Exception {
         // FIXME search functionality has to be implemented bases on Manga list
         return null;

@@ -207,12 +207,16 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         inflater.inflate(R.menu.manga_server_visual, menu);
         MenuItem search = menu.findItem(R.id.action_search);
         if (!serverBase.hasList()) {
-            MenuItem vcl = menu.findItem(R.id.ver_como_lista);
-            vcl.setVisible(false);
+            MenuItem item = menu.findItem(R.id.ver_como_lista);
+            item.setVisible(false);
         }
         if (serverBase.getServerFilters().length == 0) {
-            MenuItem flt = menu.findItem(R.id.filter);
-            flt.setVisible(false);
+            MenuItem item = menu.findItem(R.id.filter);
+            item.setVisible(false);
+        }
+        if (!serverBase.hasSearch()) {
+            MenuItem item = menu.findItem(R.id.action_search);
+            item.setVisible(false);
         }
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
         searchView.setOnQueryTextListener(new OnQueryTextListener() {

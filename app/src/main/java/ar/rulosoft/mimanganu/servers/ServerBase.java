@@ -191,12 +191,14 @@ public abstract class ServerBase {
     static final int VIEWCOMIC = 1004;
 
     public boolean hasMore = true;
-    protected String defaultSynopsis = "N/A";
     Context context;
     private String serverName;
     private int icon;
     private int flag;
     private int serverID;
+
+    @Deprecated
+    String defaultSynopsis = "N/A";
 
 	/**
 	 * Construct a new ServerBase object.
@@ -405,11 +407,14 @@ public abstract class ServerBase {
 	 */
     @Nullable
     public abstract ArrayList<Manga> getMangas() throws Exception;
+
 	/**
 	 * Returns a list of Manga filtered by a given search term.
+     *
+     * This function shall only be called if <code>hasSearch</code> returns <code>true</code>.
 	 *
 	 * @param term       a term to search for
-	 * @return           an ArrayList of Manga objects
+	 * @return           an ArrayList of Manga objects or <code>null</code> if unsupported.
 	 * @throws Exception if an error occurred
 	 */
     public abstract ArrayList<Manga> search(String term) throws Exception;
@@ -676,7 +681,7 @@ public abstract class ServerBase {
 	 * @return           a list of matches (may be empty)
 	 * @throws Exception if an error occurred
 	 */
-    public ArrayList<String> getAllMatch(String patron, String source) throws Exception {
+    ArrayList<String> getAllMatch(String patron, String source) throws Exception {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<String> matches = new ArrayList<>();
@@ -715,7 +720,7 @@ public abstract class ServerBase {
 
 	/**
 	 * Returns information if the server offers filtered navigation.
-	 * If <code>true</code> is returned, getMangasFiltered() must be implemented properly.
+	 * If <code>true</code> is returned, <code>getMangasFiltered</code> must be implemented properly.
      *
 	 * @return <code>true</code> if filtered navigation is offered
 	 */
@@ -723,7 +728,17 @@ public abstract class ServerBase {
         return true;
     }
 
-	/**
+    /**
+     * Returns information if the server offers a search functionality.
+     * If <code>true</code> is returned, <code>search</code> must be implemented properly.
+     *
+     * @return <code>true</code> if search feature is offered in the filtered view
+     */
+    public boolean hasSearch() {
+        return true;
+    }
+
+    /**
 	 * Returns the type of filtered list display supported.
      *
      * Determines the type of filtered list displayed. Either Manga can be presented as a nice grid
@@ -801,8 +816,7 @@ public abstract class ServerBase {
      * @param resId an array containing the resource identifiers
      * @return an array of translated strings
      */
-    @SuppressWarnings("WeakerAccess")
-    protected String[] buildTranslatedStringArray(int[] resId) {
+    String[] buildTranslatedStringArray(int[] resId) {
         String[] result = new String[resId.length];
         for (int i = 0; i < resId.length; i++) {
             result[i] = context.getString(resId[i]);
