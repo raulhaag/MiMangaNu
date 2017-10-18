@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -17,57 +18,142 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  */
 class LeoManga extends ServerBase {
 
-    public static String HOST = "leomanga.com";
+    private static final String HOST = "http://leomanga.com";
 
-    private static String[] demografia = {
-            "Todo", "Shonen", "Shojo", "Josei", "Seinen", "Kodomo", "Yuri"
+    private static final int[] fltDemographic = {
+            R.string.flt_tag_all, //Todos
+            R.string.flt_tag_shounen, //Shonen
+            R.string.flt_tag_shoujo, //Shojo
+            R.string.flt_tag_josei, //Josei
+            R.string.flt_tag_seinen, //Seinen
+            R.string.flt_tag_kodomo, //Kodomo
+            R.string.flt_tag_yuri, //Yuri
+    };
+    private static final String[] valDemographic = {
+            "",
+            "&demografia=shonen",
+            "&demografia=shojo",
+            "&demografia=josei",
+            "&demografia=seinen",
+            "&demografia=kodomo",
+            "&demografia=yuri"
     };
 
-    private static String[] estado = {
-            "Todo", "Finalizado", "En curso"
+    private static final int[] fltStatus = {
+            R.string.flt_status_all, //Todos
+            R.string.flt_status_completed, //Finalizado
+            R.string.flt_status_ongoing //En curso
+    };
+    private static final String[] valStatus = {
+            "",
+            "&estado=finalizado",
+            "&estado=en-curso"
     };
 
-    private static String[] estadoV = {
-            "", "&estado=finalizado", "&estado=en-curso"
+    private static final int[] fltGenre = {
+            R.string.flt_tag_action, //Acción
+            R.string.flt_tag_martial_arts, //Artes Marciales
+            R.string.flt_tag_adventure, //Aventura
+            R.string.flt_tag_sci_fi, //Ciencia Ficción
+            R.string.flt_tag_comedy, //Comedia
+            R.string.flt_tag_sports, //Deporte
+            R.string.flt_tag_doujinshi, //Doujinshi
+            R.string.flt_tag_drama, //Drama
+            R.string.flt_tag_ecchi, //Ecchi
+            R.string.flt_tag_school_life, //Escolar
+            R.string.flt_tag_fantasy, //Fantasía
+            R.string.flt_tag_gender_bender, //Gender Bender
+            R.string.flt_tag_gore, //Gore
+            R.string.flt_tag_harem, //Harem
+            R.string.flt_tag_historical, //Histórico
+            R.string.flt_tag_horror, //Horror
+            R.string.flt_tag_lolicon, //Lolicon
+            R.string.flt_tag_magic, //Magia
+            R.string.flt_tag_mecha, //Mecha
+            R.string.flt_tag_mystery, //Misterio
+            R.string.flt_tag_music, //Musical
+            R.string.flt_tag_one_shot, //One-Shot
+            R.string.flt_tag_parody, //Parodia
+            R.string.flt_tag_police, //Policíaca
+            R.string.flt_tag_psychological, //Psicológica
+            R.string.flt_tag_romance, //Romance
+            R.string.flt_tag_shoujo_ai, //Shojo Ai
+            R.string.flt_tag_slice_of_life, //Slice of Life
+            R.string.flt_tag_smut, //Smut
+            R.string.flt_tag_supernatural, //Sobrenatural
+            R.string.flt_tag_super_powers, //Superpoderes
+            R.string.flt_tag_tragedy, //Tragedia
     };
-
-    private static String[] demografiaV = {
-            "", "&demografia=shonen", "&demografia=shojo", "&demografia=josei",
-            "&demografia=seinen", "&demografia=kodomo", "&demografia=yuri"
+    private static final String[] valGenre = {
+            "accion",
+            "artes-marciales",
+            "aventura",
+            "ciencia-ficcion",
+            "comedia",
+            "deporte",
+            "doujinshi",
+            "drama",
+            "ecchi",
+            "escolar",
+            "fantasia",
+            "gender-bender",
+            "gore",
+            "harem",
+            "historico",
+            "horror",
+            "lolicon",
+            "magia",
+            "mecha",
+            "misterio",
+            "musical",
+            "one-shot",
+            "parodia",
+            "policiaca",
+            "psicologica",
+            "romance",
+            "shojo-ai",
+            "slice-of-life",
+            "smut",
+            "sobrenatural",
+            "superpoderes",
+            "tragedia",
     };
-
-    private static String[] genres = {
-            "Acción", "Artes Marciales", "Aventura", "Ciencia Ficción", "Comedia",
-            "Deporte", "Doujinshi", "Drama", "Ecchi", "Escolar", "Fantasía", "Gender Bender", "Gore", "Harem", "Histórico", "Horror",
-            "Lolicon", "Magia", "Mecha", "Misterio", "Musical", "One-Shot", "Parodia", "Policíaca", "Psicológica", "Romance", "Shojo Ai",
-            "Slice of Life", "Smut", "Sobrenatural", "Superpoderes", "Tragedia"
+    private static final int[] fltOrder = {
+            R.string.flt_order_views, //Lecturas
+            R.string.flt_order_alpha, //Alphabetico
+            R.string.flt_order_rating, //Valoración
+            R.string.flt_order_last_update, //Fecha
     };
-    private static String[] categoriasV = {
-            "accion", "artes-marciales", "aventura", "ciencia-ficcion", "comedia", "deporte",
-            "doujinshi", "drama", "ecchi", "escolar", "fantasia", "gender-bender", "gore", "harem",
-            "historico", "horror", "lolicon", "magia", "mecha", "misterio", "musical", "one-shot",
-            "parodia", "policiaca", "psicologica", "romance", "shojo-ai", "slice-of-life", "smut",
-            "sobrenatural", "Superpoderes", "tragedia"
+    private static final String[] valOrder = {
+            "",
+            "&orden=alfabetico",
+            "&orden=valoracion",
+            "&orden=fecha",
     };
-    private static String[] orden = {
-            "Lecturas", "Alfabetico", "Valoración", "Fecha"
+    private static final int[] fltType = {
+            R.string.flt_tag_all,
+            R.string.flt_tag_manga,
+            R.string.flt_tag_manhwa,
+            R.string.flt_tag_manhua,
     };
-    private static String[] ordenM = {
-            "", "orden=alfabetico", "orden=valoracion", "orden=fecha"
-    };
-    private static String[] estilo = {
-            "Todos", "Manga", "Manhwa", "Manhua"
-    };
-    private static String[] estiloV = {
-            "Todos", "Manga", "Manhwa", "Manhua"
+    private static final String[] valType = {
+            "",
+            "&estilo=manga",
+            "&estilo=manhwa",
+            "&estilo=manhua",
     };
 
     LeoManga(Context context) {
         super(context);
-        this.setFlag(R.drawable.flag_es);
-        this.setIcon(R.drawable.leomanga);
-        this.setServerName("LeoManga");
-        setServerID(ServerBase.LEOMANGA);
+        setFlag(R.drawable.flag_es);
+        setIcon(R.drawable.leomanga);
+        setServerName("LeoManga");
+        setServerID(LEOMANGA);
+    }
+
+    @Override
+    public boolean hasList() {
+        return false;
     }
 
     @Override
@@ -77,13 +163,13 @@ class LeoManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = "http://" + HOST + "/buscar?s=" + URLEncoder.encode(term, "UTF-8");
+        String web = HOST + "/buscar?s=" + URLEncoder.encode(term, "UTF-8");
         String data = getNavigatorAndFlushParameters().get(web);
         Pattern pattern = Pattern.compile("<td onclick='window.location=\"(.+?)\"'>.+?<img src=\"(.+?)\"[^>]alt=\"(.+?)\"", Pattern.DOTALL);
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            mangas.add(new Manga(LEOMANGA, m.group(3), "http://" + HOST + m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(3), HOST + m.group(1), false));
         }
         return mangas;
     }
@@ -95,27 +181,36 @@ class LeoManga extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters().size() == 0 || forceReload) {
-
+        if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavigatorAndFlushParameters().get(manga.getPath());
-            manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, defaultSynopsis));
+
+            // Summary
+            manga.setSynopsis(getFirstMatchDefault("<p class=\"text-justify\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
+
+            // Cover
             String image = getFirstMatchDefault("<img data-original=\"(.+?)\"", data, "");
             if (image.length() > 4) {
-                manga.setImages("http://" + HOST + image);
+                manga.setImages(HOST + image);
             } else {
                 manga.setImages("");
             }
-            manga.setAuthor(getFirstMatch("<a href=\"/autor.+?\">(.+?)<", data, "n/a"));
-            manga.setGenre(getFirstMatch("Géneros:.+?</div>(.+?)</div>", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
-            manga.setFinished(getFirstMatchDefault("curs-state\">(.+?)<", data, "").contains("Finalizado"));
 
-            ArrayList<Chapter> chapters = new ArrayList<>();
+            // Author
+            manga.setAuthor(getFirstMatchDefault("<a href=\"/autor.+?\">(.+?)<", data, context.getString(R.string.nodisponible)));
+
+            // Genre
+            manga.setGenre(getFirstMatchDefault("Géneros:.+?</div>(.+?)</div>", data, context.getString(R.string.nodisponible)));
+
+            // Status
+            manga.setFinished(getFirstMatchDefault("-state\">(.+?)</div>", data, "").contains("Finalizado"));
+
+            // Chapters
             Pattern pattern = Pattern.compile("<li>[\\s]*<a href=\"(/manga/.+?)\">(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
-                chapters.add(0,new Chapter(matcher.group(2).replaceAll("<.+?>", "").trim(), "http://" + HOST + matcher.group(1)));
+                Chapter chapter = new Chapter(matcher.group(2), HOST + matcher.group(1));
+                chapter.addChapterFirst(manga);
             }
-            manga.setChapters(chapters);
         }
     }
 
@@ -126,71 +221,72 @@ class LeoManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return chapter.getExtra().split("\\|")[page];
+        String extra = chapter.getExtra();
+        if (extra != null) {
+            return HOST + extra.split("\\|")[page];
+        }
+        throw new Exception("Error: no image link for this page found");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String web = "http://" + HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error obteniendo paginas 1");
+        String web = HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error: failed to get first indirection");
         data = getNavigatorAndFlushParameters().get(web);
-        String sub = "http://" + HOST + getFirstMatch("id=\"read-chapter\" data-name=\"(.+?)\"", data, "Error obteniendo paginas 3");
-        String[] pos = getFirstMatch("pos=\"(.+?)\"", data, "Error obteniendo paginas 4").split(";");
-        chapter.setPages(pos.length);
-        String images = "";
-        for (String i : pos) {
-            images = images + "|" + sub + i;
-        }
-        chapter.setExtra(images);
+        ArrayList<String> pos = getAllMatch("class=\"cap-images\" src=\"(.+?)\"", data);
+        chapter.setPages(pos.size());
+        chapter.setExtra(TextUtils.join("|", pos));
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = "http://" + HOST + "/directorio-manga?pagina=" + pageNumber;
-        //demografia
-        web = web + demografiaV[filters[0][0]];
-        //genero
-        String gen = "&genero=";
-        for (int i = 0; i < filters[1].length; i++) {
-            gen = gen + categoriasV[filters[1][i]] + "|";
-        }
-        if (gen.length() > 8) {
-            gen = gen.substring(0, gen.length() - 1);
-            web = web + gen;
-        }
+        String web;
 
-        //estado
-        web = web + estadoV[filters[2][0]];
-        //orden
-        web = web + ordenM[filters[3][0]];
+        web = HOST + "/directorio-manga?pagina=" + pageNumber;
+        web += valType[filters[0][0]];
+        web += valDemographic[filters[1][0]];
+        if (filters[2].length > 0) {
+            String gen = "&genero=";
+            for (int i = 0; i < filters[2].length; i++) {
+                gen += valGenre[filters[2][i]] + "|";
+            }
+            web += gen.substring(0, gen.length() - 1);
+        }
+        web += valStatus[filters[3][0]];
+        web += valOrder[filters[4][0]];
+
         String data = getNavigatorAndFlushParameters().get(web);
-        return getMangasFromSource(data);
-    }
-
-    private ArrayList<Manga> getMangasFromSource(String data) {
         ArrayList<Manga> mangas = new ArrayList<>();
         Pattern p = Pattern.compile("<a href=\"(/manga/.+?)\".+?src=\"(.+?)\" alt=\"(.+?)\"", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(LEOMANGA, m.group(3), "http://" + HOST + m.group(1), false);
-            manga.setImages("http://" + HOST + m.group(2).replace("thumb-", ""));
+            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(1), false);
+            manga.setImages(HOST + m.group(2).replace("thumb-", ""));
             mangas.add(manga);
         }
+        hasMore = !mangas.isEmpty();
         return mangas;
     }
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[]{new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Genero", genres, ServerFilter.FilterType.MULTI),
-                new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Orden", orden, ServerFilter.FilterType.SINGLE)
+        return new ServerFilter[]{
+                new ServerFilter(
+                        context.getString(R.string.flt_type),
+                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_demographic),
+                        buildTranslatedStringArray(fltDemographic), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_order),
+                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
-    }
-
-    @Override
-    public boolean hasList() {
-        return false;
     }
 
     @Override
