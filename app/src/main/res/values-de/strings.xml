@@ -412,4 +412,10 @@
     <string name="flt_order_numchapters">Anzahl der Kapitel</string>
     <string name="flt_tag_automobiles">Autos</string>
     <string name="flt_tag_outer_space">Weltall</string>
+    <string name="flt_order_artist">Künstler</string>
+    <string name="flt_order_default">Standard</string>
+    <string name="flt_order_ascending">aufsteigend</string>
+    <string name="flt_order_author">Autor</string>
+    <string name="flt_order_by">Ordnen nach</string>
+    <string name="flt_order_descending">absteigend</string>
 </resources>

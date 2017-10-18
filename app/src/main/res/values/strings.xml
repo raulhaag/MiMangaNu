@@ -413,4 +413,10 @@
     <string name="flt_order_numchapters">Number of Chapters</string>
     <string name="flt_tag_automobiles">Automobiles</string>
     <string name="flt_tag_outer_space">Outer Space</string>
+    <string name="flt_order_default">Default</string>
+    <string name="flt_order_author">Author</string>
+    <string name="flt_order_artist">Artist</string>
+    <string name="flt_order_ascending">ascending</string>
+    <string name="flt_order_descending">descending</string>
+    <string name="flt_order_by">Order by</string>
 </resources>
