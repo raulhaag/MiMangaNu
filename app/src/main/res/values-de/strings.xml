@@ -445,4 +445,5 @@
     <string name="flt_tag_war">Krieg</string>
     <string name="flt_tag_western">Western</string>
     <string name="flt_tag_zombies">Zombies</string>
+    <string name="flt_domain">Domäne</string>
 </resources>
