@@ -424,4 +424,25 @@
     <string name="flt_tag_manfra">Manfra</string>
     <string name="flt_tag_perverted">Pervers</string>
     <string name="flt_tag_travel">Reisen</string>
+    <string name="flt_tag_anthology">Anthologie</string>
+    <string name="flt_tag_biography">Biographie</string>
+    <string name="flt_tag_children">Kinder</string>
+    <string name="flt_tag_crime">Verbrechen</string>
+    <string name="flt_tag_family">Familie</string>
+    <string name="flt_tag_fighting">Kampf</string>
+    <string name="flt_tag_graphic_novel">Graphic Novel</string>
+    <string name="flt_tag_leading_ladies">Starke Frauen</string>
+    <string name="flt_tag_lgbtq">LGBTQ</string>
+    <string name="flt_tag_literature">Literatur</string>
+    <string name="flt_tag_movies_and_tv">Film und Fernsehen</string>
+    <string name="flt_tag_mythology">Mythologie</string>
+    <string name="flt_tag_personal">Persönlich</string>
+    <string name="flt_tag_political">Politik</string>
+    <string name="flt_tag_post_apocalyptic">Post-Apokalyptisch</string>
+    <string name="flt_tag_pulp">Schund</string>
+    <string name="flt_tag_robots">Roboter</string>
+    <string name="flt_tag_spy">Spion</string>
+    <string name="flt_tag_war">Krieg</string>
+    <string name="flt_tag_western">Western</string>
+    <string name="flt_tag_zombies">Zombies</string>
 </resources>

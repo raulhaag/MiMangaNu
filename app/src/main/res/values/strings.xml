@@ -425,4 +425,26 @@
     <string name="flt_status_one_shot">One Shot</string>
     <string name="flt_tag_perverted">Perverted</string>
     <string name="flt_tag_travel">Travel</string>
+    <string name="flt_tag_anthology">Anthology</string>
+    <string name="flt_tag_anthropomorphic">Anthropomorphic</string>
+    <string name="flt_tag_biography">Biography</string>
+    <string name="flt_tag_children">Children</string>
+    <string name="flt_tag_crime">Crime</string>
+    <string name="flt_tag_family">Family</string>
+    <string name="flt_tag_fighting">Fighting</string>
+    <string name="flt_tag_graphic_novel">Grpahic Novel</string>
+    <string name="flt_tag_leading_ladies">Leading Ladies</string>
+    <string name="flt_tag_lgbtq">LGBTQ</string>
+    <string name="flt_tag_literature">Literature</string>
+    <string name="flt_tag_movies_and_tv">Movies and TV</string>
+    <string name="flt_tag_mythology">Mythology</string>
+    <string name="flt_tag_personal">Personal</string>
+    <string name="flt_tag_political">Political</string>
+    <string name="flt_tag_post_apocalyptic">Post Apocalyptic</string>
+    <string name="flt_tag_pulp">Pulp</string>
+    <string name="flt_tag_robots">Robots</string>
+    <string name="flt_tag_spy">Spy</string>
+    <string name="flt_tag_war">War</string>
+    <string name="flt_tag_western">Western</string>
+    <string name="flt_tag_zombies">Zombies</string>
 </resources>
