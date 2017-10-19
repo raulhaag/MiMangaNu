@@ -287,7 +287,6 @@ class ReadMangaToday extends ServerBase {
             m.setImages(matcher.group(3).replace("thumb/", ""));
             mangas.add(m);
         }
-        hasMore = !mangas.isEmpty();
         return mangas;
     }
 }

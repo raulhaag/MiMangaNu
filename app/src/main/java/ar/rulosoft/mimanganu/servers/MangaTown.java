@@ -275,7 +275,6 @@ class MangaTown extends ServerBase {
             manga.setImages(m.group(3));
             mangas.add(manga);
         }
-        hasMore = mangas.size() > 0;
         return mangas;
     }
 }

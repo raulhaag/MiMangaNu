@@ -190,16 +190,11 @@ public abstract class ServerBase {
     static final int GOGOCOMIC = 1003;
     static final int VIEWCOMIC = 1004;
 
-    public boolean hasMore = true;
     Context context;
     private String serverName;
     private int icon;
     private int flag;
     private int serverID;
-    private static String cookie = "";
-
-    @Deprecated
-    String defaultSynopsis = "N/A";
 
     /**
      * Construct a new ServerBase object.
@@ -213,7 +208,7 @@ public abstract class ServerBase {
     /**
      * Get a new ServerBase object via the given identifier.
      * If the passed identifier is not known, a DeadServer instance is returned. This mechanism can
-     * also be used for servers which wen out of commission (like EsMangaHere).
+     * also be used for servers which went out of commission (like EsMangaHere).
      *
      * @param id      the identifier of the server
      * @param context the context for this object

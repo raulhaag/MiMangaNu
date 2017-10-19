@@ -264,7 +264,6 @@ class LeoManga extends ServerBase {
             manga.setImages(HOST + m.group(2).replace("thumb-", ""));
             mangas.add(manga);
         }
-        hasMore = !mangas.isEmpty();
         return mangas;
     }
 

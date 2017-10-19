@@ -198,7 +198,6 @@ class Mangapedia extends ServerBase {
         mBodyBuilder.addFormDataPart("sortOrder", valSortOrder[filters[4][0]]);
 
         ArrayList<Manga> mangas = getMangasString(nav.post(web, mBodyBuilder.build()));
-        hasMore = !mangas.isEmpty();
         return mangas;
     }
 
