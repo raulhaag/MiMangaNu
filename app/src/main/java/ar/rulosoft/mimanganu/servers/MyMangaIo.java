@@ -188,8 +188,7 @@ class MyMangaIo extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data;
         data = getNavigatorWithNeededHeader().get(getPagesNumber(chapter, page));
-        return getFirstMatch(
-                "<img src=\"(http://lel.mymanga.io/[^\"]+)\"",
+        return getFirstMatch("<img src=\"([^\"]+)\"",
                 data, "Error: failed to get the link to the image");
     }
 
@@ -259,7 +258,11 @@ class MyMangaIo extends ServerBase {
     }
 
     @Override
-    public Navigator getNavigatorWithNeededHeader() throws Exception {
+    public boolean needRefererForImages() {
+        return false;
+    }
+
+    private Navigator getNavigatorWithNeededHeader() throws Exception {
         Navigator nav = new Navigator(context);
         nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         return nav;

@@ -12,9 +12,11 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 class NineManga extends ServerBase {
     protected String HOST = "http://ninemanga.com";
+    private static String cookie = "";
 
     private static final String PATTERN_MANGA =
             "bookname\" href=\"(/manga/[^\"]+)\">(.+?)<";
@@ -283,5 +285,31 @@ class NineManga extends ServerBase {
         }
         hasMore = mangas.size() > 0;
         return mangas;
+    }
+
+    /**
+     * Helper function to generate the Cookie needed by some webpages (like NineManga).
+     */
+    private static void generateNeededCookie() {
+        cookie = "__utmz=128769555." + (System.currentTimeMillis() / 1000) + ".1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); ";
+    }
+
+    /**
+     * Helper function to get a <code>Navigator</code> instance with additional headers.
+     * Some servers need additional information to be added to the request header in order to work.
+     * This function provides such an object.
+     *
+     * @return a <code>Navigator object with extended headers</code>
+     * @throws Exception if an error occurred
+     */
+    public Navigator getNavigatorWithNeededHeader() throws Exception {
+        if (cookie.isEmpty()) {
+            generateNeededCookie();
+        }
+        Navigator nav = new Navigator(context);
+        nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
+        nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        nav.addHeader("Cookie", cookie);
+        return nav;
     }
 }

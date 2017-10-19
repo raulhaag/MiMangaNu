@@ -58,20 +58,17 @@ public class SingleDownload implements Runnable {
                 try {
                     OkHttpClient copy;
                     Request request;
+                    Request.Builder rBuilder;
                     copy = Navigator.navigator.getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();
+                    rBuilder = new Request.Builder().url(fromURL)
+                            .addHeader("User-Agent", Navigator.USER_AGENT);
                     if (referer) {
-                        request = new Request.Builder().url(fromURL)
-                                .addHeader("User-Agent", Navigator.USER_AGENT)
-                                .addHeader("Referer", cd.chapter.getPath())
-                                .build();
-                    } else {
-                        request = new Request.Builder().url(fromURL)
-                                .addHeader("User-Agent", Navigator.USER_AGENT)
-                                .build();
+                        rBuilder.addHeader("Referer", cd.chapter.getPath());
                     }
+                    request = rBuilder.build();
                     response = copy.newCall(request).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {
