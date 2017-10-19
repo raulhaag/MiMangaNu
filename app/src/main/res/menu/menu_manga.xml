@@ -72,6 +72,10 @@
             <item
                 android:id="@+id/mark_all_as_read"
                 android:title="@string/macartodoleido" />
+            <item
+                android:id="@+id/action_hide_read"
+                android:checkable="true"
+                android:title="@string/hide_read" />
         </menu>
     </item>
 </menu>
