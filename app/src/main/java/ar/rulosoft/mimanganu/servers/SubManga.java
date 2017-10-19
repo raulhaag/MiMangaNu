@@ -3,81 +3,86 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.utils.Util;
 
-public class SubManga extends ServerBase {
+class SubManga extends ServerBase {
+    private static final String HOST = "http://submanga.com";
 
-    public SubManga(Context context) {
+    SubManga(Context context) {
         super(context);
-        setServerID(SUBMANGA);
-        setIcon(R.drawable.submanga_icon);
-        this.setServerName("SubManga");
         setFlag(R.drawable.flag_es);
+        setIcon(R.drawable.submanga_icon);
+        setServerName("SubManga");
+        setServerID(SUBMANGA);
+    }
+
+    @Override
+    public boolean hasList() {
+        return true;
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        // <td><a href="(http://submanga.com/.+?)".+?</b>(.+?)<
         ArrayList<Manga> mangas = new ArrayList<>();
-        String source = getNavigatorAndFlushParameters().get("http://submanga.com/series");
+        String source = getNavigatorAndFlushParameters().get(HOST + "/series");
         Pattern p = Pattern.compile("<td><a href=\"(http://submanga.com/.+?)\".+?</b>(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            String name = m.group(2);
-            if (!name.contains("!") && !name.contains("?") && !name.contains("�") && !name.contains("�")) {
-                mangas.add(new Manga(SUBMANGA, name, m.group(1).toLowerCase(Locale.getDefault()), false));
-            }
+            mangas.add(new Manga(getServerID(), m.group(2), m.group(1), false));
         }
         return mangas;
     }
 
     @Override
+    public boolean hasFilteredNavigation() {
+        return false;
+    }
+
+    @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters().size() == 0 || forceReload) {
-            Pattern p;
-            Matcher m;
+        if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavigatorAndFlushParameters().get((manga.getPath() + "/completa"));
-            p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>", Pattern.DOTALL);
-            m = p.matcher(data);
+            Pattern p = Pattern.compile("<tr[^>]*><td[^>]*><a href=\"http://submanga.com/([^\"|#]+)\">(.+?)</a>", Pattern.DOTALL);
+            Matcher m = p.matcher(data);
 
             while (m.find()) {
-                String web = "http://submanga.com/c" + m.group(1).substring(m.group(1).lastIndexOf("/"));
-                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString(), web);
-                mc.addChapterFirst(manga);
+                String web = HOST + "/c" + m.group(1).substring(m.group(1).lastIndexOf("/"));
+                Chapter chapter = new Chapter(m.group(2), web);
+                chapter.addChapterFirst(manga);
             }
         }
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        Pattern p;
-        Matcher m;
         String data = getNavigatorAndFlushParameters().get((manga.getPath()));
 
-        p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>", Pattern.DOTALL);
-        m = p.matcher(data);
+        Pattern p = Pattern.compile("<img src=\"(http://.+?)\"/><p>(.+?)</p>", Pattern.DOTALL);
+        Matcher m = p.matcher(data);
 
+        // Cover and Summary
         if (m.find()) {
             manga.setImages(m.group(1));
-            manga.setSynopsis(Util.getInstance().fromHtml(m.group(2)).toString());
+            manga.setSynopsis(m.group(2));
         } else {
-            manga.setSynopsis(defaultSynopsis);
+            manga.setSynopsis(context.getString(R.string.nodisponible));
         }
-        manga.setAuthor(Util.getInstance().fromHtml(getFirstMatchDefault("<p>Creado por ().+?</p>", data, "")).toString().trim());
-        manga.setGenre(Util.getInstance().fromHtml(getFirstMatchDefault("(<a class=\"b\" href=\"http://submanga.com/ge.+?</p>)", data, "")).toString().trim());
+        // Author
+        manga.setAuthor(getFirstMatchDefault("<p>Creado por (.+?)</p>", data, context.getString(R.string.nodisponible)));
+        // Genre
+        manga.setGenre(getFirstMatchDefault("(<a class=\"b\" href=\"http://submanga.com/ge.+?</p>)", data, context.getString(R.string.nodisponible)));
+        // Chapters
+        loadChapters(manga, forceReload);
     }
 
     @Override
@@ -87,30 +92,19 @@ public class SubManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-            String data;
-        data = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-            data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, null);
+        String data;
+        data = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
+        data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, "");
         return data;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        chapter.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "No se pudo obtener la cantidad de páginas")));
+        chapter.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "Error: failed to get number of pages")));
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
             data = getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);
             chapter.setExtra(data.substring(0, data.length() - 4));
         }
     }
-
-    @Override
-    public boolean hasList() {
-        return true;
-    }
-
-    @Override
-    public boolean hasFilteredNavigation() {
-        return false;
-    }
-
 }

@@ -28,11 +28,11 @@ class NineManga extends ServerBase {
     private static final String PATTERN_COMPLETED =
             "<a class=\"red\" href=\"/category/completed.html\">";
     private static final String PATTERN_AUTHOR =
-            "<a itemprop=\"author\"[^>]+>(.+?)</a>";
+            "<a itemprop=\"author\"[^>]+>([^<]+)</a>";
     private static final String PATTERN_GENRE =
-            "<li itemprop=\"genre\".+?</b>(.+?)</li>";
+            "<li itemprop=\"genre\".+?</b>(.+?)</a>[^<]*</li>";
     private static final String PATTERN_CHAPTER =
-            "<a class=\"chapter_list_a\" href=\"(/chapter.+?)\" title=\"(.+?)\">(.+?)</a>";
+            "<a class=\"chapter_list_a\" href=\"(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
     private static final String PATTERN_PAGES =
             "\\d+/(\\d+)</option>[\\s]*</select>";
     @SuppressWarnings("WeakerAccess")
@@ -145,12 +145,12 @@ class NineManga extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get(
+        String data = getNavigatorWithNeededHeader().get(
                 HOST + "/search/?wd=" + URLEncoder.encode(term, "UTF-8"));
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(2)).toString(), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -164,7 +164,7 @@ class NineManga extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String data = getNavigatorAndFlushParameters().get(manga.getPath() + "?waring=1");
+            String data = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
 
             // cover image
             manga.setImages(getFirstMatchDefault(PATTERN_COVER, data, ""));
@@ -178,13 +178,13 @@ class NineManga extends ServerBase {
                     context.getString(R.string.nodisponible)));
             // genre
             manga.setGenre(Util.getInstance().fromHtml(
-                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible))
-            ).toString().trim().replace(" ", ", "));
+                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)).replace("</a>", "</a>,")
+            ).toString().trim());
             // chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(3)).toString().trim(), HOST + m.group(1));
+                Chapter mc = new Chapter(m.group(3), HOST + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -201,15 +201,14 @@ class NineManga extends ServerBase {
 
         if (page == 1) {
             return chapter.getPath();
-        }
-        else {
+        } else {
             return chapter.getPath().replace(".html", "-" + page + ".html");
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null) {
+        if ((chapter.getExtra() == null) || (chapter.getExtra().isEmpty())) {
             setExtra(chapter);
         }
         String[] images = chapter.getExtra().split("\\|");
@@ -217,7 +216,7 @@ class NineManga extends ServerBase {
     }
 
     private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+        String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
         Pattern p = Pattern.compile(PATTERN_IMAGE, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         String images = "";
@@ -230,7 +229,7 @@ class NineManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data, pages;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath());
+        data = getNavigatorWithNeededHeader().get(chapter.getPath());
         pages = getFirstMatch(PATTERN_PAGES, data, "Error: failed to get the number of pages");
         chapter.setPages(Integer.parseInt(pages));
     }
@@ -268,17 +267,17 @@ class NineManga extends ServerBase {
             }
         }
         String web;
-        if(filters[0].length < 1 && filters[1].length < 1)
+        if (filters[0].length < 1 && filters[1].length < 1)
             web = HOST + valCategory[filters[3][0]];
         else
             web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valStatus[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
 
-        String data = getNavigatorAndFlushParameters().get(web);
+        String data = getNavigatorWithNeededHeader().get(web);
         Pattern pattern = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), Util.getInstance().fromHtml(m.group(3)).toString(), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(1), false);
             manga.setImages(m.group(2));
             mangas.add(manga);
         }

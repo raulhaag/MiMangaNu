@@ -11,7 +11,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaTown extends ServerBase {
@@ -165,7 +164,7 @@ class MangaTown extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(Util.getInstance().fromHtml(m.group(2)).toString().trim(), "http:" + m.group(1));
+                Chapter mc = new Chapter(m.group(2), "http:" + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -211,7 +210,7 @@ class MangaTown extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), HtmlUnescape.Unescape(m.group(2).trim()), "https:" + m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(2), "https:" + m.group(1), false));
         }
         return mangas;
     }
@@ -272,7 +271,7 @@ class MangaTown extends ServerBase {
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(
-                    getServerID(), HtmlUnescape.Unescape(m.group(2)), "https:" + m.group(1), false);
+                    getServerID(), m.group(2), "https:" + m.group(1), false);
             manga.setImages(m.group(3));
             mangas.add(manga);
         }

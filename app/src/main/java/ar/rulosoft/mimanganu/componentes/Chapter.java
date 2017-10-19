@@ -1,12 +1,14 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
+import android.support.annotation.Nullable;
 
 import java.io.File;
 import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -31,7 +33,7 @@ public class Chapter {
 
     public Chapter(String title, String path) {
         super();
-        this.title = Util.getInstance().fromHtml(title).toString();
+        this.title = HtmlUnescape.Unescape(Util.getInstance().fromHtml(title).toString().trim());
         this.path = path;
     }
 
@@ -64,7 +66,7 @@ public class Chapter {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.title = HtmlUnescape.Unescape(Util.getInstance().fromHtml(title).toString().trim());
     }
 
     public String getPath() {
@@ -117,6 +119,7 @@ public class Chapter {
         this.downloaded = downloaded;
     }
 
+    @Nullable
     public String getExtra() {
         return extra;
     }
@@ -203,7 +206,7 @@ public class Chapter {
     public static class Comparators {
         private static final String FLOAT_PATTERN = "([.,0123456789]+)";
         private static final String STRING_END_PATTERN = "[^\\d]\\.";
-        private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].{0,1}\\d+";
+        private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].?\\d+";
         public static Comparator<Chapter> TITLE_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {

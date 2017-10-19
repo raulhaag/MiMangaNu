@@ -8,7 +8,7 @@ class ItNineManga extends NineManga {
     private static final String HOST = "http://it.ninemanga.com";
 
     private static final String PATTERN_IMAGE =
-            "src=\"(http://img\\.it\\.ninemanga\\.com/it_manga/[^\"]+?)\"";
+            "src=\"(http://esnm\\.ninemanga\\.com/it_manga/[^\"]+?)\"";
 
     private static int[] fltGenre = {
             R.string.flt_tag_action,

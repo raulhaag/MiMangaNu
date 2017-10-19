@@ -40,10 +40,10 @@ public class FromFolder extends ServerBase {
 
     FromFolder(Context context) {
         super(context);
-        this.setFlag(R.drawable.noimage);
-        this.setIcon(R.drawable.from_folder);
-        this.setServerName("FromFolder");
-        setServerID(ServerBase.FROMFOLDER);
+        setFlag(R.drawable.noimage);
+        setIcon(R.drawable.from_folder);
+        setServerName("FromFolder");
+        setServerID(FROMFOLDER);
     }
 
     @Override
@@ -62,19 +62,19 @@ public class FromFolder extends ServerBase {
         ArrayList<String> folders = Util.getInstance().dirList(manga.getPath());
         ArrayList<Chapter> chapters = new ArrayList<>();
         folders.remove(0);//remove "."
-        for(String folder:folders){
-            Chapter chapter = new Chapter(folder,manga.getPath() + folder + "/");
+        for (String folder : folders) {
+            Chapter chapter = new Chapter(folder, manga.getPath() + folder + "/");
             chapter.setDownloaded(true);
             chapters.add(chapter);
         }
         Chapter.Comparators.setManga_title(manga.getTitle());
-        Collections.sort(chapters,Chapter.Comparators.NUMBERS_ASC);
+        Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
         manga.setChapters(chapters);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        loadChapters(manga,forceReload);
+        loadChapters(manga, forceReload);
         manga.setFinished(true);
     }
 
@@ -92,9 +92,9 @@ public class FromFolder extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         ArrayList<String> images = Util.getInstance().imageList(chapter.getPath());
         chapter.setPages(images.size());
-        Collections.sort(images,NUMBERS_ASC);
+        Collections.sort(images, NUMBERS_ASC);
         String save = "";
-        for (String image:images){
+        for (String image : images) {
             save = save + "|" + image;
         }
         chapter.setExtra(save);

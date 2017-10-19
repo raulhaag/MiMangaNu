@@ -155,4 +155,9 @@ class MangaStream extends ServerBase {
         }
         return mangas;
     }
+
+    @Override
+    public FilteredType getFilteredType() {
+        return FilteredType.TEXT;
+    }
 }
