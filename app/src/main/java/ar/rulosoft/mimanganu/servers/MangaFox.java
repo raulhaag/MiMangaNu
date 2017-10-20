@@ -298,8 +298,6 @@ class MangaFox extends ServerBase {
             manga.setImages(m.group(1));
             mangas.add(manga);
         }
-
-        hasMore = !mangas.isEmpty();
         return mangas;
     }
 

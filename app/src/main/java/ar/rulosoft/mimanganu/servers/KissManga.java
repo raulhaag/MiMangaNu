@@ -21,9 +21,12 @@ class KissManga extends ServerBase {
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
-            "href=\"(/Manga/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+            "href=\"(/Manga/[^\"]+)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+    private static final String PATTERN_MANGA =
+            "(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
 
     private static final int[] fltGenre = {
+            R.string.flt_tag_4_koma,
             R.string.flt_tag_action,
             R.string.flt_tag_adult,
             R.string.flt_tag_adventure,
@@ -51,6 +54,7 @@ class KissManga extends ServerBase {
             R.string.flt_tag_mystery,
             R.string.flt_tag_one_shot,
             R.string.flt_tag_psychological,
+            R.string.flt_tag_reincarnation,
             R.string.flt_tag_romance,
             R.string.flt_tag_school_life,
             R.string.flt_tag_sci_fi,
@@ -64,56 +68,23 @@ class KissManga extends ServerBase {
             R.string.flt_tag_smut,
             R.string.flt_tag_sports,
             R.string.flt_tag_supernatural,
+            R.string.flt_tag_time_travel,
             R.string.flt_tag_tragedy,
+            R.string.flt_tag_transported,
             R.string.flt_tag_webtoon,
             R.string.flt_tag_yaoi,
-            R.string.flt_tag_yuri,
+            R.string.flt_tag_yuri
     };
-    private static final String[] valGenre = {
-            "Action",
-            "Adult",
-            "Adventure",
-            "Comedy",
-            "Comic",
-            "Cooking",
-            "Doujinshi",
-            "Drama",
-            "Ecchi",
-            "Fantasy",
-            "Gender-Bender",
-            "Harem",
-            "Historical",
-            "Horror",
-            "Josei",
-            "Lolicon",
-            "Manga",
-            "Manhua",
-            "Manhwa",
-            "Martial-Arts",
-            "Mature",
-            "Mecha",
-            "Medical",
-            "Music",
-            "Mystery",
-            "One-shot",
-            "Psychological",
-            "Romance",
-            "School-Life",
-            "Sci-fi",
-            "Seinen",
-            "Shotacon",
-            "Shoujo",
-            "Shoujo-Ai",
-            "Shounen",
-            "Shounen-Ai",
-            "Slice-of-Life",
-            "Smut",
-            "Sports",
-            "Supernatural",
-            "Tragedy",
-            "Webtoon",
-            "Yaoi",
-            "Yuri"
+
+    private static final int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_ongoing,
+            R.string.flt_status_completed,
+    };
+    private static final String[] valStatus = {
+            "",
+            "Ongoing",
+            "Completed",
     };
 
     private static final int[] fltOrder = {
@@ -139,18 +110,22 @@ class KissManga extends ServerBase {
 
     @Override
     public boolean hasList() {
-        return false;
+        return true;
     }
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        return null;
+        return search("");
     }
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         // make use of AdvanceSearch, more data is then needed
         Navigator nav = getNavigatorAndFlushParameters();
+
+        // do not hide Doujinshi in result
+        nav.addHeader("Cookie", "vns_doujinshi=1; ");
+
         nav.addPost("authorArtist", "");
         nav.addPost("mangaName", term);
         nav.addPost("status", "");
@@ -163,8 +138,7 @@ class KissManga extends ServerBase {
         Matcher m = p.matcher(source);
         if (m.find()) {
             searchList = new ArrayList<>();
-            boolean status = getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", m.group(), "Ongoing").length() == 9;
-            searchList.add(new Manga(KISSMANGA, m.group(2), m.group(1), status));
+            searchList.add(new Manga(getServerID(), m.group(2), m.group(1), m.group().contains("Status:</span>&nbsp;Completed")));
         } else {
             searchList = getMangasSource(source);
         }
@@ -191,13 +165,13 @@ class KissManga extends ServerBase {
                     getFirstMatchDefault("rel=\"image_src\" href=\"(.+?)" + "\"", source, ""));
 
             // Author
-            manga.setAuthor(getFirstMatchDefault("Author:(.+?)</p>", source, context.getString(R.string.nodisponible)));
+            manga.setAuthor(getFirstMatchDefault("Author:</span>&nbsp;(.+?)</p>", source, context.getString(R.string.nodisponible)));
 
             // Genre
-            manga.setGenre(getFirstMatchDefault("Genres:(.+?)</p>", source, context.getString(R.string.nodisponible)));
+            manga.setGenre(getFirstMatchDefault("Genres:</span>&nbsp;(.+?)</p>", source, context.getString(R.string.nodisponible)));
 
             // Status
-            manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
+            manga.setFinished(source.contains("Status:</span>&nbsp;Completed"));
 
             // Chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
@@ -261,7 +235,7 @@ class KissManga extends ServerBase {
 
     private ArrayList<Manga> getMangasSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern p = Pattern.compile("(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=.+?(/.anga[^&|\"]+).+?>(.+?)<", Pattern.DOTALL);
+        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
             Manga manga = new Manga(KISSMANGA, m.group(3), m.group(2), false);
@@ -281,63 +255,62 @@ class KissManga extends ServerBase {
                         context.getString(R.string.flt_exclude_tags),
                         buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
                 new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_order) + " (" + context.getString(R.string.flt_hint_order_unfiltered_only) + ")",
+                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
         };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        if (filters[0].length == 0 && filters[1].length == 0) { // on first load
-            return getMangasFiltered(0, 0, pageNumber);
-        } else if (filters[0].length == 1) { // single genre selection
-            String web = "/Genre/" + valGenre[0] + valOrder[0];
-            for (int i = 0; i < valGenre.length; i++) {
-                if (Util.getInstance().contains(filters[0], i)) {
-                    web = "/Genre/" + valGenre[i] + valOrder[filters[2][0]];
-                    if (pageNumber > 1) {
-                        web = web + "?page=" + pageNumber;
-                    }
-                }
-            }
-            String source = getNavigatorAndFlushParameters().post(HOST + web);
-            return getMangasSource(source);
-        } else {
-            // multiple genre selection
+        Navigator nav = getNavigatorAndFlushParameters();
+        String source;
+
+        // do not hide Doujinshi in result
+        nav.addHeader("Cookie", "vns_doujinshi=1; ");
+
+        // no filtering is active - use MangaList (much faster as it is smaller)
+        if ((filters[0].length + filters[1].length + filters[2][0]) == 0) {
+            String web = HOST + "/MangaList" + valOrder[filters[3][0]] + "?page=" + pageNumber;
+            source = nav.get(web);
+        }
+        // filtering is active, use advanced search (slow, as the whole result set is returned)
+        else {
             if (pageNumber > 1) {
+                // there is only one result page for the advanced search
                 return new ArrayList<>();
             } else {
-                Navigator nav = getNavigatorAndFlushParameters();
                 nav.addPost("mangaName", "");
                 nav.addPost("authorArtist", "");
-                for (int i = 0; i < valGenre.length; i++) {
+                for (int i = 0; i < fltGenre.length; i++) {
+                    int result = 0;
+
                     if (Util.getInstance().contains(filters[0], i)) {
-                        nav.addPost("genres", "1");
-                    } else if (Util.getInstance().contains(filters[1], i)) {
-                        nav.addPost("genres", "2");
-                    } else {
-                        nav.addPost("genres", "0");
+                        result++;
                     }
+                    if (Util.getInstance().contains(filters[1], i)) {
+                        result--;
+                    }
+                    // include + exclude = 0, include = 1, exclude = -1, no selection = 0
+                    // map exclude to "2"
+                    if (result < 0) {
+                        result = 2;
+                    }
+                    nav.addPost("genres", Integer.toString(result));
                 }
-                nav.addPost("status", "");
-                String source = nav.post(HOST + "/AdvanceSearch");
-                return getMangasSource(source);
+                nav.addPost("status", valStatus[filters[2][0]]);
+
+                source = nav.post(HOST + "/AdvanceSearch");
             }
         }
 
+        return getMangasSource(source);
     }
 
     @Override
     public boolean needRefererForImages() {
         return false;
-    }
-
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String web = "/Genre/" + valGenre[category] + valOrder[order];
-        if (pageNumber > 1) {
-            web = web + "?page=" + pageNumber;
-        }
-        String source = getNavigatorAndFlushParameters().post(HOST + web);
-        return getMangasSource(source);
     }
 }

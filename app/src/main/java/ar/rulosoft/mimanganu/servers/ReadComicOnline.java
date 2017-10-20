@@ -1,7 +1,9 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,52 +12,149 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 class ReadComicOnline extends ServerBase {
+
+    private static final String HOST = "http://readcomiconline.to";
 
     private static final String PATTERN_CHAPTER =
             "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[^>]*>([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Comic/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
-    //public static String IP = "31.192.104.134";
-    private static String HOST = "readcomiconline.to";
-    private static String[] genre = new String[]{
-            "All", "Action", "Adventure", "Anthology", "Anthropomorphic", "Biography", "Children", "Comedy",
-            "Crime", "Drama", "Family", "Fantasy", "Fighting", "Graphic Novels", "Historical", "Horror",
-            "Leading Ladies", "LGBTQ", "Literature", "Manga", "Martial Arts", "Mature", "Military",
-            "Movies & TV", "Mystery", "Mythology", "Personal", "Political", "Post-Apocalyptic",
-            "Psychological", "Pulp", "Robots", "Romance", "School Life", "Sci-Fi", "Slice of Life",
-            "Spy", "Superhero", "Supernatural", "Suspense", "Thriller", "Vampires", "Video Games", "War",
-            "Western", "Zombies"
+
+    private static final int[] fltGenre = {
+            R.string.flt_tag_all,
+            R.string.flt_tag_action,
+            R.string.flt_tag_adventure,
+            R.string.flt_tag_anthology,
+            R.string.flt_tag_anthropomorphic,
+            R.string.flt_tag_biography,
+            R.string.flt_tag_children,
+            R.string.flt_tag_comedy,
+            R.string.flt_tag_crime,
+            R.string.flt_tag_drama,
+            R.string.flt_tag_family,
+            R.string.flt_tag_fantasy,
+            R.string.flt_tag_fighting,
+            R.string.flt_tag_graphic_novel,
+            R.string.flt_tag_historical,
+            R.string.flt_tag_horror,
+            R.string.flt_tag_leading_ladies,
+            R.string.flt_tag_lgbtq,
+            R.string.flt_tag_literature,
+            R.string.flt_tag_manga,
+            R.string.flt_tag_martial_arts,
+            R.string.flt_tag_mature,
+            R.string.flt_tag_military,
+            R.string.flt_tag_movies_and_tv,
+            R.string.flt_tag_mystery,
+            R.string.flt_tag_mythology,
+            R.string.flt_tag_personal,
+            R.string.flt_tag_political,
+            R.string.flt_tag_post_apocalyptic,
+            R.string.flt_tag_psychological,
+            R.string.flt_tag_pulp,
+            R.string.flt_tag_robots,
+            R.string.flt_tag_romance,
+            R.string.flt_tag_school_life,
+            R.string.flt_tag_sci_fi,
+            R.string.flt_tag_slice_of_life,
+            R.string.flt_tag_spy,
+            R.string.flt_tag_super_hero,
+            R.string.flt_tag_supernatural,
+            R.string.flt_tag_suspense,
+            R.string.flt_tag_thriller,
+            R.string.flt_tag_vampire,
+            R.string.flt_tag_video_game,
+            R.string.flt_tag_war,
+            R.string.flt_tag_western,
+            R.string.flt_tag_zombies,
     };
-    private static String[] genreV = new String[]{
-            "/ComicList", "/Genre/Action", "/Genre/Adventure", "/Genre/Anthology", "/Genre/Anthropomorphic", "/Genre/Biography", "/Genre/Children", "/Genre/Comedy",
-            "/Genre/Crime", "/Genre/Drama", "/Genre/Family", "/Genre/Fantasy", "/Genre/Fighting", "/Genre/Graphic-Novels", "/Genre/Historical", "/Genre/Horror",
-            "/Genre/Leading-Ladies", "/Genre/LGBTQ", "/Genre/Literature", "/Genre/Manga", "/Genre/Martial-Arts", "/Genre/Mature", "/Genre/Military",
-            "/Genre/Movies-TV", "/Genre/Mystery", "/Genre/Mythology", "/Genre/Personal", "/Genre/Political", "/Genre/Post-Apocalyptic",
-            "/Genre/Psychological", "/Genre/Pulp", "/Genre/Robots", "/Genre/Romance", "/Genre/School-Life", "/Genre/Sci-Fi", "/Genre/Slice-of-Life",
-            "/Genre/Spy", "/Genre/Superhero", "/Genre/Supernatural", "/Genre/Suspense", "/Genre/Thriller", "/Genre/Vampires", "/Genre/Video-Games", "/Genre/War",
-            "/Genre/Western", "/Genre/Zombies"
+    private static final String[] valGenre = {
+            "/ComicList",
+            "/Genre/Action",
+            "/Genre/Adventure",
+            "/Genre/Anthology",
+            "/Genre/Anthropomorphic",
+            "/Genre/Biography",
+            "/Genre/Children",
+            "/Genre/Comedy",
+            "/Genre/Crime",
+            "/Genre/Drama",
+            "/Genre/Family",
+            "/Genre/Fantasy",
+            "/Genre/Fighting",
+            "/Genre/Graphic-Novels",
+            "/Genre/Historical",
+            "/Genre/Horror",
+            "/Genre/Leading-Ladies",
+            "/Genre/LGBTQ",
+            "/Genre/Literature",
+            "/Genre/Manga",
+            "/Genre/Martial-Arts",
+            "/Genre/Mature",
+            "/Genre/Military",
+            "/Genre/Movies-TV",
+            "/Genre/Mystery",
+            "/Genre/Mythology",
+            "/Genre/Personal",
+            "/Genre/Political",
+            "/Genre/Post-Apocalyptic",
+            "/Genre/Psychological",
+            "/Genre/Pulp",
+            "/Genre/Robots",
+            "/Genre/Romance",
+            "/Genre/School-Life",
+            "/Genre/Sci-Fi",
+            "/Genre/Slice-of-Life",
+            "/Genre/Spy",
+            "/Genre/Superhero",
+            "/Genre/Supernatural",
+            "/Genre/Suspense",
+            "/Genre/Thriller",
+            "/Genre/Vampires",
+            "/Genre/Video-Games",
+            "/Genre/War",
+            "/Genre/Western",
+            "/Genre/Zombies",
     };
 
-    private static String[] order = {"Popularity", "Latest Update", "New Manga", "a-z"};
-    private static String[] orderV = new String[]{"/MostPopular", "/LatestUpdate", "/Newest", ""};
-
-    private static String[] state = new String[]{
-            "Any", "Ongoing", "Completed"
+    private static final int[] fltOrder = {
+            R.string.flt_order_views,
+            R.string.flt_order_last_update,
+            R.string.flt_order_newest,
+            R.string.flt_order_alpha,
     };
-    private static String[] stateV = new String[]{
-            "", "Ongoing", "Completed"
+    private static final String[] valOrder = {
+            "/MostPopular",
+            "/LatestUpdate",
+            "/Newest",
+            "",
+    };
+
+    private static final int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_ongoing,
+            R.string.flt_status_completed,
+    };
+    private static final String[] valStatus = new String[]{
+            "",
+            "/Status/Ongoing",
+            "/Status/Completed",
     };
 
     ReadComicOnline(Context context) {
         super(context);
-        this.setFlag(R.drawable.flag_en);
-        this.setIcon(R.drawable.readcomiconline);
-        this.setServerName("ReadComicOnline");
-        setServerID(ServerBase.READCOMICONLINE);
+        setFlag(R.drawable.flag_en);
+        setIcon(R.drawable.readcomiconline);
+        setServerName("ReadComicOnline");
+        setServerID(READCOMICONLINE);
+    }
+
+    @Override
+    public boolean hasList() {
+        return false;
     }
 
     @Override
@@ -66,15 +165,14 @@ class ReadComicOnline extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
-        nav.addPost("keyword", term);
-        String source = nav.post("http://" + HOST + "/Search/Comic");
+        nav.addPost("keyword", URLEncoder.encode(term, "UTF-8"));
+        String source = nav.post(HOST + "/Search/Comic");
         ArrayList<Manga> searchList;
         Pattern p = Pattern.compile(PATTERN_SEARCH, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
             searchList = new ArrayList<>();
-            boolean status = getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", m.group(), "Ongoing").length() == 9;
-            searchList.add(new Manga(READCOMICONLINE, m.group(2), m.group(1), status));
+            searchList.add(new Manga(READCOMICONLINE, m.group(2), m.group(1), m.group().contains("Status:</span>&nbsp;Completed")));
         } else {
             searchList = getMangasSource(source);
         }
@@ -83,50 +181,51 @@ class ReadComicOnline extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters() == null || manga.getChapters().size() == 0 ||
-                forceReload) loadMangaInformation(manga, forceReload);
+        loadMangaInformation(manga, forceReload);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String source = getNavigatorAndFlushParameters().get("http://" + HOST + manga.getPath());
+        if (manga.getChapters().isEmpty() || forceReload) {
+            String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
-        // Summary
-        manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(
-                "<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
-                defaultSynopsis)).toString());
+            // Summary
+            manga.setSynopsis(
+                getFirstMatchDefault("<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
+                    context.getString(R.string.nodisponible)));
 
-        // Cover Image
-        //Log.d("RCO", "m.gI: " + manga.getImages());
-        if (manga.getImages() == null || manga.getImages().isEmpty()) {
-            String coverImage = getFirstMatchDefault("src=\"(http[s]?://readcomiconline.to/Uploads/[^\"]+?|http[s]?://\\d+.bp.blogspot.com/[^\"]+?)\"", source, "");
-            //Log.d("RCO", "cI: " + coverImage);
-            if (!coverImage.isEmpty()) {
-                manga.setImages(coverImage);
+            // Cover Image
+            if (manga.getImages() == null || manga.getImages().isEmpty()) {
+                String coverImage = getFirstMatchDefault("src=\"(http[s]?://readcomiconline.to/Uploads/[^\"]+?|http[s]?://\\d+.bp.blogspot.com/[^\"]+?)\"", source, "");
+                if (!coverImage.isEmpty()) {
+                    manga.setImages(coverImage);
+                }
+            }
+
+            // Author
+            String artist = getFirstMatchDefault("Artist:.+?\">(.+?)</a>", source, context.getString(R.string.nodisponible));
+            String writer = getFirstMatchDefault("Writer:.+?\">(.+?)</a>", source, context.getString(R.string.nodisponible));
+            if (artist.equals(writer)) {
+                manga.setAuthor(artist);
+            }
+            else {
+                manga.setAuthor(artist + ", " + writer);
+            }
+
+            // Genre
+            manga.setGenre(getFirstMatchDefault("Genres:</span>&nbsp;(.+?)</p>", source, context.getString(R.string.nodisponible)));
+
+            // Status
+            manga.setFinished(source.contains("Status:</span>&nbsp;Completed"));
+
+            // Chapter
+            Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
+            Matcher matcher = p.matcher(source);
+            while (matcher.find()) {
+                Chapter mc = new Chapter(matcher.group(2).replace(" Read Online", ""), matcher.group(1));
+                mc.addChapterFirst(manga);
             }
         }
-
-        // Author
-        String artist = getFirstMatchDefault("Artist:.+?\">(.+?)</a>", source, "");
-        String writer = getFirstMatchDefault("Writer:.+?\">(.+?)</a>", source, "");
-        if (artist.equals(writer))
-            manga.setAuthor(artist);
-        else
-            manga.setAuthor(artist + ", " + writer);
-
-        // Genre
-        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("Genres:(.+?)</p>", source, "")).toString().replaceAll("^\\s+", "").trim()));
-
-        manga.setFinished(getFirstMatchDefault("Status:</span>&nbsp;([\\S]+)", source, "Ongoing").length() == 9);
-
-        // Chapter
-        Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
-        Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<>();
-        while (matcher.find()) {
-            chapters.add(0, new Chapter(matcher.group(2).replace(" Read Online", ""), matcher.group(1)));
-        }
-        manga.setChapters(chapters);
     }
 
     @Override
@@ -136,34 +235,34 @@ class ReadComicOnline extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigatorAndFlushParameters().post("http://" + HOST + chapter.getPath());
-            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"", Pattern.DOTALL);
-            Matcher m = p.matcher(source);
-            String images = "";
-            while (m.find()) {
-                images = images + "|" + m.group(1);
-            }
-            chapter.setExtra(images);
+        if (page < 1) {
+            page = 1;
         }
-        return chapter.getExtra().split("\\|")[page];
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+
+        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
+            String source = getNavigatorAndFlushParameters().post(HOST + chapter.getPath());
+            ArrayList<String> images = getAllMatch("lstImages.push\\(\"(.+?)\"", source);
+            chapter.setPages(images.size());
+            chapter.setExtra(TextUtils.join("|", images));
+
+            return images.get(page);
+        }
+        else {
+            return chapter.getExtra().split("\\|")[page];
+        }
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        int pages = 0;
         if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigatorAndFlushParameters().get("http://" + HOST + chapter.getPath().replaceAll("[^!-z]+", ""), "http://" + HOST + chapter.getPath());
-            Pattern p = Pattern.compile("lstImages.push\\(\"(.+?)\"", Pattern.DOTALL);
-            Matcher m = p.matcher(source);
-            String images = "";
-            while (m.find()) {
-                pages++;
-                images = images + "|" + m.group(1);
-            }
-            chapter.setExtra(images);
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath().replaceAll("[^!-z]+", ""), HOST + chapter.getPath());
+            ArrayList<String> images = getAllMatch("lstImages.push\\(\"(.+?)\"", source);
+            chapter.setPages(images.size());
+            chapter.setExtra(TextUtils.join("|", images));
         }
-        chapter.setPages(pages);
     }
 
     private ArrayList<Manga> getMangasSource(String source) {
@@ -171,9 +270,6 @@ class ReadComicOnline extends ServerBase {
         Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            /*Log.d("RCO", "1: " + m.group(1));
-            Log.d("RCO", "2: " + m.group(2));
-            Log.d("RCO", "3: " + m.group(3));*/
             Manga manga = new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
@@ -183,51 +279,34 @@ class ReadComicOnline extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[]{new ServerFilter("Genre", genre, ServerFilter.FilterType.SINGLE),
-                new ServerFilter("Order", order, ServerFilter.FilterType.SINGLE)};
+        return new ServerFilter[]{
+            new ServerFilter(
+                context.getString(R.string.flt_genre),
+                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_status),
+                buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_order),
+                buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
+        };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        /*if (pageNumber > 1) {
-            return new ArrayList<>();
-        } else {
-            Navigator nav = getNavigatorAndFlushParameters();
-            nav.addPost("comicName", "");
-            if (filters[0].length == 0) {
-                for (int i = 1; i < genre.length; i++) {
-                    nav.addPost("genres", "0");
-                }
-            } else {
-                for (int i = 1; i < genre.length; i++) {
-                    if (contains(filters[0], i)) {
-
-                        nav.addPost("genres", "1");
-                    } else {
-                        nav.addPost("genres", "0");
-                    }
-                }
-            }
-            nav.addPost("status", stateV[filters[1][0]]);
-            String source = nav.post("http://" + HOST + "/AdvanceSearch");
-            return getMangasSource(source);
-        }*/
-        return getMangasFiltered(filters[0][0], filters[1][0], pageNumber);
-    }
-
-    public ArrayList<Manga> getMangasFiltered(int category, int order, int pageNumber) throws Exception {
-        String web = genreV[category] + orderV[order];
-        if (pageNumber > 1) {
-            web = web + "?page=" + pageNumber;
+        String web = HOST;
+        // genre overrides status, as only one filter can be active at a time
+        if(filters[0][0] != R.string.flt_tag_all) {
+            web += valGenre[filters[0][0]] + valOrder[filters[2][0]];
         }
-        //Log.d("RCO", "web: "+"http://" + HOST + web);
-        String source = getNavigatorAndFlushParameters().get("http://" + HOST + web);
+        else if(filters[1][0] != R.string.flt_status_all) {
+            web += valStatus[filters[1][0]] + valOrder[filters[2][0]];
+        }
+
+        if (pageNumber > 1) {
+            web += "?page=" + pageNumber;
+        }
+        String source = getNavigatorAndFlushParameters().get(web);
         return getMangasSource(source);
     }
-
-    @Override
-    public boolean hasList() {
-        return false;
-    }
-
 }

@@ -112,7 +112,7 @@ public class HeavenManga extends ServerBase {
         manga.setImages(portada);
 
         // sinopsis
-        String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, defaultSynopsis);
+        String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, context.getString(R.string.nodisponible));
         manga.setSynopsis(sinopsis.replaceAll("<.+?>", ""));
 
         // estado no soportado

@@ -53,6 +53,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
+    public static final String CHAPTERS_HIDE_READ = "hide_read_chapters";
     private static final String TAG = "MangaFragment";
     public SwipeRefreshLayout swipeReLayout;
     public Manga mManga;
@@ -72,6 +73,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
     private int readerType;
     private int chapters_order; // 0 = db_desc | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc | 5 = db_asc
+    private boolean hide_read;
     private Menu menu;
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
@@ -258,6 +260,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         Database.updateMangaRead(getActivity(), mManga.getId());
         loadInfo(mManga);
         chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
+        hide_read = pm.getBoolean(CHAPTERS_HIDE_READ, false);
     }
 
     public void loadInfo(Manga manga) {
@@ -370,6 +373,16 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             case R.id.mark_all_as_unread: {
                 Database.markAllChapters(getActivity(), this.mMangaId, false);
                 new SetChaptersPageCountAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                break;
+            }
+            case R.id.action_hide_read: {
+                item.setChecked(!item.isChecked());
+                hide_read = item.isChecked();
+                pm.edit().putBoolean(CHAPTERS_HIDE_READ, hide_read).apply();
+                new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                if (mChapterAdapter != null) {
+                    DownloadPoolService.setStateChangeListener(mChapterAdapter);
+                }
                 break;
             }
             case R.id.action_sentido: {
@@ -547,6 +560,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 R.id.sort_title_asc, R.id.sort_as_added_to_db_asc_chapters
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
+        menu.findItem(R.id.action_hide_read).setChecked(hide_read);
         int readDirection;
         if (mManga.getReadingDirection() != -1) {
             readDirection = mManga.getReadingDirection();
@@ -683,7 +697,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    public class SearchForNewChapters extends AsyncTask<Void, Void, Integer> {
+    private class SearchForNewChapters extends AsyncTask<Void, Void, Integer> {
         boolean running = false;
         SearchForNewChapters actual = null;
         int mangaId = 0;
@@ -739,12 +753,16 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
     }
 
-    public class SortAndLoadChapters extends AsyncTask<Void, Void, Void> {
+    private class SortAndLoadChapters extends AsyncTask<Void, Void, Void> {
         ArrayList<Chapter> chapters;
 
         @Override
         protected Void doInBackground(Void... params) {
-            chapters = Database.getChapters(getActivity(), mMangaId);
+            String condition = "1";
+            if(hide_read) {
+                condition = Database.COL_CAP_STATE + " != 1";
+            }
+            chapters = Database.getChapters(getActivity(), mMangaId, condition);
             try {
                 int chaptersOrder;
                 if (pm != null)

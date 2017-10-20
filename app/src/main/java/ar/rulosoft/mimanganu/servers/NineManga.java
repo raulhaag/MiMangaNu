@@ -283,7 +283,6 @@ class NineManga extends ServerBase {
             manga.setImages(m.group(2));
             mangas.add(manga);
         }
-        hasMore = mangas.size() > 0;
         return mangas;
     }
 

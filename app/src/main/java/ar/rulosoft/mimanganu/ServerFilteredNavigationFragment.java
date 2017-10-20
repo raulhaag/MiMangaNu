@@ -164,7 +164,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
 
     @Override
     public void onRequestedLastItem() {
-        if (serverBase.hasMore && !loading.isShown() && !mStart)
+        if (!loading.isShown() && !mStart)
             loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
     }
 
@@ -265,7 +265,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             mAdapter = null;
             page = 1;
             mStart = true;
-            serverBase.hasMore = true;
             loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
         } else {
             newTask = true;
@@ -322,7 +321,6 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                     mAdapter = null;
                     page = 1;
                     mStart = true;
-                    serverBase.hasMore = true;
                     loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
                     newTask = false;
                 }
