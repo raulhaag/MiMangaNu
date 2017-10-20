@@ -560,6 +560,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 R.id.sort_title_asc, R.id.sort_as_added_to_db_asc_chapters
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
+        menu.findItem(R.id.action_hide_read).setChecked(hide_read);
         int readDirection;
         if (mManga.getReadingDirection() != -1) {
             readDirection = mManga.getReadingDirection();
