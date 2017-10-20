@@ -477,8 +477,6 @@ public abstract class ServerBase {
     /**
      * Returns a list of Manga filtered by the given filter set.
      * There might be more than one result page, so pageNumber is used to get a certain result page.
-     * If more information is available, the hasMore variable shall be set to <code>true</code> to
-     * indicate this condition to the caller in order to fetch the next page.
      * <p>
      * The filter parameter contains the current selection. The first index is given by the order
      * of filters returned by <code>getServerFilters()</code>. The second index indicates the
