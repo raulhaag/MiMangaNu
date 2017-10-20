@@ -297,9 +297,9 @@ public class Util {
     private int getCorrectIcon() {
         int icon;
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            icon = R.drawable.ic_launcher_white;
+            icon = R.mipmap.ic_launcher_white;
         } else {
-            icon = R.drawable.ic_launcher;
+            icon = R.mipmap.ic_launcher;
         }
         return icon;
     }

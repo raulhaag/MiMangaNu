@@ -641,7 +641,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     mDialog = new AlertDialog.Builder(getActivity())
                             .setTitle(chapter.getTitle() + " " + getString(R.string.error))
                             .setMessage(getString(R.string.demaciados_errores))
-                            .setIcon(R.drawable.ic_launcher)
+                            .setIcon(R.mipmap.ic_launcher)
                             .setNeutralButton(getString(android.R.string.ok), null)
                             .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
                                 @Override
@@ -702,7 +702,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 mDialog = new AlertDialog.Builder(getActivity())
                         .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                         .setView(v)
-                        .setIcon(R.drawable.ic_launcher)
+                        .setIcon(R.mipmap.ic_launcher)
                         .setNegativeButton(getString(android.R.string.no), null)
                         .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
@@ -744,7 +744,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             mDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
                     .setView(v)
-                    .setIcon(R.drawable.ic_launcher)
+                    .setIcon(R.mipmap.ic_launcher)
                     .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
