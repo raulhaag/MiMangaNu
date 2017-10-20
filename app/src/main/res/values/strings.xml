@@ -448,4 +448,7 @@
     <string name="flt_tag_western">Western</string>
     <string name="flt_tag_zombies">Zombies</string>
     <string name="flt_domain">Domain</string>
+    <string name="flt_tag_time_travel">Time Travel</string>
+    <string name="flt_tag_transported">Transported</string>
+    <string name="flt_hint_order_unfiltered_only">unfiltered view only</string>
 </resources>

@@ -446,4 +446,8 @@
     <string name="flt_tag_western">Western</string>
     <string name="flt_tag_zombies">Zombies</string>
     <string name="flt_domain">Domäne</string>
+    <string name="flt_hint_order_unfiltered_only">nur für ungefilterte Ansicht</string>
+    <string name="flt_tag_time_travel">Zeitreise</string>
+    <string name="flt_tag_transported">Transported</string>
+    <string name="flt_tag_anthropomorphic">Antropomorph</string>
 </resources>
