@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -143,13 +144,21 @@ public class HeavenManga extends ServerBase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        return chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/") + 1) + page;
+        return chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/"))+ "/" + page;
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
-        return getFirstMatch("src=\"([^\"]+)\" border=\"1\" id=\"p\">", source, "Error al obtener imagen");
+        String source =getFirstMatch("<center>([\\s\\S]+)<center>",
+                getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page)),"Error al obtener ");
+        String web = getFirstMatch("<img src=\"([^\"]+)", source, "Error al obtener imagen");
+        Log.e("Image" + page, web);
+        return web;
+    }
+
+    @Override
+    public boolean needRefererForImages() {
+        return false;
     }
 
     @Override
