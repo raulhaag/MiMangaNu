@@ -19,7 +19,7 @@ class KissManga extends ServerBase {
     private static final String HOST = "http://kissmanga.com";
 
     private static final String PATTERN_CHAPTER =
-            "<td>[\\s]*<a[\\s]*href=\"(/Manga/[^\"]+)\"[\\s]*title=\"[^\"]+\">([^\"]+)</a>[\\s]*</td>";
+            "<td>\\s*<a\\s*href=\"(/Manga/[^\"]+)\"\\s*title=\"[^\"]+\">([^<]+)</a>\\s*</td>";
     private static final String PATTERN_SEARCH =
             "href=\"(/Manga/[^\"]+)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
     private static final String PATTERN_MANGA =

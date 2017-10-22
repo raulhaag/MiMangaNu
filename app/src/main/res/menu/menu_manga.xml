@@ -76,6 +76,9 @@
                 android:id="@+id/action_hide_read"
                 android:checkable="true"
                 android:title="@string/hide_read" />
+            <item
+                android:id="@+id/delete"
+                android:title="@string/borrar" />
         </menu>
     </item>
 </menu>
