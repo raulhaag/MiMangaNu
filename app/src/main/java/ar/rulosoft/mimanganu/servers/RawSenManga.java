@@ -138,26 +138,23 @@ class RawSenManga extends ServerBase {
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavigatorAndFlushParameters().get(manga.getPath());
-            // summary
-            manga.setSynopsis(Util.getInstance().fromHtml(
+            // Summary
+            manga.setSynopsis(
                     getFirstMatchDefault("description\" content=\"(.+?)\">", data,
-                            context.getString(R.string.nodisponible)).replace("</a>", "</a>,"))
-                    .toString().trim());
-            // cover
+                            context.getString(R.string.nodisponible)).replace("</a>", "</a>,").replace("\\'", "'"));
+            // Cover
             manga.setImages(getFirstMatchDefault("itemprop=\"image\" src=\"(.+?)\"", data, ""));
-            //  author
-            manga.setAuthor(Util.getInstance().fromHtml(
-                    getFirstMatchDefault("<li><b>Author<\\/b>:(.+?)<\\/li>", data,
-                            context.getString(R.string.nodisponible)).replace("</a>", "</a>,"))
-                    .toString().trim());
-            // genre
-            manga.setGenre(Util.getInstance().fromHtml(
-                    getFirstMatchDefault("<li><b>Categories<\\/b>:(.+?)<\\/li>", data,
-                            context.getString(R.string.nodisponible)).replace("</a>", "</a>,"))
-                    .toString().trim());
-            // status
+            // Author(s)
+            manga.setAuthor(
+                    getFirstMatchDefault("<li><b>Author</b>:(.+?)</a>\\s*</li>", data,
+                            context.getString(R.string.nodisponible)).replace("</a>", "</a>,"));
+            // Genre
+            manga.setGenre(
+                    getFirstMatchDefault("<li><b>Categories</b>:(.+?)</a>\\s*</li>", data,
+                            context.getString(R.string.nodisponible)));
+            // Status
             manga.setFinished(getFirstMatchDefault("<li><b>Status<\\/b>:(.+?)<\\/li>", data, " ").contains("Complete"));
-            // chapters
+            // Chapters
             Pattern p = Pattern.compile("<div class=\"title\"><a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
@@ -187,13 +184,13 @@ class RawSenManga extends ServerBase {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Referer", chapter.getPath());
         String data = nav.get(chapter.getPath() + "/" + page);
-        return getFirstMatch("img src=\"(https?://raw.senmanga.com/viewer[^\"]+)", data, "\"Error: failed to locate page image link\"");
+        return getFirstMatch("img src=\"(https?://raw.senmanga.com/viewer[^\"]+)", data, "Error: failed to locate page image link");
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String number = getFirstMatchDefault("</select> of (\\d+)", data, "Error: failed to get the number of pages");
+        String number = getFirstMatch("</select> of (\\d+)", data, "Error: failed to get the number of pages");
         chapter.setPages(Integer.parseInt(number));
     }
 
@@ -224,9 +221,12 @@ class RawSenManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = HOST + valGenre[filters[0][0]] + "page/" + pageNumber;
+        String web;
         if (fltGenre[filters[0][0]] == R.string.flt_tag_all) {
             web = HOST + valOrder[filters[1][0]] + "page/" + pageNumber;
+        }
+        else {
+            web = HOST + valGenre[filters[0][0]] + "page/" + pageNumber;
         }
         String source = getNavigatorAndFlushParameters().get(web);
         return getMangasFromSource(source);
