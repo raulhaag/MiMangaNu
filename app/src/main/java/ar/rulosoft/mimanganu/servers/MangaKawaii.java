@@ -109,28 +109,30 @@ class MangaKawaii extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            setExtra(chapter);
+        chapterInit(chapter);
+
+        if (page < 1) {
+            page = 1;
         }
-        return chapter.getExtra().split("\\|")[page];
-    }
-
-    private int setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String tmpImages = getFirstMatchDefault("<div id=\"all\"(.+?)</div>", source, "");
-
-        ArrayList<String> matches = getAllMatch("data-src='.(https://www\\.mangakawaii\\.com/uploads/[^\"]+?).'", tmpImages);
-        chapter.setExtra(TextUtils.join("|", matches));
-
-        return matches.size();
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            chapter.setPages(setExtra(chapter));
-        } else {
-            chapter.setPages(0);
+        if (chapter.getExtra() == null) {
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String tmpImages = getFirstMatchDefault("<div id=\"all\"(.+?)</div>", source, "");
+            ArrayList<String> images = getAllMatch("data-src='.(https://www\\.mangakawaii\\.com/uploads/[^\"]+?).'", tmpImages);
+
+            if(images.isEmpty()) {
+                throw new Exception("No image links found for this chapter.");
+            }
+            chapter.setPages(images.size());
+            chapter.setExtra(TextUtils.join("|", images));
         }
     }
 

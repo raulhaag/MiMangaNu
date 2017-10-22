@@ -216,37 +216,36 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String extra = chapter.getExtra();
-        if (extra == null) {
-            extra = setExtra(chapter);
-        }
-        return extra.split("\\|")[page];
-    }
+        chapterInit(chapter);
 
-    private String setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath() + "/all-pages");
-        if (source.equals("400")) {
-            // ReadMangaToday returns 400 Bad Request sometimes
-            // deleting it's cookies will usually get rid of the error
-            Util.getInstance().removeSpecificCookies(context, HOST);
-            source = getNavigatorAndFlushParameters().get(chapter.getPath() + "/all-pages");
+        if (page < 1) {
+            page = 1;
         }
-        chapter.setExtra(TextUtils.join("|", getAllMatch("<img src=\"([^\"]+)\" class=\"img-responsive-2\">", source)));
-        return chapter.getExtra();
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath());
-        if (source.equals("400")) {
-            // ReadMangaToday returns 400 Bad Request sometimes
-            // deleting it's cookies will usually get rid of the error
-            Util.getInstance().removeSpecificCookies(context, HOST);
-            source = getNavigatorAndFlushParameters().get(chapter.getPath());
+        if(chapter.getExtra() == null) {
+            String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath() + "/all-pages");
+            if (source.equals("400")) {
+                // ReadMangaToday returns 400 Bad Request sometimes
+                // deleting it's cookies will usually get rid of the error
+                Util.getInstance().removeSpecificCookies(context, HOST);
+                source = getNavigatorAndFlushParameters().get(chapter.getPath() + "/all-pages");
+            }
+            ArrayList<String> images = getAllMatch("<img src=\"([^\"]+)\" class=\"img-responsive-2\">", source);
+
+            if (images.isEmpty()) {
+                throw new Exception("No image links found for this chapter.");
+            }
+            chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
-        String pageNumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
-                "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pageNumber));
     }
 
     @Override

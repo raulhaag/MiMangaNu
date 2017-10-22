@@ -221,21 +221,32 @@ class LeoManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String extra = chapter.getExtra();
-        if (extra != null) {
-            return HOST + extra.split("\\|")[page];
+        chapterInit(chapter);
+
+        if (page < 1) {
+            page = 1;
         }
-        throw new Exception("Error: no image link for this page found");
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String web = HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error: failed to get first indirection");
-        data = getNavigatorAndFlushParameters().get(web);
-        ArrayList<String> pos = getAllMatch("class=\"cap-images\" src=\"(.+?)\"", data);
-        chapter.setPages(pos.size());
-        chapter.setExtra(TextUtils.join("|", pos));
+        if(chapter.getExtra() == null) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String web = HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error: failed to get first indirection");
+            data = getNavigatorAndFlushParameters().get(web);
+            ArrayList<String> images = getAllMatch("class=\"cap-images\" src=\"(.+?)\"", data);
+
+            if (images.isEmpty()) {
+                throw new Exception("No image links found for this chapter.");
+            }
+            chapter.setPages(images.size());
+            chapter.setExtra(TextUtils.join("|", images));
+        }
     }
 
     @Override
