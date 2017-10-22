@@ -3,6 +3,10 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,6 +14,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by xtj-9182 on 09.05.2017.
@@ -33,19 +38,26 @@ class MangaKawaii extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        // FIXME a list of Manga could be retrieved using JavaScript
         return null;
     }
 
     @Override
     public boolean hasSearch() {
-        return false;
+        return true;
     }
 
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
-        // FIXME search functionality has to be implemented bases on Manga list
-        return null;
+        Navigator nav = getNavigatorAndFlushParameters();
+        String data = nav.get("https://www.mangakawaii.com/recherche?query=" + URLEncoder.encode(search, "UTF-8"));
+        JSONArray array = new JSONObject(data).getJSONArray("suggestions");
+        ArrayList<Manga> mangas = new ArrayList<>();
+        for(int i = 0, n = array.length(); i < n; i++){
+            mangas.add(new Manga(getServerID(), array.getJSONObject(i).getString("value"),
+                    "https://www.mangakawaii.com/manga/" + array.getJSONObject(i).getString("data"),
+                    false));
+        }
+        return mangas;
     }
 
     @Override
