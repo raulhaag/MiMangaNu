@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -30,6 +31,7 @@ import android.widget.ListView;
 
 import com.fedorvlasov.lazylist.ImageLoader;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -46,6 +48,7 @@ import ar.rulosoft.mimanganu.componentes.readers.Reader.Direction;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -383,6 +386,31 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 if (mChapterAdapter != null) {
                     DownloadPoolService.setStateChangeListener(mChapterAdapter);
                 }
+                break;
+            }
+            case R.id.delete: {
+                new AlertDialog.Builder(getContext())
+                        .setTitle(R.string.app_name)
+                        .setMessage(getString(R.string.manga_delete_confirm, mManga.getTitle()))
+                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        })
+                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DownloadPoolService.forceStop(mManga.getId());
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
+                                String path = Paths.generateBasePath(serverBase, mManga, getActivity());
+                                Util.getInstance().deleteRecursive(new File(path));
+                                Database.deleteManga(getActivity(), mManga.getId());
+                                dialog.dismiss();
+                                getActivity().onBackPressed();
+                            }
+                        })
+                        .show();
                 break;
             }
             case R.id.action_sentido: {
