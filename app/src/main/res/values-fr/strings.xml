@@ -191,8 +191,6 @@
     <string name="searching">A la recherche de \"%s\" sont</string>
     <string name="delete_confirm">Etes-vous sûr de supprimer ces chapitres?</string>
     <string name="thanks">remerciements</string>
-    <string name="remember_internet_state_title">Se souviens de l\'état de la connection à internet</string>
-    <string name="remember_internet_state_subtitle">MiMangaNu va essayer se souvenir si la connection à Internet est active pour ses tâches d\'arrière plan.</string>
     <plurals name="more_chapters_not_displayed_here">
         <item quantity="one">%d chapitre suplémentaire non affiché ici…</item>
         <item quantity="other">%d chapitres suplémentaires non affichés ici…</item>
