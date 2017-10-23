@@ -451,4 +451,7 @@
     <string name="flt_tag_time_travel">Time Travel</string>
     <string name="flt_tag_transported">Transported</string>
     <string name="flt_hint_order_unfiltered_only">unfiltered view only</string>
+    <string name="server_failed_loading_page_count">Could not load page count.</string>
+    <string name="server_failed_loading_chapter">Could not load chapter information.</string>
+    <string name="server_failed_loading_image">Could not load page image information.</string>
 </resources>

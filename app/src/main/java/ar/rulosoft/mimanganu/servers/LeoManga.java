@@ -215,14 +215,7 @@ class LeoManga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        chapterInit(chapter);
-
         if (page < 1) {
             page = 1;
         }
@@ -235,14 +228,14 @@ class LeoManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getExtra() == null) {
+        if(chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
             String web = HOST + getFirstMatch("href=\"([^\"]+)\">Online", data, "Error: failed to get first indirection");
             data = getNavigatorAndFlushParameters().get(web);
             ArrayList<String> images = getAllMatch("class=\"cap-images\" src=\"(.+?)\"", data);
 
             if (images.isEmpty()) {
-                throw new Exception("No image links found for this chapter.");
+                throw new Exception(context.getString(R.string.server_failed_loading_chapter));
             }
             chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));

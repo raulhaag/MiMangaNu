@@ -117,23 +117,30 @@ class MangaStream extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath().replace("/1", "/") + page;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String src = getNavigatorAndFlushParameters().get(this.getPagesNumber(chapter, page));
-        String img = getFirstMatchDefault(PATTERN_IMAGE, src, "Error getting image");
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+
+        String src = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/1", "/") + page);
+        String img = getFirstMatch(
+                PATTERN_IMAGE, src,
+                context.getString(R.string.server_failed_loading_image));
         return "http:" + img;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pageNumber = getFirstMatchDefault("Last Page \\((\\d+)\\)</a>", source,
-                "failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pageNumber));
+        if(chapter.getPages() == 0) {
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pageNumber = getFirstMatch(
+                    "Last Page \\((\\d+)\\)</a>", source,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pageNumber));
+        }
     }
 
     @Override

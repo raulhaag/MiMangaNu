@@ -228,24 +228,30 @@ class Taadd extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Referer", chapter.getPath());
         String source = nav.get(chapter.getPath() + "-" + page + ".html");
-        return getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source, "Error: failed to get image link");
+        return getFirstMatch(
+                "src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pageNumber = getFirstMatchDefault("\">(\\d+)</option>[\\s]*</select>", source,
-                "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pageNumber));
+        if(chapter.getPages() == 0) {
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pageNumber = getFirstMatch(
+                    "\">(\\d+)</option>[\\s]*</select>", source,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pageNumber));
+        }
     }
 
     @Override

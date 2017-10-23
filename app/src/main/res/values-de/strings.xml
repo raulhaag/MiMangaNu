@@ -450,4 +450,7 @@
     <string name="flt_tag_time_travel">Zeitreise</string>
     <string name="flt_tag_transported">Transported</string>
     <string name="flt_tag_anthropomorphic">Antropomorph</string>
+    <string name="server_failed_loading_chapter">Kapitelinformationen konnten nicht geladen werden.</string>
+    <string name="server_failed_loading_image">Bildinformationen konnten nicht geladen werden.</string>
+    <string name="server_failed_loading_page_count">Anzahl der Seiten konnte nicht geladen werden.</string>
 </resources>

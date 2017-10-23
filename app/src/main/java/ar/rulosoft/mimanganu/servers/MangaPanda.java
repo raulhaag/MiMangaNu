@@ -187,27 +187,29 @@ class MangaPanda extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (page < 1) {
             page = 1;
         }
         if (page > chapter.getPages()) {
             page = chapter.getPages();
         }
-        return chapter.getPath() + "/" + page;
-    }
 
-    @Override
-    public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
-        return getFirstMatch("src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data, "Error: failed to get the link to the image");
+        String data = getNavigatorAndFlushParameters().get(chapter.getPath() + "/" + page);
+        return getFirstMatch(
+                "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pages = getFirstMatch("of (\\d+)</div>", data, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    "of (\\d+)</div>", data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override

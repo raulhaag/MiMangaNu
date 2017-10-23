@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -193,7 +194,7 @@ class NineManga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (page < 1) {
             page = 1;
         }
@@ -201,39 +202,29 @@ class NineManga extends ServerBase {
             page = chapter.getPages();
         }
 
-        if (page == 1) {
-            return chapter.getPath();
-        } else {
-            return chapter.getPath().replace(".html", "-" + page + ".html");
-        }
-    }
-
-    @Override
-    public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if ((chapter.getExtra() == null) || (chapter.getExtra().isEmpty())) {
-            setExtra(chapter);
-        }
-        String[] images = chapter.getExtra().split("\\|");
-        return images[page];
-    }
-
-    private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile(PATTERN_IMAGE, Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        String images = "";
-        while (m.find()) {
-            images = images + "|" + m.group(1);
-        }
-        chapter.setExtra(images);
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data, pages;
-        data = getNavigatorWithNeededHeader().get(chapter.getPath());
-        pages = getFirstMatch(PATTERN_PAGES, data, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            if(chapter.getExtra() == null) {
+                String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+                ArrayList<String> images = getAllMatch(PATTERN_IMAGE, source);
+
+                if (images.isEmpty()) {
+                    throw new Exception(context.getString(R.string.server_failed_loading_chapter));
+                }
+                chapter.setPages(images.size());
+                chapter.setExtra(TextUtils.join("|", images));
+            }
+            String data = getNavigatorWithNeededHeader().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    PATTERN_PAGES, data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override

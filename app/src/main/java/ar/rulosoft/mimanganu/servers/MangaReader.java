@@ -4,7 +4,7 @@ import android.content.Context;
 
 import ar.rulosoft.mimanganu.R;
 
-public class MangaReader extends MangaPanda {
+class MangaReader extends MangaPanda {
     /**
      * Okay, this is almost (except for server and color) the same,
      * so I took the liberty and use MangaPanda as template
@@ -14,7 +14,7 @@ public class MangaReader extends MangaPanda {
      * <p/>
      * Previously, this code was the same as MangaPanda either way..
      */
-    public MangaReader(Context context) {
+    MangaReader(Context context) {
         super(context);
         setFlag(R.drawable.flag_en);
         setIcon(R.drawable.mangareader);

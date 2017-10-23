@@ -214,31 +214,33 @@ class MangaFox extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        if (page > chapter.getPages()) {
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (page < 1) {
             page = 1;
         }
-        if (chapter.getPath().endsWith("html") && chapter.getPath().indexOf("/") > 0) {
-            chapter.setPath(chapter.getPath().substring(0, chapter.getPath().lastIndexOf("/") + 1));
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
         }
-        return chapter.getPath() + page + ".html";
-    }
 
-    @Override
-    public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = getNavigatorAndFlushParameters().getWithTimeout(this.getPagesNumber(chapter, page));
-        String img = "";
-        if (!source.isEmpty()) {
-            img = getFirstMatch(">[\\s]*<img src=\"(.+?)\"", source, "Error: failed to get image link");
-        }
-        return img;
+        String source = getNavigatorAndFlushParameters().getWithTimeout(
+                chapter.getPath() + page + ".html");
+        return getFirstMatch(
+                ">[\\s]*<img src=\"(.+?)\"", source,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath());
-        String pages = getFirstMatch(PATTERN_LAST, source, "Error: failed to get number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            if (chapter.getPath().endsWith("html") && chapter.getPath().indexOf("/") > 0) {
+                chapter.setPath(chapter.getPath().substring(0, chapter.getPath().lastIndexOf("/") + 1));
+            }
+            String source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath());
+            String pages = getFirstMatch(
+                    PATTERN_LAST, source,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override

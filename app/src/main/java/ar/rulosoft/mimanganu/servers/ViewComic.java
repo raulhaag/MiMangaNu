@@ -108,14 +108,7 @@ class ViewComic extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        chapterInit(chapter);
-
         if (page < 1) {
             page = 1;
         }
@@ -128,7 +121,7 @@ class ViewComic extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null) {
+        if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             ArrayList<String> images = getAllMatch("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\"", source);
             if(images.isEmpty()) {
@@ -136,7 +129,7 @@ class ViewComic extends ServerBase {
             }
 
             if(images.isEmpty()) {
-                throw new Exception("No image links found for this chapter.");
+                throw new Exception(context.getString(R.string.server_failed_loading_image));
             }
             chapter.setExtra(TextUtils.join("|", images));
             chapter.setPages(images.size());

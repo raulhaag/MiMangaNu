@@ -20,7 +20,7 @@ import ar.rulosoft.navegadores.Navigator;
 /**
  * Created by Raul on 05/04/2016.
  */
-public class TuMangaOnline extends ServerBase {
+class TuMangaOnline extends ServerBase {
 
     public static String[] type = new String[]{
             "Todos", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
@@ -77,7 +77,7 @@ public class TuMangaOnline extends ServerBase {
 
     private static int lastPage = 10000;
 
-    public TuMangaOnline(Context context) {
+    TuMangaOnline(Context context) {
         super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.tumangaonline_icon);
@@ -146,7 +146,7 @@ public class TuMangaOnline extends ServerBase {
         return result;
     }
 
-    public void initImages(Chapter chapter) throws Exception {
+    void initImages(Chapter chapter) throws Exception {
         JSONObject object = new JSONObject(getNavWithNeededHeaders().get(chapter.getExtra()));
         String webBase = object.getJSONObject("capitulo").getJSONObject("tomo").getString("idManga")+
                 "/"+ object.getJSONObject("capitulo").getString("numCapitulo") +
@@ -181,10 +181,6 @@ public class TuMangaOnline extends ServerBase {
         manga.setFinished(!object.getString("estado").contains("Activo"));
     }
 
-    @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {

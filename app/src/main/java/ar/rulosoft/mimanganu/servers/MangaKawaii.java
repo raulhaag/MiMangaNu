@@ -103,11 +103,6 @@ class MangaKawaii extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         chapterInit(chapter);
 
@@ -129,7 +124,7 @@ class MangaKawaii extends ServerBase {
             ArrayList<String> images = getAllMatch("data-src='.(https://www\\.mangakawaii\\.com/uploads/[^\"]+?).'", tmpImages);
 
             if(images.isEmpty()) {
-                throw new Exception("No image links found for this chapter.");
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
             chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));

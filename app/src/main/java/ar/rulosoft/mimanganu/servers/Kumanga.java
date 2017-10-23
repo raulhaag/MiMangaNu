@@ -262,11 +262,6 @@ class Kumanga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         if (page < 1) {
             page = 1;
@@ -274,14 +269,22 @@ class Kumanga extends ServerBase {
         if (page > chapter.getPages()) {
             page = chapter.getPages();
         }
+        assert chapter.getExtra() != null;
         return "http://img.kumanga.com/manga/" + chapter.getExtra() + "/" + page + ".jpg";
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/c/", "/leer/"));
-        chapter.setPages(Integer.parseInt(getFirstMatchDefault("<select class=\"pageselector.+?>(\\d+)</option>[\\s]*</select>", data, "0")));
-        chapter.setExtra(getFirstMatch("/c/(.+)", chapter.getPath(), "Error: failed to get chapter path"));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/c/", "/leer/"));
+            String pages = getFirstMatch(
+                    "<select class=\"pageselector.+?>(\\d+)</option>[\\s]*</select>", data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+            chapter.setExtra(getFirstMatch(
+                    "/c/(.+)", chapter.getPath(),
+                    context.getString(R.string.server_failed_loading_chapter)));
+        }
     }
 
     @Override
@@ -290,9 +293,11 @@ class Kumanga extends ServerBase {
                 new ServerFilter(
                         context.getString(R.string.flt_genre),
                         buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(context.getString(R.string.flt_type),
+                new ServerFilter(
+                        context.getString(R.string.flt_type),
                         buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
-                new ServerFilter(context.getString(R.string.flt_status),
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI)};
     }
 }

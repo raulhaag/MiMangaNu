@@ -177,22 +177,29 @@ class BatoTo extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
         String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + page, "http://bato.to/reader");
-        return getFirstMatchDefault("img id=\"comic_page\"[^>]+src=\"([^\"]+)", data, "Error getting images");
+        return getFirstMatch(
+                "img id=\"comic_page\"[^>]+src=\"([^\"]+)", data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        chapter.setExtra("http://bato.to/areader?id=" + chapter.getPath().split("#")[1] + "&p=");
-        String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + "1", "http://bato.to/reader");
-        String pages = getFirstMatchDefault("page\\s+(\\d+)</option>\\s+</select>", data, "Can't init the chapter");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            chapter.setExtra("http://bato.to/areader?id=" + chapter.getPath().split("#")[1] + "&p=");
+            String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + "1", "http://bato.to/reader");
+            String pages = getFirstMatch(
+                    "page\\s+(\\d+)</option>\\s+</select>", data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override

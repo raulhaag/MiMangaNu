@@ -13,7 +13,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -173,25 +172,32 @@ class RawSenManga extends ServerBase {
         loadChapters(manga, forceReload);
     }
 
-
-    @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Referer", chapter.getPath());
         String data = nav.get(chapter.getPath() + "/" + page);
-        return getFirstMatch("img src=\"(https?://raw.senmanga.com/viewer[^\"]+)", data, "Error: failed to locate page image link");
+        return getFirstMatch(
+                "img src=\"(https?://raw.senmanga.com/viewer[^\"]+)", data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String number = getFirstMatch("</select> of (\\d+)", data, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(number));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String number = getFirstMatch(
+                    "</select> of (\\d+)", data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(number));
+        }
     }
 
     @NonNull

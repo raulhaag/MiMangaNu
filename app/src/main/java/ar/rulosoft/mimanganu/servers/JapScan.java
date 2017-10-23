@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by xtj-9182 on 21.02.2017.
@@ -89,21 +87,29 @@ class JapScan extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        if (page < 1) {
+            page = 1;
+        }
+        if (page > chapter.getPages()) {
+            page = chapter.getPages();
+        }
+
         String source = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
-        return getFirstMatchDefault("src=\"(http://cdn[^\"]+)", source, "Error: failed to locate page image link");
+        return getFirstMatch(
+                "src=\"(http://cdn[^\"]+)", source,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pages = getFirstMatchDefault("Page (\\d+)</option>[\\s]*</select>", source, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    "Page (\\d+)</option>[\\s]*</select>", source,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
