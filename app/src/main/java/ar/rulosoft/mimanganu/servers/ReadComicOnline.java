@@ -235,31 +235,27 @@ class ReadComicOnline extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        chapterInit(chapter);
+
         if (page < 1) {
             page = 1;
         }
         if (page > chapter.getPages()) {
             page = chapter.getPages();
         }
-
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigatorAndFlushParameters().post(HOST + chapter.getPath());
-            ArrayList<String> images = getAllMatch("lstImages.push\\(\"(.+?)\"", source);
-            chapter.setPages(images.size());
-            chapter.setExtra(TextUtils.join("|", images));
-
-            return images.get(page);
-        }
-        else {
-            return chapter.getExtra().split("\\|")[page];
-        }
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath().replaceAll("[^!-z]+", ""), HOST + chapter.getPath());
+        if (chapter.getExtra() == null) {
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             ArrayList<String> images = getAllMatch("lstImages.push\\(\"(.+?)\"", source);
+
+            if(images.isEmpty()) {
+                throw new Exception("No image links found for this chapter.");
+            }
             chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));
         }
@@ -270,7 +266,7 @@ class ReadComicOnline extends ServerBase {
         Pattern p = Pattern.compile("src=\"([^\"]+)\" style=\"float.+?href=\"(.+?)\">(.+?)<", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(READCOMICONLINE, m.group(3), m.group(2), false);
+            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
         }

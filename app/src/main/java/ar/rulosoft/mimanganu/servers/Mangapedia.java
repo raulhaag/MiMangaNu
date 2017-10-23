@@ -280,25 +280,30 @@ class Mangapedia extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        chapterInit(chapter);
+
         if (page < 1) {
             page = 1;
         }
         if (page > chapter.getPages()) {
             page = chapter.getPages();
         }
-        String extra = chapter.getExtra();
-        if (extra != null) {
-            return extra.split("\\|")[page];
-        }
-        throw new Exception("Error: no image link for this page");
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        ArrayList<String> images = getAllMatch("['|\"](http[s]*://mangapedia.fr/project_code/script/image.php\\?path=.+?)['|\"]", data);
-        chapter.setPages(images.size());
-        chapter.setExtra(TextUtils.join("|", images));
+        if(chapter.getExtra() == null) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            ArrayList<String> images = getAllMatch("['|\"](http[s]*://mangapedia.fr/project_code/script/image.php\\?path=.+?)['|\"]", data);
+
+            if (images.isEmpty()) {
+                throw new Exception("No image links found for this chapter.");
+            }
+            chapter.setPages(images.size());
+            chapter.setExtra(TextUtils.join("|", images));
+        }
     }
 
     @Override

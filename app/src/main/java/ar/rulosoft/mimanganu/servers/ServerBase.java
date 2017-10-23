@@ -460,7 +460,7 @@ public abstract class ServerBase {
      * page lies within the available page numbers of the given Chapter.
      *
      * @param chapter a Chapter object to get the page image URL for
-     * @param page    the page number
+     * @param page    the page number starting at page 1 (NOT zero based)
      * @return the URL to the image on the given page of the Chapter
      * @throws Exception if an error occurred
      */
