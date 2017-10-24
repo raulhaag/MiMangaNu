@@ -104,14 +104,6 @@ class MangaKawaii extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        chapterInit(chapter);
-
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         assert chapter.getExtra() != null;
         return chapter.getExtra().split("\\|")[page - 1];
     }
@@ -126,8 +118,8 @@ class MangaKawaii extends ServerBase {
             if(images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
-            chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
     }
 

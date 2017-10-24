@@ -172,18 +172,10 @@ class MangaTown extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
         String web = chapter.getPath();
         if (page > 1) {
             web += page + ".html";
         }
-
         String data = getNavigatorAndFlushParameters().get(web);
         return getFirstMatch(
                 PATTERN_IMAGE, data,

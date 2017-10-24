@@ -118,13 +118,6 @@ class MangaStream extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
         String src = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/1", "/") + page);
         String img = getFirstMatch(
                 PATTERN_IMAGE, src,

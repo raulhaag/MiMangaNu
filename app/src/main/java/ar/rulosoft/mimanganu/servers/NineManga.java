@@ -195,13 +195,6 @@ class NineManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
         assert chapter.getExtra() != null;
         return chapter.getExtra().split("\\|")[page - 1];
     }
@@ -209,20 +202,19 @@ class NineManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
+            String data = getNavigatorWithNeededHeader().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    PATTERN_PAGES, data,
+                    context.getString(R.string.server_failed_loading_page_count));
             if(chapter.getExtra() == null) {
-                String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
+                String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + pages + "-1.html"));
                 ArrayList<String> images = getAllMatch(PATTERN_IMAGE, source);
 
                 if (images.isEmpty()) {
                     throw new Exception(context.getString(R.string.server_failed_loading_chapter));
                 }
-                chapter.setPages(images.size());
                 chapter.setExtra(TextUtils.join("|", images));
             }
-            String data = getNavigatorWithNeededHeader().get(chapter.getPath());
-            String pages = getFirstMatch(
-                    PATTERN_PAGES, data,
-                    context.getString(R.string.server_failed_loading_page_count));
             chapter.setPages(Integer.parseInt(pages));
         }
     }
@@ -278,7 +270,7 @@ class NineManga extends ServerBase {
     }
 
     /**
-     * Helper function to generate the Cookie needed by some webpages (like NineManga).
+     * Helper function to generate the Cookie needed by NineManga.
      */
     private static void generateNeededCookie() {
         cookie = "__utmz=128769555." + (System.currentTimeMillis() / 1000) + ".1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); ";
@@ -289,10 +281,10 @@ class NineManga extends ServerBase {
      * Some servers need additional information to be added to the request header in order to work.
      * This function provides such an object.
      *
-     * @return a <code>Navigator object with extended headers</code>
+     * @return           a <code>Navigator</code> object with extended headers
      * @throws Exception if an error occurred
      */
-    public Navigator getNavigatorWithNeededHeader() throws Exception {
+    private Navigator getNavigatorWithNeededHeader() throws Exception {
         if (cookie.isEmpty()) {
             generateNeededCookie();
         }

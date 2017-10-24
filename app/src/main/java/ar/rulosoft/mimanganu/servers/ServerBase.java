@@ -441,7 +441,7 @@ public abstract class ServerBase {
      * @param manga       the Manga to find information for
      * @param forceReload force new retrieval of Manga information
      * @throws Exception  if an error occurred. The exception is thrown back to UI, so its message
-     *                   should be a translatable string.
+     *                    should be a translatable string.
      * @see Manga
      * @see Chapter
      */
@@ -449,12 +449,16 @@ public abstract class ServerBase {
 
     /**
      * Returns the URL for the image on a given Chapter page.
-     * Some sanity checking should be done in the override function, like non-negativity and that
-     * <code>page</code> lies within the available page numbers of the given Chapter.
-     *
-     * Also it must be ensured, that the <code>Chapter</code> object has been initialised - this
+     * It must be ensured, that the <code>Chapter</code> object has been initialised - this
      * means, that at least the number of pages is set properly. This is ensured by calling
      * <code>chapterInit</code> before loading any images from a given chapter.
+     *
+     * If the <code>page</code> index lies outside the valid range, an exception is raised.
+     * Therefore the calling function must ensure, that the requested page is within the interval
+     * [1 .. <code>chapter.getPages()</code>] (boundaries included).
+     *
+     * Be aware, that the page numbers start at 1 - not at 0. This is mostly relevant if the page
+     * number is used as an array index.
      *
      * @param chapter    a Chapter object to get the page image URL for
      * @param page       the page number starting at page 1 (NOT zero based)

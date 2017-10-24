@@ -57,7 +57,7 @@ public class DeadServer extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return null;
+        throw new Exception(context.getString(R.string.server_dead_message));
     }
 
     @Override

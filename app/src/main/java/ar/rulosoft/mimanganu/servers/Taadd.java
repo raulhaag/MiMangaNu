@@ -229,12 +229,6 @@ class Taadd extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Referer", chapter.getPath());
         String source = nav.get(chapter.getPath() + "-" + page + ".html");

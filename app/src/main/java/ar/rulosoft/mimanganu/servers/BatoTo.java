@@ -178,12 +178,6 @@ class BatoTo extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + page, "http://bato.to/reader");
         return getFirstMatch(
                 "img id=\"comic_page\"[^>]+src=\"([^\"]+)", data,

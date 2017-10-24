@@ -175,13 +175,6 @@ class MangaHere extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
         String data = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
         return getFirstMatch(
                 PATTERN_IMAGE, data,

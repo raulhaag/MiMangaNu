@@ -175,12 +175,6 @@ class MyMangaIo extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         String data = getNavigatorWithNeededHeader().get(chapter.getPath() + page);
         return getFirstMatch(
                 "<img src=\"([^\"]+)\"", data,

@@ -136,13 +136,6 @@ class HeavenManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
         assert chapter.getExtra() != null;
         String source = getFirstMatch("<center>([\\s\\S]+)<center>",
                 getNavigatorAndFlushParameters().get(chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/")) + "/" + page), "Error al obtener ");

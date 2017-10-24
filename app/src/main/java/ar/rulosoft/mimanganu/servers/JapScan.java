@@ -88,13 +88,6 @@ class JapScan extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
         String source = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
         return getFirstMatch(
                 "src=\"(http://cdn[^\"]+)", source,

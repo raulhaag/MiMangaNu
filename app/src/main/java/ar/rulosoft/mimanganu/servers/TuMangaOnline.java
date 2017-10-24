@@ -190,17 +190,19 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (!chapter.getExtra().contains(".jpg")) {
-            initImages(chapter);
-        } else {
-            String[] d1 = chapter.getExtra().split("\\|");
-            String[] d2 = (d1[1].replace("[", "").replace("]", "").replaceAll("\"", "")).split(",");
-            chapter.setPages(d2.length);
-            String images = "";
-            for (String d : d2) {
-                images = images + "|" + d1[0] + "/" + d;
+        if(chapter.getPages() == 0) {
+            if (!chapter.getExtra().contains(".jpg")) {
+                initImages(chapter);
+            } else {
+                String[] d1 = chapter.getExtra().split("\\|");
+                String[] d2 = (d1[1].replace("[", "").replace("]", "").replaceAll("\"", "")).split(",");
+                chapter.setPages(d2.length);
+                String images = "";
+                for (String d : d2) {
+                    images = images + "|" + d1[0] + "/" + d;
+                }
+                chapter.setExtra(images);
             }
-            chapter.setExtra(images);
         }
     }
 

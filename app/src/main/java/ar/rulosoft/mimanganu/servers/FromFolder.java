@@ -81,12 +81,6 @@ public class FromFolder extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         assert chapter.getExtra() != null;
         return chapter.getPath() + chapter.getExtra().split("\\|")[page - 1];
     }
@@ -96,8 +90,8 @@ public class FromFolder extends ServerBase {
         if(chapter.getPages() == 0) {
             ArrayList<String> images = Util.getInstance().imageList(chapter.getPath());
             Collections.sort(images, NUMBERS_ASC);
-            chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
     }
 
