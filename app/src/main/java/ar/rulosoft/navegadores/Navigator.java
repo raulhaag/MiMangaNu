@@ -37,7 +37,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * @author Raul, nulldev, xtj-9182
@@ -118,55 +117,6 @@ public class Navigator {
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
-        }
-    }
-
-    public String getWithTimeout(String web) throws Exception {
-        return this.getWithTimeout(web, "", connectionTimeout, writeTimeout, readTimeout);
-    }
-
-    public String getWithTimeout(String web, String referer) throws Exception {
-        return this.getWithTimeout(web, referer, connectionTimeout, writeTimeout, readTimeout);
-    }
-
-    private String getWithTimeout(String web, String referer, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
-        // copy will share the connection pool with httpclient
-        // NEVER create new okhttp clients that aren't sharing the same connection pool
-        // see: https://github.com/square/okhttp/issues/2636
-        OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
-        if (!referer.isEmpty()) {
-            addHeader("Referer", referer);
-        }
-
-        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-        int i = 0;
-        int timeout = 250;
-        while (!response.isSuccessful()) {
-            Log.i("Nav", "source is empty, waiting for " + timeout + " ms before retrying ...");
-            i++;
-            Thread.sleep(timeout);
-            response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-            if (i < 3)
-                timeout += 250;
-            else
-                timeout += 500;
-            if (i == 5) {
-                Log.i("Nav", "couldn't get a source from " + web + " :(");
-                break;
-            }
-        }
-        if (response.isSuccessful()) {
-            if (timeout > 250)
-                Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
             return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);

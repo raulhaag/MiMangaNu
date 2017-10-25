@@ -158,7 +158,7 @@ class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().getWithTimeout(HOST + "/manga/");
+        String data = getNavigatorAndFlushParameters().get(HOST + "/manga/");
         data = getFirstMatch(PATTERN_SEGMENT, data, "Error: failed to get segment");
         Pattern p = Pattern.compile(PATTERN_SERIES, Pattern.DOTALL);
         Matcher m = p.matcher(data);
@@ -180,7 +180,7 @@ class MangaFox extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String data = getNavigatorAndFlushParameters().getWithTimeout((manga.getPath()));
+            String data = getNavigatorAndFlushParameters().get((manga.getPath()));
 
             // Cover
             manga.setImages(getFirstMatchDefault(PATTERN_COVER, data, ""));
@@ -215,7 +215,7 @@ class MangaFox extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = getNavigatorAndFlushParameters().getWithTimeout(
+        String source = getNavigatorAndFlushParameters().get(
                 chapter.getPath() + page + ".html");
         return getFirstMatch(
                 ">[\\s]*<img src=\"(.+?)\"", source,
@@ -228,7 +228,7 @@ class MangaFox extends ServerBase {
             if (chapter.getPath().endsWith("html") && chapter.getPath().indexOf("/") > 0) {
                 chapter.setPath(chapter.getPath().substring(0, chapter.getPath().lastIndexOf("/") + 1));
             }
-            String source = getNavigatorAndFlushParameters().getWithTimeout(chapter.getPath());
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pages = getFirstMatch(
                     PATTERN_LAST, source,
                     context.getString(R.string.server_failed_loading_page_count));
@@ -240,7 +240,7 @@ class MangaFox extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         String data = getNavigatorAndFlushParameters()
-                .getWithTimeout("https://mangafox.me/search.php?name_method=cw&name="
+                .get("https://mangafox.me/search.php?name_method=cw&name="
                         + URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8")
                         + "&type=&author_method=cw&author=&artist_method=cw&artist=&genres%5BAction%5D=0&genres%5BAdult%5D=0&genres%5BAdventure%5D=0&genres%5BComedy%5D=0&genres%5BDoujinshi%5D=0&genres%5BDrama%5D=0&genres%5BEcchi%5D=0&genres%5BFantasy%5D=0&genres%5BGender+Bender%5D=0&genres%5BHarem%5D=0&genres%5BHistorical%5D=0&genres%5BHorror%5D=0&genres%5BJosei%5D=0&genres%5BMartial+Arts%5D=0&genres%5BMature%5D=0&genres%5BMecha%5D=0&genres%5BMystery%5D=0&genres%5BOne+Shot%5D=0&genres%5BPsychological%5D=0&genres%5BRomance%5D=0&genres%5BSchool+Life%5D=0&genres%5BSci-fi%5D=0&genres%5BSeinen%5D=0&genres%5BShoujo%5D=0&genres%5BShoujo+Ai%5D=0&genres%5BShounen%5D=0&genres%5BShounen+Ai%5D=0&genres%5BSlice+of+Life%5D=0&genres%5BSmut%5D=0&genres%5BSports%5D=0&genres%5BSupernatural%5D=0&genres%5BTragedy%5D=0&genres%5BWebtoons%5D=0&genres%5BYaoi%5D=0&genres%5BYuri%5D=0&released_method=eq&released=&rating_method=eq&rating=&is_completed=&advopts=1");
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
@@ -284,7 +284,7 @@ class MangaFox extends ServerBase {
         web += valOrder[filters[4][0]];
         web += "&page=" + pageNumber;
 
-        String source = getNavigatorAndFlushParameters().getWithTimeout(web);
+        String source = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
