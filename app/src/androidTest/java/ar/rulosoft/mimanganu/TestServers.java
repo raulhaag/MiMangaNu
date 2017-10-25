@@ -128,7 +128,15 @@ public class TestServers {
         catch (Exception e) {
             fail(e.getMessage() + ": " + context);
         }
-        assertFalse(context, manga.getChapters().isEmpty());
+        switch (serverBase.getServerID()) {
+            case ServerBase.RAWSENMANGA:
+                // these servers list also Manga without chapters - so do not test for emptiness
+                break;
+            default:
+                assertFalse(context, manga.getChapters().isEmpty());
+                break;
+        }
+
 
         // pick a random chapter for testing
         try {
