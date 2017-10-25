@@ -44,6 +44,11 @@ class SubManga extends ServerBase {
     }
 
     @Override
+    public boolean hasSearch() {
+        return false;
+    }
+
+    @Override
     public ArrayList<Manga> search(String term) throws Exception {
         return null;
     }
