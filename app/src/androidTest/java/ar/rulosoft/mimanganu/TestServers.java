@@ -130,6 +130,7 @@ public class TestServers {
         }
         switch (serverBase.getServerID()) {
             case ServerBase.RAWSENMANGA:
+            case ServerBase.MANGAEDENIT:
                 // these servers list also Manga without chapters - so do not test for emptiness
                 break;
             default:

@@ -168,7 +168,7 @@ public abstract class ServerBase {
     static final int DENINEMANGA = 16;
     static final int RUNINEMANGA = 17;
     static final int MANGATUBE = 18;
-    static final int MANGAEDENIT = 19;
+    public static final int MANGAEDENIT = 19;
     static final int MYMANGAIO = 20;
     static final int TUMANGAONLINE = 22;
     static final int NINEMANGA = 23;

@@ -122,7 +122,7 @@ class MangaEdenIt extends MangaEden {
             // Genres
             manga.setGenre(getFirstMatchDefault("Genere</h4>(.+?)<h4>", source, context.getString(R.string.nodisponible)));
             // Chapters
-            Pattern pattern = Pattern.compile("<tr.+?href=\"(/it/it-manga/.+?)\".+?>(.+?)</a", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile("<a href=\"(/it/it-manga/[^\"]+)\" class=\"chapterLink\">(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
                 Chapter chapter = new Chapter(matcher.group(2).replaceAll("Capitolo", " Cap "), HOST + matcher.group(1));
