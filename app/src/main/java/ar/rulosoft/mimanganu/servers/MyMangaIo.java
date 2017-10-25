@@ -256,7 +256,7 @@ class MyMangaIo extends ServerBase {
     }
 
     private Navigator getNavigatorWithNeededHeader() throws Exception {
-        Navigator nav = new Navigator(context);
+        Navigator nav = Navigator.getInstance();
         nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         return nav;
     }

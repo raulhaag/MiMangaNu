@@ -277,7 +277,7 @@ class NineManga extends ServerBase {
     }
 
     /**
-     * Helper function to get a <code>Navigator</code> instance with additional headers.
+     * Helper function to set up the <code>Navigator</code> with additional headers.
      * Some servers need additional information to be added to the request header in order to work.
      * This function provides such an object.
      *
@@ -288,7 +288,7 @@ class NineManga extends ServerBase {
         if (cookie.isEmpty()) {
             generateNeededCookie();
         }
-        Navigator nav = new Navigator(context);
+        Navigator nav = Navigator.getInstance();
         nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
         nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         nav.addHeader("Cookie", cookie);

@@ -70,7 +70,7 @@ public class ImageLoader {
             return imgFile;
         try {
             if (url.indexOf("|") > 0) {
-                Navigator nav = Navigator.navigator;
+                Navigator nav = Navigator.getInstance();
                 String[] parts = url.split("\\|");
                 nav.addHeader("Referer", parts[1]);
                 FileCache.writeFile(nav.getStream(parts[0]), f);
@@ -82,7 +82,7 @@ public class ImageLoader {
                 is.close();
             }
             else {
-                FileCache.writeFile(Navigator.navigator.getStream(url), f);
+                FileCache.writeFile(Navigator.getInstance().getStream(url), f);
             }
             return decodeFile(f);
         } catch (Throwable ex) {

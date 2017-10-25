@@ -46,13 +46,24 @@ public class Navigator {
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
-    public static Navigator navigator;
     private static CookieJar cookieJar;
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
 
-    public Navigator(Context context) throws Exception {
+    private static Navigator instance;
+    public static synchronized Navigator getInstance() {
+        if (Navigator.instance == null) {
+            throw new NullPointerException("Navigator has no instance with a valid context.");
+        }
+        return Navigator.instance;
+    }
+    public static synchronized Navigator initialiseInstance(Context context) throws Exception {
+        Navigator.instance = new Navigator(context);
+        return Navigator.instance;
+    }
+
+    private Navigator(Context context) throws Exception {
         if (httpClient == null) {
             TrustManager[] trustManagers = getTrustManagers(context);
             SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -90,7 +101,6 @@ public class Navigator {
 
     public void setCookieJar(CookieJar cookieJar) {
         httpClient = new OkHttpClientConnectionChecker.Builder()
-                //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
                 .addInterceptor(new CFInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -98,6 +108,10 @@ public class Navigator {
                 .cookieJar(cookieJar)
                 .build();
         Navigator.cookieJar = cookieJar;
+    }
+
+    public void clearCookieJar(Context context) {
+        cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
     }
 
     public String get(String web) throws Exception {

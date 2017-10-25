@@ -70,7 +70,7 @@ public class Util {
                 try {
                     File updateFileCache = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
                     if (updateFileCache.exists()) updateFileCache.delete();
-                    final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
+                    final OkHttpClient client = Navigator.getInstance().getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();
@@ -557,7 +557,7 @@ public class Util {
         else
             toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
         try {
-            new Navigator(context);// to refresh cookies on navigator
+            Navigator.getInstance().clearCookieJar(context);
         } catch (Exception e) {
             //todo
         }
@@ -593,7 +593,7 @@ public class Util {
             toast(context, context.getString(R.string.deleted_no_var) + " " + count + " cookies");
 
         try {
-            new Navigator(context);// to refresh cookies navigator
+            Navigator.getInstance().clearCookieJar(context);
         } catch (Exception e) {
             //todo
         }

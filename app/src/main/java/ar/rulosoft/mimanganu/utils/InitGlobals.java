@@ -11,8 +11,7 @@ public class InitGlobals extends AsyncTask<Context, Void, Void> {
     protected Void doInBackground(Context... contexts) {
         try {
             NetworkUtilsAndReceiver.ONLY_WIFI = PreferenceManager.getDefaultSharedPreferences(contexts[0]).getBoolean("only_wifi", false);
-            if (Navigator.navigator == null)
-                Navigator.navigator = new Navigator(contexts[0]);
+            Navigator.initialiseInstance(contexts[0]);
         } catch (Exception ignore) {
             ignore.printStackTrace();
         }

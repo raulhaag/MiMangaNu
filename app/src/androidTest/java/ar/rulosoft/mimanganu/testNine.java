@@ -44,7 +44,7 @@ public class testNine {
 
     @Test
     public void testImages() throws Exception {
-        Navigator nav = Navigator.navigator;
+        Navigator nav = Navigator.getInstance();
         nav.addHeader("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
         nav.addHeader("Accept-Encoding", "deflate");
         nav.addHeader("Accept","application/json, text/plain, */*");

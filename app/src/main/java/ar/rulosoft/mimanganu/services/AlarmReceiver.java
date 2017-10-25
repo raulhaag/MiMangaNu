@@ -54,7 +54,7 @@ public class AlarmReceiver extends BroadcastReceiver {
                 Navigator.connectionTimeout = Integer.parseInt(pm.getString("connection_timeout", "10"));
                 pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                 NetworkUtilsAndReceiver.ONLY_WIFI = pm.getBoolean("only_wifi", false);
-                Navigator.navigator = new Navigator(context);
+                Navigator.initialiseInstance(context);
                 AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(context, null, pm);
                 automaticUpdateTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }

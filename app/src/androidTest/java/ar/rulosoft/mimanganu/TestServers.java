@@ -15,7 +15,6 @@ import java.util.Random;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.navegadores.Navigator;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
@@ -62,11 +61,6 @@ public class TestServers {
                 serverBase.getServerID(),
                 mActivityRule.getActivity().getApplicationContext()
         );
-
-        // wait for <code>Navigator.navigator</code> to be initialised in <code>InitGlobals</code>
-        while(Navigator.navigator == null) {
-            Thread.sleep(100);
-        }
 
         if (serverBase.hasFilteredNavigation()) {
             ArrayList<Manga> mangas = serverBase.getMangasFiltered(serverBase.getBasicFilter(), 1);

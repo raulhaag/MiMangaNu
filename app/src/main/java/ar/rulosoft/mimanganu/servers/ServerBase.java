@@ -323,8 +323,8 @@ public abstract class ServerBase {
      * @return the Navigator object
      */
     public static Navigator getNavigatorAndFlushParameters() {
-        Navigator.navigator.flushParameter();
-        return Navigator.navigator;
+        Navigator.getInstance().flushParameter();
+        return Navigator.getInstance();
     }
 
     /**
