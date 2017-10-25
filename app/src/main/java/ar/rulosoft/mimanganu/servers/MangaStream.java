@@ -20,9 +20,8 @@ class MangaStream extends ServerBase {
             "href=\"(http://readms\\.net/[^\"]+?)\">([^\"]+?)</a>";
     private static final String PATTERN_MANGA =
             "href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>";
-
     private static final String PATTERN_IMAGE =
-            "\"(//img\\.readms\\.net/cdn/manga/[^\"]+?)\"";
+            "src=\"(//img\\.readms\\.net/cdn/manga/[^\"]+)";
 
     MangaStream(Context context) {
         super(context);
