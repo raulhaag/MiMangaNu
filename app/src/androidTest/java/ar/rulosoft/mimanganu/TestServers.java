@@ -87,11 +87,18 @@ public class TestServers {
             testInitAndGetImage();
         }
 
-        /*
         if (serverBase.hasSearch()) {
-            // TODO implement this
+            ArrayList<Manga> mangas = serverBase.search("world");
+            assertNotNull(mangas);
+            assertFalse(mangas.isEmpty());
+
+            // pick a random Manga for testing
+            manga = mangas.get(rand.nextInt(mangas.size()));
+            assertNotNull(manga);
+
+            testLoadManga();
+            testInitAndGetImage();
         }
-        */
     }
 
     public void testLoadManga() throws Exception {
@@ -107,7 +114,7 @@ public class TestServers {
         // manga.getImages() might be empty
 
         assertNotNull(context, manga.getSynopsis());
-        // manga.getSynopsis() might be empty
+        assertFalse(context, manga.getSynopsis().isEmpty());
 
         assertNotNull(context, manga.getAuthor());
         assertFalse(context, manga.getAuthor().isEmpty());
