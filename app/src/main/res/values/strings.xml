@@ -454,4 +454,7 @@
     <string name="server_failed_loading_page_count">Could not load page count.</string>
     <string name="server_failed_loading_chapter">Could not load chapter information.</string>
     <string name="server_failed_loading_image">Could not load page image information.</string>
+    <string name="viewcomic_host0_down_redirect">viewcomic.com is down - redirecting to view-comic.com</string>
+    <string name="viewcomic_host1_down_redirect">view-comic.com is down - redirecting to viewcomic.com</string>
+    <string name="viewcomic_down">viewcomic.com and view-comic.com are down.</string>
 </resources>

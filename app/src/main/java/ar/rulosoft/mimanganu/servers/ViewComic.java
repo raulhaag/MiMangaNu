@@ -73,16 +73,16 @@ class ViewComic extends ServerBase {
                 manga.setImages(getFirstMatchDefault("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\"", source, ""));
 
             // Summary
-            // ViewComic lists no summary ...
+            manga.setSynopsis(context.getString(R.string.nodisponible));
 
             // Status
             // ViewComic lists no status ...
 
             // Author
-            // ViewComic lists no authors ...
+            manga.setAuthor(context.getString(R.string.nodisponible));
 
             // Genre
-            // ViewComic lists no genres ...
+            manga.setGenre(context.getString(R.string.nodisponible));
 
             // Chapters
             String newSource = getFirstMatchDefault("<select id(.+?)</select>", source, "");
@@ -155,19 +155,19 @@ class ViewComic extends ServerBase {
         }
 
         String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(web);
-        if (source.equals("404")) {
+        if (source.equals("404") || source.equals("500")) {
             if (onHost0) {
                 Log.e("VC", "viewcomic is down :(. Redirecting to view-comic");
-                Util.getInstance().toast(context, "viewcomic is down :(. Redirecting to view-comic");
+                Util.getInstance().toast(context, context.getString(R.string.viewcomic_host0_down_redirect));
                 source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(host1web);
             } else {
                 Log.e("VC", "view-comic is down :(. Redirecting to viewcomic");
-                Util.getInstance().toast(context, "view-comic is down :(. Redirecting to viewcomic");
+                Util.getInstance().toast(context, context.getString(R.string.viewcomic_host1_down_redirect));
                 source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(host0web);
             }
-            if (source.equals("404")) {
+            if (source.equals("404") || source.equals("500")) {
                 Log.e("VC", "viewcomic and view-comic are down :(");
-                Util.getInstance().toast(context, "viewcomic and view-comic are down :(");
+                Util.getInstance().toast(context, context.getString(R.string.viewcomic_down));
             }
         }
         return getMangasFromSource(source);

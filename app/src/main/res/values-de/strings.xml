@@ -453,4 +453,7 @@
     <string name="server_failed_loading_chapter">Kapitelinformationen konnten nicht geladen werden.</string>
     <string name="server_failed_loading_image">Bildinformationen konnten nicht geladen werden.</string>
     <string name="server_failed_loading_page_count">Anzahl der Seiten konnte nicht geladen werden.</string>
+    <string name="viewcomic_down">viewcomic.com und view-comic.com sind nicht erreichbar.</string>
+    <string name="viewcomic_host0_down_redirect">viewcomic.com ist nicht erreichbar - leite um zu view-comic.com</string>
+    <string name="viewcomic_host1_down_redirect">view-comic.com ist nicht erreichbar - leite um zu viewcomic.com</string>
 </resources>
