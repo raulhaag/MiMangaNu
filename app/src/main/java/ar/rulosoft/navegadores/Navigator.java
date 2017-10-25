@@ -67,7 +67,6 @@ public class Navigator {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .cookieJar(cookieJar)
                     .build();
-
         }
     }
 
@@ -328,22 +327,7 @@ public class Navigator {
         parameters.add(new Parameter(key, value));
     }
 
-    public HashMap<String, String> getFormParams(String url) throws Exception {
-        String source = this.get(url);
-        HashMap<String, String> ParametrosForm = new HashMap<>();
-        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>", Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        while (m.find()) {
-            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]", Pattern.DOTALL);
-            Matcher m1 = p1.matcher(m.group());
-            while (m1.find()) {
-                ParametrosForm.put(m1.group(1), m1.group(2));
-            }
-        }
-        return ParametrosForm;
-    }
-
-    public Headers getHeaders() {
+    private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT);//this is used all the time
         for (Parameter p : headers) {
@@ -373,13 +357,8 @@ public class Navigator {
         return httpClient;
     }
 
-    public void dropAllCalls() {
-        httpClient.dispatcher().cancelAll();
-    }
-
-
     //Explained on https://developer.android.com/training/articles/security-ssl.html
-    public TrustManager[] getTrustManagers(Context context) {
+    private TrustManager[] getTrustManagers(Context context) {
         try {
             //get system certs
             KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -388,17 +367,16 @@ public class Navigator {
             keyStore_n.load(null, null);
             Enumeration<String> aliases = keyStore.aliases();
             //creating a copy because original can't be modified
-            while (aliases.hasMoreElements())
-            {
+            while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
                 java.security.cert.X509Certificate cert = (java.security.cert.X509Certificate) keyStore.getCertificate(alias);
                 keyStore_n.setCertificateEntry(alias, cert);
             }
             //then add my key ;-P
-            keyStore_n.setCertificateEntry("mangahereco", loadCertificateFromRaw(R.raw.mangahereco,context));
-            keyStore_n.setCertificateEntry("mangafoxme", loadCertificateFromRaw(R.raw.mangafoxme,context));
+            keyStore_n.setCertificateEntry("mangahereco", loadCertificateFromRaw(R.raw.mangahereco, context));
+            keyStore_n.setCertificateEntry("mangafoxme", loadCertificateFromRaw(R.raw.mangafoxme, context));
             keyStore_n.setCertificateEntry("mangaherecoImages", loadCertificateFromRaw(R.raw.mangaherecoimages, context));
-            keyStore_n.setCertificateEntry("mangatowncom", loadCertificateFromRaw(R.raw.mangatowncom,context));
+            keyStore_n.setCertificateEntry("mangatowncom", loadCertificateFromRaw(R.raw.mangatowncom, context));
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore_n);
             return tmf.getTrustManagers();
@@ -408,7 +386,7 @@ public class Navigator {
         return null;
     }
 
-    public Certificate loadCertificateFromRaw(int rawId, Context context) {
+    private Certificate loadCertificateFromRaw(int rawId, Context context) {
         Certificate certificate = null;
         InputStream certInput = null;
         try {
@@ -428,34 +406,4 @@ public class Navigator {
         }
         return certificate;
     }
-
-
 }
-
-/**
- * Adds user agent to any client the interceptor is attached to.
- */
-class UserAgentInterceptor implements Interceptor {
-
-    private String userAgent;
-
-    public UserAgentInterceptor(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        return chain.proceed(chain.request().newBuilder()
-                .header("User-Agent", userAgent)
-                .build());
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-}
-
