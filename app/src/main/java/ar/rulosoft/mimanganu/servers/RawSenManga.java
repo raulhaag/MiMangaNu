@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import java.net.URLEncoder;
@@ -13,7 +12,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by Raul on 03/02/2016.
@@ -60,7 +58,7 @@ class RawSenManga extends ServerBase {
             R.string.flt_tag_yuri
     };
     private static final String[] valGenre = {
-            "directory/",
+            "Manga/",
             "directory/category/Action/",
             "directory/category/Adult/",
             "directory/category/Adventure/",
@@ -102,9 +100,9 @@ class RawSenManga extends ServerBase {
             R.string.flt_order_alpha,
     };
     private static final String[] valOrder = {
-            "directory/popular/",
-            "directory/rating/",
-            "directory/"
+            "?order=popular",
+            "?order=rating",
+            "?order=title"
     };
 
     RawSenManga(Context context) {
@@ -128,9 +126,16 @@ class RawSenManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = HOST + "search/" + URLEncoder.encode(term, "UTF-8");
-        String data = getNavigatorAndFlushParameters().get(web);
-        return getMangasFromSource(data);
+        String web = HOST + "search?q=" + URLEncoder.encode(term, "UTF-8");
+        String source = getNavigatorAndFlushParameters().get(web.replaceAll("^http", "https"));
+        Pattern p = Pattern.compile("<a href='([^']+)' title='([^']+)' style", Pattern.DOTALL);
+        Matcher m = p.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        while (m.find()) {
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
+            mangas.add(manga);
+        }
+        return mangas;
     }
 
     @Override
@@ -139,29 +144,38 @@ class RawSenManga extends ServerBase {
             String data = getNavigatorAndFlushParameters().get(manga.getPath());
             // Summary
             manga.setSynopsis(
-                    getFirstMatchDefault("description\" content=\"(.+?)\">", data,
-                            context.getString(R.string.nodisponible)).replace("</a>", "</a>,").replace("\\'", "'"));
+                    getFirstMatchDefault(
+                            "itemprop=\"description\">([^<]+)", data, context.getString(R.string.nodisponible)));
+            if(manga.getSynopsis().startsWith("No Description.")) {
+                manga.setSynopsis(context.getString(R.string.nodisponible));
+            }
             // Cover
-            manga.setImages(getFirstMatchDefault("itemprop=\"image\" src=\"(.+?)\"", data, ""));
+            manga.setImages(
+                    HOST + getFirstMatchDefault(
+                            "itemprop=\"image\" src=\"([^\"]+)", data, ""));
             // Author(s)
             manga.setAuthor(
-                    getFirstMatchDefault("<li><b>Author</b>:(.+?)</a>\\s*</li>", data,
+                    getFirstMatchDefault(
+                            "<strong class='data'>Author:</strong>(.+?)</a></span>", data,
                             context.getString(R.string.nodisponible)).replace("</a>", "</a>,"));
             // Genre
             manga.setGenre(
-                    getFirstMatchDefault("<li><b>Categories</b>:(.+?)</a>\\s*</li>", data,
+                    getFirstMatchDefault("<strong class='data'>Categorize in:</strong>(.+?)</a></p>", data,
                             context.getString(R.string.nodisponible)));
             // Status
-            manga.setFinished(getFirstMatchDefault("<li><b>Status<\\/b>:(.+?)<\\/li>", data, " ").contains("Complete"));
+            manga.setFinished(
+                    getFirstMatchDefault(
+                            "<strong class='data'>Status:</strong>(.+?)</span>", data, "").contains("Complete"));
             // Chapters
-            Pattern p = Pattern.compile("<div class=\"title\"><a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
+            Pattern p = Pattern.compile("</td><td><a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 Chapter mc;
                 if (m.group(1).endsWith("/1"))
-                    mc = new Chapter(m.group(2), m.group(1).substring(0,m.group(1).lastIndexOf("/")));
+                    // strip off page suffix if present
+                    mc = new Chapter(m.group(2), HOST + m.group(1).substring(0, m.group(1).length() - 2));
                 else
-                    mc = new Chapter(m.group(2), m.group(1));
+                    mc = new Chapter(m.group(2), HOST + m.group(1));
                 mc.addChapterFirst(manga);
             }
         }
@@ -174,12 +188,8 @@ class RawSenManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Referer", chapter.getPath());
-        String data = nav.get(chapter.getPath() + "/" + page);
-        return getFirstMatch(
-                "img src=\"(https?://raw.senmanga.com/viewer[^\"]+)", data,
-                context.getString(R.string.server_failed_loading_image));
+        String path = chapter.getPath().substring(HOST.length());
+        return HOST + "viewer/" + path + "/" + page;
     }
 
     @Override
@@ -193,19 +203,6 @@ class RawSenManga extends ServerBase {
         }
     }
 
-    @NonNull
-    private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern p = Pattern.compile("cover\" src=\"([^\"]+).+?alt=\"([^\"]+).+?[\\s\\S]+?href=\"([^\"]+)", Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        ArrayList<Manga> mangas = new ArrayList<>();
-        while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), m.group(3), false);
-            manga.setImages(m.group(1).replace("/thumb/50x50/", "/covers/"));
-            mangas.add(manga);
-        }
-        return mangas;
-    }
-
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
@@ -213,7 +210,7 @@ class RawSenManga extends ServerBase {
                         context.getString(R.string.flt_genre),
                         buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
                 new ServerFilter(
-                        context.getString(R.string.flt_order),
+                        context.getString(R.string.flt_order) + " (" + context.getString(R.string.flt_hint_order_unfiltered_only) + ")",
                         buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
@@ -222,12 +219,20 @@ class RawSenManga extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web;
         if (fltGenre[filters[0][0]] == R.string.flt_tag_all) {
-            web = HOST + valOrder[filters[1][0]] + "page/" + pageNumber;
+            web = HOST + valGenre[filters[0][0]] + valOrder[filters[1][0]] + "&page=" + pageNumber;
         }
         else {
-            web = HOST + valGenre[filters[0][0]] + "page/" + pageNumber;
+            web = HOST + valGenre[filters[0][0]] + "?page=" + pageNumber;
         }
         String source = getNavigatorAndFlushParameters().get(web);
-        return getMangasFromSource(source);
+        Pattern p = Pattern.compile("cover\">\\s*<a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
+        Matcher m = p.matcher(source);
+        ArrayList<Manga> mangas = new ArrayList<>();
+        while (m.find()) {
+            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
+            manga.setImages(HOST + "/Manga/cover/" + m.group(1).replaceAll("/", "") + ".jpg");
+            mangas.add(manga);
+        }
+        return mangas;
     }
 }
