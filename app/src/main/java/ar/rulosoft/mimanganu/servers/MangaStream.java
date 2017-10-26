@@ -128,9 +128,14 @@ class MangaStream extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pageNumber = getFirstMatch(
-                    "Last Page \\((\\d+)\\)</a>", source,
-                    context.getString(R.string.server_failed_loading_page_count));
+            String pageNumber = getFirstMatchDefault(
+                    "Last Page \\((\\d+)\\)</a>", source, "");
+            // handle case, where only one page is listed (as "First Page")
+            if(pageNumber.isEmpty()) {
+                pageNumber = getFirstMatch(
+                        "First Page \\((\\d+)\\)</a>", source,
+                        context.getString(R.string.server_failed_loading_page_count));
+            }
             chapter.setPages(Integer.parseInt(pageNumber));
         }
     }
