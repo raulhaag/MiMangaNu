@@ -186,6 +186,7 @@ public class Navigator {
     public String get(String web, String referer, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
@@ -221,6 +222,7 @@ public class Navigator {
     public String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
         addHeader("Referer", referer);
