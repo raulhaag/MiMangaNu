@@ -217,7 +217,7 @@ class LeoManga extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
-        return chapter.getExtra().split("\\|")[page - 1];
+        return HOST + chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
