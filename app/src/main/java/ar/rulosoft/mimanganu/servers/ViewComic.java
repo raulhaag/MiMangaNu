@@ -19,6 +19,9 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by xtj-9182 on 18.02.2016.
  */
 class ViewComic extends ServerBase {
+    private static final String PATTERN_MANGA =
+            "src=\"(https?://\\d+\\.bp\\.blogspot\\.com/[^\"]+)\".+?<a class=\"front-link\" href=\"([^\"]+)\">([^….<]+)";
+
     private static final String HOST0 = "http://viewcomic.com";
     private static final String HOST1 = "http://view-comic.com";
     private static final String[] domain = {
@@ -46,15 +49,34 @@ class ViewComic extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
-        String web;
-        if (onHost0) {
-            web = HOST0;
-        } else {
-            web = HOST1;
-        }
-        web += "/?s=" + URLEncoder.encode(search, "UTF-8");
+        String web, suffix;
 
-        String source = getNavigatorAndFlushParameters().get(web);
+        suffix = "/?s=" + URLEncoder.encode(search, "UTF-8");
+        if (onHost0) {
+            web = HOST0 + suffix;
+        } else {
+            web = HOST1 + suffix;
+        }
+
+        String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(web);
+        if (source.equals("404") || source.equals("500") || source.contains(".com temporarily close")) {
+            if (onHost0) {
+                Log.e("VC", "viewcomic is down :(. Redirecting to view-comic");
+                Util.getInstance().toast(context, context.getString(R.string.viewcomic_host0_down_redirect));
+                web = HOST1 + suffix;
+            } else {
+                Log.e("VC", "view-comic is down :(. Redirecting to viewcomic");
+                Util.getInstance().toast(context, context.getString(R.string.viewcomic_host1_down_redirect));
+                web = HOST0 + suffix;
+            }
+            // retry with switchover
+            source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(web);
+            if (source.equals("404") || source.equals("500") || source.contains(".com temporarily close")) {
+                Log.e("VC", "viewcomic and view-comic are down :(");
+                throw new Exception(context.getString(R.string.viewcomic_down));
+            }
+        }
+
         return getMangasFromSource(source);
     }
 
@@ -110,7 +132,11 @@ class ViewComic extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
-        return chapter.getExtra().split("\\|")[page - 1];
+        String url = chapter.getExtra().split("\\|")[page - 1];
+        if(url.startsWith("//")) {
+            url = "http:" + url;
+        }
+        return url;
     }
 
     @Override
@@ -167,7 +193,7 @@ class ViewComic extends ServerBase {
             }
             if (source.equals("404") || source.equals("500")) {
                 Log.e("VC", "viewcomic and view-comic are down :(");
-                Util.getInstance().toast(context, context.getString(R.string.viewcomic_down));
+                throw new Exception(context.getString(R.string.viewcomic_down));
             }
         }
         return getMangasFromSource(source);
@@ -175,7 +201,7 @@ class ViewComic extends ServerBase {
 
     private ArrayList<Manga> getMangasFromSource(String source) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern pattern = Pattern.compile("src=\"(https?://\\d+\\.bp\\.blogspot\\.com/[^\"]+)\".+?<a class=\"front-link\" href=\"([^\"]+)\">([^….<]+)", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             Manga manga = new Manga(getServerID(), matcher.group(3), matcher.group(2), false);
