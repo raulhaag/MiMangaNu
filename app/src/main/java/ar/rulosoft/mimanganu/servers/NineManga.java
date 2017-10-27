@@ -40,7 +40,7 @@ class NineManga extends ServerBase {
             "\\d+/(\\d+)</option>[\\s]*</select>";
     @SuppressWarnings("WeakerAccess")
     protected String PATTERN_IMAGE =
-            "src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"";
+            "class=\"pic_download\" href=\"(http://[^/]+/+comics/[^\"]+)\"";
     @SuppressWarnings("WeakerAccess")
     protected int[] fltGenre = {
             R.string.flt_tag_4_koma,

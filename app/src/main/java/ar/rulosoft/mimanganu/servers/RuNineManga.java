@@ -13,7 +13,7 @@ class RuNineManga extends NineManga {
     private static final String PATTERN_COVER =
             "<img itemprop=\"image\".+?src=\"(.+?)\"";
     private static final String PATTERN_IMAGE =
-            "src=\"(https://img\\.mangarussia\\.com/comics/[^\"]+?)\"";
+            "class=\"pic_download\" href=\"(http://[^/]+/+comics/pic2/[^\"]+)\"";
 
     private static final int[] fltGenre = {
             // assignment was done using Google Translate
