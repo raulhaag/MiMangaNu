@@ -101,6 +101,7 @@ class TuMangaOnline extends ServerBase {
         loadChapters(manga, forceReload, false);
     }
 
+    @SuppressWarnings("unused")
     public void loadChapters(Manga manga, boolean forceReload, boolean last) throws Exception {
         ArrayList<Chapter> result = new ArrayList<>();
         Navigator nav = getNavigatorAndFlushParameters();
@@ -146,7 +147,7 @@ class TuMangaOnline extends ServerBase {
         return result;
     }
 
-    void initImages(Chapter chapter) throws Exception {
+    private void initImages(Chapter chapter) throws Exception {
         JSONObject object = new JSONObject(getNavWithNeededHeaders().get(chapter.getExtra()));
         String webBase = object.getJSONObject("capitulo").getJSONObject("tomo").getString("idManga")+
                 "/"+ object.getJSONObject("capitulo").getString("numCapitulo") +
@@ -166,6 +167,10 @@ class TuMangaOnline extends ServerBase {
         if (object.getJSONArray("autores").length() != 0) {
             manga.setAuthor(object.getJSONArray("autores").getJSONObject(0).getString("autor"));
         }
+        else {
+            manga.setAuthor(context.getString(R.string.nodisponible));
+        }
+
         {
             String genres = "";
             JSONArray array = object.getJSONArray("generos");
@@ -176,7 +181,12 @@ class TuMangaOnline extends ServerBase {
                     genres += ", " + array.getJSONObject(i).getString("genero");
                 }
             }
-            manga.setGenre(genres);
+            if(!genres.isEmpty()) {
+                manga.setGenre(genres);
+            }
+            else {
+                manga.setGenre(context.getString(R.string.nodisponible));
+            }
         }
         manga.setFinished(!object.getString("estado").contains("Activo"));
     }
@@ -206,7 +216,7 @@ class TuMangaOnline extends ServerBase {
         }
     }
 
-    ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
+    private ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
         ArrayList<Manga> result = new ArrayList<>();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
@@ -223,7 +233,7 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {//TODO FAST
-        int returnValue = 0;
+        int returnValue;
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
         manga.setId(mangaDb.getId());
