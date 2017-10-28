@@ -1,10 +1,10 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -14,18 +14,14 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
+import okhttp3.Cookie;
+import okhttp3.HttpUrl;
 
 class NineManga extends ServerBase {
-    protected String HOST = "http://ninemanga.com";
-    private static String cookie = "";
-
     private static final String PATTERN_MANGA =
             "bookname\" href=\"(/manga/[^\"]+)\">(.+?)<";
     private static final String PATTERN_MANGA_SEARCHED =
             "<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<";
-    @SuppressWarnings("WeakerAccess")
-    protected String PATTERN_COVER =
-            "Manga\" src=\"(.+?)\"";
     private static final String PATTERN_SUMMARY =
             "<p itemprop=\"description\">(.+?)</p>";
     private static final String PATTERN_COMPLETED =
@@ -38,6 +34,27 @@ class NineManga extends ServerBase {
             "<a class=\"chapter_list_a\" href=\"(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
     private static final String PATTERN_PAGES =
             "\\d+/(\\d+)</option>[\\s]*</select>";
+    private static final int[] fltCategory = {
+            R.string.flt_category_all,
+            R.string.flt_category_hot,
+            R.string.flt_category_new,
+            R.string.flt_category_latest_release
+    };
+    private static final String[] valCategory = {
+            "/category/", "/list/Hot-Book/", "/list/New-Book/", "/list/New-Update/"
+    };
+    private static final int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_completed,
+            R.string.flt_status_ongoing
+    };
+    private static final String[] valStatus = {
+            "either", "yes", "no"};
+    private static boolean cookieInit = false;
+    protected String HOST = "http://ninemanga.com";
+    @SuppressWarnings("WeakerAccess")
+    protected String PATTERN_COVER =
+            "Manga\" src=\"(.+?)\"";
     @SuppressWarnings("WeakerAccess")
     protected String PATTERN_IMAGE =
             "class=\"pic_download\" href=\"(http://[^/]+/+comics/[^\"]+)\"";
@@ -109,30 +126,28 @@ class NineManga extends ServerBase {
             "52", "58%2C50", "40", "43", "61"
     };
 
-    private static final int[] fltCategory = {
-            R.string.flt_category_all,
-            R.string.flt_category_hot,
-            R.string.flt_category_new,
-            R.string.flt_category_latest_release
-    };
-    private static final String[] valCategory = {
-            "/category/", "/list/Hot-Book/", "/list/New-Book/", "/list/New-Update/"
-    };
-
-    private static final int[] fltStatus = {
-            R.string.flt_status_all,
-            R.string.flt_status_completed,
-            R.string.flt_status_ongoing
-    };
-    private static final String[] valStatus = {
-            "either", "yes", "no"};
-
     NineManga(Context context) {
         super(context);
         setFlag(R.drawable.flag_en);
         setIcon(R.drawable.ninemanga);
         setServerName("NineManga");
         setServerID(ServerBase.NINEMANGA);
+    }
+
+    /**
+     * Helper function to generate the Cookie needed by NineManga.
+     */
+    private static void generateNeededCookie() {
+        long aTime = System.currentTimeMillis() / 1000 - (int) (Math.random() * 100);
+        HttpUrl url = HttpUrl.parse("https://www.ninemanga.com/");
+        Navigator.getCookieJar().saveFromResponse(url, Arrays.asList(
+                Cookie.parse(url, "ninemanga_country_code=AR; Domain=ninemanga.com"),
+                Cookie.parse(url, "__utma=128769555.619121721." + aTime + "." + aTime + "." + aTime
+                        + ".1; Domain=ninemanga.com"),
+                Cookie.parse(url, "__utmc=128769555; Domain=ninemanga.com"),
+                Cookie.parse(url, "__utmz=128769555." + aTime
+                        + ".1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); Domain=ninemanga.com")
+        ));
     }
 
     @Override
@@ -195,26 +210,23 @@ class NineManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        assert chapter.getExtra() != null;
-        return chapter.getExtra().split("\\|")[page - 1];
+        String data = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-"
+                + page + ".html"));
+        data = getFirstMatch(PATTERN_IMAGE, data,
+                context.getString(R.string.server_failed_loading_image));
+        if (data.contains("//")) {
+            throw new Exception(context.getString(R.string.server_failed_loading_image));
+        }
+        return data;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String data = getNavigatorWithNeededHeader().get(chapter.getPath());
             String pages = getFirstMatch(
                     PATTERN_PAGES, data,
                     context.getString(R.string.server_failed_loading_page_count));
-            if(chapter.getExtra() == null) {
-                String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + pages + "-1.html"));
-                ArrayList<String> images = getAllMatch(PATTERN_IMAGE, source);
-
-                if (images.isEmpty()) {
-                    throw new Exception(context.getString(R.string.server_failed_loading_chapter));
-                }
-                chapter.setExtra(TextUtils.join("|", images));
-            }
             chapter.setPages(Integer.parseInt(pages));
         }
     }
@@ -270,28 +282,20 @@ class NineManga extends ServerBase {
     }
 
     /**
-     * Helper function to generate the Cookie needed by NineManga.
-     */
-    private static void generateNeededCookie() {
-        cookie = "__utmz=128769555." + (System.currentTimeMillis() / 1000) + ".1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); ";
-    }
-
-    /**
      * Helper function to set up the <code>Navigator</code> with additional headers.
      * Some servers need additional information to be added to the request header in order to work.
      * This function provides such an object.
      *
-     * @return           a <code>Navigator</code> object with extended headers
+     * @return a <code>Navigator</code> object with extended headers
      * @throws Exception if an error occurred
      */
     private Navigator getNavigatorWithNeededHeader() throws Exception {
-        if (cookie.isEmpty()) {
+        if (cookieInit) {
             generateNeededCookie();
         }
         Navigator nav = Navigator.getInstance();
         nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
         nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        nav.addHeader("Cookie", cookie);
         return nav;
     }
 }

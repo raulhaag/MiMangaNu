@@ -8,7 +8,7 @@ class DeNineManga extends NineManga {
     private static final String HOST = "http://de.ninemanga.com";
 
     private static final String PATTERN_IMAGE =
-            "src=\"(http://[^/]+/+comics/pic[^\"]+)";
+            "(http[^\"]+comics[^\"]+)";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_adventure,

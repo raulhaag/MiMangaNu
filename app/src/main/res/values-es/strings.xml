@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.71:\n\t* Agregado MangaTown.\n\t* Arreglado la búsqueda de MangaHere.\n\t* Arreglado los capítulos TuMangaOnline.\n\t* Fix en el lector contunuo para imagenes largas.
-</string>
+    <string name="update_message">Cambios en v1.72:\n\t * Todos los servidores funcionando al 28/10/2017.\n\t * Muchas mejoras en el código.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -305,7 +304,7 @@
     <string name="flt_tag_transsexual">Transexual</string>
     <string name="flt_tag_vampire">Vampiros</string>
     <string name="flt_tag_slice_of_life">Vida Cotidiana</string>
-    <string name="flt_tag_collection"></string>
+    <string name="flt_tag_collection">Colección</string>
     <string name="flt_category_hot">Popular</string>
     <string name="flt_category_new">Nueva</string>
     <string name="batoto_lang_all">Todo</string>
@@ -322,7 +321,7 @@
     <string name="flt_category">Categoría</string>
     <string name="flt_category_all">Todo</string>
     <string name="flt_demographic">Demografía</string>
-    <string name="flt_domain"></string>
+    <string name="flt_domain">Domain</string>
     <string name="flt_genre">Género</string>
     <string name="flt_order">Orden</string>
     <string name="flt_order_alpha">Alfabético</string>
@@ -336,7 +335,7 @@
     <string name="flt_order_last_update">Última actulización</string>
     <string name="flt_order_newest">Nuevos</string>
     <string name="flt_order_numchapters">Número de capítulos</string>
-    <string name="flt_order_rating"></string>
+    <string name="flt_order_rating">Rating</string>
     <string name="flt_order_similar">Similar</string>
     <string name="flt_order_title">Título</string>
     <string name="flt_order_views">Vistas</string>
