@@ -148,6 +148,7 @@ class NineManga extends ServerBase {
                 Cookie.parse(url, "__utmz=128769555." + aTime
                         + ".1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); Domain=ninemanga.com")
         ));
+        cookieInit = true;
     }
 
     @Override
@@ -214,7 +215,7 @@ class NineManga extends ServerBase {
                 + page + ".html"));
         data = getFirstMatch(PATTERN_IMAGE, data,
                 context.getString(R.string.server_failed_loading_image));
-        if (data.contains("//")) {
+        if (data.contains("////")) {
             throw new Exception(context.getString(R.string.server_failed_loading_image));
         }
         return data;
@@ -290,7 +291,7 @@ class NineManga extends ServerBase {
      * @throws Exception if an error occurred
      */
     private Navigator getNavigatorWithNeededHeader() throws Exception {
-        if (cookieInit) {
+        if (!cookieInit) {
             generateNeededCookie();
         }
         Navigator nav = Navigator.getInstance();

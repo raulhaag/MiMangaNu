@@ -4,10 +4,13 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +26,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.mimanganu.MessageActivity;
@@ -150,13 +154,13 @@ public class UpdateUtil {
                     Response response = client.newCall(new Request.Builder().url(url).build()).execute();
                     InputStream inputStream = response.body().byteStream();
                     FileOutputStream outputStream = new FileOutputStream(UPDATE_FILE_CACHE);
-                    long lenghtOfFile = response.body().contentLength();
+                    long lengthOfFile = response.body().contentLength();
                     int count;
                     byte data[] = new byte[1024 * 6];
                     long total = 0;
                     while ((count = inputStream.read(data)) != -1) {
                         total += count;
-                        int tprog = (int) ((total * 100) / lenghtOfFile);
+                        int tprog = (int) ((total * 100) / lengthOfFile);
                         if (tprog > prog) {
                             prog = tprog;
                             activity.runOnUiThread(new Runnable() {
@@ -174,7 +178,7 @@ public class UpdateUtil {
                     }
                     outputStream.close();
                     inputStream.close();
-                    activity.startActivity(getUpdateIntent());
+                    activity.startActivity(getUpdateIntent(activity));
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -197,9 +201,15 @@ public class UpdateUtil {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private static Intent getUpdateIntent() {
+    private static Intent getUpdateIntent(Context context) {
+        Uri contentUri = FileProvider.getUriForFile(context, "ar.rulosoft.provider", UPDATE_FILE_CACHE);
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(UPDATE_FILE_CACHE), "application/vnd.android.package-archive");
+        intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+        for (ResolveInfo resolveInfo : resInfoList) {
+            String packageName = resolveInfo.activityInfo.packageName;
+            context.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
         return intent;
     }
 
