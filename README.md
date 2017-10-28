@@ -34,6 +34,14 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.73:
+* Hotfix NineManga.
+* Agregado FileProvider para nougat o superior.
+
+Changes in v1.73:
+* Hotfix NineManga.
+* Add FileProvider for nougat or greater.
+
 Cambios en v1.72:
 * Todos los servidores funcionando al 28/10/2017.
 * Muchas mejoras en el código.

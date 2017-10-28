@@ -178,7 +178,7 @@ public class UpdateUtil {
                     }
                     outputStream.close();
                     inputStream.close();
-                    activity.startActivity(getUpdateIntent(activity));
+                    activity.startActivity(getAndPrepareUpdateIntent(activity));
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -201,7 +201,7 @@ public class UpdateUtil {
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private static Intent getUpdateIntent(Context context) {
+    private static Intent getAndPrepareUpdateIntent(Context context) {
         Uri contentUri = FileProvider.getUriForFile(context, "ar.rulosoft.provider", UPDATE_FILE_CACHE);
         Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
