@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -198,38 +199,22 @@ class MangaEden extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            setExtra(chapter);
-        }
-        return chapter.getExtra().split("\\|")[page];
-    }
-
-    private int setExtra(Chapter chapter) throws Exception {
-        int pages = 0;
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        Pattern pattern = Pattern.compile("fs\":\\s*\"(.+?)\"", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(source);
-        String images = "";
-        while (matcher.find()) {
-            pages++;
-            images = images + "|" + "http:" + matcher.group(1);
-        }
-        chapter.setExtra(images);
-        return pages;
+        assert chapter.getExtra() != null;
+        return "http:" + chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            chapter.setPages(setExtra(chapter));
-        } else {
-            chapter.setPages(0);
+        if (chapter.getPages() == 0) {
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+            ArrayList<String> images = getAllMatch("fs\":\\s*\"(.+?)\"", source);
+
+            if (images.isEmpty()) {
+                throw new Exception(context.getString(R.string.server_failed_loading_chapter));
+            }
+            chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
     }
 

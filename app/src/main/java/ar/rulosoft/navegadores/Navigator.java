@@ -37,7 +37,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 /**
  * @author Raul, nulldev, xtj-9182
@@ -47,13 +46,24 @@ public class Navigator {
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
-    public static Navigator navigator;
     private static CookieJar cookieJar;
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
 
-    public Navigator(Context context) throws Exception {
+    private static Navigator instance;
+    public static synchronized Navigator getInstance() {
+        if (Navigator.instance == null) {
+            throw new NullPointerException("Navigator has no instance with a valid context.");
+        }
+        return Navigator.instance;
+    }
+    public static synchronized Navigator initialiseInstance(Context context) throws Exception {
+        Navigator.instance = new Navigator(context);
+        return Navigator.instance;
+    }
+
+    private Navigator(Context context) throws Exception {
         if (httpClient == null) {
             TrustManager[] trustManagers = getTrustManagers(context);
             SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -68,7 +78,6 @@ public class Navigator {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .cookieJar(cookieJar)
                     .build();
-
         }
     }
 
@@ -92,7 +101,6 @@ public class Navigator {
 
     public void setCookieJar(CookieJar cookieJar) {
         httpClient = new OkHttpClientConnectionChecker.Builder()
-                //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
                 .addInterceptor(new CFInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -100,6 +108,10 @@ public class Navigator {
                 .cookieJar(cookieJar)
                 .build();
         Navigator.cookieJar = cookieJar;
+    }
+
+    public void clearCookieJar(Context context) {
+        cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
     }
 
     public String get(String web) throws Exception {
@@ -118,55 +130,6 @@ public class Navigator {
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
-        }
-    }
-
-    public String getWithTimeout(String web) throws Exception {
-        return this.getWithTimeout(web, "", connectionTimeout, writeTimeout, readTimeout);
-    }
-
-    public String getWithTimeout(String web, String referer) throws Exception {
-        return this.getWithTimeout(web, referer, connectionTimeout, writeTimeout, readTimeout);
-    }
-
-    private String getWithTimeout(String web, String referer, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
-        // copy will share the connection pool with httpclient
-        // NEVER create new okhttp clients that aren't sharing the same connection pool
-        // see: https://github.com/square/okhttp/issues/2636
-        OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
-        if (!referer.isEmpty()) {
-            addHeader("Referer", referer);
-        }
-
-        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-        int i = 0;
-        int timeout = 250;
-        while (!response.isSuccessful()) {
-            Log.i("Nav", "source is empty, waiting for " + timeout + " ms before retrying ...");
-            i++;
-            Thread.sleep(timeout);
-            response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-            if (i < 3)
-                timeout += 250;
-            else
-                timeout += 500;
-            if (i == 5) {
-                Log.i("Nav", "couldn't get a source from " + web + " :(");
-                break;
-            }
-        }
-        if (response.isSuccessful()) {
-            if (timeout > 250)
-                Log.i("Nav", "timeout of " + timeout + " ms worked got a source");
             return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
@@ -223,6 +186,7 @@ public class Navigator {
     public String get(String web, String referer, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
@@ -258,6 +222,7 @@ public class Navigator {
     public String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
         addHeader("Referer", referer);
@@ -378,22 +343,7 @@ public class Navigator {
         parameters.add(new Parameter(key, value));
     }
 
-    public HashMap<String, String> getFormParams(String url) throws Exception {
-        String source = this.get(url);
-        HashMap<String, String> ParametrosForm = new HashMap<>();
-        Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>", Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        while (m.find()) {
-            Pattern p1 = Pattern.compile("<[I|i]nput type=[^ ]* name=['|\"]([^\"']*)['|\"] value=['|\"]([^'\"]*)['|\"]", Pattern.DOTALL);
-            Matcher m1 = p1.matcher(m.group());
-            while (m1.find()) {
-                ParametrosForm.put(m1.group(1), m1.group(2));
-            }
-        }
-        return ParametrosForm;
-    }
-
-    public Headers getHeaders() {
+    private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT);//this is used all the time
         for (Parameter p : headers) {
@@ -423,13 +373,8 @@ public class Navigator {
         return httpClient;
     }
 
-    public void dropAllCalls() {
-        httpClient.dispatcher().cancelAll();
-    }
-
-
     //Explained on https://developer.android.com/training/articles/security-ssl.html
-    public TrustManager[] getTrustManagers(Context context) {
+    private TrustManager[] getTrustManagers(Context context) {
         try {
             //get system certs
             KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -438,17 +383,16 @@ public class Navigator {
             keyStore_n.load(null, null);
             Enumeration<String> aliases = keyStore.aliases();
             //creating a copy because original can't be modified
-            while (aliases.hasMoreElements())
-            {
+            while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
                 java.security.cert.X509Certificate cert = (java.security.cert.X509Certificate) keyStore.getCertificate(alias);
                 keyStore_n.setCertificateEntry(alias, cert);
             }
             //then add my key ;-P
-            keyStore_n.setCertificateEntry("mangahereco", loadCertificateFromRaw(R.raw.mangahereco,context));
-            keyStore_n.setCertificateEntry("mangafoxme", loadCertificateFromRaw(R.raw.mangafoxme,context));
+            keyStore_n.setCertificateEntry("mangahereco", loadCertificateFromRaw(R.raw.mangahereco, context));
+            keyStore_n.setCertificateEntry("mangafoxme", loadCertificateFromRaw(R.raw.mangafoxme, context));
             keyStore_n.setCertificateEntry("mangaherecoImages", loadCertificateFromRaw(R.raw.mangaherecoimages, context));
-            keyStore_n.setCertificateEntry("mangatowncom", loadCertificateFromRaw(R.raw.mangatowncom,context));
+            keyStore_n.setCertificateEntry("mangatowncom", loadCertificateFromRaw(R.raw.mangatowncom, context));
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore_n);
             return tmf.getTrustManagers();
@@ -458,7 +402,7 @@ public class Navigator {
         return null;
     }
 
-    public Certificate loadCertificateFromRaw(int rawId, Context context) {
+    private Certificate loadCertificateFromRaw(int rawId, Context context) {
         Certificate certificate = null;
         InputStream certInput = null;
         try {
@@ -478,34 +422,4 @@ public class Navigator {
         }
         return certificate;
     }
-
-
 }
-
-/**
- * Adds user agent to any client the interceptor is attached to.
- */
-class UserAgentInterceptor implements Interceptor {
-
-    private String userAgent;
-
-    public UserAgentInterceptor(String userAgent) {
-        this.userAgent = userAgent;
-    }
-
-    @Override
-    public Response intercept(Chain chain) throws IOException {
-        return chain.proceed(chain.request().newBuilder()
-                .header("User-Agent", userAgent)
-                .build());
-    }
-
-    public String getUserAgent() {
-        return userAgent;
-    }
-
-    public void setUserAgent(String userAgent) {
-        this.userAgent = userAgent;
-    }
-}
-

@@ -54,7 +54,7 @@ public class UpdateUtil {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
+                        final OkHttpClient client = Navigator.getInstance().getHttpClient().newBuilder()
                                 .connectTimeout(3, TimeUnit.SECONDS)
                                 .readTimeout(3, TimeUnit.SECONDS)
                                 .build();
@@ -143,7 +143,7 @@ public class UpdateUtil {
                 try {
                     UPDATE_FILE_CACHE = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
                     if (UPDATE_FILE_CACHE.exists()) UPDATE_FILE_CACHE.delete();
-                    final OkHttpClient client = Navigator.navigator.getHttpClient().newBuilder()
+                    final OkHttpClient client = Navigator.getInstance().getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();
@@ -219,10 +219,8 @@ public class UpdateUtil {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                if (Navigator.navigator == null)
-                    Navigator.navigator = new Navigator(context);
-                Navigator.navigator.flushParameter();
-                String source = Navigator.navigator.get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
+                Navigator.getInstance().flushParameter();
+                String source = Navigator.getInstance().get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
                 final JSONObject jsonObject = new JSONObject(source);
 
                 int onlineVersionMinor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));

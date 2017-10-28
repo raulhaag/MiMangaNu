@@ -14,7 +14,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class HeavenManga extends ServerBase {
+class HeavenManga extends ServerBase {
 
     private static String[] generos = new String[]{
             "Todo", "Accion", "Adulto", "Aventura", "Artes Marciales",
@@ -72,7 +72,7 @@ public class HeavenManga extends ServerBase {
             "v.html", "w.html", "x.html", "y.html", "z.html"
     };
 
-    public HeavenManga(Context context) {
+    HeavenManga(Context context) {
         super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.heavenmanga);
@@ -109,51 +109,40 @@ public class HeavenManga extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String source = getNavigatorAndFlushParameters().get(manga.getPath());
         // portada
-        String portada = getFirstMatchDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, "");
-        manga.setImages(portada);
+        manga.setImages(getFirstMatchDefault("<meta property=\"og:image\" content=\"(.+?)\"", source, ""));
 
         // sinopsis
-        String sinopsis = getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, context.getString(R.string.nodisponible));
-        manga.setSynopsis(sinopsis.replaceAll("<.+?>", ""));
+        manga.setSynopsis(getFirstMatchDefault("<div class=\"sinopsis\">(.+?)<div", source, context.getString(R.string.nodisponible)));
 
         // estado no soportado
 
+        // autor no soportado
+        manga.setAuthor(context.getString(R.string.nodisponible));
+
         // genero
-        manga.setGenre((Util.getInstance().fromHtml(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, "")).toString().trim()));
+        manga.setGenre(getFirstMatchDefault("nero\\(s\\) :(.+?)</div>", source, context.getString(R.string.nodisponible)));
 
         // capitulos
         Pattern p = Pattern.compile("<li><span class=\"capfec\">.+?><a href=\"(http://heavenmanga.com/.+?)\" title=\"(.+?)\"", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
-        ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
-            chapters.add(0, new Chapter(matcher.group(2), matcher.group(1)));
+            Chapter chapter = new Chapter(matcher.group(2), matcher.group(1));
+            chapter.addChapterFirst(manga);
         }
-        if (chapters.size() > 0)
-            manga.setChapters(chapters);
-        else
-            throw new Exception("Error al cargar capitulos");
-
-
-    }
-
-    @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        if (chapter.getExtra() == null)
-            try {
-                setExtra(chapter);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        return chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/"))+ "/" + page;
+        if (manga.getChapters().isEmpty()) {
+            throw new Exception(context.getString(R.string.server_failed_loading_chapter));
+        }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source =getFirstMatch("<center>([\\s\\S]+)<center>",
-                getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page)),"Error al obtener ");
-        String web = getFirstMatch("<img src=\"([^\"]+)", source, "Error al obtener imagen");
-        Log.e("Image" + page, web);
-        return web;
+        assert chapter.getExtra() != null;
+        String web = getNavigatorAndFlushParameters().get(chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/")) + "/" + page);
+        String source = getFirstMatch("<center>([\\s\\S]+)<center>", web,
+                context.getString(R.string.server_failed_loading_image));
+        return getFirstMatch(
+                "<img src=\"([^\"]+)", source,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
@@ -163,18 +152,20 @@ public class HeavenManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null)
-            setExtra(chapter);
-        String source = getNavigatorAndFlushParameters().get(chapter.getExtra());
-        String nop = getFirstMatch("(\\d+)</option></select>", source, "Error al cargar paginas");
-        chapter.setPages(Integer.parseInt(nop));
-    }
-
-    private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String web = getFirstMatch("<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>",
-                source, "Error al obtener página");
-        chapter.setExtra(web);
+        if(chapter.getPages() == 0) {
+            if (chapter.getExtra() == null) {
+                String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+                String web = getFirstMatch(
+                        "<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source,
+                        context.getString(R.string.server_failed_loading_chapter));
+                chapter.setExtra(web);
+            }
+            String source = getNavigatorAndFlushParameters().get(chapter.getExtra());
+            String nop = getFirstMatch(
+                    "(\\d+)</option></select>", source,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(nop));
+        }
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {

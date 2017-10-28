@@ -59,7 +59,7 @@ public class SingleDownload implements Runnable {
                     OkHttpClient copy;
                     Request request;
                     Request.Builder rBuilder;
-                    copy = Navigator.navigator.getHttpClient().newBuilder()
+                    copy = Navigator.getInstance().getHttpClient().newBuilder()
                             .connectTimeout(3, TimeUnit.SECONDS)
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();

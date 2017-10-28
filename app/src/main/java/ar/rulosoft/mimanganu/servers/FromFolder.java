@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -79,25 +80,19 @@ public class FromFolder extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return chapter.getPath() + chapter.getExtra().split("\\|")[page + 1];
+        assert chapter.getExtra() != null;
+        return chapter.getPath() + chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        ArrayList<String> images = Util.getInstance().imageList(chapter.getPath());
-        chapter.setPages(images.size());
-        Collections.sort(images, NUMBERS_ASC);
-        String save = "";
-        for (String image : images) {
-            save = save + "|" + image;
+        if(chapter.getPages() == 0) {
+            ArrayList<String> images = Util.getInstance().imageList(chapter.getPath());
+            Collections.sort(images, NUMBERS_ASC);
+            chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
-        chapter.setExtra(save);
     }
 
     @Override

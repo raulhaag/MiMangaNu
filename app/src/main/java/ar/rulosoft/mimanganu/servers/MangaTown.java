@@ -171,35 +171,26 @@ class MangaTown extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
-        if (page == 1) {
-            return chapter.getPath();
-        }
-        else {
-            return chapter.getPath() + page + ".html";
-        }
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
-        return getFirstMatch(PATTERN_IMAGE, data, "Error: failed to locate page image link");
+        String web = chapter.getPath();
+        if (page > 1) {
+            web += page + ".html";
+        }
+        String data = getNavigatorAndFlushParameters().get(web);
+        return getFirstMatch(
+                PATTERN_IMAGE, data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data, pages;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        pages = getFirstMatch(PATTERN_PAGES, data, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    PATTERN_PAGES, data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override

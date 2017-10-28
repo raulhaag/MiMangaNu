@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ class NineManga extends ServerBase {
             "\\d+/(\\d+)</option>[\\s]*</select>";
     @SuppressWarnings("WeakerAccess")
     protected String PATTERN_IMAGE =
-            "src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"";
+            "class=\"pic_download\" href=\"(http://[^/]+/+comics/[^\"]+)\"";
     @SuppressWarnings("WeakerAccess")
     protected int[] fltGenre = {
             R.string.flt_tag_4_koma,
@@ -193,47 +194,29 @@ class NineManga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-
-        if (page == 1) {
-            return chapter.getPath();
-        } else {
-            return chapter.getPath().replace(".html", "-" + page + ".html");
-        }
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if ((chapter.getExtra() == null) || (chapter.getExtra().isEmpty())) {
-            setExtra(chapter);
-        }
-        String[] images = chapter.getExtra().split("\\|");
-        return images[page];
-    }
-
-    private void setExtra(Chapter chapter) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + chapter.getPages() + "-1.html"));
-        Pattern p = Pattern.compile(PATTERN_IMAGE, Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        String images = "";
-        while (m.find()) {
-            images = images + "|" + m.group(1);
-        }
-        chapter.setExtra(images);
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data, pages;
-        data = getNavigatorWithNeededHeader().get(chapter.getPath());
-        pages = getFirstMatch(PATTERN_PAGES, data, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorWithNeededHeader().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    PATTERN_PAGES, data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            if(chapter.getExtra() == null) {
+                String source = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-" + pages + "-1.html"));
+                ArrayList<String> images = getAllMatch(PATTERN_IMAGE, source);
+
+                if (images.isEmpty()) {
+                    throw new Exception(context.getString(R.string.server_failed_loading_chapter));
+                }
+                chapter.setExtra(TextUtils.join("|", images));
+            }
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override
@@ -287,25 +270,25 @@ class NineManga extends ServerBase {
     }
 
     /**
-     * Helper function to generate the Cookie needed by some webpages (like NineManga).
+     * Helper function to generate the Cookie needed by NineManga.
      */
     private static void generateNeededCookie() {
         cookie = "__utmz=128769555." + (System.currentTimeMillis() / 1000) + ".1.1.utmcsr=(direct)|utmccn=(direct)|utmcmd=(none); ";
     }
 
     /**
-     * Helper function to get a <code>Navigator</code> instance with additional headers.
+     * Helper function to set up the <code>Navigator</code> with additional headers.
      * Some servers need additional information to be added to the request header in order to work.
      * This function provides such an object.
      *
-     * @return a <code>Navigator object with extended headers</code>
+     * @return           a <code>Navigator</code> object with extended headers
      * @throws Exception if an error occurred
      */
-    public Navigator getNavigatorWithNeededHeader() throws Exception {
+    private Navigator getNavigatorWithNeededHeader() throws Exception {
         if (cookie.isEmpty()) {
             generateNeededCookie();
         }
-        Navigator nav = new Navigator(context);
+        Navigator nav = Navigator.getInstance();
         nav.addHeader("Accept-Language", "es-ES,es;q=0.8,en-US;q=0.5,en;q=0.3");
         nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         nav.addHeader("Cookie", cookie);

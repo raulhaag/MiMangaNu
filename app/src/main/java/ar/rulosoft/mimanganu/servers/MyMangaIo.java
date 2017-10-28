@@ -174,29 +174,22 @@ class MyMangaIo extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-        return chapter.getPath() + page;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data;
-        data = getNavigatorWithNeededHeader().get(getPagesNumber(chapter, page));
-        return getFirstMatch("<img src=\"([^\"]+)\"",
-                data, "Error: failed to get the link to the image");
+        String data = getNavigatorWithNeededHeader().get(chapter.getPath() + page);
+        return getFirstMatch(
+                "<img src=\"([^\"]+)\"", data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String source = getNavigatorWithNeededHeader().get(chapter.getPath());
-        String pages = getFirstMatch("<span>sur (\\d+)</span>", source, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            String source = getNavigatorWithNeededHeader().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    "<span>sur (\\d+)</span>", source,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) throws Exception {
@@ -263,7 +256,7 @@ class MyMangaIo extends ServerBase {
     }
 
     private Navigator getNavigatorWithNeededHeader() throws Exception {
-        Navigator nav = new Navigator(context);
+        Navigator nav = Navigator.getInstance();
         nav.addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         return nav;
     }

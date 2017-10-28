@@ -184,52 +184,41 @@ class KissManga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath();
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            setExtra(chapter);
-        }
+        assert chapter.getExtra() != null;
         return chapter.getExtra().split("\\|")[page];
-    }
-
-    public void setExtra(Chapter chapter) throws Exception {
-        int pages = 0;
-        String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath().replaceAll("[^!-z]+", ""));
-        String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");
-        String lo = getNavigatorAndFlushParameters().get(HOST + "/Scripts/lo.js");
-        try (Duktape duktape = Duktape.create()) {
-            duktape.evaluate(ca);
-            duktape.evaluate(lo);
-            Pattern p = Pattern.compile("javascript\">(.+?)<", Pattern.DOTALL);
-            Matcher m = p.matcher(source);
-            while (m.find()) {
-                if (m.group(1).contains("CryptoJS")) {
-                    duktape.evaluate(m.group(1));
-                }
-            }
-
-            p = Pattern.compile("lstImages.push\\((.+?\\))\\)", Pattern.DOTALL);
-            m = p.matcher(source);
-            String images = "";
-            String image;
-            while (m.find()) {
-                pages++;
-                image = (String) duktape.evaluate(m.group(1) + ".toString()");
-                images = images + "|" + image;
-            }
-            chapter.setExtra(images);
-        }
-        chapter.setPages(pages);
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            setExtra(chapter);
+        if (chapter.getPages() == 0) {
+            int pages = 0;
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath().replaceAll("[^!-z]+", ""));
+            String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");
+            String lo = getNavigatorAndFlushParameters().get(HOST + "/Scripts/lo.js");
+            try (Duktape duktape = Duktape.create()) {
+                duktape.evaluate(ca);
+                duktape.evaluate(lo);
+                Pattern p = Pattern.compile("javascript\">(.+?)<", Pattern.DOTALL);
+                Matcher m = p.matcher(source);
+                while (m.find()) {
+                    if (m.group(1).contains("CryptoJS")) {
+                        duktape.evaluate(m.group(1));
+                    }
+                }
+
+                p = Pattern.compile("lstImages.push\\((.+?\\))\\)", Pattern.DOTALL);
+                m = p.matcher(source);
+                String images = "";
+                String image;
+                while (m.find()) {
+                    pages++;
+                    image = (String) duktape.evaluate(m.group(1) + ".toString()");
+                    images = images + "|" + image;
+                }
+                chapter.setExtra(images);
+            }
+            chapter.setPages(pages);
         }
     }
 
@@ -238,7 +227,7 @@ class KissManga extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(KISSMANGA, m.group(3), m.group(2), false);
+            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
         }

@@ -44,6 +44,11 @@ class SubManga extends ServerBase {
     }
 
     @Override
+    public boolean hasSearch() {
+        return false;
+    }
+
+    @Override
     public ArrayList<Manga> search(String term) throws Exception {
         return null;
     }
@@ -86,25 +91,27 @@ class SubManga extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath() + "/" + page;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
-        data = getFirstMatchDefault("<img[^>]+src=\"(http:\\/\\/.+?)\"", data, "");
-        return data;
+        String data = getNavigatorAndFlushParameters().get(chapter.getPath() + "/" + page);
+        return getFirstMatch(
+                "<img[^>]+src=\"(http:\\/\\/.+?)\"", data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        chapter.setPages(Integer.parseInt(getFirstMatch("(\\d+)<\\/option><\\/select>", data, "Error: failed to get number of pages")));
-        if (chapter.getExtra() == null || chapter.getExtra().length() < 2) {
-            data = getFirstMatchDefault("<img src=\"(http://.+?)\"", data, null);
-            chapter.setExtra(data.substring(0, data.length() - 4));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    "(\\d+)</option></select>", data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            if (chapter.getExtra() == null) {
+                data = getFirstMatch(
+                        "<img src=\"(http://.+?)\"", data,
+                        context.getString(R.string.server_failed_loading_chapter));
+                chapter.setExtra(data.substring(0, data.length() - 4));
+            }
+            chapter.setPages(Integer.parseInt(pages));
         }
     }
 }

@@ -174,29 +174,22 @@ class MangaHere extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
-        return chapter.getPath() + page + ".html";
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(getPagesNumber(chapter, page));
-        return getFirstMatch(PATTERN_IMAGE, data, "Error: failed to get the link to the image");
+        String data = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
+        return getFirstMatch(
+                PATTERN_IMAGE, data,
+                context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data;
-        data = getNavigatorAndFlushParameters().get(chapter.getPath());
-        String pages = getFirstMatch(PATTERN_LAST, data, "Error: failed to get the number of pages");
-        chapter.setPages(Integer.parseInt(pages));
+        if(chapter.getPages() == 0) {
+            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
+            String pages = getFirstMatch(
+                    PATTERN_LAST, data,
+                    context.getString(R.string.server_failed_loading_page_count));
+            chapter.setPages(Integer.parseInt(pages));
+        }
     }
 
     @Override

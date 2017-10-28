@@ -210,27 +210,14 @@ class ReadMangaToday extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        chapterInit(chapter);
-
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         assert chapter.getExtra() != null;
         return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getExtra() == null) {
+        if(chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath() + "/all-pages");
             if (source.equals("400")) {
                 // ReadMangaToday returns 400 Bad Request sometimes
@@ -241,7 +228,7 @@ class ReadMangaToday extends ServerBase {
             ArrayList<String> images = getAllMatch("<img src=\"([^\"]+)\" class=\"img-responsive-2\">", source);
 
             if (images.isEmpty()) {
-                throw new Exception("No image links found for this chapter.");
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
             chapter.setExtra(TextUtils.join("|", images));
             chapter.setPages(images.size());

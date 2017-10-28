@@ -229,35 +229,22 @@ class ReadComicOnline extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return chapter.getPath();
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        chapterInit(chapter);
-
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         assert chapter.getExtra() != null;
         return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null) {
+        if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             ArrayList<String> images = getAllMatch("lstImages.push\\(\"(.+?)\"", source);
 
             if(images.isEmpty()) {
-                throw new Exception("No image links found for this chapter.");
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
-            chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
     }
 

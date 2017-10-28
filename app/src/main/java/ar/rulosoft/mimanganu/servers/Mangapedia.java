@@ -197,8 +197,7 @@ class Mangapedia extends ServerBase {
         mBodyBuilder.addFormDataPart("sortBy", valSortBy[filters[3][0]]);
         mBodyBuilder.addFormDataPart("sortOrder", valSortOrder[filters[4][0]]);
 
-        ArrayList<Manga> mangas = getMangasString(nav.post(web, mBodyBuilder.build()));
-        return mangas;
+        return getMangasString(nav.post(web, mBodyBuilder.build()));
     }
 
     private ArrayList<Manga> getMangasString(String data) {
@@ -274,20 +273,7 @@ class Mangapedia extends ServerBase {
     }
 
     @Override
-    public String getPagesNumber(Chapter chapter, int page) {
-        return null;
-    }
-
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        chapterInit(chapter);
-
-        if (page < 1) {
-            page = 1;
-        }
-        if (page > chapter.getPages()) {
-            page = chapter.getPages();
-        }
         assert chapter.getExtra() != null;
         return chapter.getExtra().split("\\|")[page - 1];
     }
@@ -299,10 +285,10 @@ class Mangapedia extends ServerBase {
             ArrayList<String> images = getAllMatch("['|\"](http[s]*://mangapedia.fr/project_code/script/image.php\\?path=.+?)['|\"]", data);
 
             if (images.isEmpty()) {
-                throw new Exception("No image links found for this chapter.");
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
-            chapter.setPages(images.size());
             chapter.setExtra(TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
     }
 

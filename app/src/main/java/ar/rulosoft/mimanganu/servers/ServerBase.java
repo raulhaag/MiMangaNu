@@ -151,44 +151,43 @@ public abstract class ServerBase {
 
     public static final int FROMFOLDER = 1001;
     public static final int RAWSENMANGA = 21;
-    static final int MANGAPANDA = 1;
-    static final int ESMANGAHERE = 3;
-    static final int MANGAHERE = 4;
-    static final int MANGAFOX = 5;
-    static final int SUBMANGA = 6;
-    static final int ESMANGA = 7;
-    static final int HEAVENMANGACOM = 8;
-    static final int STARKANACOM = 9;
-    static final int ESNINEMANGA = 10;
-    static final int LECTUREENLIGNE = 11;
-    static final int KISSMANGA = 12;
-    static final int ITNINEMANGA = 13;
-    static final int TUSMANGAS = 14;
-    static final int MANGAREADER = 15;
-    static final int DENINEMANGA = 16;
-    static final int RUNINEMANGA = 17;
-    static final int MANGATUBE = 18;
-    static final int MANGAEDENIT = 19;
-    static final int MYMANGAIO = 20;
-    static final int TUMANGAONLINE = 22;
-    static final int NINEMANGA = 23;
-    static final int MANGAEDEN = 24;
-    static final int LEOMANGA = 25;
-    static final int BATOTO = 26;
-    static final int BATOTOES = 27;
-    static final int JAPSCAN = 28;
-    static final int READMANGATODAY = 29;
-    static final int TAADD = 30;
-    static final int MANGASTREAM = 31;
-    static final int MANGAKAWAII = 32;
-    static final int KUMANGA = 33;
-    static final int MANGAPEDIA = 34;
-    static final int MANGATOWN = 35;
-
-    static final int READCOMICONLINE = 1000;
-    static final int READCOMICSTV = 1002;
-    static final int GOGOCOMIC = 1003;
-    static final int VIEWCOMIC = 1004;
+    public static final int MANGAPANDA = 1;
+    public static final int ESMANGAHERE = 3;
+    public static final int MANGAHERE = 4;
+    public static final int MANGAFOX = 5;
+    public static final int SUBMANGA = 6;
+    public static final int ESMANGA = 7;
+    public static final int HEAVENMANGACOM = 8;
+    public static final int STARKANACOM = 9;
+    public static final int ESNINEMANGA = 10;
+    public static final int LECTUREENLIGNE = 11;
+    public static final int KISSMANGA = 12;
+    public static final int ITNINEMANGA = 13;
+    public static final int TUSMANGAS = 14;
+    public static final int MANGAREADER = 15;
+    public static final int DENINEMANGA = 16;
+    public static final int RUNINEMANGA = 17;
+    public static final int MANGATUBE = 18;
+    public static final int MANGAEDENIT = 19;
+    public static final int MYMANGAIO = 20;
+    public static final int TUMANGAONLINE = 22;
+    public static final int NINEMANGA = 23;
+    public static final int MANGAEDEN = 24;
+    public static final int LEOMANGA = 25;
+    public static final int BATOTO = 26;
+    public static final int BATOTOES = 27;
+    public static final int JAPSCAN = 28;
+    public static final int READMANGATODAY = 29;
+    public static final int TAADD = 30;
+    public static final int MANGASTREAM = 31;
+    public static final int MANGAKAWAII = 32;
+    public static final int KUMANGA = 33;
+    public static final int MANGAPEDIA = 34;
+    public static final int MANGATOWN = 35;
+    public static final int READCOMICONLINE = 1000;
+    public static final int READCOMICSTV = 1002;
+    public static final int GOGOCOMIC = 1003;
+    public static final int VIEWCOMIC = 1004;
 
     Context context;
     private String serverName;
@@ -212,7 +211,7 @@ public abstract class ServerBase {
      *
      * @param id      the identifier of the server
      * @param context the context for this object
-     * @return a ServerBase object or a DeadServer object
+     * @return        a <code>ServerBase</code> or a <code>DeadServer</code> object
      */
     public static ServerBase getServer(int id, Context context) {
         ServerBase serverBase;
@@ -323,8 +322,8 @@ public abstract class ServerBase {
      * @return the Navigator object
      */
     public static Navigator getNavigatorAndFlushParameters() {
-        Navigator.navigator.flushParameter();
-        return Navigator.navigator;
+        Navigator.getInstance().flushParameter();
+        return Navigator.getInstance();
     }
 
     /**
@@ -336,7 +335,7 @@ public abstract class ServerBase {
      * @param source   the string to check the pattern for
      * @param errorMsg the descriptive error message string for the Exception raised if not match
      *                 could be found
-     * @return the first match group
+     * @return         the first match group
      */
     public static String getFirstMatch(String patron, String source, String errorMsg) throws Exception {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
@@ -354,7 +353,7 @@ public abstract class ServerBase {
      * context.
      *
      * @param context the context for this object
-     * @return an array containing ServerBase instances - for each registered server
+     * @return        an array containing ServerBase instances - for each registered server
      */
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
@@ -397,8 +396,9 @@ public abstract class ServerBase {
      * <p>
      * This function shall only be called if <code>hasList</code> returns <code>true</code>.
      *
-     * @return an ArrayList of Manga objects or <code>null</code> if unsupported.
-     * @throws Exception if an error occurred
+     * @return           an ArrayList of Manga objects or <code>null</code> if unsupported.
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      */
     @Nullable
     public abstract ArrayList<Manga> getMangas() throws Exception;
@@ -408,9 +408,10 @@ public abstract class ServerBase {
      * <p>
      * This function shall only be called if <code>hasSearch</code> returns <code>true</code>.
      *
-     * @param term a term to search for
-     * @return an ArrayList of Manga objects or <code>null</code> if unsupported.
-     * @throws Exception if an error occurred
+     * @param term       a term to search for
+     * @return           an ArrayList of Manga objects or <code>null</code> if unsupported.
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      */
     public abstract ArrayList<Manga> search(String term) throws Exception;
 
@@ -419,7 +420,8 @@ public abstract class ServerBase {
      *
      * @param manga       the Manga to find chapters for
      * @param forceReload force new retrieval of chapter information
-     * @throws Exception if an error occurred
+     * @throws Exception  if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      * @see Chapter
      */
     public abstract void loadChapters(Manga manga, boolean forceReload) throws Exception;
@@ -437,40 +439,49 @@ public abstract class ServerBase {
      *
      * @param manga       the Manga to find information for
      * @param forceReload force new retrieval of Manga information
-     * @throws Exception if an error occurred
+     * @throws Exception  if an error occurred. The exception is thrown back to UI, so its message
+     *                    should be a translatable string.
      * @see Manga
      * @see Chapter
      */
     public abstract void loadMangaInformation(Manga manga, boolean forceReload) throws Exception;
 
     /**
-     * Returns the URL for the given page in a Chapter.
-     * Some sanity checking should be done in the override function, like non-negativity and that
-     * page lies within the available page numbers of the given Chapter.
-     *
-     * @param chapter a Chapter object to get the page URL for
-     * @param page    the page number
-     * @return the URL to the given page of the Chapter
-     */
-    public abstract String getPagesNumber(Chapter chapter, int page);
-
-    /**
      * Returns the URL for the image on a given Chapter page.
-     * Some sanity checking should be done in the override function, like non-negativity and that
-     * page lies within the available page numbers of the given Chapter.
+     * It must be ensured, that the <code>Chapter</code> object has been initialised - this
+     * means, that at least the number of pages is set properly. This is ensured by calling
+     * <code>chapterInit</code> before loading any images from a given chapter.
      *
-     * @param chapter a Chapter object to get the page image URL for
-     * @param page    the page number starting at page 1 (NOT zero based)
-     * @return the URL to the image on the given page of the Chapter
-     * @throws Exception if an error occurred
+     * If the <code>page</code> index lies outside the valid range, an exception is raised.
+     * Therefore the calling function must ensure, that the requested page is within the interval
+     * [1 .. <code>chapter.getPages()</code>] (boundaries included).
+     *
+     * Be aware, that the page numbers start at 1 - not at 0. This is mostly relevant if the page
+     * number is used as an array index.
+     *
+     * @param chapter    a Chapter object to get the page image URL for
+     * @param page       the page number starting at page 1 (NOT zero based)
+     * @return           the URL to the image on the given page of the Chapter
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      */
     public abstract String getImageFrom(Chapter chapter, int page) throws Exception;
 
     /**
-     * Initialise the Chapter information, basically the number of pages.
+     * Initialise the <code>Chapter</code> information, like the number of pages.
      *
-     * @param chapter the Chapter object to do the initialisation for
-     * @throws Exception if an error occurred
+     * For servers listing all images on one page, the image information can be extracted in this
+     * function and stored in the <code>Chapter</code> object via its <code>setExtra</code>
+     * function.
+     *
+     * Also it has to be ensured, that <code>chapterInit</code> is called before
+     * <code>getImageFrom</code> in order to have one time information already fetched and to avoid
+     * double work. The latter has to be ensured in this function by checking if the number of
+     * pages stored in the <code>Chapter</code> object is bigger than zero.
+     *
+     * @param chapter    the <code>Chapter</code> object to do the initialisation for
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      */
     public abstract void chapterInit(Chapter chapter) throws Exception;
 
@@ -487,8 +498,9 @@ public abstract class ServerBase {
      *
      * @param filters    the filter set to use
      * @param pageNumber the result page number for a given filter
-     * @return a list of Manga matching the filter criteria
-     * @throws Exception if an error occurred
+     * @return           a list of Manga matching the filter criteria
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      */
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         return new ArrayList<>();
@@ -514,11 +526,12 @@ public abstract class ServerBase {
      * <p>
      * All detected changes are also stored in the database.
      *
-     * @param id      the Manga id to check new chapters for
-     * @param context the Context object to use for checking
-     * @param fast    <code>true</code> to perform a fast check (first 20 chapters only)
-     * @return the count of new chapters found
-     * @throws Exception if an error occurred
+     * @param id         the Manga id to check new chapters for
+     * @param context    the Context object to use for checking
+     * @param fast       <code>true</code> to perform a fast check (first 20 chapters only)
+     * @return           the count of new chapters found
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      */
     public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {
         int returnValue;
@@ -674,9 +687,9 @@ public abstract class ServerBase {
     /**
      * Returns a list of matches for a given pattern and string.
      *
-     * @param patron the pattern to search for
-     * @param source the string to search
-     * @return a list of matches (may be empty)
+     * @param patron     the pattern to search for
+     * @param source     the string to search
+     * @return           a list of matches (may be empty)
      * @throws Exception if an error occurred
      */
     ArrayList<String> getAllMatch(String patron, String source) throws Exception {
@@ -695,7 +708,7 @@ public abstract class ServerBase {
      * @param patron   the pattern to search for
      * @param source   the string to search
      * @param mDefault the default string to return in case no match was found
-     * @return the first match or the value defined by mDefault
+     * @return         the first match or the value defined by mDefault
      */
     public String getFirstMatchDefault(String patron, String source, String mDefault) {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
@@ -799,9 +812,9 @@ public abstract class ServerBase {
     /**
      * Tests if the given login data is working.
      *
-     * @param user   the user to log in
-     * @param passwd the password to use for logging in
-     * @return <code>true</code> if the login succeeded, <code>false</code> otherwise
+     * @param user       the user to log in
+     * @param passwd     the password to use for logging in
+     * @return           <code>true</code> if the login succeeded, <code>false</code> otherwise
      * @throws Exception if an error occurred
      */
     public boolean testLogin(String user, String passwd) throws Exception {
@@ -812,7 +825,7 @@ public abstract class ServerBase {
      * Build an array of translated strings from an array of resource identifiers.
      *
      * @param resId an array containing the resource identifiers
-     * @return an array of translated strings
+     * @return      an array of translated strings
      */
     String[] buildTranslatedStringArray(int[] resId) {
         String[] result = new String[resId.length];
@@ -828,8 +841,6 @@ public abstract class ServerBase {
     public enum FilteredType {
         VISUAL, TEXT
     }
-
-
 
     class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
