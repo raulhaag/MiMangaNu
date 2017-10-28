@@ -34,6 +34,14 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.72:
+* Todos los servidores funcionando al 28/10/2017.
+* Muchas mejoras en el código.
+
+Changes in v1.72:
+* All servers working 28/10/2017.
+* A lot of improves in the code and rework.
+
 Cambios en v1.71:
 * Agregado MangaTown.
 * Arreglado la búsqueda de MangaHere.
