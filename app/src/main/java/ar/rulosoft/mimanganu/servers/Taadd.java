@@ -242,7 +242,7 @@ class Taadd extends ServerBase {
         if(chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pageNumber = getFirstMatch(
-                    "\">(\\d+)</option>[\\s]*</select>", source,
+                    ">(\\d+)</option>\\s*</select>", source,
                     context.getString(R.string.server_failed_loading_page_count));
             chapter.setPages(Integer.parseInt(pageNumber));
         }
