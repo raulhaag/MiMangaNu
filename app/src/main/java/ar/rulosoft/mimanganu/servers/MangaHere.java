@@ -90,7 +90,7 @@ class MangaHere extends ServerBase {
     private static final String PATTERN_CHAPTERS =
             "<li>[^<]*<span class=\"left\">[^<]*<a class=\"color_0077\" href=\"([^\"]*)\"[^>]*>([^<]*)</a>";
     private static final String PATTERN_AUTHOR =
-            "Author.+?\">(.+?)<";
+            "<li><label>Author\\(s\\):></label>(.+?)</li>";
     private static final String PATTERN_FINISHED =
             "</label>Completed</li>";
     private static final String PATTERN_GENRE =
@@ -156,8 +156,14 @@ class MangaHere extends ServerBase {
             manga.setFinished(data.contains(PATTERN_FINISHED));
             // Author
             manga.setAuthor(getFirstMatchDefault(PATTERN_AUTHOR, data, context.getString(R.string.nodisponible)));
+            if(manga.getAuthor().equals("Unknown")) {
+                manga.setAuthor(context.getString(R.string.nodisponible));
+            }
             // Genre
             manga.setGenre(getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)));
+            if(manga.getGenre().equals("None")) {
+                manga.setGenre(context.getString(R.string.nodisponible));
+            }
             // Chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
