@@ -25,10 +25,9 @@ import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
 
-// TODO fix missing Duktape due to NDK code
-// TODO fix KeyStore issue via shadowing
+// TODO fix KeyStore usage in Navigator with "AndroidCAStore"
 
-// need to specify SDK version for Roboelectric (see targetSdkVersion in app.gradle)
+// need to specify SDK version for Robolectric (see targetSdkVersion in app.gradle)
 @Config(manifest = "../app/src/main/AndroidManifest.xml", sdk = 25)
 @RunWith(RobolectricTestRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -106,7 +105,7 @@ public class TestServers {
         testServer(ServerBase.getServer(ServerBase.LECTUREENLIGNE, context));
     }
 
-    @Test
+    @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_KISSMANGA() throws Exception {
         testServer(ServerBase.getServer(ServerBase.KISSMANGA, context));
     }
@@ -201,7 +200,7 @@ public class TestServers {
         testServer(ServerBase.getServer(ServerBase.MANGASTREAM, context));
     }
 
-    @Test
+    @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_MANGAKAWAII() throws Exception {
         testServer(ServerBase.getServer(ServerBase.MANGAKAWAII, context));
     }
@@ -211,7 +210,7 @@ public class TestServers {
         testServer(ServerBase.getServer(ServerBase.KUMANGA, context));
     }
 
-    @Test
+    @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_MANGAPEDIA() throws Exception {
         testServer(ServerBase.getServer(ServerBase.MANGAPEDIA, context));
     }
@@ -221,7 +220,7 @@ public class TestServers {
         testServer(ServerBase.getServer(ServerBase.MANGATOWN, context));
     }
 
-    @Test
+    @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_READCOMICONLINE() throws Exception {
         testServer(ServerBase.getServer(ServerBase.READCOMICONLINE, context));
     }
