@@ -25,8 +25,8 @@
     <string name="macartodoleido">Marca tutti come letti</string>
     <string name="macartodonoleido">Marca tutti come non letti</string>
     <string name="sentido">Verso</string>
-    <string name="finalizado">Finito.</string>
-    <string name="en_progreso">In corso.</string>
+    <string name="finalizado">Finito</string>
+    <string name="en_progreso">In corso</string>
     <string name="encola">(In coda)</string>
     <string name="descargando">(Scaricando)</string>
     <string name="descargado">(Scaricato)</string>

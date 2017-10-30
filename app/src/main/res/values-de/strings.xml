@@ -33,8 +33,8 @@
     <string name="configuraciones">Einstellungen</string>
     <string name="datosde">Details</string>
     <string name="demaciados_errores">Zu viele Fehler (Download angehalten \n Mögliche Ursachen: \n * Verbindungsfehler \n Ein serverseitiger Fehler \n Ein fehlerhafter Upload, usw. \nBitte später nochmal versuchen.)</string>
-    <string name="descarga_no_leidos">Lade ungelesene</string>
-    <string name="descargarestantes">Lade fehlende</string>
+    <string name="descarga_no_leidos">Lade ungelesene Kapitel</string>
+    <string name="descargarestantes">Lade fehlende Kapitel</string>
     <string name="descargas">Downloads</string>
     <string name="direcctorio_subtitle">Ordner für Downloads festlegen (bereits vorhandene Inhalte müssen manuell in den neuen Ordner verschoben werden, danach die App und ggf. das Gerät neu starten).</string>
     <string name="directorio_title">Ordner auswählen</string>
@@ -47,7 +47,7 @@
     <string name="paused">(Angehalten)</string>
     <string name="esconder_de_galeria_subtitle">Heruntergeladene Bilder nicht in der Galerie anzeigen.</string>
     <string name="escondergaleria">Bilder verbergen</string>
-    <string name="hide_read">Verstecke gelesene</string>
+    <string name="hide_read">Gelesene ausblenden</string>
     <string name="estado">Status</string>
     <string name="filtrar">Filter</string>
     <string name="finalizado">Abgeschlossen</string>

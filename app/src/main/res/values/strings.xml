@@ -40,7 +40,7 @@
     <string name="direcctorio_subtitle">For downloads (You need to move the content to the new directory manually, restart the app and sometimes the device)</string>
     <string name="directorio_title">Select directory</string>
     <string name="download_image_again">Download image again</string>
-    <string name="en_progreso">Ongoing.</string>
+    <string name="en_progreso">Ongoing</string>
     <string name="encola">(Queued)</string>
     <string name="descargado">(Downloaded)</string>
     <string name="descargando">(Downloading)</string>
@@ -51,7 +51,7 @@
     <string name="hide_read">Hide already read</string>
     <string name="estado">Status</string>
     <string name="filtrar">Filter</string>
-    <string name="finalizado">Finished.</string>
+    <string name="finalizado">Finished</string>
     <string name="folder_changed">Folder changed.</string>
     <string name="iniciando">Loading number of pages</string>
     <string name="keep_on">Keep screen on</string>

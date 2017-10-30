@@ -42,7 +42,7 @@
     <string name="directorio_title">Выберите директорию</string>
     <string name="download_image_again">Скачать рисунки еще раз</string>
     <string name="download_selection">Скачать выбраное</string>
-    <string name="en_progreso">Онгоинг.</string>
+    <string name="en_progreso">Онгоинг</string>
     <string name="encola">(Очередь)</string>
     <string name="error">(Ошибка)</string>
     <string name="esconder_de_galeria_subtitle">Скрыть скачаные рисунки из галереи</string>
@@ -50,7 +50,7 @@
     <string name="escondergaleria">Скрыть из галереи</string>
     <string name="estado">Статус</string>
     <string name="filtrar">Фильтр</string>
-    <string name="finalizado">Закончено.</string>
+    <string name="finalizado">Закончено</string>
     <string name="folder_changed">Директория изменена.</string>
     <string name="iniciando">Загружено страниц</string>
     <string name="keep_on">Не выключать экран</string>
