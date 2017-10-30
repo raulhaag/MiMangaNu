@@ -297,7 +297,7 @@ public class TestServers {
 
         Chapter chapter = manga.getChapter(rand.nextInt(manga.getChapters().size()));
         assertNotNull(chapter);
-        testInitAndGetImage(chapter);
+        testInitChapter(chapter);
     }
 
     public void testLoadManga(Manga manga) throws Exception {
@@ -317,33 +317,33 @@ public class TestServers {
         assertFalse(manga.getGenre().isEmpty());
     }
 
-    public void testInitAndGetImage(Chapter chapter) throws Exception {
+    public void testInitChapter(Chapter chapter) throws Exception {
         System.out.printf("[CHP] %s (%s)\n", chapter.getTitle(), chapter.getPath());
 
-        String image, dimage;
         serverBase.chapterInit(chapter);
         assertFalse(chapter.getPages() == 0);
 
-        {
-            // check random image link
-            image = serverBase.getImageFrom(chapter, rand.nextInt(chapter.getPages()) + 1);
-            assertNotNull(image);
-            assertFalse(image.isEmpty());
+        // check random image link
+        testLoadImage(serverBase.getImageFrom(chapter, rand.nextInt(chapter.getPages()) + 1));
 
-            System.out.printf("[IMG] load %s\n", image);
-            dimage = Navigator.getInstance().getAndReturnResponseCodeOnFailure(image);
-            assertTrue(dimage, dimage.length() > 5);
-        }
+        // additional checking of the last page (to verify array indexing)
+        testLoadImage(serverBase.getImageFrom(chapter, chapter.getPages()));
+    }
 
-        {
-            // additional checking of the last page (to verify array indexing)
-            image = serverBase.getImageFrom(chapter, chapter.getPages());
-            assertNotNull(image);
-            assertFalse(image.isEmpty());
+    public void testLoadImage(String image) throws Exception {
+        System.out.printf("[IMG] %s\n", image);
 
-            System.out.printf("[IMG] load %s\n", image);
-            dimage = Navigator.getInstance().getAndReturnResponseCodeOnFailure(image);
-            assertTrue(dimage, dimage.length() > 5);
-        }
+        assertNotNull(image);
+        assertFalse(image.isEmpty());
+
+        // additional test for NineManga servers to detect broken hotlinking
+        assertFalse(
+                "NineManga: hotlink detection - server delivers bogus image link",
+                image.equals("http://es.taadd.com/files/img/57ead05682694a7c026f99ad14abb8c1.jpg")
+        );
+
+        // check if the image loaded has at least 1kB (assume proper content)
+        image = Navigator.getInstance().getAndReturnResponseCodeOnFailure(image);
+        assertTrue(image, image.length() > 1024);
     }
 }
