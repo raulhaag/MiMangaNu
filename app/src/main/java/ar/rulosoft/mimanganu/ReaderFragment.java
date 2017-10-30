@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,6 +38,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -73,8 +75,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private int mOrientation; // 0 = free | 1 = landscape | 2 = portrait
     private float mScrollFactor = 1f;
     // These are layout components
-    private RelativeLayout mControlsLayout, mScrollSelect;
-    private LinearLayout mSeekerLayout;
+    private RelativeLayout mControlsLayout;
     private SeekBar mSeekBar;
     private Toolbar mActionBar;
     private Chapter mChapter, nextChapter, previousChapter;
@@ -82,7 +83,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private ServerBase mServerBase;
     private TextView mSeekerPage, mScrollSensitiveText;
     private MenuItem keepOnMenuItem, screenRotationMenuItem;
-    private Button mButtonMinus, mButtonPlus;
     private Reader.Type readerType = Reader.Type.CONTINUOUS;
     private boolean controlVisible = false;
     private MenuItem displayMenu;
@@ -130,16 +130,20 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        RelativeLayout scrollSelect;
+        LinearLayout seekerLayout;
+        Button buttonMinus, buttonPlus;
+
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_reader, container, false);
         mActionBar = (Toolbar) view.findViewById(R.id.action_bar);
         mControlsLayout = (RelativeLayout) view.findViewById(R.id.controls);
         mSeekerPage = (TextView) view.findViewById(R.id.page);
         mSeekBar = (SeekBar) view.findViewById(R.id.seeker);
-        mSeekerLayout = (LinearLayout) view.findViewById(R.id.seeker_layout);
-        mScrollSelect = (RelativeLayout) view.findViewById(R.id.scroll_selector);
-        mButtonMinus = (Button) view.findViewById(R.id.minus);
-        mButtonPlus = (Button) view.findViewById(R.id.plus);
+        seekerLayout = (LinearLayout) view.findViewById(R.id.seeker_layout);
+        scrollSelect = (RelativeLayout) view.findViewById(R.id.scroll_selector);
+        buttonMinus = (Button) view.findViewById(R.id.minus);
+        buttonPlus = (Button) view.findViewById(R.id.plus);
         mScrollSensitiveText = (TextView) view.findViewById(R.id.scroll_level);
         reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setTitleTextColor(Color.WHITE);
@@ -148,26 +152,26 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         mSeekerPage.setAlpha(.9f);
         mSeekerPage.setTextColor(Color.WHITE);
 
-        mScrollSensitiveText.setText(mScrollFactor + "x");
+        mScrollSensitiveText.setText(getString(R.string.factor_suffix, mScrollFactor));
         mActionBar.setBackgroundColor(reader_bg);
-        mSeekerLayout.setBackgroundColor(reader_bg);
+        seekerLayout.setBackgroundColor(reader_bg);
         mSeekerPage.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
-        mScrollSelect.setBackgroundColor(reader_bg);
+        scrollSelect.setBackgroundColor(reader_bg);
 
         if (pm.getBoolean("hide_sensitivity_scrollbar", false))
-            mScrollSelect.setVisibility(View.INVISIBLE);
+            scrollSelect.setVisibility(View.INVISIBLE);
         if (pm.getBoolean("hide_actionbar", false))
             mActionBar.setVisibility(View.INVISIBLE);
 
-        mButtonMinus.setOnClickListener(new View.OnClickListener() {
+        buttonMinus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 modScrollSensitive(-.25f);
             }
         });
 
-        mButtonPlus.setOnClickListener(new View.OnClickListener() {
+        buttonPlus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 modScrollSensitive(.25f);
@@ -189,7 +193,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     @Override
     public void onStart() {
         super.onStart();
-        ((MainActivity) getActivity()).getSupportActionBar().hide();
+        ActionBar ab = ((MainActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.hide();
+        }
         if (!pm.getBoolean("show_status_bar", true)) {
             getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
@@ -338,7 +345,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if ((mScrollFactor + diff) >= .5 && (mScrollFactor + diff) <= 5) {
             mScrollFactor += diff;
             Database.updateMangaScrollSensitive(getActivity(), mManga.getId(), mScrollFactor);
-            mScrollSensitiveText.setText(mScrollFactor + "x");
+            mScrollSensitiveText.setText(getString(R.string.factor_suffix, mScrollFactor));
             mReader.setScrollSensitive(mScrollFactor);
         }
     }
@@ -545,12 +552,13 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (mSeekerPage != null) mSeekerPage.setText("" + (progress + 1));
+        if (mSeekerPage != null)
+            mSeekerPage.setText(String.format(Locale.getDefault(), "%d", progress + 1));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        mSeekerPage.setText("" + (seekBar.getProgress() + 1));
+        mSeekerPage.setText(String.format(Locale.getDefault(), "%d", seekBar.getProgress() + 1));
         mSeekerPage.setVisibility(SeekBar.VISIBLE);
     }
 
@@ -573,7 +581,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     @Override
     public boolean onBackPressed() {
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ((MainActivity) getActivity()).getSupportActionBar().show();
+        ActionBar ab = ((MainActivity) getActivity()).getSupportActionBar();
+        if (ab != null) {
+            ab.show();
+        }
         ((MainActivity) getActivity()).setColorToBars();
         if (getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
             getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
@@ -700,10 +711,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
                 checkBox.setChecked(imagesDelete);
                 mDialog = new AlertDialog.Builder(getActivity())
-                        .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                        .setTitle(getString(R.string.finished_reading, mChapter.getTitle()))
                         .setView(v)
                         .setIcon(R.mipmap.ic_launcher)
-                        .setNegativeButton(getString(android.R.string.no), null)
+                        .setNegativeButton(getString(R.string.back), null)
                         .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -742,16 +753,11 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
             mDialog = new AlertDialog.Builder(getActivity())
-                    .setTitle(mChapter.getTitle() + " " + getString(R.string.finalizado))
+                    .setTitle(getString(R.string.finished_reading, mManga.getTitle()))
                     .setView(v)
                     .setIcon(R.mipmap.ic_launcher)
-                    .setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .setPositiveButton(getString(R.string.close), new DialogInterface.OnClickListener() {
+                    .setNegativeButton(R.string.back, null)
+                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             boolean del_images = checkBox.isChecked();
@@ -760,16 +766,15 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                             if (del_images) {
                                 try {
                                     tmpChapter.freeSpace(getActivity());
-                                }catch (Exception e){
+                                } catch (Exception e) {
                                     //TODO catch context lost if user close while freeSpace is working (need to add a little service for this)
-                                    //
                                 }
                             }
                             if (mDialog != null)
                                 mDialog.dismiss();
                             controlVisible = true; //just to close
                             mDialog = null;
-                            if(getActivity() != null)
+                            if (getActivity() != null)
                                 getActivity().onBackPressed();
                         }
                     })
@@ -841,9 +846,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
     }
 
-    enum LoadMode {START, END, SAVED}
+    private enum LoadMode {START, END, SAVED}
 
-    public class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
+    private class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncDialog = new ProgressDialog(getActivity());
         String error;
 
@@ -895,7 +900,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
     }
 
-    public class ReDownloadImage extends AsyncTask<Void, Void, Void> {
+    private class ReDownloadImage extends AsyncTask<Void, Void, Void> {
         int idx;
         String path;
         String error = "";
@@ -909,7 +914,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             path = mReader.getPath(idx);
             File f = new File(path);
             if (f.exists()) {
-                f.delete();
+                if (!f.delete()) {
+                    Log.e("ReaderFragment", "failed to delete '" + path + "' before re-downloading.");
+                }
             }
             mReader.reloadImage(idx);
         }

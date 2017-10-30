@@ -24,6 +24,6 @@
         android:paddingLeft="0dp"
         android:paddingRight="24dp"
         android:paddingTop="24dp"
-        android:text="@string/delete_on_chapter_change" />
+        android:text="@string/delete_on_manga_finished" />
 
 </LinearLayout>

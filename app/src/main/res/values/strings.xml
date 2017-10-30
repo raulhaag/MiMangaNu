@@ -118,7 +118,7 @@
     <string name="color_reader">Reader Color</string>
     <string name="color_reader_sub">The color in the reader mode</string>
     <string name="read_next">Do you want to open the next chapter?</string>
-    <string name="last_chapter">Currently this is the last chapter</string>
+    <string name="last_chapter">Currently this is the last chapter.</string>
     <string name="genre">Genre</string>
     <string name="connection_settings">Connection Settings </string>
     <string name="connection_timeout_title">Connection timeout</string>
@@ -141,7 +141,7 @@
     <string name="paged_reader">Paged reader</string>
     <string name="error_downloading_image">Error unable to download image</string>
     <string name="used_space">Storage size used by mangas</string>
-    <string name="delete_on_chapter_change">Delete images?</string>
+    <string name="delete_on_chapter_change">Delete chapter images?</string>
     <string name="mgs_update_found">New chapters were found (%s)</string>
     <string name="close">Close</string>
     <string name="retry">Retry</string>
@@ -457,4 +457,8 @@
     <string name="viewcomic_host0_down_redirect">viewcomic.com is down - redirecting to view-comic.com</string>
     <string name="viewcomic_host1_down_redirect">view-comic.com is down - redirecting to viewcomic.com</string>
     <string name="viewcomic_down">viewcomic.com and view-comic.com are down.</string>
+    <string name="back">Back</string>
+    <string name="finished_reading">Finished reading %s</string>
+    <string name="factor_suffix" translatable="false">%.01fx</string>
+    <string name="delete_on_manga_finished">Delete Manga images?</string>
 </resources>
