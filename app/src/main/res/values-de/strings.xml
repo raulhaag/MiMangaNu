@@ -459,4 +459,6 @@
     <string name="back">Zurück</string>
     <string name="finished_reading">%s gelesen</string>
     <string name="delete_on_manga_finished">Bilder des Manga löschen?</string>
+    <string name="server_failed_locate_manga_name">Manga Name konnte nicht extrahiert werden.</string>
+    <string name="server_failed_locate_manga_url">Manga URL konnte nicht extrahiert werden.</string>
 </resources>

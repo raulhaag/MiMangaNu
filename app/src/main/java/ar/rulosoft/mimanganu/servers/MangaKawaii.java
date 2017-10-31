@@ -135,8 +135,8 @@ class MangaKawaii extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
             Manga m = new Manga(getServerID(),
-                    getFirstMatchDefault("alt='([^']+)", matcher.group(1), ""),
-                    getFirstMatchDefault("href=\"([^\"]+)", matcher.group(1), ""),
+                    getFirstMatch("alt='([^']+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_name)),
+                    getFirstMatch("href=\"([^\"]+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_url)),
                     false
             );
             m.setImages(getFirstMatchDefault("src='([^\']+)", matcher.group(1), ""));

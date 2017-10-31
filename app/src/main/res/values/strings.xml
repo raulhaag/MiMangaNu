@@ -461,4 +461,6 @@
     <string name="finished_reading">Finished reading %s</string>
     <string name="factor_suffix" translatable="false">%.01fx</string>
     <string name="delete_on_manga_finished">Delete Manga images?</string>
+    <string name="server_failed_locate_manga_name">Could not extract Manga name.</string>
+    <string name="server_failed_locate_manga_url">Could not extract Manga URL.</string>
 </resources>
