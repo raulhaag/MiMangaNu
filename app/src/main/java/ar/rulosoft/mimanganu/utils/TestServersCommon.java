@@ -13,6 +13,7 @@ import ar.rulosoft.mimanganu.servers.DeadServer;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
 
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
@@ -104,6 +105,13 @@ public class TestServersCommon {
     }
 
     private void testLoadManga(Manga manga) throws Exception {
+        assertNotNull(getContext(), manga.getTitle());
+        assertFalse(getContext(), manga.getTitle().isEmpty());
+        assertEquals(getContext(), manga.getTitle(), manga.getTitle().trim());
+
+        assertNotNull(getContext(), manga.getPath());
+        assertFalse(getContext(), manga.getPath().isEmpty());
+
         logMessage(String.format(Locale.getDefault(), "[MNG] %s (%s)", manga.getTitle(), manga.getPath()));
 
         try {
@@ -117,12 +125,18 @@ public class TestServersCommon {
 
         assertNotNull(getContext(), manga.getSynopsis());
         assertFalse(getContext(), manga.getSynopsis().isEmpty());
+        assertEquals(getContext(), manga.getSynopsis(), manga.getSynopsis().trim());
 
         assertNotNull(getContext(), manga.getAuthor());
         assertFalse(getContext(), manga.getAuthor().isEmpty());
+        assertEquals(getContext(), manga.getAuthor(), manga.getAuthor().trim().replaceAll("\\s+", " "));
 
         assertNotNull(getContext(), manga.getGenre());
         assertFalse(getContext(), manga.getGenre().isEmpty());
+        assertEquals(getContext(), manga.getGenre(), manga.getGenre().trim().replaceAll("\\s+", " "));
+        assertEquals(getContext(), manga.getGenre(), manga.getGenre().replaceAll(",+", ","));
+        assertFalse(getContext(), manga.getGenre().startsWith(","));
+        assertFalse(getContext(), manga.getGenre().endsWith(","));
     }
 
     private void testInitChapter(Chapter chapter) throws Exception {
