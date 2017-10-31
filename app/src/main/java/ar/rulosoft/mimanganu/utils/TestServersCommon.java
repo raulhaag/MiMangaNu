@@ -16,6 +16,7 @@ import ar.rulosoft.navegadores.Navigator;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
 
 public class TestServersCommon {
 
@@ -84,7 +85,12 @@ public class TestServersCommon {
             assertNotNull(getContext(), manga);
 
             testLoadManga(manga);
-            serverBase.loadChapters(manga, false);
+            try {
+                serverBase.loadChapters(manga, false);
+            }
+            catch (Exception e) {
+                fail(getContext(e.getMessage()));
+            }
 
             if(manga.getChapters().isEmpty()) {
                 logMessage("[WRN] no chapters found - will try another Manga.");
@@ -100,7 +106,12 @@ public class TestServersCommon {
     private void testLoadManga(Manga manga) throws Exception {
         logMessage(String.format(Locale.getDefault(), "[MNG] %s (%s)", manga.getTitle(), manga.getPath()));
 
-        serverBase.loadMangaInformation(manga, false);
+        try {
+            serverBase.loadMangaInformation(manga, false);
+        }
+        catch (Exception e) {
+            fail(getContext(e.getMessage()));
+        }
         assertNotNull(getContext(), manga.getImages());
         // manga.getImages() might be empty
 
@@ -117,14 +128,33 @@ public class TestServersCommon {
     private void testInitChapter(Chapter chapter) throws Exception {
         logMessage(String.format(Locale.getDefault(), "[CHP] %s (%s)", chapter.getTitle(), chapter.getPath()));
 
-        serverBase.chapterInit(chapter);
+        try {
+            serverBase.chapterInit(chapter);
+        }
+        catch (Exception e) {
+            fail(getContext(e.getMessage()));
+        }
         assertFalse(getContext(), chapter.getPages() == 0);
 
         // check random image link
-        testLoadImage(serverBase.getImageFrom(chapter, rand.nextInt(chapter.getPages()) + 1));
+        String url = null;
+        try {
+            url = serverBase.getImageFrom(chapter, rand.nextInt(chapter.getPages()) + 1);
+        }
+        catch (Exception e) {
+            fail(getContext(e.getMessage()));
+        }
+        testLoadImage(url);
 
         // additional checking of the last page (to verify array indexing)
-        testLoadImage(serverBase.getImageFrom(chapter, chapter.getPages()));
+        url = null;
+        try {
+            url = serverBase.getImageFrom(chapter, chapter.getPages());
+        }
+        catch (Exception e) {
+            fail(getContext(e.getMessage()));
+        }
+        testLoadImage(url);
     }
 
     private void testLoadImage(String image) throws Exception {
