@@ -140,8 +140,8 @@ public class TestServersCommon {
         );
 
         // check if the image loaded has at least 1kB (assume proper content)
-        String content = Navigator.getInstance().getAndReturnResponseCodeOnFailure(image);
-        assertTrue(getContext(image), content.length() > 1024);
+        image = Navigator.getInstance().getAndReturnResponseCodeOnFailure(image);
+        assertTrue(getContext("[CONTENT] " + image), image.length() > 1024);
     }
 
     /**
@@ -178,7 +178,7 @@ public class TestServersCommon {
             return "\n";
         }
         else {
-            return "\n" + TextUtils.join("\n", messages) + "\n-----------------\n";
+            return "\n" + TextUtils.join("\n", messages) + "\n";
         }
     }
 
