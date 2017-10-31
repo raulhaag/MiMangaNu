@@ -152,21 +152,24 @@ public class TestServersCommon {
 
         // check random image link
         String url = null;
+        int numimg = 0;
         try {
-            url = serverBase.getImageFrom(chapter, rand.nextInt(chapter.getPages()) + 1);
+            numimg = rand.nextInt(chapter.getPages()) + 1;
+            url = serverBase.getImageFrom(chapter, numimg);
         }
         catch (Exception e) {
-            fail(getContext(e.getMessage()));
+            fail(getContext("[NUM] " + numimg + " - " + e.getMessage()));
         }
         testLoadImage(url);
 
         // additional checking of the last page (to verify array indexing)
         url = null;
         try {
-            url = serverBase.getImageFrom(chapter, chapter.getPages());
+            numimg = chapter.getPages();
+            url = serverBase.getImageFrom(chapter, numimg);
         }
         catch (Exception e) {
-            fail(getContext(e.getMessage()));
+            fail(getContext("[NUM] " + numimg + " - " + e.getMessage()));
         }
         testLoadImage(url);
     }
