@@ -169,6 +169,9 @@ class ReadMangaToday extends ServerBase {
             // Summary
             String summary = getFirstMatchDefault("<li class=\"list-group-item movie-detail\">(.+?)</li>", source, context.getString(R.string.nodisponible));
             manga.setSynopsis(summary);
+            if(manga.getSynopsis().isEmpty()) {
+                manga.setSynopsis(context.getString(R.string.nodisponible));
+            }
 
             // Status
             manga.setFinished(!source.contains("<dd>Ongoing</dd>"));
