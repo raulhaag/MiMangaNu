@@ -21,6 +21,6 @@ class MangaReader extends MangaPanda {
         setServerName("mangareader.net");
         setServerID(MANGAREADER);
 
-        SetHost("http://www.mangareader.net");
+        setHost("http://www.mangareader.net");
     }
 }
