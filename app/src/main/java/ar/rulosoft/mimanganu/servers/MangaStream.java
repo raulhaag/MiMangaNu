@@ -17,11 +17,11 @@ class MangaStream extends ServerBase {
     private static final String HOST = "http://mangastream.com";
 
     private static final String PATTERN_CHAPTER =
-            "href=\"(http://readms\\.net/[^\"]+?)\">([^\"]+?)</a>";
+            "<a href=\"(/r/[^\"]+)\">(.+?)</a>";
     private static final String PATTERN_MANGA =
             "href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>";
     private static final String PATTERN_IMAGE =
-            "src=\"(//img\\.readms\\.net/cdn/manga/[^\"]+)";
+            "src=\"(//[^/]+/cdn/manga/[^\"]+)";
 
     MangaStream(Context context) {
         super(context);
@@ -88,40 +88,32 @@ class MangaStream extends ServerBase {
             // Chapters
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
-            String latestChapterPath = "";
             while (matcher.find()) {
-                Chapter mc = new Chapter(matcher.group(2), matcher.group(1));
-                mc.addChapterFirst(manga);
-                if (latestChapterPath.isEmpty()) {
-                    latestChapterPath = matcher.group(1);
+                Chapter chapter = new Chapter(matcher.group(2), HOST + matcher.group(1));
+                chapter.addChapterFirst(manga);
+            }
+
+            // Cover - use first image of latest chapter (if present)
+            ArrayList<Chapter> chapters = manga.getChapters();
+            manga.setImages("");
+            if(!chapters.isEmpty()) {
+                source = getNavigatorAndFlushParameters().get(
+                        chapters.get(chapters.size() - 1).getPath());
+                String image = getFirstMatchDefault(PATTERN_IMAGE, source, "");
+                if (!image.isEmpty()) {
+                    manga.setImages("http:" + image);
                 }
             }
-
-            // Cover
-            String image, chapterLink;
-            if (!latestChapterPath.contains("http://readms")) {
-                source = getNavigatorAndFlushParameters().get(latestChapterPath);
-                chapterLink = getFirstMatchDefault("href=\"(http://readms\\.net/r/[^\"]+?)\">", source, "");
-            } else {
-                chapterLink = latestChapterPath;
-            }
-
-            source = getNavigatorAndFlushParameters().get(chapterLink);
-            image = getFirstMatchDefault(PATTERN_IMAGE, source, null);
-            if (image != null) {
-                image = "http:" + image;
-            }
-            manga.setImages(image);
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String src = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/1", "/") + page);
-        String img = getFirstMatch(
-                PATTERN_IMAGE, src,
+        // strip off initial page number (i.e. '1') and append requested page number
+        String web = chapter.getPath().substring(0, chapter.getPath().length() - 1) + page;
+        return "http:" + getFirstMatch(
+                PATTERN_IMAGE, getNavigatorAndFlushParameters().get(web),
                 context.getString(R.string.server_failed_loading_image));
-        return "http:" + img;
     }
 
     @Override
@@ -129,9 +121,9 @@ class MangaStream extends ServerBase {
         if(chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pageNumber = getFirstMatchDefault(
-                    "Last Page \\((\\d+)\\)</a>", source, "");
+                    "Last Page \\((\\d+)\\)</a>", source, null);
             // handle case, where only one page is listed (as "First Page")
-            if(pageNumber.isEmpty()) {
+            if(pageNumber == null) {
                 pageNumber = getFirstMatch(
                         "First Page \\((\\d+)\\)</a>", source,
                         context.getString(R.string.server_failed_loading_page_count));
