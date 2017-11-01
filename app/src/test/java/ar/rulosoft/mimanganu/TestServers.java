@@ -16,10 +16,10 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
 import ar.rulosoft.mimanganu.utils.TestServersCommon;
 
-// TODO fix KeyStore usage in Navigator with "AndroidCAStore"
-
-// need to specify SDK version for Robolectric (see targetSdkVersion in app.gradle)
-@Config(manifest = "../app/src/main/AndroidManifest.xml", sdk = 25)
+@Config(
+        manifest = "../app/src/main/AndroidManifest.xml",
+        shadows = {ShadowNavigator.class}
+)
 @RunWith(RobolectricTestRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestServers {
