@@ -461,4 +461,5 @@
     <string name="delete_on_manga_finished">Bilder des Manga löschen?</string>
     <string name="server_failed_locate_manga_name">Manga Name konnte nicht extrahiert werden.</string>
     <string name="server_failed_locate_manga_url">Manga URL konnte nicht extrahiert werden.</string>
+    <string name="server_manga_is_licensed">Der Manga ist lizenziert und nicht mehr zum Download verfügbar.</string>
 </resources>

@@ -211,7 +211,12 @@ class MangaEden extends ServerBase {
             ArrayList<String> images = getAllMatch("fs\":\\s*\"(.+?)\"", source);
 
             if (images.isEmpty()) {
-                throw new Exception(context.getString(R.string.server_failed_loading_chapter));
+                // if the Manga was licensed, no pages are returned as well
+                getFirstMatch(
+                        "We are sorry but this manga has been licensed in your country",
+                        source,
+                        context.getString(R.string.server_failed_loading_chapter));
+                throw new Exception(context.getString(R.string.server_manga_is_licensed));
             }
             chapter.setExtra(TextUtils.join("|", images));
             chapter.setPages(images.size());
