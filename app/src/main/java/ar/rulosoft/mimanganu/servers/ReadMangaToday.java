@@ -162,49 +162,39 @@ class ReadMangaToday extends ServerBase {
 
             // Cover
             if (manga.getImages() == null || manga.getImages().isEmpty() || manga.getImages().contains("thumb")) {
-                String img = getFirstMatchDefault("<div class=\"col-md-3\">.+?<img src=\"(.+?)\" alt=", source, "");
-                manga.setImages(img);
+                manga.setImages(getFirstMatchDefault("<div class=\"col-md-3\">.+?<img src=\"(.+?)\" alt=", source, ""));
             }
 
             // Summary
             String summary = getFirstMatchDefault("<li class=\"list-group-item movie-detail\">(.+?)</li>", source, context.getString(R.string.nodisponible));
             manga.setSynopsis(summary);
+            // summary can be empty after cleaning, so check again here
             if(manga.getSynopsis().isEmpty()) {
                 manga.setSynopsis(context.getString(R.string.nodisponible));
             }
 
             // Status
-            manga.setFinished(!source.contains("<dd>Ongoing</dd>"));
+            manga.setFinished(source.contains("<dd>Completed</dd>"));
 
             // Author (can be multi-part)
-            String author = "";
-            //String author = getFirstMatchDefault("<li class=\"director\">.+?<li><a href=\".+?\">(.+?)</a>", source, "");
-            Pattern p = Pattern.compile("<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>", Pattern.DOTALL);
-            Matcher matcher = p.matcher(source);
-            while (matcher.find()) {
-                if (!author.equals(matcher.group(1) + ", ")) {
-                    author += matcher.group(1);
-                    author += ", ";
-                }
-            }
-            if (!author.isEmpty()) {
-                manga.setAuthor(author.substring(0, author.length() - 2));
+            ArrayList<String> authors = getAllMatch(
+                    "<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>", source);
+
+            if(authors.isEmpty()) {
+                manga.setAuthor(context.getString(R.string.nodisponible));
             }
             else {
-                manga.setAuthor(context.getString(R.string.nodisponible));
+                manga.setAuthor(TextUtils.join(", ", authors));
             }
 
             // Genre
             String genre = getFirstMatchDefault("<dt>Categories:</dt>.+?<dd>(.+?)</dd>", source, context.getString(R.string.nodisponible))
                     .replaceAll("</a>", ",");
-            if (genre.endsWith(",")) {
-                genre = genre.substring(0, genre.length() - 1);
-            }
-            manga.setGenre(genre);
+            manga.setGenre(genre.substring(0, genre.lastIndexOf(",")));
 
             // Chapters
-            p = Pattern.compile("<li>[\\s]*<a href=\"([^\"]+?)\">[\\s]*<span class=\"val\"><span class=\"icon-arrow-.\"></span>(.+?)</span>", Pattern.DOTALL);
-            matcher = p.matcher(source);
+            Pattern p = Pattern.compile("<li>[\\s]*<a href=\"([^\"]+?)\">[\\s]*<span class=\"val\"><span class=\"icon-arrow-.\"></span>(.+?)</span>", Pattern.DOTALL);
+            Matcher matcher = p.matcher(source);
             while (matcher.find()) {
                 Chapter chapter = new Chapter(matcher.group(2), matcher.group(1));
                 chapter.addChapterFirst(manga);
