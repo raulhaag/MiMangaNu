@@ -377,8 +377,7 @@ public class Navigator {
     private TrustManager[] getTrustManagers(Context context) {
         try {
             //get system certs
-            KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
-            keyStore.load(null, null);
+            KeyStore keyStore = getSystemCAKeyStore();
             KeyStore keyStore_n = KeyStore.getInstance(KeyStore.getDefaultType());
             keyStore_n.load(null, null);
             Enumeration<String> aliases = keyStore.aliases();
@@ -421,5 +420,13 @@ public class Navigator {
             }
         }
         return certificate;
+    }
+
+    public static KeyStore getSystemCAKeyStore() throws
+            KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+
+        KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
+        keyStore.load(null, null);
+        return keyStore;
     }
 }
