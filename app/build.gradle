@@ -6,8 +6,6 @@ android {
 
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
-        minSdkVersion 14
-        targetSdkVersion 24
         versionCode 73
         versionName "1.73"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
