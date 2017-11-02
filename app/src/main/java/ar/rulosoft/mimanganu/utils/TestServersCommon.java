@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.utils;
 
 import android.text.TextUtils;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Locale;
@@ -112,14 +111,15 @@ public class TestServersCommon {
     }
 
     private void testLoadManga(Manga manga) throws Exception {
+        logMessage(String.format(Locale.getDefault(), "[MNG] %s (%s)", manga.getTitle(), manga.getPath()));
+
         assertNotNull(getContext(), manga.getTitle());
         assertFalse(getContext(), manga.getTitle().isEmpty());
         assertEquals(getContext(), manga.getTitle(), manga.getTitle().trim());
 
         assertNotNull(getContext(), manga.getPath());
         assertFalse(getContext(), manga.getPath().isEmpty());
-
-        logMessage(String.format(Locale.getDefault(), "[MNG] %s (%s)", manga.getTitle(), manga.getPath()));
+        assertTrue(getContext(), (manga.getPath().split("//", -1).length - 1) <= 1);
 
         try {
             serverBase.loadMangaInformation(manga, false);
@@ -148,6 +148,13 @@ public class TestServersCommon {
 
     private void testInitChapter(Chapter chapter) throws Exception {
         logMessage(String.format(Locale.getDefault(), "[CHP] %s (%s)", chapter.getTitle(), chapter.getPath()));
+
+        assertNotNull(getContext(), chapter.getTitle());
+        assertFalse(getContext(), chapter.getTitle().isEmpty());
+
+        assertNotNull(getContext(), chapter.getPath());
+        assertFalse(getContext(), chapter.getPath().isEmpty());
+        assertTrue(getContext(), (chapter.getPath().split("//", -1).length - 1) <= 1);
 
         try {
             serverBase.chapterInit(chapter);
@@ -186,6 +193,7 @@ public class TestServersCommon {
 
         assertNotNull(getContext(), image);
         assertFalse(getContext(), image.isEmpty());
+        assertTrue(getContext(), (image.split("//", -1).length - 1) <= 1);
 
         // additional test for NineManga servers to detect broken hotlinking
         assertFalse(

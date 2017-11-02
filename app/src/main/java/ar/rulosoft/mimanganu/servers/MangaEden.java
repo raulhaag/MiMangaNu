@@ -18,7 +18,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  */
 class MangaEden extends ServerBase {
 
-    protected static final String HOST = "http://www.mangaeden.com/";
+    protected static final String HOST = "http://www.mangaeden.com";
 
     protected int[] fltGenre = {
             R.string.flt_tag_action,

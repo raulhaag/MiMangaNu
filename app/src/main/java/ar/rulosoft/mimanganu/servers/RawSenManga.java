@@ -18,7 +18,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  */
 class RawSenManga extends ServerBase {
 
-    private static final String HOST = "http://raw.senmanga.com/";
+    private static final String HOST = "http://raw.senmanga.com";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_all,
@@ -58,41 +58,41 @@ class RawSenManga extends ServerBase {
             R.string.flt_tag_yuri
     };
     private static final String[] valGenre = {
-            "Manga/",
-            "directory/category/Action/",
-            "directory/category/Adult/",
-            "directory/category/Adventure/",
-            "directory/category/Comedy/",
-            "directory/category/Cooking/",
-            "directory/category/Drama/",
-            "directory/category/Ecchi/",
-            "directory/category/Fantasy/",
-            "directory/category/Gender-Bender/",
-            "directory/category/Harem/",
-            "directory/category/Historical/",
-            "directory/category/Horror/",
-            "directory/category/Josei/",
-            "directory/category/Light_Novel/",
-            "directory/category/Martial_Arts/",
-            "directory/category/Mature/",
-            "directory/category/Music/",
-            "directory/category/Mystery/",
-            "directory/category/Psychological/",
-            "directory/category/Romance/",
-            "directory/category/School_Life/",
-            "directory/category/Sci-Fi/",
-            "directory/category/Seinen/",
-            "directory/category/Shoujo/",
-            "directory/category/Shoujo-Ai/",
-            "directory/category/Shounen/",
-            "directory/category/Shounen-Ai/",
-            "directory/category/Slice_of_Life/",
-            "directory/category/Smut/",
-            "directory/category/Sports/",
-            "directory/category/Supernatural/",
-            "directory/category/Tragedy/",
-            "directory/category/Webtoons/",
-            "directory/category/Yuri/"
+            "/Manga/",
+            "/directory/category/Action/",
+            "/directory/category/Adult/",
+            "/directory/category/Adventure/",
+            "/directory/category/Comedy/",
+            "/directory/category/Cooking/",
+            "/directory/category/Drama/",
+            "/irectory/category/Ecchi/",
+            "/directory/category/Fantasy/",
+            "/directory/category/Gender-Bender/",
+            "/directory/category/Harem/",
+            "/directory/category/Historical/",
+            "/directory/category/Horror/",
+            "/directory/category/Josei/",
+            "/directory/category/Light_Novel/",
+            "/directory/category/Martial_Arts/",
+            "/directory/category/Mature/",
+            "/directory/category/Music/",
+            "/directory/category/Mystery/",
+            "/directory/category/Psychological/",
+            "/directory/category/Romance/",
+            "/directory/category/School_Life/",
+            "/directory/category/Sci-Fi/",
+            "/directory/category/Seinen/",
+            "/directory/category/Shoujo/",
+            "/directory/category/Shoujo-Ai/",
+            "/directory/category/Shounen/",
+            "/directory/category/Shounen-Ai/",
+            "/directory/category/Slice_of_Life/",
+            "/directory/category/Smut/",
+            "/directory/category/Sports/",
+            "/directory/category/Supernatural/",
+            "/directory/category/Tragedy/",
+            "/directory/category/Webtoons/",
+            "/directory/category/Yuri/"
     };
     private static final int[] fltOrder = {
             R.string.flt_order_views,
@@ -126,7 +126,7 @@ class RawSenManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = HOST + "search?q=" + URLEncoder.encode(term, "UTF-8");
+        String web = HOST + "/search?q=" + URLEncoder.encode(term, "UTF-8");
         String source = getNavigatorAndFlushParameters().get(web.replaceAll("^http", "https"));
         Pattern p = Pattern.compile("<a href='([^']+)' title='([^']+)' style", Pattern.DOTALL);
         Matcher m = p.matcher(source);
@@ -188,8 +188,8 @@ class RawSenManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String path = chapter.getPath().substring(HOST.length());
-        return HOST + "viewer/" + path + "/" + page;
+        String path = chapter.getPath().substring(HOST.length() + 1);
+        return HOST + "/viewer/" + path + "/" + page;
     }
 
     @Override
