@@ -168,9 +168,10 @@ class MangaPanda extends ServerBase {
                         if (m2.find()) web = m2.group(1) + "/" + m2.group(2);
                     }
                     String chName = m1.group(2);
-                    if (!m1.group(3).trim().isEmpty())
+                    if (!m1.group(3).trim().isEmpty()) {
                         chName += " :" + m1.group(3);
-                    manga.addChapter(new Chapter(chName, HOST + web));
+                    }
+                    manga.addChapterLast(new Chapter(chName, HOST + web));
                 }
             }
             // Summary

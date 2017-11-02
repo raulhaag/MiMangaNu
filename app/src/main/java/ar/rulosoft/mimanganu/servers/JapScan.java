@@ -63,6 +63,7 @@ class JapScan extends ServerBase {
 
             // Cover Image
             // JapScan has no cover images ...
+            manga.setImages("");
 
             // Summary
             manga.setSynopsis(getFirstMatchDefault("<div id=\"synopsis\">(.+?)</div>", source, context.getString(R.string.nodisponible)));
@@ -80,8 +81,7 @@ class JapScan extends ServerBase {
             Pattern pattern = Pattern.compile("<a href=\"(//www\\.japscan\\.com/lecture-en-ligne/[^\"]+?)\">(Scan.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
-                Chapter chapter = new Chapter(matcher.group(2), "http:" + matcher.group(1));
-                chapter.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(matcher.group(2), "http:" + matcher.group(1)));
             }
         }
     }

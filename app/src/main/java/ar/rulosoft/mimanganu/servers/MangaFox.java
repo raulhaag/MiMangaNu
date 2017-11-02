@@ -203,14 +203,12 @@ class MangaFox extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc;
                 if (m.group(4) != null) {
-                    mc = new Chapter(m.group(2).trim() + ": " + m.group(4), "http:" + m.group(1).replace("1.html", ""));
+                    manga.addChapterFirst(new Chapter(m.group(2).trim() + ": " + m.group(4), "http:" + m.group(1).replace("1.html", "")));
                 }
                 else {
-                    mc = new Chapter(m.group(2).trim(), "http:" + m.group(1).replace("1.html", ""));
+                    manga.addChapterFirst(new Chapter(m.group(2).trim(), "http:" + m.group(1).replace("1.html", "")));
                 }
-                mc.addChapterFirst(manga);
             }
         }
     }

@@ -62,8 +62,7 @@ class SubManga extends ServerBase {
 
             while (m.find()) {
                 String web = HOST + "/c" + m.group(1).substring(m.group(1).lastIndexOf("/"));
-                Chapter chapter = new Chapter(m.group(2), web);
-                chapter.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(m.group(2), web));
             }
         }
     }
@@ -80,6 +79,7 @@ class SubManga extends ServerBase {
             manga.setImages(m.group(1));
             manga.setSynopsis(m.group(2));
         } else {
+            manga.setImages("");
             manga.setSynopsis(context.getString(R.string.nodisponible));
         }
         // Author

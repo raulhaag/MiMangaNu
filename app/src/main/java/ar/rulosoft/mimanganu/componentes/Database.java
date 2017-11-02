@@ -323,7 +323,7 @@ public class Database extends SQLiteOpenHelper {
             if (!database.isReadOnly())
                 database.insertOrThrow(TABLE_CHAPTERS, null, contentValues);
             else {
-                Log.e("Database", "(addChapter) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Log.e("Database", "(addChapterLast) " + context.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
             }
         } catch (SQLiteConstraintException sqlce) {

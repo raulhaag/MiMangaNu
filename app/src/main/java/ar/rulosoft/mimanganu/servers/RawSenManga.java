@@ -170,13 +170,13 @@ class RawSenManga extends ServerBase {
             Pattern p = Pattern.compile("</td><td><a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc;
-                if (m.group(1).endsWith("/1"))
+                if (m.group(1).endsWith("/1")) {
                     // strip off page suffix if present
-                    mc = new Chapter(m.group(2), HOST + m.group(1).substring(0, m.group(1).length() - 2));
-                else
-                    mc = new Chapter(m.group(2), HOST + m.group(1));
-                mc.addChapterFirst(manga);
+                    manga.addChapterFirst(new Chapter(m.group(2), HOST + m.group(1).substring(0, m.group(1).length() - 2)));
+                }
+                else {
+                    manga.addChapterFirst(new Chapter(m.group(2), HOST + m.group(1)));
+                }
             }
         }
     }

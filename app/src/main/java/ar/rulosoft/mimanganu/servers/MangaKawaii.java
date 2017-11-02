@@ -94,8 +94,7 @@ class MangaKawaii extends ServerBase {
             ArrayList<String> tmpChapterList = new ArrayList<>();
             while (matcher.find()) {
                 if(!tmpChapterList.contains(matcher.group(1))) {
-                    Chapter chapter = new Chapter(matcher.group(2), matcher.group(1));
-                    chapter.addChapterFirst(manga);
+                    manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
                     tmpChapterList.add(matcher.group(1));
                 }
             }

@@ -192,8 +192,7 @@ class MangaEden extends ServerBase {
             Pattern pattern = Pattern.compile("<tr.+?href=\"(/en/en-manga/.+?)\".+?>(.+?)</a", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
-                Chapter chapter = new Chapter(matcher.group(2).replaceAll("Chapter", " Ch "), HOST + matcher.group(1));
-                chapter.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(matcher.group(2).replaceAll("Chapter", " Ch "), HOST + matcher.group(1)));
             }
         }
     }

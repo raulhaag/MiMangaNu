@@ -266,8 +266,7 @@ class Mangapedia extends ServerBase {
             Pattern pattern = Pattern.compile("<a href=\"(http[s]*://mangapedia.fr/lel[^\"]+).+?\"nameChapter\">(.+?)<", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
-                Chapter chapter = new Chapter(matcher.group(2), matcher.group(1));
-                chapter.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
             }
         }
     }

@@ -117,14 +117,12 @@ class ViewComic extends ServerBase {
                 matcher = p.matcher(newSource);
             }
             while (matcher.find()) {
-                Chapter mc;
                 if(matcher.group(1) != null && matcher.group(2) != null) {
-                    mc = new Chapter(matcher.group(2).replaceAll("[….\\s]*(Reading)?$", ""), matcher.group(1));
+                    manga.addChapterFirst(new Chapter(matcher.group(2).replaceAll("[….\\s]*(Reading)?$", ""), matcher.group(1)));
                 }
                 else {
-                    mc = new Chapter(matcher.group(4).replaceAll("[….\\s]*(Reading)?$", ""), matcher.group(3));
+                    manga.addChapterFirst(new Chapter(matcher.group(4).replaceAll("[….\\s]*(Reading)?$", ""), matcher.group(3)));
                 }
-                mc.addChapterFirst(manga);
             }
         }
     }

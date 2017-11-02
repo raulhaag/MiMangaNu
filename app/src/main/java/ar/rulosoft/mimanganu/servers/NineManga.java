@@ -140,6 +140,7 @@ class NineManga extends ServerBase {
     private static void generateNeededCookie() {
         long aTime = System.currentTimeMillis() / 1000 - (int) (Math.random() * 100);
         HttpUrl url = HttpUrl.parse("https://www.ninemanga.com/");
+        assert url != null; // pasring the valid constant URL will never fail
         Navigator.getCookieJar().saveFromResponse(url, Arrays.asList(
                 Cookie.parse(url, "ninemanga_country_code=AR; Domain=ninemanga.com"),
                 Cookie.parse(url, "__utma=128769555.619121721." + aTime + "." + aTime + "." + aTime
@@ -203,8 +204,7 @@ class NineManga extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                Chapter mc = new Chapter(m.group(3), HOST + m.group(1));
-                mc.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(m.group(3), HOST + m.group(1)));
             }
         }
     }

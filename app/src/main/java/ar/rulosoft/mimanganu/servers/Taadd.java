@@ -221,8 +221,7 @@ class Taadd extends ServerBase {
             Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
             while (matcher.find()) {
-                Chapter chapter = new Chapter(matcher.group(2), HOST + matcher.group(1));
-                chapter.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(matcher.group(2), HOST + matcher.group(1)));
             }
         }
     }

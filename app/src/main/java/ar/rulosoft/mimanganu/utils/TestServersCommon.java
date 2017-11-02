@@ -2,7 +2,9 @@ package ar.rulosoft.mimanganu.utils;
 
 import android.text.TextUtils;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
@@ -98,6 +100,11 @@ public class TestServersCommon {
             }
         } while (manga.getChapters().isEmpty() && retries-- > 0);
         assertFalse(getContext(), manga.getChapters().isEmpty());
+
+        ArrayList<Chapter> chapters = manga.getChapters();
+        Chapter.Comparators.setManga_title(manga.getTitle());
+        Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
+        assertEquals(getContext("chapters not sorted ascending"), manga.getChapters(), chapters);
 
         Chapter chapter = manga.getChapter(rand.nextInt(manga.getChapters().size()));
         assertNotNull(getContext(), chapter);

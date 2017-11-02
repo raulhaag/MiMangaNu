@@ -47,10 +47,9 @@ class BatoToEs extends BatoTo {
             Matcher matcher = pattern.matcher(data);
             String lang = "Spanish";
             while (matcher.find()) {
-                    if (matcher.group(3).contains(lang)) {
-                        Chapter chapter = new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1));
-                        chapter.addChapterFirst(manga);
-                    }
+                if (matcher.group(3).contains(lang)) {
+                    manga.addChapterFirst(new Chapter("(" + matcher.group(3) + ") " + matcher.group(2) + " [" + matcher.group(4) + "]", matcher.group(1)));
+                }
             }
         }
     }

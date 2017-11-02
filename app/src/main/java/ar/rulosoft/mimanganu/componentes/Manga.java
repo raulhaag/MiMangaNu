@@ -13,45 +13,41 @@ public class Manga {
     private int news;
     private int lastIndex;
     private int readingDirection = -1;
-    private int readerType;//0, default, 1 paged, 2 continuous
+    private int readerType; //0, default, 1 paged, 2 continuous
 
     private String title;
-    private String synopsis = "";
-    private String images = "";
+    private String synopsis;
+    private String images;
     private String path;
-    private String author = "";
-    private String genre = "";
-    private String lastUpdate = "";
-
+    private String author;
+    private String genre;
+    private String lastUpdate;
     private boolean finished;
+
     private ArrayList<Chapter> chapters = new ArrayList<>();
     private float scrollSensitive;
 
     public Manga(int serverId, String title, String path, boolean finished) {
         super();
-        this.serverId = serverId;
-        this.path = path;
-        this.author = "";
-        this.genre = "";
-        this.finished = finished;
-
+        setServerId(serverId);
         setTitle(title);
+        setPath(path);
+        setFinished(finished);
     }
 
     public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSensitive, int readingDirection, int lastIndex, int news) {
-        this.serverId = serverId;
-        this.id = id;
-        this.images = images;
-        this.path = path;
-        this.finished = finished;
-        this.scrollSensitive = scrollSensitive;
-        this.readingDirection = readingDirection;
-        this.lastIndex = lastIndex;
-        this.news = news;
-
+        setServerId(serverId);
+        setId(id);
         setTitle(title);
-        setAuthor(author);
         setSynopsis(synopsis);
+        setImages(images);
+        setPath(path);
+        setAuthor(author);
+        setFinished(finished);
+        setScrollSensitive(scrollSensitive);
+        setReadingDirection(readingDirection);
+        setLastIndex(lastIndex);
+        setNews(news);
     }
 
     public int getId() {
@@ -66,6 +62,7 @@ public class Manga {
         return serverId;
     }
 
+    @SuppressWarnings("WeakerAccess")
     public void setServerId(int serverId) {
         this.serverId = serverId;
     }
@@ -111,15 +108,7 @@ public class Manga {
         this.author = HtmlUnescape.Unescape(Util.getInstance().fromHtml(author).toString().trim());
     }
 
-    @Override
-    public String toString() {
-        return this.title;
-    }
-
-    public void addChapter(Chapter c) {
-        chapters.add(c);
-    }
-
+    @Nullable
     public Chapter getChapter(int index) {
         if (chapters.size() > index && index >= 0) {
             return chapters.get(index);
@@ -132,14 +121,9 @@ public class Manga {
         return chapters;
     }
 
-    public void setChapters(ArrayList<Chapter> caps) {
-        chapters = caps;
+    public void setChapters(ArrayList<Chapter> chapters) {
+        this.chapters = chapters;
     }
-
-    public void clearChapters() {
-        chapters.clear();
-    }
-
 
     public int getNews() {
         return news;
@@ -209,5 +193,18 @@ public class Manga {
 
     public void setLastUpdate(String lastUpdate) {
         this.lastUpdate = lastUpdate;
+    }
+
+    public void addChapterFirst(Chapter c) {
+        chapters.add(0, c);
+    }
+
+    public void addChapterLast(Chapter c) {
+        chapters.add(c);
+    }
+
+    @Override
+    public String toString() {
+        return this.title;
     }
 }

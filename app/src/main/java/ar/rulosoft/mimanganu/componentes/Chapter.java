@@ -27,14 +27,13 @@ public class Chapter {
     private String title;
     private String path;
     private String extra;
-    private boolean finished;
     private boolean downloaded;
     private float volatile_order = -1;
 
     public Chapter(String title, String path) {
         super();
-        this.title = HtmlUnescape.Unescape(Util.getInstance().fromHtml(title).toString().trim());
-        this.path = path;
+        setTitle(title);
+        setPath(path);
     }
 
     public int getMangaID() {
@@ -77,24 +76,6 @@ public class Chapter {
         this.path = path;
     }
 
-    public boolean isFinished() {
-        return finished;
-    }
-
-    public void setFinished(boolean finished) {
-        this.finished = finished;
-    }
-
-    @Override
-    public String toString() {
-        return title;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return (obj instanceof Chapter) && this.path.replaceAll("https?","").equalsIgnoreCase(((Chapter) obj).path.replaceAll("https?",""));
-    }
-
     public int getPagesRead() {
         return pagesRead;
     }
@@ -133,12 +114,6 @@ public class Chapter {
         Database.deleteChapter(context, this);
     }
 
-    public void delete(Context context) {
-        Manga manga = Database.getManga(context, getMangaID());
-        ServerBase s = ServerBase.getServer(manga.getServerId(), context);
-        delete(context, manga, s);
-    }
-
     public void deleteImages(Context context) {
         Manga manga = Database.getManga(context, getMangaID());
         ServerBase s = ServerBase.getServer(manga.getServerId(), context);
@@ -152,20 +127,26 @@ public class Chapter {
         } else {
             path = getPath();
         }
-        File fPath = new File(path);
-        if (fPath.exists()) {
-            Util.getInstance().deleteRecursive(fPath);
+        File f = new File(path);
+        if (f.exists()) {
+            Util.getInstance().deleteRecursive(f);
         }
+    }
+
+    public void reset(Context context) {
+        Manga manga = Database.getManga(context, getMangaID());
+        ServerBase s = ServerBase.getServer(manga.getServerId(), context);
+        reset(context, manga, s);
     }
 
     public void reset(Context context, Manga manga, ServerBase s) {
         String path = Paths.generateBasePath(s, manga, this, context);
-        File fpath = new File(path);
-        if (fpath.exists())
-            Util.getInstance().deleteRecursive(fpath);
-        //setPages(0); // this breaks "Sexual Hunter Riot" from KissManga no idea why
-        setDownloaded(false);
+        File f = new File(path);
+        if (f.exists()) {
+            Util.getInstance().deleteRecursive(f);
+        }
         setPagesRead(0);
+        setDownloaded(false);
         Database.updateChapterPlusDownload(context, this);
     }
 
@@ -181,12 +162,6 @@ public class Chapter {
         Database.updateChapterPlusDownload(context, this);
     }
 
-    public void reset(Context context) {
-        Manga manga = Database.getManga(context, getMangaID());
-        ServerBase s = ServerBase.getServer(manga.getServerId(), context);
-        reset(context, manga, s);
-    }
-
     public void markRead(Context context, boolean read) {
         Database.markChapter(context, getId(), read);
         setReadStatus(read ? Chapter.READ : Chapter.UNREAD);
@@ -199,8 +174,14 @@ public class Chapter {
         }
     }
 
-    public void addChapterFirst(Manga manga) {
-        manga.getChapters().add(0, this);
+    @Override
+    public String toString() {
+        return title;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof Chapter) && this.path.replaceAll("https?","").equalsIgnoreCase(((Chapter) obj).path.replaceAll("https?",""));
     }
 
     public static class Comparators {
@@ -231,26 +212,27 @@ public class Chapter {
                 return (c2.getId() - c1.getId());
             }
         };
+
         private static String manga_title;
+        public static void setManga_title(String title) {
+            manga_title = title;
+        }
+
+        private static float getVolatileOrder(Chapter c) throws  Exception {
+            if(c.volatile_order == -1) {
+                String str1 = c.getTitle().replace(manga_title, "");
+                str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                str1 = str1.replaceAll(STRING_END_PATTERN, " ");
+                str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "").replace(',', '.');
+                c.volatile_order = Float.parseFloat(str1);
+            }
+            return c.volatile_order;
+        }
         public static Comparator<Chapter> NUMBERS_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if (c1.volatile_order == -1) {
-                        String str1 = c1.getTitle().replace(manga_title, "");
-                        str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                        str1 = str1.replaceAll(STRING_END_PATTERN, " ");
-                        str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "").replace(',', '.');
-                        c1.volatile_order = Float.parseFloat(str1);
-                    }
-                    if (c2.volatile_order == -1) {
-                        String str2 = c2.getTitle().replace(manga_title, "");
-                        str2 = str2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                        str2 = str2.replaceAll(STRING_END_PATTERN, " ");
-                        str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "").replace(',', '.');
-                        c2.volatile_order = Float.parseFloat(str2);
-                    }
-                    return (int) Math.floor(c2.volatile_order - c1.volatile_order);
+                    return (int) Math.floor(getVolatileOrder(c2) - getVolatileOrder(c1));
                 } catch (Exception e) {
                     return 0;
                 }
@@ -260,30 +242,11 @@ public class Chapter {
             @Override
             public int compare(Chapter c1, Chapter c2) {
                 try {
-                    if (c1.volatile_order == -1) {
-                        String str1 = c1.getTitle().replace(manga_title, "");
-                        str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                        str1 = str1.replaceAll(STRING_END_PATTERN, " ");
-                        str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "").replace(',', '.');
-                        c1.volatile_order = Float.parseFloat(str1);
-                    }
-                    if (c2.volatile_order == -1) {
-                        String str2 = c2.getTitle().replace(manga_title, "");
-                        str2 = str2.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                        str2 = str2.replaceAll(STRING_END_PATTERN, " ");
-                        str2 = ServerBase.getFirstMatch(FLOAT_PATTERN, str2, "").replace(',', '.');
-                        c2.volatile_order = Float.parseFloat(str2);
-                    }
-                    return (int) Math.floor(c1.volatile_order - c2.volatile_order);
+                    return (int) Math.floor(getVolatileOrder(c1) - getVolatileOrder(c2));
                 } catch (Exception e) {
                     return 0;
                 }
             }
         };
-
-        public static void setManga_title(String title) {
-            manga_title = title;
-        }
-
     }
 }

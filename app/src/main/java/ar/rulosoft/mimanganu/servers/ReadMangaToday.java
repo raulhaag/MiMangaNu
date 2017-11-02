@@ -196,8 +196,7 @@ class ReadMangaToday extends ServerBase {
             Pattern p = Pattern.compile("<li>[\\s]*<a href=\"([^\"]+?)\">[\\s]*<span class=\"val\"><span class=\"icon-arrow-.\"></span>(.+?)</span>", Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
             while (matcher.find()) {
-                Chapter chapter = new Chapter(matcher.group(2), matcher.group(1));
-                chapter.addChapterFirst(manga);
+                manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
             }
         }
     }
