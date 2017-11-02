@@ -19,7 +19,7 @@ class MangaStream extends ServerBase {
     private static final String PATTERN_CHAPTER =
             "<a href=\"(/r/[^\"]+)\">(.+?)</a>";
     private static final String PATTERN_MANGA =
-            "href=\"(http://mangastream\\.com/manga/[^\"]+?)\">([^\"]+?)</a>";
+            "href=\"(https?://mangastream\\.com/manga/[^\"]+)\">([^<]+)";
     private static final String PATTERN_IMAGE =
             "src=\"(//[^/]+/cdn/manga/[^\"]+)";
 
