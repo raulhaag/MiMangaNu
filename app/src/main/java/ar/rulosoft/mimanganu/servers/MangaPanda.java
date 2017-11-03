@@ -182,6 +182,10 @@ class MangaPanda extends ServerBase {
             manga.setFinished(data.contains("<td>Completed</td>"));
             // Genre
             manga.setGenre(getFirstMatchDefault("Genre:</td>[^<]*<td>(.+?)</td>", data, context.getString(R.string.nodisponible)).replace("a> <a", "a>, <a"));
+            assert manga.getGenre() != null;
+            if(manga.getGenre().isEmpty()) {
+                manga.setGenre(context.getString(R.string.nodisponible));
+            }
             // Author
             manga.setAuthor(getFirstMatchDefault("Author:</td>[^<]*<td>([^<]+)", data, context.getString(R.string.nodisponible)));
         }
