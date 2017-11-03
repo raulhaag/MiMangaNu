@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -30,8 +31,6 @@ class MangaTown extends ServerBase {
             "<li>[^<]*<a href=\"([^\"]+?/manga/[^\"]+)\"[^>]*>([^<]+)</a>[^<]+<span";
     private static final String PATTERN_IMAGE =
             "src=\"([^\"]+?/manga/.+?.(jpg|gif|jpeg|png|bmp).*?)\"";
-    private static final String PATTERN_PAGES =
-            ">(\\d+)</option>[^<]+?</select>";
     private static final String PATTERN_MANGA =
             "<a class=\"manga_cover\" href=\"(.+?)\" title=\"(.+?)\">\\s*<img src=\"(.+?)\"";
 
@@ -171,10 +170,8 @@ class MangaTown extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String web = chapter.getPath();
-        if (page > 1) {
-            web += page + ".html";
-        }
+        assert chapter.getExtra() != null;
+        String web = "http:" + chapter.getExtra().split("\\|")[page - 1];
         String data = getNavigatorAndFlushParameters().get(web);
         return getFirstMatch(
                 PATTERN_IMAGE, data,
@@ -185,10 +182,19 @@ class MangaTown extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pages = getFirstMatch(
-                    PATTERN_PAGES, data,
-                    context.getString(R.string.server_failed_loading_page_count));
-            chapter.setPages(Integer.parseInt(pages));
+            String page_selection = getFirstMatch(
+                    "<select onchange=\"javascript:location.href=this.value;\">(.+?)</select>", data,
+                    context.getString(R.string.server_failed_loading_page_count)
+            );
+
+            // only match numeric page indices, this automatically skips the 'featured' ad page
+            ArrayList<String> page_links = getAllMatch("<option value=\"([^\"]+)\"[^>]+>\\d+</option>", page_selection);
+            if (page_links.isEmpty()) {
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
+            }
+
+            chapter.setExtra(TextUtils.join("|", page_links));
+            chapter.setPages(page_links.size());
         }
     }
 
