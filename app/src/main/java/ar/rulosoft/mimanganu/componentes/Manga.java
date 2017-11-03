@@ -67,6 +67,7 @@ public class Manga {
         this.serverId = serverId;
     }
 
+    @Nullable
     public String getTitle() {
         return title;
     }
@@ -75,6 +76,7 @@ public class Manga {
         this.title = HtmlUnescape.Unescape(Util.getInstance().fromHtml(title).toString().trim());
     }
 
+    @Nullable
     public String getSynopsis() {
         return synopsis;
     }
@@ -92,6 +94,7 @@ public class Manga {
         this.images = images;
     }
 
+    @Nullable
     public String getPath() {
         return path;
     }
@@ -100,6 +103,7 @@ public class Manga {
         this.path = path;
     }
 
+    @Nullable
     public String getAuthor() {
         return author;
     }
@@ -168,6 +172,7 @@ public class Manga {
         this.scrollSensitive = scrollSensitive;
     }
 
+    @Nullable
     public String getGenre() {
         return genre;
     }
