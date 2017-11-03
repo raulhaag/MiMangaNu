@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -90,13 +91,11 @@ class MangaHere extends ServerBase {
     private static final String PATTERN_CHAPTERS =
             "<li>[^<]*<span class=\"left\">[^<]*<a class=\"color_0077\" href=\"([^\"]*)\"[^>]*>([^<]*)</a>";
     private static final String PATTERN_AUTHOR =
-            "<li><label>Author\\(s\\):></label>(.+?)</li>";
+            "<li><label>Author\\(s\\):</label>(.+?)</li>";
     private static final String PATTERN_FINISHED =
             "</label>Completed</li>";
     private static final String PATTERN_GENRE =
             "<li><label>Genre\\(s\\):</label>(.+?)</li>";
-    private static final String PATTERN_LAST =
-            ">(\\d+)</option>[^<]+?</select>";
     private static final String PATTERN_IMAGE =
             "src=\"([^\"]+?/manga/.+?.(jpg|gif|jpeg|png|bmp).*?)\"";
     private static final String PATTERN_MANGA =
@@ -156,11 +155,13 @@ class MangaHere extends ServerBase {
             manga.setFinished(data.contains(PATTERN_FINISHED));
             // Author
             manga.setAuthor(getFirstMatchDefault(PATTERN_AUTHOR, data, context.getString(R.string.nodisponible)));
+            assert manga.getAuthor() != null;
             if(manga.getAuthor().equals("Unknown")) {
                 manga.setAuthor(context.getString(R.string.nodisponible));
             }
             // Genre
             manga.setGenre(getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)));
+            assert manga.getGenre() != null;
             if(manga.getGenre().equals("None")) {
                 manga.setGenre(context.getString(R.string.nodisponible));
             }
@@ -180,7 +181,9 @@ class MangaHere extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
+        assert chapter.getExtra() != null;
+        String web = "http:" + chapter.getExtra().split("\\|")[page - 1];
+        String data = getNavigatorAndFlushParameters().get(web);
         return getFirstMatch(
                 PATTERN_IMAGE, data,
                 context.getString(R.string.server_failed_loading_image));
@@ -190,10 +193,19 @@ class MangaHere extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pages = getFirstMatch(
-                    PATTERN_LAST, data,
-                    context.getString(R.string.server_failed_loading_page_count));
-            chapter.setPages(Integer.parseInt(pages));
+            String page_selection = getFirstMatch(
+                    "<select class=\"wid60\"[^>]+>(.+?)</select>", data,
+                    context.getString(R.string.server_failed_loading_page_count)
+            );
+
+            // only match numeric page indices, this automatically skips the 'featured' ad page
+            ArrayList<String> page_links = getAllMatch("<option value=\"([^\"]+)\"[^>]+>\\d+</option>", page_selection);
+            if (page_links.isEmpty()) {
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
+            }
+
+            chapter.setExtra(TextUtils.join("|", page_links));
+            chapter.setPages(page_links.size());
         }
     }
 
