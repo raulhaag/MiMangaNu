@@ -176,7 +176,7 @@ class MyMangaIo extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data = getNavigatorWithNeededHeader().get(chapter.getPath() + page);
         return getFirstMatch(
-                "<img src=\"([^\"]+)\"", data,
+                "<img src=\"(http[^\"]+)\"", data,
                 context.getString(R.string.server_failed_loading_image));
     }
 
