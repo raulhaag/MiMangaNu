@@ -34,196 +34,196 @@ public class TestServers {
 
     @Ignore("FromFolder cannot be tested - yet")
     public void test_FROMFOLDER() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.FROMFOLDER, context), true);
+        new TestServersCommon(ServerBase.FROMFOLDER, true, context);
     }
 
     @Test
     public void test_RAWSENMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.RAWSENMANGA, context), true);
+        new TestServersCommon(ServerBase.RAWSENMANGA, true, context);
     }
 
     @Test
     public void test_MANGAPANDA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAPANDA, context), true);
+        new TestServersCommon(ServerBase.MANGAPANDA, true, context);
     }
 
     @Test
     public void test_ESMANGAHERE() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.ESMANGAHERE, context), true);
+        new TestServersCommon(ServerBase.ESMANGAHERE, true, context);
     }
 
     @Test
     public void test_MANGAHERE() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAHERE, context), true);
+        new TestServersCommon(ServerBase.MANGAHERE, true, context);
     }
 
     @Test
     public void test_MANGAFOX() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAFOX, context), true);
+        new TestServersCommon(ServerBase.MANGAFOX, true, context);
     }
 
     @Test
     public void test_SUBMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.SUBMANGA, context), true);
+        new TestServersCommon(ServerBase.SUBMANGA, true, context);
     }
 
     @Test
     public void test_ESMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.ESMANGA, context), true);
+        new TestServersCommon(ServerBase.ESMANGA, true, context);
     }
 
     @Test
     public void test_HEAVENMANGACOM() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.HEAVENMANGACOM, context), true);
+        new TestServersCommon(ServerBase.HEAVENMANGACOM, true, context);
     }
 
     @Test
     public void test_STARKANACOM() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.STARKANACOM, context), true);
+        new TestServersCommon(ServerBase.STARKANACOM, true, context);
     }
 
     @Test
     public void test_ESNINEMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.ESNINEMANGA, context), true);
+        new TestServersCommon(ServerBase.ESNINEMANGA, true, context);
     }
 
     @Test
     public void test_LECTUREENLIGNE() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.LECTUREENLIGNE, context), true);
+        new TestServersCommon(ServerBase.LECTUREENLIGNE, true, context);
     }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_KISSMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.KISSMANGA, context), true);
+        new TestServersCommon(ServerBase.KISSMANGA, true, context);
     }
 
     @Test
     public void test_ITNINEMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.ITNINEMANGA, context), true);
+        new TestServersCommon(ServerBase.ITNINEMANGA, true, context);
     }
 
     @Test
     public void test_TUSMANGAS() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.TUSMANGAS, context), true);
+        new TestServersCommon(ServerBase.TUSMANGAS, true, context);
     }
 
     @Test
     public void test_MANGAREADER() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAREADER, context), true);
+        new TestServersCommon(ServerBase.MANGAREADER, true, context);
     }
 
     @Test
     public void test_DENINEMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.DENINEMANGA, context), true);
+        new TestServersCommon(ServerBase.DENINEMANGA, true, context);
     }
 
     @Test
     public void test_RUNINEMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.RUNINEMANGA, context), true);
+        new TestServersCommon(ServerBase.RUNINEMANGA, true, context);
     }
 
     @Test
     public void test_MANGATUBE() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGATUBE, context), true);
+        new TestServersCommon(ServerBase.MANGATUBE, true, context);
     }
 
     @Test
     public void test_MANGAEDENIT() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAEDENIT, context), true);
+        new TestServersCommon(ServerBase.MANGAEDENIT, true, context);
     }
 
     @Test
     public void test_MYMANGAIO() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MYMANGAIO, context), true);
+        new TestServersCommon(ServerBase.MYMANGAIO, true, context);
     }
 
     @Test
     public void test_TUMANGAONLINE() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.TUMANGAONLINE, context), true);
+        new TestServersCommon(ServerBase.TUMANGAONLINE, true, context);
     }
 
     @Test
     public void test_NINEMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.NINEMANGA, context), true);
+        new TestServersCommon(ServerBase.NINEMANGA, true, context);
     }
 
     @Test
     public void test_MANGAEDEN() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAEDEN, context), true);
+        new TestServersCommon(ServerBase.MANGAEDEN, true, context);
     }
 
     @Test
     public void test_LEOMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.LEOMANGA, context), true);
+        new TestServersCommon(ServerBase.LEOMANGA, true, context);
     }
 
     @Ignore("Batoto does not work without login credentials")
     public void test_BATOTO() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.BATOTO, context), true);
+        new TestServersCommon(ServerBase.BATOTO, true, context);
     }
 
     @Ignore("Batoto(ES) does not work without login credentials")
     public void test_BATOTOES() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.BATOTOES, context), true);
+        new TestServersCommon(ServerBase.BATOTOES, true, context);
     }
 
     @Test
     public void test_JAPSCAN() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.JAPSCAN, context), true);
+        new TestServersCommon(ServerBase.JAPSCAN, true, context);
     }
 
     @Test
     public void test_READMANGATODAY() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.READMANGATODAY, context), true);
+        new TestServersCommon(ServerBase.READMANGATODAY, true, context);
     }
 
     @Test
     public void test_TAADD() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.TAADD, context), true);
+        new TestServersCommon(ServerBase.TAADD, true, context);
     }
 
     @Test
     public void test_MANGASTREAM() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGASTREAM, context), true);
+        new TestServersCommon(ServerBase.MANGASTREAM, true, context);
     }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_MANGAKAWAII() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAKAWAII, context), true);
+        new TestServersCommon(ServerBase.MANGAKAWAII, true, context);
     }
 
     @Test
     public void test_KUMANGA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.KUMANGA, context), true);
+        new TestServersCommon(ServerBase.KUMANGA, true, context);
     }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_MANGAPEDIA() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGAPEDIA, context), true);
+        new TestServersCommon(ServerBase.MANGAPEDIA, true, context);
     }
 
     @Test
     public void test_MANGATOWN() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.MANGATOWN, context), true);
+        new TestServersCommon(ServerBase.MANGATOWN, true, context);
     }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_READCOMICONLINE() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.READCOMICONLINE, context), true);
+        new TestServersCommon(ServerBase.READCOMICONLINE, true, context);
     }
 
     @Test
     public void test_READCOMICSTV() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.READCOMICSTV, context), true);
+        new TestServersCommon(ServerBase.READCOMICSTV, true, context);
     }
 
     @Test
     public void test_GOGOCOMIC() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.GOGOCOMIC, context), true);
+        new TestServersCommon(ServerBase.GOGOCOMIC, true, context);
     }
 
     @Test
     public void test_VIEWCOMIC() throws Exception {
-        new TestServersCommon(ServerBase.getServer(ServerBase.VIEWCOMIC, context), true);
+        new TestServersCommon(ServerBase.VIEWCOMIC, true, context);
     }
 }

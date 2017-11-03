@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
 
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.DeadServer;
@@ -24,6 +26,7 @@ public class TestServersCommon {
 
     private ServerBase serverBase;
     private boolean hostBasedTests;
+    private Context context;
 
     private Random rand;
     private Stack<String> messages;
@@ -37,14 +40,15 @@ public class TestServersCommon {
      *                       otherwise
      * @throws Exception     if something goes wrong
      */
-    public TestServersCommon(ServerBase serverBase, boolean hostBasedTests) throws Exception {
+    public TestServersCommon(int serverId, boolean hostBasedTests, Context context) throws Exception {
         this.rand = new Random();
         this.messages = new Stack<>();
 
-        logMessage(String.format(Locale.getDefault(), "Testing: %s (id=%d)", serverBase.getServerName(), serverBase.getServerID()));
-
-        this.serverBase = serverBase;
+        this.serverBase = ServerBase.getServer(serverId, context);
         this.hostBasedTests = hostBasedTests;
+        this.context = context;
+
+        logMessage(String.format(Locale.getDefault(), "Testing: %s (id=%d)", serverBase.getServerName(), serverBase.getServerID()));
 
         if(serverBase instanceof DeadServer) {
             logMessage("[INFO] server is an instance of DeadServer - skipping.");
@@ -128,15 +132,23 @@ public class TestServersCommon {
             fail(getContext(e.getMessage()));
         }
         assertNotNull(getContext(), manga.getImages());
-        // manga.getImages() might be empty
+        if(manga.getImages().isEmpty()) {
+            System.err.println("[WRN] no cover image set");
+        }
 
         assertNotNull(getContext(), manga.getSynopsis());
         assertFalse(getContext(), manga.getSynopsis().isEmpty());
         assertEquals(getContext(), manga.getSynopsis(), manga.getSynopsis().trim());
+        if(manga.getSynopsis().equals(context.getString(R.string.nodisponible))) {
+            System.err.println("[WRN] default value for 'summary'");
+        }
 
         assertNotNull(getContext(), manga.getAuthor());
         assertFalse(getContext(), manga.getAuthor().isEmpty());
         assertEquals(getContext(), manga.getAuthor(), manga.getAuthor().trim().replaceAll("\\s+", " "));
+        if(manga.getAuthor().equals(context.getString(R.string.nodisponible))) {
+            System.err.println("[WRN] default value for 'author'");
+        }
 
         assertNotNull(getContext(), manga.getGenre());
         assertFalse(getContext(), manga.getGenre().isEmpty());
@@ -144,6 +156,9 @@ public class TestServersCommon {
         assertEquals(getContext(), manga.getGenre(), manga.getGenre().replaceAll(",+", ","));
         assertFalse(getContext(), manga.getGenre().startsWith(","));
         assertFalse(getContext(), manga.getGenre().endsWith(","));
+        if(manga.getGenre().equals(context.getString(R.string.nodisponible))) {
+            System.err.println("[WRN] default value for 'genre'");
+        }
     }
 
     private void testInitChapter(Chapter chapter) throws Exception {
