@@ -12,7 +12,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
@@ -184,22 +183,26 @@ class NineManga extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String data = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
+            String data = getNavigatorWithNeededHeader().get(manga.getPath());
+            if(data.contains(manga.getPath() + "?waring=1")) {
+                // es.ninemanga delivers invalid chapter links if ?waring=1 is already passed on
+                // non-warned Manga - so check if there is a link and then retry with the extension
+                data = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
+            }
 
             // cover image
             manga.setImages(getFirstMatchDefault(PATTERN_COVER, data, ""));
             // summary
-            manga.setSynopsis(Util.getInstance().fromHtml(getFirstMatchDefault(PATTERN_SUMMARY, data,
-                    context.getString(R.string.nodisponible))).toString().replaceFirst("^.+?: ", "").replace("\\", ""));
+            manga.setSynopsis(getFirstMatchDefault(PATTERN_SUMMARY, data, context.getString(R.string.nodisponible)));
+            assert manga.getSynopsis() != null;
+            manga.setSynopsis(manga.getSynopsis().replaceFirst("^.+?: ", "").replace("\\", ""));
             // ongoing or completed
             manga.setFinished(data.contains(PATTERN_COMPLETED));
             // author
-            manga.setAuthor(getFirstMatchDefault(PATTERN_AUTHOR, data,
-                    context.getString(R.string.nodisponible)));
+            manga.setAuthor(getFirstMatchDefault(PATTERN_AUTHOR, data, context.getString(R.string.nodisponible)));
             // genre
-            manga.setGenre(Util.getInstance().fromHtml(
-                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)).replace("</a>", "</a>,")
-            ).toString().trim());
+            manga.setGenre(
+                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)).replace("</a>", "</a>,"));
             // chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
