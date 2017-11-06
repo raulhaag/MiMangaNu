@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
@@ -50,7 +50,7 @@ configurations.all {
 
 
 dependencies {
-    final ANDROID_SUPPORT = '25.3.1'
+    final ANDROID_SUPPORT = '25.4.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.android.support:support-v4:$ANDROID_SUPPORT"
     compile "com.android.support:design:$ANDROID_SUPPORT"
@@ -70,10 +70,18 @@ dependencies {
 
     // for device-based testing
     androidTestCompile "com.android.support:support-annotations:$ANDROID_SUPPORT"
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test.espresso:espresso-core:2.2.2'
+    androidTestCompile 'com.android.support.test:runner:1.0.1'
+    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
 
     // for host-based testing
     testCompile 'junit:junit:4.12'
-    testCompile 'org.robolectric:robolectric:3.5'
+    testImplementation "org.robolectric:robolectric:3.5.1"
+
+    android {
+        testOptions {
+            unitTests {
+                includeAndroidResources = true
+            }
+        }
+    }
 }

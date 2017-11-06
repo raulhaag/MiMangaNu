@@ -17,7 +17,6 @@ import ar.rulosoft.navegadores.Navigator;
 import ar.rulosoft.mimanganu.utils.TestServersCommon;
 
 @Config(
-        manifest = "../app/src/main/AndroidManifest.xml",
         shadows = {ShadowNavigator.class}
 )
 @RunWith(RobolectricTestRunner.class)
