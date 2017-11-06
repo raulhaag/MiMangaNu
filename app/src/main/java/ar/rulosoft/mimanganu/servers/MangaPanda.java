@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaPanda extends ServerBase {
-    private static String HOST = "http://www.mangapanda.com";
+    private String HOST = "http://www.mangapanda.com";
 
     private static final String PATTERN_SERIE =
             "<li><a href=\"([^\"]+)\">([^<]+)";
@@ -107,8 +107,8 @@ class MangaPanda extends ServerBase {
         setServerID(MANGAPANDA);
     }
 
-    void SetHost(String new_host) {
-        HOST = new_host;
+    void setHost(String host) {
+        HOST = host;
     }
 
     @Override
