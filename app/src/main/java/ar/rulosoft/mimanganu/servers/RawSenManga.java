@@ -65,7 +65,7 @@ class RawSenManga extends ServerBase {
             "/directory/category/Comedy/",
             "/directory/category/Cooking/",
             "/directory/category/Drama/",
-            "/irectory/category/Ecchi/",
+            "/directory/category/Ecchi/",
             "/directory/category/Fantasy/",
             "/directory/category/Gender-Bender/",
             "/directory/category/Harem/",
