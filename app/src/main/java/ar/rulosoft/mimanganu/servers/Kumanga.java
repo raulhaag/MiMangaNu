@@ -263,7 +263,7 @@ class Kumanga extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
-        return "http://img.kumanga.com/manga/" + chapter.getExtra() + "/" + page + ".jpg";
+        return chapter.getExtra().replaceAll("\\{.+?\\}", "" + page);
     }
 
     @Override
@@ -274,7 +274,7 @@ class Kumanga extends ServerBase {
                     "<select class=\"pageselector.+?>(\\d+)</option>[\\s]*</select>", data,
                     context.getString(R.string.server_failed_loading_page_count));
             chapter.setExtra(getFirstMatch(
-                    "/c/(.+)", chapter.getPath(),
+                    "'pageFormat':'(.+?)'", data,
                     context.getString(R.string.server_failed_loading_chapter)));
             chapter.setPages(Integer.parseInt(pages));
         }
