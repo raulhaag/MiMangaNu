@@ -464,4 +464,5 @@
     <string name="server_failed_locate_manga_name">Could not extract Manga name.</string>
     <string name="server_failed_locate_manga_url">Could not extract Manga URL.</string>
     <string name="server_manga_is_licensed">The Manga is licensed and is no longer available for downloading.</string>
+    <string name="server_uses_captcha">Server uses CAPTCHAs for link protection - cannot go further.</string>
 </resources>

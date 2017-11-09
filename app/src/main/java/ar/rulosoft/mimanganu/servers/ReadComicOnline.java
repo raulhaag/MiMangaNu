@@ -237,9 +237,14 @@ class ReadComicOnline extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-            ArrayList<String> images = getAllMatch("lstImages.push\\(\"(.+?)\"", source);
 
-            if(images.isEmpty()) {
+            if(source.contains("class=\"g-recaptcha\"")) {
+                throw new Exception(context.getString(R.string.server_uses_captcha));
+            }
+
+            ArrayList<String> images = getAllMatch("lstImages.push\\(\"([^\"]+)", source);
+
+            if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
             chapter.setExtra(TextUtils.join("|", images));
