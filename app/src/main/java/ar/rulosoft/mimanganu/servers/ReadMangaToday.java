@@ -217,7 +217,8 @@ class ReadMangaToday extends ServerBase {
                 Util.getInstance().removeSpecificCookies(context, HOST);
                 source = getNavigatorAndFlushParameters().get(chapter.getPath() + "/all-pages");
             }
-            ArrayList<String> images = getAllMatch("<img src=\"([^\"]+)\" class=\"img-responsive-2\">", source);
+            source = TextUtils.join(",", getAllMatch("<div class=\"[^\"]*page_chapter\"[^\"]*>([\\s\\S]*?)</div>",source));
+            ArrayList<String> images = getAllMatch("src=\"([^\"]+)", source);
 
             if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));

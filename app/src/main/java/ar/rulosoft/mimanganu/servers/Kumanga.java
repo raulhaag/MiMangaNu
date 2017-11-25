@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -263,12 +264,16 @@ class Kumanga extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
-        return chapter.getExtra().replaceAll("\\{.+?\\}", "" + page);
+        if (chapter.getExtra().contains("|")) {
+            return chapter.getExtra().split("\\|")[page - 1];
+        } else {
+            return chapter.getExtra().replaceAll("\\{.+?\\}", "" + page);
+        }
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/c/", "/leer/"));
             String pages = getFirstMatch(
                     "<select class=\"pageselector.+?>(\\d+)</option>[\\s]*</select>", data,
@@ -276,6 +281,10 @@ class Kumanga extends ServerBase {
             chapter.setExtra(getFirstMatch(
                     "'pageFormat':'(.+?)'", data,
                     context.getString(R.string.server_failed_loading_chapter)));
+            String pURLs = getFirstMatchDefault("var pUrl=\\[(.+?)\\]", data, "");
+            if (pURLs.contains("\"npage\":\"1\"")) {
+                chapter.setExtra(TextUtils.join("|", getAllMatch("\"imgURL\":\"([^\"]+)", pURLs.replaceAll("\\\\", ""))));
+            }
             chapter.setPages(Integer.parseInt(pages));
         }
     }
