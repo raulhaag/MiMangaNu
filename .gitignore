@@ -5,6 +5,7 @@
 .DS_Store
 /build
 /captures
+/travis_builds
 
 # Android Studio
 .gradle
