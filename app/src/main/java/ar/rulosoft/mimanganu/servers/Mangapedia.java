@@ -21,7 +21,7 @@ import okhttp3.MultipartBody;
  */
 class Mangapedia extends ServerBase {
 
-    private static final String HOST = "http://mangapedia.fr/";
+    private static final String HOST = "http://mangapedia.eu/";
 
     private static final int[] fltDemographic = {
             R.string.flt_tag_shounen,

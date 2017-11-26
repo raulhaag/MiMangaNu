@@ -92,7 +92,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 15;
+    private static int database_version = 16;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -817,6 +817,22 @@ public class Database extends SQLiteOpenHelper {
         }
         if (oldVersion < 15) {
             db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_PATH + " LIKE '%hitmanga.eu%'");
+        }
+        if(oldVersion < 16){
+            /*
+            UPDATE manga set path = REPLACE(path, 'www.readmanga.today', 'www.readmng.com') where server_id = 29;
+            UPDATE capitulos set path = REPLACE(path, 'www.readmanga.today', 'www.readmng.com') where 1;
+             */
+            db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                    " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
+                    COL_SERVER_ID  + "=29");
+            db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'www.readmanga.today', 'www.readmng.com') WHERE 1");
+            db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                    " = REPLACE(" + COL_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE " +
+                    COL_SERVER_ID  + "=34");
+            db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.fr', 'mangapedia.eu') WHERE 1");
         }
     }
 

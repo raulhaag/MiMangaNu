@@ -3,6 +3,9 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,12 +15,13 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by xtj-9182 on 01.12.2016.
  */
 class ReadMangaToday extends ServerBase {
-    private static final String HOST = "http://www.readmanga.today";
+    private static final String HOST = "https://www.readmng.com";
     private static final int[] fltGenre = {
             R.string.flt_tag_all,
             R.string.flt_tag_action,
@@ -116,30 +120,16 @@ class ReadMangaToday extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String web = HOST + "/manga-list/" + term.toLowerCase().charAt(0);
-        int count = -1;
-        // starting with 't', as this is a common prefix in English
-        String[] alphabet = {"t", "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "v", "w", "x", "y", "z"};
-        while (mangas.isEmpty()) {
-            // if the Manga was not found (yet) search through the alphabet
-            String source = getNavigatorAndFlushParameters().get(web);
-            Pattern pattern = Pattern.compile("<a href=\"(http://www\\.readmanga\\.today/[^\"]+?)\">(.+?)</a>", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(source);
-            while (matcher.find()) {
-                if (matcher.group(2).toLowerCase().contains(term.toLowerCase())) {
-                    Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-                    mangas.add(manga);
-                }
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addHeader("x-requested-with", "XMLHttpRequest");
+        String data = getNavigatorAndFlushParameters().get(HOST + "/service/search?q=" + term.toLowerCase());
+        if(!data.equals("false")) {
+            JSONArray arr = new JSONArray(data);
+            for (int i=0; i < arr.length(); i++) {
+                JSONObject m = arr.getJSONObject(i);
+                Manga manga = new Manga(getServerID(),m.getString("title"), m.getString("url"),false);
+                mangas.add(manga);
             }
-            if (count == alphabet.length) {
-                break;
-            }
-
-            web = HOST + "/manga-list/";
-            if (count != -1) {
-                web = web + alphabet[count];
-            }
-            count++;
         }
         return mangas;
     }
@@ -218,7 +208,7 @@ class ReadMangaToday extends ServerBase {
                 source = getNavigatorAndFlushParameters().get(chapter.getPath() + "/all-pages");
             }
             source = TextUtils.join(",", getAllMatch("<div class=\"[^\"]*page_chapter\"[^\"]*>([\\s\\S]*?)</div>",source));
-            ArrayList<String> images = getAllMatch("src=\"([^\"]+)", source);
+            ArrayList<String> images = getAllMatch("src=\"(h[^\"]+)", source);
 
             if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));

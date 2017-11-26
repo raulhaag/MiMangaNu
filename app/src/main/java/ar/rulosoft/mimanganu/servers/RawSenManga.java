@@ -18,7 +18,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  */
 class RawSenManga extends ServerBase {
 
-    private static final String HOST = "http://raw.senmanga.com";
+    private static final String HOST = "https://raw.senmanga.com";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_all,
@@ -58,7 +58,7 @@ class RawSenManga extends ServerBase {
             R.string.flt_tag_yuri
     };
     private static final String[] valGenre = {
-            "/Manga/",
+            "/directory/",
             "/directory/category/Action/",
             "/directory/category/Adult/",
             "/directory/category/Adventure/",
@@ -100,9 +100,9 @@ class RawSenManga extends ServerBase {
             R.string.flt_order_alpha,
     };
     private static final String[] valOrder = {
-            "?order=popular",
-            "?order=rating",
-            "?order=title"
+            "popular",
+            "rating",
+            ""
     };
 
     RawSenManga(Context context) {
@@ -126,13 +126,13 @@ class RawSenManga extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = HOST + "/search?q=" + URLEncoder.encode(term, "UTF-8");
-        String source = getNavigatorAndFlushParameters().get(web.replaceAll("^http", "https"));
-        Pattern p = Pattern.compile("<a href='([^']+)' title='([^']+)' style", Pattern.DOTALL);
+        String web = HOST + "/search/" + URLEncoder.encode(term, "UTF-8");
+        String source = getNavigatorAndFlushParameters().get(web);
+        Pattern p = Pattern.compile("<a href=\"([^\"]+)\" title=\"([^\"]+)\">\\s*<span class=\"cover\">\\s*<img src=\"([^\"]+)", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -145,37 +145,34 @@ class RawSenManga extends ServerBase {
             // Summary
             manga.setSynopsis(
                     getFirstMatchDefault(
-                            "itemprop=\"description\">([^<]+)", data, context.getString(R.string.nodisponible)));
+                            "<span itemprop=\"description\">([\\s\\S]+?)</span>", data, context.getString(R.string.nodisponible)));
             if(manga.getSynopsis().startsWith("No Description.")) {
                 manga.setSynopsis(context.getString(R.string.nodisponible));
             }
             // Cover
-            manga.setImages(
-                    HOST + getFirstMatchDefault(
-                            "itemprop=\"image\" src=\"([^\"]+)", data, ""));
+            manga.setImages(getFirstMatchDefault("\"image\" src=\"([^\"]+)", data, ""));
             // Author(s)
             manga.setAuthor(
-                    getFirstMatchDefault(
-                            "<strong class='data'>Author:</strong>(.+?)</a></span>", data,
+                    getFirstMatchDefault("<li><b>Author</b>:(.+?)</li>", data,
                             context.getString(R.string.nodisponible)).replace("</a>", "</a>,"));
             // Genre
             manga.setGenre(
-                    getFirstMatchDefault("<strong class='data'>Categorize in:</strong>(.+?)</a></p>", data,
-                            context.getString(R.string.nodisponible)));
+                    getFirstMatchDefault("<li><b>Categories</b>:(.+?)</li>", data, context.getString(R.string.nodisponible)));
             // Status
             manga.setFinished(
                     getFirstMatchDefault(
-                            "<strong class='data'>Status:</strong>(.+?)</span>", data, "").contains("Complete"));
+                            "<li><b>Status</b>:(.+?)</li>", data, "").trim()
+                            .contains("Complete"));
             // Chapters
-            Pattern p = Pattern.compile("</td><td><a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
+            Pattern p = Pattern.compile("<div class=\"title\"><a href=\"([^\"]+)\" title=\"([^\"]+)\"", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 if (m.group(1).endsWith("/1")) {
                     // strip off page suffix if present
-                    manga.addChapterFirst(new Chapter(m.group(2), HOST + m.group(1).substring(0, m.group(1).length() - 2)));
+                    manga.addChapterFirst(new Chapter(m.group(2), m.group(1).substring(0, m.group(1).length() - 2)));
                 }
                 else {
-                    manga.addChapterFirst(new Chapter(m.group(2), HOST + m.group(1)));
+                    manga.addChapterFirst(new Chapter(m.group(2), m.group(1)));
                 }
             }
         }
@@ -188,7 +185,7 @@ class RawSenManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String path = chapter.getPath().substring(HOST.length() + 1);
+        String path = chapter.getPath().substring(HOST.length() + (chapter.getPath().startsWith("https")? 1 : 2));
         return HOST + "/viewer/" + path + "/" + page;
     }
 
@@ -219,20 +216,25 @@ class RawSenManga extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web;
         if (fltGenre[filters[0][0]] == R.string.flt_tag_all) {
-            web = HOST + valGenre[filters[0][0]] + valOrder[filters[1][0]] + "&page=" + pageNumber;
+            web = HOST + valGenre[filters[0][0]] + valOrder[filters[1][0]] + "/page/" + pageNumber;
         }
         else {
-            web = HOST + valGenre[filters[0][0]] + "?page=" + pageNumber;
+            web = HOST + valGenre[filters[0][0]] + "/page/" + pageNumber;
         }
         String source = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile("cover\">\\s*<a href=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
+        Pattern p = Pattern.compile("<a href=\"([^\"]+)\" title=\"([^\"]+)\">\\s*<span class=\"cover\">\\s*<img src=\"([^\"]+)", Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
-            manga.setImages(HOST + "/Manga/cover/" + m.group(1).replaceAll("/", "") + ".jpg");
+            Manga manga = new Manga(getServerID(), m.group(2), m.group(1), false);
+            manga.setImages(m.group(3));
             mangas.add(manga);
         }
         return mangas;
+    }
+
+    @Override
+    public boolean needRefererForImages() {
+        return false;
     }
 }

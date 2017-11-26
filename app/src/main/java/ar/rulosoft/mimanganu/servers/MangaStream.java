@@ -19,7 +19,7 @@ class MangaStream extends ServerBase {
     private static final String PATTERN_CHAPTER =
             "<a href=\"(/r/[^\"]+)\">(.+?)</a>";
     private static final String PATTERN_MANGA =
-            "href=\"(https?://mangastream\\.com/manga/[^\"]+)\">([^<]+)";
+            "<td><strong><a href=\"(.*?manga[^\"]+)\">([^<]+)";
     private static final String PATTERN_IMAGE =
             "src=\"(//[^/]+/cdn/manga/[^\"]+)";
 
@@ -52,8 +52,8 @@ class MangaStream extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
-                Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-                if(!tmpMangaPathList.contains(manga.getPath())) {
+                Manga manga = new Manga(getServerID(), matcher.group(2), HOST +  matcher.group(1), false);
+                if (!tmpMangaPathList.contains(manga.getPath())) {
                     mangas.add(manga);
                     tmpMangaPathList.add(manga.getPath());
                 }
@@ -95,7 +95,7 @@ class MangaStream extends ServerBase {
             // Cover - use first image of latest chapter (if present)
             ArrayList<Chapter> chapters = manga.getChapters();
             manga.setImages("");
-            if(!chapters.isEmpty()) {
+            if (!chapters.isEmpty()) {
                 source = getNavigatorAndFlushParameters().get(
                         chapters.get(chapters.size() - 1).getPath());
                 String image = getFirstMatchDefault(PATTERN_IMAGE, source, "");
@@ -117,12 +117,12 @@ class MangaStream extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pageNumber = getFirstMatchDefault(
                     "Last Page \\((\\d+)\\)</a>", source, null);
             // handle case, where only one page is listed (as "First Page")
-            if(pageNumber == null) {
+            if (pageNumber == null) {
                 pageNumber = getFirstMatch(
                         "First Page \\((\\d+)\\)</a>", source,
                         context.getString(R.string.server_failed_loading_page_count));
@@ -135,15 +135,18 @@ class MangaStream extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + "/manga";
         String source = getNavigatorAndFlushParameters().get(web);
-
         Pattern pattern = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
 
         ArrayList<Manga> mangas = new ArrayList<>();
         ArrayList<String> tmpMangaPathList = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-            if(!tmpMangaPathList.contains(manga.getPath())) {
+            Manga manga;
+            if (matcher.group(1).startsWith("/"))
+                manga = new Manga(getServerID(), matcher.group(2), HOST +  matcher.group(1), false);
+            else
+                manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
+            if (!tmpMangaPathList.contains(manga.getPath())) {
                 mangas.add(manga);
                 tmpMangaPathList.add(manga.getPath());
             }
