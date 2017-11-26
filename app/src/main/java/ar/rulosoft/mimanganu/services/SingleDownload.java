@@ -64,7 +64,7 @@ public class SingleDownload implements Runnable {
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();
                     rBuilder = new Request.Builder().url(fromURL)
-                            .addHeader("User-Agent", Navigator.USER_AGENT);
+                            .addHeader("User-Agent", Navigator.USER_AGENT).removeHeader("Cookie");
                     if (referer) {
                         rBuilder.addHeader("Referer", cd.chapter.getPath());
                     }

@@ -42,35 +42,23 @@ import okhttp3.Response;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navigator {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:47.0) Gecko/20100101 Firefox/47.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0";
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     private static CookieJar cookieJar;
+    private static Navigator instance;
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
-
-    private static Navigator instance;
-    public static synchronized Navigator getInstance() {
-        if (Navigator.instance == null) {
-            throw new NullPointerException("Navigator has no instance with a valid context.");
-        }
-        return Navigator.instance;
-    }
-    public static synchronized Navigator initialiseInstance(Context context) throws Exception {
-        Navigator.instance = new Navigator(context);
-        return Navigator.instance;
-    }
 
     private Navigator(Context context) throws Exception {
         if (httpClient == null) {
             TrustManager[] trustManagers = getTrustManagers(context);
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustManagers, null);
-            cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
+            cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
-                    //.addInterceptor(new UserAgentInterceptor(USER_AGENT))
                     .addInterceptor(new CFInterceptor())
                     .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
@@ -79,6 +67,18 @@ public class Navigator {
                     .cookieJar(cookieJar)
                     .build();
         }
+    }
+
+    public static synchronized Navigator getInstance() {
+        if (Navigator.instance == null) {
+            throw new NullPointerException("Navigator has no instance with a valid context.");
+        }
+        return Navigator.instance;
+    }
+
+    public static synchronized Navigator initialiseInstance(Context context) throws Exception {
+        Navigator.instance = new Navigator(context);
+        return Navigator.instance;
     }
 
     public static HashMap<String, String> getFormParamsFromSource(String inSource) throws Exception {
@@ -108,6 +108,22 @@ public class Navigator {
                 .cookieJar(cookieJar)
                 .build();
         Navigator.cookieJar = cookieJar;
+    }
+
+    public static String getNewBoundary() {
+        String boundary = "---------------------------";
+        boundary += Math.floor(Math.random() * 32768);
+        boundary += Math.floor(Math.random() * 32768);
+        boundary += Math.floor(Math.random() * 32768);
+        return boundary;
+    }
+
+    public static KeyStore getSystemCAKeyStore() throws
+            KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+
+        KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
+        keyStore.load(null, null);
+        return keyStore;
     }
 
     public void clearCookieJar(Context context) {
@@ -357,14 +373,6 @@ public class Navigator {
         headers.add(new Parameter(key, value));
     }
 
-    public static String getNewBoundary() {
-        String boundary = "---------------------------";
-        boundary += Math.floor(Math.random() * 32768);
-        boundary += Math.floor(Math.random() * 32768);
-        boundary += Math.floor(Math.random() * 32768);
-        return boundary;
-    }
-
     public void flushParameter() {
         parameters = new ArrayList<>();
     }
@@ -420,13 +428,5 @@ public class Navigator {
             }
         }
         return certificate;
-    }
-
-    public static KeyStore getSystemCAKeyStore() throws
-            KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
-
-        KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
-        keyStore.load(null, null);
-        return keyStore;
     }
 }
