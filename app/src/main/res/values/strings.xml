@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.73:\n\t* Hotfix NineManga.\n\t* Add FileProvider for nougat or greater.\nChanges in v1.72:\n\t* All servers working 28/10/2017.\n\t * A lot of improves in the code and rework.</string>
+    <string name="update_message">Changes in v1.74:\n\t* All servers working 26/11/2017 except for japScan under maintenance.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

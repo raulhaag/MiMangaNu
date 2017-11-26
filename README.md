@@ -33,6 +33,11 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.74:
+* Todos los servidores funcionando 26/11/2017 excepto por japScan en mantenimiento.
+
+Changes in v1.74:
+* All servers working 26/11/2017 except for japScan under maintenance.
 
 Cambios en v1.73:
 * Hotfix NineManga.

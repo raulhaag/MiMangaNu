@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.73:\n\t* Hotfix NineManga.\n\t* Agregado FileProvider para nougat o superior.\nCambios en v1.72:\n\t * Todos los servidores funcionando al 28/10/2017.\n\t * Muchas mejoras en el código.</string>
+    <string name="update_message">Cambios en v1.74:\n\t* Todos los servidores funcionando 26/11/2017 excepto por japScan en mantenimiento.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
