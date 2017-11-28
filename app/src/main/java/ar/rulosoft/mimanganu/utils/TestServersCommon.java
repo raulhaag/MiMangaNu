@@ -35,9 +35,10 @@ public class TestServersCommon {
      * Create a common test case to be used for host based unit tests or tests using the
      * instrumentation API (i.e. device based testing).
      *
-     * @param serverBase     the <code>ServerBase</code> instance to test
+     * @param serverId       the id to get the proper <code>ServerBase</code> instance to test
      * @param hostBasedTests <code>true</code> if tests are to be run on the host, <code>false</code>
      *                       otherwise
+     * @param context        the <code>Context</code> to use during testing
      * @throws Exception     if something goes wrong
      */
     public TestServersCommon(int serverId, boolean hostBasedTests, Context context) throws Exception {
