@@ -45,7 +45,7 @@
     <string name="descargando">(Lädt herunter)</string>
     <string name="error">(Fehler)</string>
     <string name="paused">(Angehalten)</string>
-    <string name="esconder_de_galeria_subtitle">Heruntergeladene Bilder nicht in der Galerie anzeigen.</string>
+    <string name="esconder_de_galeria_subtitle">Heruntergeladene Bilder nicht in der Gallerie anzeigen. Ein Geräteneustart kann zum Übernehmen der Änderung notwendig sein.</string>
     <string name="escondergaleria">Bilder verbergen</string>
     <string name="hide_read">Gelesene ausblenden</string>
     <string name="estado">Status</string>

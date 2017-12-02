@@ -29,7 +29,7 @@ import android.widget.EditText;
 import com.fedorvlasov.lazylist.FileCache;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Locale;
 
 import ar.rulosoft.custompref.ColorListDialogFragment;
 import ar.rulosoft.custompref.ColorListDialogPref;
@@ -98,26 +98,36 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         /* This enables to hide downloaded images from gallery, just a toggle */
         final SwitchPreferenceCompat cBoxPref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("mostrar_en_galeria");
+
+        // actuate the switch based on the existence of the .nomedia file
+        final File noMedia = new File(current_filepath, ".nomedia");
+        if(android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+            cBoxPref.setChecked(noMedia.exists());
+        }
+        else {
+            cBoxPref.setEnabled(false);
+        }
         cBoxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
-                boolean have_noMedia = (Boolean) newValue;
+                // reject change event in case the external storage is not available
+                if(!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+                    return false;
+                }
 
-                if (android.os.Environment.getExternalStorageState()
-                        .equals(android.os.Environment.MEDIA_MOUNTED)) {
-                    File mimaFolder = new File(current_filepath, ".nomedia");
-
-                    if (have_noMedia) {
-                        try {
-                            mimaFolder.createNewFile();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                try {
+                    if ((Boolean) newValue) {
+                        if(!noMedia.createNewFile()) {
+                            Log.w("PF", "failed to create .nomedia file");
                         }
                     } else {
-                        if (mimaFolder.exists()) {
-                            mimaFolder.delete();
+                        if(!noMedia.delete()) {
+                            Log.w("PF", "failed to delete .nomedia file");
                         }
                     }
+                }
+                catch(Exception e) {
+                    e.printStackTrace();
                 }
 
                 return true;
@@ -620,7 +630,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize / 1024.0) + " GB");
+                                prefStoreStat.setSummary("calculating... ~" + String.format(Locale.getDefault(), "%.2f", cSize / 1024.0) + " GB");
                             }
                         });
                     } else {
@@ -628,7 +638,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                prefStoreStat.setSummary("calculating... ~" + String.format("%.2f", cSize) + " MB");
+                                prefStoreStat.setSummary("calculating... ~" + String.format(Locale.getDefault(),"%.2f", cSize) + " MB");
                             }
                         });
                     }
@@ -646,9 +656,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             if (allOk) {
                 double cSize = l / (1024.0 * 1024.0);
                 if (cSize > 1024.0)
-                    prefStoreStat.setSummary(String.format("%.2f", cSize / 1024.0) + " GB");
+                    prefStoreStat.setSummary(String.format(Locale.getDefault(), "%.2f", cSize / 1024.0) + " GB");
                 else
-                    prefStoreStat.setSummary(String.format("%.2f", cSize) + " MB");
+                    prefStoreStat.setSummary(String.format(Locale.getDefault(), "%.2f", cSize) + " MB");
             } else {
                 Log.e("PrefFragment", "" + error);
                 Util.getInstance().toast(getContext(), "" + error);
