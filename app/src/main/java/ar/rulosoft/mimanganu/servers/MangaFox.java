@@ -30,7 +30,7 @@ class MangaFox extends ServerBase {
     private static final String PATTERN_MANGA =
             "\"([^\"]+store.manga.+?)\".+?href=\"([^\"]+)[^>]+>([^<]+)";
     private static final String PATTERN_MANGA_SEARCH =
-            "<a class=\"title series_preview top\" href=\"([^\"]+)\"[^>]+([^<]+)";
+            "<a class=\"title series_preview top\" href=\"([^\"]+)\"[^>]+>([^<]+)";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_action,
