@@ -17,18 +17,27 @@ import okhttp3.Response;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
+    private final String fromURL;
+    private final String toFile;
+    private final String inRef;
     public boolean referer;
     public Status status = Status.QUEUED;
     int index, cid;
     ChapterDownload cd;
-    private String fromURL;
-    private String toFile;
     private StateChangeListener changeListener = null;
     private int retry = RETRY;
 
+
     public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
         super();
-        this.fromURL = fromURL;
+        if (fromURL.contains("|")) {
+            String[] parts = fromURL.split("\\|");
+            this.fromURL = parts[0];
+            inRef = parts[1];
+        } else {
+            this.fromURL = fromURL;
+            inRef = null;
+        }
         this.toFile = toFile;
         this.index = index;
         this.cid = cid;
@@ -63,12 +72,16 @@ public class SingleDownload implements Runnable {
                             .connectTimeout(3, TimeUnit.SECONDS)
                             .readTimeout(3, TimeUnit.SECONDS)
                             .build();
-                    rBuilder = new Request.Builder().url(fromURL)
+                    rBuilder = new Request.Builder()
                             .addHeader("User-Agent", Navigator.USER_AGENT).removeHeader("Cookie");
                     if (referer) {
-                        rBuilder.addHeader("Referer", cd.chapter.getPath());
+                        if (inRef != null) {
+                            rBuilder.addHeader("Referer", inRef);
+                        } else {
+                            rBuilder.addHeader("Referer", cd.chapter.getPath());
+                        }
                     }
-                    request = rBuilder.build();
+                    request = rBuilder.url(fromURL).build();
                     response = copy.newCall(request).execute();
                     if (!response.isSuccessful()) {
                         if (response.code() == 404) {

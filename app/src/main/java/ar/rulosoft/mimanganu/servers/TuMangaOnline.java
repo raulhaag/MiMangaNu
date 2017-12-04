@@ -137,7 +137,6 @@ class TuMangaOnline extends ServerBase {
             try {
                 JSONObject object = jsonArray.getJSONObject(i);
                 Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), getServerID() + "_" + mid + "_" + object.getString("numCapitulo"));
-                //https://www.tumangaonline.com/api/v1/imagenes?idManga=31067&idScanlation=7602&numeroCapitulo=0.00&visto=false
                 c.setExtra("https://www.tumangaonline.com/api/v1/imagenes?idManga=" + mid + "&idScanlation=" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "&numeroCapitulo=" + object.getString("numCapitulo") + "&visto=false");
                 result.add(0, c);
             } catch (JSONException e) {
@@ -195,7 +194,7 @@ class TuMangaOnline extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String[] d1 = chapter.getExtra().split("\\|");
-        return "http://img1.tumangaonline.com/subidas/" + d1[page];
+        return "https://img1.tumangaonline.com/subidas/" + d1[page] + "|https://www.tumangaonline.com/";
     }
 
     @Override
@@ -298,7 +297,7 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public boolean needRefererForImages() {
-        return false;
+        return true;
     }
 
     @Override
@@ -312,10 +311,6 @@ class TuMangaOnline extends ServerBase {
                 new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE)//5
         };
     }
-
-    //http://www.tumangaonline.com/api/v1/mangas?categorias=%5B3%5D&defecto=1&demografia=Seinen
-    // &estado=Activo&generos=%5B1%5D&itemsPerPage=20&page=1&puntuacion=0&searchBy=nombre
-    // &sortDir=asc&sortedBy=nombre&tipo=MANGA
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
