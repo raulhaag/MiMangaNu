@@ -254,7 +254,7 @@ class MangaFox extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = "";
-        web += "http://mangafox.me/search.php?name_method=cw&name=";
+        web += HOST + "/search.php?name_method=cw&name=";
         web += valType[filters[0][0]];
         web += "&author_method=cw&author=&artist_method=cw&artist=";
         for(int i = 0; i < fltGenre.length; i++) {
