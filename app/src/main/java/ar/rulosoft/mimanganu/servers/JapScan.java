@@ -88,20 +88,28 @@ class JapScan extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
-        return getFirstMatch(
-                "\\d+\" src=\"([^\"]+)", source,
-                context.getString(R.string.server_failed_loading_image));
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pages = getFirstMatch(
-                    "(\\d+)<\\/option>\\s+<\\/select>", source,
-                    context.getString(R.string.server_failed_loading_page_count));
-            chapter.setPages(Integer.parseInt(pages) - 1);
+            ArrayList<String> images = getAllMatch("<option\\s+data-img=\"([^\"]+)\"", source);
+
+            String baseImg = getFirstMatch("\\d+\" src=\"([^\"]+)", source,
+                    context.getString(R.string.server_failed_loading_image));
+            String imagesString = "|" + baseImg;
+            baseImg = baseImg.substring(0, baseImg.lastIndexOf("/") + 1);
+            int count = 1;
+            for (int i = 0; i < images.size(); i++) {
+                if (!images.get(i).matches("IMG__\\d+.jpg")) {
+                    imagesString = imagesString + "|" + baseImg + URLEncoder.encode(images.get(i), "UTF-8");
+                    count++;
+                }
+            }
+            chapter.setExtra(imagesString);
+            chapter.setPages(count);
         }
     }
 
@@ -110,7 +118,7 @@ class JapScan extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(2), HOST +  matcher.group(1), false);
+            Manga manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
             mangas.add(manga);
         }
         return mangas;
