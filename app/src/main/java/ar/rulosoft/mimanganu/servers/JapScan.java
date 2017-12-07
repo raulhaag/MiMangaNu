@@ -104,7 +104,7 @@ class JapScan extends ServerBase {
             int count = 1;
             for (int i = 0; i < images.size(); i++) {
                 if (!images.get(i).matches("IMG__\\d+.jpg")) {
-                    imagesString = imagesString + "|" + baseImg + URLEncoder.encode(images.get(i), "UTF-8");
+                    imagesString = imagesString + "|" + baseImg + images.get(i);
                     count++;
                 }
             }
