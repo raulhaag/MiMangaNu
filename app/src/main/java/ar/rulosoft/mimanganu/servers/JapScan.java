@@ -90,7 +90,7 @@ class JapScan extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String source = getNavigatorAndFlushParameters().get(chapter.getPath() + page + ".html");
         return getFirstMatch(
-                "src=\"(http://cdn[^\"]+)", source,
+                "\\d+\" src=\"([^\"]+)", source,
                 context.getString(R.string.server_failed_loading_image));
     }
 
@@ -99,9 +99,9 @@ class JapScan extends ServerBase {
         if(chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pages = getFirstMatch(
-                    "Page (\\d+)</option>[\\s]*</select>", source,
+                    "(\\d+)<\\/option>\\s+<\\/select>", source,
                     context.getString(R.string.server_failed_loading_page_count));
-            chapter.setPages(Integer.parseInt(pages));
+            chapter.setPages(Integer.parseInt(pages) - 1);
         }
     }
 
