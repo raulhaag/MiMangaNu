@@ -92,7 +92,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 16;
+    private static int database_version = 17;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -833,6 +833,13 @@ public class Database extends SQLiteOpenHelper {
                     COL_SERVER_ID  + "=34");
             db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
                     " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.fr', 'mangapedia.eu') WHERE 1");
+        }
+        if(oldVersion < 17){
+            db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                    " = REPLACE(" + COL_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE " +
+                    COL_SERVER_ID  + "=34");
+            db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.eu', 'mangapedia.fr') WHERE 1");
         }
     }
 
