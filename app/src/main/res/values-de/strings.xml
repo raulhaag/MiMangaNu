@@ -32,7 +32,7 @@
     <string name="color_secundario">Sekundäre Farbe</string>
     <string name="configuraciones">Einstellungen</string>
     <string name="datosde">Details</string>
-    <string name="demaciados_errores">Zu viele Fehler (Download angehalten \n Mögliche Ursachen: \n * Verbindungsfehler \n Ein serverseitiger Fehler \n Ein fehlerhafter Upload, usw. \nBitte später nochmal versuchen.)</string>
+    <string name="demaciados_errores">Zu viele Fehler - Download angehalten.\n Mögliche Ursachen:\n- Verbindungsfehler \n- Serverseitiger Fehler \n- Fehlerhafter Upload, usw.\nBitte später nochmal versuchen.</string>
     <string name="descarga_no_leidos">Lade ungelesene Kapitel</string>
     <string name="descargarestantes">Lade fehlende Kapitel</string>
     <string name="descargas">Downloads</string>
@@ -45,7 +45,7 @@
     <string name="descargando">(Lädt herunter)</string>
     <string name="error">(Fehler)</string>
     <string name="paused">(Angehalten)</string>
-    <string name="esconder_de_galeria_subtitle">Heruntergeladene Bilder nicht in der Gallerie anzeigen. Ein Geräteneustart kann zum Übernehmen der Änderung notwendig sein.</string>
+    <string name="esconder_de_galeria_subtitle">Heruntergeladene Bilder nicht in der Galerie anzeigen. Ein Geräteneustart kann zum Übernehmen der Änderung notwendig sein.</string>
     <string name="escondergaleria">Bilder verbergen</string>
     <string name="hide_read">Gelesene ausblenden</string>
     <string name="estado">Status</string>
@@ -255,7 +255,7 @@
     <string name="clear_specific_cookies_title">Lösche bestimmte Cookies</string>
     <string name="clear_specific_cookies_subtitle">Lösche alle Cookies die einen bestimmten Ausdruck enthalten.</string>
     <string name="clear_all_cookies_title">Cookies löschen</string>
-    <string name="clear_all_cookies_subtitle">Lösche alle Cookies. Für Seiten die eine Anmeldung benötigen (wie z.B. Batoto) muß eine erneute Anmeldung durchgeführt werden.</string>
+    <string name="clear_all_cookies_subtitle">Lösche alle Cookies. Für Seiten die eine Anmeldung benötigen (wie z.B. Batoto) muss eine erneute Anmeldung durchgeführt werden.</string>
     <string name="disable_internet_detection_title">Status der Internetverbindung ignorieren</string>
     <string name="disable_internet_detection_subtitle">Standardmäßig versucht MiMangaNu zu erkennen ob eine Internetverbindung vorhanden ist und deaktiviert manche Funktionalitäten wenn keine Verbindung besteht (oder erkannt wird).</string>
     <string name="app_update_title">Suche nach App Aktualisierungen</string>

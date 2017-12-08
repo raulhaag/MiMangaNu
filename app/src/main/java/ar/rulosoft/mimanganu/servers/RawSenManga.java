@@ -146,7 +146,7 @@ class RawSenManga extends ServerBase {
             manga.setSynopsis(
                     getFirstMatchDefault(
                             "<span itemprop=\"description\">([\\s\\S]+?)</span>", data, context.getString(R.string.nodisponible)));
-            if(manga.getSynopsis().startsWith("No Description.")) {
+            if(manga.getSynopsis().startsWith("No Description.") || manga.getSynopsis().isEmpty()) {
                 manga.setSynopsis(context.getString(R.string.nodisponible));
             }
             // Cover
