@@ -823,23 +823,30 @@ public class Database extends SQLiteOpenHelper {
             UPDATE manga set path = REPLACE(path, 'www.readmanga.today', 'www.readmng.com') where server_id = 29;
             UPDATE capitulos set path = REPLACE(path, 'www.readmanga.today', 'www.readmng.com') where 1;
              */
-            db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+            // create query variable just to avoid inspection
+            String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                     " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
-                    COL_SERVER_ID  + "=29");
-            db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'www.readmanga.today', 'www.readmng.com') WHERE 1");
-            db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                    COL_SERVER_ID  + "=29";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'www.readmanga.today', 'www.readmng.com') WHERE 1";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                     " = REPLACE(" + COL_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE " +
-                    COL_SERVER_ID  + "=34");
-            db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.fr', 'mangapedia.eu') WHERE 1");
+                    COL_SERVER_ID  + "=34";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.fr', 'mangapedia.eu') WHERE 1";
+            db.execSQL(query);
         }
         if(oldVersion < 17){
-            db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+            String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                     " = REPLACE(" + COL_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE " +
-                    COL_SERVER_ID  + "=34");
-            db.execSQL("UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.eu', 'mangapedia.fr') WHERE 1");
+                    COL_SERVER_ID  + "=34";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.eu', 'mangapedia.fr') WHERE 1";
+            db.execSQL(query);
         }
     }
 
