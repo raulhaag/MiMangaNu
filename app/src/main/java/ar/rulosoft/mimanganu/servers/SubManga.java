@@ -95,7 +95,7 @@ class SubManga extends ServerBase {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath() + "/" + page);
         return getFirstMatch(
                 "<img[^>]+src=\"(http:\\/\\/.+?)\"", data,
-                context.getString(R.string.server_failed_loading_image));
+                context.getString(R.string.server_failed_loading_image)).replace("umg.","img.");
     }
 
     @Override
