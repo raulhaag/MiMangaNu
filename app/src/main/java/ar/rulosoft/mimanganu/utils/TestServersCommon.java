@@ -39,7 +39,7 @@ public class TestServersCommon {
      * @param hostBasedTests <code>true</code> if tests are to be run on the host, <code>false</code>
      *                       otherwise
      * @param context        the <code>Context</code> to use during testing
-     * @throws Exception     if something goes wrong
+     * @throws Exception if something goes wrong
      */
     public TestServersCommon(int serverId, boolean hostBasedTests, Context context) throws Exception {
         this.rand = new Random();
@@ -51,7 +51,7 @@ public class TestServersCommon {
 
         logMessage(String.format(Locale.getDefault(), "Testing: %s (id=%d)", serverBase.getServerName(), serverBase.getServerID()));
 
-        if(serverBase instanceof DeadServer) {
+        if (serverBase instanceof DeadServer) {
             logMessage("[INFO] server is an instance of DeadServer - skipping.");
             return;
         }
@@ -94,12 +94,11 @@ public class TestServersCommon {
             testLoadManga(manga);
             try {
                 serverBase.loadChapters(manga, false);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 fail(getContext(e.getMessage()));
             }
 
-            if(manga.getChapters().isEmpty()) {
+            if (manga.getChapters().isEmpty()) {
                 logMessage("[WRN] no chapters found - will try another Manga.");
             }
         } while (manga.getChapters().isEmpty() && retries-- > 0);
@@ -128,26 +127,25 @@ public class TestServersCommon {
 
         try {
             serverBase.loadMangaInformation(manga, false);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(getContext(e.getMessage()));
         }
         assertNotNull(getContext(), manga.getImages());
-        if(manga.getImages().isEmpty()) {
+        if (manga.getImages().isEmpty()) {
             System.err.println("[WRN] no cover image set");
         }
 
         assertNotNull(getContext(), manga.getSynopsis());
         assertFalse(getContext(), manga.getSynopsis().isEmpty());
         assertEquals(getContext(), manga.getSynopsis(), manga.getSynopsis().trim());
-        if(manga.getSynopsis().equals(context.getString(R.string.nodisponible))) {
+        if (manga.getSynopsis().equals(context.getString(R.string.nodisponible))) {
             System.err.println("[WRN] default value for 'summary'");
         }
 
         assertNotNull(getContext(), manga.getAuthor());
         assertFalse(getContext(), manga.getAuthor().isEmpty());
         assertEquals(getContext(), manga.getAuthor(), manga.getAuthor().trim().replaceAll("\\s+", " "));
-        if(manga.getAuthor().equals(context.getString(R.string.nodisponible))) {
+        if (manga.getAuthor().equals(context.getString(R.string.nodisponible))) {
             System.err.println("[WRN] default value for 'author'");
         }
 
@@ -157,7 +155,7 @@ public class TestServersCommon {
         assertEquals(getContext(), manga.getGenre(), manga.getGenre().replaceAll(",+", ","));
         assertFalse(getContext(), manga.getGenre().startsWith(","));
         assertFalse(getContext(), manga.getGenre().endsWith(","));
-        if(manga.getGenre().equals(context.getString(R.string.nodisponible))) {
+        if (manga.getGenre().equals(context.getString(R.string.nodisponible))) {
             System.err.println("[WRN] default value for 'genre'");
         }
     }
@@ -174,8 +172,7 @@ public class TestServersCommon {
 
         try {
             serverBase.chapterInit(chapter);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(getContext(e.getMessage()));
         }
         assertFalse(getContext(), chapter.getPages() == 0);
@@ -186,8 +183,7 @@ public class TestServersCommon {
         try {
             numimg = rand.nextInt(chapter.getPages()) + 1;
             url = serverBase.getImageFrom(chapter, numimg);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(getContext("[NUM] " + numimg + " - " + e.getMessage()));
         }
         testLoadImage(url);
@@ -197,19 +193,21 @@ public class TestServersCommon {
         try {
             numimg = chapter.getPages();
             url = serverBase.getImageFrom(chapter, numimg);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             fail(getContext("[NUM] " + numimg + " - " + e.getMessage()));
         }
         testLoadImage(url);
     }
 
     private void testLoadImage(String image) throws Exception {
-        logMessage(String.format(Locale.getDefault(), "[IMG] %s", image));
-
+        String parts[] = image.split("\\|");
+        logMessage(String.format(Locale.getDefault(), "[IMG] %s", parts[0]));
         assertNotNull(getContext(), image);
         assertFalse(getContext(), image.isEmpty());
-        assertTrue(getContext(), (image.split("//", -1).length - 1) <= 1);
+        if (parts.length == 1)
+            assertTrue(getContext(), (image.split("//", -1).length - 1) <= 1);
+        else
+            assertTrue(getContext(), (image.split("//", -1).length - 1) <= 2);
 
         // additional test for NineManga servers to detect broken hotlinking
         assertFalse(
@@ -218,24 +216,27 @@ public class TestServersCommon {
         );
 
         // check if the image loaded has at least 1kB (assume proper content)
-        image = Navigator.getInstance().getAndReturnResponseCodeOnFailure(image);
+        Navigator nav = Navigator.getInstance();
+        if (parts.length > 1) {
+            nav.addHeader("Referer", parts[1]);
+        }
+        image = nav.getAndReturnResponseCodeOnFailure(parts[0]);
         assertTrue(getContext("[CONTENT] " + image), image.length() > 1024);
     }
 
     /**
      * Log a message.
-     *
+     * <p>
      * For host based tests, the message will directly be written on <code>System.out</code>. Device
      * based tests do not have this pipe connected, so the message will be stored for now.
      *
      * @param msg the message to log
      */
     private void logMessage(String msg) {
-        if(hostBasedTests) {
+        if (hostBasedTests) {
             // direct output
             System.out.println(msg);
-        }
-        else {
+        } else {
             // store
             messages.push(msg);
         }
@@ -243,19 +244,18 @@ public class TestServersCommon {
 
     /**
      * Create a context message to be used in assertions as message.
-     *
+     * <p>
      * Returns nothing for host-based tests as <code>System.out</code> is working, for device based
      * tests it will dump the collected logs as context before the exception stack trace.
-     *
+     * <p>
      * Use this like <code>assertXXX(getContext(), condition);</code>.
      *
      * @return a string representing the log up to now
      */
     private String getContext() {
-        if(hostBasedTests) {
+        if (hostBasedTests) {
             return "\n";
-        }
-        else {
+        } else {
             return "\n" + TextUtils.join("\n", messages) + "\n";
         }
     }

@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.75:
+* Todos los servidores funcionando al 08/12/2017.
+
+Changes in v1.75:
+* All servers working at 08/12/2017.
+
 Cambios en v1.74:
 * Todos los servidores funcionando 26/11/2017 excepto por japScan en mantenimiento.
 

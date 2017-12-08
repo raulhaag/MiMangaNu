@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.74:\n\t* Todos los servidores funcionando 26/11/2017 excepto por japScan en mantenimiento.</string>
+    <string name="update_message">Cambios en v1.75:\n\t* Todos los servidores funcionando 08/12/2017.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
