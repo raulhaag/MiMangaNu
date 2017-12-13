@@ -150,7 +150,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    ArrayList<Page.Segment> _segments = new ArrayList<Page.Segment>();
+                    ArrayList<Page.Segment> _segments = new ArrayList<>();
                     if (viewReady) {
                         lastBestVisible = -1;
                         iniVisibility = false;
@@ -224,26 +224,29 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                                 }//catch errors caused for array concurrent modify
                             }
                             if (currentPage != lastBestVisible) {
-                                setPage(lastBestVisible);
+                                currentPage = lastBestVisible;
+                                readerListener.onPageChanged(currentPage);
                             }
                         }
                     } else if (pagesLoaded) {
                         //TODO if (mViewReadyListener != null)
                         viewReady = true;
                         preparing = false;
-                        seekPage(transformPage(currentPage));
+                        absoluteScroll(xScroll, yScroll);
                     }
                     toDraw = _segments;
                     drawing = true;
                     mHandler.post(new Runnable() {
                         @Override
-                        public void run() {
-                            invalidate();
-                        }
+                        public void run() {onlyInvalidate();                       }
                     });
                 }
             }).start();
         }
+    }
+
+    private void onlyInvalidate(){
+        super.invalidate();
     }
 
     @Override
