@@ -27,4 +27,4 @@ script:
   - ./gradlew :app:assembleDebug
 
 after_success:
-    "curl --ftp-create-dirs -T app/build/outputs/apk/app-debug.apk -u $FTP_USER:$FTP_PASSWORD ftp://ftp.byethost5.com/htdocs/mmn/mmn-br$TRAVIS_BRANCH-co$TRAVIS_COMMIT-bu$TRAVIS_BUILD_NUMBER.apk"
+    "curl --ftp-create-dirs -T app/build/outputs/apk/debug/app-debug.apk -u $FTP_USER:$FTP_PASSWORD ftp://$FTP_PATH/mmn-br$TRAVIS_BRANCH-co$TRAVIS_COMMIT-bu$TRAVIS_BUILD_NUMBER.apk"
