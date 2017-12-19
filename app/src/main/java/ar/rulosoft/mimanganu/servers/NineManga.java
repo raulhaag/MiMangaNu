@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -184,10 +185,10 @@ class NineManga extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavigatorWithNeededHeader().get(manga.getPath());
-            if(data.contains(manga.getPath() + "?waring=1")) {
+            if (data.contains("?waring=1")) {
                 // es.ninemanga delivers invalid chapter links if ?waring=1 is already passed on
                 // non-warned Manga - so check if there is a link and then retry with the extension
-                data = getNavigatorWithNeededHeader().get(manga.getPath() + "?waring=1");
+                data = getNavigatorWithNeededHeader().get(manga.getPath().replaceAll(" ", "+") + "?waring=1");
             }
 
             // cover image
@@ -214,14 +215,15 @@ class NineManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-"
+     /*   String data = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-"
                 + page + ".html"));
         data = getFirstMatch(PATTERN_IMAGE, data,
                 context.getString(R.string.server_failed_loading_image));
         if (data.contains("////")) {
             throw new Exception(context.getString(R.string.server_failed_loading_image));
         }
-        return data;
+        return data;/*/
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
@@ -232,6 +234,18 @@ class NineManga extends ServerBase {
                     PATTERN_PAGES, data,
                     context.getString(R.string.server_failed_loading_page_count));
             chapter.setPages(Integer.parseInt(pages));
+            int lPages = (int) Math.ceil(chapter.getPages() / 10.0);
+            ArrayList<String> images = new ArrayList<>();
+            Navigator nav = getNavigatorWithNeededHeader();
+            nav.addHeader("Referer", chapter.getPath());
+            for (int i = 1; i <= lPages; i++) {
+                data = getNavigatorWithNeededHeader().get(chapter.getPath().replace(".html", "-10-" + i + ".html"));
+                ArrayList<String> imgs = getAllMatch(PATTERN_IMAGE, data);
+                images.addAll(imgs);
+                nav = getNavigatorWithNeededHeader();
+                nav.addHeader("Referer", chapter.getPath().replace(".html", "-10-" + i + ".html"));
+            }
+            chapter.setExtra(TextUtils.join("|", images));
         }
     }
 
