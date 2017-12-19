@@ -14,7 +14,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 
 class MangaHere extends ServerBase {
-    private static final String HOST = "https://www.mangahere.co";
+    private static final String HOST = "http://www.mangahere.cc";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_all,
@@ -130,15 +130,8 @@ class MangaHere extends ServerBase {
         String data = getNavigatorAndFlushParameters().get(HOST + "/mangalist/");
         Pattern p = Pattern.compile(PATTERN_SERIE, Pattern.DOTALL);
         Matcher m = p.matcher(data);
-        String path;
         while (m.find()) {
-            if(!m.group(2).startsWith("http")) {
-                path = "https:" + m.group(2);
-            }
-            else {
-                path = m.group(2);
-            }
-            mangas.add(new Manga(getServerID(), m.group(1), path, false));
+            mangas.add(new Manga(getServerID(), m.group(1), "http:" + m.group(2), false));
         }
         return mangas;
     }
