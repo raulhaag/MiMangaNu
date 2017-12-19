@@ -184,15 +184,27 @@ public class Chapter {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Chapter) {
-            try {
-                URL ours = new URL(getPath());
-                URL theirs = new URL(((Chapter) obj).getPath());
+            String ours = getPath();
+            String theirs = ((Chapter)obj).getPath();
 
-                return ours.getFile().equalsIgnoreCase(theirs.getFile());
+            /* in case the path is full URL, try to extract the path portion only */
+            try {
+                URL u = new URL(ours);
+                ours = u.getPath();
             }
             catch (MalformedURLException mfe) {
-                return getPath().equalsIgnoreCase(((Chapter)obj).getPath());
+                /* do nothing - leave String as is */
             }
+            try {
+                URL u = new URL(theirs);
+                theirs = u.getPath();
+            }
+            catch (MalformedURLException mfe) {
+                /* do nothing - leave String as is */
+            }
+
+            /* compare paths - no protocol, no host */
+            return ours.equalsIgnoreCase(theirs);
         }
         return false;
     }
