@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class Database extends SQLiteOpenHelper {
@@ -93,7 +94,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 19;
+    private static int database_version = 20;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -110,8 +111,11 @@ public class Database extends SQLiteOpenHelper {
             database_path = (prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/") + "dbs/";
             database_name = "mangas.db";
         }
-        if (!new File(database_path).exists())
-            new File(database_path).mkdirs();
+        if (!new File(database_path).exists()) {
+            if(!new File(database_path).mkdirs()) {
+                Log.e("Database", "failed to create database directory");
+            }
+        }
         if ((localDB == null) || !localDB.isOpen()) {
             try {
                 localDB = new Database(context).getWritableDatabase(); // Now it's writable! I think.
@@ -868,6 +872,11 @@ public class Database extends SQLiteOpenHelper {
                     " = REPLACE(" + COL_CAP_PATH +", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
             db.execSQL(query);
         }
+        if(oldVersion < 20) {
+            String query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'http://www.mangahere.cc', '') WHERE 1";
+            db.execSQL(query);
+        }
     }
 
     private void copyDbToSd(Context c) {
@@ -878,14 +887,20 @@ public class Database extends SQLiteOpenHelper {
         ruta += "dbs/";
         File exportDir = new File(ruta, "");
         if (!exportDir.exists()) {
-            exportDir.mkdirs();
+            if(!exportDir.mkdirs()) {
+                Log.e("Database", "failed to create dbs directory");
+            }
         }
         File file = new File(exportDir, dbFile.getName());
         try {
-            file.createNewFile();
-            InputStream is = new FileInputStream(dbFile);
-            FileCache.writeFile(is, file);
-            is.close();
+            if(file.createNewFile()) {
+                InputStream is = new FileInputStream(dbFile);
+                FileCache.writeFile(is, file);
+                is.close();
+            }
+            else {
+                Log.e("Database", "failed to store DB");
+            }
         } catch (IOException e) {
             Toast.makeText(c, "Error: ", Toast.LENGTH_LONG).show();
         }
