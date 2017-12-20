@@ -82,17 +82,18 @@ public class Database extends SQLiteOpenHelper {
             TABLE_CHAPTERS + "(" +
             COL_CAP_ID + " integer primary key autoincrement, " +
             COL_CAP_NAME + " text not null," +
-            COL_CAP_PATH + " text not null UNIQUE, " +
+            COL_CAP_PATH + " text not null, " +
             COL_CAP_PAGES + " int," +
             COL_CAP_ID_MANGA + " int," +
             COL_CAP_STATE + " int DEFAULT 0," +
             COL_CAP_PAG_READ + " int DEFAULT 1, " +
             COL_CAP_DOWNLOADED + " int DEFAULT 0, "+
-            COL_CAP_EXTRA + " text);";
+            COL_CAP_EXTRA + " text, " +
+            "UNIQUE (" + COL_CAP_ID_MANGA + ", " + COL_CAP_PATH + "));";
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 17;
+    private static int database_version = 19;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -819,11 +820,6 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_PATH + " LIKE '%hitmanga.eu%'");
         }
         if(oldVersion < 16){
-            /*
-            UPDATE manga set path = REPLACE(path, 'www.readmanga.today', 'www.readmng.com') where server_id = 29;
-            UPDATE capitulos set path = REPLACE(path, 'www.readmanga.today', 'www.readmng.com') where 1;
-             */
-            // create query variable just to avoid inspection
             String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                     " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
                     COL_SERVER_ID  + "=29";
@@ -846,6 +842,30 @@ public class Database extends SQLiteOpenHelper {
             db.execSQL(query);
             query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
                     " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.eu', 'mangapedia.fr') WHERE 1";
+            db.execSQL(query);
+        }
+        if(oldVersion < 18){
+            db.execSQL("CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM " + TABLE_CHAPTERS + ";");
+            db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
+            db.execSQL(DATABASE_CHAPTERS_CREATE);
+            db.execSQL("INSERT INTO capitulos (id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra) " +
+                    "SELECT id, nombre, path,paginas, manga_id, estado, leidas, descargado, extra FROM sqlitestudio_temp_table; ");
+            db.execSQL("DROP TABLE sqlitestudio_temp_table;");
+        }
+        if(oldVersion < 19){
+            String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                    " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
+                    COL_SERVER_ID  + "=4";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                    " = REPLACE(" + COL_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
+                    COL_SERVER_ID  + "=4";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
+            db.execSQL(query);
+            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                    " = REPLACE(" + COL_CAP_PATH +", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
             db.execSQL(query);
         }
     }
