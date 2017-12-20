@@ -3,8 +3,10 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -162,7 +164,8 @@ class MangaHere extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                manga.addChapterFirst(new Chapter(m.group(2), "http:" + m.group(1)));
+                URL u = new URL("http:" + m.group(1));
+                manga.addChapterFirst(new Chapter(m.group(2), u.getFile()));
             }
         }
     }
@@ -185,11 +188,20 @@ class MangaHere extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if((chapter.getPages() == 0) || (chapter.getExtra() == null)) {
-            String data = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String page_selection = getFirstMatch(
-                    "<select class=\"wid60\"[^>]+>(.+?)</select>", data,
-                    context.getString(R.string.server_failed_loading_page_count)
+            String path = HOST + chapter.getPath();
+            String data = getNavigatorAndFlushParameters().get(path);
+            String page_selection = getFirstMatchDefault(
+                    "<select class=\"wid60\"[^>]+>(.+?)</select>", data, ""
             );
+            if(page_selection.isEmpty()) {
+                // if the Manga was licensed, page selector is not present
+                if(data.contains("has been licensed. It's not available in MangaHere.")) {
+                    throw new Exception(context.getString(R.string.server_manga_is_licensed));
+                }
+                else {
+                    throw new Exception(context.getString(R.string.server_failed_loading_page_count));
+                }
+            }
 
             // only match numeric page indices, this automatically skips the 'featured' ad page
             ArrayList<String> page_links = getAllMatch("<option value=\"([^\"]+)\"[^>]+>\\d+</option>", page_selection);
@@ -226,15 +238,8 @@ class MangaHere extends ServerBase {
         String source = getNavigatorAndFlushParameters().get(web);
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
-        String path;
         while (m.find()) {
-            if(!m.group(3).contains("http")) {
-                path = "http:" + m.group(3);
-            }
-            else {
-                path = m.group(3);
-            }
-            Manga manga = new Manga(getServerID(), m.group(2), path, false);
+            Manga manga = new Manga(getServerID(), m.group(2), "http:" + m.group(3), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
         }
@@ -244,7 +249,14 @@ class MangaHere extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get(HOST + "/search.php?name=" + URLEncoder.encode(term, "UTF-8"));
+        String web = HOST + "/search.php?name=" + term.replace(" ", "+");
+        String data = getNavigatorAndFlushParameters().get(web);
+
+        if(data.contains("Sorry you have just searched, please try 5 seconds later.")) {
+            TimeUnit.MILLISECONDS.sleep(5500);
+            data = getNavigatorAndFlushParameters().get(web);
+        }
+
         Pattern p = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
