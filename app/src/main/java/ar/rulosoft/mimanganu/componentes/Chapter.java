@@ -182,6 +182,7 @@ public class Chapter {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Chapter) {
+            //TODO: after a full migration to only path this two lines need to be changed
             String ours = Util.getInstance().getFilePath(getPath());
             String theirs = Util.getInstance().getFilePath(((Chapter)obj).getPath());
             return ours.equalsIgnoreCase(theirs);
