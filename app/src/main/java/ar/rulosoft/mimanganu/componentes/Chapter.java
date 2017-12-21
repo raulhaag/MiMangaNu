@@ -4,8 +4,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.servers.FromFolder;
@@ -184,26 +182,8 @@ public class Chapter {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Chapter) {
-            String ours = getPath();
-            String theirs = ((Chapter)obj).getPath();
-
-            /* in case the path is full URL, try to extract the path portion only */
-            try {
-                URL u = new URL(ours);
-                ours = u.getPath();
-            }
-            catch (MalformedURLException mfe) {
-                /* do nothing - leave String as is */
-            }
-            try {
-                URL u = new URL(theirs);
-                theirs = u.getPath();
-            }
-            catch (MalformedURLException mfe) {
-                /* do nothing - leave String as is */
-            }
-
-            /* compare paths - no protocol, no host */
+            String ours = Util.getInstance().getFilePath(getPath());
+            String theirs = Util.getInstance().getFilePath(((Chapter)obj).getPath());
             return ours.equalsIgnoreCase(theirs);
         }
         return false;
@@ -239,20 +219,6 @@ public class Chapter {
         };
 
         private static String manga_title;
-        public static void setManga_title(String title) {
-            manga_title = title;
-        }
-
-        private static float getVolatileOrder(Chapter c) throws  Exception {
-            if(c.volatile_order == -1) {
-                String str1 = c.getTitle().replace(manga_title, "");
-                str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
-                str1 = str1.replaceAll(STRING_END_PATTERN, " ");
-                str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "").replace(',', '.');
-                c.volatile_order = Float.parseFloat(str1);
-            }
-            return c.volatile_order;
-        }
         public static Comparator<Chapter> NUMBERS_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {
@@ -273,5 +239,20 @@ public class Chapter {
                 }
             }
         };
+
+        public static void setManga_title(String title) {
+            manga_title = title;
+        }
+
+        private static float getVolatileOrder(Chapter c) throws  Exception {
+            if(c.volatile_order == -1) {
+                String str1 = c.getTitle().replace(manga_title, "");
+                str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
+                str1 = str1.replaceAll(STRING_END_PATTERN, " ");
+                str1 = ServerBase.getFirstMatch(FLOAT_PATTERN, str1, "").replace(',', '.');
+                c.volatile_order = Float.parseFloat(str1);
+            }
+            return c.volatile_order;
+        }
     }
 }

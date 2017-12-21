@@ -523,8 +523,12 @@ public class Util {
         }
     }
 
-    public String getFilePath(String url) throws Exception {
-        return getFirstMatchDefault("[https://|http://]*[www\\.]*\\S+?\\.\\S{2,3}(/.+)",url ,url);
+    public String getFilePath(String url){
+        try {
+            return getFirstMatchDefault("[https://|http://]*[www\\.]*\\S+?\\.\\S{2,3}(/.+)", url, url);
+        } catch (Exception e) {
+            return url;
+        }
     }
 
     public void removeSpecificCookies(Context context, String cookie) {
