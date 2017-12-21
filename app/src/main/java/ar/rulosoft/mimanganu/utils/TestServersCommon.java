@@ -170,6 +170,10 @@ public class TestServersCommon {
         assertFalse(getContext(), chapter.getPath().isEmpty());
         assertTrue(getContext(), (chapter.getPath().split("//", -1).length - 1) <= 1);
 
+        if(chapter.getPath().startsWith("http")) {
+            System.err.println("[WRN] relative chapter paths shall be used if possible");
+        }
+
         try {
             serverBase.chapterInit(chapter);
         } catch (Exception e) {
@@ -236,6 +240,7 @@ public class TestServersCommon {
         if (hostBasedTests) {
             // direct output
             System.out.println(msg);
+            System.out.flush();
         } else {
             // store
             messages.push(msg);

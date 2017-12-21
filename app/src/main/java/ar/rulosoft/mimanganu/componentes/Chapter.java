@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.servers.FromFolder;
@@ -181,7 +183,30 @@ public class Chapter {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj instanceof Chapter) && this.path.replaceAll("https?","").equalsIgnoreCase(((Chapter) obj).path.replaceAll("https?",""));
+        if (obj instanceof Chapter) {
+            String ours = getPath();
+            String theirs = ((Chapter)obj).getPath();
+
+            /* in case the path is full URL, try to extract the path portion only */
+            try {
+                URL u = new URL(ours);
+                ours = u.getPath();
+            }
+            catch (MalformedURLException mfe) {
+                /* do nothing - leave String as is */
+            }
+            try {
+                URL u = new URL(theirs);
+                theirs = u.getPath();
+            }
+            catch (MalformedURLException mfe) {
+                /* do nothing - leave String as is */
+            }
+
+            /* compare paths - no protocol, no host */
+            return ours.equalsIgnoreCase(theirs);
+        }
+        return false;
     }
 
     public static class Comparators {
