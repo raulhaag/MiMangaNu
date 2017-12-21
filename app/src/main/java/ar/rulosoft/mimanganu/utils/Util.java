@@ -525,7 +525,7 @@ public class Util {
 
     public String getFilePath(String url){
         try {
-            return getFirstMatchDefault("[https://|http://]*[www\\.]*\\S+?\\.\\S{2,3}(/.+)", url, url);
+            return getFirstMatchDefault(".+?\\.\\S{2,4}(\\/.+)", url, url);
         } catch (Exception e) {
             return url;
         }
