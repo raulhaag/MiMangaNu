@@ -523,6 +523,10 @@ public class Util {
         }
     }
 
+    public String getFilePath(String url) throws Exception {
+        return getFirstMatchDefault("[https://|http://]*[www\\.]*\\S+?\\.\\S{2,3}(/.+)",url ,url);
+    }
+
     public void removeSpecificCookies(Context context, String cookie) {
         int count = 0, subCount = 0, n = 0;
         SharedPreferences cookies = context.getSharedPreferences("CookiePersistence", Context.MODE_PRIVATE);

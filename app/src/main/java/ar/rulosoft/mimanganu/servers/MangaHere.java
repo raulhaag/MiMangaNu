@@ -3,8 +3,6 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -14,6 +12,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaHere extends ServerBase {
     private static final String HOST = "http://www.mangahere.cc";
@@ -164,8 +163,8 @@ class MangaHere extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                URL u = new URL("http:" + m.group(1));
-                manga.addChapterFirst(new Chapter(m.group(2), u.getFile()));
+                //URL u = new URL("http:" + m.group(1));
+                manga.addChapterFirst(new Chapter(m.group(2), Util.getInstance().getFilePath(m.group(1))));
             }
         }
     }
