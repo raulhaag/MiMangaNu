@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.76:
+* Fix NineManga.
+* Fix MangaHere.
+* Mejoras internas y en el lector continuo.
+
+Changes in v1.76:
+* Fix NineManga.
+* Fix MangaHere.
+* Internals improves and in continuous reader.
+
 Cambios en v1.75:
 * Todos los servidores funcionando al 08/12/2017.
 

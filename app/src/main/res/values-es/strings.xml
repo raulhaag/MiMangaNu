@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.75:\n\t* Todos los servidores funcionando 08/12/2017.</string>
+    <string name="update_message">Cambios en v1.76:\n\t* Fix NineManga.\n\t* Fix MangaHere.\n\t* Mejoras internas y en el lector continuo.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
