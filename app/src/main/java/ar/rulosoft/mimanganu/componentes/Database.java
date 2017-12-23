@@ -805,6 +805,15 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // create a backup of the old database in case the upgrade fails for some reason
+        // this is only called if the database is readable - otherwise an Exception would have been raised
+        try {
+            Util.getInstance().copyFile(new File(db.getPath()), new File(db.getPath() + ".bak"));
+        }
+        catch (IOException e) {
+            Log.e("Database", "Exception", e);
+        }
+
         if(oldVersion < 10){
             db.execSQL("ALTER TABLE " + TABLE_MANGA +" ADD COLUMN " + COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1");
         }
