@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class Database extends SQLiteOpenHelper {
@@ -805,6 +804,18 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // create a backup of the old database in case the upgrade should fail for some reason
+        // if a backup of the old version already exists, do not overwrite it
+        try {
+            String backup = db.getPath() + "." + oldVersion + ".bak";
+            if(!new File(backup).exists()) {
+                Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
+            }
+        }
+        catch (IOException e) {
+            Log.e("Database", "Exception", e);
+        }
+
         if(oldVersion < 10){
             db.execSQL("ALTER TABLE " + TABLE_MANGA +" ADD COLUMN " + COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1");
         }
