@@ -87,12 +87,13 @@ public class Database extends SQLiteOpenHelper {
             COL_CAP_ID_MANGA + " int," +
             COL_CAP_STATE + " int DEFAULT 0," +
             COL_CAP_PAG_READ + " int DEFAULT 1, " +
-            COL_CAP_DOWNLOADED + " int DEFAULT 0, "+
+            COL_CAP_DOWNLOADED + " int DEFAULT 0, " +
             COL_CAP_EXTRA + " text, " +
             "UNIQUE (" + COL_CAP_ID_MANGA + ", " + COL_CAP_PATH + "));";
     // name and path of database
     private static String database_name;
     private static String database_path;
+    private static boolean is_in_update_process = false;
     private static int database_version = 20;
     private static SQLiteDatabase localDB;
     Context context;
@@ -104,6 +105,16 @@ public class Database extends SQLiteOpenHelper {
     }
 
     private static SQLiteDatabase getDatabase(Context context) {
+        // this will stop if a second thread try to access to database while update is in process and show a Taost
+        while (is_in_update_process) {
+            try {
+                Util.getInstance().toast(context, context.getString(R.string.database_in_update_process));
+                Thread.sleep(3000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
         // Setup path and database name
         if (database_path == null || database_path.length() == 0) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -111,7 +122,7 @@ public class Database extends SQLiteOpenHelper {
             database_name = "mangas.db";
         }
         if (!new File(database_path).exists()) {
-            if(!new File(database_path).mkdirs()) {
+            if (!new File(database_path).mkdirs()) {
                 Log.e("Database", "failed to create database directory");
             }
         }
@@ -162,7 +173,7 @@ public class Database extends SQLiteOpenHelper {
                 Log.e("Database", "(addManga) " + context.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("Database", Log.getStackTraceString(e));
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, manga.getTitle()));
         }
@@ -340,7 +351,7 @@ public class Database extends SQLiteOpenHelper {
                 outputChapterDebugInformation(chapter, mangaId);
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, chapter.getTitle()));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e("Database", "Exception", e);
             outputChapterDebugInformation(chapter, mangaId);
             Util.getInstance().toast(context, context.getResources().getString(R.string.error_while_adding_chapter_or_manga_to_db, chapter.getTitle()));
@@ -354,7 +365,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_CAP_PAGES, chapter.getPages());
         cv.put(COL_CAP_STATE, chapter.getReadStatus());
         cv.put(COL_CAP_PAG_READ, chapter.getPagesRead());
-        cv.put(COL_CAP_EXTRA,chapter.getExtra());
+        cv.put(COL_CAP_EXTRA, chapter.getExtra());
         try {
             SQLiteDatabase database = getDatabase(context);
             if (!database.isReadOnly())
@@ -422,7 +433,7 @@ public class Database extends SQLiteOpenHelper {
             Context context, String condition, String sortBy, boolean asc) {
         if (sortBy == null) sortBy = COL_LAST_READ;
         Cursor cursor = null;
-        if(getDatabase(context) != null) {
+        if (getDatabase(context) != null) {
             cursor = getDatabase(context).query(
                     TABLE_MANGA,
                     new String[]{
@@ -438,7 +449,7 @@ public class Database extends SQLiteOpenHelper {
 
     private static ArrayList<Manga> getMangasFromCursor(Cursor cursor) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        if(cursor != null) {
+        if (cursor != null) {
             if (cursor.moveToFirst()) {
                 int colId = cursor.getColumnIndex(COL_ID);
                 int colServerId = cursor.getColumnIndex(COL_SERVER_ID);
@@ -808,85 +819,104 @@ public class Database extends SQLiteOpenHelper {
         // if a backup of the old version already exists, do not overwrite it
         try {
             String backup = db.getPath() + "." + oldVersion + ".bak";
-            if(!new File(backup).exists()) {
+            if (!new File(backup).exists()) {
                 Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
             }
-        }
-        catch (IOException e) {
-            Log.e("Database", "Exception", e);
+        } catch (IOException e) {
+            Log.e("Database backup error", "Exception", e);
         }
 
-        if(oldVersion < 10){
-            db.execSQL("ALTER TABLE " + TABLE_MANGA +" ADD COLUMN " + COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1");
-        }
-        if (oldVersion < 11) {
-            db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'");
-        }
-        if(oldVersion < 12){
-            db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_READER + " INTEGER DEFAULT 0");
-        }
-        if(oldVersion < 13){
-            db.execSQL("ALTER TABLE " + TABLE_CHAPTERS + " ADD COLUMN " + COL_CAP_EXTRA + " TEXT");
-        }
-        if(oldVersion < 14){
-            db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_LAST_UPDATE + " TEXT DEFAULT 'N/A'");
-        }
-        if (oldVersion < 15) {
-            db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_PATH + " LIKE '%hitmanga.eu%'");
-        }
-        if(oldVersion < 16){
-            String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                    " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
-                    COL_SERVER_ID  + "=29";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'www.readmanga.today', 'www.readmng.com') WHERE 1";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                    " = REPLACE(" + COL_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE " +
-                    COL_SERVER_ID  + "=34";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.fr', 'mangapedia.eu') WHERE 1";
-            db.execSQL(query);
-        }
-        if(oldVersion < 17){
-            String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                    " = REPLACE(" + COL_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE " +
-                    COL_SERVER_ID  + "=34";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'mangapedia.eu', 'mangapedia.fr') WHERE 1";
-            db.execSQL(query);
-        }
-        if(oldVersion < 18){
-            db.execSQL("CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM " + TABLE_CHAPTERS + ";");
-            db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
-            db.execSQL(DATABASE_CHAPTERS_CREATE);
-            db.execSQL("INSERT INTO capitulos (id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra) " +
-                    "SELECT id, nombre, path,paginas, manga_id, estado, leidas, descargado, extra FROM sqlitestudio_temp_table; ");
-            db.execSQL("DROP TABLE sqlitestudio_temp_table;");
-        }
-        if(oldVersion < 19){
-            String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                    " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
-                    COL_SERVER_ID  + "=4";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                    " = REPLACE(" + COL_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
-                    COL_SERVER_ID  + "=4";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
-            db.execSQL(query);
-            query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
-            db.execSQL(query);
-        }
-        if(oldVersion < 20) {
-            String query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                    " = REPLACE(" + COL_CAP_PATH +", 'http://www.mangahere.cc', '') WHERE 1";
-            db.execSQL(query);
+        try {
+            is_in_update_process = true;
+            Thread.sleep(5000);
+            if (oldVersion < 10) {
+                db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1");
+            }
+            if (oldVersion < 11) {
+                db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'");
+            }
+            if (oldVersion < 12) {
+                db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_READER + " INTEGER DEFAULT 0");
+            }
+            if (oldVersion < 13) {
+                db.execSQL("ALTER TABLE " + TABLE_CHAPTERS + " ADD COLUMN " + COL_CAP_EXTRA + " TEXT");
+            }
+            if (oldVersion < 14) {
+                db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_LAST_UPDATE + " TEXT DEFAULT 'N/A'");
+            }
+            if (oldVersion < 15) {
+                db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_PATH + " LIKE '%hitmanga.eu%'");
+            }
+            if (oldVersion < 16) {
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
+                        COL_SERVER_ID + "=29";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE " +
+                        COL_SERVER_ID + "=34";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE 1";
+                db.execSQL(query);
+            }
+            if (oldVersion < 17) {
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE " +
+                        COL_SERVER_ID + "=34";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE 1";
+                db.execSQL(query);
+            }
+            if (oldVersion < 18) {
+                db.execSQL("CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM " + TABLE_CHAPTERS + ";");
+                db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
+                db.execSQL(DATABASE_CHAPTERS_CREATE);
+                db.execSQL("INSERT INTO capitulos (id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra) " +
+                        "SELECT id, nombre, path,paginas, manga_id, estado, leidas, descargado, extra FROM sqlitestudio_temp_table; ");
+                db.execSQL("DROP TABLE sqlitestudio_temp_table;");
+            }
+            if (oldVersion < 19) {
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
+                        COL_SERVER_ID + "=4";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
+                        COL_SERVER_ID + "=4";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
+                db.execSQL(query);
+            }
+            if (oldVersion < 20) {
+                String query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
+                db.execSQL(query);
+            }
+        } catch (Exception e) {
+            // on update error try to restore last version
+            Log.e("Database update error", "Exception", e);
+            // TODO implement report sender here
+            try {
+                String backup = db.getPath() + "." + oldVersion + ".bak";
+                if (new File(backup).exists()) {
+                    if (new File(db.getPath()).delete()) {
+                        Util.getInstance().copyFile(new File(backup), new File(db.getPath()));
+                    }
+                }
+            } catch (IOException e1) {
+                Log.e("Database", "Exception", e1);
+            }
+        } finally {
+            is_in_update_process = false;
         }
     }
 
@@ -898,18 +928,17 @@ public class Database extends SQLiteOpenHelper {
         ruta += "dbs/";
         File exportDir = new File(ruta, "");
         if (!exportDir.exists()) {
-            if(!exportDir.mkdirs()) {
+            if (!exportDir.mkdirs()) {
                 Log.e("Database", "failed to create dbs directory");
             }
         }
         File file = new File(exportDir, dbFile.getName());
         try {
-            if(file.createNewFile()) {
+            if (file.createNewFile()) {
                 InputStream is = new FileInputStream(dbFile);
                 FileCache.writeFile(is, file);
                 is.close();
-            }
-            else {
+            } else {
                 Log.e("Database", "failed to store DB");
             }
         } catch (IOException e) {

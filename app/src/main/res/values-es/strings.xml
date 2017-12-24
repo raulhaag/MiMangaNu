@@ -348,4 +348,5 @@
     <string name="flt_status_suspended">Suspendido</string>
     <string name="flt_tag_all">Todo</string>
     <string name="flt_type">Tipo</string>
+    <string name="database_in_update_process">Espere por favor, actualizando la base de datos.</string>
 </resources>
