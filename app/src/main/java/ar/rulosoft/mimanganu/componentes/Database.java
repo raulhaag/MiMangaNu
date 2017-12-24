@@ -26,7 +26,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class Database extends SQLiteOpenHelper {
@@ -805,10 +804,13 @@ public class Database extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        // create a backup of the old database in case the upgrade fails for some reason
-        // this is only called if the database is readable - otherwise an Exception would have been raised
+        // create a backup of the old database in case the upgrade should fail for some reason
+        // if a backup of the old version already exists, do not overwrite it
         try {
-            Util.getInstance().copyFile(new File(db.getPath()), new File(db.getPath() + ".bak"));
+            String backup = db.getPath() + "." + oldVersion + ".bak";
+            if(!new File(backup).exists()) {
+                Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
+            }
         }
         catch (IOException e) {
             Log.e("Database", "Exception", e);
