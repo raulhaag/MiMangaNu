@@ -830,7 +830,6 @@ public class Database extends SQLiteOpenHelper {
 
         try {
             is_in_update_process = true;
-            Thread.sleep(5000);
             if (oldVersion < 10) {
                 db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1");
             }
@@ -903,6 +902,7 @@ public class Database extends SQLiteOpenHelper {
                         " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
                 db.execSQL(query);
             }
+            //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");
         } catch (Exception e) {
             // on update error try to restore last version
             Log.e("Database update error", "Exception", e);
