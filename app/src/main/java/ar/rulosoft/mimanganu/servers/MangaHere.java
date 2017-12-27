@@ -132,7 +132,7 @@ class MangaHere extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_SERIE, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(1), "http:" + m.group(2), false));
+            mangas.add(new Manga(getServerID(), m.group(1), Util.getInstance().getFilePath(m.group(2)), false));
         }
         return mangas;
     }
@@ -140,7 +140,7 @@ class MangaHere extends ServerBase {
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String data = getNavigatorAndFlushParameters().get(manga.getPath());
+            String data = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
             // Front
             manga.setImages(getFirstMatchDefault(PATTERN_COVER, data, context.getString(R.string.nodisponible)));
             // Summary
@@ -163,7 +163,6 @@ class MangaHere extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                //URL u = new URL("http:" + m.group(1));
                 manga.addChapterFirst(new Chapter(m.group(2), Util.getInstance().getFilePath(m.group(1))));
             }
         }
@@ -238,7 +237,7 @@ class MangaHere extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), "http:" + m.group(3), false);
+            Manga manga = new Manga(getServerID(), m.group(2), Util.getInstance().getFilePath(m.group(3)), false);
             manga.setImages(m.group(1));
             mangas.add(manga);
         }

@@ -66,7 +66,7 @@ public class Database extends SQLiteOpenHelper {
             TABLE_MANGA + "(" +
             COL_ID + " integer primary key autoincrement, " +
             COL_NAME + " text not null," +
-            COL_PATH + " text not null UNIQUE, " +
+            COL_PATH + " text not null, " +
             COL_IMAGE + " text," +
             COL_SYNOPSIS + " text," +
             COL_SERVER_ID + "," +
@@ -79,7 +79,8 @@ public class Database extends SQLiteOpenHelper {
             COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1," +
             COL_READER + " INTEGER DEFAULT 0," +
             COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'," +
-            COL_LAST_UPDATE + " TEXT DEFAULT 'N/A');";
+            COL_LAST_UPDATE + " TEXT DEFAULT 'N/A', " +
+            "UNIQUE (" + COL_SERVER_ID + ", " + COL_PATH + "));";
     private static final String DATABASE_CHAPTERS_CREATE = "create table " +
             TABLE_CHAPTERS + "(" +
             COL_CAP_ID + " integer primary key autoincrement, " +
@@ -96,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
     private static String database_name;
     private static String database_path;
     private static boolean is_in_update_process = false;
-    private static int database_version = 20;
+    private static int database_version = 21;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -874,12 +875,12 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
             }
             if (oldVersion < 18) {
-                db.execSQL("CREATE TABLE sqlitestudio_temp_table AS SELECT * FROM " + TABLE_CHAPTERS + ";");
+                db.execSQL("CREATE TABLE temp_chapters AS SELECT * FROM " + TABLE_CHAPTERS + ";");
                 db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
                 db.execSQL(DATABASE_CHAPTERS_CREATE);
                 db.execSQL("INSERT INTO capitulos (id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra) " +
-                        "SELECT id, nombre, path,paginas, manga_id, estado, leidas, descargado, extra FROM sqlitestudio_temp_table; ");
-                db.execSQL("DROP TABLE sqlitestudio_temp_table;");
+                        "SELECT id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra FROM temp_chapters; ");
+                db.execSQL("DROP TABLE temp_chapters;");
             }
             if (oldVersion < 19) {
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
@@ -902,11 +903,22 @@ public class Database extends SQLiteOpenHelper {
                         " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
                 db.execSQL(query);
             }
+            if(oldVersion < 21){
+                db.execSQL("CREATE TABLE temp_manga AS SELECT * FROM manga;");
+                db.execSQL("DROP TABLE " + TABLE_MANGA +";");
+                db.execSQL(DATABASE_MANGA_CREATE);
+                db.execSQL("INSERT INTO manga(id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update) " +
+                        "SELECT id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update FROM temp_manga;");
+                db.execSQL("DROP TABLE temp_manga");
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.cc', '') WHERE " +
+                        COL_SERVER_ID + "=4";
+                db.execSQL(query);
+            }
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");
         } catch (Exception e) {
             // on update error try to restore last version
             Log.e("Database update error", "Exception", e);
-            ACRA.getErrorReporter().handleException(e);
             try {
                 String backup = db.getPath() + "." + oldVersion + ".bak";
                 if (new File(backup).exists()) {
@@ -917,6 +929,7 @@ public class Database extends SQLiteOpenHelper {
             } catch (IOException e1) {
                 Log.e("Database restore error", "Exception", e1);
             }
+            ACRA.getErrorReporter().handleException(e);
         } finally {
             is_in_update_process = false;
         }
