@@ -875,6 +875,9 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
             }
             if (oldVersion < 18) {
+                db.execSQL("DELETE FROM capitulos WHERE path LIKE '//www.mangahere.co%';");
+                db.execSQL("DELETE FROM capitulos WHERE path LIKE 'http://www.mangahere.cc%';");
+
                 db.execSQL("CREATE TABLE temp_chapters AS SELECT * FROM " + TABLE_CHAPTERS + ";");
                 db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
                 db.execSQL(DATABASE_CHAPTERS_CREATE);
