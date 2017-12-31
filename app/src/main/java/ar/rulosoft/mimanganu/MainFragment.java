@@ -55,8 +55,6 @@ import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 
-import static ar.rulosoft.mimanganu.services.AlarmReceiver.LAST_CHECK;
-
 /**
  * Created by Raul
  */
@@ -66,6 +64,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
     public static final String SELECT_MODE = "selector_modo";
+    public static final String LAST_CHECK = "last_check_update";
     public static final int MODE_SHOW_ALL = 0;
     public static final int MODE_HIDE_READ = 1;
     private static final String TAG = "MainFragment";

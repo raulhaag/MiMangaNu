@@ -66,6 +66,7 @@ dependencies {
     compile 'com.squareup.okio:okio:1.13.0'
     compile 'com.squareup.duktape:duktape-android:1.1.0'
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
+    compile 'com.evernote:android-job:1.2.1'
     compile 'ch.acra:acra:4.9.2'
 
     // for device-based testing

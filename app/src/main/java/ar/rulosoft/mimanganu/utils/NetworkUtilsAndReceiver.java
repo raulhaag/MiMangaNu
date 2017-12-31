@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
@@ -16,7 +17,8 @@ import android.util.Log;
 import ar.rulosoft.mimanganu.Exceptions.NoConnectionException;
 import ar.rulosoft.mimanganu.Exceptions.NoWifiException;
 import ar.rulosoft.mimanganu.MainActivity;
-import ar.rulosoft.mimanganu.services.AlarmReceiver;
+import ar.rulosoft.mimanganu.MainFragment;
+import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
 
 /*
     Base from Yakiv Mospan
@@ -25,7 +27,6 @@ import ar.rulosoft.mimanganu.services.AlarmReceiver;
 
 public class NetworkUtilsAndReceiver extends BroadcastReceiver {
 
-    public enum ConnectionStatus {UNCHECKED, NO_INET_CONNECTED, NO_WIFI_CONNECTED, CONNECTED}
     public static ConnectionStatus connectionStatus = ConnectionStatus.UNCHECKED; //-1 not checked or changed, 0 no connection wifi, 1 no connection general, 2 connect
     public static boolean ONLY_WIFI;
 
@@ -195,13 +196,12 @@ public class NetworkUtilsAndReceiver extends BroadcastReceiver {
 
         try {
             if (isConnected(context)) {
-                //SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
-                long last_check = pm.getLong(AlarmReceiver.LAST_CHECK, 0);
+                long last_check = pm.getLong(MainFragment.LAST_CHECK, 0);
                 long current_time = System.currentTimeMillis();
                 long interval = Long.parseLong(pm.getString("update_interval", "0"));
                 if (interval > 0) {
                     if (interval < current_time - last_check) {
-                        new AlarmReceiver().onReceive(context, intent);
+                        new AutomaticUpdateTask(context,null, pm).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
@@ -209,5 +209,7 @@ public class NetworkUtilsAndReceiver extends BroadcastReceiver {
             e.printStackTrace();
         }
     }
+
+    public enum ConnectionStatus {UNCHECKED, NO_INET_CONNECTED, NO_WIFI_CONNECTED, CONNECTED}
 
 }

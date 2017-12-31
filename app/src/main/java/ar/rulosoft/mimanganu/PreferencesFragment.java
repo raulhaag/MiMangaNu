@@ -26,10 +26,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.evernote.android.job.JobManager;
+import com.evernote.android.job.JobRequest;
 import com.fedorvlasov.lazylist.FileCache;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.custompref.ColorListDialogFragment;
 import ar.rulosoft.custompref.ColorListDialogPref;
@@ -39,10 +42,10 @@ import ar.rulosoft.custompref.SeekBarCustomPreference;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.services.AlarmReceiver;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
+import ar.rulosoft.mimanganu.services.UpdateJobCreator;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
@@ -253,16 +256,18 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 long time = Long.parseLong((String) newValue);
+                JobManager.instance().cancelAllForTag(UpdateJobCreator.UPDATE_TAG);
                 if (time > 0) {
-                    AlarmReceiver.setAlarms(getActivity().getApplicationContext(),
-                            System.currentTimeMillis() + time, time);
-                } else {
-                    AlarmReceiver.stopAlarms(getActivity().getApplicationContext());
+                    new JobRequest.Builder(UpdateJobCreator.UPDATE_TAG)
+                            .setPeriodic(time, TimeUnit.MINUTES.toMillis(5))
+                            .setRequiresCharging(false)
+                            .setRequiresDeviceIdle(false)
+                            .setUpdateCurrent(true)
+                            .build()
+                            .schedule();
                 }
-
                 if(time < 0)
                     MainActivity.coldStart = false;
-
                 return true;
             }
         });
