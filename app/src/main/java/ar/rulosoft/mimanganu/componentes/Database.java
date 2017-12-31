@@ -93,10 +93,10 @@ public class Database extends SQLiteOpenHelper {
             COL_CAP_DOWNLOADED + " int DEFAULT 0, " +
             COL_CAP_EXTRA + " text, " +
             "UNIQUE (" + COL_CAP_ID_MANGA + ", " + COL_CAP_PATH + "));";
+    public static boolean is_in_update_process = false;
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static boolean is_in_update_process = false;
     private static int database_version = 21;
     private static SQLiteDatabase localDB;
     Context context;
@@ -107,17 +107,7 @@ public class Database extends SQLiteOpenHelper {
         this.context = context;
     }
 
-    private static SQLiteDatabase getDatabase(Context context) {
-        // this will stop if a second thread try to access to database while update is in process and show a Taost
-        while (is_in_update_process) {
-            try {
-                Util.getInstance().toast(context, context.getString(R.string.database_in_update_process));
-                Thread.sleep(3000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
+    public static SQLiteDatabase getDatabase(Context context) {
         // Setup path and database name
         if (database_path == null || database_path.length() == 0) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -512,20 +502,24 @@ public class Database extends SQLiteOpenHelper {
         return getChapters(c, MangaId, "1");
     }
 
-    public static ArrayList<Chapter> getChapters(Context c, int MangaId, String condicion) {
-        return getChapters(c, MangaId, condicion, false);
+    public static ArrayList<Chapter> getChapters(Context c, int MangaId, String condition) {
+        return getChapters(c, MangaId, condition, false);
     }
 
-    public static ArrayList<Chapter> getChapters(Context c, int MangaId, String condicion, boolean asc) {
-        ArrayList<Chapter> chapters = new ArrayList<>();
+    public static ArrayList<Chapter> getChapters(Context c, int MangaId, String condition, boolean asc) {
         Cursor cursor = getDatabase(c).query(
                 TABLE_CHAPTERS,
                 new String[]{
                         COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
                         COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
-                }, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condicion,
+                }, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condition,
                 null, null, null, COL_CAP_ID + (asc ? " ASC" : " DESC")
         );
+        return getChapterFromCursor(cursor);
+    }
+
+    public static ArrayList<Chapter> getChapterFromCursor(Cursor cursor) {
+        ArrayList<Chapter> chapters = new ArrayList<>();
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_CAP_ID);
             int colTitle = cursor.getColumnIndex(COL_CAP_NAME);
@@ -535,11 +529,12 @@ public class Database extends SQLiteOpenHelper {
             int colState = cursor.getColumnIndex(COL_CAP_STATE);
             int colDownloaded = cursor.getColumnIndex(COL_CAP_DOWNLOADED);
             int colExtra = cursor.getColumnIndex(COL_CAP_EXTRA);
+            int colMID = cursor.getColumnIndex(COL_CAP_ID_MANGA);
             do {
                 Chapter cap = new Chapter(cursor.getString(colTitle), cursor.getString(colWeb));
                 cap.setPages(cursor.getInt(colPages));
                 cap.setId(cursor.getInt(colId));
-                cap.setMangaID(MangaId);
+                cap.setMangaID(cursor.getInt(colMID));
                 cap.setReadStatus(cursor.getInt(colState));
                 cap.setPagesRead(cursor.getInt(colPageRead));
                 cap.setDownloaded((cursor.getInt(colDownloaded) == 1));
@@ -821,16 +816,16 @@ public class Database extends SQLiteOpenHelper {
         // create a backup of the old database in case the upgrade should fail for some reason
         // if a backup of the old version already exists, do not overwrite it
         try {
-            String backup = db.getPath() + "." + oldVersion + ".bak";
-            if (!new File(backup).exists()) {
-                Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
-            }
-        } catch (IOException e) {
-            Log.e("Database backup error", "Exception", e);
-        }
-
-        try {
             is_in_update_process = true;
+            try {
+                String backup = db.getPath() + "." + oldVersion + ".bak";
+                if (!new File(backup).exists()) {
+                    Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
+                }
+            } catch (IOException e) {
+                Log.e("Database backup error", "Exception", e);
+            }
+
             if (oldVersion < 10) {
                 db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1");
             }
@@ -875,6 +870,7 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
             }
             if (oldVersion < 18) {
+                removeDoubleChapters(db, "mangahere");
                 db.execSQL("CREATE TABLE temp_chapters AS SELECT * FROM " + TABLE_CHAPTERS + ";");
                 db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
                 db.execSQL(DATABASE_CHAPTERS_CREATE);
@@ -903,16 +899,15 @@ public class Database extends SQLiteOpenHelper {
                         " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
                 db.execSQL(query);
             }
-            if(oldVersion < 21){
+            if (oldVersion < 21) {
+                removeDoubleChapters(db, "mangahere");
                 db.execSQL("CREATE TABLE temp_manga AS SELECT * FROM manga;");
-                db.execSQL("DROP TABLE " + TABLE_MANGA +";");
+                db.execSQL("DROP TABLE " + TABLE_MANGA + ";");
                 db.execSQL(DATABASE_MANGA_CREATE);
                 db.execSQL("INSERT INTO manga(id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update) " +
                         "SELECT id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update FROM temp_manga;");
                 db.execSQL("DROP TABLE temp_manga");
-                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.cc', '') WHERE " +
-                        COL_SERVER_ID + "=4";
+                String query = "UPDATE manga SET path = REPLACE(path,'http://www.mangahere.cc', '') WHERE server_id=4;";
                 db.execSQL(query);
             }
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");
@@ -923,6 +918,10 @@ public class Database extends SQLiteOpenHelper {
                 String backup = db.getPath() + "." + oldVersion + ".bak";
                 if (new File(backup).exists()) {
                     if (new File(db.getPath()).delete()) {
+                        File journal = new File(db.getPath() + "-journal");
+                        if(journal.exists()) {
+                            journal.delete();
+                        }
                         Util.getInstance().copyFile(new File(backup), new File(db.getPath()));
                     }
                 }
@@ -934,6 +933,38 @@ public class Database extends SQLiteOpenHelper {
             is_in_update_process = false;
         }
     }
+
+    private void removeDoubleChapters(SQLiteDatabase db, String path) {
+        Cursor cursor = db.query(
+                TABLE_CHAPTERS,
+                new String[]{
+                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
+                        COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
+                }, COL_CAP_PATH + " LIKE '%" + path + "%'",
+                null, null, null, null);
+        ArrayList<Chapter> chapters = getChapterFromCursor(cursor);
+        Chapter c;
+        int cs = 1;
+        String inlist = "";
+        while (!chapters.isEmpty()) {
+            c = chapters.get(0);
+            while (chapters.contains(c)) {
+                if (cs > 1) {
+                    c = chapters.get(chapters.indexOf(c));
+                    inlist = inlist + "," + c.getId();
+                }
+                chapters.remove(c);
+                cs++;
+            }
+            cs = 1;
+        }
+        if (inlist.length() > 1) {
+            Log.i("MIMANGANU CHAPTERS REM", inlist.split(",").length + " =" + inlist);
+            inlist = inlist.substring(1, inlist.length());
+            db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_ID + " IN (" + inlist + ");");
+        }
+    }
+
 
     private void copyDbToSd(Context c) {
         File dbFile = c.getDatabasePath("mangas.db");
