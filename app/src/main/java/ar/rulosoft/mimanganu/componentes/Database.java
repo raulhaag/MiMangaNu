@@ -870,7 +870,7 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
             }
             if (oldVersion < 18) {
-                removeDoubleChapters(db, "mangahere");
+               // removeDoubleChapters(db, "mangahere");
                 db.execSQL("CREATE TABLE temp_chapters AS SELECT * FROM " + TABLE_CHAPTERS + ";");
                 db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
                 db.execSQL(DATABASE_CHAPTERS_CREATE);
@@ -879,7 +879,9 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE temp_chapters;");
             }
             if (oldVersion < 19) {
-                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                String query = "DELETE FROM capitulos WHERE id IN (SELECT CASE WHEN c1.paginas < c2.paginas THEN c1.id ELSE c2.id END AS id from capitulos as c1 join capitulos as c2 where c1.path like '%mangahere%' and REPLACE(c1.path, '//www.mangahere.co', '') = REPLACE(c2.path, 'http://www.mangahere.co', ''));";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                         " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
                         COL_SERVER_ID + "=4";
                 db.execSQL(query);
@@ -898,9 +900,11 @@ public class Database extends SQLiteOpenHelper {
                 String query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
                         " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
                 db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", '//www.mangahere.cc', '') WHERE 1";
+                db.execSQL(query);
             }
             if (oldVersion < 21) {
-                removeDoubleChapters(db, "mangahere");
                 db.execSQL("CREATE TABLE temp_manga AS SELECT * FROM manga;");
                 db.execSQL("DROP TABLE " + TABLE_MANGA + ";");
                 db.execSQL(DATABASE_MANGA_CREATE);
@@ -910,7 +914,7 @@ public class Database extends SQLiteOpenHelper {
                 String query = "UPDATE manga SET path = REPLACE(path,'http://www.mangahere.cc', '') WHERE server_id=4;";
                 db.execSQL(query);
             }
-            //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");
+            //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
         } catch (Exception e) {
             // on update error try to restore last version
             Log.e("Database update error", "Exception", e);
@@ -933,38 +937,6 @@ public class Database extends SQLiteOpenHelper {
             is_in_update_process = false;
         }
     }
-
-    private void removeDoubleChapters(SQLiteDatabase db, String path) {
-        Cursor cursor = db.query(
-                TABLE_CHAPTERS,
-                new String[]{
-                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
-                        COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
-                }, COL_CAP_PATH + " LIKE '%" + path + "%'",
-                null, null, null, null);
-        ArrayList<Chapter> chapters = getChapterFromCursor(cursor);
-        Chapter c;
-        int cs = 1;
-        String inlist = "";
-        while (!chapters.isEmpty()) {
-            c = chapters.get(0);
-            while (chapters.contains(c)) {
-                if (cs > 1) {
-                    c = chapters.get(chapters.indexOf(c));
-                    inlist = inlist + "," + c.getId();
-                }
-                chapters.remove(c);
-                cs++;
-            }
-            cs = 1;
-        }
-        if (inlist.length() > 1) {
-            Log.i("MIMANGANU CHAPTERS REM", inlist.split(",").length + " =" + inlist);
-            inlist = inlist.substring(1, inlist.length());
-            db.execSQL("DELETE FROM " + TABLE_CHAPTERS + " WHERE " + COL_CAP_ID + " IN (" + inlist + ");");
-        }
-    }
-
 
     private void copyDbToSd(Context c) {
         File dbFile = c.getDatabasePath("mangas.db");
