@@ -33,6 +33,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.77:
+* Cambios en base de datos.
+* Cambios en la búsqueda de actualizaciones.
+
+Changes in v1.77:
+* Changes in database.
+* Changes in update search.
+
 Cambios en v1.76:
 * Fix NineManga.
 * Fix MangaHere.

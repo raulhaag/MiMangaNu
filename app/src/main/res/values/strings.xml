@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.76:\n\t* Fix NineManga.\n\t* Fix MangaHere.\n\t* Internals improves and in continuous reader.</string>
+    <string name="update_message">Changes in v1.77:\n\t*Changes in database.\n\t* Changes in update search.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
