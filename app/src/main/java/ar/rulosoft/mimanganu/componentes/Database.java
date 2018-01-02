@@ -879,7 +879,7 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE temp_chapters;");
             }
             if (oldVersion < 19) {
-                String query = "DELETE FROM capitulos WHERE id IN (SELECT CASE WHEN c1.paginas > c2.paginas THEN c1.id ELSE c2.id END AS id from capitulos as c1 join capitulos as c2 where c1.path like '%mangahere%' and REPLACE(c1.path, '//www.mangahere.co', '') = REPLACE(c2.path, 'http://www.mangahere.co', ''));";
+                String query = "DELETE FROM capitulos WHERE id IN (SELECT id FROM capitulos WHERE path LIKE '//www.mangahere.co%' OR path LIKE 'http://www.mangahere.cc%');";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                         " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
