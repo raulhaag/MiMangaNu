@@ -123,11 +123,11 @@ class ReadMangaToday extends ServerBase {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("x-requested-with", "XMLHttpRequest");
         String data = getNavigatorAndFlushParameters().get(HOST + "/service/search?q=" + term.toLowerCase());
-        if(!data.equals("false")) {
+        if (!data.equals("false")) {
             JSONArray arr = new JSONArray(data);
-            for (int i=0; i < arr.length(); i++) {
+            for (int i = 0; i < arr.length(); i++) {
                 JSONObject m = arr.getJSONObject(i);
-                Manga manga = new Manga(getServerID(),m.getString("title"), m.getString("url"),false);
+                Manga manga = new Manga(getServerID(), m.getString("title"), m.getString("url"), false);
                 mangas.add(manga);
             }
         }
@@ -159,7 +159,7 @@ class ReadMangaToday extends ServerBase {
             String summary = getFirstMatchDefault("<li class=\"list-group-item movie-detail\">(.+?)</li>", source, context.getString(R.string.nodisponible));
             manga.setSynopsis(summary);
             // summary can be empty after cleaning, so check again here
-            if(manga.getSynopsis().isEmpty()) {
+            if (manga.getSynopsis() == null || manga.getSynopsis().isEmpty()) {
                 manga.setSynopsis(context.getString(R.string.nodisponible));
             }
 
@@ -170,10 +170,9 @@ class ReadMangaToday extends ServerBase {
             ArrayList<String> authors = getAllMatch(
                     "<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>", source);
 
-            if(authors.isEmpty()) {
+            if (authors.isEmpty()) {
                 manga.setAuthor(context.getString(R.string.nodisponible));
-            }
-            else {
+            } else {
                 manga.setAuthor(TextUtils.join(", ", authors));
             }
 
@@ -199,7 +198,7 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(chapter.getPath() + "/all-pages");
             if (source.equals("400")) {
                 // ReadMangaToday returns 400 Bad Request sometimes
@@ -207,8 +206,8 @@ class ReadMangaToday extends ServerBase {
                 Util.getInstance().removeSpecificCookies(context, HOST);
                 source = getNavigatorAndFlushParameters().get(chapter.getPath() + "/all-pages");
             }
-            source = TextUtils.join(",", getAllMatch("<div class=\"[^\"]*page_chapter\"[^\"]*>([\\s\\S]*?)</div>",source));
-            ArrayList<String> images = getAllMatch("src=\"(h[^\"]+)", source);
+            source = TextUtils.join(",", getAllMatch("<div class=\"[^\"]*page_chapter\"[^\"]*>([\\s\\S]*?)</div>", source));
+            ArrayList<String> images = getAllMatch("img src=\"(h[^\"]+)", source);
 
             if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
@@ -220,7 +219,7 @@ class ReadMangaToday extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[] {
+        return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_genre),
                         buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE)
@@ -233,8 +232,7 @@ class ReadMangaToday extends ServerBase {
         if (fltGenre[filters[0][0]] == R.string.flt_tag_all) {
             if (pageNumber == 1) {
                 web = HOST + "/hot-manga/";
-            }
-            else {
+            } else {
                 web = HOST + "/hot-manga/" + pageNumber;
             }
         } else {
