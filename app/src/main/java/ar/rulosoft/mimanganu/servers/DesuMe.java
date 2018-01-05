@@ -146,6 +146,7 @@ public class DesuMe extends ServerBase {
     DesuMe(Context context) {
         super(context);
         setFlag(R.drawable.flag_ru);
+        setIcon(R.drawable.desume);
         setServerName("DesuMe");
         setServerID(DESUME);
     }
