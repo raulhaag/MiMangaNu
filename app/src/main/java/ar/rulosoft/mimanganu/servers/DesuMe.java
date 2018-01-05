@@ -162,7 +162,7 @@ public class DesuMe extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[] {
+        return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_type),
                         buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
@@ -182,14 +182,14 @@ public class DesuMe extends ServerBase {
         sb.append(HOST + "/manga/?");
 
         sb.append("kinds=");
-        for(int i = 0; i < filters[0].length; i++) {
+        for (int i = 0; i < filters[0].length; i++) {
             sb.append(valType[filters[0][i]]);
             sb.append(",");
         }
         sb.setLength(sb.length() - 1);
 
         sb.append("&genres=");
-        for(int i = 0; i < filters[1].length; i++) {
+        for (int i = 0; i < filters[1].length; i++) {
             sb.append(valGenre[filters[1][i]]);
             sb.append(",");
         }
@@ -257,18 +257,32 @@ public class DesuMe extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = HOST + chapter.getPath() + "#page=" + page;
-        String data = getNavigatorAndFlushParameters().get(source);
-        return getFirstMatch("<link rel=\"image_src\" href=\"([^\"]+)", data, context.getString(R.string.server_failed_loading_image));
+        assert chapter.getExtra() != null;
+        return chapter.getExtra().split("\\|")[page - 1];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-            String pages = getFirstMatch("volume=\"\\d+\">(\\d+)</option></select></span>", data, context.getString(R.string.server_failed_loading_page_count));
 
-            chapter.setPages(Integer.parseInt(pages));
+            String imageDir = getFirstMatch("\\s*dir:\\s*\"([^\"]+)", data, context.getString(R.string.server_failed_loading_chapter));
+            imageDir = imageDir.replace("\\", "");
+            String images = getFirstMatch("\\s*images:\\s*\\[\\[(.+?)\\]\\]", data, context.getString(R.string.server_failed_loading_chapter));
+            ArrayList<String> pages = getAllMatch("\"([^\"]+)\"", images);
+
+            if (pages.size() > 0) {
+                StringBuilder extra = new StringBuilder();
+                for (String p : pages) {
+                    extra.append(imageDir).append(p).append("|");
+                }
+                extra.setLength(extra.length() - 1);
+
+                chapter.setPages(pages.size());
+                chapter.setExtra(extra.toString());
+            } else {
+                throw new Exception(context.getString(R.string.server_failed_loading_page_count));
+            }
         }
     }
 }
