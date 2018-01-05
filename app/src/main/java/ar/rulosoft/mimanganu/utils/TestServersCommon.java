@@ -179,7 +179,7 @@ public class TestServersCommon {
         } catch (Exception e) {
             fail(getContext(e.getMessage()));
         }
-        assertFalse(getContext(), chapter.getPages() == 0);
+        assertTrue(getContext(), chapter.getPages() > 1);
 
         // check random image link
         String url = null;
