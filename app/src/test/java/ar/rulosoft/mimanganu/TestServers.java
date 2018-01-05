@@ -207,6 +207,11 @@ public class TestServers {
     }
 
     @Test
+    public void test_READMANGAME() throws Exception {
+        new TestServersCommon(ServerBase.READMANGAME, true, context);
+    }
+
+    @Test
     public void test_DESUME() throws Exception {
         new TestServersCommon(ServerBase.DESUME, true, context);
     }
