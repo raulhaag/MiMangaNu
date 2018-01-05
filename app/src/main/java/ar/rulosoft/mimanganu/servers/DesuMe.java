@@ -186,7 +186,7 @@ public class DesuMe extends ServerBase {
 
         sb.append(HOST + "/manga/?");
 
-        if(filters[0].length > 0) {
+        if (filters[0].length > 0) {
             sb.append("kinds=");
             for (int i = 0; i < filters[0].length; i++) {
                 sb.append(valType[filters[0][i]]).append(",");
@@ -194,7 +194,7 @@ public class DesuMe extends ServerBase {
             sb.setLength(sb.length() - 1);
         }
 
-        if(filters[1].length > 0) {
+        if (filters[1].length > 0) {
             sb.append("&genres=");
             for (int i = 0; i < filters[1].length; i++) {
                 sb.append(valGenre[filters[1][i]]).append(",");
@@ -206,7 +206,7 @@ public class DesuMe extends ServerBase {
             sb.append("&order_by=").append(valOrder[filters[2][0]]);
         }
 
-        if(pageNumber > 1) {
+        if (pageNumber > 1) {
             sb.append("&page=").append(pageNumber);
         }
 
@@ -248,8 +248,7 @@ public class DesuMe extends ServerBase {
                 String web = "/manga/" + title.replace(" ", "-").toLowerCase() + "." + id + "/";
                 mangas.add(new Manga(getServerID(), title, web, false));
             }
-        }
-        catch (JSONException e) {
+        } catch (JSONException e) {
             // do nothing
         }
 
@@ -281,7 +280,9 @@ public class DesuMe extends ServerBase {
             Pattern p = Pattern.compile("<h4><a href=\"(/manga/[^\"]+).+?title=\"([^\"]+)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                manga.addChapterFirst(new Chapter(m.group(2), m.group(1)));
+                // remove 'volume' to ease sorting after chapters
+                String title = m.group(2).replaceFirst("^Том \\d+.\\s+", "");
+                manga.addChapterFirst(new Chapter(title, m.group(1)));
             }
         }
     }
