@@ -185,6 +185,7 @@ public abstract class ServerBase {
     public static final int MANGAPEDIA = 34;
     public static final int MANGATOWN = 35;
     public static final int READMANGAME = 36;
+    public static final int DESUME = 37;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
@@ -310,6 +311,9 @@ public abstract class ServerBase {
             case READMANGAME:
                 serverBase = new ReadMangaMe(context);
                 break;
+            case DESUME:
+                serverBase = new DesuMe(context);
+                break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
                 break;
@@ -390,6 +394,7 @@ public abstract class ServerBase {
                 new DeNineManga(context),
                 new RawSenManga(context),
                 new BatoTo(context),
+                new DesuMe(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
                 new FromFolder(context)

@@ -206,6 +206,11 @@ public class TestServers {
         new TestServersCommon(ServerBase.MANGATOWN, true, context);
     }
 
+    @Test
+    public void test_DESUME() throws Exception {
+        new TestServersCommon(ServerBase.DESUME, true, context);
+    }
+
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_READCOMICONLINE() throws Exception {
         new TestServersCommon(ServerBase.READCOMICONLINE, true, context);
