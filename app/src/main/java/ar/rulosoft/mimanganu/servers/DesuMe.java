@@ -2,7 +2,11 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +14,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.navegadores.Navigator;
 
 public class DesuMe extends ServerBase {
     private static final String HOST = "http://desu.me";
@@ -130,7 +135,7 @@ public class DesuMe extends ServerBase {
     private static int[] fltOrder = {
             R.string.flt_order_last_update,
             R.string.flt_order_alpha,
-            R.string.flt_order_rating,
+            R.string.flt_order_views,
     };
     private static String[] valOrder = {
             "",
@@ -181,34 +186,37 @@ public class DesuMe extends ServerBase {
 
         sb.append(HOST + "/manga/?");
 
-        sb.append("kinds=");
-        for (int i = 0; i < filters[0].length; i++) {
-            sb.append(valType[filters[0][i]]);
-            sb.append(",");
+        if(filters[0].length > 0) {
+            sb.append("kinds=");
+            for (int i = 0; i < filters[0].length; i++) {
+                sb.append(valType[filters[0][i]]).append(",");
+            }
+            sb.setLength(sb.length() - 1);
         }
-        sb.setLength(sb.length() - 1);
 
-        sb.append("&genres=");
-        for (int i = 0; i < filters[1].length; i++) {
-            sb.append(valGenre[filters[1][i]]);
-            sb.append(",");
+        if(filters[1].length > 0) {
+            sb.append("&genres=");
+            for (int i = 0; i < filters[1].length; i++) {
+                sb.append(valGenre[filters[1][i]]).append(",");
+            }
+            sb.setLength(sb.length() - 1);
         }
-        sb.setLength(sb.length() - 1);
 
-        sb.append("&order_by=");
-        sb.append(valOrder[filters[2][0]]);
+        if (filters[2][0] != 0) {
+            sb.append("&order_by=").append(valOrder[filters[2][0]]);
+        }
 
-        sb.append("&page=");
-        sb.append(pageNumber);
+        if(pageNumber > 1) {
+            sb.append("&page=").append(pageNumber);
+        }
 
         String source = getNavigatorAndFlushParameters().get(sb.toString());
-
         Pattern pattern = Pattern.compile("memberListItem\">\\s*<a href=\"(manga/[^\"]+).+?url\\('([^']+).+?title=[^>]+>([^<]+)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
             Manga m = new Manga(getServerID(), matcher.group(3), "/" + matcher.group(1), false);
-            m.setImages(matcher.group(2));
+            m.setImages(HOST + matcher.group(2));
             mangas.add(m);
         }
         return mangas;
@@ -216,13 +224,36 @@ public class DesuMe extends ServerBase {
 
     @Override
     public boolean hasSearch() {
-        return false;
+        return true;
     }
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        // TODO implement this
-        return null;
+        ArrayList<Manga> mangas = new ArrayList<>();
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addHeader("x-requested-with", "XMLHttpRequest");
+        nav.addPost("q", term);
+        nav.addPost("_xfResponseType", "json");
+        String data = nav.post(HOST + "/manga/find");
+
+        try {
+            JSONObject result = new JSONObject(data).getJSONObject("results");
+            Iterator<String> it = result.keys();
+            while (it.hasNext()) {
+                String title = it.next();
+                String id = getFirstMatch(
+                        "/(\\d+)\\.jpg",
+                        result.getJSONObject(title).getString("avatar"),
+                        context.getString(R.string.server_failed_locate_manga_url));
+                String web = "/manga/" + title.replace(" ", "-").toLowerCase() + "." + id + "/";
+                mangas.add(new Manga(getServerID(), title, web, false));
+            }
+        }
+        catch (JSONException e) {
+            // do nothing
+        }
+
+        return mangas;
     }
 
     @Override
@@ -236,7 +267,7 @@ public class DesuMe extends ServerBase {
             String data = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
             // cover image
-            manga.setImages(getFirstMatchDefault("src=\"(/data/manga/covers/[^\"]+)", data, ""));
+            manga.setImages(HOST + getFirstMatchDefault("src=\"(/data/manga/covers/[^\"]+)", data, ""));
             // summary
             manga.setSynopsis(getFirstMatchDefault("class=\"prgrph\">([^<]+)", data,
                     context.getString(R.string.nodisponible)));
@@ -245,7 +276,7 @@ public class DesuMe extends ServerBase {
             // author - n/a
             manga.setAuthor(context.getString(R.string.nodisponible));
             // genre
-            manga.setGenre(getFirstMatchDefault("(<a class=\"tag Tooltip\".+?)</ul>", data, context.getString(R.string.nodisponible)).replace("</li> <li>", ","));
+            manga.setGenre(getFirstMatchDefault("(<a class=\"tag Tooltip\".+?)</ul>", data, context.getString(R.string.nodisponible)).replace("</li> <li>", ", "));
             // chapter
             Pattern p = Pattern.compile("<h4><a href=\"(/manga/[^\"]+).+?title=\"([^\"]+)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
