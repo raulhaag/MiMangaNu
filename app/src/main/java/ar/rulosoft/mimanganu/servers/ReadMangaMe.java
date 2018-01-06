@@ -22,15 +22,58 @@ public class ReadMangaMe extends ServerBase {
 
     private static String HOST = "http://readmanga.me";
 
-    private static String[] genres = new String[]{
-            "Все", "В цвете", "Веб", "Выпуск приостановлен", "Ёнкома", "Комикс западный", "Манхва",
-            "Маньхуа", "Ранобэ", "Сборник", "арт", "боевик", "боевые искусства", "вампиры", "гарем",
-            "гендерная интрига", "героическое фэнтези", "детектив", "дзёсэй", "додзинси", "драма",
-            "игра", "история", "киберпанк", "кодомо", "комедия", "махо-сёдзё", "меха", "мистика",
-            "научная фантастика", "повседневность", "постапокалиптика", "приключения", "психология",
-            "романтика", "самурайский боевик", "сверхъестественное", "сёдзё", "сёдзё-ай", "сёнэн",
-            "сёнэн-ай", "спорт", "сэйнэн", "трагедия", "триллер", "ужасы", "фантастика", "фэнтези",
-            "школа", "этти", "юри"
+    private static int[] genres = new int[]{
+            R.string.flt_tag_all, //ap
+            R.string.flt_tag_color,
+            R.string.flt_tag_webtoon, //"Веб",
+            R.string.flt_status_abandoned,// "Выпуск приостановлен",
+            R.string.flt_tag_4_koma, //"Ёнкома",
+            R.string.flt_tag_comic, //"Комикс западный",
+            R.string.flt_tag_manhwa, //"Манхва",
+            R.string.flt_tag_manhua, //"Маньхуа",
+            R.string.flt_tag_light_novel, //"Ранобэ",
+            R.string.flt_tag_collection,//"Сборник",
+            R.string.flt_tag_art, //"арт",
+            R.string.flt_tag_action, //"боевик",
+            R.string.flt_tag_martial_arts, //"боевые искусства",
+            R.string.flt_tag_vampire, //"вампиры",
+            R.string.flt_tag_harem, //"гарем",
+            R.string.flt_tag_gender_bender, // "гендерная интрига",
+            R.string.flt_tag_super_hero, //"героическое фэнтези",
+            R.string.flt_tag_detective, //"детектив",
+            R.string.flt_tag_josei,//"дзёсэй",
+            R.string.flt_tag_doujinshi, //"додзинси",
+            R.string.flt_tag_drama, //"драма",
+            R.string.flt_tag_game, //"игра",
+            R.string.flt_tag_historical, //"история",
+            R.string.flt_tag_cyberpunk, //"киберпанк",
+            R.string.flt_tag_kodomo, //"кодомо",
+            R.string.flt_tag_comedy, //"комедия",
+            R.string.flt_tag_maho_shoujo, //"махо-сёдзё",
+            R.string.flt_tag_mecha, //"меха",
+            R.string.flt_tag_mystery, //"мистика",
+            R.string.flt_tag_sci_fi, //"научная фантастика",
+            R.string.flt_tag_daily_life, //"повседневность",
+            R.string.flt_tag_post_apocalyptic, //"постапокалиптика",
+            R.string.flt_tag_adventure, //"приключения",
+            R.string.flt_tag_psychological, //"психология",
+            R.string.flt_tag_romance, //"романтика",
+            R.string.flt_tag_samurai, //"самурайский боевик",
+            R.string.flt_tag_supernatural, //"сверхъестественное",
+            R.string.flt_tag_shoujo, //"сёдзё",
+            R.string.flt_tag_shoujo_ai, //"сёдзё-ай",
+            R.string.flt_tag_shounen, //"сёнэн",
+            R.string.flt_tag_shounen_ai, //"сёнэн-ай",
+            R.string.flt_tag_sports, //"спорт",
+            R.string.flt_tag_seinen, //"сэйнэн",
+            R.string.flt_tag_tragedy, //"трагедия",
+            R.string.flt_tag_thriller, //"триллер",
+            R.string.flt_tag_horror, //"ужасы",
+            R.string.flt_tag_fantastic,
+            R.string.flt_tag_fantasy, //"фэнтези",
+            R.string.flt_tag_school_life, //"школа",
+            R.string.flt_tag_ecchi, //"этти",
+            R.string.flt_tag_yuri,//"юри"
     };
     private static String[] genresV = new String[]{
             "/list", "/list/tag/color", "/list/tag/web", "/list/tag/stopped", "/list/tag/yonkoma",
@@ -51,8 +94,11 @@ public class ReadMangaMe extends ServerBase {
             "/list/genre/ecchi", "/list/genre/yuri"
     };
 
-    private static String[] sort = new String[]{
-            "По популярности","По рейтингу","Новинки","По дате обновления",
+    private static int[] sort = new int[]{
+            R.string.flt_order_rating ,//"По популярности"
+            R.string.flt_order_votes,
+            R.string.flt_order_created,
+            R.string.flt_order_last_update //"По дате обновления",
     };
 
     private static String[] sortV = new String[]{
@@ -143,7 +189,7 @@ public class ReadMangaMe extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return null;
+        return chapter.getExtra().split("\\|") [page];
     }
 
     @Override
@@ -190,8 +236,8 @@ public class ReadMangaMe extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter("Категории / Жанры", genres, ServerFilter.FilterType.SINGLE),//0
-                new ServerFilter("Сортировать", sort, ServerFilter.FilterType.SINGLE),//1
+                new ServerFilter(context.getString(R.string.flt_category) + " / " + context.getString(R.string.flt_genre), buildTranslatedStringArray(genres), ServerFilter.FilterType.SINGLE),//0
+                new ServerFilter(context.getString(R.string.flt_order), buildTranslatedStringArray(sort), ServerFilter.FilterType.SINGLE),//1 "Сортировать"
         };
     }
 

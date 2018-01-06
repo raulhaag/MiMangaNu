@@ -466,4 +466,8 @@
     <string name="server_manga_is_licensed">The Manga is licensed and is no longer available for downloading.</string>
     <string name="server_uses_captcha">Server uses CAPTCHAs for link protection - cannot go further.</string>
     <string name="database_in_update_process">Database update in process, please wait.</string>
+    <string name="flt_tag_fantastic">Fantastic</string>
+    <string name="flt_tag_color">Color</string>
+    <string name="flt_order_votes">Votes</string>
+    <string name="flt_order_created">Created</string>
 </resources>

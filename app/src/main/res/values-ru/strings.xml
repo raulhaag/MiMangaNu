@@ -193,6 +193,8 @@
     <string name="thanks">Благодарности</string>
     <plurals name="new_chapter">
         <item quantity="one">%1$d Новая глава %2$s</item>
+        <item quantity="many">%1$d Новые Главы %2$s</item>
+        <item quantity="few">%1$d Новые Главы %2$s</item>
         <item quantity="other">%1$d Новые Главы %2$s</item>
     </plurals>
     <string name="flt_tag_art">арт</string>
@@ -201,7 +203,7 @@
     <string name="flt_tag_maho_shoujo">махо-сёдзё</string>
     <string name="flt_tag_mystery">мистика</string>
     <string name="flt_tag_thriller">боевик</string>
-    <string name="flt_tag_martial_arts">боевыеискусства</string>
+    <string name="flt_tag_martial_arts">боевые искусства</string>
     <string name="flt_tag_vampire">вампиры</string>
     <string name="flt_tag_harem">гарем</string>
     <string name="flt_tag_gender_bender">гендернаяинтрига</string>
@@ -232,4 +234,21 @@
     <string name="flt_tag_school_life">школа</string>
     <string name="flt_tag_ecchi">этти</string>
     <string name="flt_tag_yuri">юри</string>
+    <string name="flt_tag_color">В цвете</string>
+    <string name="flt_tag_fantastic">фантастика</string>
+    <string name="flt_order_votes">По рейтингу</string>
+    <string name="flt_order_created">Новинки</string>
+    <string name="flt_tag_webtoon">Веб</string>
+    <string name="flt_status_abandoned">Выпуск приостановлен</string>
+    <string name="flt_tag_4_koma">Ёнкома</string>
+    <string name="flt_tag_comic">Комикс западный</string>
+    <string name="flt_tag_manhwa">Манхва</string>
+    <string name="flt_tag_manhua">Маньхуа</string>
+    <string name="flt_tag_light_novel">Ранобэ</string>
+    <string name="flt_tag_collection">Сборник</string>
+    <string name="flt_tag_action">боевик</string>
+    <string name="flt_tag_super_hero">героическое фэнтези</string>
+    <string name="flt_tag_cyberpunk">киберпанк</string>
+    <string name="flt_tag_mecha">меха</string>
+    <string name="flt_tag_post_apocalyptic">постапокалиптика</string>
 </resources>
