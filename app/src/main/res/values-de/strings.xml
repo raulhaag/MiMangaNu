@@ -463,4 +463,9 @@
     <string name="server_failed_locate_manga_url">Manga URL konnte nicht extrahiert werden.</string>
     <string name="server_manga_is_licensed">Der Manga ist lizenziert und nicht mehr zum Download verfügbar.</string>
     <string name="server_uses_captcha">Der Server verwendet CAPTCHAs zum Link-Schutz - kann nicht weiter folgen.</string>
+    <string name="database_in_update_process">Datenbank wird aktualisiert - bitte warten …</string>
+    <string name="flt_tag_fantastic">Fantastisch</string>
+    <string name="flt_tag_color">Farbe</string>
+    <string name="flt_order_votes">Bewertung</string>
+    <string name="flt_order_created">Erstellungsdatum</string>
 </resources>
