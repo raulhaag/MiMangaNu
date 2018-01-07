@@ -684,6 +684,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         } else if (mChapter.getReadStatus() == Chapter.READ) {
             mChapter.setReadStatus(Chapter.READING);
         }
+        if(mChapter.isDownloaded() && !new File(mReader.getPath(page)).exists()) {
+            reDownloadCurrentImage();
+        }
     }
 
     @Override
@@ -945,5 +948,4 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             reDownloadingImage = false;
         }
     }
-
 }
