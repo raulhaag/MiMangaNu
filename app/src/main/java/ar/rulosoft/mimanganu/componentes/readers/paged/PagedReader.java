@@ -171,19 +171,19 @@ public abstract class PagedReader extends Reader implements TapListener {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            if (mDirection == Direction.L2R)
+            if (mDirection == Direction.L2R) {
                 position = getCount() - position;
+            }
+
             Page page = pages[position];
-            if (pages[position] != null) {
-                container.addView(page, 0);
-            } else {
-                Context context = getContext();
-                page = new Page(context);
+            if (page == null) {
+                page = new Page(getContext());
                 page.setImage(paths.get(position));
-                container.addView(page, 0);
                 page.index = position;
                 pages[position] = page;
             }
+
+            container.addView(page, 0);
             return page;
         }
 
@@ -254,8 +254,9 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
 
         public void setImage() {
-            if (!imageLoaded && visor != null && !loadingImage)
+            if (!imageLoaded && visor != null && !loadingImage) {
                 new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
         }
 
         public void setImage(String path) {
