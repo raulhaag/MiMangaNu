@@ -213,7 +213,7 @@ public abstract class ServerBase {
      *
      * @param id      the identifier of the server
      * @param context the context for this object
-     * @return        a <code>ServerBase</code> or a <code>DeadServer</code> object
+     * @return a <code>ServerBase</code> or a <code>DeadServer</code> object
      */
     public static ServerBase getServer(int id, Context context) {
         ServerBase serverBase;
@@ -343,7 +343,7 @@ public abstract class ServerBase {
      * @param source   the string to check the pattern for
      * @param errorMsg the descriptive error message string for the Exception raised if not match
      *                 could be found
-     * @return         the first match group
+     * @return the first match group
      */
     public static String getFirstMatch(String patron, String source, String errorMsg) throws Exception {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
@@ -361,7 +361,7 @@ public abstract class ServerBase {
      * context.
      *
      * @param context the context for this object
-     * @return        an array containing ServerBase instances - for each registered server
+     * @return an array containing ServerBase instances - for each registered server
      */
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
@@ -406,7 +406,7 @@ public abstract class ServerBase {
      * <p>
      * This function shall only be called if <code>hasList</code> returns <code>true</code>.
      *
-     * @return           an ArrayList of Manga objects or <code>null</code> if unsupported.
+     * @return an ArrayList of Manga objects or <code>null</code> if unsupported.
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
@@ -418,8 +418,8 @@ public abstract class ServerBase {
      * <p>
      * This function shall only be called if <code>hasSearch</code> returns <code>true</code>.
      *
-     * @param term       a term to search for
-     * @return           an ArrayList of Manga objects or <code>null</code> if unsupported.
+     * @param term a term to search for
+     * @return an ArrayList of Manga objects or <code>null</code> if unsupported.
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
@@ -430,7 +430,7 @@ public abstract class ServerBase {
      *
      * @param manga       the Manga to find chapters for
      * @param forceReload force new retrieval of chapter information
-     * @throws Exception  if an error occurred. The exception is thrown back to UI, so its message
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      * @see Chapter
      */
@@ -449,8 +449,8 @@ public abstract class ServerBase {
      *
      * @param manga       the Manga to find information for
      * @param forceReload force new retrieval of Manga information
-     * @throws Exception  if an error occurred. The exception is thrown back to UI, so its message
-     *                    should be a translatable string.
+     * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
+     *                   should be a translatable string.
      * @see Manga
      * @see Chapter
      */
@@ -461,17 +461,17 @@ public abstract class ServerBase {
      * It must be ensured, that the <code>Chapter</code> object has been initialised - this
      * means, that at least the number of pages is set properly. This is ensured by calling
      * <code>chapterInit</code> before loading any images from a given chapter.
-     *
+     * <p>
      * If the <code>page</code> index lies outside the valid range, an exception is raised.
      * Therefore the calling function must ensure, that the requested page is within the interval
      * [1 .. <code>chapter.getPages()</code>] (boundaries included).
-     *
+     * <p>
      * Be aware, that the page numbers start at 1 - not at 0. This is mostly relevant if the page
      * number is used as an array index.
      *
-     * @param chapter    a Chapter object to get the page image URL for
-     * @param page       the page number starting at page 1 (NOT zero based)
-     * @return           the URL to the image on the given page of the Chapter
+     * @param chapter a Chapter object to get the page image URL for
+     * @param page    the page number starting at page 1 (NOT zero based)
+     * @return the URL to the image on the given page of the Chapter
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
@@ -479,17 +479,17 @@ public abstract class ServerBase {
 
     /**
      * Initialise the <code>Chapter</code> information, like the number of pages.
-     *
+     * <p>
      * For servers listing all images on one page, the image information can be extracted in this
      * function and stored in the <code>Chapter</code> object via its <code>setExtra</code>
      * function.
-     *
+     * <p>
      * Also it has to be ensured, that <code>chapterInit</code> is called before
      * <code>getImageFrom</code> in order to have one time information already fetched and to avoid
      * double work. The latter has to be ensured in this function by checking if the number of
      * pages stored in the <code>Chapter</code> object is bigger than zero.
      *
-     * @param chapter    the <code>Chapter</code> object to do the initialisation for
+     * @param chapter the <code>Chapter</code> object to do the initialisation for
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
@@ -508,7 +508,7 @@ public abstract class ServerBase {
      *
      * @param filters    the filter set to use
      * @param pageNumber the result page number for a given filter
-     * @return           a list of Manga matching the filter criteria
+     * @return a list of Manga matching the filter criteria
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
@@ -536,10 +536,10 @@ public abstract class ServerBase {
      * <p>
      * All detected changes are also stored in the database.
      *
-     * @param id         the Manga id to check new chapters for
-     * @param context    the Context object to use for checking
-     * @param fast       <code>true</code> to perform a fast check (first 20 chapters only)
-     * @return           the count of new chapters found
+     * @param id      the Manga id to check new chapters for
+     * @param context the Context object to use for checking
+     * @param fast    <code>true</code> to perform a fast check (first 20 chapters only)
+     * @return the count of new chapters found
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
@@ -697,9 +697,9 @@ public abstract class ServerBase {
     /**
      * Returns a list of matches for a given pattern and string.
      *
-     * @param patron     the pattern to search for
-     * @param source     the string to search
-     * @return           a list of matches (may be empty)
+     * @param patron the pattern to search for
+     * @param source the string to search
+     * @return a list of matches (may be empty)
      * @throws Exception if an error occurred
      */
     ArrayList<String> getAllMatch(String patron, String source) throws Exception {
@@ -718,7 +718,7 @@ public abstract class ServerBase {
      * @param patron   the pattern to search for
      * @param source   the string to search
      * @param mDefault the default string to return in case no match was found
-     * @return         the first match or the value defined by mDefault
+     * @return the first match or the value defined by mDefault
      */
     public String getFirstMatchDefault(String patron, String source, String mDefault) {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
@@ -822,9 +822,9 @@ public abstract class ServerBase {
     /**
      * Tests if the given login data is working.
      *
-     * @param user       the user to log in
-     * @param passwd     the password to use for logging in
-     * @return           <code>true</code> if the login succeeded, <code>false</code> otherwise
+     * @param user   the user to log in
+     * @param passwd the password to use for logging in
+     * @return <code>true</code> if the login succeeded, <code>false</code> otherwise
      * @throws Exception if an error occurred
      */
     public boolean testLogin(String user, String passwd) throws Exception {
@@ -835,7 +835,7 @@ public abstract class ServerBase {
      * Build an array of translated strings from an array of resource identifiers.
      *
      * @param resId an array containing the resource identifiers
-     * @return      an array of translated strings
+     * @return an array of translated strings
      */
     String[] buildTranslatedStringArray(int[] resId) {
         String[] result = new String[resId.length];
@@ -878,21 +878,23 @@ public abstract class ServerBase {
                     x = simpleListSize - 1;
                 int n = 0;
                 for (int i = simpleListSize - 1; i > -1; i--) {
+                    StringBuilder sb = new StringBuilder();
                     if (simpleListSize > 10 && n == x) { // last element if 10+ chapters
                         int tmp = simpleListSize - x;
-                        largeContentText += context.getResources().getQuantityString(R.plurals.more_chapters_not_displayed_here, tmp, tmp);
+                        sb.append(context.getResources().getQuantityString(R.plurals.more_chapters_not_displayed_here, tmp, tmp));
                     } else if (simpleListSize <= 10 && n == x) { // last element if <= 10 chapters
-                        largeContentText = largeContentText + simpleList.get(i).getTitle();
+                        sb.append(simpleList.get(i).getTitle());
                     } else { // every element that isn't the last element
                         if (simpleListSize > 10) { // shorten titles if > 10 chapters
                             String title = simpleList.get(i).getTitle();
                             if (title.length() > 38)
                                 title = title.substring(0, Math.min(title.length(), 35)) + "...";
-                            largeContentText = largeContentText + title + "\n";
+                            sb.append(title).append("\n");
                         } else {
-                            largeContentText = largeContentText + simpleList.get(i).getTitle() + "\n";
+                            sb.append(simpleList.get(i).getTitle()).append("\n");
                         }
                     }
+                    largeContentText = sb.toString();
                     n++;
                     // we can only display 11 lines of text
                     if (n == 11)

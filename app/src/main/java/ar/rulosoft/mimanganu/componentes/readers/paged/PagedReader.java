@@ -1,11 +1,11 @@
 package ar.rulosoft.mimanganu.componentes.readers.paged;
 
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -63,7 +63,7 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void freePage(int idx) {
-        if(idx == 0){
+        if (idx == 0) {
             if (mPageAdapter != null && mPageAdapter.pages[idx] != null) {
                 mPageAdapter.pages[idx].unloadImage();
             }
@@ -95,8 +95,8 @@ public abstract class PagedReader extends Reader implements TapListener {
     public void reloadImage(int idx) {
         //Log.d("PR", "idx: " + idx);
         if (mPageAdapter != null) {
-            if(idx > mPageAdapter.pages.length){
-                Log.e("PagedReader","idx > mPageAdapter.pages.length !");
+            if (idx > mPageAdapter.pages.length) {
+                Log.e("PagedReader", "idx > mPageAdapter.pages.length !");
             } else {
                 if (idx == 0) {
                     if (mPageAdapter.pages[idx] != null) {
@@ -126,7 +126,7 @@ public abstract class PagedReader extends Reader implements TapListener {
     public class PageAdapter extends PagerAdapter {
         private Page[] pages;
 
-        PageAdapter(){
+        PageAdapter() {
             pages = new Page[paths.size()];
         }
 
@@ -149,7 +149,7 @@ public abstract class PagedReader extends Reader implements TapListener {
             }
         }
 
-        Page getPage(int idx){
+        Page getPage(int idx) {
             if (idx < 0)
                 idx = 0;
             else if (idx >= pages.length)
@@ -171,19 +171,19 @@ public abstract class PagedReader extends Reader implements TapListener {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            if (mDirection == Direction.L2R)
+            if (mDirection == Direction.L2R) {
                 position = getCount() - position;
+            }
+
             Page page = pages[position];
-            if (pages[position] != null) {
-                container.addView(page, 0);
-            } else {
-                Context context = getContext();
-                page = new Page(context);
+            if (page == null) {
+                page = new Page(getContext());
                 page.setImage(paths.get(position));
-                container.addView(page, 0);
                 page.index = position;
                 pages[position] = page;
             }
+
+            container.addView(page, 0);
             return page;
         }
 
@@ -196,19 +196,19 @@ public abstract class PagedReader extends Reader implements TapListener {
             }
         }
 
-        public void updateDisplayType() {
-            for (int i = 0; i < pages.length; i++) {
-                if (pages[i] != null) {
-                    pages[i].visor.setDisplayType(mScreenFit);
+        void updateDisplayType() {
+            for (Page page : pages) {
+                if (page != null) {
+                    page.visor.setDisplayType(mScreenFit);
                 }
             }
         }
 
-        public void setPageScroll(float pageScroll) {
+        void setPageScroll(float pageScroll) {
             if (pages != null)
-                for (int i = 0; i < pages.length; i++) {
-                    if (pages[i] != null) {
-                        pages[i].visor.setScrollFactor(pageScroll);
+                for (Page page : pages) {
+                    if (page != null) {
+                        page.visor.setScrollFactor(pageScroll);
                     }
                 }
         }
@@ -230,12 +230,13 @@ public abstract class PagedReader extends Reader implements TapListener {
         public void init() {
             String infService = Context.LAYOUT_INFLATER_SERVICE;
             LayoutInflater li = (LayoutInflater) getContext().getSystemService(infService);
+            assert li != null;
             li.inflate(R.layout.view_reader_page, this, true);
-            visor = (ImageViewTouch) findViewById(R.id.visor);
+            visor = findViewById(R.id.visor);
             visor.setDisplayType(mScreenFit);
             visor.setTapListener(PagedReader.this);
             visor.setScaleEnabled(false);
-            loading = (ProgressBar) findViewById(R.id.loading);
+            loading = findViewById(R.id.loading);
             loading.bringToFront();
             visor.setScrollFactor(mScrollSensitive);
         }
@@ -253,8 +254,9 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
 
         public void setImage() {
-            if (!imageLoaded && visor != null && !loadingImage)
+            if (!imageLoaded && visor != null && !loadingImage) {
                 new SetImageTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
         }
 
         public void setImage(String path) {
@@ -270,6 +272,7 @@ public abstract class PagedReader extends Reader implements TapListener {
             return visor == null || visor.canScrollV(dx);
         }
 
+        @SuppressLint("StaticFieldLeak")
         public class SetImageTask extends AsyncTask<Void, Void, Bitmap> {
 
             @Override
@@ -315,8 +318,7 @@ public abstract class PagedReader extends Reader implements TapListener {
                         visor.setInitialPosition(iniPosition);
                     else visor.setInitialPosition(ImageViewTouchBase.InitialPosition.LEFT_UP);
                     if ((result.getHeight() > mTextureMax ||
-                            result.getWidth() > mTextureMax) &&
-                            Build.VERSION.SDK_INT >= 11) {
+                            result.getWidth() > mTextureMax)) {
                         visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     }
                     visor.setAlpha(0f);

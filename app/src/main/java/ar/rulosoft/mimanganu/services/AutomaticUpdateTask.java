@@ -79,7 +79,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
                     cancel(true);
-                executor.execute(new SingleUpdateSerch(mangaList.get(idx), idx));
+                executor.execute(new SingleUpdateSearch(mangaList.get(idx), idx));
             }
             executor.shutdown();
             // After finishing the loop, wait for all threads to finish their task before ending
@@ -97,20 +97,17 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     @Override
     protected void onPostExecute(Integer result) {
         super.onPostExecute(result);
+        Util.getInstance().cancelNotification(mNotifyID);
         if (context != null) {
             if (result > 0) {
-                Util.getInstance().cancelNotification(mNotifyID);
                 Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.mgs_update_found, "" + result), view, context);
             } else {
-                Util.getInstance().cancelNotification(mNotifyID);
                 if (!error.isEmpty()) {
                     Util.getInstance().toast(context, error);
                 } else {
                     Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.no_new_updates_found), view, context);
                 }
             }
-        } else {
-            Util.getInstance().cancelNotification(mNotifyID);
         }
     }
 
@@ -125,11 +122,11 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         }
     }
 
-    private class SingleUpdateSerch implements Runnable {
+    private class SingleUpdateSearch implements Runnable {
         Manga manga;
         int idx;
 
-        public SingleUpdateSerch(Manga manga, int idx) {
+        SingleUpdateSearch(Manga manga, int idx) {
             this.manga = manga;
             this.idx = idx;
         }
@@ -141,8 +138,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             publishProgress(idx);
             try {
                 if (!isCancelled()) {
-                    int diff = serverBase.searchForNewChapters(manga.getId(), context, fast);
-                    result += diff;
+                    result += serverBase.searchForNewChapters(manga.getId(), context, fast);
                 }
             } catch (Exception e) {
                 //do nothing

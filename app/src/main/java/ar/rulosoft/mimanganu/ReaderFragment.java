@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -136,15 +137,15 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_reader, container, false);
-        mActionBar = (Toolbar) view.findViewById(R.id.action_bar);
-        mControlsLayout = (RelativeLayout) view.findViewById(R.id.controls);
-        mSeekerPage = (TextView) view.findViewById(R.id.page);
-        mSeekBar = (SeekBar) view.findViewById(R.id.seeker);
-        seekerLayout = (LinearLayout) view.findViewById(R.id.seeker_layout);
-        scrollSelect = (RelativeLayout) view.findViewById(R.id.scroll_selector);
-        buttonMinus = (Button) view.findViewById(R.id.minus);
-        buttonPlus = (Button) view.findViewById(R.id.plus);
-        mScrollSensitiveText = (TextView) view.findViewById(R.id.scroll_level);
+        mActionBar = view.findViewById(R.id.action_bar);
+        mControlsLayout = view.findViewById(R.id.controls);
+        mSeekerPage = view.findViewById(R.id.page);
+        mSeekBar = view.findViewById(R.id.seeker);
+        seekerLayout = view.findViewById(R.id.seeker_layout);
+        scrollSelect = view.findViewById(R.id.scroll_selector);
+        buttonMinus = view.findViewById(R.id.minus);
+        buttonPlus = view.findViewById(R.id.plus);
+        mScrollSensitiveText = view.findViewById(R.id.scroll_level);
         reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setTitleTextColor(Color.WHITE);
         mControlsLayout.setAlpha(0f);
@@ -683,6 +684,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         } else if (mChapter.getReadStatus() == Chapter.READ) {
             mChapter.setReadStatus(Chapter.READING);
         }
+        if(mChapter.isDownloaded() && !new File(mReader.getPath(page)).exists()) {
+            reDownloadCurrentImage();
+        }
     }
 
     @Override
@@ -708,7 +712,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if (nextChapter != null) {
             if (!seamlessChapterTransition) {
                 View v = inflater.inflate(R.layout.dialog_next_chapter, null);
-                final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+                final CheckBox checkBox = v.findViewById(R.id.delete_images_oc);
                 checkBox.setChecked(imagesDelete);
                 mDialog = new AlertDialog.Builder(getActivity())
                         .setTitle(getString(R.string.finished_reading, mChapter.getTitle()))
@@ -750,7 +754,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         } else {
             final Chapter tmpChapter = mChapter;
             View v = inflater.inflate(R.layout.dialog_no_more_chapters, null);
-            final CheckBox checkBox = (CheckBox) v.findViewById(R.id.delete_images_oc);
+            final CheckBox checkBox = v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
             mDialog = new AlertDialog.Builder(getActivity())
                     .setTitle(getString(R.string.finished_reading, mManga.getTitle()))
@@ -848,6 +852,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     private enum LoadMode {START, END, SAVED}
 
+    @SuppressLint("StaticFieldLeak")
     private class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
         ProgressDialog asyncDialog = new ProgressDialog(getActivity());
         String error;
@@ -900,6 +905,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     private class ReDownloadImage extends AsyncTask<Void, Void, Void> {
         int idx;
         String path;
@@ -942,5 +948,4 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             reDownloadingImage = false;
         }
     }
-
 }

@@ -12,7 +12,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaTown extends ServerBase {
     private static final String HOST = "https://www.mangatown.com";
@@ -156,9 +155,7 @@ class MangaTown extends ServerBase {
             manga.setAuthor(getFirstMatchDefault(PATTERN_AUTHOR, data,
                     context.getString(R.string.nodisponible)));
             // genre
-            manga.setGenre(Util.getInstance().fromHtml(
-                    getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible))
-                    ).toString().trim());
+            manga.setGenre(getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)));
             // chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
