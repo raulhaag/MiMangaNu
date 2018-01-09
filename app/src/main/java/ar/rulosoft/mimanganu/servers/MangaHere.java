@@ -102,7 +102,7 @@ class MangaHere extends ServerBase {
     private static final String PATTERN_MANGA =
             "<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"";
     private static final String PATTERN_MANGA_SEARCHED =
-            "<dt>\\s+<a href=\"([^\"]+/manga[^\"]+).+?>(.+?)<";
+            "<dt>\\s+<a href=\"[^\"]+(/manga[^\"]+).+?>(.+?)<";
 
     private static int[] fltOrder = {
             R.string.flt_order_views,
@@ -258,7 +258,7 @@ class MangaHere extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(2), "http:" + m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(2), m.group(1), false));
         }
         return mangas;
     }
