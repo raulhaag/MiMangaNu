@@ -113,7 +113,7 @@ public class ReadMangaMe extends ServerBase {
     public ReadMangaMe(Context context) {
         super(context);
         setFlag(R.drawable.flag_ru);
-        setIcon(R.drawable.noimage);
+        setIcon(R.drawable.readmangame);
         setServerName("ReadMangaMe");
         setServerID(READMANGAME);
     }
