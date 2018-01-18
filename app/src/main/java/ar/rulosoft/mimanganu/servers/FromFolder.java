@@ -71,12 +71,15 @@ public class FromFolder extends ServerBase {
         Chapter.Comparators.setManga_title(manga.getTitle());
         Collections.sort(chapters, Chapter.Comparators.NUMBERS_ASC);
         manga.setChapters(chapters);
+        manga.setAuthor(context.getString(R.string.nodisponible));
+        manga.setGenre(context.getString(R.string.nodisponible));
+        manga.setSynopsis(context.getString(R.string.nodisponible));
+        manga.setFinished(true);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         loadChapters(manga, forceReload);
-        manga.setFinished(true);
     }
 
     @Override
