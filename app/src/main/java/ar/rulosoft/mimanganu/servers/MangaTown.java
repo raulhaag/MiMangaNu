@@ -169,14 +169,7 @@ class MangaTown extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
         String web = "http:" + chapter.getExtra().split("\\|")[page - 1];
-        String data = getNavigatorAndFlushParameters().getAndReturnResponseCodeOnFailure(web);
-
-        // if polled too quickly, the server will respond with 503 - throttle here if needed
-        if(data.equals("503")) {
-            Thread.sleep(500);
-            data = getNavigatorAndFlushParameters().get(web);
-        }
-
+        String data = getNavigatorAndFlushParameters().get(web);
         return getFirstMatch(
                 PATTERN_IMAGE, data,
                 context.getString(R.string.server_failed_loading_image));
