@@ -6,8 +6,8 @@ android {
 
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
-        versionCode 77
-        versionName "1.77"
+        versionCode 78
+        versionName "1.78"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
 
