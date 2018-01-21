@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.78:
+* Agregado desu.me[RU] y readmanga.me[RU].
+* Arreglado FromFolder.
+* Agregada política de reintentos.
+
+Changes in v1.78:
+* Added desu.me[RU] and readmanga.me[RU].
+* Fixed FromFolder.
+* Added retry policy.
+
 Cambios en v1.77:
 * Cambios en base de datos.
 * Cambios en la búsqueda de actualizaciones.
