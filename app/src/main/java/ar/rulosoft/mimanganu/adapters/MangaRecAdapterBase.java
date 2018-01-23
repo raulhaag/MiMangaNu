@@ -22,10 +22,10 @@ public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerV
     View.OnCreateContextMenuListener onCreateContextMenuListener;
     int darkBackground;
 
-    MangaRecAdapterBase(ArrayList<Manga> lista, Context context, boolean darkTheme) {
+    MangaRecAdapterBase(ArrayList<Manga> list, Context context, boolean darkTheme) {
         this.darkTheme = darkTheme;
-        this.darkBackground = ContextCompat.getColor(context, R.color.background_floating_material_dark);
-        mangas = lista;
+        this.darkBackground = ContextCompat.getColor(context, R.color.bg_floating_material_dark);
+        mangas = list;
     }
 
     public void setLastItemListener(OnLastItem lastItemListener) {
@@ -67,5 +67,4 @@ public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerV
     public interface OnMangaClick {
         void onMangaClick(Manga manga);
     }
-
 }

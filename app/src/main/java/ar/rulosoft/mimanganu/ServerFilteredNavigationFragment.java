@@ -55,7 +55,8 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     private ProgressBar loading;
     private MangaRecAdapterBase mAdapter;
     private boolean newTask = false;
-    private int page = 1;
+    private int top_page = 0;
+    private int req_page = 1;
     private int[][] filters = null;
     private int firstVisibleItem;
     private LoadLastTask loadLastTask = new LoadLastTask();
@@ -158,14 +159,14 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             recyclerViewGrid.getLayoutManager().scrollToPosition(firstVisibleItem);
             loading.setVisibility(View.INVISIBLE);
         } else {
-            loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
+            loadLastTask = (LoadLastTask) new LoadLastTask().execute(req_page);
         }
     }
 
     @Override
     public void onRequestedLastItem() {
         if (!loading.isShown() && !mStart)
-            loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
+            loadLastTask = (LoadLastTask) new LoadLastTask().execute(req_page);
     }
 
     @Override
@@ -263,9 +264,10 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         if (!loading.isShown()) {
             filters = selectedIndexes;
             mAdapter = null;
-            page = 1;
+            top_page = 0;
+            req_page = 1;
             mStart = true;
-            loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
+            loadLastTask = (LoadLastTask) new LoadLastTask().execute(req_page);
         } else {
             newTask = true;
         }
@@ -280,15 +282,17 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             loading.setVisibility(ProgressBar.VISIBLE);
         }
 
-        @SuppressWarnings("ResourceType")//TODO ver problema
         @Override
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
-            try {
-                mangas = serverBase.getMangasFiltered(filters, params[0]);
-            } catch (Exception e) {
-                Log.e("SFNF", "Exception", e);
-                error = Log.getStackTraceString(e);
+            if(req_page > top_page) {
+                try {
+                    mangas = serverBase.getMangasFiltered(filters, params[0]);
+                    top_page = req_page;
+                } catch (Exception e) {
+                    Log.e("SFNF", "Exception", e);
+                    error = Log.getStackTraceString(e);
+                }
             }
             return mangas;
         }
@@ -298,7 +302,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             if (!error.isEmpty()) {
                 Util.getInstance().toast(getContext(), error);
             } else {
-                page++;
+                req_page++;
                 if (result != null && result.size() != 0 && recyclerViewGrid != null) {
                     if (isAdded()) {
                         if (mAdapter == null) {
@@ -319,9 +323,10 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                 mStart = false;
                 if (newTask) {
                     mAdapter = null;
-                    page = 1;
+                    top_page = 0;
+                    req_page = 1;
                     mStart = true;
-                    loadLastTask = (LoadLastTask) new LoadLastTask().execute(page);
+                    loadLastTask = (LoadLastTask) new LoadLastTask().execute(req_page);
                     newTask = false;
                 }
             }
