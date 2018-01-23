@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.services;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -26,9 +27,9 @@ public class SingleDownload implements Runnable {
     ChapterDownload cd;
     private StateChangeListener changeListener = null;
     private int retry = RETRY;
+    private Context context;
 
-
-    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
+    public SingleDownload(Context context, String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
         super();
         if (fromURL.contains("|")) {
             String[] parts = fromURL.split("\\|");
@@ -43,6 +44,7 @@ public class SingleDownload implements Runnable {
         this.cid = cid;
         this.referer = referer;
         this.cd = cd;
+        this.context = context;
     }
 
     public int getIndex() {
@@ -191,18 +193,15 @@ public class SingleDownload implements Runnable {
     }
 
     private void writeErrorImage(File ot) throws IOException {
-        if (DownloadPoolService.actual != null) {
-            InputStream ims = DownloadPoolService.actual.getAssets().open("error_image.jpg");
-            FileOutputStream output = new FileOutputStream(ot);
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = ims.read(buffer, 0, buffer.length)) >= 0) {
-                output.write(buffer, 0, bytesRead);
-            }
-            ims.close();
-            output.flush();
-            output.close();
+        InputStream is = context.getAssets().open("error_image.jpg");
+        FileOutputStream os = new FileOutputStream(ot);
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer, 0, buffer.length)) >= 0) {
+            os.write(buffer, 0, bytesRead);
         }
+        is.close();
+        os.close();
     }
 
     private void changeStatus(Status status) {
