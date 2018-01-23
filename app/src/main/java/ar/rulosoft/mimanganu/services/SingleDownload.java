@@ -59,7 +59,9 @@ public class SingleDownload implements Runnable {
             File o = new File(toFile);
             File ot = new File(toFile + ".temp");
             if (ot.exists()) {
-                ot.delete();
+                if(!ot.delete()) {
+                    Log.e("SingleDownload", "failed to delete temporary file");
+                }
             }
             if (o.length() == 0) {
                 InputStream input;
@@ -92,9 +94,13 @@ public class SingleDownload implements Runnable {
                             changeStatus(Status.ERROR_CONNECTION);
                         }
                         retry = 0;
-                        ot.delete();
+                        if(!ot.delete()) {
+                            Log.e("SingleDownload", "failed to delete temporary file");
+                        }
                         writeErrorImage(ot);
-                        ot.renameTo(o);
+                        if(!ot.renameTo(o)) {
+                            Log.e("SingleDownload", "failed to rename temporary file");
+                        }
                         break;
                     }
                     contentLength = response.body().contentLength();
@@ -107,7 +113,7 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.RETRY);
                         try {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e1) {
+                        } catch (InterruptedException ignored) {
                         }
                         continue;
                     } else {
@@ -121,7 +127,7 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.RETRY);
                         try {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e1) {
+                        } catch (InterruptedException ignored) {
                         }
                         continue;
                     } else {
@@ -151,7 +157,7 @@ public class SingleDownload implements Runnable {
                     }
                     try {
                         Thread.sleep(3000);
-                    } catch (InterruptedException e1) {
+                    } catch (InterruptedException ignored) {
                     }
                     Log.e("SingleDownload", "ERROR_TIMEOUT");
                 } finally {
@@ -159,7 +165,9 @@ public class SingleDownload implements Runnable {
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
                             Log.e("SingleDownload", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
-                            ot.delete();
+                            if(!ot.delete()) {
+                                Log.e("SingleDownload", "failed to delete temporary file");
+                            }
                             retry--;
                             changeStatus(Status.RETRY);
                         } else {
@@ -173,11 +181,17 @@ public class SingleDownload implements Runnable {
                         response.body().close();
                         if (flaggedOk) {
                             if (ot.length() > 0) {
-                                ot.renameTo(o);
+                                if(!ot.renameTo(o)) {
+                                    Log.e("SingleDownload", "failed to rename temporary file");
+                                }
                             } else {
-                                ot.delete();
+                                if(!ot.delete()) {
+                                    Log.e("SingleDownload", "failed to delete temporary file");
+                                }
                                 writeErrorImage(ot);
-                                ot.renameTo(o);
+                                if(!ot.renameTo(o)) {
+                                    Log.e("SingleDownload", "failed to rename temporary file");
+                                }
                             }
                             //  Log.i("SingleDownload", "download ok =" + o.getPath());
                             changeStatus(Status.DOWNLOAD_OK);
