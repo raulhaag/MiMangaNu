@@ -178,9 +178,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
     @Override
     public void onPause() {
         firstVisibleItem = ((GridLayoutManager) recyclerViewGrid.getLayoutManager()).findFirstVisibleItemPosition();
-        if(mAdapter instanceof MangasRecAdapter){
-            ((MangasRecAdapter) mAdapter).shutdown(); //just release memory
-        }
+
         super.onPause();
     }
 

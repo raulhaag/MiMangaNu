@@ -8,7 +8,6 @@ import android.os.Handler;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Map;
@@ -47,7 +46,6 @@ public class ImageLoader {
                 imageView.setImageBitmap(bitmap);
             } else {
                 queuePhoto(url, imageView);
-                //imageView.setImageResource(stub_id);
             }
         }
     }
@@ -120,6 +118,10 @@ public class ImageLoader {
         }
     }
 
+    public void clearMem(){
+        mMemCache.clearMem();
+    }
+
     /**
      * An image getter, which is called, if Image is not found in memory
      * It is a runnable, which will be submit into the imgThreadPool,
@@ -176,9 +178,5 @@ public class ImageLoader {
             }
             imageViews.remove(imageView);
         }
-    }
-
-    public void clearMem(){
-        mMemCache.clearMem();
     }
 }

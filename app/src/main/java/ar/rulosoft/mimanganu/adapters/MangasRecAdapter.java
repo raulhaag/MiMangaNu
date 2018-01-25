@@ -29,15 +29,12 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
         this.context = context;
     }
 
-    public void shutdown(){
-        imageLoader.clearMem();
-    }
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Manga m = mangas.get(position);
         MangasHolder mHolder = (MangasHolder)holder;
         mHolder.serie.setText(m.getTitle());
+        ((MangasHolder) holder).serie.setImageBitmap(null);
         imageLoader.displayImg(m.getImages(), mHolder.serie);
         mHolder.v.setTag(position);
         mHolder.v.setOnClickListener(new OnClickListener() {
@@ -76,9 +73,9 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
 
         public MangasHolder(View itemView) {
             super(itemView);
-            serie = (Cover) itemView.findViewById(R.id.tapa);
-            notif = (ImageView) itemView.findViewById(R.id.notif);
-            server = (ImageView) itemView.findViewById(R.id.server);
+            serie  = itemView.findViewById(R.id.tapa);
+            notif  = itemView.findViewById(R.id.notif);
+            server = itemView.findViewById(R.id.server);
             v = itemView;
             if (darkTheme) {
                 ((CardView) itemView.findViewById(R.id.cardview_server_container))

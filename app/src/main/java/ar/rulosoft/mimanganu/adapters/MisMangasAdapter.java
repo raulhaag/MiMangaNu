@@ -48,11 +48,10 @@ public class MisMangasAdapter extends ArrayAdapter<Manga> {
         } else {
             holder = (ViewHolder) item.getTag();
         }
+        holder.serie.setImageBitmap(null);
         Manga m = getItem(position);
         holder.serie.setText(m.getTitle());
-        if (m.getImages() == null || m.getImages().equals("")) {
-            holder.serie.setImageBitmap(null);
-        } else {
+        if (m.getImages() != null && !m.getImages().isEmpty()) {
             imageLoader.displayImg(m.getImages(), holder.serie);
         }
         ServerBase server = ServerBase.getServer(m.getServerId(), getContext());
@@ -78,9 +77,9 @@ public class MisMangasAdapter extends ArrayAdapter<Manga> {
         ImageView notif;
 
         public ViewHolder(View itemView) {
-            serie = (Cover) itemView.findViewById(R.id.tapa);
-            notif = (ImageView) itemView.findViewById(R.id.notif);
-            server = (ImageView) itemView.findViewById(R.id.server);
+            serie =  itemView.findViewById(R.id.tapa);
+            notif =  itemView.findViewById(R.id.notif);
+            server = itemView.findViewById(R.id.server);
             v = itemView;
             if (darkTheme) {
                 ((CardView) itemView.findViewById(R.id.cardview_server_container))

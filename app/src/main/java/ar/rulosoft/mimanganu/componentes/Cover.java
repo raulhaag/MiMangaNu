@@ -17,7 +17,6 @@ import ar.rulosoft.mimanganu.R;
 public class Cover extends RelativeLayout implements Imaginable {
     private ImageView image;
     private TextView text;
-    private Bitmap imageRe;
 
     public Cover(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -38,21 +37,18 @@ public class Cover extends RelativeLayout implements Imaginable {
     private void initialize() {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         li.inflate(R.layout.control_tapa_serie, this, true);
-        image = (ImageView) findViewById(R.id.imagen_portada);
-        text = (TextView) findViewById(R.id.texto);
+        image = findViewById(R.id.imagen_portada);
+        text = findViewById(R.id.texto);
     }
 
     @Override
     public void setImageBitmap(Bitmap b) {
-        imageRe = b;
         if (image != null) {
-            if (b == null) {
+            if (b == null || b.isRecycled()) {
                 image.setVisibility(INVISIBLE);
             } else {
-                if(!b.isRecycled()){
-                    image.setImageBitmap(b);
-                    image.setVisibility(VISIBLE);
-                }
+                image.setImageBitmap(b);
+                image.setVisibility(VISIBLE);
             }
             image.invalidate();
         }
