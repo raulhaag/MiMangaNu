@@ -8,8 +8,29 @@ import android.util.LruCache;
  * http://stackoverflow.com/questions/1945201/android-image-caching
  */
 public class MemCache {
-    private LruCache<String, Bitmap> imagesWarehouse;
     private static MemCache cache;
+    private LruCache<String, Bitmap> imagesWarehouse;
+
+    private MemCache() {
+        /** We want 1/8 of the available memory */
+        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        final int cacheSize = maxMemory / 8;
+
+        imagesWarehouse = new LruCache<String, Bitmap>(cacheSize) {
+
+            protected int sizeOf(String key, Bitmap value) {
+                int bitmapByteCount = value.getRowBytes() * value.getHeight();
+                return bitmapByteCount / 1024;
+            }
+
+            @Override
+            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
+                if(oldValue != null && !oldValue.isRecycled()){
+                    oldValue.recycle();
+                }
+            }
+        };
+    }
 
     public static MemCache getInstance() {
         if (cache == null) {
@@ -18,24 +39,8 @@ public class MemCache {
         return cache;
     }
 
-    private MemCache() {
-        /** We want 1/8 of the available memory */
-        final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 8;
-        imagesWarehouse = new LruCache<String, Bitmap>(cacheSize) {
-            protected int sizeOf(String key, Bitmap value) {
-                int bitmapByteCount = value.getRowBytes() * value.getHeight();
-                return bitmapByteCount / 1024;
-            }
-
-            @Override
-            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
-                if(oldValue != null && evicted){
-                    oldValue.recycle();
-                }
-                super.entryRemoved(evicted, key, oldValue, newValue);
-            }
-        };
+    public void removeFromMemory(String key){
+        imagesWarehouse.remove(key);
     }
 
     public void putImageInMem(String key, Bitmap value) {

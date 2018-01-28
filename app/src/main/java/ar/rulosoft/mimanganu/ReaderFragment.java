@@ -336,6 +336,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     mReader.seekPage(mChapter.getPages());
                     break;
                 case SAVED:
+                    if(mChapter.getPagesRead() == 0)
+                        mChapter.setPagesRead(1);
                     mReader.seekPage(mChapter.getPagesRead());
             }
         }
@@ -675,6 +677,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     }
 
     public void onPageChanged(int page) {
+        if(page == 0)
+            page++;
         updatedValue = true;
         mChapter.setPagesRead(page);
         mSeekBar.setProgress(page - 1);
@@ -685,7 +689,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             mChapter.setReadStatus(Chapter.READING);
         }
         if(mChapter.isDownloaded() && !new File(mReader.getPath(page)).exists()) {
-            reDownloadCurrentImage();
+         reDownloadCurrentImage();
         }
     }
 

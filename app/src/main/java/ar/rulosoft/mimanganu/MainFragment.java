@@ -16,6 +16,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -29,7 +30,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.Toast;
 
 import org.acra.ACRA;
@@ -38,7 +38,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.rulosoft.mimanganu.adapters.MisMangasAdapter;
+import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase;
+import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
@@ -76,8 +77,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private ServerRecAdapter serverRecAdapter;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
-    private GridView grid;
-    private MisMangasAdapter mMAdapter;
+    private RecyclerView recyclerView;
+    private MangasRecAdapter mMAdapter;
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
@@ -96,8 +97,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         super.onStart();
         mSectionsPagerAdapter = new SectionsPagerAdapter();
         if (getView() != null) {
-            mViewPager = (ViewPager) getView().findViewById(R.id.pager);
-            floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
+            mViewPager = getView().findViewById(R.id.pager);
+            floatingActionButton_add = getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
             if (is_server_list_open) {
                 ObjectAnimator anim = ObjectAnimator.ofFloat(floatingActionButton_add, "rotation", 360.0f, 315.0f);
@@ -270,8 +271,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                 "SELECT id " +
                                 "FROM manga " +
                                 "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                        mMAdapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                        grid.setAdapter(mMAdapter);
+                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme);
+                        recyclerView.setAdapter(mMAdapter);
                     } catch (Exception e) {
                         Log.e("MF", "Exception", e);
                         ACRA.getErrorReporter().handleException(e);
@@ -388,7 +389,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public ViewGroup getServerListView(ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
-        final RecyclerView server_list = (RecyclerView) viewGroup.findViewById(R.id.lista_de_servers);
+        final RecyclerView server_list = viewGroup.findViewById(R.id.lista_de_servers);
         server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
         serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(getContext()), pm, getActivity());
         serverRecAdapter.setEndActionModeListener(this);
@@ -426,7 +427,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     }
 
     public void setListManga(boolean force) {
-        if (grid != null) {
+        if (recyclerView != null) {
             ArrayList<Manga> mangaList = new ArrayList<>();
             /*
              * sort_val: 0,1 = last_read (default), 2,3 = title, 4,5 = author
@@ -478,12 +479,26 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 default:
                     break;
             }
-            if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getCount() || force) {
-                mMAdapter = new MisMangasAdapter(getActivity(), mangaList, MainActivity.darkTheme);
-                grid.setAdapter(mMAdapter);
+            if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
+                mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme);
+                mMAdapter.setMangaClickListener(new MangaRecAdapterBase.OnMangaClick() {
+
+                    @Override
+                    public void onMangaClick(Manga manga) {
+                        if (serverRecAdapter.actionMode == null) {
+                            Bundle bundle = new Bundle();
+                            bundle.putInt(MainFragment.MANGA_ID, manga.getId());
+                            MangaFragment mangaFragment = new MangaFragment();
+                            mangaFragment.setArguments(bundle);
+                            //In rare cases State loss occurs
+                            ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
+                        }
+                    }
+                });
+                recyclerView.setAdapter(mMAdapter);
             }
         } else {
-            Log.i(TAG, "grid was null");
+            Log.i(TAG, "rec_view was null");
         }
     }
 
@@ -503,7 +518,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final Manga manga = (Manga) grid.getAdapter().getItem(info.position);
+        final Manga manga = ((MangasRecAdapter)recyclerView.getAdapter()).getItem(info.position);
         if (item.getItemId() == R.id.delete) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.app_name)
@@ -557,8 +572,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public ViewGroup getMMView(final ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_mis_mangas, container, false);
-        grid = (GridView) viewGroup.findViewById(R.id.grilla_mis_mangas);
-        swipeReLayout = (SwipeRefreshLayout) viewGroup.findViewById(R.id.str);
+        recyclerView = viewGroup.findViewById(R.id.recicleview_mis_mangas);
+        swipeReLayout = viewGroup.findViewById(R.id.str);
         swipeReLayout.setColorSchemeColors(MainActivity.colors[0], MainActivity.colors[1]);
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -570,7 +585,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
         if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
             columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());
-        grid.setNumColumns(columnSize);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnSize));
         if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
             swipeReLayout.post(new Runnable() {
                 @Override
@@ -579,20 +594,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 }
             });
         }
-        grid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (serverRecAdapter.actionMode == null) {
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(MainFragment.MANGA_ID, mMAdapter.getItem(position).getId());
-                    MangaFragment mangaFragment = new MangaFragment();
-                    mangaFragment.setArguments(bundle);
-                    //In rare cases State loss occurs
-                    ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
-                }
-            }
-        });
-        registerForContextMenu(grid);
+        registerForContextMenu(recyclerView);
         setListManga(true);
         return viewGroup;
     }
