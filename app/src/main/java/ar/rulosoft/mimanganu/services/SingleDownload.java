@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.services;
 
+import android.content.Context;
 import android.util.Log;
 
 import java.io.File;
@@ -26,9 +27,9 @@ public class SingleDownload implements Runnable {
     ChapterDownload cd;
     private StateChangeListener changeListener = null;
     private int retry = RETRY;
+    private Context context;
 
-
-    public SingleDownload(String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
+    public SingleDownload(Context context, String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
         super();
         if (fromURL.contains("|")) {
             String[] parts = fromURL.split("\\|");
@@ -43,6 +44,7 @@ public class SingleDownload implements Runnable {
         this.cid = cid;
         this.referer = referer;
         this.cd = cd;
+        this.context = context;
     }
 
     public int getIndex() {
@@ -57,7 +59,9 @@ public class SingleDownload implements Runnable {
             File o = new File(toFile);
             File ot = new File(toFile + ".temp");
             if (ot.exists()) {
-                ot.delete();
+                if(!ot.delete()) {
+                    Log.e("SingleDownload", "failed to delete temporary file");
+                }
             }
             if (o.length() == 0) {
                 InputStream input;
@@ -90,9 +94,13 @@ public class SingleDownload implements Runnable {
                             changeStatus(Status.ERROR_CONNECTION);
                         }
                         retry = 0;
-                        ot.delete();
+                        if(!ot.delete()) {
+                            Log.e("SingleDownload", "failed to delete temporary file");
+                        }
                         writeErrorImage(ot);
-                        ot.renameTo(o);
+                        if(!ot.renameTo(o)) {
+                            Log.e("SingleDownload", "failed to rename temporary file");
+                        }
                         break;
                     }
                     contentLength = response.body().contentLength();
@@ -105,7 +113,7 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.RETRY);
                         try {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e1) {
+                        } catch (InterruptedException ignored) {
                         }
                         continue;
                     } else {
@@ -119,7 +127,7 @@ public class SingleDownload implements Runnable {
                         changeStatus(Status.RETRY);
                         try {
                             Thread.sleep(3000);
-                        } catch (InterruptedException e1) {
+                        } catch (InterruptedException ignored) {
                         }
                         continue;
                     } else {
@@ -149,7 +157,7 @@ public class SingleDownload implements Runnable {
                     }
                     try {
                         Thread.sleep(3000);
-                    } catch (InterruptedException e1) {
+                    } catch (InterruptedException ignored) {
                     }
                     Log.e("SingleDownload", "ERROR_TIMEOUT");
                 } finally {
@@ -157,7 +165,9 @@ public class SingleDownload implements Runnable {
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
                             Log.e("SingleDownload", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
-                            ot.delete();
+                            if(!ot.delete()) {
+                                Log.e("SingleDownload", "failed to delete temporary file");
+                            }
                             retry--;
                             changeStatus(Status.RETRY);
                         } else {
@@ -171,11 +181,17 @@ public class SingleDownload implements Runnable {
                         response.body().close();
                         if (flaggedOk) {
                             if (ot.length() > 0) {
-                                ot.renameTo(o);
+                                if(!ot.renameTo(o)) {
+                                    Log.e("SingleDownload", "failed to rename temporary file");
+                                }
                             } else {
-                                ot.delete();
+                                if(!ot.delete()) {
+                                    Log.e("SingleDownload", "failed to delete temporary file");
+                                }
                                 writeErrorImage(ot);
-                                ot.renameTo(o);
+                                if(!ot.renameTo(o)) {
+                                    Log.e("SingleDownload", "failed to rename temporary file");
+                                }
                             }
                             //  Log.i("SingleDownload", "download ok =" + o.getPath());
                             changeStatus(Status.DOWNLOAD_OK);
@@ -191,18 +207,15 @@ public class SingleDownload implements Runnable {
     }
 
     private void writeErrorImage(File ot) throws IOException {
-        if (DownloadPoolService.actual != null) {
-            InputStream ims = DownloadPoolService.actual.getAssets().open("error_image.jpg");
-            FileOutputStream output = new FileOutputStream(ot);
-            byte[] buffer = new byte[4096];
-            int bytesRead;
-            while ((bytesRead = ims.read(buffer, 0, buffer.length)) >= 0) {
-                output.write(buffer, 0, bytesRead);
-            }
-            ims.close();
-            output.flush();
-            output.close();
+        InputStream is = context.getAssets().open("error_image.jpg");
+        FileOutputStream os = new FileOutputStream(ot);
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = is.read(buffer, 0, buffer.length)) >= 0) {
+            os.write(buffer, 0, bytesRead);
         }
+        is.close();
+        os.close();
     }
 
     private void changeStatus(Status status) {
