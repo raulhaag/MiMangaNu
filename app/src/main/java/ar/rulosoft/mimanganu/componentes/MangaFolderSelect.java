@@ -58,8 +58,8 @@ public class MangaFolderSelect extends DialogFragment {
         View view = i.inflate(R.layout.dialog_select_directory, null);
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         actual = pm.getString("directorio", Environment.getExternalStorageDirectory().getPath() + "/MiMangaNu/");
-        dirs = (ListView) view.findViewById(R.id.dirList);
-        dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
+        dirs = view.findViewById(R.id.dirList);
+        dirs_path = view.findViewById(R.id.dirBreadcrumb);
         ArrayList<String> dirList = Util.getInstance().dirList(actual);
         context = getActivity();
         ArrayAdapter<String> adap = new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
@@ -278,7 +278,6 @@ public class MangaFolderSelect extends DialogFragment {
 
             dialog.dismiss();
             //getActivity().onBackPressed();
-
             super.onPostExecute(result);
         }
     }

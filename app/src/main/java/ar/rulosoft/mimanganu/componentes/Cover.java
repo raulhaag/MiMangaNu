@@ -11,7 +11,7 @@ import android.widget.TextView;
 import ar.rulosoft.mimanganu.R;
 
 /**
- * serie cover by Ra�l
+ * serie cover by Raúl
  */
 
 public class Cover extends RelativeLayout implements Imaginable {

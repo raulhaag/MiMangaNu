@@ -37,17 +37,19 @@ public class ImageLoader {
     }
 
     public void displayImg(String url, Imaginable imageView) {
-        if (imageViewReUse(imageView, url)) {
+       // if (imageViewReUse(imageView, url)) {
             imageViews.put(imageView, url);
 
             // First, try to fetch image from memory
             Bitmap bitmap = mMemCache.getImageInMem(url);
-            if (bitmap != null && !bitmap.isRecycled()) {
-                imageView.setImageBitmap(bitmap);
-            } else {
-                queuePhoto(url, imageView);
+            if(!url.isEmpty()) {
+                if (bitmap != null && !bitmap.isRecycled()) {
+                    imageView.setImageBitmap(bitmap);
+                } else {
+                    queuePhoto(url, imageView);
+                }
             }
-        }
+       // }
     }
 
     private boolean imageViewReUse(Imaginable imageView, String url) {

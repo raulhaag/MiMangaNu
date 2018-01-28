@@ -137,7 +137,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         if (filters == null) {
             filters = serverBase.getBasicFilter();
         }
-        recyclerViewGrid = (RecyclerView) getView().findViewById(R.id.grilla);
+        recyclerViewGrid = getView().findViewById(R.id.grilla);
         if (serverBase.getFilteredType() == ServerBase.FilteredType.TEXT) {
             DividerItemDecoration divider = new DividerItemDecoration(getContext(), DividerItemDecoration.VERTICAL);
             Drawable sd = ContextCompat.getDrawable(getContext(), R.drawable.divider);
@@ -145,7 +145,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
             divider.setDrawable(sd);
             recyclerViewGrid.addItemDecoration(divider);
         }
-        loading = (ProgressBar) getView().findViewById(R.id.loading);
+        loading = getView().findViewById(R.id.loading);
         int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
         if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
             columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());

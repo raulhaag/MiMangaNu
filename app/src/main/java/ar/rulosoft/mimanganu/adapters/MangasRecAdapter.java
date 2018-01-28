@@ -20,8 +20,8 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class MangasRecAdapter extends MangaRecAdapterBase {
-    protected ImageLoader imageLoader;
-    Context context;
+    private ImageLoader imageLoader;
+    private Context context;
 
     public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
         super(lista,context,darkTheme);
@@ -71,7 +71,7 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
         ImageView server;
         ImageView notif;
 
-        public MangasHolder(View itemView) {
+        private MangasHolder(View itemView) {
             super(itemView);
             serie  = itemView.findViewById(R.id.tapa);
             notif  = itemView.findViewById(R.id.notif);
