@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent">#00000000</color>
+    <color name="bg_floating_material_dark">@color/material_grey_800</color>
 </resources>

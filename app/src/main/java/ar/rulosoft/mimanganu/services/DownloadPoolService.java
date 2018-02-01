@@ -422,7 +422,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
                         String source_file = s.getImageFrom(dc.chapter, sig);
                         String save_file = path + "/" + sig + ".jpg";
                         SingleDownload des;
-                        des = new SingleDownload(source_file, save_file, sig - 1, dc.chapter.getId(), dc, s.needRefererForImages());
+                        des = new SingleDownload(getApplicationContext(), source_file, save_file, sig - 1, dc.chapter.getId(), dc, s.needRefererForImages());
                         des.setChangeListener(dc);
                         dc.setChangeListener(this);
                         new Thread(des).start();

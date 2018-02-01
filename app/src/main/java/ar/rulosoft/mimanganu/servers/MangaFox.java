@@ -197,7 +197,7 @@ class MangaFox extends ServerBase {
             manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, context.getString(R.string.nodisponible)));
 
             // Genre
-            manga.setGenre(getFirstMatchDefault("(<a href=\"//mangafox.me/search/genres/.+?</td>)", data, context.getString(R.string.nodisponible)));
+            manga.setGenre(getFirstMatchDefault("(<a href=\"//mangafox.[^/]+/search/genres/.+?</td>)", data, context.getString(R.string.nodisponible)));
 
             // Chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
@@ -253,10 +253,10 @@ class MangaFox extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = "";
-        web += HOST + "/search.php?name_method=cw&name=";
-        web += valType[filters[0][0]];
-        web += "&author_method=cw&author=&artist_method=cw&artist=";
+        StringBuilder web = new StringBuilder();
+        web.append(HOST + "/search.php?name_method=cw&name=");
+        web.append(valType[filters[0][0]]);
+        web.append("&author_method=cw&author=&artist_method=cw&artist=");
         for(int i = 0; i < fltGenre.length; i++) {
             // no preference
             String selection = "0";
@@ -275,16 +275,16 @@ class MangaFox extends ServerBase {
                 }
             }
 
-            web += valGenre[i] + selection;
+            web.append(valGenre[i]).append(selection);
         }
-        web += "&released_method=eq&released=";
-        web += "&rating_method=eq&rating=";
-        web += valStatus[filters[3][0]];
-        web += "&advopts=1";
-        web += valOrder[filters[4][0]];
-        web += "&page=" + pageNumber;
+        web.append("&released_method=eq&released=");
+        web.append("&rating_method=eq&rating=");
+        web.append(valStatus[filters[3][0]]);
+        web.append("&advopts=1");
+        web.append(valOrder[filters[4][0]]);
+        web.append("&page=").append(pageNumber);
 
-        String source = getNavigatorAndFlushParameters().get(web);
+        String source = getNavigatorAndFlushParameters().get(web.toString());
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();

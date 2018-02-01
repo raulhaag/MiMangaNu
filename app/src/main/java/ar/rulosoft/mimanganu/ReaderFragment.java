@@ -814,26 +814,19 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onChange(final SingleDownload singleDownload) {
-        Activity activity = getActivity();
-        if (activity != null)
-            if (singleDownload.status == SingleDownload.Status.DOWNLOAD_OK) {
-                mReader.reloadImage(singleDownload.getIndex());
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mReader.invalidate();
+        final Activity activity = getActivity();
+        if (activity != null) {
+            mReader.reloadImage(singleDownload.getIndex());
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mReader.invalidate();
+                    if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
+                        Toast.makeText(activity, R.string.error_downloading_image, Toast.LENGTH_LONG).show();
                     }
-                });
-            } else {
-                if (singleDownload.status.ordinal() > SingleDownload.Status.DOWNLOAD_OK.ordinal()) {
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(getActivity(), R.string.error_downloading_image, Toast.LENGTH_LONG).show();
-                        }
-                    });
                 }
-            }
+            });
+        }
     }
 
     @Override
@@ -955,7 +948,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                SingleDownload s = new SingleDownload(mServerBase.getImageFrom(mChapter, idx), path, idx, mChapter.getId(), new ChapterDownload(mChapter), mServerBase.needRefererForImages());
+                SingleDownload s = new SingleDownload(getContext(), mServerBase.getImageFrom(mChapter, idx), path, idx, mChapter.getId(), new ChapterDownload(mChapter), mServerBase.needRefererForImages());
                 s.setChangeListener(ReaderFragment.this);
                 new Thread(s).start();
             } catch (Exception e) {
