@@ -695,6 +695,15 @@ public abstract class ServerBase {
     }
 
     /**
+     * Returns the server path name.
+     *
+     * @return the server path name
+     */
+    public String getPath() {
+        return serverName;
+    }
+
+    /**
      * Returns a list of matches for a given pattern and string.
      *
      * @param patron the pattern to search for

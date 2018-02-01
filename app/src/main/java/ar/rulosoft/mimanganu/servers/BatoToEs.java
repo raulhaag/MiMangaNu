@@ -20,8 +20,14 @@ class BatoToEs extends BatoTo {
         super(context);
         setFlag(R.drawable.flag_es);
         setIcon(R.drawable.batoto);
-        setServerName("BatoTo(ES)");
+        setServerName("VatotoCom(ES)");
         setServerID(BATOTOES);
+    }
+
+
+    @Override
+    public String getPath() {
+        return "BatoTo(ES)";
     }
 
     @Override
@@ -34,7 +40,8 @@ class BatoToEs extends BatoTo {
             // Summary
             manga.setSynopsis(getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, context.getString(R.string.nodisponible)));
             // Cover
-            manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
+            manga.setImages(HOST + getFirstMatchDefault("<img src=\"(/forums/upload.+?)\"", data, ""));
+            if(manga.getImages().equals(HOST)) manga.setImages("");
             // Author
             manga.setAuthor(getFirstMatchDefault("search\\?artist_name=.+?>([^<]+)", data, context.getString(R.string.nodisponible)));
             // Genre

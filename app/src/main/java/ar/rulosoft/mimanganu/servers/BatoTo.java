@@ -49,41 +49,38 @@ class BatoTo extends ServerBase {
             "i8", "i32", "i35", "i16", "i33", "i19", "i21", "i23",
             "i25", "i26", "i28", "i36", "i29", "i31", "i44", "e44"
     };
-
     private static String[] completed = new String[]{"Any", "Completed", "Incomplete"};
     private static String[] completedV = new String[]{"", "&completed=c", "&completed=i"};
-
-
     private static String[] im = new String[]{"Yes", "No"};
     private static String[] imV = new String[]{"", "&mature=n"};
-
-
     private static String[] type = new String[]{"Any", "Manga(JP)", "Manhwa(Kr)", "Manhua(Cn)",
             "Artbook", "Other"};
     private static String[] typeV = new String[]{"", "&type=jp", "&type=kr", "&type=cn", "&type=ar",
             "&type=ot"};
-
-
     private static String[] orderBy = new String[]{"Title", "Author", "Artist", "Rating", "Views",
             "Last Update"};
     private static String[] orderByV = new String[]{"&order_cond=title", "&order_cond=author",
             "&order_cond=artist", "&order_cond=rating", "&order_cond=views", "&order_cond=update"};
-
-
     private static String[] orderDir = new String[]{"Ascending", "Descending"};
     private static String[] orderDirV = new String[]{"&order=asc", "&order=desc"};
+    protected String HOST = "https://vatoto.com";
 
     BatoTo(Context context) {
         super(context);
         this.setFlag(R.drawable.noimage);
         this.setIcon(R.drawable.batoto);
-        this.setServerName("BatoTo");
+        this.setServerName("VatotoCom");
         setServerID(ServerBase.BATOTO);
     }
 
     @Override
+    public String getPath() {
+        return "BatoTo";
+    }
+
+    @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = "http://bato.to/search_ajax?p=" + pageNumber;
+        String web = HOST + "/search_ajax?p=" + pageNumber;
         if (filters[0].length > 0) {
             String genres = "";
             for (int filter : filters[0]) {
@@ -126,7 +123,7 @@ class BatoTo extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = "http://bato.to/search_ajax?name=" + URLEncoder.encode(term, "UTF-8") + "&name_cond=c&p=1";
+        String web = HOST + "/search_ajax?name=" + URLEncoder.encode(term, "UTF-8") + "&name_cond=c&p=1";
         String data = getNavigatorAndFlushParameters().get(web);
         return getMangasFromSource(data);
     }
@@ -146,7 +143,8 @@ class BatoTo extends ServerBase {
                 String data = getNavigatorAndFlushParameters().get(manga.getPath(), new BatotoLoginInterceptor(user, password));
                 String synopsis = getFirstMatchDefault("Description:</td>\\s+<td>(.*?)</td>", data, context.getString(R.string.nodisponible));
                 manga.setSynopsis(Util.getInstance().fromHtml(synopsis).toString());
-                manga.setImages(getFirstMatchDefault("(http://img\\.bato\\.to/forums/uploads.+?)\"", data, ""));
+                manga.setImages(HOST + getFirstMatchDefault("(\\/forums\\/upload.+?)\"", data, ""));
+                if(manga.getImages().equals(HOST)) manga.setImages("");
                 manga.setAuthor(getFirstMatchDefault("search\\?artist_name=.+?>([^<]+)", data, "n/a"));
                 manga.setGenre(getFirstMatchDefault("Genres:</td>\\s+<td>([\\s\\S]+?)<img[^>]+?alt=.edit", data, "").replaceAll("<.*?>", "").replaceAll(",[\\s]*", ",").trim());
                 manga.setFinished(!getFirstMatchDefault("Status:<\\/td>\\s+<td>([^<]+)", data, "").contains("Ongoing"));
@@ -187,7 +185,7 @@ class BatoTo extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
-            chapter.setExtra("http://bato.to/areader?id=" + chapter.getPath().split("#")[1] + "&p=");
+            chapter.setExtra(HOST + "/areader?id=" + chapter.getPath().split("#")[1] + "&p=");
             String data = getNavigatorAndFlushParameters().get(chapter.getExtra() + "1", "http://bato.to/reader");
             String pages = getFirstMatch(
                     "page\\s+(\\d+)</option>\\s+</select>", data,
@@ -213,7 +211,7 @@ class BatoTo extends ServerBase {
         CookieJar ccj = nav.getHttpClient().cookieJar();
         VolatileCookieJar cj = new VolatileCookieJar();
         nav.setCookieJar(cj);
-        String data = nav.get("https://bato.to/forums/index.php?app=core&amp;module=global&amp;section=login");
+        String data = nav.get(HOST + "/forums/index.php?app=core&amp;module=global&amp;section=login");
         HashMap<String, String> params = Navigator.getFormParamsFromSource(data);
         nav = getNavigatorAndFlushParameters();
         nav.addPost("auth_key", params.get("auth_key"));
@@ -221,7 +219,7 @@ class BatoTo extends ServerBase {
         nav.addPost("ips_username", user);
         nav.addPost("referer", "https://bato.to/forums/");
         nav.addPost("rememberMe", "1");
-        nav.post("https://bato.to/forums/index.php?app=core&module=global&section=login&do=process");
+        nav.post(HOST +"/forums/index.php?app=core&module=global&section=login&do=process");
         List<Cookie> cookies = Navigator.getCookieJar().loadForRequest(HttpUrl.parse("https://bato.to"));
         nav.setCookieJar(ccj);
         return cj.contain("member_id");
@@ -286,9 +284,9 @@ class BatoTo extends ServerBase {
                             .build();
                     String loginWeb;
                     if (request.isHttps()) {
-                        loginWeb = "https://bato.to/forums/index.php?app=core&module=global&section=login&do=process";
+                        loginWeb = HOST + "/forums/index.php?app=core&module=global&section=login&do=process";
                     } else {
-                        loginWeb = "http://bato.to/forums/index.php?app=core&module=global&section=login&do=process";
+                        loginWeb = "http://vatoto.com/forums/index.php?app=core&module=global&section=login&do=process";
                     }
                     Request request0 = new Request.Builder().url(loginWeb)
                             .method("POST", requestBody)

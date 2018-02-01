@@ -30,7 +30,7 @@ public class Paths {
     }
 
     public static String generateBasePath(ServerBase serverBase, Manga manga, Chapter chapter, Context context) {
-        String serverName = serverBase.getServerName();
+        String serverName = serverBase.getPath();
         if (serverBase instanceof DeadServer) {
             serverName = DeadServer.getServerName(manga);
         }
@@ -41,7 +41,7 @@ public class Paths {
     }
 
     public static String generateBasePath(ServerBase serverBase, Manga manga, Context context) {
-        String serverName = serverBase.getServerName();
+        String serverName = serverBase.getPath();
         if (serverBase instanceof DeadServer) {
             serverName = DeadServer.getServerName(manga);
         }

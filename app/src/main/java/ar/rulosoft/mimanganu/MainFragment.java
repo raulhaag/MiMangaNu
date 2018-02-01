@@ -43,6 +43,7 @@ import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
+import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
@@ -153,7 +154,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
 
             // App Update
-            if(pm.getBoolean("app_update", true)) {
+            if (pm.getBoolean("app_update", true)) {
                 boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
                 if (onLatestAppVersion) {
                     long last_check = pm.getLong("last_app_update", 0);
@@ -396,7 +397,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         server_list.setAdapter(serverRecAdapter);
         serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
-            public void onServerClick(ServerBase server) {
+            public void onServerClick(final ServerBase server) {
                 if (!(server instanceof FromFolder)) {
                     if (server.hasCredentials()) {
                         if (server.hasFilteredNavigation()) {
@@ -413,7 +414,18 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                             ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
                         }
                     } else {
-                        Util.getInstance().showFastSnackBar(getString(R.string.this_server_needs_an_account), getView(), getContext());
+                        LoginDialog lDialog = new LoginDialog(getContext(), server);
+                        lDialog.getDialog().setCanceledOnTouchOutside(false);
+                        lDialog.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                if (server.hasCredentials())
+                                    onServerClick(server);
+                                else
+                                    Util.getInstance().showFastSnackBar(getString(R.string.this_server_needs_an_account), getView(), getContext());
+                            }
+                        });
+                        lDialog.show();
                     }
                 } else {
                     MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
@@ -518,7 +530,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public boolean onContextItemSelected(MenuItem item) {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final Manga manga = ((MangasRecAdapter)recyclerView.getAdapter()).getItem(info.position);
+        final Manga manga = ((MangasRecAdapter) recyclerView.getAdapter()).getItem(info.position);
         if (item.getItemId() == R.id.delete) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.app_name)

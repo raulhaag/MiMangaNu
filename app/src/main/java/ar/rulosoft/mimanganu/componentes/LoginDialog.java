@@ -35,9 +35,9 @@ public class LoginDialog {
         this.context = context;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View rootView = inflater.inflate(R.layout.dialog_login, null);
-        username = (EditText) rootView.findViewById(R.id.txtUsername);
-        password = (EditText) rootView.findViewById(R.id.txtPassword);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        username = rootView.findViewById(R.id.txtUsername);
+        password = rootView.findViewById(R.id.txtPassword);
+        progressBar = rootView.findViewById(R.id.progressBar);
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
         dialogBuilder.setTitle(context.getString(R.string.login_in) + serverBase.getServerName());
         dialogBuilder.setView(rootView);

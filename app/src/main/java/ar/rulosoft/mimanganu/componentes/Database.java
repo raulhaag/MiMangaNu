@@ -97,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 21;
+    private static int database_version = 22;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -870,7 +870,6 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
             }
             if (oldVersion < 18) {
-               // removeDoubleChapters(db, "mangahere");
                 db.execSQL("CREATE TABLE temp_chapters AS SELECT * FROM " + TABLE_CHAPTERS + ";");
                 db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
                 db.execSQL(DATABASE_CHAPTERS_CREATE);
@@ -912,6 +911,14 @@ public class Database extends SQLiteOpenHelper {
                         "SELECT id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update FROM temp_manga;");
                 db.execSQL("DROP TABLE temp_manga");
                 String query = "UPDATE manga SET path = REPLACE(path,'http://www.mangahere.cc', '') WHERE server_id=4;";
+                db.execSQL(query);
+            }
+            if (oldVersion < 22) {
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
                 db.execSQL(query);
             }
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/

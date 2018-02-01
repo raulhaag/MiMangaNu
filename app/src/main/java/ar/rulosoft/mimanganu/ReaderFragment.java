@@ -719,6 +719,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 final CheckBox checkBox = v.findViewById(R.id.delete_images_oc);
                 checkBox.setChecked(imagesDelete);
                 mDialog = new AlertDialog.Builder(getActivity())
+
                         .setTitle(getString(R.string.finished_reading, mChapter.getTitle()))
                         .setView(v)
                         .setIcon(R.mipmap.ic_launcher)
@@ -740,6 +741,26 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                                 if (mDialog != null && mDialog.isShowing())
                                     mDialog.dismiss();
                                 mDialog = null;
+                            }
+                        })
+                        .setNeutralButton("okdontshowagaing", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                boolean del_images = checkBox.isChecked();
+                                if (pm != null)
+                                    pm.edit().putBoolean("delete_images", del_images).apply();
+                                mChapter.setReadStatus(Chapter.READ);
+                                mChapter.setPagesRead(mChapter.getPages());
+                                Database.updateChapter(getActivity(), mChapter);
+                                Chapter pChapter = mChapter;
+                                loadChapter(nextChapter, LoadMode.START);
+                                if (del_images) {
+                                    pChapter.freeSpace(getActivity());
+                                }
+                                if (mDialog != null && mDialog.isShowing())
+                                    mDialog.dismiss();
+                                mDialog = null;
+                                pm.edit().putBoolean("seamless_chapter_transitions", true);
                             }
                         })
                         .show();
