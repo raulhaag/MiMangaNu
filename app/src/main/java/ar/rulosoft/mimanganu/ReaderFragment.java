@@ -743,7 +743,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                                 mDialog = null;
                             }
                         })
-                        .setNeutralButton("okdontshowagaing", new DialogInterface.OnClickListener() {
+                        .setNeutralButton(R.string.dont_ask_again, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 boolean del_images = checkBox.isChecked();

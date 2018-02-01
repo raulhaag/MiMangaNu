@@ -430,4 +430,6 @@
     <string name="delete_on_manga_finished">¿Borrar las imágenes de este manga?</string>
     <string name="back">Volver</string>
     <string name="flt_order_created">Creado</string>
+    <string name="dont_ask_again">Siempre</string>
+
 </resources>
