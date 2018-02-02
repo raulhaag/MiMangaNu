@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.78:\n\t* Agregado desu.me[RU] y readmanga.me[RU].\n\t* Arreglado FromFolder.\n\t* Agregada política de reintentos.</string>
+    <string name="update_message">Cambios en v1.79:\n\t* Agregada configuración de reintentos.\n\t* Cambiado Bato.to a Vatoto (no funcional aun).\n\t* Mejoras internas.\n\t* Arreglados generos en MangaFox.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

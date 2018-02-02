@@ -33,6 +33,18 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.79:
+* Agregada configuración de reintentos.
+* Cambiado Bato.to a Vatoto (no funcional aun)
+* Mejoras internas.
+* Arreglados generos en MangaFox.
+
+Changes in v1.79:
+* Added retry config preference.
+* Changed Bato.to to Vatoto (no functional yet)
+* Internal improves.
+* Fixed MangaFox genre filter.
+
 Cambios en v1.78:
 * Agregado desu.me[RU] y readmanga.me[RU].
 * Arreglado FromFolder.
