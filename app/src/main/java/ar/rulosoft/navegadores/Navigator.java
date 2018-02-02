@@ -1,6 +1,8 @@
 package ar.rulosoft.navegadores;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
@@ -46,6 +48,7 @@ public class Navigator {
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
+    public static int connectionRetry = 10;
     private static CookieJar cookieJar;
     private static Navigator instance;
     private OkHttpClient httpClient;
@@ -54,13 +57,18 @@ public class Navigator {
 
     private Navigator(Context context) throws Exception {
         if (httpClient == null) {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            writeTimeout = Integer.parseInt(prefs.getString("write_timeout", "10"));
+            connectionRetry = Integer.parseInt(prefs.getString("connection_retry", "10"));
+            readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
+            connectionTimeout = Integer.parseInt(prefs.getString("connection_timeout", "10"));
             TrustManager[] trustManagers = getTrustManagers(context);
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustManagers, null);
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
                     .addInterceptor(new CFInterceptor())
-                    .addInterceptor(new RetryInterceptor(10))
+                    .addInterceptor(new RetryInterceptor())
                     .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)

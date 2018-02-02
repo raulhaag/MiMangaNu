@@ -8,14 +8,12 @@ import okhttp3.Response;
 
 public class RetryInterceptor implements Interceptor {
 
-    private int retry;
 
-    public RetryInterceptor(int retry) {
-        this.retry = retry;
-    }
+    public RetryInterceptor() {}
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        int retry = Navigator.connectionRetry;
         Request request = chain.request();
         Response response = chain.proceed(request);
         int tryCount = 0;

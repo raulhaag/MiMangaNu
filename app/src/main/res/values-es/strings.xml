@@ -431,5 +431,7 @@
     <string name="back">Volver</string>
     <string name="flt_order_created">Creado</string>
     <string name="dont_ask_again">Siempre</string>
+    <string name="connection_retry_summary">%s veces.</string>
+    <string name="connection_retry_title">Reintentos en error</string>
 
 </resources>

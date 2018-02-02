@@ -336,7 +336,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     mReader.seekPage(mChapter.getPages());
                     break;
                 case SAVED:
-                    if(mChapter.getPagesRead() == 0)
+                    if (mChapter.getPagesRead() == 0)
                         mChapter.setPagesRead(1);
                     mReader.seekPage(mChapter.getPagesRead());
             }
@@ -677,7 +677,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     }
 
     public void onPageChanged(int page) {
-        if(page == 0)
+        if (page == 0)
             page++;
         updatedValue = true;
         mChapter.setPagesRead(page);
@@ -688,8 +688,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         } else if (mChapter.getReadStatus() == Chapter.READ) {
             mChapter.setReadStatus(Chapter.READING);
         }
-        if(mChapter.isDownloaded() && !new File(mReader.getPath(page)).exists()) {
-         reDownloadCurrentImage();
+        if (mChapter.isDownloaded() && !new File(mReader.getPath(page)).exists()) {
+            reDownloadCurrentImage();
         }
     }
 
@@ -760,7 +760,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                                 if (mDialog != null && mDialog.isShowing())
                                     mDialog.dismiss();
                                 mDialog = null;
-                                pm.edit().putBoolean("seamless_chapter_transitions", true);
+                                pm.edit().putBoolean("seamless_chapter_transitions", true).apply();
                             }
                         })
                         .show();

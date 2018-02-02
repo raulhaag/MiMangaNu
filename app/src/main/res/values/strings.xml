@@ -471,4 +471,6 @@
     <string name="flt_order_votes">Votes</string>
     <string name="flt_order_created">Created</string>
     <string name="dont_ask_again">Always</string>
+    <string name="connection_retry_title">Connection retry</string>
+    <string name="connection_retry_summary">%s times.</string>
 </resources>

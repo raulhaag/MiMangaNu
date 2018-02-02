@@ -343,6 +343,15 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             onlyWifiUpdateSwitch.setEnabled(true);
         }
 
+        final SeekBarCustomPreference seekBarConnectionRetry = (SeekBarCustomPreference) getPreferenceManager().findPreference("connection_retry");
+        seekBarConnectionRetry.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                Navigator.connectionRetry = Integer.parseInt(prefs.getString("connection_retry", "10"));
+                return true;
+            }
+        });
+
         final SeekBarCustomPreference seekBarConnectionTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("connection_timeout");
         seekBarConnectionTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
