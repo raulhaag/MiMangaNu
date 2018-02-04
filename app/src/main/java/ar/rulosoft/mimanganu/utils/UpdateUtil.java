@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
@@ -202,15 +203,21 @@ public class UpdateUtil {
     }
 
     private static Intent getAndPrepareUpdateIntent(Context context) {
-        Uri contentUri = FileProvider.getUriForFile(context, "ar.rulosoft.provider", UPDATE_FILE_CACHE);
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
-        List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
-        for (ResolveInfo resolveInfo : resInfoList) {
-            String packageName = resolveInfo.activityInfo.packageName;
-            context.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(UPDATE_FILE_CACHE), "application/vnd.android.package-archive");
+            return intent;
+        }else {
+            Uri contentUri = FileProvider.getUriForFile(context, "ar.rulosoft.provider", UPDATE_FILE_CACHE);
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
+            List<ResolveInfo> resInfoList = context.getPackageManager().queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
+            for (ResolveInfo resolveInfo : resInfoList) {
+                String packageName = resolveInfo.activityInfo.packageName;
+                context.grantUriPermission(packageName, contentUri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            }
+            return intent;
         }
-        return intent;
     }
 
     public static class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
