@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu;
 
-import android.animation.ObjectAnimator;
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,8 +14,6 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,7 +45,6 @@ import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
-import ar.rulosoft.mimanganu.componentes.MoreMangasPageTransformer;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
@@ -56,6 +54,8 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
+import io.codetail.animation.ViewAnimationUtils;
+import io.codetail.widget.RevealFrameLayout;
 
 /**
  * Created by Raul
@@ -76,14 +76,14 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private FloatingActionButton floatingActionButton_add;
     private boolean is_server_list_open = false;
     private ServerRecAdapter serverRecAdapter;
-    private SectionsPagerAdapter mSectionsPagerAdapter;
-    private ViewPager mViewPager;
+    private RevealFrameLayout reveal;
     private RecyclerView recyclerView;
     private MangasRecAdapter mMAdapter;
     private SwipeRefreshLayout swipeReLayout;
     private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
+    private View mmView, serverListView;
 
     @Nullable
     @Override
@@ -96,30 +96,24 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onStart() {
         super.onStart();
-        mSectionsPagerAdapter = new SectionsPagerAdapter();
+        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        MainActivity.colors = ThemeColors.getColors(pm);
+
         if (getView() != null) {
-            mViewPager = getView().findViewById(R.id.pager);
+            reveal = getView().findViewById(R.id.revealFrame);
             floatingActionButton_add = getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
-            if (is_server_list_open) {
-                ObjectAnimator anim = ObjectAnimator.ofFloat(floatingActionButton_add, "rotation", 360.0f, 315.0f);
-                anim.setDuration(0);
-                anim.start();
-            }
+            mmView = getMMView(reveal);
+            serverListView = getServerListView(reveal);
+            reveal.removeAllViews();
+            reveal.addView(mmView);
+            reveal.addView(serverListView);
         }
-        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (is_server_list_open)
-            is_server_list_open = false;
         if (swipeReLayout != null)
             swipeReLayout.clearAnimation();
     }
@@ -127,10 +121,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     @Override
     public void onResume() {
         super.onResume();
-        mViewPager.setAdapter(mSectionsPagerAdapter);
-        mViewPager.setPageTransformer(false, new MoreMangasPageTransformer());
         MainActivity activity = (MainActivity) getActivity();
-        MainActivity.colors = ThemeColors.getColors(pm);
         activity.setColorToBars();
         if (MainActivity.darkTheme != pm.getBoolean("dark_theme", false)) {
             Util.getInstance().restartApp(getContext());
@@ -140,10 +131,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.backListener = this;
         activity.keyUpListener = this;
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
-        if (!is_server_list_open && getView() != null) {
-            ObjectAnimator anim = ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
-            anim.setDuration(0);
-            anim.start();
+
+        if(is_server_list_open){
+            serverListView.setVisibility(View.VISIBLE);
+        }else{
+            serverListView.setVisibility(View.INVISIBLE);
         }
 
         if (MainActivity.coldStart) {
@@ -208,22 +200,26 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onClick(View v) {
-        if (serverRecAdapter.actionMode == null) {
-            if (mViewPager.getCurrentItem() == 0) {
-                is_server_list_open = true;
-                ObjectAnimator anim =
-                        ObjectAnimator.ofFloat(v, "rotation", 360.0f, 315.0f);
-                anim.setDuration(200);
-                anim.start();
-                mViewPager.setCurrentItem(1);
-            } else {
-                is_server_list_open = false;
-                ObjectAnimator anim =
-                        ObjectAnimator.ofFloat(v, "rotation", 315.0f, 360.0f);
-                anim.setDuration(200);
-                anim.start();
-                mViewPager.setCurrentItem(0);
-            }
+
+        int cx = (floatingActionButton_add.getLeft() + floatingActionButton_add.getRight()) / 2;
+        int cy = (floatingActionButton_add.getTop() + floatingActionButton_add.getBottom()) / 2;
+        int radius = Math.max(serverListView.getWidth(), serverListView.getHeight());
+        if (is_server_list_open) {
+            is_server_list_open = false;
+            Animator anim = ViewAnimationUtils.createCircularReveal(serverListView, cx, cy, radius, 0);
+            anim.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    serverListView.setVisibility(View.INVISIBLE);
+                }
+            });
+            anim.start();
+        } else {
+            is_server_list_open = true;
+            Animator anim = ViewAnimationUtils.createCircularReveal(serverListView, cx, cy, 0, radius);
+            serverListView.setVisibility(View.VISIBLE);
+            anim.start();
         }
     }
 
@@ -317,9 +313,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 break;
             }
             case R.id.action_edit_server_list:
-                if (mViewPager.getCurrentItem() == 0) {
-                    mViewPager.setCurrentItem(1);
-                    returnToMangaList = true;
+                if (!is_server_list_open) {
+                    onClick(floatingActionButton_add);
                 }
                 serverRecAdapter.startActionMode();
                 break;
@@ -611,15 +606,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         return viewGroup;
     }
 
+
     @Override
     public boolean onBackPressed() {
-        if (mViewPager.getCurrentItem() == 1 && getView() != null) {
-            ObjectAnimator anim =
-                    ObjectAnimator.ofFloat(getView().findViewById(R.id.floatingActionButton_add), "rotation", 315.0f, 360.0f);
-            anim.setDuration(200);
-            anim.start();
-            mViewPager.setCurrentItem(0);
-            return true;
+        if(is_server_list_open){
+          onClick(floatingActionButton_add);
+          return true;
         }
         return false;
     }
@@ -637,63 +629,10 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public void onEndActionMode() {
         if (returnToMangaList) {
             returnToMangaList = false;
-            mViewPager.setCurrentItem(0);
+            // TODO mViewPager.setCurrentItem(0);
         }
     }
 
-    public class SectionsPagerAdapter extends PagerAdapter {
-        ViewGroup[] pages;
-
-        SectionsPagerAdapter() {
-            super();
-            this.pages = new ViewGroup[2];
-
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(pages[position]);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            ViewGroup viewGroup;
-            if (pages[position] == null)
-                if (position == 0) {
-                    viewGroup = getMMView(container);
-                    pages[0] = viewGroup;
-                } else {
-                    if (pages[1] == null) {
-                        viewGroup = getServerListView(container);
-                        pages[1] = viewGroup;
-                    } else {
-                        viewGroup = pages[1];
-                    }
-                }
-            else {
-                viewGroup = pages[position];
-            }
-            container.addView(viewGroup);
-            return viewGroup;
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        //deprecated but error if not found
-        @SuppressWarnings("deprecation")
-        @Override
-        public void destroyItem(View container, int position, Object object) {
-            destroyItem((ViewGroup) container, position, object);
-        }
-    }
 
     public class UpdateListTask extends AutomaticUpdateTask {
         private Context context;

@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ar.rulosoft.mimanganu.componentes.NoSwipeViewPager
-        android:id="@+id/pager"
+    <io.codetail.widget.RevealFrameLayout
+        android:id="@+id/revealFrame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
