@@ -107,17 +107,22 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     }
 
     public String getPath(int idx) {
-        return getPage(idx).getPath();
+        Page p = getPage(idx);
+        if(p != null){
+            return p.getPath();
+        }else{
+            return "";
+        }
     }
 
     public Page getPage(int page) {
+        if(pages != null && page >= 0 && page < pages.size())
         if (page == 0) {
-            // only happens when one spams
-            // the re-download button on the last page
             return pages.get(page);
         } else {
             return pages.get(page - 1);
         }
+        return null;
     }
 
     private void init(Context context) {

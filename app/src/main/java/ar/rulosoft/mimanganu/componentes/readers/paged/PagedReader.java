@@ -79,10 +79,10 @@ public abstract class PagedReader extends Reader implements TapListener {
         if (paths != null) {
             if (idx == 0)
                 return paths.get(idx);
-            else
+            else if (idx < paths.size())
                 return paths.get(idx - 1);
-        } else
-            return "";
+        }
+        return "";
     }
 
     @Override

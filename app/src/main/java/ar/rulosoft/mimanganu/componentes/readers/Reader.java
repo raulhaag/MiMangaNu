@@ -1,7 +1,7 @@
 package ar.rulosoft.mimanganu.componentes.readers;
 
 import android.content.Context;
-import android.widget.LinearLayout;
+import android.widget.FrameLayout;
 
 import java.util.List;
 
@@ -24,7 +24,7 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
  * <p>
  * returned pages ever go to be number 1 to n, being n the array paths size
  */
-public abstract class Reader extends LinearLayout {
+public abstract class Reader extends FrameLayout {
     protected int mTextureMax;
     protected float mScrollSensitive = 1.f;
     protected Direction mDirection = Direction.R2L;
