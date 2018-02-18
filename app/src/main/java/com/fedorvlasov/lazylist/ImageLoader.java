@@ -42,7 +42,7 @@ public class ImageLoader {
 
             // First, try to fetch image from memory
             Bitmap bitmap = mMemCache.getImageInMem(url);
-            if(!url.isEmpty()) {
+            if(url != null && !url.isEmpty()) {
                 if (bitmap != null && !bitmap.isRecycled()) {
                     imageView.setImageBitmap(bitmap);
                 } else {

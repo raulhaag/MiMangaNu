@@ -186,6 +186,7 @@ public abstract class ServerBase {
     public static final int MANGATOWN = 35;
     public static final int READMANGAME = 36;
     public static final int DESUME = 37;
+    public static final int MANGARAWONLINE = 38;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
@@ -314,6 +315,9 @@ public abstract class ServerBase {
             case DESUME:
                 serverBase = new DesuMe(context);
                 break;
+            case MANGARAWONLINE:
+                serverBase = new MangaRawOnline(context);
+                break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
                 break;
@@ -384,6 +388,7 @@ public abstract class ServerBase {
                 new ReadMangaToday(context),
                 new MangaTown(context),
                 new RuNineManga(context),
+                new DesuMe(context),
                 new ReadMangaMe(context),
                 new MyMangaIo(context),
                 new JapScan(context),
@@ -393,8 +398,8 @@ public abstract class ServerBase {
                 new MangaEdenIt(context),
                 new DeNineManga(context),
                 new RawSenManga(context),
+                new MangaRawOnline(context),
                 new BatoTo(context),
-                new DesuMe(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
                 new FromFolder(context)
@@ -411,7 +416,9 @@ public abstract class ServerBase {
      *                   should be a translatable string.
      */
     @Nullable
-    public abstract ArrayList<Manga> getMangas() throws Exception;
+    public  ArrayList<Manga> getMangas() throws Exception{ //make default null just a couple of server need to implement it
+        return null;
+    }
 
     /**
      * Returns a list of Manga filtered by a given search term.
