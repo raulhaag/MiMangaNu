@@ -30,7 +30,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private ArrayList<Manga> mangaList;
     private ArrayList<Manga> fromFolderMangaList;
     private int threads = 2;
-    private int result = 0;
+    private int[] result;
     private int numNow = 0;
     private Context context;
     private SharedPreferences pm;
@@ -71,10 +71,11 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     protected Integer doInBackground(Void... params) {
         if (context != null && error.isEmpty()) {
             ExecutorService executor = Executors.newFixedThreadPool(threads);
-
             if (!NetworkUtilsAndReceiver.isConnectedNonDestructive(context)) {
                 mangaList = fromFolderMangaList;
             }
+
+            result = new int[mangaList.size()];
 
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
@@ -91,7 +92,10 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 }
             }
         }
-        return result;
+        int sum = 0;
+        for (int i : result)
+            sum += i;
+        return sum;
     }
 
     @Override
@@ -138,7 +142,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             publishProgress(idx);
             try {
                 if (!isCancelled()) {
-                    result += serverBase.searchForNewChapters(manga.getId(), context, fast);
+                    result[idx] += serverBase.searchForNewChapters(manga.getId(), context, fast);
                 }
             } catch (Exception e) {
                 //do nothing
