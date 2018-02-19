@@ -30,7 +30,7 @@ class NineManga extends ServerBase {
     private static final String PATTERN_GENRE =
             "<li itemprop=\"genre\".+?</b>(.+?)</a>[^<]*</li>";
     private static final String PATTERN_CHAPTER =
-            "<a class=\"chapter_list_a\" href=\"(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
+            "<a class=\"chapter_list_a\" href=\".*?(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
     private static final String PATTERN_PAGES =
             "\\d+/(\\d+)</option>[\\s]*</select>";
     private static final int[] fltCategory = {
@@ -283,7 +283,7 @@ class NineManga extends ServerBase {
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(3), m.group(1), false);
             manga.setImages(m.group(2));
             mangas.add(manga);
         }

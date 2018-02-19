@@ -23,11 +23,18 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
     private ImageLoader imageLoader;
     private Context context;
 
+    public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme, View.OnCreateContextMenuListener onCreateContextMenuListener) {
+        super(lista,context,darkTheme);
+        this.onCreateContextMenuListener = onCreateContextMenuListener;
+        imageLoader = new ImageLoader(context);
+        this.context = context;
+    }
     public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
         super(lista,context,darkTheme);
         imageLoader = new ImageLoader(context);
         this.context = context;
     }
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {

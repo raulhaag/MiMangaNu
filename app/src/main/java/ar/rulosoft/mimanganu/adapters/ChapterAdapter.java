@@ -293,10 +293,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChange
         private ImageView imageButton;
 
         public ViewHolder(View v) {
-            this.textViewName = (TextView) v.findViewById(R.id.capitulo_titulo);
-            this.textViewStatus = (TextView) v.findViewById(R.id.capitulo_info);
-            this.textViewPages = (TextView) v.findViewById(R.id.capitulo_paginas);
-            this.imageButton = (ImageView) v.findViewById(R.id.boton);
+            this.textViewName = v.findViewById(R.id.capitulo_titulo);
+            this.textViewStatus = v.findViewById(R.id.capitulo_info);
+            this.textViewPages = v.findViewById(R.id.capitulo_paginas);
+            this.imageButton = v.findViewById(R.id.boton);
         }
 
     }

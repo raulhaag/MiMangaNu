@@ -28,7 +28,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.Toast;
 
 import org.acra.ACRA;
@@ -84,6 +83,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private UpdateListTask updateListTask = null;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
     private View mmView, serverListView;
+    private int lastContextMenuIndex;
 
     @Nullable
     @Override
@@ -268,7 +268,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                 "SELECT id " +
                                 "FROM manga " +
                                 "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme);
+                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme,MainFragment.this);
                         recyclerView.setAdapter(mMAdapter);
                     } catch (Exception e) {
                         Log.e("MF", "Exception", e);
@@ -487,7 +487,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                     break;
             }
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
-                mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme);
+                mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme, MainFragment.this);
                 mMAdapter.setMangaClickListener(new MangaRecAdapterBase.OnMangaClick() {
 
                     @Override
@@ -511,21 +511,22 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.gridview_mismangas, menu);
         MenuItem m = menu.findItem(R.id.noupdate);
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        if (mMAdapter.getItem(info.position).isFinished()) {
+        Manga manga = mMAdapter.getItem((int) v.getTag());
+        if (manga.isFinished()) {
             m.setTitle(getActivity().getResources().getString(R.string.buscarupdates));
         } else {
             m.setTitle(getActivity().getResources().getString(R.string.nobuscarupdate));
         }
+        lastContextMenuIndex = (int) v.getTag();
     }
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-        final Manga manga = ((MangasRecAdapter) recyclerView.getAdapter()).getItem(info.position);
+        final Manga manga = ((MangasRecAdapter) recyclerView.getAdapter()).getItem(lastContextMenuIndex);
         if (item.getItemId() == R.id.delete) {
             new AlertDialog.Builder(getContext())
                     .setTitle(R.string.app_name)
@@ -601,7 +602,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 }
             });
         }
-        registerForContextMenu(recyclerView);
         setListManga(true);
         return viewGroup;
     }
@@ -629,7 +629,7 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     public void onEndActionMode() {
         if (returnToMangaList) {
             returnToMangaList = false;
-            // TODO mViewPager.setCurrentItem(0);
+            onClick(floatingActionButton_add);
         }
     }
 

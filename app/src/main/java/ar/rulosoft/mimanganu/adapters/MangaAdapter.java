@@ -18,7 +18,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaAdapter extends ArrayAdapter<Manga> {
     private static int listItem = R.layout.listitem_server_manga;
-    boolean darkTheme;
+    private boolean darkTheme;
     private LayoutInflater li;
 
     public MangaAdapter(Context context, List<Manga> items, boolean darkTheme) {
@@ -27,6 +27,7 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         this.darkTheme = darkTheme;
     }
 
+    @NonNull
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
@@ -38,15 +39,14 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
         }
 
         final Manga item = getItem(position);
-
         if (item != null) {
             holder.textViewName.setText(Util.getInstance().fromHtml(item.getTitle()));
         }
         return convertView;
     }
 
-    public void addAll(ArrayList<Manga> mangasNuevos) {
-        for (Manga manga : mangasNuevos) {
+    public void addAll(ArrayList<Manga> newMangas) {
+        for (Manga manga : newMangas) {
             add(manga);
         }
     }
@@ -54,8 +54,8 @@ public class MangaAdapter extends ArrayAdapter<Manga> {
     public static class ViewHolder {
         private TextView textViewName;
 
-        public ViewHolder(View v, boolean darkTheme) {
-            this.textViewName = (TextView) v.findViewById(R.id.manga_title);
+        ViewHolder(View v, boolean darkTheme) {
+            this.textViewName = v.findViewById(R.id.manga_title);
             if (!darkTheme) {
                 this.textViewName.setTextColor(Color.parseColor("#111111"));
             }
