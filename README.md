@@ -94,6 +94,6 @@ MiMangaNu uses the following libraries (in chronological order) :
 Our thanks goes out to all of the above mentioned Libraries' authors and contributors.
 We are not explicitly endorsed by any of them.
 
-Contribuciones de Dostoi, TheSniperFan, xtj-9182, falibros, Alexander, grgeosteve, Johndeep y alguien mas que seguro me olvido.
+Contribuciones de Dostoi, TheSniperFan, xtj-9182, falibros, Alexander, grgeosteve, Johndeep, YChvanov, jordyamc, tempura-san y alguien mas que seguro me olvido.
 
 Este programa solo automatiza funciones que se podrian hacer con un navegador de internet el creador no se resposabiliza por su mal uso.
