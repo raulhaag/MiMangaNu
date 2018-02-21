@@ -10,7 +10,7 @@
 
 *IT - Manga lettore online / offline, gratuito e open source.
 
-*RU - В России Манга читает вас. Попробуйте MiMangaNu прямо сейчас.
+*RU - Программа для бесплатного чтения манги с открытым исходным кодом.
 
 Screenshots
 ----------
