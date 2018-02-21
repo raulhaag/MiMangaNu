@@ -36,7 +36,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import ar.rulosoft.mimanganu.adapters.MangaRecAdapterBase;
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -60,7 +59,7 @@ import io.codetail.widget.RevealFrameLayout;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ServerRecAdapter.OnEndActionModeListener {
+public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ServerRecAdapter.OnEndActionModeListener, MangasRecAdapter.OnMangaClick {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -132,9 +131,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         activity.keyUpListener = this;
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
 
-        if(is_server_list_open){
+        if (is_server_list_open) {
             serverListView.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             serverListView.setVisibility(View.INVISIBLE);
         }
 
@@ -268,7 +267,8 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                                 "SELECT id " +
                                 "FROM manga " +
                                 "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme,MainFragment.this);
+                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme, MainFragment.this);
+                        mMAdapter.setMangaClickListener(MainFragment.this);
                         recyclerView.setAdapter(mMAdapter);
                     } catch (Exception e) {
                         Log.e("MF", "Exception", e);
@@ -488,24 +488,23 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
                 mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme, MainFragment.this);
-                mMAdapter.setMangaClickListener(new MangaRecAdapterBase.OnMangaClick() {
-
-                    @Override
-                    public void onMangaClick(Manga manga) {
-                        if (serverRecAdapter.actionMode == null) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt(MainFragment.MANGA_ID, manga.getId());
-                            MangaFragment mangaFragment = new MangaFragment();
-                            mangaFragment.setArguments(bundle);
-                            //In rare cases State loss occurs
-                            ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
-                        }
-                    }
-                });
+                mMAdapter.setMangaClickListener(MainFragment.this);
                 recyclerView.setAdapter(mMAdapter);
             }
         } else {
             Log.i(TAG, "rec_view was null");
+        }
+    }
+
+    @Override
+    public void onMangaClick(Manga manga) {
+        if (serverRecAdapter.actionMode == null) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(MainFragment.MANGA_ID, manga.getId());
+            MangaFragment mangaFragment = new MangaFragment();
+            mangaFragment.setArguments(bundle);
+            //In rare cases State loss occurs
+            ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
         }
     }
 
@@ -609,9 +608,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public boolean onBackPressed() {
-        if(is_server_list_open){
-          onClick(floatingActionButton_add);
-          return true;
+        if (is_server_list_open) {
+            onClick(floatingActionButton_add);
+            return true;
         }
         return false;
     }

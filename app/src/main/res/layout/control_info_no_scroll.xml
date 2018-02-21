@@ -28,11 +28,10 @@
 
             <ImageView
                 android:id="@+id/imagen"
-                android:layout_width="100dp"
-                android:layout_height="150dp"
+                android:layout_width="130dp"
+                android:layout_height="210dp"
                 android:layout_gravity="center"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="4dp"
+                android:layout_marginLeft="4dp"
                 android:scaleType="centerCrop" />
 
             <LinearLayout
@@ -62,6 +61,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
+                    android:maxLines="1"
                     android:text="@string/nodisponible" />
 
                 <TextView
@@ -84,6 +84,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
+                    android:maxLines="1"
                     android:text="@string/nodisponible" />
 
                 <TextView
@@ -106,6 +107,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
+                    android:maxLines="1"
                     android:text="@string/nodisponible" />
 
                 <TextView
@@ -128,6 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
+                    android:maxLines="1"
                     android:text="@string/nodisponible" />
 
                 <TextView
@@ -150,6 +153,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
+                    android:maxLines="1"
                     android:text="@string/nodisponible" />
             </LinearLayout>
 
