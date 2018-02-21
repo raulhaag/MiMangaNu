@@ -18,9 +18,9 @@ import okhttp3.HttpUrl;
 
 class NineManga extends ServerBase {
     private static final String PATTERN_MANGA =
-            "bookname\" href=\"(/manga/[^\"]+)\">(.+?)<";
+            "bookname\" href=\".*?(/manga/[^\"]+)\">(.+?)<";
     private static final String PATTERN_MANGA_SEARCHED =
-            "<dl class=\"bookinfo\">.+?href=\"(.+?)\"><img src=\"(.+?)\".+?\">(.+?)<";
+            "<dl class=\"bookinfo\">.+?href=\".*?(/manga/.+?)\"><img src=\"(.+?)\".+?\">(.+?)<";
     private static final String PATTERN_SUMMARY =
             "<p itemprop=\"description\">(.+?)</p>";
     private static final String PATTERN_COMPLETED =
@@ -169,7 +169,7 @@ class NineManga extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), HOST + m.group(1), false);
+            Manga manga = new Manga(getServerID(), m.group(2), m.group(1), false);
             mangas.add(manga);
         }
         return mangas;
@@ -183,11 +183,11 @@ class NineManga extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String data = getNavigatorWithNeededHeader().get(manga.getPath());
+            String data = getNavigatorWithNeededHeader().get(HOST + manga.getPath());
             if (data.contains("?waring=1")) {
                 // es.ninemanga delivers invalid chapter links if ?waring=1 is already passed on
                 // non-warned Manga - so check if there is a link and then retry with the extension
-                data = getNavigatorWithNeededHeader().get(manga.getPath().replaceAll(" ", "+") + "?waring=1");
+                data = getNavigatorWithNeededHeader().get(HOST + manga.getPath().replaceAll(" ", "+") + "?waring=1");
             }
 
             // cover image
@@ -207,7 +207,7 @@ class NineManga extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                manga.addChapterFirst(new Chapter(m.group(3), HOST + m.group(1)));
+                manga.addChapterFirst(new Chapter(m.group(3), m.group(1)));
             }
         }
     }
@@ -216,13 +216,12 @@ class NineManga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         Navigator nav = getNavigatorWithNeededHeader();
         if (page == 1)
-            nav.addHeader("Referer", chapter.getPath());
+            nav.addHeader("Referer", HOST + chapter.getPath());
         else
-            nav.addHeader("Referer", chapter.getPath().replace(".html", "-" + (page - 1) + ".html"));
-        String data = nav.get(chapter.getPath().replace(".html", "-"
+            nav.addHeader("Referer", HOST + chapter.getPath().replace(".html", "-" + (page - 1) + ".html"));
+        String data = nav.get(HOST + chapter.getPath().replace(".html", "-"
                 + page + ".html"));
-        data = getFirstMatch(PATTERN_IMAGE, data,
-                context.getString(R.string.server_failed_loading_image));
+        data = getFirstMatch(PATTERN_IMAGE, data, context.getString(R.string.server_failed_loading_image));
         if (data.contains("////")) {
             throw new Exception(context.getString(R.string.server_failed_loading_image));
         }
@@ -232,7 +231,7 @@ class NineManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            String data = getNavigatorWithNeededHeader().get(chapter.getPath());
+            String data = getNavigatorWithNeededHeader().get(HOST + chapter.getPath());
             String pages = getFirstMatch(
                     PATTERN_PAGES, data,
                     context.getString(R.string.server_failed_loading_page_count));

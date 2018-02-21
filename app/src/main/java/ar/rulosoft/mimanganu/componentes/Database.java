@@ -97,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 22;
+    private static int database_version = 23;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -919,6 +919,43 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
                         " = REPLACE(" + COL_CAP_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
+                db.execSQL(query);
+            }
+            if (oldVersion < 23){
+                //http://de.ninemanga.com
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                //http://ru.ninemanga.com
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'http://ru.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://ru.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                //http://es.ninemanga.com
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'http://es.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://es.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                //http://it.ninemanga.com
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'http://it.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://it.ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                //http://ninemanga.com
+                query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'http://ninemanga.com', '') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'http://ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
             }
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
