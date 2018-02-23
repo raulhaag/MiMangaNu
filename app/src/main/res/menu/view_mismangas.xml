@@ -10,7 +10,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_view_download"
-        android:icon="@drawable/ic_action_downloads"
+        android:icon="@drawable/vector_drawable_ic_file_download_white___px"
         android:title="@string/descargas"
         app:showAsAction="always" />
     <item
@@ -62,8 +62,6 @@
                     </group>
                 </menu>
             </item>
-            <item android:id="@+id/action_edit_server_list"
-                android:title="@string/edit_server_list"/>
             <item
                 android:id="@+id/action_settings"
                 android:title="@string/configuraciones" />

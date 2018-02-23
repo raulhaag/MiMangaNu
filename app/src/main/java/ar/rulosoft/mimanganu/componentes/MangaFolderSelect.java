@@ -27,7 +27,6 @@ import java.util.List;
 
 import ar.rulosoft.custompref.ArrayAdapterDirectory;
 import ar.rulosoft.mimanganu.MainActivity;
-import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -41,7 +40,6 @@ public class MangaFolderSelect extends DialogFragment {
     private String actual;
     private ListView dirs;
     private TextView dirs_path;
-    private MainFragment mainFragment;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
     private AlertDialog dialog;
 
@@ -111,10 +109,6 @@ public class MangaFolderSelect extends DialogFragment {
         });
 
         return dialog;
-    }
-
-    public void setMainFragment(MainFragment mainFragment) {
-        this.mainFragment = mainFragment;
     }
 
     public class AddMangaTask extends AsyncTask<String, Integer, Void> {
@@ -191,9 +185,6 @@ public class MangaFolderSelect extends DialogFragment {
                 Toast.makeText(getContext(), getContext().getString(R.string.dir_already_on_db), Toast.LENGTH_LONG).show();
             if (!error.isEmpty()) {
                 Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
-            }
-            if (mainFragment != null) {
-                mainFragment.setListManga(true);
             }
 
             dialog.dismiss();
@@ -272,12 +263,7 @@ public class MangaFolderSelect extends DialogFragment {
             if (!error.isEmpty()) {
                 Toast.makeText(getActivity(), error, Toast.LENGTH_LONG).show();
             }
-            if (mainFragment != null) {
-                mainFragment.setListManga(true);
-            }
-
             dialog.dismiss();
-            //getActivity().onBackPressed();
             super.onPostExecute(result);
         }
     }

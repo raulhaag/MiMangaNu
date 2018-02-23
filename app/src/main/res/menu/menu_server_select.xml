@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_edit_server_list"
+        android:icon="@drawable/vector_drawable_ic_edit_white___px"
+        android:title="@string/edit_server_list"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,7 +1,5 @@
 package ar.rulosoft.mimanganu;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,12 +9,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
@@ -37,29 +35,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
-import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
-import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Paths;
+import ar.rulosoft.mimanganu.utils.RevealAnimationSetting;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
-import io.codetail.animation.ViewAnimationUtils;
-import io.codetail.widget.RevealFrameLayout;
 
 /**
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements View.OnClickListener, MainActivity.OnBackListener, MainActivity.OnKeyUpListener, ServerRecAdapter.OnEndActionModeListener, MangasRecAdapter.OnMangaClick {
+public class MainFragment extends Fragment implements MainActivity.OnKeyUpListener, MangasRecAdapter.OnMangaClick, View.OnClickListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -72,41 +66,58 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
     private SharedPreferences pm;
     private Menu menu;
     private FloatingActionButton floatingActionButton_add;
-    private boolean is_server_list_open = false;
-    private ServerRecAdapter serverRecAdapter;
-    private RevealFrameLayout reveal;
     private RecyclerView recyclerView;
     private MangasRecAdapter mMAdapter;
     private SwipeRefreshLayout swipeReLayout;
-    private boolean returnToMangaList = false;
     private UpdateListTask updateListTask = null;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
-    private View mmView, serverListView;
     private int lastContextMenuIndex;
+
+    public MainFragment() {
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        setAllowEnterTransitionOverlap(true);
+        setAllowReturnTransitionOverlap(true);
+        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        MainActivity.colors = ThemeColors.getColors(pm);
+        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_main, container, false);
+        final CoordinatorLayout cl = viewGroup.findViewById(R.id.coordinator_layout);
+        recyclerView = viewGroup.findViewById(R.id.recicleview_mis_mangas);
+        swipeReLayout = viewGroup.findViewById(R.id.str);
+        swipeReLayout.setColorSchemeColors(MainActivity.colors[0], MainActivity.colors[1]);
+        swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                updateListTask = new UpdateListTask(getActivity(), cl, pm);
+                updateListTask.execute();
+            }
+        });
+        int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
+        if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
+            columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnSize));
+        if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
+            swipeReLayout.post(new Runnable() {
+                @Override
+                public void run() {
+                    swipeReLayout.setRefreshing(true);
+                }
+            });
+        }
+        return viewGroup;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        MainActivity.colors = ThemeColors.getColors(pm);
-
         if (getView() != null) {
-            reveal = getView().findViewById(R.id.revealFrame);
             floatingActionButton_add = getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
-            mmView = getMMView(reveal);
-            serverListView = getServerListView(reveal);
-            reveal.removeAllViews();
-            reveal.addView(mmView);
-            reveal.addView(serverListView);
         }
     }
 
@@ -127,16 +138,9 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
         activity.enableHomeButton(false);
         activity.setTitle(getString(R.string.app_name));
-        activity.backListener = this;
         activity.keyUpListener = this;
+        setListManga(true);
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
-
-        if (is_server_list_open) {
-            serverListView.setVisibility(View.VISIBLE);
-        } else {
-            serverListView.setVisibility(View.INVISIBLE);
-        }
-
         if (MainActivity.coldStart) {
             // Manga Updates
             long updateInterval = Long.parseLong(pm.getString("update_interval", "0"));
@@ -197,29 +201,11 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
     }
 
-    @Override
+    //@Override
     public void onClick(View v) {
-
-        int cx = (floatingActionButton_add.getLeft() + floatingActionButton_add.getRight()) / 2;
-        int cy = (floatingActionButton_add.getTop() + floatingActionButton_add.getBottom()) / 2;
-        int radius = Math.max(serverListView.getWidth(), serverListView.getHeight());
-        if (is_server_list_open) {
-            is_server_list_open = false;
-            Animator anim = ViewAnimationUtils.createCircularReveal(serverListView, cx, cy, radius, 0);
-            anim.addListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    super.onAnimationEnd(animation);
-                    serverListView.setVisibility(View.INVISIBLE);
-                }
-            });
-            anim.start();
-        } else {
-            is_server_list_open = true;
-            Animator anim = ViewAnimationUtils.createCircularReveal(serverListView, cx, cy, 0, radius);
-            serverListView.setVisibility(View.VISIBLE);
-            anim.start();
-        }
+        final int cx = v.getLeft() + v.getWidth() / 2, cy = v.getTop() + v.getHeight() / 2;
+        ((MainActivity)getActivity()).replaceFragment(ServersSelectFragment.newInstance(
+                new RevealAnimationSetting(cx, cy, getView().getWidth(), getView().getHeight(), (int)v.getWidth()/2)), "SERVER_SELECT");
     }
 
     @Override
@@ -312,12 +298,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
                 ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");
                 break;
             }
-            case R.id.action_edit_server_list:
-                if (!is_server_list_open) {
-                    onClick(floatingActionButton_add);
-                }
-                serverRecAdapter.startActionMode();
-                break;
             case R.id.sort_last_read: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 0).apply();
@@ -380,57 +360,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
             }
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public ViewGroup getServerListView(ViewGroup container) {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_add_manga, container, false);
-        final RecyclerView server_list = viewGroup.findViewById(R.id.lista_de_servers);
-        server_list.setLayoutManager(new LinearLayoutManager(getActivity()));
-        serverRecAdapter = new ServerRecAdapter(ServerBase.getServers(getContext()), pm, getActivity());
-        serverRecAdapter.setEndActionModeListener(this);
-        server_list.setAdapter(serverRecAdapter);
-        serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
-            @Override
-            public void onServerClick(final ServerBase server) {
-                if (!(server instanceof FromFolder)) {
-                    if (server.hasCredentials()) {
-                        if (server.hasFilteredNavigation()) {
-                            ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
-                            Bundle b = new Bundle();
-                            b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                            fragment.setArguments(b);
-                            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
-                        } else {
-                            ServerListFragment fragment = new ServerListFragment();
-                            Bundle b = new Bundle();
-                            b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                            fragment.setArguments(b);
-                            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
-                        }
-                    } else {
-                        LoginDialog lDialog = new LoginDialog(getContext(), server);
-                        lDialog.getDialog().setCanceledOnTouchOutside(false);
-                        lDialog.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                if (server.hasCredentials())
-                                    onServerClick(server);
-                                else
-                                    Util.getInstance().showFastSnackBar(getString(R.string.this_server_needs_an_account), getView(), getContext());
-                            }
-                        });
-                        lDialog.show();
-                    }
-                } else {
-                    MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
-                    mangaFolderSelect.setMainFragment(MainFragment.this);
-                    mangaFolderSelect.show(getChildFragmentManager(), "fragment_find_folder");
-                    Log.i("MF", "from file selected");
-                }
-            }
-        });
-        return viewGroup;
     }
 
     public void setListManga(boolean force) {
@@ -498,14 +427,12 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
 
     @Override
     public void onMangaClick(Manga manga) {
-        if (serverRecAdapter.actionMode == null) {
-            Bundle bundle = new Bundle();
-            bundle.putInt(MainFragment.MANGA_ID, manga.getId());
-            MangaFragment mangaFragment = new MangaFragment();
-            mangaFragment.setArguments(bundle);
-            //In rare cases State loss occurs
-            ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
-        }
+        Bundle bundle = new Bundle();
+        bundle.putInt(MainFragment.MANGA_ID, manga.getId());
+        MangaFragment mangaFragment = new MangaFragment();
+        mangaFragment.setArguments(bundle);
+        //In rare cases State loss occurs
+        ((MainActivity) getActivity()).replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
     }
 
     @Override
@@ -575,46 +502,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         return super.onContextItemSelected(item);
     }
 
-
-    public ViewGroup getMMView(final ViewGroup container) {
-        LayoutInflater inflater = LayoutInflater.from(getActivity());
-        ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_mis_mangas, container, false);
-        recyclerView = viewGroup.findViewById(R.id.recicleview_mis_mangas);
-        swipeReLayout = viewGroup.findViewById(R.id.str);
-        swipeReLayout.setColorSchemeColors(MainActivity.colors[0], MainActivity.colors[1]);
-        swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                updateListTask = new UpdateListTask(getActivity(), container, pm);
-                updateListTask.execute();
-            }
-        });
-        int columnSize = Integer.parseInt(pm.getString("grid_columns", "-1"));
-        if (columnSize == -1 || pm.getBoolean("grid_columns_automatic_detection", true))
-            columnSize = Util.getInstance().getGridColumnSizeFromWidth(getActivity());
-        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), columnSize));
-        if (updateListTask != null && updateListTask.getStatus() == AsyncTask.Status.RUNNING) {
-            swipeReLayout.post(new Runnable() {
-                @Override
-                public void run() {
-                    swipeReLayout.setRefreshing(true);
-                }
-            });
-        }
-        setListManga(true);
-        return viewGroup;
-    }
-
-
-    @Override
-    public boolean onBackPressed() {
-        if (is_server_list_open) {
-            onClick(floatingActionButton_add);
-            return true;
-        }
-        return false;
-    }
-
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_MENU) {
@@ -623,15 +510,6 @@ public class MainFragment extends Fragment implements View.OnClickListener, Main
         }
         return false;
     }
-
-    @Override
-    public void onEndActionMode() {
-        if (returnToMangaList) {
-            returnToMangaList = false;
-            onClick(floatingActionButton_add);
-        }
-    }
-
 
     public class UpdateListTask extends AutomaticUpdateTask {
         private Context context;

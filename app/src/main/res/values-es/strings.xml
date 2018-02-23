@@ -433,5 +433,6 @@
     <string name="dont_ask_again">Siempre</string>
     <string name="connection_retry_summary">%s veces.</string>
     <string name="connection_retry_title">Reintentos en error</string>
+    <string name="select_server">Selecionna servidor</string>
 
 </resources>

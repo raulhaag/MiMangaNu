@@ -3,10 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <io.codetail.widget.RevealFrameLayout
-        android:id="@+id/revealFrame"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/str"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/recicleview_mis_mangas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numColumns="3" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/floatingActionButton_add"

@@ -51,6 +51,7 @@ configurations.all {
 
 dependencies {
     final ANDROID_SUPPORT = '26.1.0'
+    implementation 'com.android.support:support-v4:26.1.0'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile "com.android.support:support-v4:$ANDROID_SUPPORT"
     compile "com.android.support:design:$ANDROID_SUPPORT"
@@ -69,11 +70,10 @@ dependencies {
     compile 'com.evernote:android-job:1.2.1'
     compile 'ch.acra:acra:4.9.2'
     dependencies {
-        compile ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
+        compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
             transitive = true;
         }
     }
-
 
     // for device-based testing
     androidTestCompile "com.android.support:support-annotations:$ANDROID_SUPPORT"
