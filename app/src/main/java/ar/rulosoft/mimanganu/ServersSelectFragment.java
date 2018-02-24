@@ -20,9 +20,6 @@ import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.AnimationUtils;
-import ar.rulosoft.mimanganu.utils.Dismissible;
-import ar.rulosoft.mimanganu.utils.RevealAnimationSetting;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -31,12 +28,9 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Use the {@link ServersSelectFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class ServersSelectFragment extends Fragment implements Dismissible, MainActivity.OnBackListener, ServerRecAdapter.OnEndActionModeListener {
+public class ServersSelectFragment extends Fragment implements MainActivity.OnBackListener, ServerRecAdapter.OnEndActionModeListener {
 
-    public static final String A_R_SETTINGS = "a_r_settings";
     private ServerRecAdapter serverRecAdapter;
-    private boolean animate_out = false;
-    private boolean animate_in = true;
     private RecyclerView server_list;
 
     public ServersSelectFragment() {
@@ -49,12 +43,8 @@ public class ServersSelectFragment extends Fragment implements Dismissible, Main
      *
      * @return A new instance of fragment ServersFragment.
      */
-    public static ServersSelectFragment newInstance(RevealAnimationSetting revealAnimationSetting) {
-        Bundle args = new Bundle();
-        args.putParcelable(A_R_SETTINGS, revealAnimationSetting);
-        ServersSelectFragment fragment = new ServersSelectFragment();
-        fragment.setArguments(args);
-        return fragment;
+    public static ServersSelectFragment newInstance() {
+        return new ServersSelectFragment();
     }
 
     @Override
@@ -112,12 +102,6 @@ public class ServersSelectFragment extends Fragment implements Dismissible, Main
                 }
             }
         });
-        if(animate_in) {
-            AnimationUtils.registerCircularRevealAnimation(getContext(), server_list,
-                    (RevealAnimationSetting) getArguments().getParcelable(A_R_SETTINGS),
-                    MainActivity.colors[1], viewGroup.getSolidColor());
-            animate_in = false;
-        }
         return viewGroup;
     }
 
@@ -165,25 +149,7 @@ public class ServersSelectFragment extends Fragment implements Dismissible, Main
 
 
     @Override
-    public void dismiss(final OnDismissedListener listener) {
-        AnimationUtils.startCircularExitAnimation(getContext(), server_list,
-                (RevealAnimationSetting) getArguments().getParcelable(A_R_SETTINGS), getView().getSolidColor(),
-                MainActivity.colors[1], new OnDismissedListener() {
-                    @Override
-                    public void onDismissed() {
-                        animate_out = true;
-                        getActivity().onBackPressed();
-                    }
-                });
-    }
-
-    @Override
     public boolean onBackPressed() {
-        if (!animate_out) {
-            dismiss(null);
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 }

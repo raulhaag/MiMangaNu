@@ -188,7 +188,9 @@ public class MainActivity extends AppCompatActivity {
         // setAllowOptimization(true) (new default)
         // fA -> fB
         // fB.onStart -> fA.onStop
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
+        ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         //System.gc();
     }
@@ -196,7 +198,19 @@ public class MainActivity extends AppCompatActivity {
     public void replaceFragment(Fragment fragment, String tag) {
         backListener = null;
         keyUpListener = null;
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(R.anim.fade_in, R.anim.fade_out).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commit();
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
+        ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commit();
+        getSupportFragmentManager().executePendingTransactions();
+    }
+
+    public void replaceFragment(Fragment fragment, String tag, int f1_animation_out,
+                                int f2_animation_in, int f2_animation_out, int f1_animation_in) {
+        backListener = null;
+        keyUpListener = null;
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(f2_animation_in,
+                f1_animation_out, f1_animation_in, f2_animation_out).replace(R.id.coordinator_layout,
+                fragment).addToBackStack(tag).commit();
         getSupportFragmentManager().executePendingTransactions();
     }
 

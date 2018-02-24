@@ -44,7 +44,6 @@ import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Paths;
-import ar.rulosoft.mimanganu.utils.RevealAnimationSetting;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
@@ -203,9 +202,8 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
 
     //@Override
     public void onClick(View v) {
-        final int cx = v.getLeft() + v.getWidth() / 2, cy = v.getTop() + v.getHeight() / 2;
-        ((MainActivity)getActivity()).replaceFragment(ServersSelectFragment.newInstance(
-                new RevealAnimationSetting(cx, cy, getView().getWidth(), getView().getHeight(), (int)v.getWidth()/2)), "SERVER_SELECT");
+        ((MainActivity)getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
+                "SERVER_SELECT",R.anim.stay_there, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.stay_there);
     }
 
     @Override
