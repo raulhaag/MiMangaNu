@@ -76,6 +76,8 @@ public abstract class Reader extends FrameLayout {
 
     public abstract int getCurrentPage();
 
+    public abstract int getPages();
+
     protected abstract int transformPage(int page);
 
     public void setScrollSensitive(float mScrollSensitive) {
@@ -103,6 +105,18 @@ public abstract class Reader extends FrameLayout {
     }
 
     public void setScreenFit(DisplayType displayType) {
+    }
+
+    public int limitValidPage(int idx) {
+        if (idx < 0) return 0;
+        else if (idx < getPages()) return idx;
+        else return getPages() - 1;
+    }
+
+    public boolean isValidIdx(int idx) {
+        if (idx < 0) return false;
+        else if (idx < getPages()) return true;
+        else return false;
     }
 
     public enum Direction {L2R, R2L, VERTICAL}

@@ -51,6 +51,11 @@ public abstract class PagedReader extends Reader implements TapListener {
     }
 
     @Override
+    public int getPages() {
+        return paths.size();
+    }
+
+    @Override
     public void setPaths(List<String> paths) {
         this.paths = paths;
         setPagerAdapter(new PageAdapter());

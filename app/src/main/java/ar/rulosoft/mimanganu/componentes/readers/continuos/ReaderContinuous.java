@@ -32,7 +32,7 @@ import rapid.decoder.BitmapDecoder;
  * Created by Raul on 22/10/2015.
  */
 
-public abstract class ReaderContinuous extends Reader implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener{
+public abstract class ReaderContinuous extends Reader implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
     protected int currentPage = 0, lastBestVisible = 0;
     protected float lastPageBestPercent = 0f;
     protected int mTextureMax = 1024;
@@ -84,6 +84,10 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
 
     public abstract void reloadImage(int idx);
 
+    @Override
+    public int getPages() {
+        return pages.size();
+    }
 
     @Override
     protected int transformPage(int page) {
@@ -98,7 +102,8 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     }
 
     public void freePage(int idx) {
-        getPage(idx).freeMemory();
+        if (isValidIdx(idx))
+            getPage(idx).freeMemory();
     }
 
     @Override
@@ -108,20 +113,16 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
 
     public String getPath(int idx) {
         Page p = getPage(idx);
-        if(p != null){
+        if (p != null) {
             return p.getPath();
-        }else{
+        } else {
             return "";
         }
     }
 
     public Page getPage(int page) {
-        if(pages != null && page >= 0 && page < pages.size())
-        if (page == 0) {
-            return pages.get(page);
-        } else {
-            return pages.get(page - 1);
-        }
+        if (isValidIdx(page))
+                return pages.get(page);
         return null;
     }
 
@@ -243,14 +244,16 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                     drawing = true;
                     mHandler.post(new Runnable() {
                         @Override
-                        public void run() {onlyInvalidate();                       }
+                        public void run() {
+                            onlyInvalidate();
+                        }
                     });
                 }
             }).start();
         }
     }
 
-    private void onlyInvalidate(){
+    private void onlyInvalidate() {
         super.invalidate();
     }
 
