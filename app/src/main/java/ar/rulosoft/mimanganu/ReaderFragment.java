@@ -31,7 +31,6 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -42,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import ar.rulosoft.mimanganu.componentes.Chapter;
+import ar.rulosoft.mimanganu.componentes.CustomSeekBar;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
@@ -59,7 +59,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
 import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
-public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener, MainActivity.OnKeyUpListener, MainActivity.OnBackListener {
+public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener, CustomSeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener, MainActivity.OnKeyUpListener, MainActivity.OnBackListener {
 
     private static final String KEEP_SCREEN_ON = "keep_screen_on";
     private static final String ORIENTATION = "orientation";
@@ -77,12 +77,12 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private float mScrollFactor = 1f;
     // These are layout components
     private RelativeLayout mControlsLayout;
-    private SeekBar mSeekBar;
+    private CustomSeekBar mSeekBar;
     private Toolbar mActionBar;
     private Chapter mChapter, nextChapter, previousChapter;
     private Manga mManga;
     private ServerBase mServerBase;
-    private TextView mSeekerPage, mScrollSensitiveText;
+    private TextView pageTextView, mScrollSensitiveText;
     private MenuItem keepOnMenuItem, screenRotationMenuItem;
     private Reader.Type readerType = Reader.Type.CONTINUOUS;
     private boolean controlVisible = false;
@@ -90,6 +90,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private AlertDialog mDialog = null;
     private boolean reDownloadingImage, freshStart = true;
     private int reader_bg;
+    private TextView titleTextView;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -101,6 +102,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
         mChapter = Database.getChapter(getActivity(), chapterId);
         if (mChapter == null) {
+            Log.e("ERROR", "CAN'T LOAD CHAPTER");
             //can't get chapter
             return;
         }
@@ -132,15 +134,18 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         RelativeLayout scrollSelect;
-        LinearLayout seekerLayout;
+        RelativeLayout seekerLayout;
         Button buttonMinus, buttonPlus;
 
         super.onCreateView(inflater, container, savedInstanceState);
         View view = inflater.inflate(R.layout.fragment_reader, container, false);
         mActionBar = view.findViewById(R.id.action_bar);
         mControlsLayout = view.findViewById(R.id.controls);
-        mSeekerPage = view.findViewById(R.id.page);
+        pageTextView =  view.findViewById(R.id.pages);
+        titleTextView = view.findViewById(R.id.title);
         mSeekBar = view.findViewById(R.id.seeker);
+        mSeekBar.setMin(1);
+
         seekerLayout = view.findViewById(R.id.seeker_layout);
         scrollSelect = view.findViewById(R.id.scroll_selector);
         buttonMinus = view.findViewById(R.id.minus);
@@ -150,13 +155,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         mActionBar.setTitleTextColor(Color.WHITE);
         mControlsLayout.setAlpha(0f);
         mControlsLayout.setVisibility(View.GONE);
-        mSeekerPage.setAlpha(.9f);
-        mSeekerPage.setTextColor(Color.WHITE);
 
         mScrollSensitiveText.setText(getString(R.string.factor_suffix, mScrollFactor));
         mActionBar.setBackgroundColor(reader_bg);
         seekerLayout.setBackgroundColor(reader_bg);
-        mSeekerPage.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
         scrollSelect.setBackgroundColor(reader_bg);
 
@@ -274,10 +276,12 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 }
             }
         }
-        getActivity().setTitle(mChapter.getTitle());
+        titleTextView.setText(mChapter.getTitle());
         if (mChapter.getPages() == 0) {
             new GetPageTask().execute(mChapter);
         } else {
+            if(mChapter.getPagesRead() == 0)
+                mChapter.setPagesRead(1);
             DownloadPoolService.setDownloadListener(this);
             mChapter.setReadStatus(Chapter.READING);
             Database.updateChapter(getActivity(), mChapter);
@@ -296,8 +300,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 }
             }
             mReader.setPaths(pages);
-            mActionBar.setTitle(mChapter.getTitle());
-            mSeekBar.setMax(mChapter.getPages() - 1);
+            mActionBar.setTitle(mManga.getTitle());
+            mSeekBar.setMax(mChapter.getPages());
             DownloadPoolService.attachListener(this, mChapter.getId());
             boolean next = false;
             for (int i = 0; i < mManga.getChapters().size(); i++) {
@@ -504,7 +508,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     @Override
     public void onImageDownloaded(int cid, int page) {
         if (cid == mChapter.getId())
-            mReader.reloadImage(page + 1);
+            mReader.reloadImage(page);
     }
 
     @Override
@@ -555,21 +559,19 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (mSeekerPage != null)
-            mSeekerPage.setText(String.format(Locale.getDefault(), "%d", progress + 1));
+        if (pageTextView != null)
+            pageTextView.setText(String.format(Locale.getDefault(), "%d / %d", seekBar.getProgress(), mChapter.getPages()));
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        mSeekerPage.setText(String.format(Locale.getDefault(), "%d", seekBar.getProgress() + 1));
-        mSeekerPage.setVisibility(SeekBar.VISIBLE);
+        pageTextView.setText(String.format(Locale.getDefault(), "%d / %d", seekBar.getProgress(), mChapter.getPages()));
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        mSeekerPage.setVisibility(SeekBar.INVISIBLE);
         int pm = seekBar.getProgress();
-        mReader.goToPage(pm + 1);//start on 0
+        mReader.goToPage(pm);
     }
 
     @Override
@@ -677,21 +679,19 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     }
 
     public void onPageChanged(int page) {
-        if (page == 0)
-            page++;
         updatedValue = true;
         mChapter.setPagesRead(page);
-        mSeekBar.setProgress(page - 1);
+        mSeekBar.setProgress(page);
         if (mReader.isLastPageVisible()) {
             mChapter.setPagesRead(mChapter.getPages());
             mChapter.setReadStatus(Chapter.READ);
         } else if (mChapter.getReadStatus() == Chapter.READ) {
             mChapter.setReadStatus(Chapter.READING);
-        };
-        /*  TODO need revision of next tree lines */
+        }
+        /*  TODO need revision of next tree lines
         if (mChapter.isDownloaded() && !new File(mReader.getPath(page)).exists()) {
             reDownloadCurrentImage();
-        }
+        }*/
     }
 
     @Override
@@ -702,7 +702,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 mChapter.setReadStatus(Chapter.UNREAD);
                 mChapter.setPagesRead(1);
                 loadChapter(previousChapter, LoadMode.END);
-                //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                 Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getActivity());
             }
         }

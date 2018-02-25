@@ -51,7 +51,7 @@ public class VerticalReader extends ReaderContinuous {
         else
             pageIdx = idx - 1;
         if (pages != null && pageIdx < pages.size() && pageIdx >= 0) {
-            int cPage = currentPage;
+            int cPage = currentPage - 1;
             if (pages.size() < cPage || cPage < 0)
                 cPage = 0;
             if(cPage >= pages.size())
@@ -86,15 +86,15 @@ public class VerticalReader extends ReaderContinuous {
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (readerListener != null)
             if (e.getX() < getWidth() / 4) {
-                if (currentPage == 0)
+                if (currentPage == 1)
                     readerListener.onStartOver();
                 else
-                    goToPage(currentPage);
+                    goToPage(currentPage -1);
             } else if (e.getX() > getWidth() / 4 * 3) {
                 if (isLastPageVisible())
                     readerListener.onEndOver();
                 else
-                    goToPage(currentPage + 2);
+                    goToPage(currentPage + 1);
             } else {
                 readerListener.onMenuRequired();
             }
@@ -163,10 +163,10 @@ public class VerticalReader extends ReaderContinuous {
     @Override
     public void postLayout() {
         if(yScroll == 0)
-            absoluteScroll(xScroll, getPagePosition(currentPage));
+            absoluteScroll(xScroll, getPagePosition(currentPage - 1));
         generateDrawPool();
         if (readerListener != null) {
-            readerListener.onPageChanged(transformPage(currentPage));
+            readerListener.onPageChanged(currentPage);
         }
     }
 
@@ -184,7 +184,7 @@ public class VerticalReader extends ReaderContinuous {
         if (readerListener != null) {
             readerListener.onPageChanged(index);
         }
-        currentPage = page;
+        currentPage = transformPage(page);
     }
 
     @Override
@@ -217,7 +217,7 @@ public class VerticalReader extends ReaderContinuous {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     animatingSeek = false;
-                    currentPage = aPage;
+                    currentPage = transformPage(aPage);
                     VerticalReader.this.generateDrawPool();
                 }
 
@@ -244,7 +244,7 @@ public class VerticalReader extends ReaderContinuous {
     public void reset() {
         xScroll = 0;
         yScroll = 0;
-        currentPage = 0;
+        currentPage = 1;
         pages = null;
         pagesLoaded = false;
         viewReady = false;

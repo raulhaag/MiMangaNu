@@ -229,8 +229,8 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                                     tested = false;
                                 }//catch errors caused for array concurrent modify
                             }
-                            if (currentPage != lastBestVisible) {
-                                currentPage = lastBestVisible;
+                            if (currentPage != transformPage(lastBestVisible)) {
+                                currentPage = transformPage(lastBestVisible);
                                 readerListener.onPageChanged(currentPage);
                             }
                         }
@@ -298,7 +298,6 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
             generateDrawPool();
         }
     }
-
 
     protected Page initValues(String path) {
         Page dimension = getNewPage();
