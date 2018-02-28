@@ -228,9 +228,6 @@ public abstract class ServerBase {
             case MANGAFOX:
                 serverBase = new MangaFox(context);
                 break;
-            case SUBMANGA:
-                serverBase = new SubManga(context);
-                break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga(context);
                 break;
@@ -372,7 +369,6 @@ public abstract class ServerBase {
                 new TuMangaOnline(context),
                 new BatoToEs(context),
                 new HeavenManga(context),
-                new SubManga(context),
                 new EsNineManga(context),
                 new LeoManga(context),
                 new Kumanga(context),

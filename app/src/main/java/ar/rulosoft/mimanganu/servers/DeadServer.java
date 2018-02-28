@@ -32,6 +32,7 @@ public class DeadServer extends ServerBase {
         deadServers.put(STARKANACOM, "Starkana");
         deadServers.put(TUSMANGAS, "TusMangasOnline");
         deadServers.put(ESMANGAHERE, "EsMangaHere");
+        deadServers.put(SUBMANGA, "SubManga");
         return deadServers.get(m.getServerId());
     }
 

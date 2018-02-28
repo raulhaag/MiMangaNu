@@ -33,6 +33,21 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.80:
+* Fix y reestructuración NineManga
+* Nueva traducción al ruso (YChvanov).
+* Agregado MangaRawOnline.
+* Muchos fix internos y cambios en UI.
+* SubManga fue retirado.
+
+Changes in v1.80:
+* Fix an resstructured Ninemanga.
+* New Russian translation (YChvanov).
+* Added MangaRawOnline.
+* Lot of internal fixes and on UI.
+* SubManga was removed.
+
 Cambios en v1.79:
 * Agregada configuración de reintentos.
 * Cambiado Bato.to a Vatoto (no funcional aun)
