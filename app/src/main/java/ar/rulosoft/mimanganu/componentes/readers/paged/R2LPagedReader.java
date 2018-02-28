@@ -20,14 +20,14 @@ public class R2LPagedReader extends HorizontalPagedReader {
                 if (readerListener != null) {
                     readerListener.onPageChanged(transformPage(position));
                 }
-                currentPage = position;
+                currentPage = position + 1;
                 if (mPageAdapter != null)
                     mPageAdapter.setCurrentPage(position);
             }
 
             @Override
             public void onPageSelected(int position) {
-                currentPage = position;
+                currentPage = position + 1;
             }
 
             @Override
@@ -45,6 +45,11 @@ public class R2LPagedReader extends HorizontalPagedReader {
     @Override
     public boolean isLastPageVisible() {
         return paths != null && !paths.isEmpty() && mViewPager.getCurrentItem() == (paths.size() - 1);
+    }
+
+    @Override
+    public int getCurrentPage() {
+        return getCurrentPosition() + 1;
     }
 
     @Override
@@ -66,7 +71,7 @@ public class R2LPagedReader extends HorizontalPagedReader {
                         readerListener.onStartOver();
                     }
                 } else {
-                    mViewPager.setCurrentItem(currentPage - 1);
+                    mViewPager.setCurrentItem(getCurrentPosition() - 1);
                 }
             } else if (e.getX() > getWidth() / 4 * 3) {
                 if (currentPage == paths.size() - 1) {
@@ -74,7 +79,7 @@ public class R2LPagedReader extends HorizontalPagedReader {
                         readerListener.onEndOver();
                     }
                 } else {
-                    mViewPager.setCurrentItem(currentPage + 1);
+                    mViewPager.setCurrentItem(getCurrentPosition() + 1);
                 }
             } else {
                 readerListener.onMenuRequired();

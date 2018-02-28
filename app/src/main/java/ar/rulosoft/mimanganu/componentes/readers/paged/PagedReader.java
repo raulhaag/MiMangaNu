@@ -7,7 +7,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,7 +33,7 @@ public abstract class PagedReader extends Reader implements TapListener {
     private static ImageViewTouchBase.DisplayType mScreenFit;
     protected PageAdapter mPageAdapter;
     List<String> paths;
-    int currentPage = 0;
+    int currentPage = 1;  //keep the value from 1..n for externally view
     private InitialPosition iniPosition = InitialPosition.LEFT_UP;
 
     public PagedReader(Context context) {
@@ -42,6 +41,8 @@ public abstract class PagedReader extends Reader implements TapListener {
     }
 
     public abstract void setPagerAdapter(PageAdapter mPageAdapter);
+
+    protected abstract int getCurrentPosition();
 
     @Override
     public void setScreenFit(ImageViewTouchBase.DisplayType displayType) {
@@ -68,24 +69,16 @@ public abstract class PagedReader extends Reader implements TapListener {
 
     @Override
     public void freePage(int idx) {
-        if (idx == 0) {
-            if (mPageAdapter != null && mPageAdapter.pages[idx] != null) {
-                mPageAdapter.pages[idx].unloadImage();
-            }
-        } else {
-            if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
-                mPageAdapter.pages[idx - 1].unloadImage();
-            }
+        int iIdx = idx - 1;
+        if (mPageAdapter != null && mPageAdapter.pages[iIdx] != null) {
+            mPageAdapter.pages[iIdx].unloadImage();
         }
     }
 
     @Override
     public String getPath(int idx) {
         if (paths != null) {
-            if (idx == 0)
-                return paths.get(idx);
-            else if (idx < paths.size())
-                return paths.get(idx - 1);
+            return paths.get(idx - 1);
         }
         return "";
     }
@@ -93,26 +86,13 @@ public abstract class PagedReader extends Reader implements TapListener {
     @Override
     public void reset() {
         setPagerAdapter(null);
-        currentPage = 0;
+        currentPage = 1;
     }
 
     @Override
     public void reloadImage(int idx) {
-        //Log.d("PR", "idx: " + idx);
-        if (mPageAdapter != null) {
-            if (idx > mPageAdapter.pages.length) {
-                Log.e("PagedReader", "idx > mPageAdapter.pages.length !");
-            } else {
-                if (idx == 0) {
-                    if (mPageAdapter.pages[idx] != null) {
-                        mPageAdapter.pages[idx].setImage();
-                    }
-                } else {
-                    if (mPageAdapter.pages[idx - 1] != null) {
-                        mPageAdapter.pages[idx - 1].setImage();
-                    }
-                }
-            }
+        if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
+                mPageAdapter.pages[idx - 1].setImage();
         }
     }
 
@@ -136,12 +116,10 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
 
         public Page getCurrentPage() {
-            return pages[currentPage];
+            return pages[getCurrentPosition()];
         }
 
         public void setCurrentPage(int nCurrentPage) {
-            if (mDirection == Direction.L2R)
-                nCurrentPage = paths.size() - nCurrentPage;
             currentPage = nCurrentPage;
             for (int i = 0; i < pages.length; i++) {
                 if (pages[i] != null) {
@@ -155,11 +133,7 @@ public abstract class PagedReader extends Reader implements TapListener {
         }
 
         Page getPage(int idx) {
-            if (idx < 0)
-                idx = 0;
-            else if (idx >= pages.length)
-                idx = pages.length - 1;
-            return pages[idx];
+            return pages[idx - 1];
         }
 
         @Override

@@ -35,7 +35,7 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
         int page = aPage - 1;
         mViewPager.setCurrentItem(page);
         if (readerListener != null) {
-            readerListener.onPageChanged(transformPage(page));
+            readerListener.onPageChanged(aPage);
         }
         currentPage = aPage;
     }
@@ -49,7 +49,7 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
         String infService = Context.LAYOUT_INFLATER_SERVICE;
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(infService);
         li.inflate(R.layout.view_paged_reader_vertical, this, true);
-        mViewPager = (UnScrolledViewPagerVertical) findViewById(R.id.pager);
+        mViewPager = findViewById(R.id.pager);
         addOnPageChangeListener();
         mViewPager.setOnSwipeOutListener(this);
     }
@@ -61,14 +61,14 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
                 if (readerListener != null) {
                     readerListener.onPageChanged(transformPage(position));
                 }
-                currentPage = position;
+                currentPage = position + 1;
                 if(mPageAdapter != null)
                     mPageAdapter.setCurrentPage(position);
             }
 
             @Override
             public void onPageSelected(int position) {
-                currentPage = position;
+                currentPage = position + 1;
             }
 
             @Override
@@ -83,23 +83,28 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
         mViewPager.setAdapter(mPageAdapter);
     }
 
+    @Override
+    protected int getCurrentPosition() {
+        return mViewPager.getCurrentItem();
+    }
+
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (readerListener != null)
             if (e.getX() < getWidth() / 4) {
-                if (currentPage == 0) {
+                if (currentPage == 1) {
                     if (readerListener != null) {
                         readerListener.onStartOver();
                     }
                 } else {
-                    mViewPager.setCurrentItem(currentPage - 1);
+                    mViewPager.setCurrentItem(getCurrentPosition() - 1);
                 }
             } else if (e.getX() > getWidth() / 4 * 3) {
-                if (currentPage == paths.size() - 1) {
+                if (currentPage == paths.size()) {
                     if (readerListener != null) {
                         readerListener.onEndOver();
                     }
                 } else {
-                    mViewPager.setCurrentItem(currentPage + 1);
+                    mViewPager.setCurrentItem(getCurrentPosition() + 1);
                 }
             } else {
                 readerListener.onMenuRequired();

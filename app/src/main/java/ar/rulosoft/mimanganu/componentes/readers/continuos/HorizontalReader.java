@@ -50,36 +50,28 @@ public abstract class HorizontalReader extends ReaderContinuous {
 
     @Override
     public void postLayout() {
-        absoluteScroll(getPagePosition(currentPage), yScroll);
+        absoluteScroll(getPagePosition(currentPage - 1), yScroll);
         generateDrawPool();
         if (readerListener != null) {
-            readerListener.onPageChanged(currentPage);
+            readerListener.onPageChanged(currentPage - 1);
         }
     }
 
     @Override
     public void seekPage(int index) {
         int page = index - 1;
-        if (page < 0)
-            page = 0;
-        else if (index >= pages.size())
-            page = pages.size() - 1;
         if (viewReady && pagesLoaded) {
             absoluteScroll(getPagePosition(page), yScroll);
             generateDrawPool();
         }
-        currentPage = page;
+        currentPage = index;
         if (readerListener != null) {
-            readerListener.onPageChanged(transformPage(currentPage));
+            readerListener.onPageChanged(currentPage);
         }
     }
 
     public void reloadImage(int idx) {
-        int pageIdx;
-        if(idx == 0)
-            pageIdx = idx;
-        else
-            pageIdx = idx - 1;
+        int pageIdx = idx - 1;
         if (pages != null && pageIdx < pages.size() && pageIdx >= 0) {
             int cPage = currentPage;
             if (pages.size() < cPage || cPage < 0)
@@ -158,7 +150,7 @@ public abstract class HorizontalReader extends ReaderContinuous {
     public void reset() {
         xScroll = 0;
         yScroll = 0;
-        currentPage = 0;
+        currentPage = 1;
         pages = null;
         pagesLoaded = false;
         viewReady = false;

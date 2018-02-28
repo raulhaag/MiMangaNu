@@ -108,11 +108,12 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
 
     @Override
     public int getCurrentPage() {
-        return currentPage + 1;
+        return currentPage;
     }
 
     public String getPath(int idx) {
-        Page p = getPage(idx);
+        int iIdx = idx - 1;
+        Page p = getPage(iIdx);
         if (p != null) {
             return p.getPath();
         } else {

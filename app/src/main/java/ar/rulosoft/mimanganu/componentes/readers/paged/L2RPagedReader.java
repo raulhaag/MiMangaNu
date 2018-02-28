@@ -113,15 +113,15 @@ public class L2RPagedReader extends HorizontalPagedReader {
                         readerListener.onStartOver();
                     }
                 } else {
-                    mViewPager.setCurrentItem(currentPage - 1);
+                    mViewPager.setCurrentItem(getCurrentPosition() - 1);
                 }
             } else if (e.getX() > getWidth() / 4 * 3) {
-                if (currentPage == paths.size() - 1) {
+                if (currentPage == paths.size()) {
                     if (readerListener != null) {
                         readerListener.onEndOver();
                     }
                 } else {
-                    mViewPager.setCurrentItem(currentPage + 1);
+                    mViewPager.setCurrentItem(getCurrentPosition() + 1);
                 }
             } else {
                 readerListener.onMenuRequired();
