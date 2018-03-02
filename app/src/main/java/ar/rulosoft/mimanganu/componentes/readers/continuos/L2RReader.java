@@ -131,12 +131,12 @@ public class L2RReader extends HorizontalReader {
                 if (isLastPageVisible())
                     readerListener.onEndOver();
                 else
-                    goToPage(currentPage + 2);
+                    goToPage(currentPage + 1);
             } else if (e.getX() > getWidth() / 4 * 3) {
-                if (currentPage == 0)
+                if (currentPage == 1)
                     readerListener.onStartOver();
                 else
-                    goToPage(currentPage);
+                    goToPage(currentPage - 1);
             } else {
                 readerListener.onMenuRequired();
             }

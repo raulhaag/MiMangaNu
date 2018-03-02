@@ -316,7 +316,7 @@ public class DownloadPoolService extends Service implements StateChangeListener 
             slots++;
         }
         if (downloadListener != null) {
-            downloadListener.onImageDownloaded(singleDownload.cid, singleDownload.index);
+            downloadListener.onImageDownloaded(singleDownload.cid, singleDownload.index + 1);// +1 reader manage from 1 .. n
         }
         if (mDownloadsChangesListener != null) {
             mDownloadsChangesListener.onStatusChanged(chapterDownloads.indexOf(singleDownload.cd), singleDownload.cd);

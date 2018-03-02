@@ -121,15 +121,15 @@ public class R2LReader extends HorizontalReader {
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
         if (e.getX() < getWidth() / 4) {
-            if (currentPage == 0)
+            if (currentPage == 1)
                 readerListener.onStartOver();
             else
-                goToPage(currentPage);
+                goToPage(currentPage - 1);
         } else if (e.getX() > getWidth() / 4 * 3) {
             if (isLastPageVisible())
                 readerListener.onEndOver();
             else
-                goToPage(currentPage + 2);
+                goToPage(currentPage + 1);
         } else {
             readerListener.onMenuRequired();
         }
