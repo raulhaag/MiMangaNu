@@ -34,6 +34,12 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.81:
+* QuickFix a error del lector introducido versión 1.80.
+
+Changes in v1.81:
+* QuickFix introduced error from v1.80 on reader.
+
 Cambios en v1.80:
 * Fix y reestructuración NineManga
 * Nueva traducción al ruso (YChvanov).

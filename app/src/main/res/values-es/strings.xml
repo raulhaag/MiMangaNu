@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.80:\n\t* Fix y reestructuración NineManga\n\t* Nueva traducción al ruso (YChvanov).\n\t* Agregado MangaRawOnline.\n\t* Muchos fix internos y cambios en UI.\n\t* SubManga fue retirado.</string>
+    <string name="update_message">Cambios en v1.81:\n\t* QuickFix a error del lector introducido versión 1.80.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
