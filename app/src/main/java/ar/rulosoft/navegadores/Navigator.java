@@ -2,6 +2,7 @@ package ar.rulosoft.navegadores;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
@@ -26,6 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
@@ -65,11 +67,17 @@ public class Navigator {
             TrustManager[] trustManagers = getTrustManagers(context);
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustManagers, null);
+            SSLSocketFactory socketFactory = null;
+            if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+                socketFactory = new Tls12SocketFactory(sslContext.getSocketFactory());
+            } else {
+                socketFactory = sslContext.getSocketFactory();
+            }
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
                     .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                     .addInterceptor(new CFInterceptor())
-                    .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
+                    .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
