@@ -67,8 +67,8 @@ public class Navigator {
             sslContext.init(null, trustManagers, null);
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
+                    .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                     .addInterceptor(new CFInterceptor())
-                    .addInterceptor(new RetryInterceptor())
                     .sslSocketFactory(sslContext.getSocketFactory(), (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
@@ -110,6 +110,7 @@ public class Navigator {
 
     public void setCookieJar(CookieJar cookieJar) {
         httpClient = new OkHttpClientConnectionChecker.Builder()
+                .addInterceptor(new RetryInterceptor())
                 .addInterceptor(new CFInterceptor())
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)

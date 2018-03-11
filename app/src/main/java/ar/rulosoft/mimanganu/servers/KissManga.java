@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.squareup.duktape.Duktape;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +22,7 @@ class KissManga extends ServerBase {
     private static final String PATTERN_CHAPTER =
             "<td>\\s*<a\\s*href=\"(/Manga/[^\"]+)\"\\s*title=\"[^\"]+\">([^<]+)</a>\\s*</td>";
     private static final String PATTERN_SEARCH =
-            "href=\"(/Manga/[^\"]+)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+            "<a href=\"[^\"]+(/[M|m]anga/[^\"]+)\">(.+?)</a>";
     private static final String PATTERN_MANGA =
             "(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
 
@@ -110,12 +111,7 @@ class KissManga extends ServerBase {
 
     @Override
     public boolean hasList() {
-        return true;
-    }
-
-    @Override
-    public ArrayList<Manga> getMangas() throws Exception {
-        return search("");
+        return false;
     }
 
     @Override
@@ -126,21 +122,16 @@ class KissManga extends ServerBase {
         // do not hide Doujinshi in result
         nav.addHeader("Cookie", "vns_doujinshi=1; ");
 
-        nav.addPost("authorArtist", "");
-        nav.addPost("mangaName", term);
-        nav.addPost("status", "");
-        nav.addPost("genres", "");
+        nav.addPost("keyword", URLEncoder.encode(term, "UTF-8"));
+        nav.addPost("type", "Manga");
 
-        String source = nav.post(HOST + "/AdvanceSearch");
-
-        ArrayList<Manga> searchList;
+        String source = nav.post(HOST + "/Search/SearchSuggest");
+        source = source.replaceAll("<\\*span>", "");
+        ArrayList<Manga> searchList = new ArrayList<>();
         Pattern p = Pattern.compile(PATTERN_SEARCH, Pattern.DOTALL);
         Matcher m = p.matcher(source);
-        if (m.find()) {
-            searchList = new ArrayList<>();
-            searchList.add(new Manga(getServerID(), m.group(2), m.group(1), m.group().contains("Status:</span>&nbsp;Completed")));
-        } else {
-            searchList = getMangasSource(source);
+        while (m.find()) {
+            searchList.add(new Manga(getServerID(), m.group(2), m.group(1), false));
         }
         return searchList;
     }

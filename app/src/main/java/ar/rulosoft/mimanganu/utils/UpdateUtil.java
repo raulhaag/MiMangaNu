@@ -237,13 +237,10 @@ public class UpdateUtil {
         protected Void doInBackground(Void... params) {
             try {
                 Navigator.getInstance().flushParameter();
-                String source = Navigator.getInstance().get("https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest");
-                final JSONObject jsonObject = new JSONObject(source);
+                String source = Navigator.getInstance().get(LATEST_RELEASE_URL);
 
                 int onlineVersionMinor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));
                 int onlineVersionMajor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\"tag_name\": \"(\\d+)\\.\\d+\"", source, ""));
-                //String body = getFirstMatchDefault("\"body\": \"(.+?)\"", source, "").replaceAll("\\\\r\\\\n","").trim().replaceAll("  "," ");
-                final String download_url = Util.getInstance().getFirstMatchDefault("\"browser_download_url\": \"(.+?)\"", source, "");
                 String currentVersionTmp = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
                 int currentVersionMinor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\\d+\\.(\\d+)", currentVersionTmp, ""));
                 int currentVersionMajor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("(\\d+)\\.\\d+", currentVersionTmp, ""));
