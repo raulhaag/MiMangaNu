@@ -60,10 +60,10 @@ import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
 public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener, MainActivity.OnKeyUpListener, MainActivity.OnBackListener {
 
-    private static final String KEEP_SCREEN_ON = "keep_screen_on";
-    private static final String ORIENTATION = "orientation";
+    public static final String KEEP_SCREEN_ON = "keep_screen_on";
+    public static final String ORIENTATION = "orientation";
+    public static final String ADJUST_KEY = "ajustar_a";
     private static final String MAX_TEXTURE = "max_texture";
-    private static final String ADJUST_KEY = "ajustar_a";
     private static int mTextureMax;
     private static DisplayType mScreenFit;
     public Reader mReader;

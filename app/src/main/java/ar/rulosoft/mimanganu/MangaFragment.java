@@ -43,6 +43,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.ControlInfoNoScroll;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ReaderOptions;
 import ar.rulosoft.mimanganu.componentes.readers.Reader.Direction;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
@@ -51,7 +52,7 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener {
+public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener, ReaderOptions.OptionListener {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
@@ -72,8 +73,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private SharedPreferences pm;
     private ImageLoader mImageLoader;
     private ListView mListView;
-    private MenuItem mMenuItemReaderSense, mMenuItemReaderType;
-    private int readerType;
     private int chapters_order; // 0 = db_desc | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc | 5 = db_asc
     private boolean hide_read;
     private Menu menu;
@@ -85,6 +84,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private int mNotifyID_MarkSelectedAsUnread = (int) System.currentTimeMillis();
     private int mNotifyID_RemoveChapters = (int) System.currentTimeMillis();
     private int mNotifyID_ResetChapters = (int) System.currentTimeMillis();
+    private ReaderOptions readerOptions;
 
     @Nullable
     @Override
@@ -105,164 +105,169 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         }
         mManga = Database.getManga(getActivity(), mMangaId);
         mServerBase = ServerBase.getServer(mManga.getServerId(), getContext());
-        readerType = pm.getBoolean("reader_type", true) ? 1 : 2;
-        if (mManga.getReaderType() != 0) {
-            readerType = mManga.getReaderType();
-        }
-        if (getView() != null) {
-            mListView = (ListView) getView().findViewById(R.id.list);
-            swipeReLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
-        }
-        mImageLoader = new ImageLoader(getActivity());
-        final int[] colors = ThemeColors.getColors(pm);
-        swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
-        if (savedInstanceState != null) {
-            if (searchForNewChapters.getStatus() == AsyncTask.Status.RUNNING) {
-                swipeReLayout.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        swipeReLayout.setRefreshing(true);
+        if (getView() == null) {
+            try {
+                finalize();
+            } catch (Throwable throwable) {
+                throwable.printStackTrace();
+            }
+        }else {
+            mListView = getView().findViewById(R.id.list);
+            swipeReLayout = getView().findViewById(R.id.str);
+            readerOptions = getView().findViewById(R.id.reader_options);
+            mImageLoader = new ImageLoader(getActivity());
+            final int[] colors = ThemeColors.getColors(pm);
+            readerOptions.setBackgroundColor(colors[0]);
+            readerOptions.setManga(mManga);
+            swipeReLayout.setColorSchemeColors(colors[0], colors[1]);
+            if (savedInstanceState != null) {
+                if (searchForNewChapters.getStatus() == AsyncTask.Status.RUNNING) {
+                    swipeReLayout.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            swipeReLayout.setRefreshing(true);
+                        }
+                    });
+                }
+            }
+            swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    if ((searchForNewChapters.getStatus() != AsyncTask.Status.RUNNING)) {
+                        searchForNewChapters = new SearchForNewChapters();
+                        searchForNewChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
-                });
-            }
-        }
-        swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if ((searchForNewChapters.getStatus() != AsyncTask.Status.RUNNING)) {
-                    searchForNewChapters = new SearchForNewChapters();
-                    searchForNewChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
-            }
-        });
-        mListView.setDivider(new ColorDrawable(colors[0]));
-        mListView.setDividerHeight(1);
-        mInfo = new ControlInfoNoScroll(getActivity());
-        mListView.addHeaderView(mInfo);
-        mInfo.setColor(MainActivity.darkTheme, colors[0]);
-        mInfo.enableTitleCopy(getActivity(),mManga.getTitle());
-        ChapterAdapter.setColor(MainActivity.darkTheme, colors[1], colors[0]);
-        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Chapter c = (Chapter) mListView.getAdapter().getItem(position);
-                getPagesTask = new GetPagesTask();
-                getPagesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
-            }
-        });
-        mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+            });
+            mListView.setDivider(new ColorDrawable(colors[0]));
+            mListView.setDividerHeight(1);
+            mInfo = new ControlInfoNoScroll(getActivity());
+            mListView.addHeaderView(mInfo);
+            mInfo.setColor(MainActivity.darkTheme, colors[0]);
+            mInfo.enableTitleCopy(getActivity(), mManga.getTitle());
+            ChapterAdapter.setColor(MainActivity.darkTheme, colors[1], colors[0]);
+            mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Chapter c = (Chapter) mListView.getAdapter().getItem(position);
+                    getPagesTask = new GetPagesTask();
+                    getPagesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
+                }
+            });
+            mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+            mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
-            @Override
-            public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
-                return false;
-            }
+                @Override
+                public boolean onPrepareActionMode(android.view.ActionMode mode, Menu menu) {
+                    return false;
+                }
 
-            @Override
-            public void onDestroyActionMode(android.view.ActionMode mode) {
-                mChapterAdapter.clearSelection();
-            }
+                @Override
+                public void onDestroyActionMode(android.view.ActionMode mode) {
+                    mChapterAdapter.clearSelection();
+                }
 
-            @Override
-            public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
-                MenuInflater inflater = getActivity().getMenuInflater();
-                inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
-                return true;
-            }
+                @Override
+                public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
+                    MenuInflater inflater = getActivity().getMenuInflater();
+                    inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
+                    return true;
+                }
 
-            @Override
-            public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
-                final SparseBooleanArray selection = mChapterAdapter.getSelection();
-                final ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
-                boolean finish = true;
-                switch (item.getItemId()) {
-                    case R.id.select_all:
-                        mChapterAdapter.selectAll();
-                        return true;
-                    case R.id.unselect:
-                        mChapterAdapter.clearSelection();
-                        return true;
-                    case R.id.select_from:
-                        mChapterAdapter.selectFrom(selection.keyAt(0));
-                        return true;
-                    case R.id.select_to:
-                        mChapterAdapter.selectTo(selection.keyAt(0));
-                        return true;
-                    case R.id.download_selection:
-                        new AsyncAddChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChapterAdapter.getSelectedChapters());
-                        break;
-                    case R.id.mark_as_read_and_delete_images:
-                        markSelectedAsRead = new MarkSelectedAsRead(selection.size());
-                        markSelectedAsRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        deleteImages = new DeleteImages(serverBase, selection.size());
-                        deleteImages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        break;
-                    case R.id.delete_images:
-                        deleteImages = new DeleteImages(serverBase, selection.size());
-                        deleteImages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        break;
-                    case R.id.remove_chapter:
-                        finish = false;
-                        new AlertDialog.Builder(getContext())
-                                .setTitle(R.string.app_name)
-                                .setMessage(R.string.delete_confirm)
-                                .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        if (selection.size() < 8) {
-                                            // Remove chapters on UI Thread
-                                            for (int i = selection.size() - 1; i >= 0; i--) {
-                                                Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                                                chapter.delete(getActivity(), mManga, serverBase);
-                                                mChapterAdapter.remove(chapter);
-                                                mode.finish();
-                                            }
-                                        } else {
-                                            removeChapters = new RemoveChapters(serverBase, selection.size(), mode);
-                                            removeChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                @Override
+                public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
+                    final SparseBooleanArray selection = mChapterAdapter.getSelection();
+                    final ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
+                    boolean finish = true;
+                    switch (item.getItemId()) {
+                        case R.id.select_all:
+                            mChapterAdapter.selectAll();
+                            return true;
+                        case R.id.unselect:
+                            mChapterAdapter.clearSelection();
+                            return true;
+                        case R.id.select_from:
+                            mChapterAdapter.selectFrom(selection.keyAt(0));
+                            return true;
+                        case R.id.select_to:
+                            mChapterAdapter.selectTo(selection.keyAt(0));
+                            return true;
+                        case R.id.download_selection:
+                            new AsyncAddChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, mChapterAdapter.getSelectedChapters());
+                            break;
+                        case R.id.mark_as_read_and_delete_images:
+                            markSelectedAsRead = new MarkSelectedAsRead(selection.size());
+                            markSelectedAsRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            deleteImages = new DeleteImages(serverBase, selection.size());
+                            deleteImages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            break;
+                        case R.id.delete_images:
+                            deleteImages = new DeleteImages(serverBase, selection.size());
+                            deleteImages.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            break;
+                        case R.id.remove_chapter:
+                            finish = false;
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle(R.string.app_name)
+                                    .setMessage(R.string.delete_confirm)
+                                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
                                         }
-                                        dialog.dismiss();
-                                    }
-                                })
-                                .show();
-                        break;
-                    case R.id.reset_chapter:
-                        resetChapters = new ResetChapters(serverBase, selection.size());
-                        resetChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        break;
-                    case R.id.mark_selected_as_read:
-                        markSelectedAsRead = new MarkSelectedAsRead(selection.size());
-                        markSelectedAsRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        break;
-                    case R.id.mark_selected_as_unread:
-                        markSelectedAsUnread = new MarkSelectedAsUnread(selection.size());
-                        markSelectedAsUnread.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                        break;
+                                    })
+                                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            if (selection.size() < 8) {
+                                                // Remove chapters on UI Thread
+                                                for (int i = selection.size() - 1; i >= 0; i--) {
+                                                    Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                                                    chapter.delete(getActivity(), mManga, serverBase);
+                                                    mChapterAdapter.remove(chapter);
+                                                    mode.finish();
+                                                }
+                                            } else {
+                                                removeChapters = new RemoveChapters(serverBase, selection.size(), mode);
+                                                removeChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                            }
+                                            dialog.dismiss();
+                                        }
+                                    })
+                                    .show();
+                            break;
+                        case R.id.reset_chapter:
+                            resetChapters = new ResetChapters(serverBase, selection.size());
+                            resetChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            break;
+                        case R.id.mark_selected_as_read:
+                            markSelectedAsRead = new MarkSelectedAsRead(selection.size());
+                            markSelectedAsRead.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            break;
+                        case R.id.mark_selected_as_unread:
+                            markSelectedAsUnread = new MarkSelectedAsUnread(selection.size());
+                            markSelectedAsUnread.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                            break;
+                    }
+                    mChapterAdapter.notifyDataSetChanged();
+                    if (finish)
+                        mode.finish();
+                    return false;
                 }
-                mChapterAdapter.notifyDataSetChanged();
-                if (finish)
-                    mode.finish();
-                return false;
-            }
 
-            @Override
-            public void onItemCheckedStateChanged(
-                    android.view.ActionMode mode, int position, long id, boolean checked) {
-                mChapterAdapter.setSelectedOrUnselected(position);
-            }
-        });
+                @Override
+                public void onItemCheckedStateChanged(
+                        android.view.ActionMode mode, int position, long id, boolean checked) {
+                    mChapterAdapter.setSelectedOrUnselected(position);
+                }
+            });
 
-        getActivity().setTitle(mManga.getTitle());
-        Database.updateMangaRead(getActivity(), mManga.getId());
-        loadInfo(mManga);
-        chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
-        hide_read = pm.getBoolean(CHAPTERS_HIDE_READ, false);
+            getActivity().setTitle(mManga.getTitle());
+            Database.updateMangaRead(getActivity(), mManga.getId());
+            loadInfo(mManga);
+            chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
+            hide_read = pm.getBoolean(CHAPTERS_HIDE_READ, false);
+        }
     }
 
     public void loadInfo(Manga manga) {
@@ -342,6 +347,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
             case android.R.id.home:
                 getActivity().onBackPressed();
                 return true;
+            case R.id.action_config_reader:
+                readerOptions.switchOptions();
+                break;
             case R.id.action_download_remaining: {
                 new AlertDialog.Builder(getContext())
                         .setTitle(R.string.app_name)
@@ -421,7 +429,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 } else {
                     readDirection = Integer.parseInt(pm.getString(DIRECTION, "" + Direction.L2R.ordinal()));
                 }
-                if (readDirection == Direction.R2L.ordinal()) {
+           /*     if (readDirection == Direction.R2L.ordinal()) {
                     mMenuItemReaderSense.setIcon(R.drawable.ic_action_inverso);
                     this.mDirection = Direction.L2R;
                 } else if (readDirection == Direction.L2R.ordinal()) {
@@ -430,11 +438,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                 } else {
                     mMenuItemReaderSense.setIcon(R.drawable.ic_action_clasico);
                     this.mDirection = Direction.R2L;
-                }
+                }/*/
                 mManga.setReadingDirection(this.mDirection.ordinal());
                 Database.updateReadOrder(getActivity(), this.mDirection.ordinal(), mManga.getId());
                 break;
             }
+            /*
             case R.id.action_reader:
                 if (mManga.getReaderType() == 2) {
                     mManga.setReaderType(1);
@@ -448,7 +457,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                     mMenuItemReaderType.setTitle(R.string.continuous_reader);
                 }
                 Database.updateManga(getActivity(), mManga, false);
-                break;
+                break;/*/
             case R.id.action_view_download: {
                 ((MainActivity) getActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
                 break;
@@ -581,8 +590,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_manga, menu);
-        mMenuItemReaderSense = menu.findItem(R.id.action_sentido);
-        mMenuItemReaderType = menu.findItem(R.id.action_reader);
         int sortList[] = {
                 R.id.sort_as_added_to_db_desc_chapters, R.id.sort_number,
                 R.id.sort_number_asc, R.id.sort_title,
@@ -590,33 +597,23 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
         menu.findItem(R.id.action_hide_read).setChecked(hide_read);
-        int readDirection;
-        if (mManga.getReadingDirection() != -1) {
-            readDirection = mManga.getReadingDirection();
-        } else {
-            readDirection = Integer.parseInt(pm.getString(DIRECTION, "" + Direction.R2L.ordinal()));
-        }
-
-        if (readDirection == Direction.R2L.ordinal()) {
-            this.mDirection = Direction.R2L;
-            mMenuItemReaderSense.setIcon(R.drawable.ic_action_clasico);
-        } else if (readDirection == Direction.L2R.ordinal()) {
-            this.mDirection = Direction.L2R;
-            mMenuItemReaderSense.setIcon(R.drawable.ic_action_inverso);
-        } else {
-            this.mDirection = Direction.VERTICAL;
-            mMenuItemReaderSense.setIcon(R.drawable.ic_action_verical);
-        }
-
-        if (readerType == 2) {
-            mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
-            mMenuItemReaderType.setTitle(R.string.continuous_reader);
-        } else {
-            mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
-            mMenuItemReaderType.setTitle(R.string.paged_reader);
-        }
-
         this.menu = menu;
+    }
+
+    @Override
+    public void onOptionChange(ReaderOptions.OptionType optionType) {
+        switch(optionType){
+            case TYPE:
+                break;
+            case AJUST:
+                break;
+            case DIRECTION:
+                break;
+            case ROTATE:
+                break;
+            case KEEP_SCREEN:
+                break;
+        }
     }
 
     private class AsyncAddChapters extends AsyncTask<Chapter, Void, Void> {

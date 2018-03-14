@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:visibility="visible">
 
         <ListView
             android:id="@+id/list"
@@ -17,4 +18,9 @@
             android:layout_height="wrap_content"
             android:choiceMode="none" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <ar.rulosoft.mimanganu.componentes.ReaderOptions
+        android:id="@+id/reader_options"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </android.support.design.widget.CoordinatorLayout>

@@ -3,32 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="ar.rulosoft.mimanganu.ActivityCapitulos">
     <item
-        android:id="@+id/action_reader"
-        android:icon="@drawable/ic_action_paged"
-        android:orderInCategory="100"
-        android:title="@string/paged_reader"
-        app:showAsAction="always" />
-    <item
-        android:id="@+id/action_sentido"
-        android:icon="@drawable/ic_action_clasico"
-        android:orderInCategory="100"
-        android:title="@string/sentido"
+        android:id="@+id/action_config_reader"
+        android:icon="@drawable/ic_action_config_reader"
+        android:title="@string/configuraciones"
         app:showAsAction="always" />
 
     <item
         android:id="@+id/action_view_download"
         android:icon="@drawable/ic_action_downloads"
-        android:orderInCategory="100"
         android:title="@string/descargas"
+        app:showAsAction="ifRoom" />
 
-        app:showAsAction="always" />
     <item
         android:id="@+id/sort_chapters"
         android:icon="@drawable/ic_action_sort"
-
-        android:orderInCategory="100"
         android:title="@string/sort"
-        app:showAsAction="always">
+        app:showAsAction="ifRoom">
         <menu>
             <group android:checkableBehavior="single">
                 <item
@@ -52,33 +42,24 @@
             </group>
         </menu>
     </item>
-
     <item
-        android:id="@+id/submenu"
-        android:icon="@drawable/ic_action_core_overflow"
-        android:orderInCategory="100"
-        android:title="@+id/more_options"
-        app:showAsAction="always">
-        <menu>
-            <item
-                android:id="@+id/action_download_remaining"
-                android:title="@string/descargarestantes" />
-            <item
-                android:id="@+id/action_download_unread"
-                android:title="@string/descarga_no_leidos" />
-            <item
-                android:id="@+id/mark_all_as_unread"
-                android:title="@string/macartodonoleido" />
-            <item
-                android:id="@+id/mark_all_as_read"
-                android:title="@string/macartodoleido" />
-            <item
-                android:id="@+id/action_hide_read"
-                android:checkable="true"
-                android:title="@string/hide_read" />
-            <item
-                android:id="@+id/delete"
-                android:title="@string/borrar" />
-        </menu>
-    </item>
+        android:id="@+id/action_download_remaining"
+        android:title="@string/descargarestantes" />
+    <item
+        android:id="@+id/action_download_unread"
+        android:title="@string/descarga_no_leidos" />
+    <item
+        android:id="@+id/mark_all_as_unread"
+        android:title="@string/macartodonoleido" />
+    <item
+        android:id="@+id/mark_all_as_read"
+        android:title="@string/macartodoleido" />
+    <item
+        android:id="@+id/action_hide_read"
+        android:checkable="true"
+        android:title="@string/hide_read" />
+    <item
+        android:id="@+id/delete"
+        android:title="@string/borrar" />
 </menu>
+
