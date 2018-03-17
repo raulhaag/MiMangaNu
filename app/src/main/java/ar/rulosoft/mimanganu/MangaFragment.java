@@ -17,7 +17,6 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,7 +50,7 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener {
+public class MangaFragment extends Fragment {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
@@ -73,7 +72,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private ListView mListView;
     private int chapters_order; // 0 = db_desc | 1 = chapter number | 2 = chapter number asc | 3 = title | 4 = title asc | 5 = db_asc
     private boolean hide_read;
-    private Menu menu;
     private ControlInfoNoScroll mInfo;
     private ServerBase mServerBase;
     private MainActivity mActivity;
@@ -331,15 +329,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     }
 
     @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            menu.performIdentifierAction(R.id.submenu, 0);
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -559,7 +548,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
         menu.findItem(R.id.action_hide_read).setChecked(hide_read);
-        this.menu = menu;
     }
 
     private class AsyncAddChapters extends AsyncTask<Chapter, Void, Void> {

@@ -10,63 +10,52 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/action_view_download"
-        android:icon="@drawable/vector_drawable_ic_file_download_white___px"
+        android:icon="@drawable/ic_download_white_vd"
         android:title="@string/descargas"
         app:showAsAction="always" />
     <item
-        android:id="@+id/submenu"
-        android:icon="@drawable/ic_action_core_overflow"
-        android:orderInCategory="100"
-        android:title="@string/more_options"
-        app:showAsAction="always">
+        android:id="@+id/action_hide_read"
+        android:checkable="true"
+        android:title="@string/hide_read" />
+    <item
+        android:id="@+id/action_sort_by"
+        android:title="@string/sort">
         <menu>
-            <item
-                android:id="@+id/action_hide_read"
-                android:checkable="true"
-                android:title="@string/hide_read" />
-            <item
-                android:id="@+id/action_sort_by"
-                android:title="@string/sort">
-                <menu>
-                    <group android:checkableBehavior="single">
-                        <item
-                            android:id="@+id/sort_last_read"
-                            android:title="@string/sort_recent" />
-                        <item
-                            android:id="@+id/sort_last_read_desc"
-                            android:title="@string/sort_recent_desc" />
-                        <item
-                            android:id="@+id/sort_name"
-                            android:title="@string/sort_title" />
-                        <item
-                            android:id="@+id/sort_name_desc"
-                            android:title="@string/sort_title_desc" />
-                        <item
-                            android:id="@+id/sort_author"
-                            android:title="@string/sort_author" />
-                        <item
-                            android:id="@+id/sort_author_desc"
-                            android:title="@string/sort_author_desc" />
-                        <item
-                            android:id="@+id/sort_finished"
-                            android:title="@string/finalizado" />
-                        <item
-                            android:id="@+id/sort_finished_asc"
-                            android:title="@string/en_progreso" />
-                        <item
-                            android:id="@+id/sort_as_added_to_db_asc"
-                            android:title="@string/sort_as_added_to_db_asc" />
-                        <item
-                            android:id="@+id/sort_as_added_to_db_desc"
-                            android:title="@string/sort_as_added_to_db_desc" />
-                    </group>
-                </menu>
-            </item>
-            <item
-                android:id="@+id/action_settings"
-                android:title="@string/configuraciones" />
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/sort_last_read"
+                    android:title="@string/sort_recent" />
+                <item
+                    android:id="@+id/sort_last_read_desc"
+                    android:title="@string/sort_recent_desc" />
+                <item
+                    android:id="@+id/sort_name"
+                    android:title="@string/sort_title" />
+                <item
+                    android:id="@+id/sort_name_desc"
+                    android:title="@string/sort_title_desc" />
+                <item
+                    android:id="@+id/sort_author"
+                    android:title="@string/sort_author" />
+                <item
+                    android:id="@+id/sort_author_desc"
+                    android:title="@string/sort_author_desc" />
+                <item
+                    android:id="@+id/sort_finished"
+                    android:title="@string/finalizado" />
+                <item
+                    android:id="@+id/sort_finished_asc"
+                    android:title="@string/en_progreso" />
+                <item
+                    android:id="@+id/sort_as_added_to_db_asc"
+                    android:title="@string/sort_as_added_to_db_asc" />
+                <item
+                    android:id="@+id/sort_as_added_to_db_desc"
+                    android:title="@string/sort_as_added_to_db_desc" />
+            </group>
         </menu>
     </item>
-
-    <!--android:icon="@drawable/ic_action_action_settings"-->
+    <item
+        android:id="@+id/action_settings"
+        android:title="@string/configuraciones" />
 </menu>

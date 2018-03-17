@@ -19,7 +19,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -52,7 +51,7 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements MainActivity.OnKeyUpListener, MangasRecAdapter.OnMangaClick, View.OnClickListener {
+public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnClickListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -63,7 +62,6 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
     private static final String TAG = "MainFragment";
     public static int mNotifyID = 1246502;
     private SharedPreferences pm;
-    private Menu menu;
     private FloatingActionButton floatingActionButton_add;
     private RecyclerView recyclerView;
     private MangasRecAdapter mMAdapter;
@@ -137,7 +135,6 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
         }
         activity.enableHomeButton(false);
         activity.setTitle(getString(R.string.app_name));
-        activity.keyUpListener = this;
         setListManga(true);
         floatingActionButton_add.setBackgroundTintList(ColorStateList.valueOf(MainActivity.colors[1]));
         if (MainActivity.coldStart) {
@@ -203,7 +200,7 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
     //@Override
     public void onClick(View v) {
         ((MainActivity)getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
-                "SERVER_SELECT",R.anim.stay_there, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.stay_there);
+                "SERVER_SELECT",R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
     }
 
     @Override
@@ -219,7 +216,6 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
             @Override
             public void onClick(View view) {
                 mMenu.findItem(R.id.action_view_download).setVisible(false);
-                mMenu.findItem(R.id.submenu).setVisible(false);
             }
         });
 
@@ -228,7 +224,6 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
             public boolean onClose() {
                 setListManga(false);
                 mMenu.findItem(R.id.action_view_download).setVisible(true);
-                mMenu.findItem(R.id.submenu).setVisible(true);
                 return false;
             }
         });
@@ -276,7 +271,6 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
                 R.id.sort_as_added_to_db_asc, R.id.sort_as_added_to_db_desc
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
-        this.menu = menu;
     }
 
     @Override
@@ -498,15 +492,6 @@ public class MainFragment extends Fragment implements MainActivity.OnKeyUpListen
                 Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapter), getView(), getContext());
         }
         return super.onContextItemSelected(item);
-    }
-
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_MENU) {
-            menu.performIdentifierAction(R.id.submenu, 0);
-            return true;
-        }
-        return false;
     }
 
     public class UpdateListTask extends AutomaticUpdateTask {

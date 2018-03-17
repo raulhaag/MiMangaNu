@@ -153,12 +153,12 @@ public class ReaderOptions extends FrameLayout {
                 public void onClick(View v) {
                     if (!mKeepOn) {
                         keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
-                        if (mActivity != null)
+                        if (mActivity != null && optionListener != null)
                             mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         keep_screen.setText(R.string.stay_awake_on);
                     } else {
                         keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_off), null, null);
-                        if (mActivity != null)
+                        if (mActivity != null && optionListener != null)
                             mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         keep_screen.setText(R.string.stay_awake_off);
                     }

@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_edit_server_list"
-        android:icon="@drawable/vector_drawable_ic_edit_white___px"
+        android:icon="@drawable/ic_edit_white_vd"
         android:title="@string/edit_server_list"
         app:showAsAction="ifRoom" />
 </menu>

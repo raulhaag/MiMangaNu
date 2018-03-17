@@ -69,11 +69,6 @@ dependencies {
     compile 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     compile 'com.evernote:android-job:1.2.1'
     compile 'ch.acra:acra:4.9.2'
-    dependencies {
-        compile('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
-            transitive = true;
-        }
-    }
 
     // for device-based testing
     androidTestCompile "com.android.support:support-annotations:$ANDROID_SUPPORT"
