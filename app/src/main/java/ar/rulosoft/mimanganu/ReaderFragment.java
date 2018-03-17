@@ -43,6 +43,7 @@ import java.util.Locale;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ReaderOptions;
 import ar.rulosoft.mimanganu.componentes.readers.Reader;
 import ar.rulosoft.mimanganu.componentes.readers.Reader.Direction;
 import ar.rulosoft.mimanganu.servers.FromFolder;
@@ -55,24 +56,22 @@ import ar.rulosoft.mimanganu.services.StateChangeListener;
 import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
-import it.sephiroth.android.library.imagezoom.ImageViewTouchBase;
-import it.sephiroth.android.library.imagezoom.ImageViewTouchBase.DisplayType;
 
-public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener, SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener, MainActivity.OnKeyUpListener, MainActivity.OnBackListener {
+
+public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener,
+        SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener,
+        MainActivity.OnKeyUpListener, MainActivity.OnBackListener, ReaderOptions.OptionListener {
 
     public static final String KEEP_SCREEN_ON = "keep_screen_on";
     public static final String ORIENTATION = "orientation";
     public static final String ADJUST_KEY = "ajustar_a";
     private static final String MAX_TEXTURE = "max_texture";
     private static int mTextureMax;
-    private static DisplayType mScreenFit;
     public Reader mReader;
     boolean updatedValue = false;//just a flag to no seek when the reader seek
     private Direction direction;
     // These are values, which should be fetched from preference
     private SharedPreferences pm;
-    private boolean mKeepOn; // false = normal  | true = screen on
-    private int mOrientation; // 0 = free | 1 = landscape | 2 = portrait
     private float mScrollFactor = 1f;
     // These are layout components
     private RelativeLayout mControlsLayout;
@@ -82,10 +81,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private Manga mManga;
     private ServerBase mServerBase;
     private TextView pageTextView, mScrollSensitiveText;
-    private MenuItem keepOnMenuItem, screenRotationMenuItem;
+    private ReaderOptions readerOptions;
     private Reader.Type readerType = Reader.Type.CONTINUOUS;
     private boolean controlVisible = false;
-    private MenuItem displayMenu;
     private AlertDialog mDialog = null;
     private boolean reDownloadingImage, freshStart = true;
     private int reader_bg;
@@ -108,10 +106,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         mManga = Database.getFullManga(getActivity(), mChapter.getMangaID());
         mServerBase = ServerBase.getServer(mManga.getServerId(), getContext());
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        mScreenFit = DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
         mTextureMax = Integer.parseInt(pm.getString(MAX_TEXTURE, "2048"));
-        mOrientation = pm.getInt(ORIENTATION, 0);
-        mKeepOn = pm.getBoolean(KEEP_SCREEN_ON, false);
+
         mScrollFactor = Float.parseFloat(pm.getString("scroll_speed", "1"));
         int intReaderType = pm.getBoolean("reader_type", true) ? 1 : 2;
         if (mManga.getReaderType() != 0) {
@@ -140,10 +136,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         View view = inflater.inflate(R.layout.fragment_reader, container, false);
         mActionBar = view.findViewById(R.id.action_bar);
         mControlsLayout = view.findViewById(R.id.controls);
-        pageTextView =  view.findViewById(R.id.pages);
+        pageTextView = view.findViewById(R.id.pages);
         titleTextView = view.findViewById(R.id.title);
         mSeekBar = view.findViewById(R.id.seeker);
-
+        readerOptions = view.findViewById(R.id.reader_options);
         seekerLayout = view.findViewById(R.id.seeker_layout);
         scrollSelect = view.findViewById(R.id.scroll_selector);
         buttonMinus = view.findViewById(R.id.minus);
@@ -156,6 +152,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
         mScrollSensitiveText.setText(getString(R.string.factor_suffix, mScrollFactor));
         mActionBar.setBackgroundColor(reader_bg);
+        readerOptions.setBackgroundColor(reader_bg);
         seekerLayout.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
         scrollSelect.setBackgroundColor(reader_bg);
@@ -164,6 +161,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             scrollSelect.setVisibility(View.INVISIBLE);
         if (pm.getBoolean("hide_actionbar", false))
             mActionBar.setVisibility(View.INVISIBLE);
+
+        readerOptions.setOptionListener(ReaderFragment.this);
+        readerOptions.setActivity(getActivity());
+        readerOptions.setManga(mManga);
 
         buttonMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,15 +244,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             ((FrameLayout) getView().findViewById(R.id.reader_placeholder)).removeAllViews();
             ((FrameLayout) getView().findViewById(R.id.reader_placeholder)).addView(mReader);
             mReader.setMaxTexture(mTextureMax);
-            mReader.setScreenFit(mScreenFit);
+            mReader.setScreenFit(readerOptions.getScreenFit());
             mReader.setReaderListener(this);
             mReader.setScrollSensitive(mScrollFactor);
-            if (displayMenu != null)
-                if (mReader.hasFitFeature()) {
-                    displayMenu.setVisible(true);
-                } else {
-                    displayMenu.setVisible(false);
-                }
             loadChapter(mChapter, LoadMode.SAVED);
         }
     }
@@ -278,7 +273,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if (mChapter.getPages() == 0) {
             new GetPageTask().execute(mChapter);
         } else {
-            if(mChapter.getPagesRead() == 0)
+            if (mChapter.getPagesRead() == 0)
                 mChapter.setPagesRead(1);
             DownloadPoolService.setDownloadListener(this);
             mChapter.setReadStatus(Chapter.READING);
@@ -374,40 +369,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         mActionBar.getMenu().clear();
         mActionBar.inflateMenu(R.menu.menu_reader);
         Menu menu = mActionBar.getMenu();
-        displayMenu = menu.findItem(R.id.action_ajustar);
-        keepOnMenuItem = menu.findItem(R.id.action_keep_screen_on);
-        screenRotationMenuItem = menu.findItem(R.id.action_orientation);
-        if (mKeepOn) {
-            keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
-            getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-        if (mOrientation == 1) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
-        } else if (mOrientation == 2) {
-            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
-        }
-        MenuItem mMenuItem = menu.findItem(R.id.action_sentido);
-
-        if (direction == Direction.R2L) {
-            this.direction = Direction.R2L;
-            mMenuItem.setIcon(R.drawable.ic_action_clasico);
-        } else if (direction == Direction.L2R) {
-            this.direction = Direction.L2R;
-            mMenuItem.setIcon(R.drawable.ic_action_inverso);
-        } else {
-            this.direction = Direction.VERTICAL;
-            mMenuItem.setIcon(R.drawable.ic_action_verical);
-        }
-        if (mReader != null) {
-            if (mReader.hasFitFeature()) {
-                displayMenu.setVisible(true);
-                updateIcon(mScreenFit, false);
-            } else {
-                displayMenu.setVisible(false);
-            }
-        }
         mActionBar.setNavigationIcon(R.drawable.ic_back);
         mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
@@ -425,79 +386,14 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_ajustar: {
-                mScreenFit = mScreenFit.getNext();
-                SharedPreferences.Editor editor = pm.edit();
-                editor.putString(ADJUST_KEY, mScreenFit.toString());
-                editor.apply();
-                mReader.setScreenFit(mScreenFit);
-                updateIcon(mScreenFit, true);
-                return true;
-            }
-            case R.id.action_keep_screen_on: {
-                if (!mKeepOn) {
-                    keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_on);
-                    getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Toast.makeText(getActivity(), getString(R.string.stay_awake_on),
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    keepOnMenuItem.setIcon(R.drawable.ic_action_mantain_screen_off);
-                    getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-                    Toast.makeText(getActivity(), getString(R.string.stay_awake_off),
-                            Toast.LENGTH_SHORT).show();
-                }
-                mKeepOn = !mKeepOn;
-
-                SharedPreferences.Editor editor = pm.edit();
-                editor.putBoolean(KEEP_SCREEN_ON, mKeepOn);
-                editor.apply();
-                break;
-            }
-            case R.id.action_orientation: {
-                if (mOrientation == 0) {
-                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-                    screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_landscape);
-                    Toast.makeText(getActivity(), getString(R.string.lock_on_landscape),
-                            Toast.LENGTH_SHORT).show();
-                } else if (mOrientation == 1) {
-                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                    screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_portrait);
-                    Toast.makeText(getActivity(), getString(R.string.lock_on_portrait),
-                            Toast.LENGTH_SHORT).show();
-                } else if (mOrientation == 2) {
-                    getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-                    screenRotationMenuItem.setIcon(R.drawable.ic_action_screen_free);
-                    Toast.makeText(getActivity(), getString(R.string.rotation_no_locked),
-                            Toast.LENGTH_SHORT).show();
-                }
-                mOrientation = (mOrientation + 1) % 3;
-                SharedPreferences.Editor editor = pm.edit();
-                editor.putInt(ORIENTATION, mOrientation);
-                editor.apply();
-                mActionBar.setTitleTextColor(Color.WHITE);
-                break;
-            }
-            case R.id.action_sentido: {
-                if (direction == Direction.R2L) {
-                    item.setIcon(R.drawable.ic_action_inverso);
-                    this.direction = Direction.L2R;
-                } else if (direction == Direction.L2R) {
-                    item.setIcon(R.drawable.ic_action_verical);
-                    this.direction = Direction.VERTICAL;
-                } else {
-                    item.setIcon(R.drawable.ic_action_clasico);
-                    this.direction = Direction.R2L;
-                }
-                mManga.setReadingDirection(this.direction.ordinal());
-                Database.updateReadOrder(getActivity(), this.direction.ordinal(), mManga.getId());
-                setReader();
-                break;
-            }
             case R.id.re_download_image:
                 if (!reDownloadingImage)
                     reDownloadCurrentImage();
                 else
                     Util.getInstance().toast(getActivity(), getString(R.string.dont_spam_redownload_button));
+                break;
+            case R.id.action_config_reader:
+                readerOptions.switchOptions();
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -539,7 +435,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onDestroy() {
-        if(mReader != null) mReader.freeMemory();
+        if (mReader != null) mReader.freeMemory();
         super.onDestroy();
     }
 
@@ -837,32 +733,20 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         r.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void updateIcon(DisplayType displayType, boolean showMsg) {
-        if (displayMenu != null) {
-            String msg = "";
-            switch (displayType) {
-                case NONE:
-                    displayMenu.setIcon(R.drawable.ic_action_original);
-                    msg = getString(R.string.no_scale);
-                    break;
-                case FIT_TO_HEIGHT:
-                    displayMenu.setIcon(R.drawable.ic_action_ajustar_alto);
-                    msg = getString(R.string.ajuste_alto);
-                    break;
-                case FIT_TO_WIDTH:
-                    displayMenu.setIcon(R.drawable.ic_action_ajustar_ancho);
-                    msg = getString(R.string.ajuste_ancho);
-                    break;
-                case FIT_TO_SCREEN:
-                    displayMenu.setIcon(R.drawable.ic_action_ajustar_diagonal);
-                    msg = getString(R.string.mejor_ajuste);
-                    break;
-                default:
-                    break;
-            }
-            if (showMsg)
-                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
-
+    @Override
+    public void onOptionChange(ReaderOptions.OptionType optionType) {
+        switch (optionType) {
+            case TYPE:
+                readerType = readerOptions.getReaderType();
+                setReader();
+                break;
+            case AJUST:
+                mReader.setScreenFit(readerOptions.getScreenFit());
+                break;
+            case DIRECTION:
+                direction = readerOptions.getDirection();
+                setReader();
+                break;
         }
     }
 

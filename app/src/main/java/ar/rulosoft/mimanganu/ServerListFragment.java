@@ -24,6 +24,7 @@ import java.util.List;
 import ar.rulosoft.mimanganu.adapters.MangaAdapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class ServerListFragment extends Fragment {
@@ -40,7 +41,9 @@ public class ServerListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        return inflater.inflate(R.layout.fragment_server_plain_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_server_plain_list, container, false);
+        v.setBackgroundDrawable(getContext().getResources().getDrawable(ThemeColors.getBackground(),null));
+        return v;
     }
 
     @Override
@@ -50,8 +53,8 @@ public class ServerListFragment extends Fragment {
         if (id == -1)
             id = getArguments().getInt(MainFragment.SERVER_ID);
         serverBase = ServerBase.getServer(id, getContext());
-        list = (ListView) getView().findViewById(R.id.lista_de_mangas);
-        loading = (ProgressBar) getView().findViewById(R.id.loading);
+        list = getView().findViewById(R.id.lista_de_mangas);
+        loading = getView().findViewById(R.id.loading);
         if (adapter == null) {
             loadMangasTask = (LoadMangasTask) new LoadMangasTask().execute();
         } else {

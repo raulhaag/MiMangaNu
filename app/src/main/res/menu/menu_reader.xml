@@ -4,34 +4,16 @@
     tools:context=".ActivityPagedReader">
 
     <item
-        android:id="@+id/action_sentido"
-        android:icon="@drawable/ic_action_clasico"
-        android:orderInCategory="100"
-        android:title="@string/sentido"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_keep_screen_on"
-        android:icon="@drawable/ic_action_mantain_screen_off"
-        android:title="@string/keep_on"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_orientation"
-        android:icon="@drawable/ic_action_screen_free"
-        android:title="@string/rotation"
-        app:showAsAction="always" />
-
-    <item
-        android:id="@+id/action_ajustar"
-        android:icon="@drawable/ic_action_original"
-        android:title="@string/action_ajustar_a"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/re_download_image"
         android:icon="@drawable/ic_action_image_reload"
         android:orderInCategory="100"
         android:title="@string/download_image_again"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_config_reader"
+        android:icon="@drawable/ic_action_config_reader"
+        android:title="@string/configuraciones"
+        app:showAsAction="always" />
+
 </menu>

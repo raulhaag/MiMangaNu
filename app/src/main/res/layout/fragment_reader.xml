@@ -106,7 +106,13 @@
                 android:gravity="center"
                 android:text="-"
                 android:textColor="@android:color/white" />
+
         </RelativeLayout>
 
+        <ar.rulosoft.mimanganu.componentes.ReaderOptions
+            android:id="@+id/reader_options"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/action_bar" />
     </RelativeLayout>
 </android.support.design.widget.CoordinatorLayout>

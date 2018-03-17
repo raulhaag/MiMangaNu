@@ -2,13 +2,16 @@ package ar.rulosoft.mimanganu.componentes;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -33,6 +36,7 @@ public class ReaderOptions extends FrameLayout {
     Reader.Direction mDirection;
     ImageViewTouchBase.DisplayType mScreenFit;
     LinearLayout optionsRoot;
+    Activity mActivity;
     Manga manga;
     int d = -1;
     Button type, direction, ajust, keep_screen, rotate;
@@ -67,7 +71,6 @@ public class ReaderOptions extends FrameLayout {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (li != null) {
             li.inflate(R.layout.reader_options, this, true);
-
             type = findViewById(R.id.reader_type);
             type.setOnClickListener(new OnClickListener() {
                 @Override
@@ -76,16 +79,26 @@ public class ReaderOptions extends FrameLayout {
                         if (manga.getReaderType() == 2) {
                             manga.setReaderType(1);
                             readerType = 1;
-                            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_paged), null, null);
+                            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_paged), null, null);
                             type.setText(R.string.paged_reader);
                         } else {
                             manga.setReaderType(2);
                             readerType = 2;
-                            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_continuous), null, null);
+                            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_continuous), null, null);
                             type.setText(R.string.continuous_reader);
                         }
                     if (manga != null)
                         Database.updateManga(getContext(), manga, false);
+                    if (optionListener != null) {
+                        optionListener.onOptionChange(OptionType.TYPE);
+                    }
+                    if(readerType == 2){
+                        ajust.setEnabled(false);
+                        ajust.setAlpha(0.5f);
+                    }else{
+                        ajust.setEnabled(true);
+                        ajust.setAlpha(1.f);
+                    }
                 }
             });
 
@@ -100,18 +113,21 @@ public class ReaderOptions extends FrameLayout {
                         readDirection = Integer.parseInt(pm.getString(MangaFragment.DIRECTION, "" + Reader.Direction.L2R.ordinal()));
                     }
                     if (readDirection == Reader.Direction.R2L.ordinal()) {
-                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_inverso), null, null);
+                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_inverso), null, null);
                         mDirection = Reader.Direction.L2R;
                     } else if (readDirection == Reader.Direction.L2R.ordinal()) {
-                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_verical), null, null);
+                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_verical), null, null);
                         mDirection = Reader.Direction.VERTICAL;
                     } else {
-                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_clasico), null, null);
+                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_clasico), null, null);
                         mDirection = Reader.Direction.R2L;
                     }
                     if (manga != null) {
                         manga.setReadingDirection(mDirection.ordinal());
                         Database.updateReadOrder(getContext(), mDirection.ordinal(), manga.getId());
+                    }
+                    if (optionListener != null) {
+                        optionListener.onOptionChange(OptionType.DIRECTION);
                     }
                 }
             });
@@ -124,8 +140,10 @@ public class ReaderOptions extends FrameLayout {
                     SharedPreferences.Editor editor = pm.edit();
                     editor.putString(ADJUST_KEY, mScreenFit.toString());
                     editor.apply();
-                    //TODO mReader.setScreenFit(mScreenFit);
                     updateIconAjust(mScreenFit);
+                    if (optionListener != null) {
+                        optionListener.onOptionChange(OptionType.AJUST);
+                    }
                 }
             });
 
@@ -134,15 +152,20 @@ public class ReaderOptions extends FrameLayout {
                 @Override
                 public void onClick(View v) {
                     if (!mKeepOn) {
-                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
-                        //TODO getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
+                        if (mActivity != null)
+                            mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         keep_screen.setText(R.string.stay_awake_on);
                     } else {
-                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_mantain_screen_off), null, null);
-                        //TODO getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_off), null, null);
+                        if (mActivity != null)
+                            mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         keep_screen.setText(R.string.stay_awake_off);
                     }
                     mKeepOn = !mKeepOn;
+                    if (optionListener != null) {
+                        optionListener.onOptionChange(OptionType.KEEP_SCREEN);
+                    }
                 }
             });
 
@@ -152,6 +175,9 @@ public class ReaderOptions extends FrameLayout {
                 public void onClick(View v) {
                     mOrientation = (mOrientation + 1) % 3;
                     updateIconOrientation();
+                    if (optionListener != null) {
+                        optionListener.onOptionChange(OptionType.ROTATE);
+                    }
                 }
             });
             optionsRoot = findViewById(R.id.option_root);
@@ -172,13 +198,13 @@ public class ReaderOptions extends FrameLayout {
         }
         if (d == Reader.Direction.R2L.ordinal()) {
             this.mDirection = Reader.Direction.R2L;
-            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_clasico), null, null);
+            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_clasico), null, null);
         } else if (d == Reader.Direction.L2R.ordinal()) {
             this.mDirection = Reader.Direction.L2R;
-            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_inverso), null, null);
+            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_inverso), null, null);
         } else {
             this.mDirection = Reader.Direction.VERTICAL;
-            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_verical), null, null);
+            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_verical), null, null);
         }
 
         // Type
@@ -187,11 +213,15 @@ public class ReaderOptions extends FrameLayout {
             readerType = manga.getReaderType();
         }
         if (readerType == 2) {
-            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_continuous), null, null);
+            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_continuous), null, null);
             type.setText(R.string.continuous_reader);
         } else {
-            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_paged), null, null);
+            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_paged), null, null);
             type.setText(R.string.paged_reader);
+        }
+        if(readerType == 2){
+            ajust.setEnabled(false);
+            ajust.setAlpha(0.5f);
         }
 
         // Ajust
@@ -201,8 +231,9 @@ public class ReaderOptions extends FrameLayout {
         // KeepOn
         mKeepOn = pm.getBoolean(ReaderFragment.KEEP_SCREEN_ON, false);
         if (mKeepOn) {
-            keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
-            //TODO getActivity().getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+            keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
+            if (mActivity != null)
+                mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
 
         // Orientation
@@ -213,19 +244,19 @@ public class ReaderOptions extends FrameLayout {
     private void updateIconAjust(ImageViewTouchBase.DisplayType displayType) {
         switch (displayType) {
             case NONE:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_original), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_original), null, null);
                 ajust.setText(R.string.no_scale);
                 break;
             case FIT_TO_HEIGHT:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_ajustar_alto), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_ajustar_alto), null, null);
                 ajust.setText(R.string.ajuste_alto);
                 break;
             case FIT_TO_WIDTH:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_ajustar_ancho), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_ajustar_ancho), null, null);
                 ajust.setText(R.string.ajuste_ancho);
                 break;
             case FIT_TO_SCREEN:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_ajustar_diagonal), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_ajustar_diagonal), null, null);
                 ajust.setText(R.string.mejor_ajuste);
                 break;
             default:
@@ -236,16 +267,19 @@ public class ReaderOptions extends FrameLayout {
 
     private void updateIconOrientation() {
         if (mOrientation == 0) {
-            // TODO getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_screen_landscape), null, null);
+            if (mActivity != null)
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_screen_landscape), null, null);
             rotate.setText(R.string.lock_on_landscape);
         } else if (mOrientation == 1) {
-            // TODO getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_screen_portrait), null, null);
+            if (mActivity != null)
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_screen_portrait), null, null);
             rotate.setText(R.string.lock_on_portrait);
         } else if (mOrientation == 2) {
-            // TODO getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getDrawable(R.drawable.ic_action_screen_free), null, null);
+            if (mActivity != null)
+                mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_screen_free), null, null);
             rotate.setText(R.string.rotation_no_locked);
         }
         SharedPreferences.Editor editor = pm.edit();
@@ -253,24 +287,7 @@ public class ReaderOptions extends FrameLayout {
         editor.apply();
     }
 
-    public void switchOptions(){
-        /*
-        int cx = (optionsRoot.getLeft() + optionsRoot.getRight());
-        int cy = optionsRoot.getTop();
-        int dx = Math.max(cx, optionsRoot.getWidth() - cx);
-        int dy = Math.max(cy, optionsRoot.getHeight() - cy);
-        float finalRadius = (float) Math.hypot(dx, dy);
-        if(optionsRoot.getVisibility() == INVISIBLE) {
-
-            optionsRoot.setVisibility(VISIBLE);
-            Animator animator = ViewAnimationUtils.createCircularReveal(optionsRoot, cx, cy, 0, finalRadius);
-            animator.setInterpolator(new AccelerateDecelerateInterpolator());
-            animator.setDuration(300);
-            animator.start();
-        }else{
-            optionsRoot.setVisibility(INVISIBLE);
-
-        }/*/
+    public void switchOptions() {
         ValueAnimator vA = ValueAnimator.ofFloat(0f, 1f);
         vA.setInterpolator(new DecelerateInterpolator());
         vA.setDuration(300);
@@ -280,11 +297,11 @@ public class ReaderOptions extends FrameLayout {
                 optionsRoot.setAlpha(animation.getAnimatedFraction());
             }
         });
-        if(optionsRoot.getVisibility() == INVISIBLE) {
+        if (optionsRoot.getVisibility() == INVISIBLE) {
             optionsRoot.setAlpha(0f);
             optionsRoot.setVisibility(VISIBLE);
             vA.start();
-        }else{
+        } else {
             vA.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -315,6 +332,28 @@ public class ReaderOptions extends FrameLayout {
         optionsRoot.setBackgroundColor(color);
     }
 
+    public void setActivity(Activity mActivity) {
+        this.mActivity = mActivity;
+    }
+
+    public void setOptionListener(OptionListener optionListener) {
+        this.optionListener = optionListener;
+    }
+
+    public ImageViewTouchBase.DisplayType getScreenFit() {
+        return mScreenFit;
+    }
+
+    public Reader.Type getReaderType() {
+        if (readerType == 2)
+            return Reader.Type.CONTINUOUS;
+        else
+            return Reader.Type.PAGED;
+    }
+
+    public Reader.Direction getDirection() {
+        return mDirection;
+    }
 
     public enum OptionType {
         TYPE,
@@ -324,7 +363,7 @@ public class ReaderOptions extends FrameLayout {
         ROTATE
     }
 
-    public interface OptionListener{
+    public interface OptionListener {
         void onOptionChange(OptionType optionType);
     }
 }

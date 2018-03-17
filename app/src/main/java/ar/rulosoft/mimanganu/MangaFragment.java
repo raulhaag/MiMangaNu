@@ -44,7 +44,6 @@ import ar.rulosoft.mimanganu.componentes.ControlInfoNoScroll;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ReaderOptions;
-import ar.rulosoft.mimanganu.componentes.readers.Reader.Direction;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -52,7 +51,7 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener, ReaderOptions.OptionListener {
+public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListener {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
@@ -68,7 +67,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
     private MarkSelectedAsRead markSelectedAsRead = null;
     private MarkSelectedAsUnread markSelectedAsUnread = null;
     private GetPagesTask getPagesTask = null;
-    private Direction mDirection;
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
     private ImageLoader mImageLoader;
@@ -422,42 +420,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
                         .show();
                 break;
             }
-            case R.id.action_sentido: {
-                int readDirection;
-                if (mManga.getReadingDirection() != -1) {
-                    readDirection = mManga.getReadingDirection();
-                } else {
-                    readDirection = Integer.parseInt(pm.getString(DIRECTION, "" + Direction.L2R.ordinal()));
-                }
-           /*     if (readDirection == Direction.R2L.ordinal()) {
-                    mMenuItemReaderSense.setIcon(R.drawable.ic_action_inverso);
-                    this.mDirection = Direction.L2R;
-                } else if (readDirection == Direction.L2R.ordinal()) {
-                    mMenuItemReaderSense.setIcon(R.drawable.ic_action_verical);
-                    this.mDirection = Direction.VERTICAL;
-                } else {
-                    mMenuItemReaderSense.setIcon(R.drawable.ic_action_clasico);
-                    this.mDirection = Direction.R2L;
-                }/*/
-                mManga.setReadingDirection(this.mDirection.ordinal());
-                Database.updateReadOrder(getActivity(), this.mDirection.ordinal(), mManga.getId());
-                break;
-            }
-            /*
-            case R.id.action_reader:
-                if (mManga.getReaderType() == 2) {
-                    mManga.setReaderType(1);
-                    readerType = 1;
-                    mMenuItemReaderType.setIcon(R.drawable.ic_action_paged);
-                    mMenuItemReaderType.setTitle(R.string.paged_reader);
-                } else {
-                    mManga.setReaderType(2);
-                    readerType = 2;
-                    mMenuItemReaderType.setIcon(R.drawable.ic_action_continuous);
-                    mMenuItemReaderType.setTitle(R.string.continuous_reader);
-                }
-                Database.updateManga(getActivity(), mManga, false);
-                break;/*/
             case R.id.action_view_download: {
                 ((MainActivity) getActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
                 break;
@@ -598,22 +560,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnKeyUpListe
         menu.findItem(sortList[chapters_order]).setChecked(true);
         menu.findItem(R.id.action_hide_read).setChecked(hide_read);
         this.menu = menu;
-    }
-
-    @Override
-    public void onOptionChange(ReaderOptions.OptionType optionType) {
-        switch(optionType){
-            case TYPE:
-                break;
-            case AJUST:
-                break;
-            case DIRECTION:
-                break;
-            case ROTATE:
-                break;
-            case KEEP_SCREEN:
-                break;
-        }
     }
 
     private class AsyncAddChapters extends AsyncTask<Chapter, Void, Void> {

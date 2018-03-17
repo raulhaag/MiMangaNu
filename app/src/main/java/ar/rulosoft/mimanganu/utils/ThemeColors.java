@@ -1,7 +1,10 @@
 package ar.rulosoft.mimanganu.utils;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.preference.PreferenceManager;
+import android.util.Log;
 
 /**
  * Get the colors from preference and set them here.
@@ -9,6 +12,11 @@ import android.graphics.Color;
  * Created by Raul on 02/05/2015.
  */
 public class ThemeColors {
+
+    private static boolean inited = false;
+    private static int[] colors = new int[5];
+    private static int background = android.R.drawable.screen_background_dark;
+
     /**
      * traer colores de la interfaz
      * [0] principal
@@ -18,7 +26,6 @@ public class ThemeColors {
      * [4] dark
      */
     public static int[] getColors(SharedPreferences sp) {
-        int[] colors = new int[5];
         colors[0] = sp.getInt("primario", Color.parseColor("#2A52BE"));
         colors[1] = sp.getInt("secundario", Color.parseColor("#1E90FF"));
         if (colors[0] == 0) {
@@ -28,8 +35,26 @@ public class ThemeColors {
         colors[2] = (31 << 24) | (colors[0] & 0x00ffffff);
         colors[3] = (colors[1]) & 0xFFCCCCCC;
         colors[4] = brightnessColor(colors[0], 0.81f); // 700
+        boolean darkTheme = sp.getBoolean("dark_theme", false);
+        background = (darkTheme ? android.R.drawable.screen_background_dark : android.R.drawable.screen_background_light);
+        inited = true;
         return colors;
     }
+
+
+    public static int[] getColors(Context context){
+        if(inited)
+            return colors;
+        else
+            return getColors(PreferenceManager.getDefaultSharedPreferences(context));
+    }
+
+    public static int getBackground(){
+        if(!inited)
+            Log.w("MiMangaNu", "ThemeColors not initialized (Default value returned)");
+        return background;
+    }
+
 
     /**
      * Returns reader bg color, which should be used separately from other colors
