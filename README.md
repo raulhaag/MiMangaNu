@@ -34,6 +34,20 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.82
+* Agregado un nueva opción en el reader.
+* Arreglado ssl handshake para api 16 a 22.
+* Vuelta atras a seekbar para el grupo de dispositivos que mostraban error de "reflection".
+* Arreglado los taps en orden correcto en el lector.
+* Otros arreglos menores.
+
+Changes in v1.82
+* Added new reader menu.
+* Fix ssl handshake for api 16 to 22.
+* Back to normal seekbar to fix a group of devices giving "reflection" error.
+* Fix reader tap bad order.
+* Others min fixes.
+
 Cambios en v1.81:
 * QuickFix a error del lector introducido versión 1.80.
 
