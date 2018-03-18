@@ -89,6 +89,7 @@ public class VerticalPagedReader extends PagedReader implements OnSwipeOutListen
     }
 
     public boolean onSingleTapConfirmed(MotionEvent e) {
+        currentPage = getCurrentPage();
         if (readerListener != null)
             if (e.getX() < getWidth() / 4) {
                 if (currentPage == 1) {
