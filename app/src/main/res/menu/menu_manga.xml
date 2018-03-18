@@ -16,7 +16,7 @@
 
     <item
         android:id="@+id/sort_chapters"
-        android:icon="@drawable/ic_action_sort"
+        android:icon="@drawable/ic_order_vd"
         android:title="@string/sort"
         app:showAsAction="ifRoom">
         <menu>

@@ -33,7 +33,7 @@
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/download_selection"
-        android:icon="@drawable/ic_action_downloads"
+        android:icon="@drawable/ic_download_white_vd"
         android:title="@string/download_selection"
         app:showAsAction="ifRoom" />
     <item
