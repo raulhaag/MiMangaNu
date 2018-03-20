@@ -2,30 +2,24 @@ package ar.rulosoft.mimanganu.utils;
 
 import android.app.Activity;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.AsyncTask;
+import android.graphics.Color;
 import android.os.Build;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -39,25 +33,26 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.navegadores.Navigator;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 import static ar.rulosoft.mimanganu.MainActivity.pm;
 
 public class Util {
+    private static final String channelIdSV = "MiMangaNu_New_S_V";
+    private static final String channelIdSNV = "MiMangaNu_New_S_NV";
+    private static final String channelIdNSV = "MiMangaNu_New_NS_V";
+    private static final String channelIdNSNV = "MiMangaNu_New_NS_NV";
+
+
     public static int n = 0;
     private static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
     private static NotificationCompat.Builder notificationWithProgressbarBuilder;
     private static NotificationManager notificationManager;
-    private static int appUpdateDownloadProgress = 0;
 
     private Util() {
     }
@@ -66,71 +61,46 @@ public class Util {
         return LazyHolder.utilInstance;
     }
 
-    private static void downloadAppUpdate(final AppCompatActivity activity, final String url, final ProgressBar bar, final TextView desc, final DialogInterface dialog) {
-        new AsyncTask<Void, Void, Void>() {
-            @Override
-            protected Void doInBackground(Void... voids) {
-                try {
-                    File updateFileCache = new File(PreferenceManager.getDefaultSharedPreferences(activity).getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/", "update.apk");
-                    if (updateFileCache.exists()) updateFileCache.delete();
-                    final OkHttpClient client = Navigator.getInstance().getHttpClient().newBuilder()
-                            .connectTimeout(3, TimeUnit.SECONDS)
-                            .readTimeout(3, TimeUnit.SECONDS)
-                            .build();
-                    Response response = client.newCall(new Request.Builder().url(url).build()).execute();
-                    InputStream inputStream = response.body().byteStream();
-                    FileOutputStream outputStream = new FileOutputStream(updateFileCache);
-                    long lengthOfFile = response.body().contentLength();
-                    int count;
-                    byte data[] = new byte[1024 * 6];
-                    long total = 0;
-                    while ((count = inputStream.read(data)) != -1) {
-                        total += count;
-                        int tProgress = (int) ((total * 100) / lengthOfFile);
-                        if (tProgress > appUpdateDownloadProgress) {
-                            appUpdateDownloadProgress = tProgress;
-                            activity.runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    String downloading_text = activity.getString(R.string.downloading) + " " + appUpdateDownloadProgress + "%";
-                                    desc.setText(downloading_text);
-                                    bar.setIndeterminate(false);
-                                    bar.setProgress(appUpdateDownloadProgress);
-                                }
-                            });
-                        }
-                        outputStream.write(data, 0, count);
-                        outputStream.flush();
-                    }
-                    outputStream.close();
-                    inputStream.close();
-                    activity.startActivity(getUpdateIntent(updateFileCache));
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            dialog.dismiss();
-                        }
-                    });
-                } catch (Exception e) {
-                    Log.e("Util", "Error while downloading update");
-                    e.printStackTrace();
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            Toast.makeText(activity, R.string.update_error, Toast.LENGTH_SHORT).show();
-                            dialog.dismiss();
-                        }
-                    });
-                }
-                return null;
+    public static void createNotificationChannels(Context context) {
+        // Creates android O notification channels
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationManager notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
+            assert notificationManager != null;
+            if (null == notificationManager.getNotificationChannel(channelIdNSNV)) {
+                /* Sound and vibrate */
+                NotificationChannel notificationChannel = new NotificationChannel(channelIdSV, "MiMangaNu Sound, Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription("MiMangaNu Sound, Vibrate");
+                notificationChannel.enableVibration(true);
+                notificationChannel.setVibrationPattern(new long[]{0, 500, 500, 1000});
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.WHITE);
+                notificationManager.createNotificationChannel(notificationChannel);
+                /* Sound, no vibrate */
+                notificationChannel = new NotificationChannel(channelIdSNV, "MiMangaNu Sound, no Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription("MiMangaNu Sound, no Vibrate");
+                notificationChannel.enableVibration(false);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.WHITE);
+                notificationManager.createNotificationChannel(notificationChannel);
+                /* No Sound, vibrate */
+                notificationChannel = new NotificationChannel(channelIdNSV, "MiMangaNu no Sound, Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription("MiMangaNu no Sound, Vibrate");
+                notificationChannel.enableVibration(true);
+                notificationChannel.setSound(null, null);
+                notificationChannel.setVibrationPattern(new long[]{0, 500, 500, 1000});
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.WHITE);
+                notificationManager.createNotificationChannel(notificationChannel);
+                /* No sound, no vibrate */
+                notificationChannel = new NotificationChannel(channelIdNSNV, "MiMangaNu no Sound, no Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription("MiMangaNu no Sound, no Vibrate");
+                notificationChannel.enableVibration(false);
+                notificationChannel.setSound(null, null);
+                notificationChannel.enableLights(true);
+                notificationChannel.setLightColor(Color.WHITE);
+                notificationManager.createNotificationChannel(notificationChannel);
             }
-        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-    }
-
-    private static Intent getUpdateIntent(File updateFileCache) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setDataAndType(Uri.fromFile(updateFileCache), "application/vnd.android.package-archive");
-        return intent;
+        }
     }
 
     public Object clone() throws CloneNotSupportedException {
@@ -322,11 +292,28 @@ public class Util {
     }
 
     public void createNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
+
+        String useChannel = channelIdSV;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (pm != null) {
+                if (pm.getBoolean("update_sound", false)) {
+                    if (!pm.getBoolean("update_vibrate", false)) {
+                        useChannel = channelIdSNV;
+                    }
+                }else{
+                    if (pm.getBoolean("update_vibrate", false)) {
+                        useChannel = channelIdNSV;
+                    }else{
+                        useChannel = channelIdNSNV;
+                    }
+                }
+            }
+        }
         Notification notification;
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Intent deleteIntent = new Intent(context, NotificationDeleteIntentReceiver.class);
         PendingIntent deletePendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis() + 1, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, useChannel);
         notificationBuilder.setOngoing(true);
         notificationBuilder.setContentTitle(contentTitle);
         notificationBuilder.setContentText(contentText);
@@ -340,10 +327,8 @@ public class Util {
         }
         ++n;
         //notificationBuilder.setNumber(n); // don't delete this I need this for debugging ~ xtj9182
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
-            notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
-        }
+        notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+        notificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
 
         notification = notificationBuilder.build();
@@ -369,7 +354,7 @@ public class Util {
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis() + 1, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context);
+        searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context, channelIdNSNV);
         searchingForUpdatesNotificationBuilder.setOngoing(true);
         searchingForUpdatesNotificationBuilder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
         searchingForUpdatesNotificationBuilder.setContentText("");
@@ -378,11 +363,9 @@ public class Util {
         searchingForUpdatesNotificationBuilder.setAutoCancel(true);
         searchingForUpdatesNotificationBuilder.addAction(R.drawable.ic_action_x_light, context.getResources().getString(R.string.cancel), cancelPendingIntent);
         searchingForUpdatesNotificationBuilder.setGroup("searchingForUpdates");
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
-            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(context.getResources().getString(R.string.searching_for_updates)));
-            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(""));
-        }
+        searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
+        searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(context.getResources().getString(R.string.searching_for_updates)));
+        searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(""));
         searchingForUpdatesNotificationBuilder.setProgress(100, 0, true);
 
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
@@ -394,19 +377,17 @@ public class Util {
     public void changeSearchingForUpdatesNotification(Context context, int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
         searchingForUpdatesNotificationBuilder.setContentTitle(contentTitle);
         searchingForUpdatesNotificationBuilder.setContentText(contentText);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
-            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
-            searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
-        }
+        searchingForUpdatesNotificationBuilder.setPriority(Notification.PRIORITY_HIGH);
+        searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+        searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+
         if (ongoing) {
             searchingForUpdatesNotificationBuilder.setOngoing(true);
             if (progress == max) {
                 searchingForUpdatesNotificationBuilder.setProgress(max, progress, true);
                 searchingForUpdatesNotificationBuilder.setContentText(context.getResources().getString(R.string.finishing_update));
-                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(context.getResources().getString(R.string.finishing_update)));
-                }
+                searchingForUpdatesNotificationBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(context.getResources().getString(R.string.finishing_update)));
+
             } else {
                 searchingForUpdatesNotificationBuilder.setProgress(max, progress, false);
             }
@@ -422,18 +403,16 @@ public class Util {
         defaultIntent.putExtra("manga_id", -2);
         defaultIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent defaultPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), defaultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationWithProgressbarBuilder = new NotificationCompat.Builder(context);
+        notificationWithProgressbarBuilder = new NotificationCompat.Builder(context, channelIdNSNV);
         notificationWithProgressbarBuilder.setOngoing(true);
         notificationWithProgressbarBuilder.setContentTitle(contentTitle);
         notificationWithProgressbarBuilder.setContentText(contentText);
         notificationWithProgressbarBuilder.setSmallIcon(getCorrectIcon());
         notificationWithProgressbarBuilder.setContentIntent(defaultPendingIntent);
         notificationWithProgressbarBuilder.setAutoCancel(true);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
-            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
-            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
-        }
+        notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
+        notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+        notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
         notificationWithProgressbarBuilder.setProgress(100, 0, true);
 
         notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
@@ -445,11 +424,10 @@ public class Util {
     public void changeNotificationWithProgressbar(int max, int progress, int id, String contentTitle, String contentText, boolean ongoing) {
         notificationWithProgressbarBuilder.setContentTitle(contentTitle);
         notificationWithProgressbarBuilder.setContentText(contentText);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
-            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
-            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
-        }
+        notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
+        notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().setBigContentTitle(contentTitle));
+        notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
+
         if (ongoing) {
             notificationWithProgressbarBuilder.setOngoing(true);
             if (progress == max) {
@@ -467,10 +445,8 @@ public class Util {
     // same as above but without contentTitle
     public void changeNotificationWithProgressbar(int max, int progress, int id, String contentText, boolean ongoing) {
         notificationWithProgressbarBuilder.setContentText(contentText);
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
-            notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
-        }
+        notificationWithProgressbarBuilder.setPriority(Notification.PRIORITY_HIGH);
+        notificationWithProgressbarBuilder.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText));
         if (ongoing) {
             notificationWithProgressbarBuilder.setOngoing(true);
             if (progress == max) {
@@ -494,6 +470,7 @@ public class Util {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public Spanned fromHtml(String source) {
         // https://stackoverflow.com/questions/37904739/html-fromhtml-deprecated-in-android-n
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -540,7 +517,7 @@ public class Util {
         }
     }
 
-    public String getFilePath(String url){
+    public String getFilePath(String url) {
         try {
             return getFirstMatchDefault(".+?\\.\\S{2,4}(\\/.+)", url, url);
         } catch (Exception e) {

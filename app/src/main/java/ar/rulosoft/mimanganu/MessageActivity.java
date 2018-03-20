@@ -14,7 +14,7 @@ public class MessageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
         if (getIntent().getStringExtra(MESSAGE_VALUE).equals(MESSAGE_UPDATE)) {
-            UpdateUtil.generatUpdateDialog(MessageActivity.this);
+            UpdateUtil.generateUpdateDialog(MessageActivity.this);
         } else {
             onBackPressed();
         }

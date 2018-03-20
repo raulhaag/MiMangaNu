@@ -1,5 +1,6 @@
 package ar.rulosoft.mimanganu.utils;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -53,7 +54,8 @@ public class UpdateUtil {
         new CheckForAppUpdates(context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    public static void generatUpdateDialog(final Context context) {
+    @SuppressLint("StaticFieldLeak")
+    public static void generateUpdateDialog(final Context context) {
         if (NetworkUtilsAndReceiver.isConnectedNonDestructive(context))
             new AsyncTask<Void, Void, Void>() {
                 @Override
@@ -141,6 +143,7 @@ public class UpdateUtil {
             }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
+    @SuppressLint("StaticFieldLeak")
     private static void download(final AppCompatActivity activity, final String url, final ProgressBar bar, final TextView desc, final DialogInterface dialog) {
         new AsyncTask<Void, Void, Void>() {
             @Override

@@ -9,6 +9,7 @@ import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by jtx on 28.05.2016.
@@ -37,6 +38,7 @@ public class MiMangaNuApplication extends Application {
         if(JobManager.instance().getAllJobRequestsForTag(UpdateJobCreator.UPDATE_TAG).isEmpty()){
             UpdateJobCreator.UpdateJob.scheduleJob(getApplicationContext());
         }
+        Util.createNotificationChannels(getApplicationContext());
     }
 
 }
