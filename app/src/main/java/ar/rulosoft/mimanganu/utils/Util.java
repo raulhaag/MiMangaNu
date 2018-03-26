@@ -43,12 +43,8 @@ import ar.rulosoft.navegadores.Navigator;
 import static ar.rulosoft.mimanganu.MainActivity.pm;
 
 public class Util {
-    private static final String channelIdSV = "MiMangaNu_New_S_V";
-    private static final String channelIdSNV = "MiMangaNu_New_S_NV";
-    private static final String channelIdNSV = "MiMangaNu_New_NS_V";
-    private static final String channelIdNSNV = "MiMangaNu_New_NS_NV";
-
-
+    public static final String channelIdNews = "MiMangaNu_News";
+    private static final String channelIdUpdate = "MiMangaNu_Update";
     public static int n = 0;
     private static NotificationCompat.Builder searchingForUpdatesNotificationBuilder;
     private static NotificationCompat.Builder notificationWithProgressbarBuilder;
@@ -66,33 +62,17 @@ public class Util {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationManager notificationManager = (NotificationManager) context.getSystemService(MainActivity.NOTIFICATION_SERVICE);
             assert notificationManager != null;
-            if (null == notificationManager.getNotificationChannel(channelIdNSNV)) {
+            if (null == notificationManager.getNotificationChannel(channelIdUpdate)) {
                 /* Sound and vibrate */
-                NotificationChannel notificationChannel = new NotificationChannel(channelIdSV, "MiMangaNu Sound, Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                NotificationChannel notificationChannel = new NotificationChannel(channelIdNews, "MiMangaNu Sound, Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.setDescription("MiMangaNu Sound, Vibrate");
                 notificationChannel.enableVibration(true);
                 notificationChannel.setVibrationPattern(new long[]{0, 500, 500, 1000});
                 notificationChannel.enableLights(true);
                 notificationChannel.setLightColor(Color.WHITE);
                 notificationManager.createNotificationChannel(notificationChannel);
-                /* Sound, no vibrate */
-                notificationChannel = new NotificationChannel(channelIdSNV, "MiMangaNu Sound, no Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
-                notificationChannel.setDescription("MiMangaNu Sound, no Vibrate");
-                notificationChannel.enableVibration(false);
-                notificationChannel.enableLights(true);
-                notificationChannel.setLightColor(Color.WHITE);
-                notificationManager.createNotificationChannel(notificationChannel);
-                /* No Sound, vibrate */
-                notificationChannel = new NotificationChannel(channelIdNSV, "MiMangaNu no Sound, Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
-                notificationChannel.setDescription("MiMangaNu no Sound, Vibrate");
-                notificationChannel.enableVibration(true);
-                notificationChannel.setSound(null, null);
-                notificationChannel.setVibrationPattern(new long[]{0, 500, 500, 1000});
-                notificationChannel.enableLights(true);
-                notificationChannel.setLightColor(Color.WHITE);
-                notificationManager.createNotificationChannel(notificationChannel);
                 /* No sound, no vibrate */
-                notificationChannel = new NotificationChannel(channelIdNSNV, "MiMangaNu no Sound, no Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel = new NotificationChannel(channelIdUpdate, "MiMangaNu no Sound, no Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.setDescription("MiMangaNu no Sound, no Vibrate");
                 notificationChannel.enableVibration(false);
                 notificationChannel.setSound(null, null);
@@ -292,28 +272,11 @@ public class Util {
     }
 
     public void createNotification(Context context, boolean isPermanent, int id, Intent intent, String contentTitle, String contentText) {
-
-        String useChannel = channelIdSV;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            if (pm != null) {
-                if (pm.getBoolean("update_sound", false)) {
-                    if (!pm.getBoolean("update_vibrate", false)) {
-                        useChannel = channelIdSNV;
-                    }
-                }else{
-                    if (pm.getBoolean("update_vibrate", false)) {
-                        useChannel = channelIdNSV;
-                    }else{
-                        useChannel = channelIdNSNV;
-                    }
-                }
-            }
-        }
         Notification notification;
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
         Intent deleteIntent = new Intent(context, NotificationDeleteIntentReceiver.class);
         PendingIntent deletePendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis() + 1, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, useChannel);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(context, channelIdNews);
         notificationBuilder.setOngoing(true);
         notificationBuilder.setContentTitle(contentTitle);
         notificationBuilder.setContentText(contentText);
@@ -354,7 +317,7 @@ public class Util {
         contentIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent cancelPendingIntent = PendingIntent.getBroadcast(context, (int) System.currentTimeMillis(), cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         PendingIntent contentPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis() + 1, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context, channelIdNSNV);
+        searchingForUpdatesNotificationBuilder = new NotificationCompat.Builder(context, channelIdUpdate);
         searchingForUpdatesNotificationBuilder.setOngoing(true);
         searchingForUpdatesNotificationBuilder.setContentTitle(context.getResources().getString(R.string.searching_for_updates));
         searchingForUpdatesNotificationBuilder.setContentText("");
@@ -403,7 +366,7 @@ public class Util {
         defaultIntent.putExtra("manga_id", -2);
         defaultIntent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent defaultPendingIntent = PendingIntent.getActivity(context, (int) System.currentTimeMillis(), defaultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        notificationWithProgressbarBuilder = new NotificationCompat.Builder(context, channelIdNSNV);
+        notificationWithProgressbarBuilder = new NotificationCompat.Builder(context, channelIdUpdate);
         notificationWithProgressbarBuilder.setOngoing(true);
         notificationWithProgressbarBuilder.setContentTitle(contentTitle);
         notificationWithProgressbarBuilder.setContentText(contentText);

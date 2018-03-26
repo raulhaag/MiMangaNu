@@ -434,5 +434,7 @@
     <string name="connection_retry_summary">%s veces.</string>
     <string name="connection_retry_title">Reintentos en error</string>
     <string name="select_server">Selecionna servidor</string>
+    <string name="notification_o_title">Notificaciones.</string>
+    <string name="notification_o_subtitle">Configurar notificaciones de nuevos mangas.</string>
 
 </resources>

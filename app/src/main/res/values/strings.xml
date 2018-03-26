@@ -473,6 +473,8 @@
     <string name="dont_ask_again">Always</string>
     <string name="connection_retry_title">Connection retry</string>
     <string name="connection_retry_summary">%s times.</string>
+    <string name="notification_o_title">Notification.</string>
+    <string name="notification_o_subtitle">New manga notification settings.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

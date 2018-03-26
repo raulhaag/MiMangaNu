@@ -3,13 +3,16 @@ package ar.rulosoft.mimanganu;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
@@ -525,7 +528,24 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        setFirstRunDefaults();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            getPreferenceManager().findPreference("update_sound").setVisible(false);
+            getPreferenceManager().findPreference("update_vibrate").setVisible(false);
+            getPreferenceManager().findPreference("update_notif_options").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    Intent intent = new Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS);
+                    intent.putExtra(Settings.EXTRA_CHANNEL_ID, Util.channelIdNews);
+                    intent.putExtra(Settings.EXTRA_APP_PACKAGE, getContext().getPackageName());
+                    startActivity(intent);
+                    return true;
+                }
+            });
+        }else{
+            getPreferenceManager().findPreference("update_notif_options").setVisible(false);
+        }
+
+            setFirstRunDefaults();
     }
 
     private void setFirstRunDefaults() {
