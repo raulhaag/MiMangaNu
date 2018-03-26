@@ -64,16 +64,20 @@ public class Util {
             assert notificationManager != null;
             if (null == notificationManager.getNotificationChannel(channelIdUpdate)) {
                 /* Sound and vibrate */
-                NotificationChannel notificationChannel = new NotificationChannel(channelIdNews, "MiMangaNu Sound, Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
-                notificationChannel.setDescription("MiMangaNu Sound, Vibrate");
+                NotificationChannel notificationChannel = new NotificationChannel(channelIdNews,
+                        context.getResources().getString(R.string.notification_channel_new),
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription(context.getResources().getString(R.string.notification_channel_new));
                 notificationChannel.enableVibration(true);
                 notificationChannel.setVibrationPattern(new long[]{0, 500, 500, 1000});
                 notificationChannel.enableLights(true);
                 notificationChannel.setLightColor(Color.WHITE);
                 notificationManager.createNotificationChannel(notificationChannel);
                 /* No sound, no vibrate */
-                notificationChannel = new NotificationChannel(channelIdUpdate, "MiMangaNu no Sound, no Vibrate", NotificationManager.IMPORTANCE_DEFAULT);
-                notificationChannel.setDescription("MiMangaNu no Sound, no Vibrate");
+                notificationChannel = new NotificationChannel(channelIdUpdate,
+                        context.getResources().getString(R.string.notification_channel_update),
+                        NotificationManager.IMPORTANCE_DEFAULT);
+                notificationChannel.setDescription(context.getResources().getString(R.string.notification_channel_update));
                 notificationChannel.enableVibration(false);
                 notificationChannel.setSound(null, null);
                 notificationChannel.enableLights(true);

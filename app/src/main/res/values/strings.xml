@@ -475,6 +475,8 @@
     <string name="connection_retry_summary">%s times.</string>
     <string name="notification_o_title">Notification.</string>
     <string name="notification_o_subtitle">New manga notification settings.</string>
+    <string name="notification_channel_new">New mangas and updates.</string>
+    <string name="notification_channel_update">Update search progress notification.</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
