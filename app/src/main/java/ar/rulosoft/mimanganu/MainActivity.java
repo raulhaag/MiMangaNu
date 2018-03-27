@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        setTheme(darkTheme ? R.style.AppTheme_Dark_NoActionbar : R.style.AppTheme_Dark_NoActionbar);
+        setTheme(darkTheme ? R.style.AppTheme_Dark_NoActionbar : R.style.AppTheme_Light_NoActionbar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
