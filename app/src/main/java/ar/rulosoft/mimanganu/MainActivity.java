@@ -18,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.ViewConfiguration;
@@ -56,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         }
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
         darkTheme = pm.getBoolean("dark_theme", false);
-        setTheme(darkTheme ? R.style.AppTheme_miDark : R.style.AppTheme_miLight);
+        setTheme(darkTheme ? R.style.AppTheme_Dark_NoActionbar : R.style.AppTheme_Dark_NoActionbar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (isStoragePermissionGiven()) {
@@ -70,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
             requestStoragePermission();
             setContentView(R.layout.activity_main_no_permision);
         }
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
 
     @Override

@@ -78,8 +78,6 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        setAllowEnterTransitionOverlap(true);
-        setAllowReturnTransitionOverlap(true);
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
         MainActivity.colors = ThemeColors.getColors(pm);
         ViewGroup viewGroup = (ViewGroup) inflater.inflate(R.layout.fragment_main, container, false);
