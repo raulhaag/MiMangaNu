@@ -121,7 +121,7 @@ public class SingleDownload implements Runnable {
                         break;
                     }
                 } catch (IOException e) {
-                    Log.e("SingleDownload", "ERROR_OPENING_FILE");
+                    Log.e("SingleDownload", "ERROR_OPENING_FILE" + e.getLocalizedMessage());
                     retry--;
                     if (retry > 0) {
                         changeStatus(Status.RETRY);
