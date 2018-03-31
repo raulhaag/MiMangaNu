@@ -20,6 +20,7 @@
         <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
         <!--<item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="AppTheme.Dark.NoActionbar" parent="Theme.AppCompat.NoActionBar">
@@ -31,6 +32,7 @@
         <!--<item name="android:textColorSecondary">@color/abc_secondary_text_material_dark</item>-->
         <!--<item name="android:seekBarStyle">@style/SeekBarSeekBartTheme</item>-->
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+        <item name="windowActionModeOverlay">true</item>
     </style>
 
     <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
