@@ -56,7 +56,7 @@ class NineManga extends ServerBase {
             "Manga\" src=\"(.+?)\"";
     @SuppressWarnings("WeakerAccess")
     protected String PATTERN_IMAGE =
-            "class=\"pic_download\" href=\"(http://[^/]+/+comics/[^\"]+)\"";
+            "(http[^\"]*?/comic[^\"]*?)\"";
     @SuppressWarnings("WeakerAccess")
     protected int[] fltGenre = {
             R.string.flt_tag_4_koma,
@@ -272,11 +272,7 @@ class NineManga extends ServerBase {
             }
         }
         String web;
-        if (filters[0].length < 1 && filters[1].length < 1)
-            web = HOST + valCategory[filters[3][0]];
-        else
-            web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valStatus[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
-
+        web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valStatus[filters[2][0]] + "&page=" + pageNumber + ".html";
         String data = getNavigatorWithNeededHeader().get(web);
         Pattern pattern = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
         Matcher m = pattern.matcher(data);
