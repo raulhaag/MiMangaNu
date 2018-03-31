@@ -16,7 +16,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 class JapScan extends ServerBase {
 
-    private static final String HOST = "http://www.japscan.com";
+    private static final String HOST = "http://www.japscan.cc";
 
     JapScan(Context context) {
         super(context);
@@ -38,7 +38,7 @@ class JapScan extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
-        String source = getNavigatorAndFlushParameters().get("http://www.japscan.com/mangas/");
+        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/");
         Pattern pattern = Pattern.compile("<a href=\"(/mangas/[^\"].+?)\">(.+?)</a>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -78,7 +78,7 @@ class JapScan extends ServerBase {
             manga.setGenre(getFirstMatchDefault("<div class=\"row\">.+?<div class=\"cell\">.+?<div class=\"cell\">.+?<div class=\"cell\">(.+?)</div>", source, context.getString(R.string.nodisponible)));
 
             // Chapters
-            Pattern pattern = Pattern.compile("<a href=\"(//www\\.japscan\\.com/lecture-en-ligne/[^\"]+?)\">(Scan.+?)</a>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile("<a href=\"(//www\\.japscan\\.cc/lecture-en-ligne/[^\"]+?)\">(Scan.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
                 manga.addChapterFirst(new Chapter(matcher.group(2), "http:" + matcher.group(1)));

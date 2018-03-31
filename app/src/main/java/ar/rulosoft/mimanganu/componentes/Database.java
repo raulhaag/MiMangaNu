@@ -97,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 23;
+    private static int database_version = 24;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -958,7 +958,17 @@ public class Database extends SQLiteOpenHelper {
                         " = REPLACE(" + COL_CAP_PATH + ", 'http://ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
             }
-            //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
+
+            if (oldVersion < 24){
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
+                        " = REPLACE(" + COL_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
+                        " = REPLACE(" + COL_CAP_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
+                db.execSQL(query);
+
+            }
+                //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
         } catch (Exception e) {
             // on update error try to restore last version
             Log.e("Database update error", "Exception", e);
