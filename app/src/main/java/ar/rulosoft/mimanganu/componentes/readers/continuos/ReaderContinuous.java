@@ -725,7 +725,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
             float nScale = Math.max(.8f, Math.min(mScaleFactor * detector.getScaleFactor(), 3.0f));
             if ((nScale <= 3f && nScale >= 1f)) {//can be better, but how ?
                 float final_x = (((((screenWidth * nScale) - screenWidth)) / nScale) - ((((screenWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) * detector.getFocusX() / screenWidth;
-                float final_y = (((((screenHeight * nScale) - screenHeight)) / nScale) - ((((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) * detector.getFocusX() / screenHeight;
+                float final_y = (((((screenHeight * nScale) - screenHeight)) / nScale) - ((((screenHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) * detector.getFocusY() / screenHeight;
                 screenHeightSS = screenHeight;
                 screenWidthSS = screenWidth;
                 relativeScroll(final_x, final_y);
