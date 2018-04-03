@@ -202,7 +202,7 @@ class MangaHere extends ServerBase {
             }
 
             // only match numeric page indices, this automatically skips the 'featured' ad page
-            ArrayList<String> page_links = getAllMatch("<option value=\"([^\"]+)\"[^>]+>\\d+</option>", page_selection);
+            ArrayList<String> page_links = getAllMatch("<option value=\"([^\"]+)\"[^>]*>\\d+</option>", page_selection);
             if (page_links.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }

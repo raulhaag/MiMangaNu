@@ -22,7 +22,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -356,7 +355,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                             | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                             | View.SYSTEM_UI_FLAG_IMMERSIVE);
-
         }
     }
 
@@ -368,7 +366,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     public void initMenu() {
         mActionBar.getMenu().clear();
         mActionBar.inflateMenu(R.menu.menu_reader);
-        Menu menu = mActionBar.getMenu();
         mActionBar.setNavigationIcon(R.drawable.ic_back);
         mActionBar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override

@@ -119,7 +119,9 @@ class MangaStream extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pageNumber = getFirstMatchDefault(
+            if(source.contains("been removed from the website.")){
+                throw new Exception("Licenced or removed chapter");
+            }            String pageNumber = getFirstMatchDefault(
                     "Last Page \\((\\d+)\\)</a>", source, null);
             // handle case, where only one page is listed (as "First Page")
             if (pageNumber == null) {

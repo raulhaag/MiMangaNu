@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.evernote.android.job.JobManager;
 
-import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
@@ -27,7 +26,7 @@ public class MiMangaNuApplication extends Application {
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
-        ACRA.init(this);
+       // ACRA.init(this);
     }
 
     @Override public void onCreate() {

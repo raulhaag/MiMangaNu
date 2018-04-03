@@ -145,6 +145,7 @@ public class Chapter {
         if (f.exists()) {
             Util.getInstance().deleteRecursive(f);
         }
+        setPages(0);
         setPagesRead(0);
         setDownloaded(false);
         Database.updateChapterPlusDownload(context, this);

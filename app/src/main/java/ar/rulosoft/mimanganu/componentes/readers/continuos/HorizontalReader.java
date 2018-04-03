@@ -73,18 +73,18 @@ public abstract class HorizontalReader extends ReaderContinuous {
     public void reloadImage(int idx) {
         int pageIdx = idx - 1;
         if (pages != null && pageIdx < pages.size() && pageIdx >= 0) {
-            int cPage = currentPage;
-            if (pages.size() < cPage || cPage < 0)
-                cPage = 0;
+            int cIdx = currentPage - 1;
+            if (pages.size() < cIdx || cIdx < 0)
+                cIdx = 0;
             float value = 0;
-            if (pages.get(cPage) != null)
-                value = pages.get(cPage).init_visibility;
+            if (pages.get(cIdx) != null)
+                value = pages.get(cIdx).init_visibility;
             Page page = initValues(pages.get(pageIdx).path);
             pages.set(pageIdx, page);
             calculateParticularScale(pages.get(pageIdx));
             calculateVisibilities();
-            if (pages.get(cPage) != null)
-                value = value - pages.get(cPage).init_visibility;
+            if (pages.get(cIdx) != null)
+                value = value - pages.get(cIdx).init_visibility;
             relativeScroll(-value, 0);
             generateDrawPool();
         }
