@@ -40,12 +40,6 @@ public class CFInterceptor implements Interceptor {
     }
 
     public Response resolveOverCF(Chain chain, Response response) throws IOException {
-        try {
-            Thread.sleep(4000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
         Request request = response.request();
         String content = response.body().string();
         String domain = request.url().host().trim();
@@ -61,14 +55,19 @@ public class CFInterceptor implements Interceptor {
         String operation = rawOperation.replaceAll("a\\.value =(.+?) \\+ .+?;.*", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
         String js = operation.replace("\n", "");
         Duktape duktape = Duktape.create();
-        long result = 0;
+        double result = 0;
         try {
-            String res = (String) duktape.evaluate(js + ".toString()");
-            result = Long.parseLong(res);
+            result = (double) duktape.evaluate(js);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             duktape.close();
+        }
+
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
 
         String answer = String.valueOf(result + domain.length());

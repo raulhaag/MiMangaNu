@@ -1,5 +1,7 @@
 package ar.rulosoft.navegadores;
 
+import android.util.Log;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -22,6 +24,7 @@ public class RetryInterceptor implements Interceptor {
             Request newRequest = request.newBuilder().url(url).build();
             tryCount++;
             try {
+                Log.i("Retry ", "retry");
                 Thread.sleep(500 * tryCount);
             } catch (InterruptedException e) {
                 e.printStackTrace();

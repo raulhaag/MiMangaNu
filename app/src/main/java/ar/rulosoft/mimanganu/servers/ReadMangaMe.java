@@ -194,7 +194,7 @@ public class ReadMangaMe extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
+        String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + "?mtr=1");
         data = getFirstMatch("rm_h.init\\(([\\s\\S]+?)\\)", data, context.getString(R.string.server_failed_loading_page_count));
         Pattern pattern = Pattern.compile("\\[['|\"][\\s\\S]*?,['|\"](.+?)['|\"],['|\"](.+?)['|\"]");
         Matcher m = pattern.matcher(data);
@@ -222,7 +222,7 @@ public class ReadMangaMe extends ServerBase {
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("sm-6 \">[^/]*href=\"([^\"]+)[^/]*=\"([^\"]+)\" title=\"([^\"]+)", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("sm-6 \">[\\s\\S]+?href=\"(.+?)\"[\\s\\S]+?original='(.+?)' title='(.+?)'", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

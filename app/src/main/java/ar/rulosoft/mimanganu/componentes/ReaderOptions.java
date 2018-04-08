@@ -355,6 +355,10 @@ public class ReaderOptions extends FrameLayout {
         return mDirection;
     }
 
+    public boolean isVisible() {
+        return optionsRoot.getVisibility() == VISIBLE;
+    }
+
     public enum OptionType {
         TYPE,
         DIRECTION,

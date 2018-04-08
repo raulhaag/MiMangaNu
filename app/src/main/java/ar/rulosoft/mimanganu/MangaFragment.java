@@ -50,7 +50,7 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class MangaFragment extends Fragment {
+public class MangaFragment extends Fragment implements MainActivity.OnBackListener {
     public static final String DIRECTION = "direcciondelectura";
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
@@ -87,6 +87,7 @@ public class MangaFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
+        ((MainActivity)getActivity()).setOnBackListener(this);
         mMangaId = getArguments().getInt(MainFragment.MANGA_ID, -1);
         return inflater.inflate(R.layout.fragment_manga, container, false);
     }
@@ -548,6 +549,15 @@ public class MangaFragment extends Fragment {
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
         menu.findItem(R.id.action_hide_read).setChecked(hide_read);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if(readerOptions.isVisible()){
+            readerOptions.switchOptions();
+            return true;
+        }
+        return false;
     }
 
     private class AsyncAddChapters extends AsyncTask<Chapter, Void, Void> {

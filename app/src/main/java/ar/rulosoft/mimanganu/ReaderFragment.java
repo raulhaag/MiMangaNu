@@ -223,8 +223,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     @Override
     public void onAttach(Context context) {
         MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.backListener = this;
-        mainActivity.keyUpListener = this;
+        mainActivity.setOnBackListener(this);
+        mainActivity.setOnKeyUpListener(this);
         super.onAttach(context);
     }
 
@@ -476,6 +476,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public boolean onBackPressed() {
+        if(readerOptions.isVisible()){
+            readerOptions.switchOptions();
+            return true;
+        }
         getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ActionBar ab = ((MainActivity) getActivity()).getSupportActionBar();
         if (ab != null) {
@@ -489,6 +493,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onMenuRequired() {
+        if(readerOptions.isVisible()){
+            readerOptions.switchOptions();
+            return;
+        }
         if (controlVisible) {
             hideSystemUI();
             controlVisible = false;

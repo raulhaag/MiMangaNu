@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
     public static boolean coldStart;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
     public ActionBar mActBar;
-    OnBackListener backListener;
-    OnKeyUpListener keyUpListener;
+    private OnBackListener backListener;
+    private OnKeyUpListener keyUpListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
             replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
-            if(Util.n > 0)
+            if (Util.n > 0)
                 Util.n--;
             //Util.getInstance().toast(this, "n: " + Util.n, 1);
             Log.i("MA", "n: " + Util.n);
@@ -195,8 +195,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void replaceFragmentAllowStateLoss(Fragment fragment, String tag) {
-        backListener = null;
-        keyUpListener = null;
         // introduced in support lib v25.1.0
         // setAllowOptimization(false)
         // fA -> fB
@@ -212,8 +210,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void replaceFragment(Fragment fragment, String tag) {
-        backListener = null;
-        keyUpListener = null;
         getSupportFragmentManager().beginTransaction().setCustomAnimations(
                 R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
         ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commit();
@@ -222,8 +218,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void replaceFragment(Fragment fragment, String tag, int f1_animation_out,
                                 int f2_animation_in, int f2_animation_out, int f1_animation_in) {
-        backListener = null;
-        keyUpListener = null;
         getSupportFragmentManager().beginTransaction().setCustomAnimations(f2_animation_in,
                 f1_animation_out, f1_animation_in, f2_animation_out).replace(R.id.coordinator_layout,
                 fragment).addToBackStack(tag).commit();
@@ -232,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+
         if (backListener != null) {
             if (!backListener.onBackPressed()) {
                 backListener = null;
@@ -257,6 +252,13 @@ public class MainActivity extends AppCompatActivity {
             if (!keyUpListener.onKeyUp(keyCode, event))
                 return super.onKeyUp(keyCode, event);
         return super.onKeyUp(keyCode, event);
+    }
+
+    public void setOnBackListener(OnBackListener backListener) {
+        this.backListener = backListener;
+    }
+    public void setOnKeyUpListener(OnKeyUpListener keyUpListener) {
+        this.keyUpListener = keyUpListener;
     }
 
     public interface OnBackListener {
