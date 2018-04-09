@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.82:\n\t* Agregado un nueva opción en el reader.\n\t* Arreglado ssl handshake para api 16 a 22\n\t* Vuelta atras a seekbar para el grupo de dispositivos que mostraban error de "reflection".\n\t* Arreglado los taps en orden correcto en el lector.\n\t* Otros arreglos menores.</string>
+    <string name="update_message">Cambios en v1.83:\n\t* Agregado canal de notificaciones en androi O.\n\t* Muchos arreglos.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

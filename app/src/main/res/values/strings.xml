@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.82:\n\t* Added new reader menu.\n\t* Fix ssl handshake for api 16 to 22.\n\t* Back to normal seekbar to fix a group of devices giving "reflection" error.\n\t* Fix reader tap bad order\n\t* Others min fixes.</string>
+    <string name="update_message">Changes in v1.83:\n\t* Added android O notification channel\n\t*A lot of fixes.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
