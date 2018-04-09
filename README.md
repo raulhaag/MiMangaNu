@@ -33,6 +33,13 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.83
+* Agregado canal de notificaciones en androi O.
+* Muchos arreglos.
+
+Changes in v1.83
+* Added android O notification channel.
+* A lot of fixes.
 
 Cambios en v1.82
 * Agregado un nueva opción en el reader.
