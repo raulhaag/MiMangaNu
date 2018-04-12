@@ -166,6 +166,9 @@ public class ReaderOptions extends FrameLayout {
                     if (optionListener != null) {
                         optionListener.onOptionChange(OptionType.KEEP_SCREEN);
                     }
+                    SharedPreferences.Editor editor = pm.edit();
+                    editor.putBoolean(ReaderFragment.KEEP_SCREEN_ON, mKeepOn);
+                    editor.apply();
                 }
             });
 
@@ -178,6 +181,9 @@ public class ReaderOptions extends FrameLayout {
                     if (optionListener != null) {
                         optionListener.onOptionChange(OptionType.ROTATE);
                     }
+                    SharedPreferences.Editor editor = pm.edit();
+                    editor.putInt(ReaderFragment.ORIENTATION, mOrientation);
+                    editor.apply();
                 }
             });
             optionsRoot = findViewById(R.id.option_root);
