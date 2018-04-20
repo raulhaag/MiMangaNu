@@ -174,7 +174,7 @@ class MangaHere extends ServerBase {
                 manga.setGenre(context.getString(R.string.nodisponible));
             }
             // Chapter
-            Pattern p = Pattern.compile("<li>\\s*<span class=\"left\">\\s*<a class=\"color_0077\" href=\"([^\"]+)\" >([^<]+)</a>\\s*<span class=\"mr6\">([^<]+)", Pattern.DOTALL);
+            Pattern p = Pattern.compile("<li>\\s*<span class=\"left\">\\s*<a class=\"color_0077\"\\s+href=\"([^\"]+)\"\\s*>([^<]+)</a>\\s*<span\\s+class=\"mr6\">([^<]*)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 manga.addChapterFirst(new Chapter(m.group(2).trim() + " " + m.group(3).trim(), Util.getInstance().getFilePath(m.group(1))));
