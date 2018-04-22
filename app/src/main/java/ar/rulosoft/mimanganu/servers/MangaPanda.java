@@ -243,7 +243,7 @@ class MangaPanda extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         String web = HOST + "/search/?w=" + valType[filters[1][0]] + valStatus[filters[2][0]] + valOrder[filters[3][0]] + "&genre=" + gens + "&p=" + ((pageNumber - 1) * 30);
         String data = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile("(http:[^']+/cover/.+?)'.+?<h3><a href=\"(.+?)\">(.+?)<", Pattern.DOTALL);
+        Pattern p = Pattern.compile("(https:[^']+/cover/[^']+).+?<h3><a href=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(2), false);

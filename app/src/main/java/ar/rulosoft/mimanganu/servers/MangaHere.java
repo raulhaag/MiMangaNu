@@ -3,6 +3,9 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -13,12 +16,23 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 class MangaHere extends ServerBase {
     private static final String HOST = "http://www.mangahere.cc";
 
-    private static final int[] fltGenre = {
+    private static final int[] fltType = {
             R.string.flt_tag_all,
+            R.string.flt_tag_manga,
+            R.string.flt_tag_manhwa,
+    };
+    private static final String[] valType = {
+            "",
+            "rl",
+            "lr",
+    };
+
+    private static final int[] fltGenre = {
             R.string.flt_tag_action,
             R.string.flt_tag_adventure,
             R.string.flt_tag_comedy,
@@ -44,53 +58,66 @@ class MangaHere extends ServerBase {
             R.string.flt_tag_shoujo,
             R.string.flt_tag_shoujo_ai,
             R.string.flt_tag_shounen,
+            R.string.flt_tag_shounen_ai,
             R.string.flt_tag_slice_of_life,
             R.string.flt_tag_sports,
             R.string.flt_tag_supernatural,
             R.string.flt_tag_tragedy,
+            R.string.flt_tag_yaoi,
             R.string.flt_tag_yuri
     };
     private static final String[] valGenre = {
-            "directory",
-            "action",
-            "adventure",
-            "comedy",
-            "doujinshi",
+            "Action",
+            "Adventure",
+            "Comedy",
+            "Doujinshi",
             "Drama",
-            "ecchi",
-            "fantasy",
-            "gender_bender",
-            "harem",
-            "historical",
-            "horror",
-            "josei",
-            "martial_arts",
-            "mature",
-            "mecha",
-            "mystery",
-            "one_shot",
-            "psychological",
-            "romance",
-            "school_life",
-            "sci-fi",
-            "seinen",
-            "shoujo",
-            "shoujo Ai",
-            "shounen",
-            "slice_of_life",
-            "sports",
-            "supernatural",
-            "tragedy",
-            "yuri"
+            "Ecchi",
+            "Fantasy",
+            "Gender Bender",
+            "Harem",
+            "Historical",
+            "Horror",
+            "Josei",
+            "Martial Arts",
+            "Mature",
+            "Mecha",
+            "Mystery",
+            "One Shot",
+            "Psychological",
+            "Romance",
+            "School Life",
+            "Sci-fi",
+            "Seinen",
+            "Shoujo",
+            "Shoujo Ai",
+            "Shounen",
+            "Shounen Ai",
+            "Slice of Life",
+            "Sports",
+            "Supernatural",
+            "Tragedy",
+            "Yaoi",
+            "Yuri",
     };
+
+    private static final int[] fltStatus = {
+            R.string.flt_status_all,
+            R.string.flt_status_ongoing,
+            R.string.flt_status_completed,
+    };
+    private static final String[] valStatus = {
+            "",
+            "1",
+            "0",
+    };
+
     private static final String PATTERN_SERIE =
             "<li><a class=\"manga_info\" rel=\"([^\"]*)\" href=\"([^\"]*)\"><span>[^<]*</span>([^<]*)</a></li>";
     private static final String PATTERN_COVER =
             "<img src=\"(.+?cover.+?)\"";
     private static final String PATTERN_SUMMARY =
             "<p id=\"show\" style=\"display:none;\">(.+?)&nbsp;<a";
-    private static final String PATTERN_CHAPTERS =
-            "<li>[^<]*<span class=\"left\">[^<]*<a class=\"color_0077\" href=\"([^\"]*)\"[^>]*>([^<]*)</a>";
     private static final String PATTERN_AUTHOR =
             "<li><label>Author\\(s\\):</label>(.+?)</li>";
     private static final String PATTERN_FINISHED =
@@ -103,19 +130,6 @@ class MangaHere extends ServerBase {
             "<img src=\"(.+?)\".+?alt=\"(.+?)\".+?<a href=\"(.+?)\"";
     private static final String PATTERN_MANGA_SEARCHED =
             "<dt>\\s+<a href=\"[^\"]+(/manga[^\"]+).+?>(.+?)<";
-
-    private static int[] fltOrder = {
-            R.string.flt_order_views,
-            R.string.flt_order_alpha,
-            R.string.flt_order_rating,
-            R.string.flt_order_last_update
-    };
-    private static String[] orderM = {
-            "?views.za",
-            "?name.az",
-            "?rating.za",
-            "?last_chapter_time.az"
-    };
 
     MangaHere(Context context) {
         super(context);
@@ -160,10 +174,10 @@ class MangaHere extends ServerBase {
                 manga.setGenre(context.getString(R.string.nodisponible));
             }
             // Chapter
-            Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
+            Pattern p = Pattern.compile("<li>\\s*<span class=\"left\">\\s*<a class=\"color_0077\"\\s+href=\"([^\"]+)\"\\s*>([^<]+)</a>\\s*<span\\s+class=\"mr6\">([^<]*)", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                manga.addChapterFirst(new Chapter(m.group(2), Util.getInstance().getFilePath(m.group(1))));
+                manga.addChapterFirst(new Chapter(m.group(2).trim() + " " + m.group(3).trim(), Util.getInstance().getFilePath(m.group(1))));
             }
         }
     }
@@ -221,26 +235,91 @@ class MangaHere extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[] {
                 new ServerFilter(
-                        context.getString(R.string.flt_genre),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
+                        context.getString(R.string.flt_type),
+                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
                 new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
         };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String web = HOST + "/" + valGenre[filters[0][0]] + "/" + pageNumber + ".htm" + orderM[filters[1][0]];
-        String source = getNavigatorAndFlushParameters().get(web);
-        Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), Util.getInstance().getFilePath(m.group(3)), false);
-            manga.setImages(m.group(1));
-            mangas.add(manga);
+
+        if(filters[0][0] == 0 && filters[1].length <= 1 && filters[2][0] == 0) {
+            // perform simple directory listing (faster)
+            String web;
+            if(filters[1].length == 0) {
+                web = HOST + "/directory/" + pageNumber + ".htm";
+            } else {
+                web = HOST + "/" + valGenre[filters[1][0]].toLowerCase().replace(" ", "_") + "/" + pageNumber + ".htm";
+            }
+
+            String source = getNavigatorAndFlushParameters().get(web);
+            Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
+            Matcher m = p.matcher(source);
+            while (m.find()) {
+                Manga manga = new Manga(getServerID(), m.group(2), Util.getInstance().getFilePath(m.group(3)), false);
+                manga.setImages(m.group(1));
+                mangas.add(manga);
+            }
         }
+        else {
+            // perform complex filtering
+            StringBuilder sb = new StringBuilder();
+
+            sb.append(HOST).append("/search.php?");
+            sb.append("direction=").append(valType[filters[0][0]]).append("&");
+            sb.append("name_method=cw&name=&author_method=cw&author=&artist_method=cw&artist=&");
+            for (int i = 0; i < valGenre.length; i++) {
+                sb.append("genres[").append(valGenre[i]).append("]=");
+                boolean hasGenre = false;
+                for (int j : filters[1]) {
+                    if (j == i) {
+                        hasGenre = true;
+                        break;
+                    }
+                }
+                sb.append(hasGenre ? "1&" : "0&");
+            }
+            sb.append("released_method=eq&released=&");
+            sb.append("is_completed=").append(valStatus[filters[2][0]]).append("&");
+            sb.append("advopts=1");
+            if (pageNumber > 1) {
+                sb.append("&page=").append(pageNumber);
+            }
+
+            String web = sb.toString();
+            String source = getNavigatorAndFlushParameters().get(web);
+            // MangaHere delivers the last page again for page numbers greater than the last page number
+            // detect this case here and deliver an empty array in that case
+            int lastPage = Integer.parseInt(getFirstMatchDefault("<a href=\"javascript:void\\(0\\);\" class=\"hover\">(\\d+)</a>", source, "0"));
+            if (pageNumber <= lastPage) {
+                Pattern p = Pattern.compile("href=\"([^\"]+)\" class=\"manga_info name_one\" rel=\"([^\"]+)", Pattern.DOTALL);
+                Matcher m = p.matcher(source);
+                while (m.find()) {
+                    Manga manga = new Manga(getServerID(), m.group(2), Util.getInstance().getFilePath(m.group(1)), false);
+
+                    // extract the cover URL from the popup via AJAX
+                    Navigator nav = getNavigatorAndFlushParameters();
+                    nav.addHeader("X-Requested-With", "XMLHttpRequest");
+                    nav.addPost("name", m.group(2));
+                    String data = nav.post(HOST + "/ajax/series.php");
+                    try {
+                        manga.setImages(new JSONArray(data).getString(1));
+                    } catch (JSONException e) {
+                        manga.setImages("");
+                    }
+
+                    mangas.add(manga);
+                }
+            }
+        }
+
         return mangas;
     }
 

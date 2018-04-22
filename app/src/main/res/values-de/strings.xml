@@ -468,4 +468,12 @@
     <string name="flt_tag_color">Farbe</string>
     <string name="flt_order_votes">Bewertung</string>
     <string name="flt_order_created">Erstellungsdatum</string>
+    <string name="dont_ask_again">Immer</string>
+    <string name="connection_retry_title">Verbindungsversuche</string>
+    <string name="connection_retry_summary">%s mal</string>
+    <string name="notification_o_title">Benachrichtigung</string>
+    <string name="notification_o_subtitle">Einstellungen für Benachrichtigung bei neuen Manga</string>
+    <string name="notification_channel_new">Neue Manga und Aktualisierungen</string>
+    <string name="notification_channel_update">Benachrichtigung für Aktualisierungsfortschritt</string>
+    <string name="select_server">Server wählen</string>
 </resources>
