@@ -80,6 +80,12 @@ public abstract class Reader extends FrameLayout {
 
     protected abstract int transformPage(int page);
 
+    public abstract void setBlueFilter(float bf);
+
+    public void setBlueFilter(){
+        setBlueFilter(1f);
+    }
+
     public void setScrollSensitive(float mScrollSensitive) {
         this.mScrollSensitive = mScrollSensitive;
     }

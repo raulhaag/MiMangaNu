@@ -509,6 +509,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             DownloadPoolService.setStateChangeListener(mChapterAdapter);
         }
         mListView.setSelection(mManga.getLastIndex());
+//        readerOptions.setValues(); //to update data before reader change values
     }
 
     @Override

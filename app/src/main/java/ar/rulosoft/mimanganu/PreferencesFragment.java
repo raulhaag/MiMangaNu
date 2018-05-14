@@ -81,8 +81,10 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
         PreferenceGroup preferenceGroup = (PreferenceGroup) findPreference("account");
         ServerBase[] servers = ServerBase.getServers(getContext());
+        boolean isThereAnyServerUsingAccount = false;
         for (final ServerBase sb : servers) {
             if (sb.needLogin()) {
+                isThereAnyServerUsingAccount = true;
                 SwitchPreferenceCompat preference = new SwitchPreferenceCompat(getContext());
                 preference.setTitle(sb.getServerName());
                 preference.setSelectable(true);
@@ -96,6 +98,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 preferenceGroup.addPreference(preference);
             }
         }
+        if(!isThereAnyServerUsingAccount)
+            preferenceGroup.setVisible(false);
 
         /* Once, create necessary Data */
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
@@ -271,42 +275,6 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 }
                 if(time < 0)
                     MainActivity.coldStart = false;
-                return true;
-            }
-        });
-
-        /* This is for Custom language selection */
-        final ListPreference listPrefBatotoLang = (ListPreference) getPreferenceManager().findPreference("batoto_lang_selection");
-        listPrefBatotoLang.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals("Custom")) {
-                    LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    View rootView = inflater.inflate(R.layout.simple_input_dialog, null);
-                    final EditText CustomLang = (EditText) rootView.findViewById(R.id.txtCustomLang);
-                    AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
-                    dialogBuilder.setTitle(getString(R.string.custom_language));
-                    dialogBuilder.setView(rootView);
-                    dialogBuilder.setPositiveButton("Ok", null);
-                    dialogBuilder.setNegativeButton(getString(R.string.cancel), null);
-                    AlertDialog dialog = dialogBuilder.create();
-                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                        @Override
-                        public void onShow(final DialogInterface dialog) {
-                            Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                            accept.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    prefs.edit().putString("batoto_custom_lang", CustomLang.getText().toString()).apply();
-                                    Util.getInstance().toast(getContext(), getString(R.string.custom_language) + ": " + CustomLang.getText().toString());
-                                    dialog.dismiss();
-                                }
-                            });
-                        }
-                    });
-                    dialog.show();
-                }
-
                 return true;
             }
         });

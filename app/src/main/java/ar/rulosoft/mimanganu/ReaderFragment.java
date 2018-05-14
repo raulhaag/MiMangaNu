@@ -56,6 +56,9 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
+import static ar.rulosoft.mimanganu.componentes.ReaderOptions.BLUE_FILTER_CHECK;
+import static ar.rulosoft.mimanganu.componentes.ReaderOptions.BLUE_FILTER_LEVEL;
+
 
 public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener,
         SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener,
@@ -239,6 +242,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             mSeekBar.setRotation(0);
         }
         mReader.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        readerOptions.setReader(mReader);
         if (getView() != null) {
             ((FrameLayout) getView().findViewById(R.id.reader_placeholder)).removeAllViews();
             ((FrameLayout) getView().findViewById(R.id.reader_placeholder)).addView(mReader);
@@ -247,6 +251,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             mReader.setReaderListener(this);
             mReader.setScrollSensitive(mScrollFactor);
             loadChapter(mChapter, LoadMode.SAVED);
+        }
+
+        if(pm.getBoolean(BLUE_FILTER_CHECK, false)){
+            mReader.setBlueFilter((100 - pm.getInt(BLUE_FILTER_LEVEL, 30))/100f);
         }
     }
 
@@ -493,10 +501,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onMenuRequired() {
-        if(readerOptions.isVisible()){
-            readerOptions.switchOptions();
-            return;
-        }
         if (controlVisible) {
             hideSystemUI();
             controlVisible = false;

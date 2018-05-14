@@ -7,6 +7,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Rect;
@@ -46,13 +48,15 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     protected ScaleGestureDetector mScaleDetector;
     protected GestureDetector mGestureDetector;
     protected Rect screen;
+    Canvas cache;
     float mScaleFactor = 1.f;
     Matrix m = new Matrix();
+    Paint mPaint = new Paint();
     int screenHeight, screenWidth;
     int screenHeightSS, screenWidthSS; // Sub scaled
     Handler mHandler;
     ArrayList<Page.Segment> toDraw = new ArrayList<>();
-    boolean drawing = false, preparing = false, waiting = false;
+    boolean drawing = false, preparing = false;
 
     float ppi;
 
@@ -83,6 +87,17 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     public abstract void postLayout();
 
     public abstract void reloadImage(int idx);
+
+    @Override
+    public void setBlueFilter(float bf) {
+        ColorMatrix cm = new ColorMatrix();
+        cm.set(new float[]{1, 0, 0, 0, 0,
+                0, (0.6f + 0.4f * bf), 0, 0, 0,
+                0f, 0f, (0.1f + 0.9f * bf), 0, 0,
+                0, 0, 0, 1f, 0});
+        mPaint.setColorFilter(new ColorMatrixColorFilter(cm));
+        this.postInvalidate();
+    }
 
     @Override
     public int getPages() {
@@ -123,11 +138,12 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
 
     public Page getPage(int page) {
         if (isValidIdx(page))
-                return pages.get(page);
+            return pages.get(page);
         return null;
     }
 
     private void init(Context context) {
+        mPaint.setFilterBitmap(true);
         setWillNotDraw(false);
         mScaleDetector = new ScaleGestureDetector(context, new ScaleListener());
         mGestureDetector = new GestureDetector(getContext(), this);
@@ -246,7 +262,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                     mHandler.post(new Runnable() {
                         @Override
                         public void run() {
-                            onlyInvalidate();
+                            invalidate();
                         }
                     });
                 }
@@ -254,38 +270,20 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
         }
     }
 
-    private void onlyInvalidate() {
-        super.invalidate();
-    }
-
-    @Override
-    public void invalidate() {
-        generateDrawPool();
-        super.invalidate();
-    }
-
     @Override
     protected void onDraw(Canvas canvas) {
-        waiting = false;
-        if (drawing) {
-            if (toDraw.size() > 0)
+            if (toDraw.size() > 0) {
                 for (Page.Segment s : toDraw) {
                     s.draw(canvas);
                 }
-            else
-                waiting = true;
+                cache = canvas;
+            } else {
+                generateDrawPool();
+                if (cache != null)
+                    canvas = cache;
+            }
             preparing = false;
             drawing = false;
-            if (waiting) {
-                waiting = false;
-                generateDrawPool();
-            }
-        } else {
-            if (preparing)
-                waiting = true;
-            else
-                generateDrawPool();
-        }
     }
 
     public void setPaths(List<String> paths) {
@@ -609,13 +607,9 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
             Bitmap segment;
             ImagesStates state;
             int dx, dy;
-            Paint mPaint;
             int alpha;
 
             public Segment() {
-                mPaint = new Paint();
-                mPaint.setAlpha(255);
-                mPaint.setFilterBitmap(true);
                 alpha = 255;
                 state = ImagesStates.NULL;
             }

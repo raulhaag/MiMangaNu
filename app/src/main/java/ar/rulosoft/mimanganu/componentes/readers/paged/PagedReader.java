@@ -5,6 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorFilter;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
@@ -108,8 +111,19 @@ public abstract class PagedReader extends Reader implements TapListener {
         return true;
     }
 
+    @Override
+    public void setBlueFilter(float bf){
+        ColorMatrix cm = new ColorMatrix();
+        cm.set(new float[]{1, 0, 0, 0, 0,
+                0, (0.6f + 0.4f * bf), 0, 0, 0,
+                0f, 0f, (0.1f + 0.9f * bf), 0, 0,
+                0, 0, 0, 1f, 0});
+        mPageAdapter.updateBlueFilter(new ColorMatrixColorFilter(cm));
+    }
+
     public class PageAdapter extends PagerAdapter {
         private Page[] pages;
+        private ColorFilter cf = new ColorFilter();
 
         PageAdapter() {
             pages = new Page[paths.size()];
@@ -158,6 +172,7 @@ public abstract class PagedReader extends Reader implements TapListener {
             if (page == null) {
                 page = new Page(getContext());
                 page.setImage(paths.get(position));
+                page.visor.setColorFilter(cf);
                 page.index = position;
                 pages[position] = page;
             }
@@ -172,6 +187,15 @@ public abstract class PagedReader extends Reader implements TapListener {
                 container.removeView((Page) object);
             } catch (Exception ignore) {
 
+            }
+        }
+
+        public void updateBlueFilter(ColorFilter cf) {
+            this.cf = cf;
+            for (Page page : pages) {
+                if (page != null) {
+                    page.visor.setColorFilter(cf);
+                }
             }
         }
 

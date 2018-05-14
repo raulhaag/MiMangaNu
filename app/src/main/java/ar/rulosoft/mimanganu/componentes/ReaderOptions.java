@@ -14,8 +14,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 
 import ar.rulosoft.mimanganu.MangaFragment;
 import ar.rulosoft.mimanganu.R;
@@ -33,13 +38,20 @@ import static ar.rulosoft.mimanganu.ReaderFragment.ORIENTATION;
 
 public class ReaderOptions extends FrameLayout {
 
+    public static final String BLUE_FILTER_CHECK = "blue_filter_switch_";
+    public static final String BLUE_FILTER_LEVEL = "blue_filter_level_";
+
     Reader.Direction mDirection;
     ImageViewTouchBase.DisplayType mScreenFit;
     LinearLayout optionsRoot;
     Activity mActivity;
+    Reader reader;
     Manga manga;
     int d = -1;
     Button type, direction, ajust, keep_screen, rotate;
+    CheckBox blueCheckbox;
+    RelativeLayout root;
+    SeekBar blueLevel;
     SharedPreferences pm;
     private int readerType;
     private boolean mKeepOn;
@@ -71,7 +83,18 @@ public class ReaderOptions extends FrameLayout {
         LayoutInflater li = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         if (li != null) {
             li.inflate(R.layout.reader_options, this, true);
+
+            root = findViewById(R.id.root_reader_options);
+            optionsRoot = findViewById(R.id.option_root);
             type = findViewById(R.id.reader_type);
+            direction = findViewById(R.id.reader_direction);
+            ajust = findViewById(R.id.reader_ajust);
+            rotate = findViewById(R.id.reader_rotate);
+            keep_screen = findViewById(R.id.reader_stay_awake);
+            blueCheckbox = findViewById(R.id.blue_cb);
+            blueLevel = findViewById(R.id.blue_sb);
+            ImageButton back = findViewById(R.id.reader_options_close);
+
             type.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -92,17 +115,16 @@ public class ReaderOptions extends FrameLayout {
                     if (optionListener != null) {
                         optionListener.onOptionChange(OptionType.TYPE);
                     }
-                    if(readerType == 2){
+                    if (readerType == 2) {
                         ajust.setEnabled(false);
                         ajust.setAlpha(0.5f);
-                    }else{
+                    } else {
                         ajust.setEnabled(true);
                         ajust.setAlpha(1.f);
                     }
                 }
             });
 
-            direction = findViewById(R.id.reader_direction);
             direction.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -132,7 +154,6 @@ public class ReaderOptions extends FrameLayout {
                 }
             });
 
-            ajust = findViewById(R.id.reader_ajust);
             ajust.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -147,7 +168,6 @@ public class ReaderOptions extends FrameLayout {
                 }
             });
 
-            keep_screen = findViewById(R.id.reader_stay_awake);
             keep_screen.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -172,7 +192,6 @@ public class ReaderOptions extends FrameLayout {
                 }
             });
 
-            rotate = findViewById(R.id.reader_rotate);
             rotate.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -186,7 +205,48 @@ public class ReaderOptions extends FrameLayout {
                     editor.apply();
                 }
             });
-            optionsRoot = findViewById(R.id.option_root);
+
+            blueCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    pm.edit().putBoolean(BLUE_FILTER_CHECK, isChecked).apply();
+                    if (isChecked) {
+                        if (reader != null)
+                            reader.setBlueFilter((100f - blueLevel.getProgress()) / 100f);
+                        blueLevel.setEnabled(true);
+                    } else {
+                        if (reader != null)
+                            reader.setBlueFilter(1f);
+                        blueLevel.setEnabled(false);
+                    }
+                }
+            });
+
+            blueLevel.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (reader != null && blueCheckbox.isChecked())
+                        reader.setBlueFilter((100f - progress) / 100f);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    if (reader != null)
+                        reader.setBlueFilter((100f - seekBar.getProgress()) / 100f);
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
+
+            back.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    switchOptions();
+                }
+            });
         }
     }
 
@@ -195,7 +255,7 @@ public class ReaderOptions extends FrameLayout {
         setValues();
     }
 
-    private void setValues() {
+    public void setValues() {
         //   Direction
         if (manga != null && manga.getReadingDirection() != -1) {
             d = manga.getReadingDirection();
@@ -225,7 +285,7 @@ public class ReaderOptions extends FrameLayout {
             type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_paged), null, null);
             type.setText(R.string.paged_reader);
         }
-        if(readerType == 2){
+        if (readerType == 2) {
             ajust.setEnabled(false);
             ajust.setAlpha(0.5f);
         }
@@ -245,6 +305,7 @@ public class ReaderOptions extends FrameLayout {
         // Orientation
         mOrientation = pm.getInt(ORIENTATION, 0);
         updateIconOrientation();
+
     }
 
     private void updateIconAjust(ImageViewTouchBase.DisplayType displayType) {
@@ -293,6 +354,17 @@ public class ReaderOptions extends FrameLayout {
         editor.apply();
     }
 
+    private void saveValues() {
+        pm.edit().putInt(BLUE_FILTER_LEVEL, blueLevel.getProgress()).apply();
+        pm.edit().putBoolean(BLUE_FILTER_CHECK, blueCheckbox.isChecked()).apply();
+    }
+
+    private void updateValue() {
+        blueCheckbox.setChecked(pm.getBoolean(BLUE_FILTER_CHECK, false));
+        blueLevel.setProgress(pm.getInt(BLUE_FILTER_LEVEL, 30));
+        blueLevel.setEnabled(blueCheckbox.isChecked());
+    }
+
     public void switchOptions() {
         ValueAnimator vA = ValueAnimator.ofFloat(0f, 1f);
         vA.setInterpolator(new DecelerateInterpolator());
@@ -303,11 +375,13 @@ public class ReaderOptions extends FrameLayout {
                 optionsRoot.setAlpha(animation.getAnimatedFraction());
             }
         });
-        if (optionsRoot.getVisibility() == INVISIBLE) {
+        if (root.getVisibility() == GONE) {
             optionsRoot.setAlpha(0f);
-            optionsRoot.setVisibility(VISIBLE);
+            root.setVisibility(VISIBLE);
+            updateValue();
             vA.start();
         } else {
+            saveValues();
             vA.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -316,7 +390,7 @@ public class ReaderOptions extends FrameLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    optionsRoot.setVisibility(INVISIBLE);
+                    root.setVisibility(GONE);
                 }
 
                 @Override
@@ -342,6 +416,15 @@ public class ReaderOptions extends FrameLayout {
         this.mActivity = mActivity;
     }
 
+    public void setReader(Reader reader) {
+        if (reader != null) {
+            this.reader = reader;
+            if (blueCheckbox.isChecked()) {
+                reader.setBlueFilter((100f - blueLevel.getProgress()) / 100f);
+            }
+        }
+    }
+
     public void setOptionListener(OptionListener optionListener) {
         this.optionListener = optionListener;
     }
@@ -362,7 +445,7 @@ public class ReaderOptions extends FrameLayout {
     }
 
     public boolean isVisible() {
-        return optionsRoot.getVisibility() == VISIBLE;
+        return root.getVisibility()  == VISIBLE;
     }
 
     public enum OptionType {

@@ -282,12 +282,6 @@ public abstract class ServerBase {
             case LEOMANGA:
                 serverBase = new LeoManga(context);
                 break;
-            case BATOTO:
-                serverBase = new BatoTo(context);
-                break;
-            case BATOTOES:
-                serverBase = new BatoToEs(context);
-                break;
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
@@ -367,7 +361,6 @@ public abstract class ServerBase {
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
                 new TuMangaOnline(context),
-                new BatoToEs(context),
                 new HeavenManga(context),
                 new EsNineManga(context),
                 new LeoManga(context),
@@ -395,7 +388,6 @@ public abstract class ServerBase {
                 new DeNineManga(context),
                 new RawSenManga(context),
                 new MangaRawOnline(context),
-                new BatoTo(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
                 new FromFolder(context)

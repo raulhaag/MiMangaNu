@@ -17,17 +17,6 @@
         android:key="account"
         android:title="@string/accounts" />
 
-    <PreferenceCategory android:title="@string/extra_server_settings">
-        <ListPreference
-            android:defaultValue="Automatic"
-            android:dialogTitle="@string/batoto_lang_chapters_title"
-            android:entries="@array/batoto_lang_array"
-            android:entryValues="@array/batoto_lang_array_values"
-            android:key="batoto_lang_selection"
-            android:summary="@string/batoto_lang_chapters_subtitle"
-            android:title="@string/batoto_lang_chapters_title" />
-    </PreferenceCategory>
-
     <PreferenceCategory android:title="@string/connection_settings">
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
