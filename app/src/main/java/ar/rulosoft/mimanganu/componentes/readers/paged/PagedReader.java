@@ -95,7 +95,7 @@ public abstract class PagedReader extends Reader implements TapListener {
     @Override
     public void reloadImage(int idx) {
         if (mPageAdapter != null && mPageAdapter.pages[idx - 1] != null) {
-                mPageAdapter.pages[idx - 1].setImage();
+            mPageAdapter.pages[idx - 1].setImage();
         }
     }
 
@@ -112,13 +112,14 @@ public abstract class PagedReader extends Reader implements TapListener {
     }
 
     @Override
-    public void setBlueFilter(float bf){
+    public void setBlueFilter(float bf) {
         ColorMatrix cm = new ColorMatrix();
         cm.set(new float[]{1, 0, 0, 0, 0,
                 0, (0.6f + 0.4f * bf), 0, 0, 0,
                 0f, 0f, (0.1f + 0.9f * bf), 0, 0,
                 0, 0, 0, 1f, 0});
-        mPageAdapter.updateBlueFilter(new ColorMatrixColorFilter(cm));
+        if (mPageAdapter != null)
+            mPageAdapter.updateBlueFilter(new ColorMatrixColorFilter(cm));
     }
 
     public class PageAdapter extends PagerAdapter {
