@@ -52,12 +52,12 @@ public class CFInterceptor implements Interceptor {
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
 
-        String operation = rawOperation.replaceAll("a\\.value =(.+?) \\+ .+?;.*", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
-        String js = operation.replace("\n", "");
+        String operation = rawOperation.replaceAll("a\\.value = (.+ \\+ t\\.length).+", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
+        String js = operation.replaceAll("t.length", "" + domain.length()).replaceAll("\n", "");
         Duktape duktape = Duktape.create();
-        double result = 0;
+        String result = "";
         try {
-            result = (double) duktape.evaluate(js);
+            result = duktape.evaluate(js).toString();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -70,29 +70,21 @@ public class CFInterceptor implements Interceptor {
             e.printStackTrace();
         }
 
-        String answer = String.valueOf(result + domain.length());
-
         String url = new HttpUrl.Builder().scheme("http").host(domain)
-                .addPathSegment("cdn-cgi").addPathSegment("l").addPathSegment("chk_jschl")
+                .addPathSegments("cdn-cgi/l/chk_jschl")
                 .addEncodedQueryParameter("jschl_vc", challenge)
                 .addEncodedQueryParameter("pass", challengePass)
-                .addEncodedQueryParameter("jschl_answer", answer)
+                .addEncodedQueryParameter("jschl_answer", result)
                 .build().toString();
 
         Request request1 = new Request.Builder()
                 .url(url)
                 .header("User-Agent", Navigator.USER_AGENT)
                 .header("Referer", request.url().toString())
+                .header("Accept-Language", "es")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml")
                 .build();
         response.body().close();
-        response = chain.proceed(request1);//generate the cookie
-        response.body().close();
-        try {
-            Thread.sleep(1000); //give it a time and complete the 5 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        response = chain.proceed(request.newBuilder().build());
-        return response;
+        return chain.proceed(request1);//generate the cookie
     }
 }

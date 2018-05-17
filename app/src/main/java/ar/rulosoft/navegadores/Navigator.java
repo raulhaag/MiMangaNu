@@ -46,7 +46,7 @@ import okhttp3.Response;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navigator {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0";
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
@@ -75,7 +75,7 @@ public class Navigator {
             }
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
-                    .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
+                    //.addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                     .addInterceptor(new CFInterceptor())
                     .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
@@ -380,6 +380,7 @@ public class Navigator {
     private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT);//this is used all the time
+        builder.add("Accept-Language", "es");
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
         }

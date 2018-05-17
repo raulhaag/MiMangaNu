@@ -63,9 +63,9 @@ dependencies {
     implementation 'rapid.decoder:library:0.3.0'
     implementation 'rapid.decoder:jpeg-decoder:0.3.0'
     implementation 'rapid.decoder:png-decoder:0.3.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.9.0'
-    implementation 'com.squareup.okio:okio:1.13.0'
-    implementation 'com.squareup.duktape:duktape-android:1.1.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okio:okio:1.14.0'
+    implementation 'com.squareup.duktape:duktape-android:1.2.0'
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     implementation 'com.evernote:android-job:1.2.1'
     implementation 'ch.acra:acra:4.9.2'
@@ -74,6 +74,7 @@ dependencies {
     androidTestImplementation "com.android.support:support-annotations:$ANDROID_SUPPORT"
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
 
     // for host-based testing
     testImplementation 'junit:junit:4.12'
