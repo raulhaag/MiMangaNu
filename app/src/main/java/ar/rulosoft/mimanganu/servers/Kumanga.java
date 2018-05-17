@@ -253,10 +253,18 @@ class Kumanga extends ServerBase {
             manga.setFinished(!getFirstMatchDefault("<p><b>Estado: </b>(.+?)</p>", data, "Activo")
                     .contains("Activo"));
             // Chapters
+            int pages = (Integer.parseInt(getFirstMatchDefault("php_pagination\\([^,]+,[^,]+,[^,]+,[^,]+,([^,]+),.+?\\)", data, "10")) / 10) + 1;
             Pattern pattern = Pattern.compile("<h4 class=\"title\">\\s*<a href=\"(manga[^\"]+).+?>(.+?)</i>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
             while (matcher.find()) {
                 manga.addChapterFirst(new Chapter(matcher.group(2), HOST + "/" + matcher.group(1)));
+            }
+            for (int i = 2; i <= pages; i++) {
+                data = getNavigatorAndFlushParameters().get(manga.getPath() + "/p/" + i);
+                matcher = pattern.matcher(data);
+                while (matcher.find()) {
+                    manga.addChapterFirst(new Chapter(matcher.group(2), HOST + "/" + matcher.group(1)));
+                }
             }
         }
     }
