@@ -38,6 +38,7 @@ public abstract class PagedReader extends Reader implements TapListener {
     List<String> paths;
     int currentPage = 1;  //keep the value from 1..n for externally view
     private InitialPosition iniPosition = InitialPosition.LEFT_UP;
+    ColorFilter savedCf;
 
     public PagedReader(Context context) {
         super(context);
@@ -118,15 +119,27 @@ public abstract class PagedReader extends Reader implements TapListener {
                 0, (0.6f + 0.4f * bf), 0, 0, 0,
                 0f, 0f, (0.1f + 0.9f * bf), 0, 0,
                 0, 0, 0, 1f, 0});
+        savedCf = new ColorMatrixColorFilter(cm);
         if (mPageAdapter != null)
-            mPageAdapter.updateBlueFilter(new ColorMatrixColorFilter(cm));
+            mPageAdapter.updateBlueFilter(savedCf);
     }
 
     public class PageAdapter extends PagerAdapter {
         private Page[] pages;
-        private ColorFilter cf = new ColorFilter();
+        private ColorFilter cf;
 
         PageAdapter() {
+            if(savedCf == null) {
+                ColorMatrix cm = new ColorMatrix();
+                cm.set(new float[]{1f, 0, 0, 0, 0,
+                        0, 1f, 0, 0, 0,
+                        0, 0, 1f, 0, 0,
+                        0, 0, 0, 1f, 0});
+                cf = new ColorMatrixColorFilter(cm);
+                savedCf = cf;
+            }else{
+                cf = savedCf;
+            }
             pages = new Page[paths.size()];
         }
 
@@ -172,8 +185,8 @@ public abstract class PagedReader extends Reader implements TapListener {
             Page page = pages[position];
             if (page == null) {
                 page = new Page(getContext());
-                page.setImage(paths.get(position));
                 page.visor.setColorFilter(cf);
+                page.setImage(paths.get(position));
                 page.index = position;
                 pages[position] = page;
             }
@@ -254,7 +267,6 @@ public abstract class PagedReader extends Reader implements TapListener {
             }
             imageLoaded = false;
             loadingImage = false;
-            //System.gc();
         }
 
         public void setImage() {
