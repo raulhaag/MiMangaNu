@@ -232,7 +232,7 @@ class Taadd extends ServerBase {
         nav.addHeader("Referer", chapter.getPath());
         String source = nav.get(chapter.getPath() + "-" + page + ".html");
         return getFirstMatch(
-                "src=\"(http[s]?://pic\\.taadd\\.com/comics/[^\"]+?|http[s]?://pic\\d+\\.taadd\\.com/comics/[^\"]+?)\"", source,
+                "src=\"(http[s]?://.{2,4}\\.taadd\\.com/comics/[^\"]+?)\"", source,
                 context.getString(R.string.server_failed_loading_image));
     }
 
