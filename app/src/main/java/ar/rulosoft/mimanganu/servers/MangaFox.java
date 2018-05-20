@@ -197,7 +197,7 @@ class MangaFox extends ServerBase {
             manga.setAuthor(getFirstMatchDefault("\"/search/author/.+?>(.+?)<", data, context.getString(R.string.nodisponible)));
 
             // Genre
-            manga.setGenre(getFirstMatchDefault("(<a href=\"//mangafox.[^/]+/search/genres/.+?</td>)", data, context.getString(R.string.nodisponible)));
+            manga.setGenre(getFirstMatchDefault("(<a href=\"//(mangafox|fanfox).[^/]+/search/genres/.+?</td>)", data, context.getString(R.string.nodisponible)));
 
             // Chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTERS, Pattern.DOTALL);
