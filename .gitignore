@@ -14,6 +14,8 @@
 .idea/misc.xml
 .idea/modules.xml
 .idea/inspectionProfiles/
+.idea/caches/
+.idea/codeStyles/
 app/app.iml
 imageviewtouchlibrary/imageviewtouchlibrary.iml
 *.iml
