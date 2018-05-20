@@ -283,13 +283,17 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         @Override
         protected ArrayList<Manga> doInBackground(Integer... params) {
             ArrayList<Manga> mangas = null;
-            if(req_page > top_page) {
+            if (req_page > top_page) {
                 try {
                     mangas = serverBase.getMangasFiltered(filters, params[0]);
                     top_page = req_page;
                 } catch (Exception e) {
                     Log.e("SFNF", "Exception", e);
-                    error = Log.getStackTraceString(e);
+                    if (e.getMessage() != null)
+                        error = e.getMessage();
+                    else {
+                        error = "null pointer";
+                    }
                 }
             }
             return mangas;

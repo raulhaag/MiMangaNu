@@ -13,6 +13,7 @@ import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersisto
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -46,7 +47,7 @@ import okhttp3.Response;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navigator {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:60.0) Gecko/20100101 Firefox/60.0";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36";
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
@@ -75,13 +76,14 @@ public class Navigator {
             }
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             httpClient = new OkHttpClientConnectionChecker.Builder()
-                    //.addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
+                    .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                     .addInterceptor(new CFInterceptor())
                     .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
                     .connectTimeout(10, TimeUnit.SECONDS)
                     .writeTimeout(10, TimeUnit.SECONDS)
                     .readTimeout(30, TimeUnit.SECONDS)
                     .cookieJar(cookieJar)
+                    .dns(new MmNDNS())
                     .build();
         }
     }
@@ -116,14 +118,26 @@ public class Navigator {
         return cookieJar;
     }
 
-    public void setCookieJar(CookieJar cookieJar) {
+    public void setCookieJar(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
+        TrustManager[] trustManagers = getTrustManagers(context);
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustManagers, null);
+        SSLSocketFactory socketFactory = null;
+        if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
+            socketFactory = new Tls12SocketFactory(sslContext.getSocketFactory());
+        } else {
+            socketFactory = sslContext.getSocketFactory();
+        }
+        cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
         httpClient = new OkHttpClientConnectionChecker.Builder()
-                .addInterceptor(new RetryInterceptor())
+                .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                 .addInterceptor(new CFInterceptor())
+                .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .cookieJar(cookieJar)
+                .dns(new MmNDNS())
                 .build();
         Navigator.cookieJar = cookieJar;
     }
@@ -241,8 +255,6 @@ public class Navigator {
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .addInterceptor(interceptor)
                 .build();
-        addHeader("Content-Encoding", "deflate");
-        addHeader("Accept-Encoding", "deflate");
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
             return response.body().string();
@@ -380,7 +392,10 @@ public class Navigator {
     private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT);//this is used all the time
-        builder.add("Accept-Language", "es");
+        builder.add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
+        builder.add("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        builder.add("Content-Encoding", "deflate");
+        builder.add("Accept-Encoding", "deflate");
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
         }

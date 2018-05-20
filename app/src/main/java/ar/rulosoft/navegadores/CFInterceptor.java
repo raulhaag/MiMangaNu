@@ -81,8 +81,10 @@ public class CFInterceptor implements Interceptor {
                 .url(url)
                 .header("User-Agent", Navigator.USER_AGENT)
                 .header("Referer", request.url().toString())
-                .header("Accept-Language", "es")
-                .header("Accept", "text/html,application/xhtml+xml,application/xml")
+                .header("Accept-Language", "es-419,es;q=0.9")
+                .header("Upgrade-Insecure-Requests", "1")
+                .header("Conection","keep-alive")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
                 .build();
         response.body().close();
         return chain.proceed(request1);//generate the cookie
