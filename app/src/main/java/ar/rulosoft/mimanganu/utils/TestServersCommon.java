@@ -114,7 +114,7 @@ public class TestServersCommon {
         testInitChapter(chapter);
     }
 
-    private void testLoadManga(Manga manga) throws Exception {
+    private void testLoadManga(Manga manga) {
         logMessage(String.format(Locale.getDefault(), "[MNG] %s (%s)", manga.getTitle(), manga.getPath()));
 
         assertNotNull(getContext(), manga.getTitle());
