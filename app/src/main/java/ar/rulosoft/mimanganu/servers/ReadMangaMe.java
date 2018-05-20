@@ -95,14 +95,14 @@ public class ReadMangaMe extends ServerBase {
     };
 
     private static int[] sort = new int[]{
-            R.string.flt_order_rating ,//"По популярности"
+            R.string.flt_order_rating,//"По популярности"
             R.string.flt_order_votes,
             R.string.flt_order_created,
             R.string.flt_order_last_update //"По дате обновления",
     };
 
     private static String[] sortV = new String[]{
-            "sortType=rate","sortType=votes","sortType=created","sortType=updated"
+            "sortType=rate", "sortType=votes", "sortType=created", "sortType=updated"
     };
 
     /**
@@ -110,7 +110,7 @@ public class ReadMangaMe extends ServerBase {
      *
      * @param context the context for this object
      */
-    public ReadMangaMe(Context context) {
+    ReadMangaMe(Context context) {
         super(context);
         setFlag(R.drawable.flag_ru);
         setIcon(R.drawable.readmangame);
@@ -143,27 +143,28 @@ public class ReadMangaMe extends ServerBase {
             String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
             // Cover
-                manga.setImages(getFirstMatchDefault("<img class=.+?src=\"(http[^\"]+)\"", source, ""));
+            manga.setImages(getFirstMatchDefault("<img class=.+?src=\"(http[^\"]+)\"", source, ""));
 
             // Summary
-            String summary = getFirstMatchDefault("<p><span style=\"text-align: start; text-indent: 0px;\">(.+?)</span></p>", source, context.getString(R.string.nodisponible));
+            String summary = getFirstMatchDefault("<div class=\"manga-description\" itemprop=\"description\">(.+?)<div class=\"clearfix\"></div>", source, context.getString(R.string.nodisponible));
             manga.setSynopsis(summary);
+
             // summary can be empty after cleaning, so check again here
-            if(manga.getSynopsis().isEmpty()) {
+            assert (manga.getSynopsis() != null);
+            if (manga.getSynopsis().isEmpty()) {
                 manga.setSynopsis(context.getString(R.string.nodisponible));
             }
 
             // Status
-           // manga.setFinished(source.contains(""));
+            manga.setFinished(getFirstMatchDefault("<b>Перевод:</b>([^<]+)", source, "").contains("завершен"));
 
             // Author (can be multi-part)
             ArrayList<String> authors = getAllMatch(
-                    "elem_author.+?person-link\">(.+?)<", source);
+                    "elem_(author|screenwriter|illustrator).+?person-link\">(.+?)<", source);
 
-            if(authors.isEmpty()) {
+            if (authors.isEmpty()) {
                 manga.setAuthor(context.getString(R.string.nodisponible));
-            }
-            else {
+            } else {
                 manga.setAuthor(TextUtils.join(", ", authors));
             }
 
@@ -171,10 +172,9 @@ public class ReadMangaMe extends ServerBase {
             ArrayList<String> genres = getAllMatch(
                     "elem_genre.+?element-link\">(.+?)<", source);
 
-            if(genres.isEmpty()) {
+            if (genres.isEmpty()) {
                 manga.setGenre(context.getString(R.string.nodisponible));
-            }
-            else {
+            } else {
                 manga.setGenre(TextUtils.join(", ", genres));
             }
 
@@ -189,24 +189,28 @@ public class ReadMangaMe extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return chapter.getExtra().split("\\|") [page];
+        assert (chapter.getExtra() != null);
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + "?mtr=1");
         data = getFirstMatch("rm_h.init\\(([\\s\\S]+?)\\)", data, context.getString(R.string.server_failed_loading_page_count));
+
         Pattern pattern = Pattern.compile("\\[['|\"][\\s\\S]*?,['|\"](.+?)['|\"],['|\"](.+?)['|\"]");
         Matcher m = pattern.matcher(data);
-        String images =  "";
-        while (m.find()){
-            images = images + "|" + m.group(1) + m.group(2);
+
+        StringBuilder sb = new StringBuilder();
+        int pages = 0;
+        while (m.find()) {
+            sb.append("|").append(m.group(1)).append(m.group(2));
+            pages++;
         }
-        int pages = images.split("\\|").length - 1;
-        if(pages > 0){
-            chapter.setExtra(images);
+        if (pages > 0) {
+            chapter.setExtra(sb.toString());
             chapter.setPages(pages);
-        }else{
+        } else {
             throw new Exception(context.getString(R.string.server_failed_loading_page_count));
         }
     }
@@ -214,7 +218,7 @@ public class ReadMangaMe extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + genresV[filters[0][0]] + "?" + sortV[filters[1][0]];
-        if(pageNumber > 1){
+        if (pageNumber > 1) {
             web = web + "&offset=" + (pageNumber * 70) + "&max=70";
         }
         String data = getNavigatorAndFlushParameters().get(web);
