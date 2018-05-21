@@ -21,9 +21,9 @@ public class CookieFilter extends PersistentCookieJar {
 
     @Override
     public synchronized List<Cookie> loadForRequest(HttpUrl url) {
-        if(url.toString().matches(".+?senmanga.com/viewer.+")){
+        if (url.toString().matches(".+?senmanga.com/viewer.+")) {
             return new ArrayList<>();
-        }else{
+        } else {
             return super.loadForRequest(url);
         }
     }

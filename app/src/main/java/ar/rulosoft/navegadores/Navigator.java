@@ -65,26 +65,8 @@ public class Navigator {
             connectionRetry = Integer.parseInt(prefs.getString("connection_retry", "10"));
             readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
             connectionTimeout = Integer.parseInt(prefs.getString("connection_timeout", "10"));
-            TrustManager[] trustManagers = getTrustManagers(context);
-            SSLContext sslContext = SSLContext.getInstance("TLS");
-            sslContext.init(null, trustManagers, null);
-            SSLSocketFactory socketFactory = null;
-            if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
-                socketFactory = new Tls12SocketFactory(sslContext.getSocketFactory());
-            } else {
-                socketFactory = sslContext.getSocketFactory();
-            }
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
-            httpClient = new OkHttpClientConnectionChecker.Builder()
-                    .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
-                    .addInterceptor(new CFInterceptor())
-                    .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
-                    .connectTimeout(10, TimeUnit.SECONDS)
-                    .writeTimeout(10, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .cookieJar(cookieJar)
-                    .dns(new MmNDNS())
-                    .build();
+            initClient(new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context)), context);
         }
     }
 
@@ -118,7 +100,7 @@ public class Navigator {
         return cookieJar;
     }
 
-    public void setCookieJar(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
+    public void initClient(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
         TrustManager[] trustManagers = getTrustManagers(context);
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustManagers, null);
@@ -128,7 +110,6 @@ public class Navigator {
         } else {
             socketFactory = sslContext.getSocketFactory();
         }
-        cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
         httpClient = new OkHttpClientConnectionChecker.Builder()
                 .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                 .addInterceptor(new CFInterceptor())
@@ -395,7 +376,6 @@ public class Navigator {
         builder.add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
         builder.add("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         builder.add("Content-Encoding", "deflate");
-        builder.add("Accept-Encoding", "deflate");
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
         }
