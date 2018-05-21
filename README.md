@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.84
+* Varios servidores actializados(no todos).
+* Agregado filtro azul para el lector.
+* Muchos fixes.
+
+Changes in v1.84
+* Various servers fixes(not all).
+* Added blue filter for reader.
+* Min fixes.
+
 Cambios en v1.83
 * Agregado canal de notificaciones en androi O.
 * Muchos arreglos.

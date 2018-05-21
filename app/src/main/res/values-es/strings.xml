@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.83:\n\t* Agregado canal de notificaciones en androi O.\n\t* Muchos arreglos.</string>
+    <string name="update_message">Cambios en v1.84:\n\t* Varios servidores actializados(no todos).\n\t* Agregado filtro azul para el lector.\n\t* Muchos fixes.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
