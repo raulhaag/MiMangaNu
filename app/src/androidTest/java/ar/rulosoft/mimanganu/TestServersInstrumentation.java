@@ -211,6 +211,21 @@ public class TestServersInstrumentation {
     }
 
     @Test
+    public void test_READMANGAME() throws Exception {
+        new TestServersCommon(ServerBase.READMANGAME, true, context);
+    }
+
+    @Test
+    public void test_DESUME() throws Exception {
+        new TestServersCommon(ServerBase.DESUME, true, context);
+    }
+
+    @Test
+    public void test_MANGARAWONLINE() throws Exception {
+        new TestServersCommon(ServerBase.MANGARAWONLINE, true, context);
+    }
+
+    @Test
     public void test_READCOMICONLINE() throws Exception {
         new TestServersCommon(ServerBase.READCOMICONLINE, false, context);
     }
