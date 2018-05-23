@@ -20,7 +20,7 @@ import ar.rulosoft.navegadores.Navigator;
 
 public class ReadMangaMe extends ServerBase {
 
-    private static String HOST = "http://readmanga.me";
+    private String HOST = "http://readmanga.me";
 
     private static int[] genres = new int[]{
             R.string.flt_tag_all, //ap
@@ -248,5 +248,9 @@ public class ReadMangaMe extends ServerBase {
     @Override
     public boolean hasList() {
         return false;
+    }
+
+    void setHost(String host) {
+        HOST = host;
     }
 }

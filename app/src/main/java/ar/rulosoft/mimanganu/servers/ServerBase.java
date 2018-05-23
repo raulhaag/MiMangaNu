@@ -187,6 +187,7 @@ public abstract class ServerBase {
     public static final int READMANGAME = 36;
     public static final int DESUME = 37;
     public static final int MANGARAWONLINE = 38;
+    public static final int MINTMANGA = 39;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
@@ -309,6 +310,9 @@ public abstract class ServerBase {
             case MANGARAWONLINE:
                 serverBase = new MangaRawOnline(context);
                 break;
+            case MINTMANGA:
+                serverBase = new MintManga(context);
+                break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
                 break;
@@ -388,6 +392,7 @@ public abstract class ServerBase {
                 new DeNineManga(context),
                 new RawSenManga(context),
                 new MangaRawOnline(context),
+                new MintManga(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
                 new FromFolder(context)
@@ -704,9 +709,8 @@ public abstract class ServerBase {
      * @param patron the pattern to search for
      * @param source the string to search
      * @return a list of matches (may be empty)
-     * @throws Exception if an error occurred
      */
-    ArrayList<String> getAllMatch(String patron, String source) throws Exception {
+    ArrayList<String> getAllMatch(String patron, String source) {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         ArrayList<String> matches = new ArrayList<>();
@@ -829,9 +833,9 @@ public abstract class ServerBase {
      * @param user   the user to log in
      * @param passwd the password to use for logging in
      * @return <code>true</code> if the login succeeded, <code>false</code> otherwise
-     * @throws Exception if an error occurred
      */
-    public boolean testLogin(String user, String passwd) throws Exception {
+    @SuppressWarnings("unused")
+    public boolean testLogin(String user, String passwd) {
         return false;
     }
 
