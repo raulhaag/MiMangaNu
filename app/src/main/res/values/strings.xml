@@ -477,8 +477,13 @@
     <string name="notification_o_subtitle">New manga notification settings.</string>
     <string name="notification_channel_new">New mangas and updates.</string>
     <string name="notification_channel_update">Update search progress notification.</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="select_server">Select server</string>
     <string name="blue_filter">Blue filter</string>
+    <string name="replace_backup">Replace current backup?</string>
+    <string name="backup_restore">Replace current configuration from backup?</string>
+    <string name="preferences_backup_not_found">Preference Backup not found on MiMangaNu directory</string>
+    <string name="backup_settings_summary">Save settings to external directory</string>
+    <string name="backup_settings_title">Backup settings</string>
+    <string name="restore_settings_summary">Restore settings from external directory</string>
+    <string name="restore_settings_title">Restore Settings</string>
 </resources>

@@ -436,5 +436,13 @@
     <string name="select_server">Selecionna servidor</string>
     <string name="notification_o_title">Notificaciones.</string>
     <string name="notification_o_subtitle">Configurar notificaciones de nuevos mangas.</string>
+    <string name="blue_filter">Filtro Azul</string>
+    <string name="replace_backup">¿Reemplazar backup actual?</string>
+    <string name="backup_restore">¿Reemplazar la configuración actual desde backup?</string>
+    <string name="preferences_backup_not_found">No se encontro un backup de la configuración en el directorio de MiMangaNu.</string>
+    <string name="backup_settings_summary">Guardar configuraciones a directorio externo.</string>
+    <string name="backup_settings_title">Reespaldar preferencias</string>
+    <string name="restore_settings_summary">Restaurar preferencias desde directorio externo.</string>
+    <string name="restore_settings_title">Reestaurar preferencias</string>
 
 </resources>

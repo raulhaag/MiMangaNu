@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v7.preference.ListPreference;
@@ -34,6 +36,7 @@ import com.evernote.android.job.JobRequest;
 import com.fedorvlasov.lazylist.FileCache;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -98,7 +101,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 preferenceGroup.addPreference(preference);
             }
         }
-        if(!isThereAnyServerUsingAccount)
+        if (!isThereAnyServerUsingAccount)
             preferenceGroup.setVisible(false);
 
         /* Once, create necessary Data */
@@ -111,32 +114,30 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
         // actuate the switch based on the existence of the .nomedia file
         final File noMedia = new File(current_filepath, ".nomedia");
-        if(android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+        if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
             cBoxPref.setChecked(noMedia.exists());
-        }
-        else {
+        } else {
             cBoxPref.setEnabled(false);
         }
         cBoxPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 // reject change event in case the external storage is not available
-                if(!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+                if (!android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
                     return false;
                 }
 
                 try {
                     if ((Boolean) newValue) {
-                        if(!noMedia.createNewFile()) {
+                        if (!noMedia.createNewFile()) {
                             Log.w("PF", "failed to create .nomedia file");
                         }
                     } else {
-                        if(!noMedia.delete()) {
+                        if (!noMedia.delete()) {
                             Log.w("PF", "failed to delete .nomedia file");
                         }
                     }
-                }
-                catch(Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -273,7 +274,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                             .build()
                             .schedule();
                 }
-                if(time < 0)
+                if (time < 0)
                     MainActivity.coldStart = false;
                 return true;
             }
@@ -295,7 +296,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        final SwitchPreferenceCompat onlyWifiUpdateSwitch = (SwitchPreferenceCompat)getPreferenceManager().findPreference("update_only_wifi");
+        final SwitchPreferenceCompat onlyWifiUpdateSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("update_only_wifi");
 
         SwitchPreferenceCompat onlyWifiSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("only_wifi");
         onlyWifiSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
@@ -308,9 +309,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        if(onlyWifiSwitch.isChecked()){
+        if (onlyWifiSwitch.isChecked()) {
             onlyWifiUpdateSwitch.setEnabled(false);
-        }else{
+        } else {
             onlyWifiUpdateSwitch.setEnabled(true);
         }
 
@@ -477,6 +478,50 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+        final Preference backupPreferences = getPreferenceManager().findPreference("backup_settings");
+        backupPreferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                File cf = new File(prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/shared_prefs_backup");
+                if (cf.list().length > 0) {
+                    Snackbar snackbar = Snackbar.make(getView(), R.string.replace_backup, Snackbar.LENGTH_LONG)
+                            .setActionTextColor(Color.WHITE)
+                            .setAction(android.R.string.ok, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    backupPreferences();
+                                }
+                            });
+                    if (MainActivity.colors != null)
+                        snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+                    snackbar.show();
+                } else {
+                    backupPreferences();
+                }
+                return true;
+            }
+        });
+
+        final Preference restorePreferences = getPreferenceManager().findPreference("restore_settings");
+        restorePreferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+
+                Snackbar snackbar = Snackbar.make(getView(), R.string.backup_restore, Snackbar.LENGTH_LONG)
+                        .setActionTextColor(Color.WHITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                restorePreferences();
+                            }
+                        });
+                if (MainActivity.colors != null)
+                    snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+                snackbar.show();
+                return true;
+            }
+        });
+
         final Preference prefVacuumDatabase = getPreferenceManager().findPreference("vacuum_database");
         prefVacuumDatabase.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -509,11 +554,49 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     return true;
                 }
             });
-        }else{
+        } else {
             getPreferenceManager().findPreference("update_notif_options").setVisible(false);
         }
 
-            setFirstRunDefaults();
+        setFirstRunDefaults();
+    }
+
+    private void backupPreferences() {
+        File from = new File(getContext().getApplicationInfo().dataDir + "/shared_prefs/");
+        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/shared_prefs_backup";
+        File to = new File(dir);
+        Util.getInstance().deleteRecursive(to);
+        to.mkdirs();
+        for (String f : from.list()) {
+            try {
+                File toFile = new File(to.getPath(), f);
+                Util.getInstance().copyFile(new File(from.getPath(), f),
+                        toFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void restorePreferences() {
+        File to = new File(getContext().getApplicationInfo().dataDir + "/shared_prefs/");
+        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/shared_prefs_backup";
+        File from = new File(dir);
+        Util.getInstance().deleteRecursive(to);
+        to.mkdirs();
+        if(from.list().length == 0){
+            Util.getInstance().showFastSnackBar(getString(R.string.preferences_backup_not_found), getView(), getContext());
+            return;
+        }
+        for (String f : from.list()) {
+            try {
+                File toFile = new File(to.getPath() + "/" + f);
+                Util.getInstance().copyFile(new File(from.getPath() + "/" + f), toFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        Util.getInstance().restartApp(getContext());
     }
 
     private void setFirstRunDefaults() {
@@ -640,7 +723,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                prefStoreStat.setSummary("calculating... ~" + String.format(Locale.getDefault(),"%.2f", cSize) + " MB");
+                                prefStoreStat.setSummary("calculating... ~" + String.format(Locale.getDefault(), "%.2f", cSize) + " MB");
                             }
                         });
                     }

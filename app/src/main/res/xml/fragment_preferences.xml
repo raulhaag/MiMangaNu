@@ -292,6 +292,14 @@
             android:summary="@string/reset_server_list_to_defaults_subtitle"
             android:title="@string/reset_server_list_to_defaults_title" />
         <android.support.v7.preference.Preference
+            android:key="backup_settings"
+            android:summary="@string/backup_settings_summary"
+            android:title="@string/backup_settings_title" />
+        <android.support.v7.preference.Preference
+            android:key="restore_settings"
+            android:summary="@string/restore_settings_summary"
+            android:title="@string/restore_settings_title"  />
+        <android.support.v7.preference.Preference
             android:key="vacuum_database"
             android:summary="@string/vacuum_database_subtitle"
             android:title="@string/vacuum_database_title" />

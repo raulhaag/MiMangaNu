@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             dlgAlert.create().show();
-
             pm.edit().putInt("version_code0", currentVersionCode).apply();
         }
     }
