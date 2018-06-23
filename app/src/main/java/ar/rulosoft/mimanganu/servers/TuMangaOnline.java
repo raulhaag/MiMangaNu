@@ -1,18 +1,17 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.text.TextUtils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
-import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.navegadores.Navigator;
@@ -23,56 +22,54 @@ import ar.rulosoft.navegadores.Navigator;
 class TuMangaOnline extends ServerBase {
 
     public static String[] type = new String[]{
-            "Todos", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
+            "Todos", "Manga", "Manhua", "Manhwa", "Novela", "One Shot", "Dounjinshi", "Oel"
     };
     private static String[] genres = new String[]{
-            "Acción", "Apocalíptico", "Artes Marciales", "Aventura", "Ciencia Ficción",
-            "Comedia", "Cyberpunk", "Demonios", "Deportes", "Drama", "Ecchi", "Fantasía",
-            "Gender Bender", "Gore", "Harem", "Histórico", "Horror", "Magia", "Mecha", "Militar",
-            "Misterio", "Musical", "Parodia", "Policial", "Psicológico", "Realidad Virtual",
-            "Recuentos de la vida", "Reencarnación", "Romance", "Samurai", "Sobrenatural",
-            "Super Poderes", "Supervivencia", "Suspense", "Thiller", "Tragedia", "Vampiros",
-            "Vida Escolar", "Yuri"
+            "Acción", "Aventura", "Comedia", "Drama", "Recuentos de la vida", "Ecchi", "Fantasia",
+            "Magia", "Supernatural", "Horror", "Misterio", "Psicológico", "Romance",
+            "Ciencia Ficción", "Thriller", "Deporte", "Girls Love", "Boys Love", "Harem", "Mecha",
+            "Supervivencia", "Reencarnación", "Gore", "Apocalíptico", "Tragedia", "Vida Escolar",
+            "Historia", "Militar", "Policiaco", "Crimen", "Superpoderes", "Vampiros",
+            "Artes Marciales", "Samurái", "Género Bender", "Realidad Virtual", "Ciberpunk",
+            "Musica", "Parodia", "Animación", "Demonios", "Familia", "Extranjero", "Niños",
+            "Realidad", "Telenovela", "Guerra", "Oeste"
     };
     private static String[] genresValues = new String[]{
-            "1", "24", "33", "2", "14", "3", "37", "41", "16", "4", "6", "7", "35", "23", "19",
-            "27", "10", "8", "20", "28", "11", "38", "39", "40", "12", "36", "5", "22", "13", "34",
-            "9", "31", "21", "15", "30", "25", "32", "26", "17"
+            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+            "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+            "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44",
+            "45", "46", "47", "48"
     };
     private static String[] demografia = {
-            "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo", "Otros"
+            "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
     };
     private static String[] demografiaV = {
-            "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo", "Otros"
+            "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
     };
     private static String[] estado = {
-            "Todos", "Activo", "Abandonado", "Finalizado"
+            "Todos", "Activo", "Abandonado", "Finalizado", "Pausado"
     };
     private static String[] estadoV = {
-            "", "Activo", "Abandonado", "Finalizado"
+            "", "publishing", "cancelled", "ended", "on_hold"
     };
     private static String[] typeV = new String[]{
-            "", "Manga", "Manhua", "Manhwa", "Novela", "Propio", "Otro"
-    };
-
-    private static String[] categoria = new String[]{
-            "Dōjinshi", "One-Shot", "Webtoon", "Yonkoma"
-    };
-
-    private static String[] categoriaV = new String[]{
-            "2", "1", "3", "4"
+            "", "manga", "manhua", "manhwa", "novel", "one_shot", "doujinshi", "oel"
     };
 
     private static String[] sortBy = new String[]{
-            "Alfabetico ↓", "Ranking ↓", "Número de lecturas ↓", "Fecha de creacion ↓",
-            "Alfabetico ↑", "Ranking ↑", "Número de lecturas ↑", "Fecha de creacion ↑"
+            "Me gusta", "Alfabetico", "Puntuación", "Creación", "Fecha de Esterno",
     };
 
     private static String[] sortByValues = new String[]{
-            "&sortDir=asc&sortedBy=nombre", "&sortDir=desc&sortedBy=puntuacion",
-            "&sortDir=desc&sortedBy=numVistos", "&sortDir=desc&sortedBy=fechaCreacion",
-            "&sortDir=desc&sortedBy=nombre", "&sortDir=asc&sortedBy=puntuacion",
-            "&sortDir=asc&sortedBy=numVistos", "&sortDir=asc&sortedBy=fechaCreacion"
+            "likes_count", "alphabetically", "score", "creation", "release_date"
+    };
+
+    private static String[] sortOrder = new String[]{
+            "Descendiente", "Ascendiente"
+    };
+
+    private static String[] sortOrderValues = new String[]{
+            "desc", "asc"
     };
 
     private static int lastPage = 10000;
@@ -92,202 +89,47 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        JSONObject jsonObject = new JSONObject(getNavWithNeededHeaders().get("http://www.tumangaonline.com/api/v1/mangas?categorias=%5B%5D&generos=%5B%5D&itemsPerPage=20&nameSearch=" + URLEncoder.encode(term, "UTF-8") + "&page=1&puntuacion=0&searchBy=nombre&sortDir=asc&sortedBy=nombre"));
-        return getMangasJsonArray(jsonObject.getJSONArray("data"));
+        JSONObject jsonObject = new JSONObject(getNavWithNeededHeaders().get("http://www.tumangaonline.me/api/v1/mangas?categorias=%5B%5D&generos=%5B%5D&itemsPerPage=20&nameSearch=" + URLEncoder.encode(term, "UTF-8") + "&page=1&puntuacion=0&searchBy=nombre&sortDir=asc&sortedBy=nombre"));
+        return null;//TODO getMangasJsonArray(jsonObject.getJSONArray("data"));
     }
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        loadChapters(manga, forceReload, false);
-    }
-
-    @SuppressWarnings("unused")
-    public void loadChapters(Manga manga, boolean forceReload, boolean last) throws Exception {
-        ArrayList<Chapter> result = new ArrayList<>();
-        Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Cache-mode", "no-cache");
-        nav.addHeader("Referer", "http://www.tumangaonline.com/biblioteca/mangas/" + manga.getPath() + "/" + URLEncoder.encode(manga.getTitle(), "UTF-8"));
-        String data = nav.get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + 1 + "&tomo=-1");
-        if (data != null && data.length() > 3) {
-            JSONObject object = new JSONObject(data);
-            int last_page = object.getInt("last_page");
-            result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
-            if (!last)
-                for (int i = 2; i <= last_page; i++) {
-                    try {
-                        nav = getNavigatorAndFlushParameters();
-                        nav.addHeader("Cache-mode", "no-cache");
-                        nav.addHeader("Referer", "http://www.tumangaonline.com/biblioteca/mangas/" + manga.getPath() + "/" + URLEncoder.encode(manga.getTitle(), "UTF-8"));
-                        data = nav.get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath() + "/capitulos?page=" + i + "&tomo=-1");
-                        if (data != null && data.length() > 3) {
-                            object = new JSONObject(data);
-                            result.addAll(0, getChaptersJsonArray(object.getJSONArray("data"), manga.getPath()));
-                        }
-                    } catch (Exception ignore) {
-                    }
-                }
-        }
-        manga.setChapters(result);
-    }
-
-    private ArrayList<Chapter> getChaptersJsonArray(JSONArray jsonArray, String mid) {
-        ArrayList<Chapter> result = new ArrayList<>();
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject object = jsonArray.getJSONObject(i);
-                Chapter c = new Chapter("Capítulo " + object.getString("numCapitulo") + " " + (object.getString("nombre").equalsIgnoreCase("null") ? "" : object.getString("nombre")), getServerID() + "_" + mid + "_" + object.getString("numCapitulo"));
-                c.setExtra("https://www.tumangaonline.com/api/v1/imagenes?idManga=" + mid + "&idScanlation=" + object.getJSONArray("subidas").getJSONObject(0).getString("idScan") + "&numeroCapitulo=" + object.getString("numCapitulo") + "&visto=false");
-                result.add(0, c);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    private void initImages(Chapter chapter) throws Exception {
-        JSONObject object = new JSONObject(getNavWithNeededHeaders().get(chapter.getExtra()));
-        String webBase = object.getJSONObject("capitulo").getJSONObject("tomo").getString("idManga")+
-                "/"+ object.getJSONObject("capitulo").getString("numCapitulo") +
-                "/" + object.getString("idScan") + "/";
-        String imgs = object.getString("imagenes");
-        imgs = imgs.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"","").replaceAll(",","|");
-        chapter.setPages(imgs.split("\\|").length);
-        imgs = "|" + webBase + imgs.replace("|", "|" + webBase);
-        chapter.setExtra(imgs);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        JSONObject object = new JSONObject(getNavWithNeededHeaders().get("http://www.tumangaonline.com/api/v1/mangas/" + manga.getPath()));
-        manga.setImages("http://img1.tumangaonline.com/" + object.getString("imageUrl"));
-        manga.setSynopsis(object.getJSONObject("info").getString("sinopsis"));
-        if (object.getJSONArray("autores").length() != 0) {
-            manga.setAuthor(object.getJSONArray("autores").getJSONObject(0).getString("autor"));
-        }
-        else {
-            manga.setAuthor(context.getString(R.string.nodisponible));
-        }
+        String data = getNavWithNeededHeaders().get(
+                String.format("https://tumangaonline.me/library/manga/%s/%s", manga.getPath(),
+                        URLEncoder.encode(manga.getTitle(), "UTF-8")));
 
-        {
-            String genres = "";
-            JSONArray array = object.getJSONArray("generos");
-            for (int i = 0; i < array.length(); i++) {
-                if (genres.equals("")) {
-                    genres = array.getJSONObject(i).getString("genero");
-                } else {
-                    genres += ", " + array.getJSONObject(i).getString("genero");
-                }
-            }
-            if(!genres.isEmpty()) {
-                manga.setGenre(genres);
-            }
-            else {
-                manga.setGenre(context.getString(R.string.nodisponible));
-            }
+        manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
+        manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">(.+)<", data)));
+        manga.setAuthor(getFirstMatchDefault(">(.+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
+
+        Pattern pattern = Pattern.compile("<div class=\"col-10 text-truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
+        Matcher matcher = pattern.matcher(data);
+
+        while (matcher.find()) {
+            manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), "_" + matcher.group(2) + "_"));
         }
-        manga.setFinished(!object.getString("estado").contains("Activo"));
     }
 
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String[] d1 = chapter.getExtra().split("\\|");
-        return "https://img1.tumangaonline.com/subidas/" + d1[page] + "|https://www.tumangaonline.com/";
+        return d1[page];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
-            if (!chapter.getExtra().contains(".jpg")) {
-                initImages(chapter);
-            } else {
-                String[] d1 = chapter.getExtra().split("\\|");
-                String[] d2 = (d1[1].replace("[", "").replace("]", "").replaceAll("\"", "")).split(",");
-                chapter.setPages(d2.length);
-                String images = "";
-                for (String d : d2) {
-                    images = images + "|" + d1[0] + "/" + d;
-                }
-                chapter.setExtra(images);
-            }
+            String data = getNavWithNeededHeaders().get("https://tumangaonline.me/goto/" + chapter.getPath().split("_")[1]);
+            ArrayList<String> imgs = getAllMatch("src=\"(https://img.+?)\"", data);
+            chapter.setPages(imgs.size());
+            chapter.setExtra("|" + TextUtils.join("|", imgs));
         }
-    }
-
-    private ArrayList<Manga> getMangasJsonArray(JSONArray jsonArray) {
-        ArrayList<Manga> result = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            try {
-                JSONObject object = jsonArray.getJSONObject(i);
-                Manga m = new Manga(getServerID(), object.getString("nombre"), object.getString("id"), "Finalizado".contains(object.getString("estado")));
-                m.setImages("http://img1.tumangaonline.com/" + object.getString("imageUrl").replaceAll("\\\\", ""));
-                result.add(m);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        return result;
-    }
-
-    @Override
-    public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {//TODO FAST
-        int returnValue;
-        Manga mangaDb = Database.getFullManga(context, id);
-        Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
-        manga.setId(mangaDb.getId());
-        this.loadMangaInformation(manga, true);
-        loadChapters(manga, false, true);
-
-        manga.getChapters().removeAll(mangaDb.getChapters());
-        for (Chapter chapter : manga.getChapters()) {
-            chapter.setMangaID(mangaDb.getId());
-            chapter.setReadStatus(Chapter.NEW);
-            Database.addChapter(context, chapter, mangaDb.getId());
-        }
-
-        if (manga.getChapters().size() > 0) {
-            Database.updateMangaRead(context, mangaDb.getId());
-            Database.updateNewMangas(context, mangaDb, manga.getChapters().size());
-        }
-
-        returnValue = manga.getChapters().size();
-
-        if (returnValue > 0)
-            new CreateGroupByMangaNotificationsTask(manga.getChapters(), manga, context).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-
-        boolean changes = false;
-        if (!mangaDb.getAuthor().equals(manga.getAuthor()) &&
-                manga.getAuthor().length() > 2) {
-            mangaDb.setAuthor(manga.getAuthor());
-            changes = true;
-        }
-
-        if (!mangaDb.getImages().equals(manga.getImages()) &&
-                manga.getImages().length() > 2) {
-            mangaDb.setImages(manga.getImages());
-            changes = true;
-        }
-
-        if (!mangaDb.getSynopsis().equals(manga.getSynopsis()) &&
-                manga.getSynopsis().length() > 2) {
-            mangaDb.setSynopsis(manga.getSynopsis());
-            changes = true;
-        }
-
-        if (!mangaDb.getGenre().equals(manga.getGenre()) &&
-                manga.getGenre().length() > 2) {
-            mangaDb.setGenre(manga.getGenre());
-            changes = true;
-        }
-        if (mangaDb.isFinished() != manga.isFinished()) {
-            mangaDb.setFinished(manga.isFinished());
-            changes = true;
-        }
-
-        if (changes) Database.updateManga(context, mangaDb, false);
-
-        return returnValue;
     }
 
     @Override
@@ -307,47 +149,59 @@ class TuMangaOnline extends ServerBase {
                 new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),//1
                 new ServerFilter("Generos", genres, ServerFilter.FilterType.MULTI),//2
                 new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),//3
-                new ServerFilter("Categoria", categoria, ServerFilter.FilterType.MULTI),//4
-                new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE)//5
+                new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE), //4
+                new ServerFilter("En dirección", sortOrder, ServerFilter.FilterType.SINGLE) //5
         };
     }
 
+    // ?order_item=     0
+    // &order_dir=      1
+    // &title=&filter_by=title
+    // &type=           2
+    // &demography=     3
+    // &status=         4
+    // &webcomic=&yonkoma=&amateur=
+    // &genders%5B%5D=1&genders%5B%5D=3&genders%5B%5D=6
+
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+
+        String web = "https://tumangaonline.me/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
+
+
         if (pageNumber == 1)
             lastPage = 10000;
         if (pageNumber <= lastPage) {
             String gens = "";
             for (int i = 0; i < filters[2].length; i++) {
-                gens = gens + genresValues[filters[2][i]] + ",";
+                gens = gens + "&genders%5B%5D=" + genresValues[filters[2][i]];
             }
-            if (gens.length() > 0)
-                gens = gens.substring(0, gens.length() - 1);
 
-            String cats = "";
-            for (int i = 0; i < filters[4].length; i++) {
-                cats = cats + categoriaV[filters[4][i]] + ",";
-            }
-            if (cats.length() > 0)
-                cats = cats.substring(0, cats.length() - 1);
-
-            String web = "http://www.tumangaonline.com/api/v1/mangas?categorias=%5B" + cats +
-                    "%5D&defecto=1&demografia=" + demografiaV[filters[1][0]] + "&estado=" +
-                    estadoV[filters[3][0]] + "&generos=%5B" + gens + "%5D&itemsPerPage=20&page=" +
-                    pageNumber + "&puntuacion=0&searchBy=nombre" + sortByValues[filters[5][0]] +
-                    "&tipo=" + typeV[filters[0][0]];
-            JSONObject jsonObject = new JSONObject(getNavWithNeededHeaders().get(web));
-            lastPage = jsonObject.getInt("last_page");
-            return getMangasJsonArray(jsonObject.getJSONArray("data"));
+            web = String.format(web, sortByValues[filters[4][0]], sortOrderValues[filters[5][0]],
+                    typeV[filters[0][0]], demografiaV[filters[1][0]], estadoV[filters[3][0]]) + gens;
+            String data = getNavWithNeededHeaders().get(web);
+            return getMangasLibrary(data);
         } else {
             return new ArrayList<>();
         }
     }
 
+    private ArrayList<Manga> getMangasLibrary(String data) {
+        ArrayList<Manga> mangas = new ArrayList<>();
+        Pattern pattern = Pattern.compile("https:\\/\\/tumangaonline.me\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
+        Matcher m = pattern.matcher(data);
+        while (m.find()) {
+            Manga manga = new Manga(getServerID(), m.group(3), m.group(1), false);
+            manga.setImages(m.group(2));
+            mangas.add(manga);
+        }
+        return mangas;
+    }
+
     private Navigator getNavWithNeededHeaders() {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Cache-mode", "no-cache");
-        nav.addHeader("Referer", "https://www.tumangaonline.com/biblioteca");
+        nav.addHeader("Referer", "https://tumangaonline.me/library/manga/");
         return nav;
     }
 }
