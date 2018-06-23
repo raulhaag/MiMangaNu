@@ -82,7 +82,7 @@ public class Navigator {
         return Navigator.instance;
     }
 
-    public static HashMap<String, String> getFormParamsFromSource(String inSource) throws Exception {
+    public static HashMap<String, String> getFormParamsFromSource(String inSource) {
         HashMap<String, String> ParametrosForm = new HashMap<>();
         Pattern p = Pattern.compile("<[F|f]orm([\\s|\\S]+?)</[F|f]orm>", Pattern.DOTALL);
         Matcher m = p.matcher(inSource);
@@ -160,6 +160,26 @@ public class Navigator {
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
             return response.body().string();
+        } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+            response.body().close();
+            return "";
+        }
+    }
+
+    public String getRedirectWeb(String web) throws Exception {
+        // copy will share the connection pool with httpclient
+        // NEVER create new okhttp clients that aren't sharing the same connection pool
+        // see: https://github.com/square/okhttp/issues/2636
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        if (response.isSuccessful()) {
+            return response.request().url().toString();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();
@@ -358,7 +378,7 @@ public class Navigator {
         }
     }
 
-    private RequestBody getPostParams() throws Exception {
+    private RequestBody getPostParams() {
         FormBody.Builder builder = new FormBody.Builder();
         for (Parameter p : parameters) {
             builder.add(p.getKey(), p.getValue());

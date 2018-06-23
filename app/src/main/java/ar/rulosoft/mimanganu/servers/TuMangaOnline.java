@@ -3,8 +3,6 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
-import org.json.JSONObject;
-
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -89,8 +87,11 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        JSONObject jsonObject = new JSONObject(getNavWithNeededHeaders().get("http://www.tumangaonline.me/api/v1/mangas?categorias=%5B%5D&generos=%5B%5D&itemsPerPage=20&nameSearch=" + URLEncoder.encode(term, "UTF-8") + "&page=1&puntuacion=0&searchBy=nombre&sortDir=asc&sortedBy=nombre"));
-        return null;//TODO getMangasJsonArray(jsonObject.getJSONArray("data"));
+        String web = "https://tumangaonline.me/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
+        web = String.format(web, URLEncoder.encode(term, "UTF-8"));
+        String data = getNavWithNeededHeaders().get(web);
+        return getMangasLibrary(data);
+
     }
 
     @Override
@@ -125,7 +126,8 @@ class TuMangaOnline extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if(chapter.getPages() == 0) {
-            String data = getNavWithNeededHeaders().get("https://tumangaonline.me/goto/" + chapter.getPath().split("_")[1]);
+            String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath().split("_")[1]);
+            String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
             ArrayList<String> imgs = getAllMatch("src=\"(https://img.+?)\"", data);
             chapter.setPages(imgs.size());
             chapter.setExtra("|" + TextUtils.join("|", imgs));
@@ -167,8 +169,6 @@ class TuMangaOnline extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
 
         String web = "https://tumangaonline.me/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
-
-
         if (pageNumber == 1)
             lastPage = 10000;
         if (pageNumber <= lastPage) {
