@@ -40,8 +40,8 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_CAP_STATE = "estado";
     public static final String COL_CAP_DOWNLOADED = "descargado";
     // Table for entire manga
+    public static final String COL_SERVER_ID = "server_id";
     private static final String TABLE_MANGA = "manga";
-    private static final String COL_SERVER_ID = "server_id";
     private static final String COL_PATH = "path";
     private static final String COL_IMAGE = "imagen";
     private static final String COL_SYNOPSIS = "sinopsis";
@@ -97,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 24;
+    private static int database_version = 25;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -436,7 +436,6 @@ public class Database extends SQLiteOpenHelper {
                     },
                     condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
         }
-
         return getMangasFromCursor(cursor);
     }
 

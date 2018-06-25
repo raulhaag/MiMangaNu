@@ -23,6 +23,7 @@ import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,6 +35,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import ar.rulosoft.mimanganu.R;
+import okhttp3.ConnectionSpec;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -42,6 +44,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.TlsVersion;
 
 /**
  * @author Raul, nulldev, xtj-9182
@@ -105,8 +108,15 @@ public class Navigator {
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustManagers, null);
         SSLSocketFactory socketFactory = null;
+        List<ConnectionSpec> specs = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
             socketFactory = new Tls12SocketFactory(sslContext.getSocketFactory());
+            ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
+                    .tlsVersions(TlsVersion.TLS_1_2)
+                    .build();
+            specs.add(cs);
+            specs.add(ConnectionSpec.COMPATIBLE_TLS);
+            specs.add(ConnectionSpec.CLEARTEXT);
         } else {
             socketFactory = sslContext.getSocketFactory();
         }
@@ -117,6 +127,7 @@ public class Navigator {
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
+                .connectionSpecs(specs)
                 .cookieJar(cookieJar)
                 .dns(new MmNDNS())
                 .build();
@@ -436,6 +447,7 @@ public class Navigator {
             keyStore_n.setCertificateEntry("mangatowncom", loadCertificateFromRaw(R.raw.mangatowncom, context));
             keyStore_n.setCertificateEntry("mangatownsecureimage", loadCertificateFromRaw(R.raw.mangatownsecureimages, context));
             keyStore_n.setCertificateEntry("tumangaonline", loadCertificateFromRaw(R.raw.tumangaonline, context));
+            keyStore_n.setCertificateEntry("tmo_me", loadCertificateFromRaw(R.raw.tumangaonline_me, context));
 
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore_n);

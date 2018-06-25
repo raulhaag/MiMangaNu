@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -10,8 +11,10 @@ import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
+import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -53,24 +56,20 @@ class TuMangaOnline extends ServerBase {
     private static String[] typeV = new String[]{
             "", "manga", "manhua", "manhwa", "novel", "one_shot", "doujinshi", "oel"
     };
-
     private static String[] sortBy = new String[]{
             "Me gusta", "Alfabetico", "Puntuación", "Creación", "Fecha de Esterno",
     };
-
     private static String[] sortByValues = new String[]{
             "likes_count", "alphabetically", "score", "creation", "release_date"
     };
-
     private static String[] sortOrder = new String[]{
             "Descendiente", "Ascendiente"
     };
-
     private static String[] sortOrderValues = new String[]{
             "desc", "asc"
     };
-
     private static int lastPage = 10000;
+    public final int VERSION = 2;
 
     TuMangaOnline(Context context) {
         super(context);
@@ -87,7 +86,7 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = "https://tumangaonline.me/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
+        String web = "http://tumangaonline.me/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
         web = String.format(web, URLEncoder.encode(term, "UTF-8"));
         String data = getNavWithNeededHeaders().get(web);
         return getMangasLibrary(data);
@@ -96,23 +95,27 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        loadMangaInformation(manga, forceReload);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = getNavWithNeededHeaders().get(
-                String.format("https://tumangaonline.me/library/manga/%s/%s", manga.getPath(),
-                        URLEncoder.encode(manga.getTitle(), "UTF-8")));
+        if (manga.getChapters().isEmpty() || forceReload) {
+            String data = getNavWithNeededHeaders().get(
+                    String.format("http://tumangaonline.me/library/manga/%s/%s", manga.getPath(),
+                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
 
-        manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
-        manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">(.+)<", data)));
-        manga.setAuthor(getFirstMatchDefault(">(.+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
+            manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
+            manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
+            manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">(.+)<", data)));
+            manga.setAuthor(getFirstMatchDefault(">(.+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
 
-        Pattern pattern = Pattern.compile("<div class=\"col-10 text-truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
-        Matcher matcher = pattern.matcher(data);
+            Pattern pattern = Pattern.compile("<div class=\"col-10 text-truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
+            Matcher matcher = pattern.matcher(data);
 
-        while (matcher.find()) {
-            manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), "_" + matcher.group(2) + "_"));
+            while (matcher.find()) {
+                manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), matcher.group(2)));
+            }
         }
     }
 
@@ -125,10 +128,10 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
-            String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath().split("_")[1]);
+        if (chapter.getPages() == 0) {
+            String web = getNavWithNeededHeaders().getRedirectWeb("http://tumangaonline.me/goto/" + chapter.getPath());
             String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
-            ArrayList<String> imgs = getAllMatch("src=\"(https://img.+?)\"", data);
+            ArrayList<String> imgs = getAllMatch("src=\"(http://img.+?)\"", data);
             chapter.setPages(imgs.size());
             chapter.setExtra("|" + TextUtils.join("|", imgs));
         }
@@ -168,7 +171,7 @@ class TuMangaOnline extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
 
-        String web = "https://tumangaonline.me/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
+        String web = "http://tumangaonline.me/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
         if (pageNumber == 1)
             lastPage = 10000;
         if (pageNumber <= lastPage) {
@@ -188,7 +191,7 @@ class TuMangaOnline extends ServerBase {
 
     private ArrayList<Manga> getMangasLibrary(String data) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern pattern = Pattern.compile("https:\\/\\/tumangaonline.me\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
+        Pattern pattern = Pattern.compile("\\/\\/tumangaonline.me\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
         Matcher m = pattern.matcher(data);
         while (m.find()) {
             Manga manga = new Manga(getServerID(), m.group(3), m.group(1), false);
@@ -201,7 +204,51 @@ class TuMangaOnline extends ServerBase {
     private Navigator getNavWithNeededHeaders() {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Cache-mode", "no-cache");
-        nav.addHeader("Referer", "https://tumangaonline.me/library/manga/");
+        nav.addHeader("Referer", "http://tumangaonline.me/library/manga/");
         return nav;
+    }
+
+    public boolean updateServerVersion() {
+        int k = 0;
+        ArrayList<Manga> mangas = Database.getMangasCondition(context,
+                Database.COL_SERVER_ID + " = " + getServerID(), Database.COL_SERVER_ID, true);
+        for (Manga m : mangas) {
+            Util.getInstance().toast(context, k + "/" + mangas.size() + context.getString(R.string.processed));
+            k++;
+            Manga mangaDb = Database.getFullManga(context, m.getId());
+            Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
+            manga.setId(mangaDb.getId());
+            try {
+                this.loadMangaInformation(manga, true);
+                this.loadChapters(manga, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+
+            for (int j = mangaDb.getChapters().size() - 1; j >= 0; j--) {
+                Chapter cdb = mangaDb.getChapter(j);
+                for (int i = 0; i < manga.getChapters().size(); i++) {
+                    Chapter c = manga.getChapter(i);
+                    try {
+                        if (c.getTitle().contains(" " + cdb.getPath().split("_")[2])) {
+                            manga.getChapters().remove(i);
+                            cdb.setPath(c.getPath());
+                            cdb.setExtra("");
+                            Database.updateChapter(context, cdb);
+                            break;
+                        }
+                    } catch (Exception e) {
+                        Log.i("Error mapping", cdb.getPath());
+                    }
+                }
+            }
+        }
+        return true;
+    }
+
+    @Override
+    public int getServerVersion() {
+        return VERSION;
     }
 }

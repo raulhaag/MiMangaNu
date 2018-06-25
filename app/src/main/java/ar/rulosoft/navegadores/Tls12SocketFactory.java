@@ -3,13 +3,23 @@ package ar.rulosoft.navegadores;
 /**
  * Credits to gotev https://github.com/square/okhttp/issues/2372.
  */
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+
+/**
+ * Enables TLS v1.2 when creating SSLSockets.
+ * <p/>
+ * For some reason, android supports TLS v1.2 from API 16, but enables it by
+ * default only from API 20.
+ *
+ * @link https://developer.android.com/reference/javax/net/ssl/SSLSocket.html
+ * @see SSLSocketFactory
+ */
 
 /**
  * Enables TLS v1.2 when creating SSLSockets.
@@ -20,7 +30,7 @@ import javax.net.ssl.SSLSocketFactory;
  * @see SSLSocketFactory
  */
 public class Tls12SocketFactory extends SSLSocketFactory {
-    private static final String[] TLS_V12_ONLY = {"TLSv1.2"};
+    private static final String[] TLS_V1X_ONLY = {"TLSv1.1", "TLSv1.2", "SSLv3"};
 
     final SSLSocketFactory delegate;
 
@@ -44,12 +54,12 @@ public class Tls12SocketFactory extends SSLSocketFactory {
     }
 
     @Override
-    public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port) throws IOException {
         return patch(delegate.createSocket(host, port));
     }
 
     @Override
-    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+    public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException {
         return patch(delegate.createSocket(host, port, localHost, localPort));
     }
 
@@ -65,7 +75,7 @@ public class Tls12SocketFactory extends SSLSocketFactory {
 
     private Socket patch(Socket s) {
         if (s instanceof SSLSocket) {
-            ((SSLSocket) s).setEnabledProtocols(TLS_V12_ONLY);
+            ((SSLSocket) s).setEnabledProtocols(TLS_V1X_ONLY);
         }
         return s;
     }

@@ -148,6 +148,7 @@ import ar.rulosoft.navegadores.Navigator;
  * If all of steps work properly - congratulations, you made it. (o.O)/v
  */
 public abstract class ServerBase {
+    public final int VERSION = 1;
 
     public static final int FROMFOLDER = 1001;
     public static final int RAWSENMANGA = 21;
@@ -543,7 +544,7 @@ public abstract class ServerBase {
      * @throws Exception if an error occurred. The exception is thrown back to UI, so its message
      *                   should be a translatable string.
      */
-    public int searchForNewChapters(int id, Context context, boolean fast) throws Exception {
+    public int searchForNewChapters(int id, Context context, boolean fast) {
         int returnValue;
         Manga mangaDb = Database.getFullManga(context, id);
         Manga manga = new Manga(mangaDb.getServerId(), mangaDb.getTitle(), mangaDb.getPath(), false);
@@ -922,5 +923,13 @@ public abstract class ServerBase {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
         }
+    }
+
+    public int getServerVersion() {
+        return VERSION;
+    }
+
+    public boolean updateServerVersion() {
+        return false;
     }
 }

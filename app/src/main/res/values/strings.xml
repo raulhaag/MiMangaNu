@@ -486,4 +486,7 @@
     <string name="backup_settings_title">Backup settings</string>
     <string name="restore_settings_summary">Restore settings from external directory</string>
     <string name="restore_settings_title">Restore Settings</string>
+    <string name="update_server_information">Running server update, it can take a while (5-10 min), please wait until finish message is displayed!</string>
+    <string name="server_update_process_finished">Server update process finished</string>
+    <string name="processed">processed</string>
 </resources>

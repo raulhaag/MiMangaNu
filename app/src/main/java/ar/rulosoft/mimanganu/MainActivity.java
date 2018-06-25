@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -21,11 +22,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 
+import ar.rulosoft.mimanganu.componentes.Database;
+import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.InitGlobals;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
@@ -41,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
     public ActionBar mActBar;
     private OnBackListener backListener;
     private OnKeyUpListener keyUpListener;
+    MainFragment mainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         if (isStoragePermissionGiven()) {
             if (savedInstanceState == null) {
                 coldStart = true;
-                MainFragment mainFragment = new MainFragment();
+                mainFragment = new MainFragment();
                 getSupportFragmentManager().beginTransaction().add(R.id.coordinator_layout, mainFragment).commit();
             }
             showUpdateDialog();
@@ -113,6 +119,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     pm.edit().putBoolean("show_updates", false).apply();
                     dialog.dismiss();
+                    executeServerUpdates();
                 }
             });
             dlgAlert.setNegativeButton(getString(R.string.see_later), new DialogInterface.OnClickListener() {
@@ -120,10 +127,47 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     pm.edit().putBoolean("show_updates", true).apply();
                     dialog.dismiss();
+                    executeServerUpdates();
                 }
             });
             dlgAlert.create().show();
             pm.edit().putInt("version_code0", currentVersionCode).apply();
+        }
+    }
+
+    private void executeServerUpdates() {
+        for (final ServerBase s : ServerBase.getServers(getApplicationContext())) {
+            final String id = "server_version_" + s.getServerID();
+            if (pm.getInt(id, 1) < s.getServerVersion()) {
+                if (Database.getMangasCondition(getApplicationContext(),
+                        Database.COL_SERVER_ID + " = " + s.getServerID(), Database.COL_SERVER_ID, true).size() > 0) {
+                    String serverUpdateText = s.getServerName() + " " + getString(R.string.update_server_information);
+                    Snackbar snackbar = Snackbar.make(mainFragment.getView(), serverUpdateText, Snackbar.LENGTH_INDEFINITE);
+                    TextView textView = snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+                    textView.setMaxLines(5);
+                    if (MainActivity.colors != null)
+                        snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+                    snackbar.setAction(android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                        }
+                    });
+                    snackbar.show();
+
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (s.updateServerVersion()) {
+                                pm.edit().putInt(id, s.getServerVersion()).apply();
+                                Util.getInstance().showTimeSnackBar(getString(R.string.server_update_process_finished),
+                                        mainFragment.getView(), getApplicationContext(), Snackbar.LENGTH_INDEFINITE);
+                            }
+                        }
+                    }).start();
+                } else {
+                    pm.edit().putInt(id, s.getServerVersion()).apply();
+                }
+            }
         }
     }
 
@@ -256,6 +300,7 @@ public class MainActivity extends AppCompatActivity {
     public void setOnBackListener(OnBackListener backListener) {
         this.backListener = backListener;
     }
+
     public void setOnKeyUpListener(OnKeyUpListener keyUpListener) {
         this.keyUpListener = keyUpListener;
     }

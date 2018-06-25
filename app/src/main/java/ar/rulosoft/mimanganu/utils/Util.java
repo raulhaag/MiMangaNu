@@ -134,27 +134,22 @@ public class Util {
     }
 
     public void showFastSnackBar(String message, View view, Context context) {
-        if (view != null) {
-            Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT);
-            if (MainActivity.colors != null)
-                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
-            snackbar.show();
-        } else {
-            if (context != null) {
-                Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
-            }
-        }
+        showTimeSnackBar(message, view, context, Snackbar.LENGTH_SHORT);
     }
 
     public void showSlowSnackBar(String message, View view, Context context) {
+        showTimeSnackBar(message, view, context, Snackbar.LENGTH_LONG);
+    }
+
+    public void showTimeSnackBar(String message, View view, Context context, int duration) {
         if (view != null) {
-            Snackbar snackbar = Snackbar.make(view, message, Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(view, message, duration);
             if (MainActivity.colors != null)
                 snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
             snackbar.show();
         } else {
             if (context != null) {
-                Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+                Toast.makeText(context, message, duration).show();
             }
         }
     }
@@ -474,7 +469,7 @@ public class Util {
         return camelCase.toString();
     }
 
-    public String getFirstMatchDefault(String patron, String source, String mDefault) throws Exception {
+    public String getFirstMatchDefault(String patron, String source, String mDefault) {
         Pattern p = Pattern.compile(patron, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         if (m.find()) {
