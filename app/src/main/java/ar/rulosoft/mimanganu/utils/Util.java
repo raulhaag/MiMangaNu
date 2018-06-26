@@ -22,6 +22,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -572,7 +575,18 @@ public class Util {
         return false;
     }
 
+    public boolean isGPServicesAvailable(Context context)  {
+        final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        if (status == ConnectionResult.SUCCESS)
+        {
+            return true;
+        }
+        return false;
+    }
+
     private static class LazyHolder {
         private static final Util utilInstance = new Util();
     }
+
+
 }

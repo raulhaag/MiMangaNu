@@ -68,6 +68,7 @@ dependencies {
     implementation 'com.squareup.duktape:duktape-android:1.1.0'
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     implementation 'com.evernote:android-job:1.2.5'
+    implementation 'com.google.android.gms:play-services-base:11.0.0'
     implementation 'ch.acra:acra:4.9.2'
 
     // for device-based testing

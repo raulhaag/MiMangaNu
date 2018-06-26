@@ -9,6 +9,7 @@ import android.util.Log;
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;
 import com.franmontiel.persistentcookiejar.persistence.SharedPrefsCookiePersistor;
+import com.google.android.gms.security.ProviderInstaller;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.utils.Util;
 import okhttp3.ConnectionSpec;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
@@ -62,6 +64,11 @@ public class Navigator {
     private ArrayList<Parameter> headers = new ArrayList<>();
 
     private Navigator(Context context) throws Exception {
+
+        if (Util.getInstance().isGPServicesAvailable(context)) {
+            ProviderInstaller.installIfNeeded(context); //dislike but needed on old devices to have access to new ssl ca/ etc
+        }
+
         if (httpClient == null) {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             writeTimeout = Integer.parseInt(prefs.getString("write_timeout", "10"));
@@ -405,7 +412,7 @@ public class Navigator {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT);//this is used all the time
         builder.add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        builder.add("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        builder.add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         builder.add("Content-Encoding", "deflate");
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
