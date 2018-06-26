@@ -86,7 +86,7 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = "http://tumangaonline.me/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
+        String web = "https://tumangaonline.me/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
         web = String.format(web, URLEncoder.encode(term, "UTF-8"));
         String data = getNavWithNeededHeaders().get(web);
         return getMangasLibrary(data);
@@ -102,7 +102,7 @@ class TuMangaOnline extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavWithNeededHeaders().get(
-                    String.format("http://tumangaonline.me/library/manga/%s/%s", manga.getPath(),
+                    String.format("https://tumangaonline.me/library/manga/%s/%s", manga.getPath(),
                             URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
 
             manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
@@ -129,9 +129,9 @@ class TuMangaOnline extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            String web = getNavWithNeededHeaders().getRedirectWeb("http://tumangaonline.me/goto/" + chapter.getPath());
+            String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath());
             String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
-            ArrayList<String> imgs = getAllMatch("src=\"(http://img.+?)\"", data);
+            ArrayList<String> imgs = getAllMatch("src=\"(https*://img.+?)\"", data);
             chapter.setPages(imgs.size());
             chapter.setExtra("|" + TextUtils.join("|", imgs));
         }
@@ -204,7 +204,7 @@ class TuMangaOnline extends ServerBase {
     private Navigator getNavWithNeededHeaders() {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Cache-mode", "no-cache");
-        nav.addHeader("Referer", "http://tumangaonline.me/library/manga/");
+        nav.addHeader("Referer", "https://tumangaonline.me/library/manga/");
         return nav;
     }
 

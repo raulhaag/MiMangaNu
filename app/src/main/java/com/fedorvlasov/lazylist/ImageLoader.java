@@ -15,6 +15,8 @@ import java.util.WeakHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import javax.net.ssl.SSLHandshakeException;
+
 import ar.rulosoft.mimanganu.componentes.Imaginable;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -73,7 +75,7 @@ public class ImageLoader {
                 Navigator nav = Navigator.getInstance();
                 String[] parts = url.split("\\|");
                 nav.addHeader("Referer", parts[1]);
-                FileCache.writeFile(nav.getStream(parts[0]), f);
+                    FileCache.writeFile(nav.getStream(parts[0]), f);
             } else if (url.startsWith("/")) {
                 // FromFolder sets url as an absolute local path, so load file directly
                 InputStream is;

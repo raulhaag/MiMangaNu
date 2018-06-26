@@ -66,45 +66,16 @@ public class SingleDownload implements Runnable {
             if (o.length() == 0) {
                 InputStream input;
                 OutputStream output;
-                Response response;
-                long contentLength;
                 try {
-                    OkHttpClient copy;
-                    Request request;
-                    Request.Builder rBuilder;
-                    copy = Navigator.getInstance().getHttpClient().newBuilder()
-                            .connectTimeout(3, TimeUnit.SECONDS)
-                            .readTimeout(3, TimeUnit.SECONDS)
-                            .build();
-                    rBuilder = new Request.Builder()
-                            .addHeader("User-Agent", Navigator.USER_AGENT);
+                    Navigator nav = Navigator.getInstance();
                     if (referer) {
                         if (inRef != null) {
-                            rBuilder.addHeader("Referer", inRef);
+                            nav.addHeader("Referer", inRef);
                         } else {
-                            rBuilder.addHeader("Referer", cd.chapter.getPath());
+                            nav.addHeader("Referer", cd.chapter.getPath());
                         }
                     }
-                    request = rBuilder.url(fromURL).build();
-                    response = copy.newCall(request).execute();
-                    if (!response.isSuccessful()) {
-                        if (response.code() == 404) {
-                            changeStatus(Status.ERROR_404);
-                        } else {
-                            changeStatus(Status.ERROR_CONNECTION);
-                        }
-                        retry = 0;
-                        if(!ot.delete()) {
-                            Log.e("SingleDownload", "failed to delete temporary file");
-                        }
-                        writeErrorImage(ot);
-                        if(!ot.renameTo(o)) {
-                            Log.e("SingleDownload", "failed to rename temporary file");
-                        }
-                        break;
-                    }
-                    contentLength = response.body().contentLength();
-                    input = response.body().byteStream();
+                    input = nav.getStream(fromURL);
                     output = new FileOutputStream(ot);
                 } catch (FileNotFoundException e) {
                     Log.e("SingleDownload", "ERROR_WRITING_FILE");
@@ -163,22 +134,12 @@ public class SingleDownload implements Runnable {
                 } finally {
                     boolean flaggedOk = false;
                     if (status != Status.RETRY) {
-                        if (contentLength > ot.length()) {
-                            Log.e("SingleDownload", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
-                            if(!ot.delete()) {
-                                Log.e("SingleDownload", "failed to delete temporary file");
-                            }
-                            retry--;
-                            changeStatus(Status.RETRY);
-                        } else {
                             flaggedOk = true;
-                        }
                     }
                     try {
                         output.flush();
                         output.close();
                         input.close();
-                        response.body().close();
                         if (flaggedOk) {
                             if (ot.length() > 0) {
                                 if(!ot.renameTo(o)) {

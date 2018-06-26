@@ -29,6 +29,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -45,6 +46,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.TlsVersion;
+import okhttp3.internal.http2.Header;
 
 /**
  * @author Raul, nulldev, xtj-9182
@@ -111,12 +113,13 @@ public class Navigator {
         List<ConnectionSpec> specs = new ArrayList<>();
         if (Build.VERSION.SDK_INT >= 16 && Build.VERSION.SDK_INT < 22) {
             socketFactory = new Tls12SocketFactory(sslContext.getSocketFactory());
-            ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.MODERN_TLS)
-                    .tlsVersions(TlsVersion.TLS_1_2)
+            ConnectionSpec cs = new ConnectionSpec.Builder(ConnectionSpec.COMPATIBLE_TLS)
+                    .allEnabledCipherSuites()
+                    .allEnabledTlsVersions()
                     .build();
             specs.add(cs);
-            specs.add(ConnectionSpec.COMPATIBLE_TLS);
             specs.add(ConnectionSpec.CLEARTEXT);
+
         } else {
             socketFactory = sslContext.getSocketFactory();
         }
@@ -168,13 +171,17 @@ public class Navigator {
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
 
-        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
+        try {
+            Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+            if (response.isSuccessful()) {
+                return response.body().string();
+            } else {
+                Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+                response.body().close();
+                return "";
+            }
+        } catch (SSLHandshakeException e) {
+            return OldNavigator.getWhitURLConnection(web, parameters, connectionTimeout, readTimeout);
         }
     }
 
@@ -188,13 +195,22 @@ public class Navigator {
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
 
-        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-        if (response.isSuccessful()) {
-            return response.request().url().toString();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
+        Request request = new Request.Builder().url(web).headers(getHeaders()).build();
+        try {
+            Response response = copy.newCall(request).execute();
+            if (response.isSuccessful()) {
+                return response.request().url().toString();
+            } else {
+                Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+                response.body().close();
+                return "";
+            }
+        } catch (SSLHandshakeException e) {
+            ArrayList<Parameter> headers = new ArrayList<>();
+            for(String s: request.headers().names()){
+                headers.add(new Parameter(s,request.headers().values(s).get(0)));
+            }
+            return OldNavigator.getRedirectURLConnection(web, headers);
         }
     }
 
@@ -207,14 +223,17 @@ public class Navigator {
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
-
-        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-        if (response.isSuccessful()) {
-            return response.body().byteStream();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            throw new Exception("Can't get stream");
+        try {
+            Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+            if (response.isSuccessful()) {
+                return response.body().byteStream();
+            } else {
+                Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+                response.body().close();
+                throw new Exception("Can't get stream");
+            }
+        } catch (SSLHandshakeException s) {
+            return OldNavigator.getStreamURLConnection(web);
         }
     }
 
@@ -405,7 +424,7 @@ public class Navigator {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT);//this is used all the time
         builder.add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        builder.add("Accept","text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
+        builder.add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         builder.add("Content-Encoding", "deflate");
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
