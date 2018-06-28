@@ -107,8 +107,8 @@ class TuMangaOnline extends ServerBase {
 
             manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
             manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
-            manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">(.+)<", data)));
-            manga.setAuthor(getFirstMatchDefault(">(.+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
+            manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">([^<]+)<", data)));
+            manga.setAuthor(getFirstMatchDefault(">([^<]+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
 
             Pattern pattern = Pattern.compile("<div class=\"col-10 text-truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
             Matcher matcher = pattern.matcher(data);
