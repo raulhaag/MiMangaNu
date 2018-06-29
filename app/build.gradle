@@ -65,7 +65,7 @@ dependencies {
     implementation 'rapid.decoder:png-decoder:0.3.0'
     implementation 'com.squareup.okhttp3:okhttp:3.10.0'
     implementation 'com.squareup.okio:okio:1.14.0'
-    implementation 'com.squareup.duktape:duktape-android:1.1.0'
+    implementation 'com.squareup.duktape:duktape-android:1.2.0'
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     implementation 'com.evernote:android-job:1.2.5'
     implementation 'com.google.android.gms:play-services-base:11.0.0'
