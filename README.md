@@ -33,12 +33,17 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.86:
+* Arreglado el navegador dispositiva post lollipop.
 
 Cambios en v1.85:
  * TMO fixed (necesita un proceso después de actualizar).
  * Agregado MintManga.
  * Agregado backup de configuraciones.
  * Otras funciones de fondo.
+
+ Changes in v1.86:
+ * Fix navigator for post lollipop devices.
 
  Changes in v1.85:
  * TMO fixed (need post update process).

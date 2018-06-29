@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.85:\n\t* TMO fixed (necesita un proceso después de actualizar).\n\t* Agregado MintManga.\n\t* Agregado backup de configuraciones. \n\t* Otras funciones de fondo.</string>
+    <string name="update_message">Cambios en v1.86:\n\t* Arreglado el navegador para nuevos dispositivos.\nCambios en v1.85:\n\t* TMO fixed (necesita un proceso después de actualizar).\n\t* Agregado MintManga.\n\t* Agregado backup de configuraciones. \n\t* Otras funciones de fondo.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
