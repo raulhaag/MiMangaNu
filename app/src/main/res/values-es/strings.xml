@@ -253,7 +253,7 @@
     <string name="app_update_title">Buscar actualizaciones de la aplicación.</string>
     <string name="chapter">capítulos</string>
     <string name="clear_all_cookies_subtitle">Tap aquí para borrar todas las Cookies.</string>
-    <string name="clear_all_cookies_title">Borror cookies</string>
+    <string name="clear_all_cookies_title">Borrar cookies</string>
     <string name="clear_specific_cookies_subtitle">Tap aquí para borrar las Cookies que contengan.</string>
     <string name="clear_specific_cookies_title">Borrar cookie específica</string>
     <string name="custom_language">Lenguaje personalizado.</string>
@@ -433,7 +433,7 @@
     <string name="dont_ask_again">Siempre</string>
     <string name="connection_retry_summary">%s veces.</string>
     <string name="connection_retry_title">Reintentos en error</string>
-    <string name="select_server">Selecionna servidor</string>
+    <string name="select_server">Selecciona un servidor</string>
     <string name="notification_o_title">Notificaciones.</string>
     <string name="notification_o_subtitle">Configurar notificaciones de nuevos mangas.</string>
     <string name="blue_filter">Filtro Azul</string>

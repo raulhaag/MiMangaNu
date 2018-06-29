@@ -34,7 +34,7 @@ Downloads
 Changelog
 ---------
 Cambios en v1.86:
-* Arreglado el navegador dispositiva post lollipop.
+* Arreglado el navegador dispositivos post lollipop.
 
 Cambios en v1.85:
  * TMO fixed (necesita un proceso después de actualizar).
