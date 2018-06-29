@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.84:\n\t* Varios servidores actializados(no todos).\n\t* Agregado filtro azul para el lector.\n\t* Muchos fixes.</string>
+    <string name="update_message">Cambios en v1.85:\n\t* TMO fixed (necesita un proceso después de actualizar).\n\t* Agregado MintManga.\n\t* Agregado backup de configuraciones. \n\t* Otras funciones de fondo.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -444,5 +444,8 @@
     <string name="backup_settings_title">Reespaldar preferencias</string>
     <string name="restore_settings_summary">Restaurar preferencias desde directorio externo.</string>
     <string name="restore_settings_title">Reestaurar preferencias</string>
+    <string name="processed">" precesado(s)"</string>
+    <string name="server_update_process_finished">Acualizacion de datos del servidor finalizada.</string>
+    <string name="update_server_information">Ejecutando una actualización de datos del servidor, puede tardar 5 -10 min, por favor espera hasta que el mensaje de terminado sea mostrado (su base de datos esta en juego).</string>
 
 </resources>

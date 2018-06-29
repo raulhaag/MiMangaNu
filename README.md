@@ -33,6 +33,19 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.85:
+ * TMO fixed (necesita un proceso después de actualizar).
+ * Agregado MintManga.
+ * Agregado backup de configuraciones.
+ * Otras funciones de fondo.
+
+ Changes in v1.85:
+ * TMO fixed (need post update process).
+ * Added MintManga.
+ * Added configuration backup option.
+ * Other backend functions.
+
 Cambios en v1.84
 * Varios servidores actializados(no todos).
 * Agregado filtro azul para el lector.

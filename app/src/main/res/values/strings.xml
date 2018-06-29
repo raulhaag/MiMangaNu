@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.84:\n\t* Various servers fixes(not all).\n\t* Added blue filter for reader.\n\t* Min fixes..</string>
+    <string name="update_message">Changes in v1.85:\n\t* TMO fixed (need post update process).\n\t* Added MintManga.\n\t* Added configuration backup option. \n\t* Other backend functions.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
@@ -487,6 +487,6 @@
     <string name="restore_settings_summary">Restore settings from external directory</string>
     <string name="restore_settings_title">Restore Settings</string>
     <string name="update_server_information">Running server update, it can take a while (5-10 min), please wait until finish message is displayed!</string>
-    <string name="server_update_process_finished">Server update process finished</string>
-    <string name="processed">processed</string>
+    <string name="server_update_process_finished">Server update process finished.</string>
+    <string name="processed">" processed"</string>
 </resources>
