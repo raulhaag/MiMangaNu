@@ -199,14 +199,14 @@ class KissManga extends ServerBase {
 
                 p = Pattern.compile("lstImages.push\\((.+?\\))\\)", Pattern.DOTALL);
                 m = p.matcher(source);
-                String images = "";
+                StringBuilder sb = new StringBuilder();
                 String image;
                 while (m.find()) {
                     pages++;
                     image = (String) duktape.evaluate(m.group(1) + ".toString()");
-                    images = images + "|" + image;
+                    sb.append("|").append(image);
                 }
-                chapter.setExtra(images);
+                chapter.setExtra(sb.toString());
             }
             chapter.setPages(pages);
         }
