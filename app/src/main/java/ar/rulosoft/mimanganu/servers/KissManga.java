@@ -122,7 +122,7 @@ class KissManga extends ServerBase {
         // do not hide Doujinshi in result
         nav.addHeader("Cookie", "vns_doujinshi=1; ");
 
-        nav.addPost("keyword", URLEncoder.encode(term, "UTF-8"));
+        nav.addPost("keyword", term);
         nav.addPost("type", "Manga");
 
         String source = nav.post(HOST + "/Search/SearchSuggest");
