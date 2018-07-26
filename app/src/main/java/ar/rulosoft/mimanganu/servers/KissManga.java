@@ -183,7 +183,7 @@ class KissManga extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             int pages = 0;
-            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath().replaceAll("[^!-z]+", ""));
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");
             String lo = getNavigatorAndFlushParameters().get(HOST + "/Scripts/lo.js");
             try (Duktape duktape = Duktape.create()) {
