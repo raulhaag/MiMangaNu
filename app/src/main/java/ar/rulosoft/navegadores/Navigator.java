@@ -399,10 +399,13 @@ public class Navigator {
 
     private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
-        builder.add("User-Agent", USER_AGENT);//this is used all the time
-        builder.add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        builder.add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
-        builder.add("Content-Encoding", "deflate");
+        builder.add("User-Agent", USER_AGENT)
+                .add("Accept-Language", "en")
+                .add("Upgrade-Insecure-Requests", "1")
+                .add("DNT", "1")
+                .add("Conection", "keep-alive")
+                .add("Accept", "text/html,application/xhtml+xml,application/xml");
+
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
         }

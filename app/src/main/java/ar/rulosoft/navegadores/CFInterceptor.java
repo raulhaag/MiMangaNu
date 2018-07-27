@@ -41,8 +41,9 @@ public class CFInterceptor implements Interceptor {
 
     public Response resolveOverCF(Chain chain, Response response) throws IOException {
         Request request = response.request();
-        String content = response.body().string();
         String domain = request.url().host().trim();
+        String content = response.body().string();
+        response.body().close();
         String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
         String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
         String challengePass = getFirstMatch(PASS_PATTERN, content);
@@ -65,12 +66,12 @@ public class CFInterceptor implements Interceptor {
         }
 
         try {
-            Thread.sleep(4000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        String url = new HttpUrl.Builder().scheme("http").host(domain)
+        String url = new HttpUrl.Builder().scheme(request.isHttps() ? "https" : "http").host(domain)
                 .addPathSegments("cdn-cgi/l/chk_jschl")
                 .addEncodedQueryParameter("jschl_vc", challenge)
                 .addEncodedQueryParameter("pass", challengePass)
@@ -81,12 +82,13 @@ public class CFInterceptor implements Interceptor {
                 .url(url)
                 .header("User-Agent", Navigator.USER_AGENT)
                 .header("Referer", request.url().toString())
-                .header("Accept-Language", "es-419,es;q=0.9")
+                .header("Accept-Language", "en")
                 .header("Upgrade-Insecure-Requests", "1")
-                .header("Conection","keep-alive")
-                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8")
+                .header("DNT", "1")
+                .header("Conection", "keep-alive")
+                .header("Accept", "text/html,application/xhtml+xml,application/xml")
                 .build();
-        response.body().close();
-        return chain.proceed(request1);//generate the cookie
+
+        return chain.proceed(request1);//generate the cookie;
     }
 }
