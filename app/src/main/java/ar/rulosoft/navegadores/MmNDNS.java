@@ -16,8 +16,8 @@ public class MmNDNS implements Dns {
         List<InetAddress> list = new ArrayList<>();
         if (hostname.toLowerCase().contains("kissmanga.com")) {
             list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 87, (byte) 121, (byte) 98, (byte) 205}));
-        } else if (hostname.toLowerCase().contains("readcomiconline.to")) {
-            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 51, (byte) 15, (byte) 204, (byte) 213}));
+       // } else if (hostname.toLowerCase().contains("readcomiconline.to")) {
+       //    list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 51, (byte) 15, (byte) 204, (byte) 213}));
         } else {
             list = SYSTEM.lookup(hostname);
         }
