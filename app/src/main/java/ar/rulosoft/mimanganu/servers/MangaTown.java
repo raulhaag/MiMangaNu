@@ -31,7 +31,7 @@ class MangaTown extends ServerBase {
     private static final String PATTERN_IMAGE =
             "src=\"([^\"]+?/manga/.+?.(jpg|gif|jpeg|png|bmp).*?)\"";
     private static final String PATTERN_MANGA =
-            "<a class=\"manga_cover\" href=\"(.+?)\" title=\"(.+?)\">\\s*<img src=\"(.+?)\"";
+            "<a class=\"manga_cover\" href=\"([^\"]+)\" title=\"([^\"]+)\">\\s*<img\\s+src=\"(.+?)\"";
 
     // filter by status /0-0-0-X-0-0/
     private static int[] fltStatus = {
