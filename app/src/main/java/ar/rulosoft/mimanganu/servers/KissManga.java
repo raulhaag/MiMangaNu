@@ -122,7 +122,7 @@ class KissManga extends ServerBase {
         // do not hide Doujinshi in result
         nav.addHeader("Cookie", "vns_doujinshi=1; ");
 
-        nav.addPost("keyword", URLEncoder.encode(term, "UTF-8"));
+        nav.addPost("keyword", term);
         nav.addPost("type", "Manga");
 
         String source = nav.post(HOST + "/Search/SearchSuggest");
@@ -183,7 +183,7 @@ class KissManga extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             int pages = 0;
-            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath().replaceAll("[^!-z]+", ""));
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");
             String lo = getNavigatorAndFlushParameters().get(HOST + "/Scripts/lo.js");
             try (Duktape duktape = Duktape.create()) {
@@ -199,14 +199,14 @@ class KissManga extends ServerBase {
 
                 p = Pattern.compile("lstImages.push\\((.+?\\))\\)", Pattern.DOTALL);
                 m = p.matcher(source);
-                String images = "";
+                StringBuilder sb = new StringBuilder();
                 String image;
                 while (m.find()) {
                     pages++;
                     image = (String) duktape.evaluate(m.group(1) + ".toString()");
-                    images = images + "|" + image;
+                    sb.append("|").append(image);
                 }
-                chapter.setExtra(images);
+                chapter.setExtra(sb.toString());
             }
             chapter.setPages(pages);
         }

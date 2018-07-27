@@ -194,7 +194,7 @@ public class Chapter {
     public static class Comparators {
         private static final String FLOAT_PATTERN = "(\\d+([\\.,]\\d+)?)";
         private static final String STRING_END_PATTERN = "[^\\d]\\.";
-        private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L].?\\d+";
+        private static final String VOLUME_REMOVE_PATTERN = "[v|V][o|O][l|L]\\.?\\s*\\d+";
         public static Comparator<Chapter> TITLE_DESC = new Comparator<Chapter>() {
             @Override
             public int compare(Chapter c1, Chapter c2) {

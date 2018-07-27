@@ -294,7 +294,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             } else {
                 for (int i = 0; i < mChapter.getPages(); i++) {
                     try {
-                        pages.add(mServerBase.getImageFrom(mChapter, i));
+                        pages.add(mServerBase.getImageFrom(mChapter, i + 1));
                     } catch (Exception ignore) {
                     }
                 }
