@@ -97,7 +97,7 @@ class JapScan extends ServerBase {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             ArrayList<String> images = getAllMatch("<option\\s+data-img=\"([^\"]+)\"", source);
 
-            String baseImg = getFirstMatch("\\d+\" src=\"([^\"]+)", source,
+            String baseImg = getFirstMatch("<img data-img.+?src=\"([^\"]+)", source,
                     context.getString(R.string.server_failed_loading_image));
             String imagesString = "|" + baseImg;
             baseImg = baseImg.substring(0, baseImg.lastIndexOf("/") + 1);
