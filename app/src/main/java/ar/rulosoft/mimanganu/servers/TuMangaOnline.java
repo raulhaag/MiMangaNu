@@ -116,6 +116,13 @@ class TuMangaOnline extends ServerBase {
             while (matcher.find()) {
                 manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), matcher.group(2)));
             }
+            if (manga.getChapters().size() == 0) {
+                pattern = Pattern.compile("truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
+                matcher = pattern.matcher(data);
+                while (matcher.find()) {
+                    manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), matcher.group(2)));
+                }
+            }
         }
     }
 
