@@ -35,6 +35,9 @@ public class DeadServer extends ServerBase {
         deadServers.put(SUBMANGA, "SubManga");
         deadServers.put(BATOTO, "BatoTo");
         deadServers.put(BATOTOES, "BatoTo(ES)");
+        deadServers.put(MANGAPEDIA, "Mangapedia");
+
+
         return deadServers.get(m.getServerId());
     }
 

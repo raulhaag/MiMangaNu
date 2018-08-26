@@ -287,9 +287,6 @@ public abstract class ServerBase {
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
-            case MANGAPEDIA:
-                serverBase = new Mangapedia(context);
-                break;
             case MANGAKAWAII:
                 serverBase = new MangaKawaii(context);
                 break;
@@ -386,7 +383,6 @@ public abstract class ServerBase {
                 new ReadMangaMe(context),
                 new MyMangaIo(context),
                 new JapScan(context),
-                new Mangapedia(context),
                 new MangaKawaii(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
