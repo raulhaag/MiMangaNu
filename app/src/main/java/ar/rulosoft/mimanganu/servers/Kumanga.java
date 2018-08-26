@@ -263,7 +263,7 @@ class Kumanga extends ServerBase {
             try {
                 data = getAllMatch("leer\\/'\\+this.value\">([\\s\\S]+?)<\\/select>",
                         getNavigatorAndFlushParameters().get(temp.get(0).getPath().replace("/c/", "/leer/"))).get(1);
-                pattern = Pattern.compile("value=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
+                pattern = Pattern.compile("value=\"([^\"]+)\"[ selected]*>([^<]+)", Pattern.DOTALL);
                 matcher = pattern.matcher(data);
                 while (matcher.find()) {
                     manga.addChapterFirst(new Chapter(matcher.group(2), HOST + "/manga/leer/" + matcher.group(1)));
