@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.86:\n\t* Fix navigator for post lollipop devices.\nChanges in v1.85:\n\t* TMO fixed (need post update process).\n\t* Added MintManga.\n\t* Added configuration backup option. \n\t* Other backend functions.</string>
+    <string name="update_message">Changes in v1.87:\n\t* Added Manga.ae (Ar).\n\t* Added Neumanga.tv (Indo).\n\t* Various fixes..</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

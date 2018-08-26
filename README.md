@@ -33,6 +33,17 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.87:
+* Agregado Manga.ae (Ar).
+* Agregado Neumanga.tv (Indo).
+* Varios fixes.
+
+Changes in v1.87:
+* Added Manga.ae (Ar).
+* Added Neumanga.tv (Indo).
+* Various fixes.
+
 Cambios en v1.86:
 * Arreglado el navegador dispositivos post lollipop.
 
