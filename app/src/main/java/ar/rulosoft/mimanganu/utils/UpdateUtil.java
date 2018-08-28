@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.icu.text.SymbolTable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -15,6 +16,7 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -46,7 +48,9 @@ import static ar.rulosoft.mimanganu.MainActivity.pm;
 
 public class UpdateUtil {
     private static final String TAG = "UpdateUtils";
-    private static final String LATEST_RELEASE_URL = "https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest";
+    private static final String LATEST_RELEASE_URL = "https://github.com/raulhaag/MiMangaNu/releases/latest";
+    private static final String LATEST_RELEASE_URL_API = "https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest";
+
     private static File UPDATE_FILE_CACHE = new File(Environment.getExternalStorageDirectory() + "/download", "update.apk");
     private static int prog = 0;
 
@@ -61,28 +65,17 @@ public class UpdateUtil {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        final OkHttpClient client = Navigator.getInstance().getHttpClient().newBuilder()
-                                .connectTimeout(3, TimeUnit.SECONDS)
-                                .readTimeout(3, TimeUnit.SECONDS)
-                                .build();
-                        Response response = client.newCall(new Request.Builder().url(LATEST_RELEASE_URL).build()).execute();
-                        final JSONObject object = new JSONObject(response.body().string());
-                        String version_name = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-                        if (!version_name.equals(object.getString("tag_name"))) {            //Test <-----
+                        final Triple<String,String, String> info = getCurrentVersion();
                             ((AppCompatActivity) context).runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
                                     LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                                     View rootView = inflater.inflate(R.layout.dialog_update, null);
-                                    final TextView desc = (TextView) rootView.findViewById(R.id.descrption);
-                                    final ProgressBar progressBar = (ProgressBar) rootView.findViewById(R.id.progress);
+                                    final TextView desc = rootView.findViewById(R.id.descrption);
+                                    final ProgressBar progressBar = rootView.findViewById(R.id.progress);
                                     final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                                    try {
-                                        desc.setText(object.getString("body"));
-                                        dialogBuilder.setTitle(context.getString(R.string.new_version) + " " + object.getString("tag_name"));
-                                    } catch (JSONException e) {
-                                        Log.e(TAG, "Error reading source");
-                                    }
+                                    desc.setText(info.getThird());
+                                    dialogBuilder.setTitle(context.getString(R.string.new_version) + " " + info.getFirst());
                                     dialogBuilder.setView(rootView);
                                     dialogBuilder.setPositiveButton(context.getString(R.string.download), null);
                                     dialogBuilder.setNegativeButton(context.getString(R.string.close), null);
@@ -118,7 +111,7 @@ public class UpdateUtil {
                                                                 progressBar.setIndeterminate(true);
                                                             }
                                                         });
-                                                        download(activity, object.getJSONArray("assets").getJSONObject(0).getString("browser_download_url"), progressBar, desc, dialog);
+                                                        download(activity, info.getSecond(), progressBar, desc, dialog);
                                                     } catch (Exception e) {
                                                         Log.e(TAG, "Error while starting download");
                                                         e.printStackTrace();
@@ -129,11 +122,7 @@ public class UpdateUtil {
                                     });
                                     dialog.show();
                                 }
-
                             });
-                        } else {
-                            Log.i(TAG, "App is up to date!!!!");
-                        }
                     } catch (Exception e) {
                         Log.e(TAG, "Error while searching for new update");
                         e.printStackTrace();
@@ -223,6 +212,31 @@ public class UpdateUtil {
         }
     }
 
+    private static Triple<String,String,String> getCurrentVersion(){
+        Navigator.getInstance().flushParameter();
+        try {
+            final JSONObject object = new JSONObject(Navigator.getInstance().get(LATEST_RELEASE_URL_API));
+            String version = object.getString("tag_name");
+            String data = object.getString("body");
+            String link = object.getJSONArray("assets").getJSONObject(0).getString("browser_download_url");
+            return new Triple<>(version, link, data);
+        } catch (Exception e) {
+        }
+        try {
+            String source = Navigator.getInstance().get(LATEST_RELEASE_URL);
+            String link = "https://github.com" + Util.getInstance().getFirstMatchDefault("(/raulhaag/MiMangaNu[^\"]+apk)", source, "");
+            if(link.equals("https://github.com")){
+                return null;
+            }
+            String version = Util.getInstance().getFirstMatchDefault("tree/([^\"]+)", source, "");
+            String data = Util.getInstance().getFirstMatchDefault("<div class=\"markdown-body\">([\\s\\S]+?)</div>", source, "");
+            return new Triple<>(version, link, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
         private String error = "";
         private Context context;
@@ -239,19 +253,12 @@ public class UpdateUtil {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Navigator.getInstance().flushParameter();
-                String source = Navigator.getInstance().get(LATEST_RELEASE_URL);
-
-                int onlineVersionMinor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\"tag_name\": \"\\d+\\.(\\d+)\"", source, ""));
-                int onlineVersionMajor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\"tag_name\": \"(\\d+)\\.\\d+\"", source, ""));
+                Triple<String,String, String> info = getCurrentVersion();
                 String currentVersionTmp = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-                int currentVersionMinor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("\\d+\\.(\\d+)", currentVersionTmp, ""));
-                int currentVersionMajor = Integer.parseInt(Util.getInstance().getFirstMatchDefault("(\\d+)\\.\\d+", currentVersionTmp, ""));
-
-                if (currentVersionMinor != onlineVersionMinor || currentVersionMajor != onlineVersionMajor) {
+                if (!currentVersionTmp.equals(info.getFirst())) {
                     Intent intent = new Intent(context, MessageActivity.class);
                     intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + onlineVersionMajor + "." + onlineVersionMinor + " " + context.getString(R.string.is_available));
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + info.getFirst() + context.getString(R.string.is_available));
                     pm.edit().putBoolean("on_latest_app_version", false).apply();
                     //Only display update if user tap on notification
                 } else {

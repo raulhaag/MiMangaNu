@@ -22,6 +22,8 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
 
+    private boolean cfiw = false;
+
     public static String getFirstMatch(Pattern p, String source) {
         Matcher m = p.matcher(source);
         if (m.find()) {
@@ -34,7 +36,17 @@ public class CFInterceptor implements Interceptor {
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
         if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
-            return resolveOverCF(chain, response);
+            if (!cfiw) { // synchronized isn't a better idea
+                cfiw = true;
+                return resolveOverCF(chain, response);
+            } else {
+                try {
+                    Thread.sleep(5000);
+                    return chain.proceed(response.request());
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return response;
     }
@@ -88,7 +100,7 @@ public class CFInterceptor implements Interceptor {
                 .header("Conection", "keep-alive")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml")
                 .build();
-
+        cfiw = false;
         return chain.proceed(request1);//generate the cookie;
     }
 }

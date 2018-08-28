@@ -19,7 +19,7 @@ public class RetryInterceptor implements Interceptor {
         Request request = chain.request();
         Response response = chain.proceed(request);
         int tryCount = 0;
-        while (tryCount <= retry && (response == null || !response.isSuccessful())) {
+        while (tryCount <= retry && (response == null || !response.isSuccessful()) && !request.url().host().contains("github")) { // don't retry app updates
             String url = request.url().toString();
             Request newRequest = request.newBuilder().url(url).build();
             tryCount++;
