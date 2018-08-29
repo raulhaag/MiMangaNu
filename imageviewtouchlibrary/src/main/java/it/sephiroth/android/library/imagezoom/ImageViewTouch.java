@@ -53,16 +53,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
         mGestureDetector = new GestureDetector(getContext(), mGestureListener, null, true);
     }
 
-    /*
-    public void setDoubleTapListener(OnImageViewTouchDoubleTapListener listener) {
-        mDoubleTapListener = listener;
-    }
-
-    public void setSingleTapListener(OnImageViewTouchSingleTapListener listener) {
-        mSingleTapListener = listener;
-    }
-    */
-
     public void setTapListener(TapListener nTapListener) {
         mTapListener = nTapListener;
     }
@@ -71,19 +61,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
         mScaleEnabled = value;
     }
 
-    /*
-    public void setScrollEnabled(boolean value) {
-        mScrollEnabled = value;
-    }
-
-    public boolean getDoubleTapEnabled() {
-        return mDoubleTapEnabled;
-    }
-
-    public void setDoubleTapEnabled(boolean value) {
-        mDoubleTapEnabled = value;
-    }
-    */
 
     protected OnGestureListener getGestureListener() {
         return new GestureListener();
@@ -212,22 +189,6 @@ public class ImageViewTouch extends ImageViewTouchBase {
         double bitmapScrollRectDelta = Math.abs(bitmapRect.top - mScrollRect.top);
         return bitmapScrollRectDelta > SCROLL_DELTA_THRESHOLD;
     }
-
-    /*
-    public void scrollToOrigin() {
-        RectF bitmapRect = getBitmapRect();
-        scrollBy(-bitmapRect.right, -bitmapRect.top);
-    }
-
-    public interface OnImageViewTouchDoubleTapListener {
-        void onDoubleTap();
-    }
-
-
-    public interface OnImageViewTouchSingleTapListener {
-        void onSingleTapConfirmed();
-    }
-    */
 
     public class GestureListener extends GestureDetector.SimpleOnGestureListener {
 
