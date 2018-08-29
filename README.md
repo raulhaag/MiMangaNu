@@ -33,6 +33,15 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.87:
+* Fix TMO.
+* Alternativa para la actulización.
+* CFI solo una instancia.
+
+Changes in v1.87:
+* Fix TMO.
+* App update alternative.
+* CFI only once a time.
 
 Cambios en v1.87:
 * Agregado Manga.ae (Ar).
