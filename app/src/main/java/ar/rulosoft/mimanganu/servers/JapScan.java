@@ -78,10 +78,10 @@ class JapScan extends ServerBase {
             manga.setGenre(getFirstMatchDefault("<div class=\"row\">.+?<div class=\"cell\">.+?<div class=\"cell\">.+?<div class=\"cell\">(.+?)</div>", source, context.getString(R.string.nodisponible)));
 
             // Chapters
-            Pattern pattern = Pattern.compile("<a href=\"(//www\\.japscan\\.cc/lecture-en-ligne/[^\"]+?)\">(Scan.+?)</a>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile("<a href=\"[//www\\.japscan\\.cc]*(/lecture-en-ligne/[^\"]+?)\">(Scan.+?)</a>", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(2), "http:" + matcher.group(1)));
+                manga.addChapterFirst(new Chapter(matcher.group(2), HOST + matcher.group(1)));
             }
         }
     }
