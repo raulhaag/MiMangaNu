@@ -1,1 +1,2 @@
+include ':fakegps'
 include 'imageviewtouchlibrary', ':app'
