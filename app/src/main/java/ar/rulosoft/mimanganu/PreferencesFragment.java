@@ -284,6 +284,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         final Preference prefAbout = getPreferenceManager().findPreference("about_text");
         prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 
+        /* Hide app update pref o f-droid users */
+        if(BuildConfig.VERSION_NAME.contains("fdroid")){
+            getPreferenceManager().findPreference("app_update").setVisible(false);
+        }
+
         /* This will check how much storage is taken by the mangas */
         new calcStorage().execute(current_filepath);
 

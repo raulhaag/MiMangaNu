@@ -48,7 +48,7 @@ android {
         }
         github {
             signingConfig signingConfigs.release
-            versionNameSuffix '-github'
+             //removed to maintain updates as now are
             dimension "builds"
         }
     }

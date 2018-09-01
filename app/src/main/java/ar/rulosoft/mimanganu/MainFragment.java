@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -143,7 +144,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             // App Update
-            if (pm.getBoolean("app_update", true)) {
+            if (pm.getBoolean("app_update", true)  && !BuildConfig.VERSION_NAME.contains("fdroid")) {
                 boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
                 if (onLatestAppVersion) {
                     long last_check = pm.getLong("last_app_update", 0);

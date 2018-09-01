@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import ar.rulosoft.mimanganu.BuildConfig;
 import ar.rulosoft.mimanganu.MessageActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.navegadores.Navigator;
@@ -254,8 +255,7 @@ public class UpdateUtil {
         protected Void doInBackground(Void... params) {
             try {
                 Triple<String,String, String> info = getCurrentVersion();
-                String currentVersionTmp = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-                if (!currentVersionTmp.equals(info.getFirst())) {
+                if (!BuildConfig.VERSION_NAME.equals(info.getFirst())) {
                     Intent intent = new Intent(context, MessageActivity.class);
                     intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
                     Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + info.getFirst() + context.getString(R.string.is_available));
