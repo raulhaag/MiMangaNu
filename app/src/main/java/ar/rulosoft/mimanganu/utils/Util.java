@@ -144,7 +144,7 @@ public class Util {
         showTimeSnackBar(message, view, context, Snackbar.LENGTH_LONG);
     }
 
-    public void showTimeSnackBar(String message, View view, Context context, int duration) {
+    public void showTimeSnackBar(final String message, View view, final Context context, final int duration) {
         if (view != null) {
             Snackbar snackbar = Snackbar.make(view, message, duration);
             if (MainActivity.colors != null)
@@ -152,7 +152,12 @@ public class Util {
             snackbar.show();
         } else {
             if (context != null) {
-                Toast.makeText(context, message, duration).show();
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(context, message, duration).show();
+                    }
+                });
             }
         }
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.88:\n\t* Fix TMO.\n\t* Alternativa para la actulización.\n\t* CFI solo una instancia.</string>
+    <string name="update_message">Cambios en v1.89:\n\t*  Arreglado TMO.\n\t*  Agregado "sabor" especial para fdroid.\n\t*  Otros arreglos menores</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

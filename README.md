@@ -33,6 +33,17 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.89:
+* Arreglado TMO.
+* Agregado "sabor" especial para fdroid.
+* Otros arreglos menores.
+
+Changes in v1.89:
+* Fix TMO.
+* Added fdroid flavor.
+* Min fixes.
+
 Cambios en v1.88:
 * Fix TMO.
 * Alternativa para la actulización.

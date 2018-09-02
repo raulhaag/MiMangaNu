@@ -101,7 +101,9 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
 
     @Override
     public int getPages() {
-        return pages.size();
+        if (pages != null)
+            return pages.size();
+        return 0;
     }
 
     @Override
@@ -272,18 +274,18 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
 
     @Override
     protected void onDraw(Canvas canvas) {
-            if (toDraw.size() > 0) {
-                for (Page.Segment s : toDraw) {
-                    s.draw(canvas);
-                }
-                cache = canvas;
-            } else {
-                generateDrawPool();
-                if (cache != null)
-                    canvas = cache;
+        if (toDraw.size() > 0) {
+            for (Page.Segment s : toDraw) {
+                s.draw(canvas);
             }
-            preparing = false;
-            drawing = false;
+            cache = canvas;
+        } else {
+            generateDrawPool();
+            if (cache != null)
+                canvas = cache;
+        }
+        preparing = false;
+        drawing = false;
     }
 
     public void setPaths(List<String> paths) {
