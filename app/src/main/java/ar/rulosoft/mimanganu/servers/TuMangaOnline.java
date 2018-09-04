@@ -132,7 +132,7 @@ class TuMangaOnline extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String[] d1 = chapter.getExtra().split("\\|");
-        return HOST + d1[page] + "|" + d1[0];
+        return d1[page] + "|" + d1[0];
     }
 
     @Override
@@ -140,9 +140,10 @@ class TuMangaOnline extends ServerBase {
         if (chapter.getPages() == 0) {
             String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath());
             String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
-            ArrayList<String> imgs = getAllMatch("(/tmoImage.php[^']+)", data);
+            String basedir = getFirstMatch("dirPath\\s*=\\s*\"([^\"]+)\";", data, context.getString(R.string.error));
+            ArrayList<String> imgs = getAllMatch(".src\\s*=\\s*\\S*\\s*\\+\\s*'([^']+)'\\s*;", data);
             chapter.setPages(imgs.size());
-            chapter.setExtra(web + "|"  + TextUtils.join("|", imgs));
+            chapter.setExtra( web + "|" + basedir + TextUtils.join("|" + basedir, imgs));
         }
     }
 

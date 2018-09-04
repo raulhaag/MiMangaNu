@@ -17,7 +17,7 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  * Created by Raul on 17/07/2016.
  */
 class LeoManga extends ServerBase {
-
+    // Planed delete to 04/10/2018
     private static final String HOST = "http://leomanga.com";
 
     private static final int[] fltDemographic = {

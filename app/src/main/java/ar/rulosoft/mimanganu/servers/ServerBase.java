@@ -373,7 +373,7 @@ public abstract class ServerBase {
                 new TuMangaOnline(context),
                 new HeavenManga(context),
                 new EsNineManga(context),
-                new LeoManga(context),
+                //new LeoManga(context), temporary remove, if past a month and sever is down then full remove it (04/09/2018)
                 new Kumanga(context),
                 new MangaPanda(context),
                 new MangaReader(context),
