@@ -266,7 +266,7 @@ class Kumanga extends ServerBase {
                 pattern = Pattern.compile("value=\"([^\"]+)\"[ selected]*>([^<]+)", Pattern.DOTALL);
                 matcher = pattern.matcher(data);
                 while (matcher.find()) {
-                    manga.addChapterFirst(new Chapter(matcher.group(2), HOST + "/manga/leer/" + matcher.group(1)));
+                    manga.addChapterLast(new Chapter(matcher.group(2), HOST + "/manga/leer/" + matcher.group(1)));
                 }
                 return;
             }catch (Exception e){
