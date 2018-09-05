@@ -63,7 +63,7 @@ public class MangaAE extends ServerBase {
      *
      * @param context the context for this object
      */
-    public MangaAE(Context context) {
+    MangaAE(Context context) {
         super(context);
         setFlag(R.drawable.flag_ar);
         setIcon(R.drawable.mangaae);

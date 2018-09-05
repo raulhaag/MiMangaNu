@@ -52,7 +52,7 @@ public class NeuMangaTv extends ServerBase {
      *
      * @param context the context for this object
      */
-    public NeuMangaTv(Context context) {
+    NeuMangaTv(Context context) {
         super(context);
         setFlag(R.drawable.flag_indo);
         setIcon(R.drawable.neumangatv);
