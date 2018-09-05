@@ -136,7 +136,7 @@ public class TestServers {
         new TestServersCommon(ServerBase.MYMANGAIO, true, context);
     }
 
-    @Test
+    @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_TUMANGAONLINE() throws Exception {
         new TestServersCommon(ServerBase.TUMANGAONLINE, true, context);
     }
@@ -224,6 +224,16 @@ public class TestServers {
     @Test
     public void test_MINTMANGA() throws Exception {
         new TestServersCommon(ServerBase.MINTMANGA, true, context);
+    }
+
+    @Test
+    public void test_MANGAAE() throws Exception {
+        new TestServersCommon(ServerBase.MANGAAE, true, context);
+    }
+
+    @Test
+    public void test_NEUMANGATV() throws Exception {
+        new TestServersCommon(ServerBase.NEUMANGATV, true, context);
     }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")

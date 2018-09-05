@@ -212,17 +212,32 @@ public class TestServersInstrumentation {
 
     @Test
     public void test_READMANGAME() throws Exception {
-        new TestServersCommon(ServerBase.READMANGAME, true, context);
+        new TestServersCommon(ServerBase.READMANGAME, false, context);
     }
 
     @Test
     public void test_DESUME() throws Exception {
-        new TestServersCommon(ServerBase.DESUME, true, context);
+        new TestServersCommon(ServerBase.DESUME, false, context);
     }
 
     @Test
     public void test_MANGARAWONLINE() throws Exception {
-        new TestServersCommon(ServerBase.MANGARAWONLINE, true, context);
+        new TestServersCommon(ServerBase.MANGARAWONLINE, false, context);
+    }
+
+    @Test
+    public void test_MINTMANGA() throws Exception {
+        new TestServersCommon(ServerBase.MINTMANGA, false, context);
+    }
+
+    @Test
+    public void test_MANGAAE() throws Exception {
+        new TestServersCommon(ServerBase.MANGAAE, false, context);
+    }
+
+    @Test
+    public void test_NEUMANGATV() throws Exception {
+        new TestServersCommon(ServerBase.NEUMANGATV, false, context);
     }
 
     @Test
