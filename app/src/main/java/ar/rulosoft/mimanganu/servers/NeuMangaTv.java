@@ -10,6 +10,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by Raúl on 26/08/2018.
@@ -80,10 +81,10 @@ public class NeuMangaTv extends ServerBase {
 
             // Author
             manga.setAuthor(getFirstMatchDefault(PATTERN_MANGA_AUTHOR, data,
-                    context.getString(R.string.nodisponible)).replaceAll("<.+?>|\\n", " "));
+                    context.getString(R.string.nodisponible)));
             // Genre
             manga.setGenre(getFirstMatchDefault(PATTERN_MANGA_GENRE, data,
-                    context.getString(R.string.nodisponible)).replaceAll("<.+?>|\\n", " "));
+                    context.getString(R.string.nodisponible)));
 
             // Summary
             manga.setSynopsis(getFirstMatchDefault(PATTERN_MANGA_SUMMARY, data,
@@ -107,12 +108,15 @@ public class NeuMangaTv extends ServerBase {
         String web = HOST + chapter.getPath() + "/" + page;
         String data = getNavigatorAndFlushParameters().get(web);
         web = getFirstMatch(PATTERN_CHAPTER_IMAGE, data, "can't find image");
+        web =  web.replaceAll("([^:])//", "$1/"); // remove consecutive slashes
         return web + "|" + HOST + chapter.getPath();
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addHeader("Cookie", "age_confirmed=1");
+        String data = nav.get(HOST + chapter.getPath());
         chapter.setPages(Integer.parseInt(getFirstMatch(PATTERN_CHAPTER_PAGES, data, "can't init pages")));
     }
 
