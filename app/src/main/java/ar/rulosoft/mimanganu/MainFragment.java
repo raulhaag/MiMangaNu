@@ -144,17 +144,14 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             // App Update
-            if (pm.getBoolean("app_update", true)  && !BuildConfig.VERSION_NAME.contains("fdroid")) {
-                boolean onLatestAppVersion = pm.getBoolean("on_latest_app_version", false);
-                if (onLatestAppVersion) {
-                    long last_check = pm.getLong("last_app_update", 0);
-                    long diff = System.currentTimeMillis() - last_check;
-                    //Log.i("MF", "diff: " + diff);
-                    if (diff > 129600000) {
-                        pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
-                        UpdateUtil.checkAppUpdates(getContext());
-                    }
-                } else {
+            if (pm.getBoolean("app_update", true) &&
+                    !(getContext().getPackageManager().getInstallerPackageName(getContext()
+                            .getPackageName())).equals("org.fdroid.fdroid")) {
+                long last_check = pm.getLong("last_app_update", 0);
+                long diff = System.currentTimeMillis() - last_check;
+                //Log.i("MF", "diff: " + diff);
+                if (diff > 43200000) {
+                    pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
                     UpdateUtil.checkAppUpdates(getContext());
                 }
             }
@@ -198,8 +195,8 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
 
     //@Override
     public void onClick(View v) {
-        ((MainActivity)getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
-                "SERVER_SELECT",R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
+        ((MainActivity) getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
+                "SERVER_SELECT", R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
     }
 
     @Override

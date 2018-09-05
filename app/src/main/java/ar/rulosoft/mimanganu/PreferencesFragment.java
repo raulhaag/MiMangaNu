@@ -285,7 +285,8 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 
         /* Hide app update pref o f-droid users */
-        if(BuildConfig.VERSION_NAME.contains("fdroid")){
+        if((getContext().getPackageManager().getInstallerPackageName(getContext()
+                .getPackageName())).equals("org.fdroid.fdroid")){
             getPreferenceManager().findPreference("app_update").setVisible(false);
         }
 

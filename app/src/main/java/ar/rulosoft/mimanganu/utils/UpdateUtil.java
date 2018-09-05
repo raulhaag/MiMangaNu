@@ -230,7 +230,10 @@ public class UpdateUtil {
                 return null;
             }
             String version = Util.getInstance().getFirstMatchDefault("tree/([^\"]+)", source, "");
-            String data = Util.getInstance().getFirstMatchDefault("<div class=\"markdown-body\">([\\s\\S]+?)</div>", source, "");
+            String data = Util.getInstance().getFirstMatchDefault("<div class=\"markdown-body\">([\\s\\S]+?)</div>", source, "")
+                    .replaceAll("<li>(.+)</li>", "* $1")
+                    .replaceAll("\\s*<p>([^<]+)</p>","$1")
+                    .replaceAll("<[^>]+>", "");
             return new Triple<>(version, link, data);
         } catch (Exception e) {
             e.printStackTrace();
@@ -259,8 +262,6 @@ public class UpdateUtil {
                     Intent intent = new Intent(context, MessageActivity.class);
                     intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
                     Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + info.getFirst() + context.getString(R.string.is_available));
-                    pm.edit().putBoolean("on_latest_app_version", false).apply();
-                    //Only display update if user tap on notification
                 } else {
                     Log.i("Util", "App is up to date. No update necessary");
                 }
