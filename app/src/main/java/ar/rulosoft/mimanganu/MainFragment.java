@@ -144,9 +144,8 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             // App Update
-            if (pm.getBoolean("app_update", true) &&
-                    !(getContext().getPackageManager().getInstallerPackageName(getContext()
-                            .getPackageName())).equals("org.fdroid.fdroid")) {
+            if (pm.getBoolean("app_update", true) && !UpdateUtil
+                    .getInstallerPackagename(getContext()).equals("org.fdroid.fdroid")) {
                 long last_check = pm.getLong("last_app_update", 0);
                 long diff = System.currentTimeMillis() - last_check;
                 //Log.i("MF", "diff: " + diff);

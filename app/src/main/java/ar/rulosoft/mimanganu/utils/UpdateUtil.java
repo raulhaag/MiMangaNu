@@ -280,4 +280,9 @@ public class UpdateUtil {
             super.onPostExecute(result);
         }
     }
+
+    public static String getInstallerPackagename(Context context){
+        String installer = (context.getPackageManager().getInstallerPackageName(context.getPackageName()));
+        return installer != null ? installer : "com.none.found";
+    }
 }

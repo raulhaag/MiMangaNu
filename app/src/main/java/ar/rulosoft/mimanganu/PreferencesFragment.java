@@ -53,6 +53,7 @@ import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
+import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -285,8 +286,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 
         /* Hide app update pref o f-droid users */
-        if((getContext().getPackageManager().getInstallerPackageName(getContext()
-                .getPackageName())).equals("org.fdroid.fdroid")){
+        if(UpdateUtil.getInstallerPackagename(getContext()).equals("org.fdroid.fdroid")){
             getPreferenceManager().findPreference("app_update").setVisible(false);
         }
 

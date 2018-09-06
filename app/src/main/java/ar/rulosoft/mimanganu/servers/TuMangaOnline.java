@@ -140,10 +140,14 @@ class TuMangaOnline extends ServerBase {
         if (chapter.getPages() == 0) {
             String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath());
             String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
-            String basedir = getFirstMatch("dirPath\\s*=\\s*\"([^\"]+)\";", data, context.getString(R.string.error));
-            ArrayList<String> imgs = getAllMatch(".src\\s*=\\s*\\S*\\s*\\+\\s*'([^']+)'\\s*;", data);
-            chapter.setPages(imgs.size());
-            chapter.setExtra( web + "|" + basedir + TextUtils.join("|" + basedir, imgs));
+            String basedir = getFirstMatch("(https://[img1]*.tumangaonline.me/uploads/[^\"^']+)", data, context.getString(R.string.error));
+            ArrayList<String> canvasIds = getAllMatch("<canvas id=\"([^\"]+)", data);
+            String imgs = web;
+            for (String cid: canvasIds){
+                imgs = imgs + "|" + basedir + getFirstMatch(cid + ".{0,100}?'([^']+.jpg)", data,  context.getString(R.string.error));
+            }
+            chapter.setPages(canvasIds.size());
+            chapter.setExtra(imgs);
         }
     }
 
