@@ -1,5 +1,5 @@
 function chapterInit(data) {
-    pipe "|";
+    pipe = "|";
     siteR = /(https:\/\/[img1]*.tumangaonline.me\/uploads\/[^\\\"^']+)/g;
     path = siteR.exec(data)[0];
     idsR = /<canvas id=\"([^\"]+)/g;
