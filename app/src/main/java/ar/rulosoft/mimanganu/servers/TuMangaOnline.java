@@ -4,6 +4,8 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.squareup.duktape.Duktape;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -139,16 +141,21 @@ class TuMangaOnline extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
+            if (script == null) {
+                script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/hybrid_plugin/js_plugin/22.js");
+            }
             String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath());
             String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
-            String basedir = getFirstMatch("(https://[img1]*.tumangaonline.me/uploads/[^\"^']+)", data, context.getString(R.string.error));
-            ArrayList<String> canvasIds = getAllMatch("<canvas id=\"([^\"]+)", data);
-            String imgs = web;
-            for (String cid: canvasIds){
-                imgs = imgs + "|" + basedir + getFirstMatch(cid + ".{0,100}?'([^']+.jpg)", data,  context.getString(R.string.error));
+            String images = "";
+            try (Duktape duktape = Duktape.create()) {
+                duktape.evaluate(script);
+                JSIn chapterInit = duktape.get("chapterInit", JSIn.class);
+                images = web + chapterInit.call(true, data);
+            } catch (Exception e) {
+                throw new Exception(context.getString(R.string.error));
             }
-            chapter.setPages(canvasIds.size());
-            chapter.setExtra(imgs);
+            chapter.setPages(images.split("\\|").length - 1);
+            chapter.setExtra(images);
         }
     }
 
@@ -268,4 +275,9 @@ class TuMangaOnline extends ServerBase {
     public int getServerVersion() {
         return VERSION;
     }
+
+    interface JSIn {
+        String call(boolean b, String data);
+    }
+
 }
