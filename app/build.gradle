@@ -75,7 +75,7 @@ dependencies {
     implementation 'rapid.decoder:library:0.3.0'
     implementation 'rapid.decoder:jpeg-decoder:0.3.0'
     implementation 'rapid.decoder:png-decoder:0.3.0'
-    implementation 'com.squareup.okhttp3:okhttp:3.10.0'
+    implementation 'com.squareup.okhttp3:okhttp:3.9.1' //on 3.10.0 are deprecated some ciphers
     implementation 'com.squareup.okio:okio:1.14.0'
     implementation 'com.squareup.duktape:duktape-android:1.1.0'
     /* v 1.2.0 need 4+mb extra*/
