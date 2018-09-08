@@ -24,6 +24,8 @@ class TuMangaOnline extends ServerBase {
 
     private static final String HOST = "https://tumangaonline.me";
 
+    public static String script = null;
+
     public static String[] type = new String[]{
             "Todos", "Manga", "Manhua", "Manhwa", "Novela", "One Shot", "Dounjinshi", "Oel"
     };
@@ -128,7 +130,6 @@ class TuMangaOnline extends ServerBase {
         }
     }
 
-
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String[] d1 = chapter.getExtra().split("\\|");
@@ -184,7 +185,6 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-
         String web = "https://tumangaonline.me/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
         if (pageNumber == 1)
             lastPage = 10000;
