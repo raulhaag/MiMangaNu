@@ -34,6 +34,16 @@ Downloads
 Changelog
 ---------
 
+Cambios en v1.90:
+* Arreglado TMO (agregado plugin hibrida).
+* Quitando mensaje de actualización F-droid(test).
+* Otros arreglos menores.
+
+Changes in v1.90:
+* Fix TMO (Added hybrid plugin).
+* Removed F-droid update message(test).
+* Min fixes.
+
 Cambios en v1.89:
 * Arreglado TMO.
 * Agregado "sabor" especial para fdroid.
