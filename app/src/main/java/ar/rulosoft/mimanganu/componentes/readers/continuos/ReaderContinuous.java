@@ -326,7 +326,9 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                 BitmapFactory.decodeStream(inputStream, null, bitmapOptions);
                 dimension.original_width = bitmapOptions.outWidth;
                 dimension.original_height = bitmapOptions.outHeight;
-                inputStream.close();
+                if (inputStream!=null){
+                	inputStream.close();
+                }
             } catch (IOException ignored) {
             }
             dimension.initValues();
