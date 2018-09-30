@@ -5,6 +5,7 @@ import android.util.Log;
 import com.squareup.duktape.Duktape;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,8 +22,7 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern OPERATION_PATTERN = Pattern.compile("setTimeout\\(function\\(\\)\\{\\s+(var .,.,.,.[\\s\\S]+?a\\.value = .+?)\r?\n", Pattern.DOTALL);
     private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
-
-    private boolean cfiw = false;
+    private static ArrayList<String> runningHosts = new ArrayList<>();
 
     public static String getFirstMatch(Pattern p, String source) {
         Matcher m = p.matcher(source);
@@ -34,19 +34,23 @@ public class CFInterceptor implements Interceptor {
 
     @Override
     public Response intercept(Chain chain) throws IOException {
+        int h = 0; //just to control an infinite loop
+        while (runningHosts.contains(chain.request().url().host()) && h < 20) {
+            try {
+                h++;
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
         Response response = chain.proceed(chain.request());
         if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
-            if (!cfiw) { // synchronized isn't a better idea
-                cfiw = true;
+            runningHosts.add(chain.request().url().host());
+            try {
                 return resolveOverCF(chain, response);
-            } else {
-                try {
-                    Thread.sleep(5000);
-                    return chain.proceed(response.request());
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+            }catch (IOException e){
+                runningHosts.remove(chain.request().url().host());
+        }
         }
         return response;
     }
@@ -59,7 +63,6 @@ public class CFInterceptor implements Interceptor {
         String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
         String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
         String challengePass = getFirstMatch(PASS_PATTERN, content);
-
         if (rawOperation == null || challengePass == null || challenge == null) {
             Log.e("CFI", "couldn't resolve over cloudflare");
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
@@ -94,13 +97,11 @@ public class CFInterceptor implements Interceptor {
                 .url(url)
                 .header("User-Agent", Navigator.USER_AGENT)
                 .header("Referer", request.url().toString())
-                .header("Accept-Language", "en")
-                .header("Upgrade-Insecure-Requests", "1")
-                .header("DNT", "1")
-                .header("Conection", "keep-alive")
+                .header("Accept-Language", "en, eu")
+                .header("Connection", "keep-alive")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml")
                 .build();
-        cfiw = false;
+        runningHosts.remove(chain.request().url().host());
         return chain.proceed(request1);//generate the cookie;
     }
 }

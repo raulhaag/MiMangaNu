@@ -125,7 +125,7 @@ public class Navigator {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .cookieJar(cookieJar)
-                .dns(new MmNDNS())
+                //.dns(new MmNDNS())//
                 .build();
         Navigator.cookieJar = cookieJar;
     }
@@ -401,9 +401,7 @@ public class Navigator {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT)
                 .add("Accept-Language", "en")
-                .add("Upgrade-Insecure-Requests", "1")
-                .add("DNT", "1")
-                .add("Conection", "keep-alive")
+                .add("Connection", "keep-alive")
                 .add("Accept", "text/html,application/xhtml+xml,application/xml");
 
         for (Parameter p : headers) {
