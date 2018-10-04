@@ -107,7 +107,7 @@ public class Navigator {
         return cookieJar;
     }
 
-    public void initClient(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
+    private void initClient(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
         TrustManager[] trustManagers = getTrustManagers(context);
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustManagers, null);
@@ -138,7 +138,7 @@ public class Navigator {
         return boundary;
     }
 
-    public static KeyStore getSystemCAKeyStore() throws
+    private static KeyStore getSystemCAKeyStore() throws
             KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
 
         KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
@@ -150,11 +150,11 @@ public class Navigator {
         cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
     }
 
-    public String get(String web) throws Exception {
+    public synchronized String get(String web) throws Exception {
         return this.get(web, connectionTimeout, writeTimeout, readTimeout);
     }
 
-    public String get(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
+    public synchronized String get(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
         // copy will share the connection pool with httpclient
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
@@ -239,7 +239,7 @@ public class Navigator {
         }
     }
 
-    public String get(String web, String referer, Interceptor interceptor) throws Exception {
+    public synchronized String get(String web, String referer, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -257,7 +257,7 @@ public class Navigator {
         }
     }
 
-    public String get(String web, Interceptor interceptor) throws Exception {
+    public synchronized String get(String web, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -273,7 +273,7 @@ public class Navigator {
         }
     }
 
-    public String get(String web, String referer) throws Exception {
+    public synchronized String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -291,31 +291,7 @@ public class Navigator {
         }
     }
 
-    @Deprecated
-    public String get(String ip, String path, String host) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
-        addHeader("Host", host);
-
-        Request request = new Request.Builder()
-                .url("http://" + ip + path)
-                .headers(getHeaders())
-                .build();
-        Response response = copy.newCall(request).execute();
-
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message());
-            response.body().close();
-            return "";
-        }
-    }
-
-    public String post(String web) throws Exception {
+    public synchronized String post(String web) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -338,7 +314,7 @@ public class Navigator {
         }
     }
 
-    public String post(String web, RequestBody formParams) throws Exception {
+    public synchronized String post(String web, RequestBody formParams) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -356,30 +332,6 @@ public class Navigator {
             return response.body().string();
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
-            response.body().close();
-            return "";
-        }
-    }
-
-    @Deprecated
-    public String post(String ip, String path, String host) throws Exception {
-        OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
-        addHeader("Host", host);
-        Request request = new Request.Builder()
-                .url("http://" + ip + path)
-                .headers(getHeaders())
-                .method("POST", getPostParams())
-                .build();
-        Response response = copy.newCall(request).execute();
-
-        if (response.isSuccessful()) {
-            return response.body().string();
-        } else {
-            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message());
             response.body().close();
             return "";
         }
