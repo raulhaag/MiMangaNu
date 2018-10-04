@@ -22,7 +22,6 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern OPERATION_PATTERN = Pattern.compile("setTimeout\\(function\\(\\)\\{\\s+(var .,.,.,.[\\s\\S]+?a\\.value = .+?)\r?\n", Pattern.DOTALL);
     private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
-    private static ArrayList<String> runningHosts = new ArrayList<>();
 
     public static String getFirstMatch(Pattern p, String source) {
         Matcher m = p.matcher(source);
@@ -33,24 +32,10 @@ public class CFInterceptor implements Interceptor {
     }
 
     @Override
-    public Response intercept(Chain chain) throws IOException {
-        int h = 0; //just to control an infinite loop
-        while (runningHosts.contains(chain.request().url().host()) && h < 20) {
-            try {
-                h++;
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+    public synchronized Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
         if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
-            runningHosts.add(chain.request().url().host());
-            try {
-                return resolveOverCF(chain, response);
-            }catch (IOException e){
-                runningHosts.remove(chain.request().url().host());
-        }
+            return resolveOverCF(chain, response);
         }
         return response;
     }
@@ -101,7 +86,6 @@ public class CFInterceptor implements Interceptor {
                 .header("Connection", "keep-alive")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml")
                 .build();
-        runningHosts.remove(chain.request().url().host());
         return chain.proceed(request1);//generate the cookie;
     }
 }
