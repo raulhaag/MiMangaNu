@@ -4,15 +4,8 @@
     android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/image_preview" />
-
-    <ImageView
         android:id="@+id/imagen_portada"
+        android:src="@drawable/image_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitXY" />
@@ -34,29 +27,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="?attr/selectableItemBackground" />
-
-    <ImageView
-        android:id="@+id/notif"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/notif"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/info_bg" />
-
-    <ImageView
-        android:id="@+id/server"
-        android:layout_width="12sp"
-        android:layout_height="12sp"
-        android:layout_alignLeft="@+id/tapa"
-        android:layout_alignTop="@+id/tapa"
-        android:layout_margin="6sp" />
-
 </RelativeLayout>

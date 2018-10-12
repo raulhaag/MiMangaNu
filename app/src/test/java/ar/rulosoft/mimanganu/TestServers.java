@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config;
 
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
-import ar.rulosoft.mimanganu.utils.TestServersCommon;
+
 
 @Config(
         shadows = {ShadowNavigator.class}
@@ -255,4 +255,5 @@ public class TestServers {
     public void test_VIEWCOMIC() throws Exception {
         new TestServersCommon(ServerBase.VIEWCOMIC, true, context);
     }
+
 }

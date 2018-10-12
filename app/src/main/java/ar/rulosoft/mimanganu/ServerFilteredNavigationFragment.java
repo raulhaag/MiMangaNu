@@ -309,9 +309,9 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                     if (isAdded()) {
                         if (mAdapter == null) {
                             if (serverBase.getFilteredType() == ServerBase.FilteredType.VISUAL) {
-                                mAdapter = new MangasRecAdapter(result, getActivity(), MainActivity.darkTheme);
+                                mAdapter = new MangasRecAdapter(result, getActivity());
                             } else {
-                                mAdapter = new MangasRecAdapterText(result, getActivity(), MainActivity.darkTheme);
+                                mAdapter = new MangasRecAdapterText(result, getActivity());
                             }
                             mAdapter.setOnCreateContextMenuListener(ServerFilteredNavigationFragment.this);
                             mAdapter.setLastItemListener(ServerFilteredNavigationFragment.this);

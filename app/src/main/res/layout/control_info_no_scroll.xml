@@ -10,7 +10,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/titulo"
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:background="@color/accent_material_light"
@@ -27,12 +27,13 @@
             android:orientation="horizontal">
 
             <ImageView
-                android:id="@+id/imagen"
+                android:id="@+id/image"
                 android:layout_width="130dp"
                 android:layout_height="210dp"
                 android:layout_gravity="center"
                 android:layout_marginLeft="4dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/image_preview" />
 
             <LinearLayout
                 android:layout_width="match_parent"

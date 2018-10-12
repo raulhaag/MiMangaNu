@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,14 +18,13 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 public class MangasRecAdapterText extends MangaRecAdapterBase {
 
-    public MangasRecAdapterText(ArrayList<Manga> lista, Context context, boolean darkTheme) {
-        super(lista,context,darkTheme);
+    public MangasRecAdapterText(ArrayList<Manga> list, Context context) {
+        super(list,context);
     }
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.listitem_server_manga, viewGroup, false);
-        ViewCompat.setElevation(v, 5f);
         if (onCreateContextMenuListener != null)
             v.setOnCreateContextMenuListener(onCreateContextMenuListener);
         return new MangasHolder(v);
@@ -56,12 +54,8 @@ public class MangasRecAdapterText extends MangaRecAdapterBase {
 
         public MangasHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.manga_title);
+            title =  itemView.findViewById(R.id.manga_title);
             v = itemView;
-           /* if (darkTheme) {
-                ((CardView) itemView.findViewById(R.id.cardview_server_container))
-                        .setCardBackgroundColor(darkBackground);
-            }/*/
         }
     }
 }

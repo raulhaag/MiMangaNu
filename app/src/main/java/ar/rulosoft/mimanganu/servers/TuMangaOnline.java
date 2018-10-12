@@ -233,6 +233,7 @@ class TuMangaOnline extends ServerBase {
     }
 
     public boolean updateServerVersion() {
+        /*
         int k = 0;
         ArrayList<Manga> mangas = Database.getMangasCondition(context,
                 Database.COL_SERVER_ID + " = " + getServerID(), Database.COL_SERVER_ID, true);
@@ -267,7 +268,7 @@ class TuMangaOnline extends ServerBase {
                     }
                 }
             }
-        }
+        }*/
         return true;
     }
 

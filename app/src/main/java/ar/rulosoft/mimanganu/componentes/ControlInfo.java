@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.UiThread;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -32,7 +33,6 @@ public class ControlInfo extends ScrollView implements Imaginable {
     private TextView status;
     private TextView server;
     private TextView synopsis;
-    private TextView title;
     private TextView genre;
     private TextView authorTitle;
     private TextView statusTitle;
@@ -63,17 +63,16 @@ public class ControlInfo extends ScrollView implements Imaginable {
         lineStatusView = findViewById(R.id.lineStatus);
         lineServerView = findViewById(R.id.lineServer);
         lineGenreView = findViewById(R.id.lineGenre);
-        authorTitle = (TextView) findViewById(R.id.titleAuthor);
-        statusTitle = (TextView) findViewById(R.id.titleStatus);
-        serverTitle = (TextView) findViewById(R.id.titleServer);
-        genreTitle = (TextView) findViewById(R.id.titleGenre);
-        status = (TextView) findViewById(R.id.textStatus);
-        server = (TextView) findViewById(R.id.textServer);
-        synopsis = (TextView) findViewById(R.id.sinopsis);
-        title = (TextView) findViewById(R.id.titulo);
-        author = (TextView) findViewById(R.id.textAuthor);
-        genre = (TextView) findViewById(R.id.textGenre);
-        image = (ImageView) findViewById(R.id.imagen);
+        authorTitle = findViewById(R.id.titleAuthor);
+        statusTitle = findViewById(R.id.titleStatus);
+        serverTitle = findViewById(R.id.titleServer);
+        genreTitle = findViewById(R.id.titleGenre);
+        status = findViewById(R.id.textStatus);
+        server = findViewById(R.id.textServer);
+        synopsis = findViewById(R.id.sinopsis);
+        author = findViewById(R.id.textAuthor);
+        genre = findViewById(R.id.textGenre);
+        image = findViewById(R.id.image);
     }
 
     @SuppressWarnings("ResourceAsColor")//lint error
@@ -84,7 +83,6 @@ public class ControlInfo extends ScrollView implements Imaginable {
         lineStatusView.setBackgroundColor(color);
         lineServerView.setBackgroundColor(color);
         lineGenreView.setBackgroundColor(color);
-        title.setBackgroundColor(mColor);
         authorTitle.setTextColor(mColor);
         statusTitle.setTextColor(mColor);
         serverTitle.setTextColor(mColor);
@@ -112,7 +110,7 @@ public class ControlInfo extends ScrollView implements Imaginable {
     }
 
     @UiThread
-    public void enableTitleCopy(final Context context,final String name){
+    public void enableTitleCopy(final Context context, final String name) {
         this.image.setClickable(true);
         this.image.setOnClickListener(new OnClickListener() {
             @Override
@@ -120,7 +118,7 @@ public class ControlInfo extends ScrollView implements Imaginable {
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("label", name);
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(context,R.string.title_copied,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.title_copied, Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -135,8 +133,4 @@ public class ControlInfo extends ScrollView implements Imaginable {
         image.setImageResource(id);
     }
 
-    public void setTitle(String title) {
-        this.title.setVisibility(View.VISIBLE);
-        this.title.setText(title);
-    }
 }

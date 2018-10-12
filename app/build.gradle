@@ -1,13 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '27.0.3'
+    compileSdkVersion 28
+    buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
         versionCode 90
         versionName "1.90"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        minSdkVersion 15
     }
     signingConfigs {
         release {
@@ -62,13 +63,11 @@ configurations.all {
 
 
 dependencies {
-    final ANDROID_SUPPORT = '26.1.0'
+    final ANDROID_SUPPORT = '28.0.0'
     implementation "com.android.support:support-v4:$ANDROID_SUPPORT"
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "com.android.support:support-v4:$ANDROID_SUPPORT"
     implementation "com.android.support:design:$ANDROID_SUPPORT"
     implementation "com.android.support:appcompat-v7:$ANDROID_SUPPORT"
-    implementation "com.android.support:cardview-v7:$ANDROID_SUPPORT"
     implementation "com.android.support:recyclerview-v7:$ANDROID_SUPPORT"
     implementation "com.android.support:preference-v7:$ANDROID_SUPPORT"
     api project(':imageviewtouchlibrary')
@@ -77,8 +76,7 @@ dependencies {
     implementation 'rapid.decoder:png-decoder:0.3.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1' //on 3.10.0 are deprecated some ciphers
     implementation 'com.squareup.okio:okio:1.14.0'
-    implementation 'com.squareup.duktape:duktape-android:1.1.0'
-    /* v 1.2.0 need 4+mb extra*/
+    implementation 'com.squareup.duktape:duktape-android:1.1.0'/* v 1.2.0 need 4+mb extra*/
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     implementation 'com.evernote:android-job:1.2.5'
     githubImplementation 'com.google.android.gms:play-services-base:11.0.0'
@@ -89,6 +87,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     androidTestImplementation 'com.android.support.test:rules:1.0.2'
+    androidTestImplementation 'junit:junit:4.12'
     // for host-based testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:3.8'

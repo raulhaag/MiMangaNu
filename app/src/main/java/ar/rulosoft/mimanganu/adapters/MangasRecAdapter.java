@@ -1,6 +1,8 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -23,25 +25,25 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
     private ImageLoader imageLoader;
     private Context context;
 
-    public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme, View.OnCreateContextMenuListener onCreateContextMenuListener) {
-        super(lista,context,darkTheme);
+    public MangasRecAdapter(ArrayList<Manga> list, Context context, View.OnCreateContextMenuListener onCreateContextMenuListener) {
+        super(list, context);
         this.onCreateContextMenuListener = onCreateContextMenuListener;
         imageLoader = new ImageLoader(context);
         this.context = context;
     }
-    public MangasRecAdapter(ArrayList<Manga> lista, Context context, boolean darkTheme) {
-        super(lista,context,darkTheme);
+
+    public MangasRecAdapter(ArrayList<Manga> list, Context context) {
+        super(list, context);
         imageLoader = new ImageLoader(context);
         this.context = context;
     }
 
-
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Manga m = mangas.get(position);
-        MangasHolder mHolder = (MangasHolder)holder;
+        MangasHolder mHolder = (MangasHolder) holder;
         mHolder.serie.setText(m.getTitle());
-        ((MangasHolder) holder).serie.setImageBitmap(null);
+        ((MangasHolder) holder).serie.setImageResource(R.drawable.image_preview);
         imageLoader.displayImg(m.getImages(), mHolder.serie);
         mHolder.v.setTag(position);
         mHolder.v.setOnClickListener(new OnClickListener() {
@@ -80,14 +82,10 @@ public class MangasRecAdapter extends MangaRecAdapterBase {
 
         private MangasHolder(View itemView) {
             super(itemView);
-            serie  = itemView.findViewById(R.id.tapa);
-            notif  = itemView.findViewById(R.id.notif);
+            serie = itemView.findViewById(R.id.tapa);
+            notif = itemView.findViewById(R.id.notif);
             server = itemView.findViewById(R.id.server);
             v = itemView;
-            if (darkTheme) {
-                ((CardView) itemView.findViewById(R.id.cardview_server_container))
-                        .setCardBackgroundColor(darkBackground);
-            }
         }
     }
 }

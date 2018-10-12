@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.UiThread;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -33,7 +34,6 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     private TextView status;
     private TextView server;
     private TextView synopsis;
-    private TextView title;
     private TextView genre;
     private TextView authorTitle;
     private TextView statusTitle;
@@ -67,19 +67,18 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
         lineServerView = findViewById(R.id.lineServer);
         lineGenreView = findViewById(R.id.lineGenre);
         lineLastUpdateView = findViewById(R.id.lineLastUpdate);
-        authorTitle = (TextView) findViewById(R.id.titleAuthor);
-        statusTitle = (TextView) findViewById(R.id.titleStatus);
-        serverTitle = (TextView) findViewById(R.id.titleServer);
-        genreTitle = (TextView) findViewById(R.id.titleGenre);
-        lastUpdateTitle = (TextView) findViewById(R.id.titleLastUpdate);
-        lastUpdate = (TextView) findViewById(R.id.textLastUpdate);
-        status = (TextView) findViewById(R.id.textStatus);
-        server = (TextView) findViewById(R.id.textServer);
-        synopsis = (TextView) findViewById(R.id.sinopsis);
-        title = (TextView) findViewById(R.id.titulo);
-        author = (TextView) findViewById(R.id.textAuthor);
-        genre = (TextView) findViewById(R.id.textGenre);
-        image = (ImageView) findViewById(R.id.imagen);
+        authorTitle = findViewById(R.id.titleAuthor);
+        statusTitle = findViewById(R.id.titleStatus);
+        serverTitle = findViewById(R.id.titleServer);
+        genreTitle = findViewById(R.id.titleGenre);
+        lastUpdateTitle = findViewById(R.id.titleLastUpdate);
+        lastUpdate = findViewById(R.id.textLastUpdate);
+        status = findViewById(R.id.textStatus);
+        server = findViewById(R.id.textServer);
+        synopsis = findViewById(R.id.sinopsis);
+        author = findViewById(R.id.textAuthor);
+        genre = findViewById(R.id.textGenre);
+        image = findViewById(R.id.image);
     }
 
     @SuppressWarnings("ResourceAsColor")//lint error
@@ -91,7 +90,6 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
         lineServerView.setBackgroundColor(color);
         lineGenreView.setBackgroundColor(color);
         lineLastUpdateView.setBackgroundColor(color);
-        title.setBackgroundColor(mColor);
         authorTitle.setTextColor(mColor);
         statusTitle.setTextColor(mColor);
         serverTitle.setTextColor(mColor);
@@ -147,11 +145,4 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
         image.setImageResource(id);
     }
 
-    public void setTitle(String title) {
-        if (title.length() > 2)
-            this.title.setVisibility(View.VISIBLE);
-        else
-            this.title.setVisibility(View.GONE);
-        this.title.setText(title);
-    }
 }

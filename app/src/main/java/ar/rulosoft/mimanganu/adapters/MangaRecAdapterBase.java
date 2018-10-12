@@ -16,15 +16,11 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     protected ArrayList<Manga> mangas;
-    protected boolean darkTheme = false;
     OnLastItem lastItemListener;
     OnMangaClick mangaClickListener;
     View.OnCreateContextMenuListener onCreateContextMenuListener;
-    int darkBackground;
 
-    MangaRecAdapterBase(ArrayList<Manga> list, Context context, boolean darkTheme) {
-        this.darkTheme = darkTheme;
-        this.darkBackground = ContextCompat.getColor(context, R.color.bg_floating_material_dark);
+    MangaRecAdapterBase(ArrayList<Manga> list, Context context) {
         mangas = list;
     }
 

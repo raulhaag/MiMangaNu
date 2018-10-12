@@ -241,7 +241,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                                 "SELECT id " +
                                 "FROM manga " +
                                 "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
-                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme, MainFragment.this);
+                        mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
                         mMAdapter.setMangaClickListener(MainFragment.this);
                         recyclerView.setAdapter(mMAdapter);
                     } catch (Exception e) {
@@ -403,7 +403,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                     break;
             }
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
-                mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainActivity.darkTheme, MainFragment.this);
+                mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
                 mMAdapter.setMangaClickListener(MainFragment.this);
                 recyclerView.setAdapter(mMAdapter);
             }
