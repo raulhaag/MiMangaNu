@@ -1,6 +1,5 @@
 package it.sephiroth.android.library.imagezoom;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
@@ -9,9 +8,10 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.support.v4.content.res.ResourcesCompat;
+import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.widget.ImageView;
 
 import it.sephiroth.android.library.easing.Cubic;
 import it.sephiroth.android.library.easing.Easing;
@@ -23,7 +23,7 @@ import it.sephiroth.android.library.imagezoom.utils.IDisposable;
  *
  * @author alessandro
  */
-public abstract class ImageViewTouchBase extends ImageView implements IDisposable {
+public abstract class ImageViewTouchBase extends AppCompatImageView implements IDisposable {
 
     public static final String LOG_TAG = "ImageViewTouchBase";
     public static final float ZOOM_INVALID = -1f;
@@ -84,7 +84,7 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
     }
 
     protected void init(Context context, AttributeSet attrs, int defStyle) {
-        setScaleType(ImageView.ScaleType.MATRIX);
+        setScaleType(AppCompatImageView.ScaleType.MATRIX);
     }
 
     @Override
@@ -396,14 +396,14 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
 
     @Override
     public void setImageResource(int resId) {
-        setImageDrawable(getContext().getResources().getDrawable(resId));
+        ResourcesCompat.getDrawable(getResources(), resId, null);
     }
 
     /**
      * {@inheritDoc} Set the new image to display and reset the internal matrix.
      *
      * @param bitmap the {@link Bitmap} to display
-     * @see {@link ImageView#setImageBitmap(Bitmap)}
+     * @see {@link AppCompatImageView#setImageBitmap(Bitmap)}
      */
     @Override
     public void setImageBitmap(final Bitmap bitmap) {
@@ -787,10 +787,6 @@ public abstract class ImageViewTouchBase extends ImageView implements IDisposabl
         return getValue(matrix, Matrix.MSCALE_X);
     }
 
-    @SuppressLint("Override")
-    public float getRotation() {
-        return 0;
-    }
 
     /**
      * Returns the current image scale
