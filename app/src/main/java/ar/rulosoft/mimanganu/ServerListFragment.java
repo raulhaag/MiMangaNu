@@ -24,7 +24,6 @@ import java.util.List;
 import ar.rulosoft.mimanganu.adapters.MangaAdapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
 public class ServerListFragment extends Fragment {
@@ -42,7 +41,6 @@ public class ServerListFragment extends Fragment {
         setHasOptionsMenu(true);
         setRetainInstance(true);
         View v = inflater.inflate(R.layout.fragment_server_plain_list, container, false);
-        v.setBackgroundDrawable(getContext().getResources().getDrawable(ThemeColors.getBackground(),null));
         return v;
     }
 
