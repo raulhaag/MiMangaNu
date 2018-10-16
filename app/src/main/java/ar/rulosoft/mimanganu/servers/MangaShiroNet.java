@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -71,7 +72,9 @@ public class MangaShiroNet extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        return null;
+        String src = getNavigatorAndFlushParameters().get(HOST + "?s=" + URLEncoder
+                .encode(term, "UTF-8"));
+        return getMangasFromSource(src);
     }
 
     @Override
