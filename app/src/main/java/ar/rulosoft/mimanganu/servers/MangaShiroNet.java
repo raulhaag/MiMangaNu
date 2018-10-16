@@ -65,7 +65,7 @@ public class MangaShiroNet extends ServerBase {
     public MangaShiroNet(Context context) {
         super(context);
         setFlag(R.drawable.flag_indo);
-        setIcon(R.drawable.noimage);
+        setIcon(R.drawable.mangashironet);
         setServerName("MangaShiroNet");
         setServerID(MANGASHIRONET);
     }
