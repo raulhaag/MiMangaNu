@@ -73,8 +73,8 @@ public class SingleDownload implements Runnable {
                     Request request;
                     Request.Builder rBuilder;
                     copy = Navigator.getInstance().getHttpClient().newBuilder()
-                            .connectTimeout(3, TimeUnit.SECONDS)
-                            .readTimeout(3, TimeUnit.SECONDS)
+                            .connectTimeout(5, TimeUnit.SECONDS)
+                            .readTimeout(5, TimeUnit.SECONDS)
                             .build();
                     rBuilder = new Request.Builder()
                             .addHeader("User-Agent", Navigator.USER_AGENT);

@@ -191,10 +191,12 @@ public abstract class ServerBase {
     public static final int MINTMANGA = 39;
     public static final int MANGAAE = 40;
     public static final int NEUMANGATV = 41;
+    public static final int MANGASHIRONET = 42;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
     public static final int VIEWCOMIC = 1004;
+    public static final int VERCOMIC = 1005;
 
     Context context;
     private String serverName;
@@ -283,9 +285,9 @@ public abstract class ServerBase {
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
-            case LEOMANGA:
-                serverBase = new LeoManga(context);
-                break;
+            //case LEOMANGA:
+            //     serverBase = new LeoManga(context);
+            //    break;
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
@@ -321,6 +323,12 @@ public abstract class ServerBase {
                 break;
             case NEUMANGATV:
                 serverBase = new NeuMangaTv(context);
+                break;
+            case VERCOMIC:
+                serverBase = new VerComicsCom(context);
+                break;
+            case MANGASHIRONET:
+                serverBase = new MangaShiroNet(context);
                 break;
             default:
                 serverBase = new DeadServer(context);
@@ -400,6 +408,8 @@ public abstract class ServerBase {
                 new MintManga(context),
                 new MangaAE(context),
                 new NeuMangaTv(context),
+                new MangaShiroNet(context),
+                new VerComicsCom(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
                 new FromFolder(context)
