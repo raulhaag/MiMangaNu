@@ -83,11 +83,10 @@ public class L2RPagedReader extends HorizontalPagedReader {
 
     @Override
     public void freePage(int idx) {
-        if (mPageAdapter != null && mPageAdapter.getPage(paths.size() - idx) != null) {
-            mPageAdapter.getPage(paths.size() - idx).unloadImage();
+        if (mPageAdapter != null && mPageAdapter.getPage(paths.size() - idx + 1) != null) {
+            mPageAdapter.getPage(paths.size() - idx + 1).unloadImage();
         }
     }
-
 
     @Override
     public boolean isLastPageVisible() {
