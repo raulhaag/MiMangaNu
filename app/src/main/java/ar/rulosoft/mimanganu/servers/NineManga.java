@@ -278,9 +278,7 @@ class NineManga extends ServerBase {
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), m.group(1), false);
-            manga.setImages(m.group(2));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(3), m.group(1), m.group(2)));
         }
         return mangas;
     }
@@ -291,9 +289,8 @@ class NineManga extends ServerBase {
      * This function provides such an object.
      *
      * @return a <code>Navigator</code> object with extended headers
-     * @throws Exception if an error occurred
      */
-    private Navigator getNavigatorWithNeededHeader() throws Exception {
+    private Navigator getNavigatorWithNeededHeader() {
         if (!cookieInit) {
             generateNeededCookie();
         }

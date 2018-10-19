@@ -42,7 +42,6 @@ public class VerComicsCom extends ServerBase {
                 JSONObject o = (JSONObject) list.get("" + i);
                 Manga m = new Manga(getServerID(), i + "|\t\t" + o.get("name").toString(), o.get("taxonomy").toString() + "/" +
                         o.get("slug").toString() + "/", false);
-                m.setSynopsis(o.get("description").toString());
                 mangas.add(m);
             } catch (Exception e) {
                 last++;

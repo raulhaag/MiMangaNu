@@ -263,10 +263,7 @@ class MangaTown extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(
-                    getServerID(), m.group(2), "https:" + m.group(1), false);
-            manga.setImages(m.group(3));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(2), "https:" + m.group(1), m.group(3)));
         }
         return mangas;
     }

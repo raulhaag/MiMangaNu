@@ -216,9 +216,7 @@ public class DesuMe extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga m = new Manga(getServerID(), matcher.group(3), "/" + matcher.group(1), false);
-            m.setImages(HOST + matcher.group(2));
-            mangas.add(m);
+            mangas.add(new Manga(getServerID(), matcher.group(3), "/" + matcher.group(1), HOST + matcher.group(2)));
         }
         return mangas;
     }

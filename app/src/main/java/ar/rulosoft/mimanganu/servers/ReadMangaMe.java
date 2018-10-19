@@ -230,9 +230,7 @@ public class ReadMangaMe extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(3), matcher.group(1), false);
-            manga.setImages(matcher.group(2));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), matcher.group(3), matcher.group(1), matcher.group(2)));
         }
         return mangas;
     }

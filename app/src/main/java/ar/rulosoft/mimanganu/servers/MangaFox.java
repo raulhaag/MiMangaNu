@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 
 class MangaFox extends ServerBase {
-    private static final String HOST = "http://mangafox.me";
+    private static final String HOST = "http://http://fanfox.net";
 
     private static final String PATTERN_SERIES =
             "<li><a href=\"([^\"]+)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">([^<]+)</a></li>";
@@ -289,9 +289,7 @@ class MangaFox extends ServerBase {
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), "http:" + m.group(2), false);
-            manga.setImages(m.group(1));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(3), "http:" + m.group(2), m.group(1)));
         }
         return mangas;
     }

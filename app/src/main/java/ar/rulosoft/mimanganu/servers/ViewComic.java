@@ -202,9 +202,7 @@ class ViewComic extends ServerBase {
         Pattern pattern = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(3), matcher.group(2), false);
-            manga.setImages(matcher.group(1));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), matcher.group(3), matcher.group(2), matcher.group(1)));
         }
         return mangas;
     }

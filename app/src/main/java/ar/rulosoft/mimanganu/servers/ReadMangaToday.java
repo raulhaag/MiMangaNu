@@ -250,9 +250,7 @@ class ReadMangaToday extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga m = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-            m.setImages(matcher.group(3).replace("thumb/", ""));
-            mangas.add(m);
+            mangas.add(new Manga(getServerID(), matcher.group(2), matcher.group(1), matcher.group(3).replace("thumb/", "")));
         }
         return mangas;
     }

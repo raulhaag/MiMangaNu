@@ -224,9 +224,7 @@ class KissManga extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(source);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
-            manga.setImages(m.group(1));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(3), m.group(2), m.group(1)));
         }
         return mangas;
     }

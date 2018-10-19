@@ -202,10 +202,10 @@ class Kumanga extends ServerBase {
         JSONArray jsonArray = json.getJSONArray("contents");
         for (int i = 0, j = jsonArray.length(); i < j; i++) {
             JSONObject object = (JSONObject) jsonArray.get(i);
-            Manga m = new Manga(getServerID(), object.getString("name"),
-                    HOST + "/manga/" + object.getInt("id") + "/", false);
-            m.setImages(HOST + "/kumathumb.php?src=" + object.getInt("id"));
-            mangas.add(m);
+            mangas.add(new Manga(getServerID(), object.getString("name"),
+                    HOST + "/manga/" + object.getInt("id") + "/",
+                    HOST + "/kumathumb.php?src=" + object.getInt("id")
+            ));
         }
         return mangas;
     }

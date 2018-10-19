@@ -226,9 +226,7 @@ class RawSenManga extends ServerBase {
         Matcher m = p.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(2), m.group(1), false);
-            manga.setImages(m.group(3));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(2), m.group(1), m.group(3)));
         }
         return mangas;
     }

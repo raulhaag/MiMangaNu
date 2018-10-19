@@ -35,6 +35,15 @@ public class Manga {
         setFinished(finished);
     }
 
+    public Manga(int serverId, String title, String path, String images) {
+        super();
+        setServerId(serverId);
+        setTitle(title);
+        setPath(path);
+        setImages(images);
+    }
+
+
     public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSensitive, int readingDirection, int lastIndex, int news) {
         setServerId(serverId);
         setId(id);

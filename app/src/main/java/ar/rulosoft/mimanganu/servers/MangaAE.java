@@ -147,9 +147,7 @@ public class MangaAE extends ServerBase {
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), "(" + m.group(3) + ") " + m.group(4), m.group(1), false);
-            manga.setImages(m.group(2));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), "(" + m.group(3) + ") " + m.group(4), m.group(1), m.group(2)));
         }
         return mangas;
     }

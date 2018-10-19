@@ -73,6 +73,11 @@ public class DeadServer extends ServerBase {
     }
 
     @Override
+    public int searchForNewChapters(int id, Context context, boolean fast) {
+        return 0; //just return 0 found and don't throw exceptions
+    }
+
+    @Override
     public boolean hasList() {
         return false;
     }

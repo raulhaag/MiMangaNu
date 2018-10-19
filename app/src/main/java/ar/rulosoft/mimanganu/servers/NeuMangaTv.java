@@ -147,9 +147,7 @@ public class NeuMangaTv extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA_FILTERED);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), m.group(2), false);
-            manga.setImages(m.group(1).replace("=60,75", "=200,300"));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(3), m.group(2), m.group(1).replace("=60,75", "=200,300")));
         }
         return mangas;
     }

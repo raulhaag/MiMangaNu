@@ -133,13 +133,12 @@ class MangaKawaii extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga m = new Manga(getServerID(),
+
+            mangas.add(new Manga(getServerID(),
                     getFirstMatch("alt='([^']+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_name)),
                     getFirstMatch("href=\"([^\"]+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_url)),
-                    false
-            );
-            m.setImages(getFirstMatchDefault("src='([^\']+)", matcher.group(1), ""));
-            mangas.add(m);
+                    getFirstMatchDefault("src='([^\']+)", matcher.group(1), "")
+            ));
         }
         return mangas;
     }

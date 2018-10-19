@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.util.Log;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -12,7 +11,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 
 class HeavenManga extends ServerBase {
 
@@ -172,9 +170,7 @@ class HeavenManga extends ServerBase {
         Pattern p = Pattern.compile("<article class=\"rel\"><a href=\"(http://heavenmanga.com/.+?)\"><header>(.+?)<.+?src=\"(.+?)\"", Pattern.DOTALL);
         Matcher matcher = p.matcher(source);
         while (matcher.find()) {
-            Manga manga = new Manga(HEAVENMANGACOM, matcher.group(2), matcher.group(1), false);
-            manga.setImages(matcher.group(3));
-            mangas.add(manga);
+            mangas.add(new Manga(HEAVENMANGACOM, matcher.group(2), matcher.group(1), matcher.group(3)));
         }
         return mangas;
     }

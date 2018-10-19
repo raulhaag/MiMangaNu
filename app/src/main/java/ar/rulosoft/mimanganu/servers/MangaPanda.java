@@ -183,7 +183,7 @@ class MangaPanda extends ServerBase {
             // Genre
             manga.setGenre(getFirstMatchDefault("Genre:</td>[^<]*<td>(.+?)</td>", data, context.getString(R.string.nodisponible)).replace("a> <a", "a>, <a"));
             assert manga.getGenre() != null;
-            if(manga.getGenre().isEmpty()) {
+            if (manga.getGenre().isEmpty()) {
                 manga.setGenre(context.getString(R.string.nodisponible));
             }
             // Author
@@ -201,7 +201,7 @@ class MangaPanda extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pages = getFirstMatch(
                     "of (\\d+)</div>", data,
@@ -246,9 +246,7 @@ class MangaPanda extends ServerBase {
         Pattern p = Pattern.compile("(https:[^']+/cover/[^']+).+?<h3><a href=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), HOST + m.group(2), false);
-            manga.setImages(m.group(1).replace("r0", "l0"));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(3), HOST + m.group(2), m.group(1).replace("r0", "l0")));
         }
         return mangas;
     }

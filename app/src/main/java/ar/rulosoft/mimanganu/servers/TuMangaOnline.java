@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.squareup.duktape.Duktape;
 
@@ -13,10 +12,8 @@ import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
-import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -218,9 +215,7 @@ class TuMangaOnline extends ServerBase {
         Pattern pattern = Pattern.compile("\\/\\/tumangaonline.me\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
         Matcher m = pattern.matcher(data);
         while (m.find()) {
-            Manga manga = new Manga(getServerID(), m.group(3), m.group(1), false);
-            manga.setImages(m.group(2));
-            mangas.add(manga);
+            mangas.add(new Manga(getServerID(), m.group(3), m.group(1), m.group(2)));
         }
         return mangas;
     }
