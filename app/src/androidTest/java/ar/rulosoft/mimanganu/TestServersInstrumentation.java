@@ -12,8 +12,8 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.TestServersCommon;
 import ar.rulosoft.navegadores.Navigator;
+import util.TestServersCommon;
 
 /**
  * Created by Raul on 09/01/2017.

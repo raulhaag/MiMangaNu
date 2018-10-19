@@ -14,7 +14,7 @@ import org.robolectric.annotation.Config;
 
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
-
+import util.TestServersCommon;
 
 @Config(
         shadows = {ShadowNavigator.class}

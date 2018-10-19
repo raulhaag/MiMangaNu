@@ -1,4 +1,4 @@
-package ar.rulosoft.mimanganu;
+package util;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -9,15 +9,16 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.Stack;
 
+import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.servers.DeadServer;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
 
-import static com.ibm.icu.impl.Assert.fail;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
