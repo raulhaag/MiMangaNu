@@ -196,7 +196,7 @@ public abstract class ServerBase {
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
     public static final int VIEWCOMIC = 1004;
-    public static final int VERCOMIC = 1005;
+    public static final int VERCOMICSCOM = 1005;
 
     Context context;
     private String serverName;
@@ -324,7 +324,7 @@ public abstract class ServerBase {
             case NEUMANGATV:
                 serverBase = new NeuMangaTv(context);
                 break;
-            case VERCOMIC:
+            case VERCOMICSCOM:
                 serverBase = new VerComicsCom(context);
                 break;
             case MANGASHIRONET:

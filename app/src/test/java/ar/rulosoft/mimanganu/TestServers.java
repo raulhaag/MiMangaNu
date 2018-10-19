@@ -36,6 +36,17 @@ public class TestServers {
         new TestServersCommon(ServerBase.FROMFOLDER, true, context);
     }
 
+
+    @Test
+    public void test_MANGASHIRONET() throws Exception {
+        new TestServersCommon(ServerBase.MANGASHIRONET, true, context);
+    }
+
+    @Test
+    public void test_VERCOMICSCOM() throws Exception {
+        new TestServersCommon(ServerBase.VERCOMICSCOM, true, context);
+    }
+
     @Test
     public void test_RAWSENMANGA() throws Exception {
         new TestServersCommon(ServerBase.RAWSENMANGA, true, context);

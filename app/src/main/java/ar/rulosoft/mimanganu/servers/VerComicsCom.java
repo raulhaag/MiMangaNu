@@ -27,7 +27,7 @@ public class VerComicsCom extends ServerBase {
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.vercomicscom);
         this.setServerName("VerComicsCom");
-        setServerID(ServerBase.VERCOMIC);
+        setServerID(ServerBase.VERCOMICSCOM);
     }
 
     @Nullable

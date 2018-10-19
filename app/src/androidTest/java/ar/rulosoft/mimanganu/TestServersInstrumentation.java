@@ -39,6 +39,16 @@ public class TestServersInstrumentation {
     }
 
     @Test
+    public void test_MANGASHIRONET() throws Exception {
+        new TestServersCommon(ServerBase.MANGASHIRONET, false, context);
+    }
+
+    @Test
+    public void test_VERCOMICSCOM() throws Exception {
+        new TestServersCommon(ServerBase.VERCOMICSCOM, false, context);
+    }
+
+    @Test
     public void test_RAWSENMANGA() throws Exception {
         new TestServersCommon(ServerBase.RAWSENMANGA, false, context);
     }
@@ -259,4 +269,5 @@ public class TestServersInstrumentation {
     public void test_VIEWCOMIC() throws Exception {
         new TestServersCommon(ServerBase.VIEWCOMIC, false, context);
     }
+
 }

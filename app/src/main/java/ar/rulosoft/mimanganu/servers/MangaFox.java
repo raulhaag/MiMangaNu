@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 
 class MangaFox extends ServerBase {
-    private static final String HOST = "http://http://fanfox.net";
+    private static final String HOST = "http://mangafox.me/";
 
     private static final String PATTERN_SERIES =
             "<li><a href=\"([^\"]+)\" rel=\"\\d+\" class=\"series_preview manga_(close|open)\">([^<]+)</a></li>";
