@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -102,12 +103,12 @@ public class ReaderOptions extends FrameLayout {
                         if (manga.getReaderType() == 2) {
                             manga.setReaderType(1);
                             readerType = 1;
-                            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_paged), null, null);
+                            type.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_paged), null, null);
                             type.setText(R.string.paged_reader);
                         } else {
                             manga.setReaderType(2);
                             readerType = 2;
-                            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_continuous), null, null);
+                            type.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_continuous), null, null);
                             type.setText(R.string.continuous_reader);
                         }
                     if (manga != null)
@@ -135,13 +136,13 @@ public class ReaderOptions extends FrameLayout {
                         readDirection = Integer.parseInt(pm.getString(MangaFragment.DIRECTION, "" + Reader.Direction.L2R.ordinal()));
                     }
                     if (readDirection == Reader.Direction.R2L.ordinal()) {
-                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_inverso), null, null);
+                        direction.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_inverso), null, null);
                         mDirection = Reader.Direction.L2R;
                     } else if (readDirection == Reader.Direction.L2R.ordinal()) {
-                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_verical), null, null);
+                        direction.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_verical), null, null);
                         mDirection = Reader.Direction.VERTICAL;
                     } else {
-                        direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_clasico), null, null);
+                        direction.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_clasico), null, null);
                         mDirection = Reader.Direction.R2L;
                     }
                     if (manga != null) {
@@ -172,12 +173,12 @@ public class ReaderOptions extends FrameLayout {
                 @Override
                 public void onClick(View v) {
                     if (!mKeepOn) {
-                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
+                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_mantain_screen_on), null, null);
                         if (mActivity != null && optionListener != null)
                             mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         keep_screen.setText(R.string.stay_awake_on);
                     } else {
-                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_off), null, null);
+                        keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_mantain_screen_off), null, null);
                         if (mActivity != null && optionListener != null)
                             mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         keep_screen.setText(R.string.stay_awake_off);
@@ -264,13 +265,13 @@ public class ReaderOptions extends FrameLayout {
         }
         if (d == Reader.Direction.R2L.ordinal()) {
             this.mDirection = Reader.Direction.R2L;
-            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_clasico), null, null);
+            direction.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_clasico), null, null);
         } else if (d == Reader.Direction.L2R.ordinal()) {
             this.mDirection = Reader.Direction.L2R;
-            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_inverso), null, null);
+            direction.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_inverso), null, null);
         } else {
             this.mDirection = Reader.Direction.VERTICAL;
-            direction.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_verical), null, null);
+            direction.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_verical), null, null);
         }
 
         // Type
@@ -279,10 +280,10 @@ public class ReaderOptions extends FrameLayout {
             readerType = manga.getReaderType();
         }
         if (readerType == 2) {
-            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_continuous), null, null);
+            type.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_continuous), null, null);
             type.setText(R.string.continuous_reader);
         } else {
-            type.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_paged), null, null);
+            type.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_paged), null, null);
             type.setText(R.string.paged_reader);
         }
         if (readerType == 2) {
@@ -297,7 +298,7 @@ public class ReaderOptions extends FrameLayout {
         // KeepOn
         mKeepOn = pm.getBoolean(ReaderFragment.KEEP_SCREEN_ON, false);
         if (mKeepOn) {
-            keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_mantain_screen_on), null, null);
+            keep_screen.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_mantain_screen_on), null, null);
             if (mActivity != null)
                 mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         }
@@ -311,19 +312,19 @@ public class ReaderOptions extends FrameLayout {
     private void updateIconAjust(ImageViewTouchBase.DisplayType displayType) {
         switch (displayType) {
             case NONE:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_original), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_original), null, null);
                 ajust.setText(R.string.no_scale);
                 break;
             case FIT_TO_HEIGHT:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_ajustar_alto), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_alto), null, null);
                 ajust.setText(R.string.ajuste_alto);
                 break;
             case FIT_TO_WIDTH:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_ajustar_ancho), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_ancho), null, null);
                 ajust.setText(R.string.ajuste_ancho);
                 break;
             case FIT_TO_SCREEN:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_ajustar_diagonal), null, null);
+                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_diagonal), null, null);
                 ajust.setText(R.string.mejor_ajuste);
                 break;
             default:
@@ -336,17 +337,17 @@ public class ReaderOptions extends FrameLayout {
         if (mOrientation == 0) {
             if (mActivity != null)
                 mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
-            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_screen_landscape), null, null);
+            rotate.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_screen_landscape), null, null);
             rotate.setText(R.string.lock_on_landscape);
         } else if (mOrientation == 1) {
             if (mActivity != null)
                 mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_screen_portrait), null, null);
+            rotate.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_screen_portrait), null, null);
             rotate.setText(R.string.lock_on_portrait);
         } else if (mOrientation == 2) {
             if (mActivity != null)
                 mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
-            rotate.setCompoundDrawablesWithIntrinsicBounds(null, getContext().getResources().getDrawable(R.drawable.ic_action_screen_free), null, null);
+            rotate.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_screen_free), null, null);
             rotate.setText(R.string.rotation_no_locked);
         }
         SharedPreferences.Editor editor = pm.edit();

@@ -4,7 +4,6 @@ import android.content.Context;
 
 import com.squareup.duktape.Duktape;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -183,7 +182,15 @@ class KissManga extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             int pages = 0;
+
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
+
+            if (source.contains("class=\"g-recaptcha\"")) {
+                throw new Exception(context.getString(R.string.server_uses_captcha));
+                //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(HOST + chapter.getPath()));
+                //context.startActivity(browserIntent);
+            }
+
             String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");
             String lo = getNavigatorAndFlushParameters().get(HOST + "/Scripts/lo.js");
             try (Duktape duktape = Duktape.create()) {

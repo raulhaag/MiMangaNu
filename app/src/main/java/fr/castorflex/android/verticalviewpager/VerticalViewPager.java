@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.os.ParcelableCompat;
 import android.support.v4.os.ParcelableCompatCreatorCallbacks;
 import android.support.v4.view.AccessibilityDelegateCompat;
@@ -586,7 +587,7 @@ public class VerticalViewPager extends ViewGroup {
      * @param resId Resource ID of a drawable to display between pages
      */
     public void setPageMarginDrawable(int resId) {
-        setPageMarginDrawable(getContext().getResources().getDrawable(resId));
+        setPageMarginDrawable(ContextCompat.getDrawable(getContext(), resId));
     }
 
     @Override
