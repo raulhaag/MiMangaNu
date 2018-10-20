@@ -33,6 +33,17 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.91:
+* Agregados mangashiro.net y vercomics.com.
+* Agregada traducción Indonesian gracias a joielechong.
+* Mejoras en UI, CFI.
+* Otros fixes.
+
+Changes in v1.91:
+* Added mangashiro.net and vercomics.com.
+* Add Indonesian translation thanks joielechong.
+* Improve UI, CFI.
+* Others fixes.
 
 Cambios en v1.90:
 * Arreglado TMO (agregado plugin hibrida).
