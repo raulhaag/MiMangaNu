@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.90:\n\t*  Arreglado TMO (agregado plugin hibrida).\n\t*  Quitando mensaje de actualización F-droid(test).\n\t*  Otros arreglos menores</string>
+    <string name="update_message">Cambios en v1.91:\n\t* Agregados mangashiro.net y vercomics.com.\n\t* Agregada traducción Indonesian gracias a joielechong.\n\t* Mejoras en UI, CFI.\n\t* Otros fixes.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
