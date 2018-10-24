@@ -105,9 +105,9 @@ public class VerComicsCom extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-        String page = getFirstMatchDefault("src=\"(.+?issuu.+?)\"", data, "notfound");
+        String page = getFirstMatchDefault("data-url=\"(.+?)\"", data, "notfound");
         if (page.equals("notfound")) {
-            page = getFirstMatchDefault("data-url=\"(.+?)\"", data, "notfound");
+            page = getFirstMatchDefault("src=\"([^\\s]+issu[^\\s]+)\"", data, "notfound");
         }
         String username = "";
         String docname = "";
