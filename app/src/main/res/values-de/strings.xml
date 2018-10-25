@@ -476,4 +476,15 @@
     <string name="notification_channel_new">Neue Manga und Aktualisierungen</string>
     <string name="notification_channel_update">Benachrichtigung für Aktualisierungsfortschritt</string>
     <string name="select_server">Server wählen</string>
+    <string name="blue_filter">Blaufilter</string>
+    <string name="replace_backup">Aktuelle Sicherung ersetzen?</string>
+    <string name="backup_restore">Aktuelle Konfiguration durch Sicherung ersetzen?</string>
+    <string name="preferences_backup_not_found">Sicherung der Einstellungen nicht im MiMangaNu Verzeichnis gefunden</string>
+    <string name="backup_settings_summary">Sichere Einstellungen in externes Verzeichnis</string>
+    <string name="backup_settings_title">Einstellungen sichern</string>
+    <string name="restore_settings_summary">Einstellungen aus externem Verzeichnis wiederherstellen</string>
+    <string name="restore_settings_title">Einstellungen wiederherstellen</string>
+    <string name="update_server_information">Serveraktualisierung läuft. Das kann einige Zeit dauern (5-10min). Bitte warten, bis die Aktualisierungsmeldung erschienen ist.</string>
+    <string name="server_update_process_finished">Serveraktualisierung beendet.</string>
+    <string name="processed">" verarbeitet"</string>
 </resources>
