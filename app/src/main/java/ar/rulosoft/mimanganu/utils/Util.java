@@ -131,7 +131,7 @@ public class Util {
     }
 
     public String getLastStringInPathDontRemoveLastChar(String path) {
-        path = path.substring(0, path.length());
+        path = path;
         int idx = path.lastIndexOf("/");
         return path.substring(idx + 1);
     }
@@ -440,6 +440,15 @@ public class Util {
         }
     }
 
+    public void cancelAllNotification() {
+        try {
+            if (notificationManager != null)
+                notificationManager.cancelAll();
+        } catch (Exception e) {
+            Log.e("Util", "Exception", e);
+        }
+    }
+
     @SuppressWarnings("deprecation")
     public Spanned fromHtml(String source) {
         // https://stackoverflow.com/questions/37904739/html-fromhtml-deprecated-in-android-n
@@ -582,11 +591,7 @@ public class Util {
 
     public boolean isGPServicesAvailable(Context context)  {
         final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
-        if (status == ConnectionResult.SUCCESS)
-        {
-            return true;
-        }
-        return false;
+        return status == ConnectionResult.SUCCESS;
     }
 
     private static class LazyHolder {

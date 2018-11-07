@@ -117,7 +117,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
 
     @Override
     protected void onCancelled() {
-        Util.getInstance().cancelNotification(mNotifyID);
+        Util.getInstance().cancelAllNotification();
         if (context != null) {
             Util.getInstance().toast(context, context.getString(R.string.update_search_cancelled));
             if (Util.n > (48 - threads)) {
@@ -139,7 +139,6 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         public void run() {
             ServerBase serverBase = ServerBase.getServer(manga.getServerId(), context);
             boolean fast = pm.getBoolean("fast_update", true);
-            publishProgress(idx);
             try {
                 if (!isCancelled()) {
                     result[idx] += serverBase.searchForNewChapters(manga.getId(), context, fast);
@@ -147,6 +146,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             } catch (Exception e) {
                 //do nothing
             }
+            publishProgress(idx);
         }
     }
 }

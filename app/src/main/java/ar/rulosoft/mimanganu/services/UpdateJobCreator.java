@@ -17,6 +17,7 @@ import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 /**
@@ -38,6 +39,7 @@ public class UpdateJobCreator implements JobCreator{
     public static class UpdateJob extends Job {
         static final String LAST_CHECK = "last_check_update";
         private SharedPreferences pm;
+        private AutomaticUpdateTask automaticUpdateTask;
 
         public static void scheduleJob(Context context) {
             SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(context);
@@ -63,7 +65,6 @@ public class UpdateJobCreator implements JobCreator{
                 pm = PreferenceManager.getDefaultSharedPreferences(getContext());
                 boolean only_wifi_updates = pm.getBoolean("update_only_wifi", false);
                 boolean only_wifi = pm.getBoolean("only_wifi", false);
-                NetworkUtilsAndReceiver.reset();
                 if (only_wifi_updates) {
                     only_wifi = true;
                 }
@@ -73,7 +74,7 @@ public class UpdateJobCreator implements JobCreator{
                     pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                     NetworkUtilsAndReceiver.ONLY_WIFI = pm.getBoolean("only_wifi", false);
                     Navigator.initialiseInstance(getContext());
-                    final AutomaticUpdateTask automaticUpdateTask = new AutomaticUpdateTask(getContext(), null, pm);
+                    automaticUpdateTask = new AutomaticUpdateTask(getContext(), null, pm);
                     Handler mainHandler = new Handler(getContext().getMainLooper());
                     mainHandler.post(new Runnable() {
                         @Override
@@ -85,6 +86,7 @@ public class UpdateJobCreator implements JobCreator{
                 NetworkUtilsAndReceiver.reset();
             } catch (Exception ignore) { //next time on connection go to update
                 ignore.printStackTrace();
+                Util.getInstance().cancelAllNotification();
             }
             return Result.SUCCESS;
         }

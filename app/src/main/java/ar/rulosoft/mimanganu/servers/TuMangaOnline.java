@@ -2,9 +2,11 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.squareup.duktape.Duktape;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -15,13 +17,15 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.navegadores.Navigator;
+import okhttp3.Interceptor;
+import okhttp3.Response;
 
 /**
  * Created by Raul on 05/04/2016.
  */
 class TuMangaOnline extends ServerBase {
 
-    private static final String HOST = "https://tumangaonline.me";
+    private static final String HOST = "https://tmofans.com";
 
     public static String script = null;
 
@@ -89,7 +93,7 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = "https://tumangaonline.me/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
+        String web = HOST + "/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
         web = String.format(web, URLEncoder.encode(term, "UTF-8"));
         String data = getNavWithNeededHeaders().get(web);
         return getMangasLibrary(data);
@@ -105,8 +109,9 @@ class TuMangaOnline extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavWithNeededHeaders().get(
-                    String.format("https://tumangaonline.me/library/manga/%s/%s", manga.getPath(),
-                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
+                    String.format(HOST + "/library/manga/%s/%s", manga.getPath(),
+                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")),
+                    new Inter429());
 
             manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
             manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
@@ -141,8 +146,8 @@ class TuMangaOnline extends ServerBase {
             if (script == null) {
                 script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + ".js");
             }
-            String web = getNavWithNeededHeaders().getRedirectWeb("https://tumangaonline.me/goto/" + chapter.getPath());
-            String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
+            String web = getNavWithNeededHeaders().getRedirectWeb(HOST + "/goto/" + chapter.getPath());
+            String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"), new Inter429());
             String images = "";
             try (Duktape duktape = Duktape.create()) {
                 duktape.evaluate(script);
@@ -189,7 +194,7 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = "https://tumangaonline.me/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
+        String web = HOST + "/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
         if (pageNumber == 1)
             lastPage = 10000;
         if (pageNumber <= lastPage) {
@@ -200,7 +205,7 @@ class TuMangaOnline extends ServerBase {
 
             web = String.format(web, sortByValues[filters[4][0]], sortOrderValues[filters[5][0]],
                     typeV[filters[0][0]], demografiaV[filters[1][0]], estadoV[filters[3][0]]) + gens;
-            if(pageNumber > 1){
+            if (pageNumber > 1) {
                 web = web + "&page=" + pageNumber;
             }
             String data = getNavWithNeededHeaders().get(web);
@@ -212,7 +217,7 @@ class TuMangaOnline extends ServerBase {
 
     private ArrayList<Manga> getMangasLibrary(String data) {
         ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern pattern = Pattern.compile("\\/\\/tumangaonline.me\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
+        Pattern pattern = Pattern.compile("\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
         Matcher m = pattern.matcher(data);
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(3), m.group(1), m.group(2)));
@@ -223,7 +228,7 @@ class TuMangaOnline extends ServerBase {
     private Navigator getNavWithNeededHeaders() {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Cache-mode", "no-cache");
-        nav.addHeader("Referer", "https://tumangaonline.me/library/manga/");
+        nav.addHeader("Referer", HOST + "/library/manga/");
         return nav;
     }
 
@@ -274,6 +279,23 @@ class TuMangaOnline extends ServerBase {
 
     interface JSIn {
         String call(boolean b, String data);
+    }
+
+    public class Inter429 implements Interceptor {
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Response response = chain.proceed(chain.request());
+            if (response.code() == 429) {
+                //to many request slow down on this server and make again
+                Log.i("toomany", "o many request slow down on this server and make again");
+                try {
+                    Thread.sleep(15000);
+                } catch (InterruptedException e) {
+                }
+            }
+            return chain.proceed(chain.request());
+        }
     }
 
 }
