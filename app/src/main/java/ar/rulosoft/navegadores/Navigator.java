@@ -182,11 +182,14 @@ public class Navigator {
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .followRedirects(false)
                 .build();
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
-        if (response.isSuccessful()) {
-            return response.request().url().toString();
+
+        String location = response.header("location");
+        if (location != null) {
+            return location;
         } else {
             Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
             response.body().close();

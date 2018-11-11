@@ -11,7 +11,8 @@ import okhttp3.Response;
 public class RetryInterceptor implements Interceptor {
 
 
-    public RetryInterceptor() {}
+    public RetryInterceptor() {
+    }
 
     @Override
     public Response intercept(Chain chain) throws IOException {
@@ -19,13 +20,18 @@ public class RetryInterceptor implements Interceptor {
         Request request = chain.request();
         Response response = chain.proceed(request);
         int tryCount = 0;
-        while (tryCount <= retry && (response == null || !response.isSuccessful()) && !request.url().host().contains("github")) { // don't retry app updates
+        while (tryCount <= retry &&
+                (response == null || (!response.isSuccessful() && !response.isRedirect())) &&
+                !request.url().host().contains("github")) { // don't retry app updates
             String url = request.url().toString();
             Request newRequest = request.newBuilder().url(url).build();
             tryCount++;
             try {
-                Log.i("Retry ", "retry");
-                Thread.sleep(500 * tryCount);
+                Log.w("Retry ", "retry (" + (response != null ? response.code() : "null") + ")");
+                Thread.sleep(1000 * tryCount);
+                if (response != null && (response.code() == 429 || response.code() == 400)) {
+                    Thread.sleep(30000);
+                }
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -2,11 +2,9 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 import android.text.TextUtils;
-import android.util.Log;
 
 import com.squareup.duktape.Duktape;
 
-import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -17,8 +15,6 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.navegadores.Navigator;
-import okhttp3.Interceptor;
-import okhttp3.Response;
 
 /**
  * Created by Raul on 05/04/2016.
@@ -102,7 +98,8 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        loadMangaInformation(manga, forceReload);
+        if (forceReload)
+            loadMangaInformation(manga, forceReload);
     }
 
     @Override
@@ -110,8 +107,7 @@ class TuMangaOnline extends ServerBase {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavWithNeededHeaders().get(
                     String.format(HOST + "/library/manga/%s/%s", manga.getPath(),
-                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")),
-                    new Inter429());
+                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
 
             manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
             manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
@@ -147,7 +143,7 @@ class TuMangaOnline extends ServerBase {
                 script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + ".js");
             }
             String web = getNavWithNeededHeaders().getRedirectWeb(HOST + "/goto/" + chapter.getPath());
-            String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"), new Inter429());
+            String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
             String images = "";
             try (Duktape duktape = Duktape.create()) {
                 duktape.evaluate(script);
@@ -281,21 +277,13 @@ class TuMangaOnline extends ServerBase {
         String call(boolean b, String data);
     }
 
-    public class Inter429 implements Interceptor {
-
-        @Override
-        public Response intercept(Chain chain) throws IOException {
-            Response response = chain.proceed(chain.request());
-            if (response.code() == 429) {
-                //to many request slow down on this server and make again
-                Log.i("toomany", "o many request slow down on this server and make again");
-                try {
-                    Thread.sleep(15000);
-                } catch (InterruptedException e) {
-                }
-            }
-            return chain.proceed(chain.request());
+    @Override
+    public synchronized int searchForNewChapters(int id, Context context, boolean fast) {
+        int count = super.searchForNewChapters(id, context, fast);
+        try {
+            Thread.sleep(3000); /// try to avoid too many request forcing single thread on this server and a wait;
+        } catch (InterruptedException e) {
         }
+        return count;
     }
-
 }
