@@ -126,7 +126,7 @@ public class MangaShiroNet extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String src = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-        src = getFirstMatch("<div id=\"readerarea\">([\\s\\S]+?</a>)</p>", src,
+        src = getFirstMatch("<div id=\"readerarea\">([\\s\\S]+?</a>)<[^a]", src,
                 context.getString(R.string.error));
         ArrayList<String> images = getAllMatch("href=\"(.+?)\"", src);
         chapter.setPages(images.size());
