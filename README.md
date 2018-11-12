@@ -33,6 +33,18 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.92:
+* Arreglado mangashiro.net
+* Arreglado y mejorado tmo.
+* Mejorado Vercomic.com
+* Actulizada la traducción al Aleman.
+
+Changes in v1.92:
+* Improve mangashiro.net
+* Fix and improve tmo.
+* Improve Vercomic.com
+* Updated german translation.
+
 Cambios en v1.91:
 * Agregados mangashiro.net y vercomics.com.
 * Agregada traducción Indonesian gracias a joielechong.

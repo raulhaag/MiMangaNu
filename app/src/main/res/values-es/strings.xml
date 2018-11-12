@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.91:\n\t* Agregados mangashiro.net y vercomics.com.\n\t* Agregada traducción Indonesian gracias a joielechong.\n\t* Mejoras en UI, CFI.\n\t* Otros fixes.</string>
+    <string name="update_message">Cambios en v1.92:\n\t* Arreglado mangashiro.net\n\t* Arreglado y mejorado tmo.\n\t* Mejorado Vercomic.com\n\t* Actulizada la traducción al Aleman.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
