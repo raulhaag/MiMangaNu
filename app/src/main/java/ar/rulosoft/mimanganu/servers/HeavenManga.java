@@ -144,7 +144,7 @@ class HeavenManga extends ServerBase {
 
     @Override
     public boolean needRefererForImages() {
-        return false;
+        return true;
     }
 
     @Override

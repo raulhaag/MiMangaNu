@@ -55,7 +55,7 @@ public class SingleDownload implements Runnable {
     @Override
     public void run() {
         changeStatus(Status.INIT);
-        while (status != Status.DOWNLOAD_OK && retry > 0) {
+        while (status != Status.DOWNLOAD_OK && retry >= 0) {
             File o = new File(toFile);
             File ot = new File(toFile + ".temp");
             if (ot.exists()) {
@@ -74,7 +74,7 @@ public class SingleDownload implements Runnable {
                     Request.Builder rBuilder;
                     copy = Navigator.getInstance().getHttpClient().newBuilder()
                             .connectTimeout(5, TimeUnit.SECONDS)
-                            .readTimeout(5, TimeUnit.SECONDS)
+                            .readTimeout(20, TimeUnit.SECONDS)
                             .build();
                     rBuilder = new Request.Builder()
                             .addHeader("User-Agent", Navigator.USER_AGENT);

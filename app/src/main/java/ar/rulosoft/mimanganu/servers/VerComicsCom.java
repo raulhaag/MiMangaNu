@@ -107,6 +107,9 @@ public class VerComicsCom extends ServerBase {
         String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
         String page = getFirstMatchDefault("data-url=\"(.+?)\"", data, "notfound");
         if (page.equals("notfound")) {
+            page = "embed" + getFirstMatchDefault("data-configid=\"(.+?)\"", data, "notfound");
+        }
+        if (page.contains("notfound")) {
             page = getFirstMatchDefault("src=\"([^\\s]+issu[^\\s]+)\"", data, "notfound");
         }
         String username = "";

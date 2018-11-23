@@ -8,7 +8,7 @@ class EsNineManga extends NineManga {
     private static final String HOST = "http://es.ninemanga.com";
 
     private static final String PATTERN_IMAGE =
-            "class=\"pic_download\" href=\"(http://[^/]+/+es_manga/[^\"]+)";
+            "class=\"pic_download\" href=\"(https*://[^/]+/+es_manga/[^\"]+)";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_4_koma,
