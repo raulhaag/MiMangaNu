@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.92:\n\t* Arreglado mangashiro.net\n\t* Arreglado y mejorado tmo.\n\t* Mejorado Vercomic.com\n\t* Actulizada la traducción al Aleman.</string>
+    <string name="update_message">Cambios en v1.93:\n\t* Arreglado para que funcione en Android Pie.\n\t* Quitado MangaFox y agregado Fanfox.\n\t* Mejorado Vercomic.com y heavenmanga.\n\t* Arreglado EsNinemanga.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
