@@ -192,6 +192,7 @@ public abstract class ServerBase {
     public static final int MANGAAE = 40;
     public static final int NEUMANGATV = 41;
     public static final int MANGASHIRONET = 42;
+    public static final int FANFOXNET = 43;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
@@ -231,8 +232,8 @@ public abstract class ServerBase {
             case MANGAHERE:
                 serverBase = new MangaHere(context);
                 break;
-            case MANGAFOX:
-                serverBase = new MangaFox(context);
+            case FANFOXNET:
+                serverBase = new FanfoxNet(context);
                 break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga(context);
@@ -285,9 +286,9 @@ public abstract class ServerBase {
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
-            //case LEOMANGA:
-            //     serverBase = new LeoManga(context);
-            //    break;
+            //   case LEOMANGA:
+            //        serverBase = new LeoManga(context);
+            //       break;
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
@@ -386,7 +387,7 @@ public abstract class ServerBase {
                 new MangaPanda(context),
                 new MangaReader(context),
                 new MangaHere(context),
-                new MangaFox(context),
+                new FanfoxNet(context),
                 new KissManga(context),
                 new MangaEden(context),
                 new MangaStream(context),
@@ -396,6 +397,7 @@ public abstract class ServerBase {
                 new MangaTown(context),
                 new RuNineManga(context),
                 new DesuMe(context),
+                new MintManga(context),
                 new ReadMangaMe(context),
                 new MyMangaIo(context),
                 new JapScan(context),
@@ -405,7 +407,6 @@ public abstract class ServerBase {
                 new DeNineManga(context),
                 new RawSenManga(context),
                 new MangaRawOnline(context),
-                new MintManga(context),
                 new MangaAE(context),
                 new NeuMangaTv(context),
                 new MangaShiroNet(context),

@@ -281,7 +281,7 @@ class TuMangaOnline extends ServerBase {
     public synchronized int searchForNewChapters(int id, Context context, boolean fast) {
         int count = super.searchForNewChapters(id, context, fast);
         try {
-            Thread.sleep(3000); /// try to avoid too many request forcing single thread on this server and a wait;
+            Thread.sleep(6000); /// try to avoid too many request forcing single thread on this server and a wait;
         } catch (InterruptedException e) {
         }
         return count;
