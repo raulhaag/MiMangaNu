@@ -141,7 +141,7 @@ public class FanfoxNet extends ServerBase {
         manga.setSynopsis(getFirstMatchDefault("right-content\">([^<]+?)<", data, context.getString(R.string.nodisponible)));
         manga.setFinished(getFirstMatchDefault("title-tip\">([^<]+)", data, "").contains("Complete"));
         // Chapter
-        Pattern p = Pattern.compile("<li> <a href=\"(.+?)\".+?title=\"([^\"]+)", Pattern.DOTALL);
+        Pattern p = Pattern.compile("[li|none']{2,5}> <a href=\"(.+?)\".+?title=\"([^\"]+)", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             manga.addChapterFirst(new Chapter(m.group(2), m.group(1)));
