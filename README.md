@@ -33,6 +33,18 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.93:
+* Arreglado para que funcione en Android Pie.
+* Quitado MangaFox y agregado Fanfox.
+* Mejorado Vercomic.com y heavenmanga.
+* Arreglado EsNinemanga.
+
+Changes in v1.93:
+* Fix to work on Android Pie.
+* Removed MangaFox and added Fanfox.
+* Improve Vercomic.com and heavenmanga.
+* Fix EsNinemanga.
+
 Cambios en v1.92:
 * Arreglado mangashiro.net
 * Arreglado y mejorado tmo.
