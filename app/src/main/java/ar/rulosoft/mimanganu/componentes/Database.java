@@ -97,7 +97,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 25;
+    private static int database_version = 26;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -964,6 +964,13 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
                         " = REPLACE(" + COL_CAP_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
+                db.execSQL(query);
+
+            }
+            if (oldVersion < 26) {
+                String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH + " = REPLACE(" + COL_PATH + ", 'http://www.japscan.cc/mangas/', '/manga/') WHERE 1";
+                db.execSQL(query);
+                query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH + " = REPLACE(" + COL_CAP_PATH + ", 'http://www.japscan.cc', '') WHERE 1";
                 db.execSQL(query);
 
             }
