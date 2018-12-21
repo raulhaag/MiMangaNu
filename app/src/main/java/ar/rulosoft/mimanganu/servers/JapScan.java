@@ -16,7 +16,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 class JapScan extends ServerBase {
 
-    private static final String HOST = "http://www.japscan.cc";
+    private static final String HOST = "http://www.japscan.to";
 
     JapScan(Context context) {
         super(context);
@@ -44,7 +44,7 @@ class JapScan extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
             if (matcher.group(2).toLowerCase().contains(URLEncoder.encode(search.toLowerCase(), "UTF-8"))) {
-                Manga manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
+                Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
                 mangas.add(manga);
             }
         }
@@ -59,79 +59,64 @@ class JapScan extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String source = getNavigatorAndFlushParameters().get(manga.getPath());
+            String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
             // Cover Image
             // JapScan has no cover images ...
-            manga.setImages("");
+            manga.setImages(HOST + getFirstMatchDefault("<div class=\"m-2\">[\\s\\S]+?src=\"([^\"]+)", source, ""));
 
             // Summary
-            manga.setSynopsis(getFirstMatchDefault("<div id=\"synopsis\">(.+?)</div>", source, context.getString(R.string.nodisponible)));
+            manga.setSynopsis(getFirstMatchDefault("Synopsis:</div>[\\s\\S]+?<p[^>]+>([^<]+)", source, context.getString(R.string.nodisponible)));
 
             // Status
-            manga.setFinished(!getFirstMatchDefault("<div class=\"row\">.+?<div class=\"cell\">.+?<div class=\"cell\">.+?<div class=\"cell\">.+?<div class=\"cell\">.+?<div class=\"cell\">(.+?)</div>", source, "").contains("En Cours"));
+            manga.setFinished(getFirstMatchDefault("Statut:</span>([^<]+)", source, "").contains("Terminé"));
 
             // Author
-            manga.setAuthor(getFirstMatchDefault("<div class=\"row\">(.+?)</div>", source, context.getString(R.string.nodisponible)));
+            manga.setAuthor(getFirstMatchDefault("Auteur\\(s\\):</span>([^<]+)", source, context.getString(R.string.nodisponible)).trim());
 
             // Genres
-            manga.setGenre(getFirstMatchDefault("<div class=\"row\">.+?<div class=\"cell\">.+?<div class=\"cell\">.+?<div class=\"cell\">(.+?)</div>", source, context.getString(R.string.nodisponible)));
+            manga.setGenre(getFirstMatchDefault("Type\\(s\\):</span>([^<]+)", source, context.getString(R.string.nodisponible)));
 
             // Chapters
-            Pattern pattern = Pattern.compile("<a href=\"[//www\\.japscan\\.cc]*(/lecture-en-ligne/[^\"]+?)\">(Scan.+?)</a>", Pattern.DOTALL);
+            Pattern pattern = Pattern.compile("<div class=\"chapters_list text-truncate\">[\\s\\S]+?href=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
             Matcher matcher = pattern.matcher(source);
             while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(2), HOST + matcher.group(1)));
+                manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
             }
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return chapter.getExtra().split("\\|")[page];
+        String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + page + ".html");
+
+        return getFirstMatch("data-src=\"([^\"]+)", source, context.getString(R.string.error_downloading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            ArrayList<String> images = getAllMatch("<option\\s+data-img=\"([^\"]+)\"", source);
-
-            String baseImg = getFirstMatch("<img data-img.+?src=\"([^\"]+)", source,
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
+            String pages = getFirstMatch("Page (\\d+)</option>\\s*</select>", source,
                     context.getString(R.string.server_failed_loading_image));
-            String imagesString = "|" + baseImg;
-            baseImg = baseImg.substring(0, baseImg.lastIndexOf("/") + 1);
-            int count = 1;
-            for (int i = 0; i < images.size(); i++) {
-                if (!images.get(i).matches("IMG__\\d+.jpg")) {
-                    imagesString = imagesString + "|" + baseImg + images.get(i);
-                    count++;
-                }
-            }
-            chapter.setExtra(imagesString);
-            chapter.setPages(count);
+            chapter.setPages(Integer.parseInt(pages));
         }
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
-        Pattern pattern = Pattern.compile("<a href=\"(/mangas/[^\"].+?)\">(.+?)</a>", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("\"img-fluid\" src=\"([^\"]+)[\\s\\S]+?<a[^>]+?href=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
+            Manga manga = new Manga(getServerID(), matcher.group(3), matcher.group(2), HOST + matcher.group(1));
             mangas.add(manga);
         }
         return mangas;
     }
 
     @Override
-    public FilteredType getFilteredType() {
-        return FilteredType.TEXT;
-    }
-
-    @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/");
+        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + pageNumber);
         return getMangasFromSource(source);
     }
 }

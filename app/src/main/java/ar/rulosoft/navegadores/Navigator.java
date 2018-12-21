@@ -49,7 +49,7 @@ import okhttp3.Response;
  * @author Raul, nulldev, xtj-9182
  */
 public class Navigator {
-    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36";
+    public static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:64.0) Gecko/20100101 Firefox/64.0";
     public static int connectionTimeout = 10;
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
@@ -355,9 +355,10 @@ public class Navigator {
     private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT)
-                .add("Accept-Language", "en")
+                .add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
                 .add("Connection", "keep-alive")
-                .add("Accept", "text/html,application/xhtml+xml,application/xml");
+                .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .add("Accept-Encoding", "deflate");
 
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
