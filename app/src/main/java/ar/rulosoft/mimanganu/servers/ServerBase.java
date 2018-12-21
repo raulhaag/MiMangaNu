@@ -757,6 +757,25 @@ public abstract class ServerBase {
     }
 
     /**
+     * Returns the last match for a given pattern and string or a default text.
+     *
+     * @param patron   the pattern to search for
+     * @param source   the string to search
+     * @param mDefault the default string to return in case no match was found
+     * @return the first match or the value defined by mDefault
+     */
+
+    public String getLastMatchDefault(String patron, String source, String mDefault) {
+        Pattern p = Pattern.compile(patron, Pattern.DOTALL);
+        Matcher m = p.matcher(source);
+        String result = mDefault;
+        while (m.find()) {
+            result = m.group(1);
+        }
+        return result;
+    }
+
+    /**
      * Returns information if a referrer is needed for image loading.
      *
      * @return <code>true</code> if a referrer is needed

@@ -2,6 +2,9 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,13 +13,14 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by xtj-9182 on 21.02.2017.
  */
 class JapScan extends ServerBase {
 
-    private static final String HOST = "http://www.japscan.to";
+    private static final String HOST = "https://www.japscan.to";
 
     JapScan(Context context) {
         super(context);
@@ -38,17 +42,20 @@ class JapScan extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/");
-        Pattern pattern = Pattern.compile("<a href=\"(/mangas/[^\"].+?)\">(.+?)</a>", Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
-        while (matcher.find()) {
-            if (matcher.group(2).toLowerCase().contains(URLEncoder.encode(search.toLowerCase(), "UTF-8"))) {
-                Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-                mangas.add(manga);
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addPost("search", URLEncoder.encode(search, "UTF-8"));
+        String source = nav.post(HOST + "/search/");
+        if (source.length() > 2) {
+            JSONArray jsonArray = new JSONArray(source);
+            JSONObject item;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                item = (JSONObject) jsonArray.get(i);
+                mangas.add(new Manga(getServerID(), item.getString("name"), item.getString("url"), false));
             }
         }
         return mangas;
+
     }
 
     @Override
