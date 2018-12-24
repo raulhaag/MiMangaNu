@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.93:\n\t* Fix to work on Android Pie.\n\t* Removed MangaFox and added Fanfox.\n\t* Improve Vercomic.com and heavenmanga.\n\t* Fix EsNinemanga.</string>
+    <string name="update_message">Changes in v1.94:\n\t* Fixed Japscan, Fanfox and CFI.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

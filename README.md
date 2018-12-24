@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.94:
+* Arreglado Japscan, Fanfox y CFI.
+
+Changes in v1.94:
+* Fixed Japscan, Fanfox and CFI.
+
 Cambios en v1.93:
 * Arreglado para que funcione en Android Pie.
 * Quitado MangaFox y agregado Fanfox.
