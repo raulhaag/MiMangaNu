@@ -440,9 +440,15 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public void onDestroy() {
-        if (mReader != null) mReader.freeMemory();
+        if (readerOptions != null) {
+            readerOptions.startStopBrightLevel(false);
+        }
+        if (mReader != null) {
+            mReader.freeMemory();
+        }
         super.onDestroy();
     }
+
 
     @Override
     public void onResume() {
@@ -749,7 +755,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 readerType = readerOptions.getReaderType();
                 setReader();
                 break;
-            case AJUST:
+            case ADJUST:
                 mReader.setScreenFit(readerOptions.getScreenFit());
                 break;
             case DIRECTION:

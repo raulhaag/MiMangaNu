@@ -41,6 +41,8 @@ public class ReaderOptions extends FrameLayout {
 
     public static final String BLUE_FILTER_CHECK = "blue_filter_switch_";
     public static final String BLUE_FILTER_LEVEL = "blue_filter_level_";
+    public static final String BRIGHT_CHECK = "bright_filter_switch__";
+    public static final String BRIGHT_LEVEL = "bright_filter_level__";
 
     Reader.Direction mDirection;
     ImageViewTouchBase.DisplayType mScreenFit;
@@ -49,10 +51,10 @@ public class ReaderOptions extends FrameLayout {
     Reader reader;
     Manga manga;
     int d = -1;
-    Button type, direction, ajust, keep_screen, rotate;
-    CheckBox blueCheckbox;
+    Button type, direction, adjust, keep_screen, rotate;
+    CheckBox blueCheckbox, brightCheckbox;
     RelativeLayout root;
-    SeekBar blueLevel;
+    SeekBar blueLevel, brightLevel;
     SharedPreferences pm;
     private int readerType;
     private boolean mKeepOn;
@@ -89,11 +91,13 @@ public class ReaderOptions extends FrameLayout {
             optionsRoot = findViewById(R.id.option_root);
             type = findViewById(R.id.reader_type);
             direction = findViewById(R.id.reader_direction);
-            ajust = findViewById(R.id.reader_ajust);
+            adjust = findViewById(R.id.reader_ajust);
             rotate = findViewById(R.id.reader_rotate);
             keep_screen = findViewById(R.id.reader_stay_awake);
             blueCheckbox = findViewById(R.id.blue_cb);
             blueLevel = findViewById(R.id.blue_sb);
+            brightCheckbox = findViewById(R.id.ux_cb);
+            brightLevel = findViewById(R.id.ux_sb);
             ImageButton back = findViewById(R.id.reader_options_close);
 
             type.setOnClickListener(new OnClickListener() {
@@ -117,11 +121,11 @@ public class ReaderOptions extends FrameLayout {
                         optionListener.onOptionChange(OptionType.TYPE);
                     }
                     if (readerType == 2) {
-                        ajust.setEnabled(false);
-                        ajust.setAlpha(0.5f);
+                        adjust.setEnabled(false);
+                        adjust.setAlpha(0.5f);
                     } else {
-                        ajust.setEnabled(true);
-                        ajust.setAlpha(1.f);
+                        adjust.setEnabled(true);
+                        adjust.setAlpha(1.f);
                     }
                 }
             });
@@ -155,16 +159,16 @@ public class ReaderOptions extends FrameLayout {
                 }
             });
 
-            ajust.setOnClickListener(new OnClickListener() {
+            adjust.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     mScreenFit = mScreenFit.getNext();
                     SharedPreferences.Editor editor = pm.edit();
                     editor.putString(ADJUST_KEY, mScreenFit.toString());
                     editor.apply();
-                    updateIconAjust(mScreenFit);
+                    updateIconAdjust(mScreenFit);
                     if (optionListener != null) {
-                        optionListener.onOptionChange(OptionType.AJUST);
+                        optionListener.onOptionChange(OptionType.ADJUST);
                     }
                 }
             });
@@ -207,10 +211,10 @@ public class ReaderOptions extends FrameLayout {
                 }
             });
 
+            updateValues();
             blueCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    pm.edit().putBoolean(BLUE_FILTER_CHECK, isChecked).apply();
                     if (isChecked) {
                         if (reader != null)
                             reader.setBlueFilter((100f - blueLevel.getProgress()) / 100f);
@@ -242,6 +246,33 @@ public class ReaderOptions extends FrameLayout {
                 }
             });
 
+            brightCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    startStopBrightLevel(isChecked);
+                    if (isChecked)
+                        setBrightLevel(brightLevel.getProgress());
+
+                    brightLevel.setEnabled(isChecked);
+                }
+            });
+
+            brightLevel.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    setBrightLevel(brightLevel.getProgress());
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+                    setBrightLevel(brightLevel.getProgress());
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+            });
             back.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -287,13 +318,13 @@ public class ReaderOptions extends FrameLayout {
             type.setText(R.string.paged_reader);
         }
         if (readerType == 2) {
-            ajust.setEnabled(false);
-            ajust.setAlpha(0.5f);
+            adjust.setEnabled(false);
+            adjust.setAlpha(0.5f);
         }
 
         // Ajust
         mScreenFit = ImageViewTouchBase.DisplayType.valueOf(pm.getString(ADJUST_KEY, ImageViewTouchBase.DisplayType.FIT_TO_WIDTH.toString()));
-        updateIconAjust(mScreenFit);
+        updateIconAdjust(mScreenFit);
 
         // KeepOn
         mKeepOn = pm.getBoolean(ReaderFragment.KEEP_SCREEN_ON, false);
@@ -306,26 +337,26 @@ public class ReaderOptions extends FrameLayout {
         // Orientation
         mOrientation = pm.getInt(ORIENTATION, 0);
         updateIconOrientation();
-
+        updateValues();
     }
 
-    private void updateIconAjust(ImageViewTouchBase.DisplayType displayType) {
+    private void updateIconAdjust(ImageViewTouchBase.DisplayType displayType) {
         switch (displayType) {
             case NONE:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_original), null, null);
-                ajust.setText(R.string.no_scale);
+                adjust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_original), null, null);
+                adjust.setText(R.string.no_scale);
                 break;
             case FIT_TO_HEIGHT:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_alto), null, null);
-                ajust.setText(R.string.ajuste_alto);
+                adjust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_alto), null, null);
+                adjust.setText(R.string.ajuste_alto);
                 break;
             case FIT_TO_WIDTH:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_ancho), null, null);
-                ajust.setText(R.string.ajuste_ancho);
+                adjust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_ancho), null, null);
+                adjust.setText(R.string.ajuste_ancho);
                 break;
             case FIT_TO_SCREEN:
-                ajust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_diagonal), null, null);
-                ajust.setText(R.string.mejor_ajuste);
+                adjust.setCompoundDrawablesWithIntrinsicBounds(null, ContextCompat.getDrawable(getContext(), R.drawable.ic_action_ajustar_diagonal), null, null);
+                adjust.setText(R.string.mejor_ajuste);
                 break;
             default:
                 break;
@@ -358,12 +389,19 @@ public class ReaderOptions extends FrameLayout {
     private void saveValues() {
         pm.edit().putInt(BLUE_FILTER_LEVEL, blueLevel.getProgress()).apply();
         pm.edit().putBoolean(BLUE_FILTER_CHECK, blueCheckbox.isChecked()).apply();
+
+        pm.edit().putInt(BRIGHT_LEVEL, brightLevel.getProgress()).apply();
+        pm.edit().putBoolean(BRIGHT_CHECK, brightCheckbox.isChecked()).apply();
     }
 
-    private void updateValue() {
+    public void updateValues() {
         blueCheckbox.setChecked(pm.getBoolean(BLUE_FILTER_CHECK, false));
         blueLevel.setProgress(pm.getInt(BLUE_FILTER_LEVEL, 30));
         blueLevel.setEnabled(blueCheckbox.isChecked());
+
+        brightCheckbox.setChecked(pm.getBoolean(BRIGHT_CHECK, false));
+        brightLevel.setProgress(pm.getInt(BRIGHT_LEVEL, 125));
+        brightLevel.setEnabled(brightCheckbox.isChecked());
     }
 
     public void switchOptions() {
@@ -379,7 +417,7 @@ public class ReaderOptions extends FrameLayout {
         if (root.getVisibility() == GONE) {
             optionsRoot.setAlpha(0f);
             root.setVisibility(VISIBLE);
-            updateValue();
+            updateValues();
             vA.start();
         } else {
             saveValues();
@@ -423,6 +461,10 @@ public class ReaderOptions extends FrameLayout {
             if (blueCheckbox.isChecked()) {
                 reader.setBlueFilter((100f - blueLevel.getProgress()) / 100f);
             }
+            if (brightCheckbox.isChecked()) {
+                startStopBrightLevel(true);
+                setBrightLevel(brightLevel.getProgress());
+            }
         }
     }
 
@@ -446,13 +488,33 @@ public class ReaderOptions extends FrameLayout {
     }
 
     public boolean isVisible() {
-        return root.getVisibility()  == VISIBLE;
+        return root.getVisibility() == VISIBLE;
     }
+
+    public void setBrightLevel(int level) {
+        if (mActivity == null) return;
+        WindowManager.LayoutParams layoutParams = mActivity.getWindow().getAttributes();
+        layoutParams.screenBrightness = ((float) level / 255.0f);
+        mActivity.getWindow().setAttributes(layoutParams);
+    }
+
+    public void startStopBrightLevel(boolean start) {
+        if (mActivity == null) return;
+        WindowManager.LayoutParams layoutParams = mActivity.getWindow().getAttributes(); // Get Params
+        if (start) {
+            layoutParams.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_FULL;
+        } else {
+            layoutParams.screenBrightness = WindowManager.LayoutParams.BRIGHTNESS_OVERRIDE_NONE;
+        }
+        mActivity.getWindow().setAttributes(layoutParams); // Set params
+    }
+
+
 
     public enum OptionType {
         TYPE,
         DIRECTION,
-        AJUST,
+        ADJUST,
         KEEP_SCREEN,
         ROTATE
     }

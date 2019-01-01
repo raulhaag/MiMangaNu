@@ -447,5 +447,6 @@
     <string name="processed">" precesado(s)"</string>
     <string name="server_update_process_finished">Acualizacion de datos del servidor finalizada.</string>
     <string name="update_server_information">Ejecutando una actualización de datos del servidor, puede tardar 5 -10 min, por favor espera hasta que el mensaje de terminado sea mostrado (su base de datos esta en juego).</string>
+    <string name="bright_level">Brillo</string>
 
 </resources>
