@@ -139,7 +139,7 @@ class HeavenManga extends ServerBase {
                 context.getString(R.string.server_failed_loading_image));
         return getFirstMatch(
                 "<img src=\"([^\"]+)", source,
-                context.getString(R.string.server_failed_loading_image));
+                context.getString(R.string.server_failed_loading_image)).trim();
     }
 
     @Override
