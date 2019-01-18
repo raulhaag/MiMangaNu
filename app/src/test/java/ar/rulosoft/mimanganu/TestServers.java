@@ -177,7 +177,7 @@ public class TestServers {
         new TestServersCommon(ServerBase.BATOTOES, true, context);
     }
 
-    @Test
+    @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_JAPSCAN() throws Exception {
         new TestServersCommon(ServerBase.JAPSCAN, true, context);
     }
