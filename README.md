@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.95:
+* Arreglado Japscan Webtoon y mejorado.
+* Arreglado últimos cambios en Fanfox / MangaHere (son iguales).
+* Agregado control de brillo al lector.
+
+Changes in v1.95:
+* Fixed Japscan Webtoon and improve.
+* Fixed last changes on Fanfox / MangaHere (both are the same).
+* Added bright control to reader.
+
 Cambios en v1.94:
 * Arreglado Japscan, Fanfox y CFI.
 
