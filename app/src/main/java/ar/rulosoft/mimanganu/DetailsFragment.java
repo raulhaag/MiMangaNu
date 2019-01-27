@@ -78,10 +78,15 @@ public class DetailsFragment extends Fragment {
                 try {
                     List<Manga> mangas = Database.getMangas(getContext(), null, true);
                     for (Manga m : mangas) {
-                        if (m.getPath().equals(manga.getPath())) {
+                        if (m.getPath().equals(manga.getPath()) && (m.getServerId() == manga.getServerId())) {
                             mangaAlreadyAdded = true;
                             if (floatingActionButton_add != null)
-                                floatingActionButton_add.hide();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        floatingActionButton_add.hide();
+                                    }
+                                });
                         }
                     }
                 } catch (Exception e) {
@@ -92,13 +97,13 @@ public class DetailsFragment extends Fragment {
         });
         t0.start();
 
-        data = (ControlInfo) getView().findViewById(R.id.datos);
-        swipeRefreshLayout = (SwipeRefreshLayout) getView().findViewById(R.id.str);
+        data = getView().findViewById(R.id.datos);
+        swipeRefreshLayout = getView().findViewById(R.id.str);
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
-        floatingActionButton_add = (FloatingActionButton) getView().findViewById(R.id.floatingActionButton_add);
+        floatingActionButton_add = getView().findViewById(R.id.floatingActionButton_add);
         floatingActionButton_add.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {

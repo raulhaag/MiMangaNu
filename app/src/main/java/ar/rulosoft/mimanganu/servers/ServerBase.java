@@ -233,7 +233,7 @@ public abstract class ServerBase {
                 serverBase = new MangaHere(context);
                 break;
             case FANFOXNET:
-                serverBase = new FanfoxNet(context);
+                serverBase = new FanFoxNet(context);
                 break;
             case HEAVENMANGACOM:
                 serverBase = new HeavenManga(context);
@@ -387,7 +387,7 @@ public abstract class ServerBase {
                 new MangaPanda(context),
                 new MangaReader(context),
                 new MangaHere(context),
-                new FanfoxNet(context),
+                new FanFoxNet(context),
                 new KissManga(context),
                 new MangaEden(context),
                 new MangaStream(context),

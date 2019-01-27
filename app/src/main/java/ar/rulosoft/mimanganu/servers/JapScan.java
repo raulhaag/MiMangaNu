@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -95,9 +96,8 @@ class JapScan extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + page + ".html");
-
-        return getFirstMatch("data-src=\"([^\"]+)", source, context.getString(R.string.error_downloading_image));
+        String[] parts = chapter.getExtra().split("\\|");
+        return parts[0] + parts[page];
     }
 
     @Override
@@ -106,6 +106,10 @@ class JapScan extends ServerBase {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             String pages = getFirstMatch("Page (\\d+)</option>\\s*</select>", source,
                     context.getString(R.string.server_failed_loading_image));
+            String path = getFirstMatch("data-src=\"([^\"]+)", source, context.getString(R.string.error_downloading_image));
+            path = path.substring(0, path.lastIndexOf("/") + 1);
+            ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);
+            chapter.setExtra(path + "|" + TextUtils.join("|", imgs));
             chapter.setPages(Integer.parseInt(pages));
         }
     }

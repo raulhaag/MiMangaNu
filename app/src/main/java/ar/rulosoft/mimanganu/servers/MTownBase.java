@@ -17,46 +17,8 @@ import ar.rulosoft.navegadores.Navigator;
 import okhttp3.Cookie;
 import okhttp3.HttpUrl;
 
-public class FanfoxNet extends ServerBase {
+public abstract class MTownBase extends ServerBase {
 
-    public static final String HOST = "https://fanfox.net";
-    private static final int[] fltGenre = {
-            R.string.flt_tag_action,
-            R.string.flt_tag_adventure,
-            R.string.flt_tag_comedy,
-            R.string.flt_tag_drama,
-            R.string.flt_tag_fantasy,
-            R.string.flt_tag_martial_arts,
-            R.string.flt_tag_shounen,
-            R.string.flt_tag_horror,
-            R.string.flt_tag_supernatural,
-            R.string.flt_tag_harem,
-            R.string.flt_tag_psychological,
-            R.string.flt_tag_romance,
-            R.string.flt_tag_school_life,
-            R.string.flt_tag_shoujo,
-            R.string.flt_tag_mystery,
-            R.string.flt_tag_sci_fi,
-            R.string.flt_tag_seinen,
-            R.string.flt_tag_tragedy,
-            R.string.flt_tag_ecchi,
-            R.string.flt_tag_sports,
-            R.string.flt_tag_slice_of_life,
-            R.string.flt_tag_mature,
-            R.string.flt_tag_shoujo_ai,
-            R.string.flt_tag_webtoon,
-            R.string.flt_tag_doujinshi,
-            R.string.flt_tag_one_shot,
-            R.string.flt_tag_smut,
-            R.string.flt_tag_yaoi,
-            R.string.flt_tag_josei,
-            R.string.flt_tag_historical,
-            R.string.flt_tag_shounen_ai,
-            R.string.flt_tag_gender_bender,
-            R.string.flt_tag_adult,
-            R.string.flt_tag_yuri,
-            R.string.flt_tag_mecha
-    };
     private static final int[] fltOrder = {
             R.string.flt_order_alpha,
             R.string.flt_order_views,
@@ -68,32 +30,37 @@ public class FanfoxNet extends ServerBase {
             R.string.flt_status_ongoing,
             R.string.flt_status_completed
     };
-    private static boolean cookieInit = false;
 
     /**
      * Construct a new ServerBase object.
      *
      * @param context the context for this object
      */
-    FanfoxNet(Context context) {
+    public MTownBase(Context context) {
         super(context);
-        setFlag(R.drawable.flag_en);
-        setIcon(R.drawable.mangafox_icon);
-        setServerName("FanFox");
-        setServerID(FANFOXNET);
     }
 
-    private static void generateNeededCookie() {
-        HttpUrl url = HttpUrl.parse(HOST);
+    public abstract String getHost();
+
+    public abstract String getDomain();
+
+    public abstract int[] getFilter();
+
+    public abstract boolean getCookieInit();
+
+    public abstract void setCookieInit(boolean state);
+
+    private void generateNeededCookie() {
+        HttpUrl url = HttpUrl.parse(getHost());
         Navigator.getCookieJar().saveFromResponse(url, Arrays.asList(
-                Cookie.parse(url, "isAdult=1; Domain=fanfox.net"))
+                Cookie.parse(url, "isAdult=1; Domain=" + getDomain()))
         );
-        cookieInit = true;
+        setCookieInit(true);
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        StringBuilder web = new StringBuilder(HOST);
+        StringBuilder web = new StringBuilder(getHost());
         web.append("/search?title=&genres=");
         for (int i : filters[0]) {
             web.append((i + 1));
@@ -122,7 +89,7 @@ public class FanfoxNet extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         return getMangasFromSource(getNavigatorWithNeededHeader()
-                .get("https://fanfox.net/search?title=&genres=&st=0&sort=&stype=1&name_method=cw&name=" +
+                .get(getHost() + "/search?title=&genres=&st=0&sort=&stype=1&name_method=cw&name=" +
                         URLEncoder.encode(term, "UTF-8") +
                         "&author_method=cw&author=&artist_method=cw&artist=&type=&rating_method=eq&rating=&released_method=eq&released="));
     }
@@ -134,7 +101,7 @@ public class FanfoxNet extends ServerBase {
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = getNavigatorWithNeededHeader().get(HOST + manga.getPath());
+        String data = getNavigatorWithNeededHeader().get(getHost() + manga.getPath());
         manga.setImages(getFirstMatchDefault("over-img\" src=\"([^\"]+)", data, ""));
         manga.setAuthor(getFirstMatchDefault("say\">Author:(.+)</p>", data, context.getString(R.string.nodisponible)));
         manga.setGenre(getFirstMatchDefault("tag-list\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
@@ -153,11 +120,13 @@ public class FanfoxNet extends ServerBase {
         String[] vars = chapter.getExtra().split("\\|");
         if (vars[0].equals("1")) {
             Navigator nav = getNavigatorWithNeededHeader();
-            nav.addHeader("Referer", HOST + chapter.getPath());
-            String data = nav.get(vars[2] + "chapterfun.ashx?cid=" + vars[1] + "&page=" + page + "&key=" + (page != 1 ? vars[3] : ""));
+            nav.addHeader("Referer", getHost() + chapter.getPath());
+            String data = nav.get(vars[2] + "/chapterfun.ashx?cid=" + vars[1] + "&page=" + page + "&key=" + (page != 1 ? vars[3] : ""));
             data = Util.getInstance().unpack(data);
             String dir = getFirstMatch("\"([^\"]+)\";", data, "Error getting image(0)");
             String image = getFirstMatch("\\[\"([^\"]+)\"", data, "Error getting image(1)");
+            if (!dir.startsWith("http"))
+                dir = "https:" + dir;
             return dir + image;
         } else {
             return "https:" + vars[page];
@@ -166,7 +135,7 @@ public class FanfoxNet extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        String web = HOST + chapter.getPath();
+        String web = getHost() + chapter.getPath();
         String data = getNavigatorWithNeededHeader().get(web);
         int pages = Integer.parseInt(getLastMatchDefault("data-page=\"(\\d+)\">(\\d+)", data, "-1"));
         if (pages != -1) {
@@ -198,7 +167,7 @@ public class FanfoxNet extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                        buildTranslatedStringArray(getFilter()), ServerFilter.FilterType.MULTI),
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
@@ -209,10 +178,11 @@ public class FanfoxNet extends ServerBase {
     }
 
     private Navigator getNavigatorWithNeededHeader() {
-        if (!cookieInit) {
+        if (!getCookieInit()) {
             generateNeededCookie();
         }
         Navigator nav = getNavigatorAndFlushParameters();
         return nav;
     }
+
 }
