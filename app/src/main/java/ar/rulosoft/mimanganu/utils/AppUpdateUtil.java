@@ -7,7 +7,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.icu.text.SymbolTable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,7 +15,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.FileProvider;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -24,7 +22,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -41,13 +38,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static ar.rulosoft.mimanganu.MainActivity.pm;
-
 /**
  * Created by Jordy on 23/04/2017.
  */
 
-public class UpdateUtil {
+public class AppUpdateUtil {
     private static final String TAG = "UpdateUtils";
     private static final String LATEST_RELEASE_URL = "https://github.com/raulhaag/MiMangaNu/releases/latest";
     private static final String LATEST_RELEASE_URL_API = "https://api.github.com/repos/raulhaag/MiMangaNu/releases/latest";

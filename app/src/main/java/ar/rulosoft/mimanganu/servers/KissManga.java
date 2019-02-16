@@ -16,12 +16,10 @@ import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 class KissManga extends ServerBase {
-    private static final String HOST = "http://kissmanga.com";
+    private static final String HOST = "https://kissmanga.com";
 
     private static final String PATTERN_CHAPTER =
             "<td>\\s*<a\\s*href=\"(/Manga/[^\"]+)\"\\s*title=\"[^\"]+\">([^<]+)</a>\\s*</td>";
-    private static final String PATTERN_SEARCH =
-            "<a href=\"[^\"]+(/[M|m]anga/[^\"]+)\">(.+?)</a>";
     private static final String PATTERN_MANGA =
             "(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
 
@@ -54,7 +52,6 @@ class KissManga extends ServerBase {
             R.string.flt_tag_mystery,
             R.string.flt_tag_one_shot,
             R.string.flt_tag_psychological,
-            R.string.flt_tag_reincarnation,
             R.string.flt_tag_romance,
             R.string.flt_tag_school_life,
             R.string.flt_tag_sci_fi,
@@ -64,13 +61,9 @@ class KissManga extends ServerBase {
             R.string.flt_tag_shoujo_ai,
             R.string.flt_tag_shounen,
             R.string.flt_tag_shounen_ai,
-            R.string.flt_tag_slice_of_life,
             R.string.flt_tag_smut,
             R.string.flt_tag_sports,
             R.string.flt_tag_supernatural,
-            R.string.flt_tag_time_travel,
-            R.string.flt_tag_tragedy,
-            R.string.flt_tag_transported,
             R.string.flt_tag_webtoon,
             R.string.flt_tag_yaoi,
             R.string.flt_tag_yuri
@@ -117,22 +110,11 @@ class KissManga extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         // make use of AdvanceSearch, more data is then needed
         Navigator nav = getNavigatorAndFlushParameters();
-
-        // do not hide Doujinshi in result
         nav.addHeader("Cookie", "vns_doujinshi=1; ");
-
         nav.addPost("keyword", term);
-        nav.addPost("type", "Manga");
 
-        String source = nav.post(HOST + "/Search/SearchSuggest");
-        source = source.replaceAll("<\\*span>", "");
-        ArrayList<Manga> searchList = new ArrayList<>();
-        Pattern p = Pattern.compile(PATTERN_SEARCH, Pattern.DOTALL);
-        Matcher m = p.matcher(source);
-        while (m.find()) {
-            searchList.add(new Manga(getServerID(), m.group(2), m.group(1), false));
-        }
-        return searchList;
+        String source = nav.post(HOST + "/Search/Manga");
+        return getMangasSource(source);
     }
 
     @Override
@@ -179,7 +161,7 @@ class KissManga extends ServerBase {
     }
 
     @Override
-    public void chapterInit(Chapter chapter) throws Exception {
+    public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             int pages = 0;
 
@@ -261,11 +243,13 @@ class KissManga extends ServerBase {
             source = nav.get(web);
         }
         // filtering is active, use advanced search (slow, as the whole result set is returned)
+
         else {
             if (pageNumber > 1) {
                 // there is only one result page for the advanced search
                 return new ArrayList<>();
             } else {
+
                 nav.addPost("mangaName", "");
                 nav.addPost("authorArtist", "");
                 for (int i = 0; i < fltGenre.length; i++) {

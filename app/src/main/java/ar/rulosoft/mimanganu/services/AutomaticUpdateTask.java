@@ -8,8 +8,10 @@ import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.BiConsumer;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
@@ -75,8 +77,47 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 mangaList = fromFolderMangaList;
             }
 
-            result = new int[mangaList.size()];
+            {
+                // get a simple hash map of needed server to be checked for cfi
+                HashMap<Integer, Boolean> hosts = new HashMap<>();
+                for (Manga m : mangaList) {
+                    hosts.put(m.getServerId(), false);
+                }
+                // check status of server and run cfi once per server if needed
+                final ExecutorService executorLocal = Executors.newFixedThreadPool(threads);
+                hosts.forEach(new BiConsumer<Integer, Boolean>() {
+                    @Override
+                    public void accept(final Integer j, Boolean k) {
+                        executorLocal.execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    ServerBase s = ServerBase.getServer(j, context);
+                                    Log.i(s.getServerName(), "check Started");
+                                    if (s.hasFilteredNavigation()) {
+                                        s.getMangasFiltered(s.getBasicFilter(), 1);
+                                    } else {
+                                        s.getMangas();
+                                    }
+                                    Log.i(s.getServerName(), "check finished");
+                                } catch (Exception e) {
+                                    Log.i("can' t confirm", "check failed");
+                                }
+                            }
+                        });
+                    }
+                });
+                executorLocal.shutdown();
+                while (!executorLocal.isTerminated()) {
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "After sleep failure", e);
+                    }
+                }
+            }
 
+            result = new int[mangaList.size()];
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
                     cancel(true);

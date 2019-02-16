@@ -52,8 +52,8 @@ import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
+import ar.rulosoft.mimanganu.utils.AppUpdateUtil;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
-import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
@@ -286,7 +286,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         prefAbout.setSummary("v" + BuildConfig.VERSION_NAME);
 
         /* Hide app update pref o f-droid users */
-        if(UpdateUtil.getInstallerPackagename(getContext()).equals("org.fdroid.fdroid")){
+        if (AppUpdateUtil.getInstallerPackagename(getContext()).equals("org.fdroid.fdroid")) {
             getPreferenceManager().findPreference("app_update").setVisible(false);
         }
 
@@ -415,7 +415,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
 
                 LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View rootView = inflater.inflate(R.layout.simple_input_dialog, null);
-                final EditText SpecificCookiesToClear = (EditText) rootView.findViewById(R.id.txtCustomLang);
+                final EditText SpecificCookiesToClear = rootView.findViewById(R.id.txtCustomLang);
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getContext());
                 dialogBuilder.setTitle("Cookies to clear contain");
                 dialogBuilder.setView(rootView);

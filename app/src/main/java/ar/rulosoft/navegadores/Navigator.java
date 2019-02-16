@@ -77,14 +77,14 @@ public class Navigator {
         }
     }
 
-    public static synchronized Navigator getInstance() {
+    public static Navigator getInstance() {
         if (Navigator.instance == null) {
             throw new NullPointerException("Navigator has no instance with a valid context.");
         }
         return Navigator.instance;
     }
 
-    public static synchronized Navigator initialiseInstance(Context context) throws Exception {
+    public static Navigator initialiseInstance(Context context) throws Exception {
         Navigator.instance = new Navigator(context);
         return Navigator.instance;
     }
@@ -150,11 +150,11 @@ public class Navigator {
         cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
     }
 
-    public synchronized String get(String web) throws Exception {
+    public String get(String web) throws Exception {
         return this.get(web, connectionTimeout, writeTimeout, readTimeout);
     }
 
-    public synchronized String get(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
+    public String get(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
         // copy will share the connection pool with httpclient
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
@@ -242,7 +242,7 @@ public class Navigator {
         }
     }
 
-    public synchronized String get(String web, String referer, Interceptor interceptor) throws Exception {
+    public String get(String web, String referer, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -260,7 +260,7 @@ public class Navigator {
         }
     }
 
-    public synchronized String get(String web, Interceptor interceptor) throws Exception {
+    public String get(String web, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
@@ -276,7 +276,7 @@ public class Navigator {
         }
     }
 
-    public synchronized String get(String web, String referer) throws Exception {
+    public String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -294,7 +294,7 @@ public class Navigator {
         }
     }
 
-    public synchronized String post(String web) throws Exception {
+    public String post(String web) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
@@ -317,7 +317,7 @@ public class Navigator {
         }
     }
 
-    public synchronized String post(String web, RequestBody formParams) throws Exception {
+    public String post(String web, RequestBody formParams) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)

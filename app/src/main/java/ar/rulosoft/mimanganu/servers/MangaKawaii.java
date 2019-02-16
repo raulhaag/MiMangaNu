@@ -49,12 +49,12 @@ class MangaKawaii extends ServerBase {
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
-        String data = nav.get("https://www.mangakawaii.com/recherche?query=" + URLEncoder.encode(search, "UTF-8"));
+        String data = nav.get(HOST + "/recherche?query=" + URLEncoder.encode(search, "UTF-8"));
         JSONArray array = new JSONObject(data).getJSONArray("suggestions");
         ArrayList<Manga> mangas = new ArrayList<>();
         for(int i = 0, n = array.length(); i < n; i++){
             mangas.add(new Manga(getServerID(), array.getJSONObject(i).getString("value"),
-                    "https://www.mangakawaii.com/manga/" + array.getJSONObject(i).getString("data"),
+                    "/manga/" + array.getJSONObject(i).getString("data"),
                     false));
         }
         return mangas;
@@ -68,28 +68,28 @@ class MangaKawaii extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String source = getNavigatorAndFlushParameters().get(manga.getPath());
+            String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
             // Cover
             if (manga.getImages() == null || manga.getImages().isEmpty()) {
-                String img = getFirstMatchDefault("src='(https://www.mangakawaii.com/uploads/manga/[^\"]+?)'", source, "");
+                String img = getFirstMatchDefault("itemprop=\"image\" content = \"([^\"]+)", source, "");
                 manga.setImages(img);
             }
 
             // Summary
-            manga.setSynopsis(getFirstMatchDefault("id=\"synopsis\">[\\s]*<p>(.+?)</p>", source, context.getString(R.string.nodisponible)));
+            manga.setSynopsis(getFirstMatchDefault("desc__content\">(.+?)<br></div>", source, context.getString(R.string.nodisponible)));
 
             // Status
-            manga.setFinished(!getFirstMatchDefault("Statut(.+?)</span>", source, "").contains("En Cours"));
+            manga.setFinished(!getFirstMatchDefault("Statut[^=]+[^>]+>([^<]+)", source, "").contains("En Cours"));
 
             // Author
-            manga.setAuthor(getFirstMatchDefault("author/.+?\">(.+?)</a>", source, context.getString(R.string.nodisponible)));
+            manga.setAuthor(getFirstMatchDefault("liste-manga/author/[^\"]+\">([^<]+)<", source, context.getString(R.string.nodisponible)));
 
             // Genre
-            manga.setGenre(getFirstMatchDefault("Genres</span>(.+?)</span>", source, context.getString(R.string.nodisponible)));
+            manga.setGenre(TextUtils.join(",", getAllMatch("liste-manga/category/[^\"]+\">([^<]+)</a>", source)));
 
             // Chapters
-            Pattern p = Pattern.compile("href=\"(https://www\\.mangakawaii\\.com/manga/[^\"]+?)\">([^\"]+?)</a>", Pattern.DOTALL);
+            Pattern p = Pattern.compile("<a href=\"(/manga/[^\"]+)[\\s\\S]+?svg>\\s+([^\\n]+)", Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
             ArrayList<String> tmpChapterList = new ArrayList<>();
             while (matcher.find()) {
@@ -110,9 +110,8 @@ class MangaKawaii extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getExtra() == null) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String tmpImages = getFirstMatchDefault("<div id=\"all\"(.+?)</div>", source, "");
-            ArrayList<String> images = getAllMatch("data-src='.(https://www\\.mangakawaii\\.com/uploads/[^\"]+?).'", tmpImages);
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
+            ArrayList<String> images = getAllMatch("data-src='\\s*(.+?)\\s*'", source);
 
             if(images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
@@ -126,17 +125,16 @@ class MangaKawaii extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         // TODO implement filtering
 
-        String web = HOST + "/liste-mangas?page=" + pageNumber;
+        String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
         String source = getNavigatorAndFlushParameters().get(web);
 
         Pattern pattern = Pattern.compile("<div class=\"media-left\">(.+?)</div>", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-
             mangas.add(new Manga(getServerID(),
                     getFirstMatch("alt='([^']+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_name)),
-                    getFirstMatch("href=\"([^\"]+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_url)),
+                    getFirstMatch("(/manga/[^\"]+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_url)),
                     getFirstMatchDefault("src='([^\']+)", matcher.group(1), "")
             ));
         }

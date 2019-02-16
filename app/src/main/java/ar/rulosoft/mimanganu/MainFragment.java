@@ -4,7 +4,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -42,10 +41,10 @@ import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
+import ar.rulosoft.mimanganu.utils.AppUpdateUtil;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
-import ar.rulosoft.mimanganu.utils.UpdateUtil;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -144,14 +143,14 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             // App Update
-            if (pm.getBoolean("app_update", true) && !UpdateUtil
+            if (pm.getBoolean("app_update", true) && !AppUpdateUtil
                     .getInstallerPackagename(getContext()).equals("org.fdroid.fdroid")) {
                 long last_check = pm.getLong("last_app_update", 0);
                 long diff = System.currentTimeMillis() - last_check;
                 //Log.i("MF", "diff: " + diff);
                 if (diff > 43200000) {
                     pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
-                    UpdateUtil.checkAppUpdates(getContext());
+                    AppUpdateUtil.checkAppUpdates(getContext());
                 }
             }
             MainActivity.coldStart = false;
