@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.96:
+* Arreglado Kissmanga y mangakawaii.
+* Mejorado busqueda de actualizaciones en algunos servidores.
+* Actualizada la traducción al italiano por tesseract241.
+
+Changes in v1.96:
+* Fixed Kissmanga and mangakawaii.
+* Improve update search on same servers.
+* Outdated it translation thanks to tesseract241.
+
 Cambios en v1.95:
 * Arreglado Japscan Webtoon y mejorado.
 * Arreglado últimos cambios en Fanfox / MangaHere (son iguales).

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.95:\n\t* Arreglado Japscan Webtoon y mejorado.\n\t* Arreglado últimos cambios en Fanfox / MangaHere (son iguales).\n\t* Agregado control de brillo al lector.</string>
+    <string name="update_message">Cambios en v1.96:\n\t* Arreglado Kissmanga y mangakawaii.\n\t* Mejorado busqueda de actualizaciones en algunos servidores.\n\t* Actualizada la traducción al italiano por tesseract241.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
