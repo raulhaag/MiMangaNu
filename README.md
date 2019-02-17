@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.97:
+* Corregido updates en versiones de android antiguas.
+
+Changes in v1.97:
+* Fixed update search on old android versions.
+
 Cambios en v1.96:
 * Arreglado Kissmanga y mangakawaii.
 * Mejorado busqueda de actualizaciones en algunos servidores.

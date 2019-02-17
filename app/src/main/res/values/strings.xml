@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.96:\n\t* Fixed Kissmanga and mangakawaii.\n\t* Improve update search on same servers.\n\t* Outdated it translation thanks to tesseract241.</string>
+    <string name="update_message">Changes in v1.97:\n\t* Fixed update search on old android versions.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

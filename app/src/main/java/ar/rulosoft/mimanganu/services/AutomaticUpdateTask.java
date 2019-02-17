@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.BiConsumer;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
@@ -85,28 +84,25 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 }
                 // check status of server and run cfi once per server if needed
                 final ExecutorService executorLocal = Executors.newFixedThreadPool(threads);
-                hosts.forEach(new BiConsumer<Integer, Boolean>() {
-                    @Override
-                    public void accept(final Integer j, Boolean k) {
-                        executorLocal.execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    ServerBase s = ServerBase.getServer(j, context);
-                                    Log.i(s.getServerName(), "check Started");
-                                    if (s.hasFilteredNavigation()) {
-                                        s.getMangasFiltered(s.getBasicFilter(), 1);
-                                    } else {
-                                        s.getMangas();
-                                    }
-                                    Log.i(s.getServerName(), "check finished");
-                                } catch (Exception e) {
-                                    Log.i("can' t confirm", "check failed");
+                for (final int sid : hosts.keySet()) {
+                    executorLocal.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                ServerBase s = ServerBase.getServer(sid, context);
+                                Log.i(s.getServerName(), "check Started");
+                                if (s.hasFilteredNavigation()) {
+                                    s.getMangasFiltered(s.getBasicFilter(), 1);
+                                } else {
+                                    s.getMangas();
                                 }
+                                Log.i(s.getServerName(), "check finished");
+                            } catch (Exception e) {
+                                Log.i("can' t confirm", "check failed");
                             }
-                        });
-                    }
-                });
+                        }
+                    });
+                }
                 executorLocal.shutdown();
                 while (!executorLocal.isTerminated()) {
                     try {
