@@ -44,12 +44,12 @@ android {
     productFlavors {
         fdroid {
             signingConfig signingConfigs.release
-            versionNameSuffix '-fdroid'
             dimension "builds"
         }
         github {
             signingConfig signingConfigs.release
              //removed to maintain updates as now are
+            versionNameSuffix '-github'
             dimension "builds"
         }
     }
