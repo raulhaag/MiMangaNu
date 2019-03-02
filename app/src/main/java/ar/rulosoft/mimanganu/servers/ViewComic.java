@@ -22,8 +22,8 @@ class ViewComic extends ServerBase {
     private static final String PATTERN_MANGA =
             "src=\"(https?://\\d+\\.bp\\.blogspot\\.com/[^\"]+)\".+?<a class=\"front-link\" href=\"([^\"]+)\">([^….<]+)";
 
-    private static final String HOST0 = "http://viewcomic.com";
-    private static final String HOST1 = "http://view-comic.com";
+    private static final String HOST0 = "http://view-comic.com";
+    private static final String HOST1 = "http://viewcomic.com";
     private static final String[] domain = {
             HOST0, HOST1
     };

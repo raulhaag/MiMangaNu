@@ -128,15 +128,11 @@ class MangaKawaii extends ServerBase {
         String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
         String source = getNavigatorAndFlushParameters().get(web);
 
-        Pattern pattern = Pattern.compile("<div class=\"media-left\">(.+?)</div>", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("(/manga/[^\"]+)[\\s\\S]+?data-src='([^']+)' alt='([^']+)'", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            mangas.add(new Manga(getServerID(),
-                    getFirstMatch("alt='([^']+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_name)),
-                    getFirstMatch("(/manga/[^\"]+)", matcher.group(1), context.getString(R.string.server_failed_locate_manga_url)),
-                    getFirstMatchDefault("src='([^\']+)", matcher.group(1), "")
-            ));
+            mangas.add(new Manga(getServerID(), matcher.group(3), matcher.group(1), matcher.group(2)));
         }
         return mangas;
     }
