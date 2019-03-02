@@ -137,7 +137,8 @@ public abstract class MTownBase extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         String web = getHost() + chapter.getPath();
         String data = getNavigatorWithNeededHeader().get(web);
-        int pages = Integer.parseInt(getLastMatchDefault("data-page=\"(\\d+)\">(\\d+)", data, "-1"));
+        int pages = Integer.parseInt(getLastMatchDefault("data-page=\"(\\d+)\">(\\d+)", data, "1"));
+        if (pages == -1 && !data.contains(">&gt;</a>")) pages = 1;
         if (pages != -1) {
             String cid = getFirstMatch("chapterid\\s*=\\s*(\\d+)", data, "Error on chapter initialization (1)");
             data = getFirstMatch("javascript\">\\s*(eval\\(.+?)</script>", data, "Error on chapter initialization (3)");
