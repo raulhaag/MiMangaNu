@@ -73,7 +73,7 @@ public class Navigator {
             readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
             connectionTimeout = Integer.parseInt(prefs.getString("connection_timeout", "10"));
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
-            initClient(new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context)), context);
+            initClient(cookieJar, context);
         }
     }
 

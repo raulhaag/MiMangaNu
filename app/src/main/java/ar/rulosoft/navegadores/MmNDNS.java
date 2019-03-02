@@ -9,15 +9,16 @@ import okhttp3.Dns;
 
 /**
  * Created by Raúl on 15/05/2018.
+ * saved only jic
  */
 public class MmNDNS implements Dns {
     @Override
     public List<InetAddress> lookup(String hostname) throws UnknownHostException {
         List<InetAddress> list = new ArrayList<>();
-        if (hostname.toLowerCase().contains("kissmanga.com")) {
-            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 87, (byte) 121, (byte) 98, (byte) 205}));
-       // } else if (hostname.toLowerCase().contains("readcomiconline.to")) {
-       //    list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 51, (byte) 15, (byte) 204, (byte) 213}));
+        if (hostname.toLowerCase().contains("kkkk.com")) {
+            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 255, (byte) 255, (byte) 255, (byte) 0}));
+        } else if (hostname.toLowerCase().contains("rrrrr.to")) {
+            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 127, (byte) 0, (byte) 0, (byte) 1}));
         } else {
             list = SYSTEM.lookup(hostname);
         }

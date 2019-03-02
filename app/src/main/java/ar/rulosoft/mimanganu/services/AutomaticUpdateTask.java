@@ -76,11 +76,13 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 mangaList = fromFolderMangaList;
             }
 
+            final HashMap<Integer, ServerBase> hosts = new HashMap<>();
             {
                 // get a simple hash map of needed server to be checked for cfi
-                HashMap<Integer, Boolean> hosts = new HashMap<>();
                 for (Manga m : mangaList) {
-                    hosts.put(m.getServerId(), false);
+                    if (!hosts.containsKey(m.getServerId())) {
+                        hosts.put(m.getServerId(), ServerBase.getServer(m.getServerId(), context));
+                    }
                 }
                 // check status of server and run cfi once per server if needed
                 final ExecutorService executorLocal = Executors.newFixedThreadPool(threads);
@@ -89,7 +91,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                         @Override
                         public void run() {
                             try {
-                                ServerBase s = ServerBase.getServer(sid, context);
+                                ServerBase s = hosts.get(sid);
                                 Log.i(s.getServerName(), "check Started");
                                 if (s.hasFilteredNavigation()) {
                                     s.getMangasFiltered(s.getBasicFilter(), 1);
@@ -117,7 +119,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
                     cancel(true);
-                executor.execute(new SingleUpdateSearch(mangaList.get(idx), idx));
+                executor.execute(new SingleUpdateSearch(hosts.get(mangaList.get(idx).getServerId()), mangaList.get(idx), idx));
             }
             executor.shutdown();
             // After finishing the loop, wait for all threads to finish their task before ending
@@ -166,15 +168,24 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private class SingleUpdateSearch implements Runnable {
         Manga manga;
         int idx;
+        ServerBase serverBase;
+
+        SingleUpdateSearch(ServerBase serverBase, Manga manga, int idx) {
+            this.manga = manga;
+            this.idx = idx;
+            this.serverBase = serverBase;
+        }
+
 
         SingleUpdateSearch(Manga manga, int idx) {
             this.manga = manga;
             this.idx = idx;
+            this.serverBase = ServerBase.getServer(manga.getServerId(), context);
+
         }
 
         @Override
         public void run() {
-            ServerBase serverBase = ServerBase.getServer(manga.getServerId(), context);
             boolean fast = pm.getBoolean("fast_update", true);
             try {
                 if (!isCancelled()) {

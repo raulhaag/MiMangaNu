@@ -30,7 +30,9 @@ public class RetryInterceptor implements Interceptor {
                 Log.w("Retry ", "retry (" + (response != null ? response.code() : "null") + ")");
                 Thread.sleep(1000 * tryCount);
                 if (response != null && (response.code() == 429 || response.code() == 400)) {
-                    Thread.sleep(30000);
+                    for (int i = 0; i < 58; i++) {
+                        Thread.sleep(500); // reduced, tray to not loose the control
+                    }
                 }
             } catch (InterruptedException e) {
                 e.printStackTrace();
