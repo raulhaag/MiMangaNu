@@ -243,7 +243,7 @@
     <string name="batoto_lang_chapters_title">Bototo idioma de capítulos</string>
     <string name="download_all_chapters">Descargar todos los capítulos</string>
     <string name="extra_server_settings">Otras configuraciones de servidores</string>
-    <string name="is_available">está disponible</string>
+    <string name="is_available"> está disponible</string>
     <string name="this_server_needs_an_account">Este servidor necesita una cuenta. Agrégala en ajustes.</string>
     <string name="download">Descargar</string>
     <string name="update_error">Error al descargar actualización</string>

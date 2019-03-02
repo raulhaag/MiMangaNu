@@ -253,7 +253,7 @@ public class AppUpdateUtil {
         protected Void doInBackground(Void... params) {
             try {
                 Triple<String,String, String> info = getCurrentVersion();
-                if (!BuildConfig.VERSION_NAME.equals(info.getFirst())) {
+                if (!BuildConfig.VERSION_NAME.replace("-github", "").equals(info.getFirst())) {
                     Intent intent = new Intent(context, MessageActivity.class);
                     intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
                     Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + info.getFirst() + context.getString(R.string.is_available));

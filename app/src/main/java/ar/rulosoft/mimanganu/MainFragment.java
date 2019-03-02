@@ -143,11 +143,11 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             // App Update
-            if (pm.getBoolean("app_update", true) && !AppUpdateUtil
-                    .getInstallerPackagename(getContext()).equals("org.fdroid.fdroid")) {
+            if (pm.getBoolean("app_update", true) && BuildConfig.VERSION_NAME.contains("github")) {
                 long last_check = pm.getLong("last_app_update", 0);
                 long diff = System.currentTimeMillis() - last_check;
                 //Log.i("MF", "diff: " + diff);
+                AppUpdateUtil.checkAppUpdates(getContext());
                 if (diff > 43200000) {
                     pm.edit().putLong("last_app_update", System.currentTimeMillis()).apply();
                     AppUpdateUtil.checkAppUpdates(getContext());
