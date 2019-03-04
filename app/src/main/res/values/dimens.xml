@@ -7,6 +7,7 @@
     <dimen name="tamano_texto">18sp</dimen>
     <dimen name="tamano_texto_dp">18dp</dimen>
     <dimen name="padding_recycleview">-4dp</dimen>
+    <dimen name="preference_margin">8dp</dimen>
 
     <!-- Some font and margin sizes for dialogs -->
     <dimen name="dialog_content_text_size">18sp</dimen>

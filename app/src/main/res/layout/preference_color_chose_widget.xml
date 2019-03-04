@@ -6,9 +6,9 @@
     android:gravity="center_vertical"
     android:minHeight="?android:attr/listPreferredItemHeight"
     android:orientation="horizontal"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingLeft="@dimen/preference_margin"
     android:paddingTop="8dp"
-    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/preference_margin"
     android:paddingBottom="8dp">
 
     <ImageView
