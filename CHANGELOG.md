@@ -1,5 +1,206 @@
 ﻿Changelog
 ---------
+Cambios en v1.96:
+* Arreglado Kissmanga y mangakawaii.
+* Mejorado busqueda de actualizaciones en algunos servidores.
+* Actualizada la traducción al italiano por tesseract241.
+
+Changes in v1.96:
+* Fixed Kissmanga and mangakawaii.
+* Improve update search on same servers.
+* Outdated it translation thanks to tesseract241.
+
+Cambios en v1.95:
+* Arreglado Japscan Webtoon y mejorado.
+* Arreglado últimos cambios en Fanfox / MangaHere (son iguales).
+* Agregado control de brillo al lector.
+
+Changes in v1.95:
+* Fixed Japscan Webtoon and improve.
+* Fixed last changes on Fanfox / MangaHere (both are the same).
+* Added bright control to reader.
+
+Cambios en v1.94:
+* Arreglado Japscan, Fanfox y CFI.
+
+Changes in v1.94:
+* Fixed Japscan, Fanfox and CFI.
+
+Cambios en v1.93:
+* Arreglado para que funcione en Android Pie.
+* Quitado MangaFox y agregado Fanfox.
+* Mejorado Vercomic.com y heavenmanga.
+* Arreglado EsNinemanga.
+
+Changes in v1.93:
+* Fix to work on Android Pie.
+* Removed MangaFox and added Fanfox.
+* Improve Vercomic.com and heavenmanga.
+* Fix EsNinemanga.
+
+Cambios en v1.92:
+* Arreglado mangashiro.net
+* Arreglado y mejorado tmo.
+* Mejorado Vercomic.com
+* Actulizada la traducción al Aleman.
+
+Changes in v1.92:
+* Improve mangashiro.net
+* Fix and improve tmo.
+* Improve Vercomic.com
+* Updated german translation.
+
+Cambios en v1.91:
+* Agregados mangashiro.net y vercomics.com.
+* Agregada traducción Indonesian gracias a joielechong.
+* Mejoras en UI, CFI.
+* Otros fixes.
+
+Changes in v1.91:
+* Added mangashiro.net and vercomics.com.
+* Add Indonesian translation thanks joielechong.
+* Improve UI, CFI.
+* Others fixes.
+
+Cambios en v1.90:
+* Arreglado TMO (agregado plugin hibrida).
+* Quitando mensaje de actualización F-droid(test).
+* Otros arreglos menores.
+
+Changes in v1.90:
+* Fix TMO (Added hybrid plugin).
+* Removed F-droid update message(test).
+* Min fixes.
+
+Cambios en v1.89:
+* Arreglado TMO.
+* Agregado "sabor" especial para fdroid.
+* Otros arreglos menores.
+
+Changes in v1.89:
+* Fix TMO.
+* Added fdroid flavor.
+* Min fixes.
+
+Cambios en v1.88:
+* Fix TMO.
+* Alternativa para la actulización.
+* CFI solo una instancia.
+
+Changes in v1.88:
+* Fix TMO.
+* App update alternative.
+* CFI only once a time.
+
+Cambios en v1.87:
+* Agregado Manga.ae (Ar).
+* Agregado Neumanga.tv (Indo).
+* Varios fixes.
+
+Changes in v1.87:
+* Added Manga.ae (Ar).
+* Added Neumanga.tv (Indo).
+* Various fixes.
+
+Cambios en v1.86:
+* Arreglado el navegador dispositivos post lollipop.
+
+Cambios en v1.85:
+ * TMO fixed (necesita un proceso después de actualizar).
+ * Agregado MintManga.
+ * Agregado backup de configuraciones.
+ * Otras funciones de fondo.
+
+ Changes in v1.86:
+ * Fix navigator for post lollipop devices.
+
+ Changes in v1.85:
+ * TMO fixed (need post update process).
+ * Added MintManga.
+ * Added configuration backup option.
+ * Other backend functions.
+
+Cambios en v1.84
+* Varios servidores actializados(no todos).
+* Agregado filtro azul para el lector.
+* Muchos fixes.
+
+Changes in v1.84
+* Various servers fixes(not all).
+* Added blue filter for reader.
+* Min fixes.
+
+Cambios en v1.83
+* Agregado canal de notificaciones en androi O.
+* Muchos arreglos.
+
+Changes in v1.83
+* Added android O notification channel.
+* A lot of fixes.
+
+Cambios en v1.82
+* Agregado un nueva opción en el reader.
+* Arreglado ssl handshake para api 16 a 22.
+* Vuelta atras a seekbar para el grupo de dispositivos que mostraban error de "reflection".
+* Arreglado los taps en orden correcto en el lector.
+* Otros arreglos menores.
+
+Changes in v1.82
+* Added new reader menu.
+* Fix ssl handshake for api 16 to 22.
+* Back to normal seekbar to fix a group of devices giving "reflection" error.
+* Fix reader tap bad order.
+* Others min fixes.
+
+Cambios en v1.81:
+* QuickFix a error del lector introducido versión 1.80.
+
+Changes in v1.81:
+* QuickFix introduced error from v1.80 on reader.
+
+Cambios en v1.80:
+* Fix y reestructuración NineManga
+* Nueva traducción al ruso (YChvanov).
+* Agregado MangaRawOnline.
+* Muchos fix internos y cambios en UI.
+* SubManga fue retirado.
+
+Changes in v1.80:
+* Fix an resstructured Ninemanga.
+* New Russian translation (YChvanov).
+* Added MangaRawOnline.
+* Lot of internal fixes and on UI.
+* SubManga was removed.
+
+Cambios en v1.79:
+* Agregada configuración de reintentos.
+* Cambiado Bato.to a Vatoto (no funcional aun)
+* Mejoras internas.
+* Arreglados generos en MangaFox.
+
+Changes in v1.79:
+* Added retry config preference.
+* Changed Bato.to to Vatoto (no functional yet)
+* Internal improves.
+* Fixed MangaFox genre filter.
+
+Cambios en v1.78:
+* Agregado desu.me[RU] y readmanga.me[RU].
+* Arreglado FromFolder.
+* Agregada política de reintentos.
+
+Changes in v1.78:
+* Added desu.me[RU] and readmanga.me[RU].
+* Fixed FromFolder.
+* Added retry policy.
+
+Cambios en v1.77:
+* Cambios en base de datos.
+* Cambios en la búsqueda de actualizaciones.
+
+Changes in v1.77:
+* Changes in database.
+* Changes in update search.
 
 Cambios en v1.76:
 * Fix NineManga.

@@ -21,7 +21,7 @@ import ar.rulosoft.navegadores.Navigator;
  */
 /* Je suis Charlie */
 class MangaKawaii extends ServerBase {
-    private static final String HOST = "https://www.mangakawaii.com";
+    private static final String HOST = "https://www.mangakawaii.to";
 
     MangaKawaii(Context context) {
         super(context);

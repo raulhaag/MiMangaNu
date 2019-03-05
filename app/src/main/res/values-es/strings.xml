@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.97:\n\t* Corregido updates en versiones de android antiguas.</string>
+    <string name="update_message">Cambios en v1.98:\n\t* Un par de server arreglados y una mejora.\n\t* Arreglado error en preferencias y removido el sufijo de fdroid.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
