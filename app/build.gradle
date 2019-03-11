@@ -5,8 +5,8 @@ android {
     buildToolsVersion '28.0.2'
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
-        versionCode 98
-        versionName "1.98"
+        versionCode 99
+        versionName "1.99"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         minSdkVersion 15
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.98:\n\t* Un par de server arreglados y una mejora.\n\t* Arreglado error en preferencias y removido el sufijo de fdroid.</string>
+    <string name="update_message">Cambios en v1.99:\n\t* Fix mangahere and fanfox.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -32,8 +32,8 @@
     <string name="descargando">(Descargando)</string>
     <string name="descargado">(Descargado)</string>
     <string name="error">(Error)</string>
-    <string name="apachelic">Licencia Apache</string>
     <string name="mitlic">Licencia MIT</string>
+    <string name="apachelic">Licencia Apache</string>
     <string name="marcarleido">Marcar como leído</string>
     <string name="esconder_de_galeria_subtitle">Esconder imágenes descargadas de la galería</string>
     <string name="descarga_no_leidos">Descargar no leídos</string>

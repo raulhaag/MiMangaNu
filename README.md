@@ -33,6 +33,11 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.99:
+* Fix mangahere and fanfox.
+
+Changes in v1.99:
+* Fix mangahere and fanfox.
 
 Cambios en v1.98:
 * Un par de server arreglados y una mejora.

@@ -137,25 +137,32 @@ public abstract class MTownBase extends ServerBase {
     public void chapterInit(Chapter chapter) throws Exception {
         String web = getHost() + chapter.getPath();
         String data = getNavigatorWithNeededHeader().get(web);
-        int pages = Integer.parseInt(getLastMatchDefault("data-page=\"(\\d+)\">(\\d+)", data, "1"));
-        if (pages == -1 && !data.contains(">&gt;</a>")) pages = 1;
+        int pages = Integer.parseInt(getLastMatchDefault("data-page=\"(\\d+)\">(\\d+)", data, "-1"));
         if (pages != -1) {
-            String cid = getFirstMatch("chapterid\\s*=\\s*(\\d+)", data, "Error on chapter initialization (1)");
-            data = getFirstMatch("javascript\">\\s*(eval\\(.+?)</script>", data, "Error on chapter initialization (3)");
-            data = getFirstMatch("guidkey\\s*=(.+?);", Util.getInstance().unpack(data), "Error on chapter initialization (4)");
-            ArrayList<String> keyp = getAllMatch("'([\\d|a|b|c|d|e|f])'", data);
-            StringBuilder key = new StringBuilder();
-            for (String string : keyp) {
-                key.append(string);
-            }
-            web = web.substring(0, web.length() - 6);
-            chapter.setPages(pages);
-            chapter.setExtra("1|" + cid + "|" + web + "|" + key.toString());
+            cim1(data, web, chapter, pages);
         } else {
-            data = getFirstMatch("\\['(.+?)'\\]", Util.getInstance().unpack(data), "Error on chapter initialization (0)");
-            chapter.setExtra("0|" + data.replaceAll("','", "|"));
-            chapter.setPages(data.split("','").length);
+            String data2 = getFirstMatchDefault("\\['(.+?)'\\]", Util.getInstance().unpack(data), "");
+            if (data2.equals("")) {
+                cim1(data, web, chapter, 1);
+                return;
+            }
+            chapter.setExtra("0|" + data2.replaceAll("','", "|"));
+            chapter.setPages(data2.split("','").length);
         }
+    }
+
+    private void cim1(String data, String web, Chapter chapter, int pages) throws Exception {
+        String cid = getFirstMatch("chapterid\\s*=\\s*(\\d+)", data, "Error on chapter initialization (1)");
+        data = getFirstMatch("javascript\">\\s*(eval\\(.+?)</script>", data, "Error on chapter initialization (3)");
+        data = getFirstMatch("guidkey\\s*=(.+?);", Util.getInstance().unpack(data), "Error on chapter initialization (4)");
+        ArrayList<String> keyp = getAllMatch("'([\\d|a|b|c|d|e|f])'", data);
+        StringBuilder key = new StringBuilder();
+        for (String string : keyp) {
+            key.append(string);
+        }
+        web = web.substring(0, web.length() - 6);
+        chapter.setPages(pages);
+        chapter.setExtra("1|" + cid + "|" + web + "|" + key.toString());
     }
 
     @Override
