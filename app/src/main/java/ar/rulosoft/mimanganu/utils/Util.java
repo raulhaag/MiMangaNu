@@ -12,6 +12,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
@@ -46,6 +47,7 @@ import ar.rulosoft.navegadores.Navigator;
 import static ar.rulosoft.mimanganu.MainActivity.pm;
 
 public class Util {
+
     public static final String channelIdNews = "MiMangaNu_News";
     private static final String channelIdUpdate = "MiMangaNu_Update";
     public static int n = 0;
@@ -54,6 +56,16 @@ public class Util {
     private static NotificationManager notificationManager;
 
     private Util() {
+    }
+
+
+    public static void initGlobals(Context context) {
+        try {
+            NetworkUtilsAndReceiver.ONLY_WIFI = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("only_wifi", false);
+            Navigator.initialiseInstance(context);
+        } catch (Exception ignore) {
+            ignore.printStackTrace();
+        }
     }
 
     public static Util getInstance() {

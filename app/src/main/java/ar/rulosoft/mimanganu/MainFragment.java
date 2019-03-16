@@ -141,7 +141,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             if (updateInterval < 0) {
                 updateAtStartUp(updateInterval);
             }
-
+            //AppUpdateUtil.checkAppUpdates(getContext()); just or tests
             // App Update
             if (pm.getBoolean("app_update", true) && BuildConfig.VERSION_NAME.contains("github")) {
                 long last_check = pm.getLong("last_app_update", 0);
