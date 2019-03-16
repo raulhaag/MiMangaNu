@@ -130,4 +130,9 @@ class JapScan extends ServerBase {
         String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + pageNumber);
         return getMangasFromSource(source);
     }
+
+    @Override
+    public boolean needRefererForImages() {
+        return false;
+    }
 }

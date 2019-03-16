@@ -5,7 +5,6 @@ import android.util.Log;
 import com.squareup.duktape.Duktape;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,8 +52,8 @@ public class CFInterceptor implements Interceptor {
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
 
-        String operation = rawOperation.replaceAll("a\\.value = (.+ \\+ t\\.length).+", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
-        String js = operation.replaceAll("t.length", "" + domain.length()).replaceAll("\n", "");
+        String operation = rawOperation.replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
+        String js = operation.replaceAll("t.length", domain.length() + "").replaceAll("\n", "");
         Duktape duktape = Duktape.create();
         String result = "";
         try {

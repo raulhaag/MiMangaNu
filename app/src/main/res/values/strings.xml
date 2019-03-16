@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.99:\n\t* Fix mangahere and fanfox.</string>
+    <string name="update_message">Changes in v1.100:\n\t* Fix CFI.\n\t* Fix JapScan.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

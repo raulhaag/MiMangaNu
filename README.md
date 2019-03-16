@@ -33,6 +33,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.100:
+* Fix CFI.
+* Fix JapScan.
+
+Changes in v1.100:
+* Fix CFI.
+* Fix JapScan.
+
 Cambios en v1.99:
 * Fix mangahere and fanfox.
 
