@@ -65,7 +65,7 @@ class JapScan extends ServerBase {
     }
 
     @Override
-    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+    public synchronized void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
@@ -101,7 +101,7 @@ class JapScan extends ServerBase {
     }
 
     @Override
-    public void chapterInit(Chapter chapter) throws Exception {
+    public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             String pages = getFirstMatch("Page (\\d+)</option>\\s*</select>", source,
@@ -126,7 +126,7 @@ class JapScan extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+    public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + pageNumber);
         return getMangasFromSource(source);
     }

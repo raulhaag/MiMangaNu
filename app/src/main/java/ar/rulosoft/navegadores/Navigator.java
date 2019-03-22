@@ -3,6 +3,7 @@ package ar.rulosoft.navegadores;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
+import android.os.Handler;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
@@ -59,9 +60,12 @@ public class Navigator {
     private OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
+    private Context context;
+    private Handler mlHandler;
 
     private Navigator(Context context) throws Exception {
-
+        mlHandler = new Handler();
+        this.context = context;
         if (Util.getInstance().isGPServicesAvailable(context)) {
             ProviderInstaller.installIfNeeded(context); //dislike but needed on old devices to have access to new ssl ca/ etc
         }
@@ -430,5 +434,13 @@ public class Navigator {
             }
         }
         return certificate;
+    }
+
+    public Context getContext() {
+        return context;
+    }
+
+    public Handler getMlHandler() {
+        return mlHandler;
     }
 }

@@ -9,6 +9,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -204,6 +205,8 @@ public abstract class ServerBase {
     private int icon;
     private int flag;
     private int serverID;
+    private static HashMap<String, ServerBase> initedServers = new HashMap<>();
+
 
     /**
      * Construct a new ServerBase object.
@@ -212,6 +215,13 @@ public abstract class ServerBase {
      */
     public ServerBase(Context context) {
         this.context = context;
+    }
+
+    public static ServerBase getServer(int id, Context context) {
+        if (!initedServers.containsKey("" + id)) {
+            initedServers.put("" + id, getNewServer(id, context));
+        }
+        return initedServers.get("" + id);
     }
 
     /**
@@ -223,7 +233,7 @@ public abstract class ServerBase {
      * @param context the context for this object
      * @return a <code>ServerBase</code> or a <code>DeadServer</code> object
      */
-    public static ServerBase getServer(int id, Context context) {
+    private static ServerBase getNewServer(int id, Context context) {
         ServerBase serverBase;
         switch (id) {
             case MANGAPANDA:

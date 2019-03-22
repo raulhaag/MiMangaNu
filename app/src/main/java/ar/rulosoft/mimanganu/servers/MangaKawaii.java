@@ -66,7 +66,7 @@ class MangaKawaii extends ServerBase {
     }
 
     @Override
-    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+    public synchronized void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
@@ -108,7 +108,7 @@ class MangaKawaii extends ServerBase {
     }
 
     @Override
-    public void chapterInit(Chapter chapter) throws Exception {
+    public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getExtra() == null) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             ArrayList<String> images = getAllMatch("data-src='\\s*(.+?)\\s*'", source);
@@ -122,9 +122,7 @@ class MangaKawaii extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        // TODO implement filtering
-
+    public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
         String source = getNavigatorAndFlushParameters().get(web);
 

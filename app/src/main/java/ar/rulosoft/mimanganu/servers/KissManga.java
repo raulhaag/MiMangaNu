@@ -123,7 +123,7 @@ class KissManga extends ServerBase {
     }
 
     @Override
-    public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+    public synchronized void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
 
@@ -230,7 +230,7 @@ class KissManga extends ServerBase {
     }
 
     @Override
-    public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
+    public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
         String source;
 
