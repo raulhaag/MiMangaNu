@@ -1,27 +1,30 @@
 package ar.rulosoft.navegadores;
 
-import android.os.Build;
+import android.util.Base64;
 import android.util.Log;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.Toast;
+
+import com.squareup.duktape.Duktape;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
-
+/**
+ * Resolver based on habrahabr.ru/post/258101/.
+ */
 public class CFInterceptor implements Interceptor {
 
-    boolean cfl = false;
-    private WebView webView;
-    private String cfurl;
+    private final static Pattern OPERATION_PATTERN = Pattern.compile("setTimeout\\(function\\(\\)\\{\\s+(var .,.,.,.[\\s\\S]+?a\\.value = .+?;)", Pattern.DOTALL);
+    private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
+    private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
+    private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"s\" value=\"([^\"]*)");
+    private final static Pattern REPLACE_VALUE = Pattern.compile("visibility:hidden;\" id=\".+\">([^<]+)<");
 
     public static String getFirstMatch(Pattern p, String source) {
         Matcher m = p.matcher(source);
@@ -40,88 +43,69 @@ public class CFInterceptor implements Interceptor {
         return response;
     }
 
-    public synchronized Response resolveOverCF(Chain chain, Response response) throws IOException {
-        final Request request = response.request();
-        final String content = response.body().string();
+    public Response resolveOverCF(Chain chain, Response response) throws IOException {
+        Request request = response.request();
+        String domain = request.url().host().trim();
+        String content = response.body().string();
         response.body().close();
-        cfl = false;
-        Navigator.getInstance().getMlHandler().post(new Runnable() {
-            @Override
-            public void run() {
-                webView = new WebView(Navigator.getInstance().getContext());
-                webView.setWebViewClient(new WebViewClient() {
 
-                    @Override
-                    public void onLoadResource(WebView view, String url) {
-                        Log.i("MMN Loading if", url);
-                        if (url.contains("cdn-cgi/l/chk_jschl")) { //challenged send;
-                            view.stopLoading();
-                            cfl = true;
-                            cfurl = url;
-                        }
-                    }
+        String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
+        String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
+        String challengePass = getFirstMatch(PASS_PATTERN, content);
+        String s = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content));
+        String rv = getFirstMatch(REPLACE_VALUE, content);
 
-                    @Override
-                    public void onPageFinished(WebView view, String url) {
-                        Log.i("MMN FiniWini", url);
-                    }
-                });
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    CookieManager.getInstance().removeAllCookies(null);
-                    CookieManager.getInstance().flush();
-                } else {
-                    CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(Navigator.getInstance().getContext());
-                    cookieSyncMngr.startSync();
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    cookieManager.removeAllCookie();
-                    cookieManager.removeSessionCookie();
-                    cookieSyncMngr.stopSync();
-                    cookieSyncMngr.sync();
-                }
-                webView.getSettings().setJavaScriptEnabled(true);
-                webView.getSettings().setUserAgentString(Navigator.USER_AGENT);
-                webView.getSettings().setLoadsImagesAutomatically(false);
-                webView.getSettings().setBlockNetworkLoads(false);
-                webView.loadDataWithBaseURL(request.url().toString(), content, "text/html", "UTF-8", "");
-            }
-        });
-
-        int toCounter = 0;
-        while (!cfl && toCounter < 100) {
-            try {
-                toCounter++;
-                Thread.sleep(1000);
-                if (cfl) break;
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        if (rawOperation == null || challengePass == null || challenge == null || s == null) {
+            Log.e("CFI", "couldn't resolve over cloudflare");
+            return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
 
-        Navigator.getInstance().getMlHandler().post(new Runnable() {
+        String operation = rawOperation.replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
+        String js = operation.replaceAll("t.length", domain.length() + "").replaceAll("\n", "");
+        js = js.replaceAll("atob", "Atob.atob").replaceAll("function\\(p\\)\\{[^\\}]+\\}", rv).replaceAll("a.value = (\\([^;]+;)", "$1");
+        Duktape duktape = Duktape.create();
+        Atob atob = new Atob() {
             @Override
-            public void run() {
-                webView.destroy();
+            public String atob(String str) {
+                return new String(Base64.decode(str, Base64.DEFAULT));
             }
-        });
-
-        if (toCounter >= 20) {
-            Navigator.getInstance().getMlHandler().post(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(Navigator.getInstance().getContext(), "Timeout", Toast.LENGTH_LONG).show();
-                }
-            });
-            return null;
+        };
+        duktape.set("Atob", Atob.class, atob); //not sure if needed after replacement method
+        String result = "";
+        try {
+            result = duktape.evaluate(js).toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            duktape.close();
         }
+
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        String url = new HttpUrl.Builder().scheme(request.isHttps() ? "https" : "http").host(domain)
+                .addPathSegments("cdn-cgi/l/chk_jschl")
+                .addEncodedQueryParameter("s", s)
+                .addEncodedQueryParameter("jschl_vc", challenge)
+                .addEncodedQueryParameter("pass", challengePass)
+                .addEncodedQueryParameter("jschl_answer", result)
+                .build().toString();
+
         Request request1 = new Request.Builder()
-                .url(cfurl)
+                .url(url)
                 .header("User-Agent", Navigator.USER_AGENT)
                 .header("Referer", request.url().toString())
                 .header("Accept-Language", "en, eu")
                 .header("Connection", "keep-alive")
                 .header("Accept", "text/html,application/xhtml+xml,application/xml")
                 .build();
+        return chain.proceed(request1);//generate the cookie;
+    }
 
-        return chain.proceed(request1);//.addHeader("Cookie", lastCookie).build());
+    interface Atob {
+        String atob(String str);
     }
 }
