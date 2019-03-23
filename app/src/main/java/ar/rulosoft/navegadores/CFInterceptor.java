@@ -1,6 +1,9 @@
 package ar.rulosoft.navegadores;
 
+import android.os.Build;
+import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
@@ -39,37 +42,52 @@ public class CFInterceptor implements Interceptor {
 
     public synchronized Response resolveOverCF(Chain chain, Response response) throws IOException {
         final Request request = response.request();
+        final String content = response.body().string();
+        response.body().close();
         cfl = false;
         Navigator.getInstance().getMlHandler().post(new Runnable() {
             @Override
             public void run() {
                 webView = new WebView(Navigator.getInstance().getContext());
                 webView.setWebViewClient(new WebViewClient() {
-                    boolean cs = false;
 
                     @Override
                     public void onLoadResource(WebView view, String url) {
-                        if (cs) {
-                        }
+                        Log.i("MMN Loading if", url);
                         if (url.contains("cdn-cgi/l/chk_jschl")) { //challenged send;
                             view.stopLoading();
                             cfl = true;
                             cfurl = url;
                         }
                     }
+
+                    @Override
+                    public void onPageFinished(WebView view, String url) {
+                        Log.i("MMN FiniWini", url);
+                    }
                 });
-                CookieManager.getInstance().removeAllCookies(null);
-                CookieManager.getInstance().flush();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    CookieManager.getInstance().removeAllCookies(null);
+                    CookieManager.getInstance().flush();
+                } else {
+                    CookieSyncManager cookieSyncMngr = CookieSyncManager.createInstance(Navigator.getInstance().getContext());
+                    cookieSyncMngr.startSync();
+                    CookieManager cookieManager = CookieManager.getInstance();
+                    cookieManager.removeAllCookie();
+                    cookieManager.removeSessionCookie();
+                    cookieSyncMngr.stopSync();
+                    cookieSyncMngr.sync();
+                }
                 webView.getSettings().setJavaScriptEnabled(true);
                 webView.getSettings().setUserAgentString(Navigator.USER_AGENT);
                 webView.getSettings().setLoadsImagesAutomatically(false);
                 webView.getSettings().setBlockNetworkLoads(false);
-                webView.loadUrl(request.url().toString());
+                webView.loadDataWithBaseURL(request.url().toString(), content, "text/html", "UTF-8", "");
             }
         });
 
         int toCounter = 0;
-        while (!cfl && toCounter < 20) {
+        while (!cfl && toCounter < 100) {
             try {
                 toCounter++;
                 Thread.sleep(1000);
