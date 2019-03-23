@@ -33,10 +33,10 @@ Downloads
 
 Changelog
 ---------
-Cambios en v1.100:
+Cambios en v1.101:
 * Fix CFI.
 
-Changes in v1.100:
+Changes in v1.101:
 * Fix CFI.
 
 Cambios en v1.100:
