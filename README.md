@@ -35,6 +35,12 @@ Changelog
 ---------
 Cambios en v1.100:
 * Fix CFI.
+
+Changes in v1.100:
+* Fix CFI.
+
+Cambios en v1.100:
+* Fix CFI.
 * Fix JapScan.
 
 Changes in v1.100:
