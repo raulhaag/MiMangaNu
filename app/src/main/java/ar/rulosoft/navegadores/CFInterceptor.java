@@ -17,6 +17,7 @@ import okhttp3.Response;
 
 /**
  * Resolver based on habrahabr.ru/post/258101/.
+ * and https://github.com/VeNoMouS/cloudflare-scrape-js2py
  */
 public class CFInterceptor implements Interceptor {
 
@@ -61,9 +62,13 @@ public class CFInterceptor implements Interceptor {
         }
 
         String operation = rawOperation.replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
-        String js = operation.replaceAll("t.length", domain.length() + "").replaceAll("\n", "");
-        js = js.replaceAll("atob", "Atob.atob").replaceAll("function\\(p\\)\\{[^\\}]+\\}", rv).replaceAll("a.value = (\\([^;]+;)", "$1");
+        String js = operation.substring(0, operation.indexOf(";")) + "; p = 0; k ='fk'; t = \"" + domain + "\"" + operation.substring(operation.indexOf(";"));
+        js = js.replaceAll("atob", "Atob.atob").replaceAll("a.value = (\\([^;]+;)", "$1").replaceAll(";\\s*;", ";");
+        js = js.replace("function(p){return eval((true+\"\")[0]+\".\"+([][\"fill\"]+\"\")[3]+(+(101))[\"to\"+String[\"name\"]](21)[1]+(false+\"\")[1]+(true+\"\")[1]+Function(\"return escape\")()((\"\")[\"italics\"]())[2]+(true+[][\"fill\"])[10]+(undefined+\"\")[2]+(true+\"\")[3]+(+[]+Array)[10]+(true+\"\")[0]+\"(\"+p+\")\")}", "t.charCodeAt");
+        js = js.replaceAll(";", ";\n");
+
         Duktape duktape = Duktape.create();
+        duktape.evaluate("var document = {getElementById: function(p) { return {innerHTML:\"" + rv + "\"};}};");
         Atob atob = new Atob() {
             @Override
             public String atob(String str) {
