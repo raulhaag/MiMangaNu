@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.102:
+* Fix CFI.
+
+Changes in v1.102:
+* Fix CFI.
+
 Cambios en v1.101:
 * Fix CFI.
 
