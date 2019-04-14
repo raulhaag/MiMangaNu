@@ -58,7 +58,7 @@ public class CFInterceptor implements Interceptor {
         String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
         String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
         String challengePass = getFirstMatch(PASS_PATTERN, content);
-        String s = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content));
+        String s = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content), "UTF-8");
         String rv = getFirstMatch(REPLACE_VALUE, content);
 
         if (rawOperation == null || challengePass == null || challenge == null || s == null) {
@@ -66,11 +66,15 @@ public class CFInterceptor implements Interceptor {
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
 
-        String js = rawOperation.replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1").replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
-        js = Jsonfxxx.getInstance().jsonfxxx(js);
+        String js = rawOperation
+                .replaceAll("e\\s*=\\s*function[\\s\\S]+?\\};", "")
+                .replaceAll("atob", "Atob.atob")
+                .replaceAll("e\\(\"(.+?)\"\\)", "Atob\\.atob(\"$1\")")
+                .replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1")
+                .replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
         Duktape duktape = Duktape.create();
         js = js.replaceAll("[\n\\']", "");
-        // js = js.replace(";", ";\n");
+        // js = js.replace(";", ";\n"); only on debug for a easy read
 
         String newJs = String.format("var t = \"%s\";\n" +
                 "            var g = String.fromCharCode;\n" +
@@ -87,7 +91,7 @@ public class CFInterceptor implements Interceptor {
             }
         };
         duktape.set("Atob", Atob.class, atob); //not sure if needed after replacement method
-        js = js.replaceAll("atob", "Atob.atob").replaceAll("a.value = (\\([^;]+;)", "$1").replaceAll(";\\s*;", ";");
+        js = js.replaceAll("a.value = (\\([^;]+;)", "$1").replaceAll(";\\s*;", ";");
         String result = "";
         try {
             result = duktape.evaluate(js).toString();

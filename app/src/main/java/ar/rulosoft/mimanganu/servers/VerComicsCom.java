@@ -15,7 +15,7 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 
 public class VerComicsCom extends ServerBase {
 
-    private static final String HOST = "http://vercomics.com/";
+    private static final String HOST = "https://vercomics.com/";
 
     /**
      * Construct a new ServerBase object.
@@ -34,13 +34,13 @@ public class VerComicsCom extends ServerBase {
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
-        String data = getNavigatorAndFlushParameters().get(HOST + "category/300/");
+        String data = getNavigatorAndFlushParameters().get(HOST + "comic/300/");
         JSONObject list = new JSONObject(getFirstMatch("js_array =(\\{[\\s\\S]+?\\})\\;\\s*</sc", data, context.getString(R.string.error)));
         int last = list.length();
         for (int i = 0; i < last; i++) {
             try {
                 JSONObject o = (JSONObject) list.get("" + i);
-                Manga m = new Manga(getServerID(), i + "|\t\t" + o.get("name").toString(), o.get("taxonomy").toString() + "/" +
+                Manga m = new Manga(getServerID(), i + "|\t\t" + o.get("name").toString(), "comic/" +
                         o.get("slug").toString() + "/", false);
                 mangas.add(m);
             } catch (Exception e) {
@@ -65,7 +65,7 @@ public class VerComicsCom extends ServerBase {
         if (pages == 1) {
             pages = Integer.parseInt(getFirstMatchDefault("/(\\d+)/\">Última", data, "1"));
         }
-        Pattern pattern = Pattern.compile("<a href=\"http://vercomics.com/(.+?)\" rel=\"bookmark\" title=\"(.+?)\"");
+        Pattern pattern = Pattern.compile("<a href=\"https?://vercomics.com/(.+?)\" rel=\"bookmark\" title=\"(.+?)\"");
         Matcher matcher = pattern.matcher(data);
         ArrayList<Chapter> chapters = new ArrayList<>();
         while (matcher.find()) {
@@ -91,10 +91,16 @@ public class VerComicsCom extends ServerBase {
         manga.setAuthor(context.getString(R.string.nodisponible));
         manga.setSynopsis(context.getString(R.string.nodisponible));
         manga.setGenre(context.getString(R.string.nodisponible));
-        JSONObject list = new JSONObject(getFirstMatch("js_array =(\\{[\\s\\S]+?\\})\\;\\s*</sc", data, context.getString(R.string.error)));
-        JSONObject o = (JSONObject) list.get(manga.getTitle().split("\\|")[0]);
-        manga.setTitle(o.get("name").toString());
-        manga.setSynopsis(o.get("description").toString());
+        try {
+            JSONObject list = new JSONObject(getFirstMatch("js_array =(\\{[\\s\\S]+?\\})\\;\\s*</sc", data, context.getString(R.string.error)));
+            JSONObject o = (JSONObject) list.get(manga.getTitle().split("\\|")[0]);
+            manga.setTitle(o.get("name").toString());
+            manga.setSynopsis(o.get("description").toString());
+        } catch (Exception e) {
+            // already gived
+        }
+        if (forceReload)
+            loadChapters(manga, forceReload);
     }
 
     @Override
