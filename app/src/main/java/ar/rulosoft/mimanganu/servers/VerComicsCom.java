@@ -60,27 +60,29 @@ public class VerComicsCom extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
-        int pages = Integer.parseInt(getFirstMatchDefault("/page/(\\d+)/\">[^ ]+?<a class=\"nextpostslink\"", data, "1"));
-        if (pages == 1) {
-            pages = Integer.parseInt(getFirstMatchDefault("/(\\d+)/\">Última", data, "1"));
-        }
-        Pattern pattern = Pattern.compile("<a href=\"https?://vercomics.com/(.+?)\" rel=\"bookmark\" title=\"(.+?)\"");
-        Matcher matcher = pattern.matcher(data);
-        ArrayList<Chapter> chapters = new ArrayList<>();
-        while (matcher.find()) {
-            chapters.add(new Chapter(matcher.group(2), matcher.group(1)));
-        }
-        for (int i = 2; i <= pages; i++) {
-            //  Util.getInstance().toast(context, "Cargando " + i + " de " + pages + " paginas", Toast.LENGTH_SHORT);
-            data = getNavigatorAndFlushParameters().get(HOST + manga.getPath() + "/page/" + i + "/");
-            matcher = pattern.matcher(data);
+        if (manga.getChapters().isEmpty()) {
+            String data = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
+            int pages = Integer.parseInt(getFirstMatchDefault("/page/(\\d+)/\">[^ ]+?<a class=\"nextpostslink\"", data, "1"));
+            if (pages == 1) {
+                pages = Integer.parseInt(getFirstMatchDefault("/(\\d+)/\">Última", data, "1"));
+            }
+            Pattern pattern = Pattern.compile("<a href=\"https?://vercomics.com/(.+?)\" rel=\"bookmark\" title=\"(.+?)\"");
+            Matcher matcher = pattern.matcher(data);
+            ArrayList<Chapter> chapters = new ArrayList<>();
             while (matcher.find()) {
                 chapters.add(new Chapter(matcher.group(2), matcher.group(1)));
             }
-        }
-        for (Chapter c : chapters) {
-            manga.addChapterFirst(c);
+            for (int i = 2; i <= pages; i++) {
+                //  Util.getInstance().toast(context, "Cargando " + i + " de " + pages + " paginas", Toast.LENGTH_SHORT);
+                data = getNavigatorAndFlushParameters().get(HOST + manga.getPath() + "/page/" + i + "/");
+                matcher = pattern.matcher(data);
+                while (matcher.find()) {
+                    chapters.add(new Chapter(matcher.group(2), matcher.group(1)));
+                }
+            }
+            for (Chapter c : chapters) {
+                manga.addChapterFirst(c);
+            }
         }
     }
 
@@ -91,16 +93,12 @@ public class VerComicsCom extends ServerBase {
         manga.setAuthor(context.getString(R.string.nodisponible));
         manga.setSynopsis(context.getString(R.string.nodisponible));
         manga.setGenre(context.getString(R.string.nodisponible));
-        try {
+        if (manga.getTitle().contains("|")) {
             JSONObject list = new JSONObject(getFirstMatch("js_array =(\\{[\\s\\S]+?\\})\\;\\s*</sc", data, context.getString(R.string.error)));
             JSONObject o = (JSONObject) list.get(manga.getTitle().split("\\|")[0]);
             manga.setTitle(o.get("name").toString());
             manga.setSynopsis(o.get("description").toString());
-        } catch (Exception e) {
-            // already gived
         }
-        if (forceReload)
-            loadChapters(manga, forceReload);
     }
 
     @Override

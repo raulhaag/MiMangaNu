@@ -122,6 +122,7 @@ public class Navigator {
             socketFactory = sslContext.getSocketFactory();
         }
         httpClient = new OkHttpClientConnectionChecker.Builder()
+                .addInterceptor(new UnzippingInterceptor())
                 .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                 .addInterceptor(new CFInterceptor())
                 .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
@@ -362,7 +363,7 @@ public class Navigator {
                 .add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
                 .add("Connection", "keep-alive")
                 .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .add("Accept-Encoding", "deflate");
+                .add("Accept-Encoding", "gzip, deflate");
 
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());
