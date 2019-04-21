@@ -21,6 +21,7 @@ import static junit.framework.TestCase.assertTrue;
 import static junit.framework.TestCase.fail;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 
 public class TestServersCommon {
 
@@ -204,7 +205,7 @@ public class TestServersCommon {
     }
 
     private void testLoadImage(String image) throws Exception {
-        String parts[] = image.split("\\|");
+        String[] parts = image.split("\\|");
         logMessage(String.format(Locale.getDefault(), "[IMG] %s", parts[0]));
         assertNotNull(getContext(), image);
         assertFalse(getContext(), image.isEmpty());
@@ -214,9 +215,9 @@ public class TestServersCommon {
             assertTrue(getContext(), (image.split("//", -1).length - 1) <= 2);
 
         // additional test for NineManga servers to detect broken hotlinking
-        assertFalse(
+        assertNotEquals(
                 getContext("NineManga: hotlink detection - server delivers bogus image link"),
-                image.equals("http://es.taadd.com/files/img/57ead05682694a7c026f99ad14abb8c1.jpg")
+                image, "http://es.taadd.com/files/img/57ead05682694a7c026f99ad14abb8c1.jpg"
         );
 
         // check if the image loaded has at least 1kB (assume proper content)
