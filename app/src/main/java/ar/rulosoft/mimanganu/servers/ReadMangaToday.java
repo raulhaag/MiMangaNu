@@ -121,8 +121,10 @@ class ReadMangaToday extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         ArrayList<Manga> mangas = new ArrayList<>();
         Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("x-requested-with", "XMLHttpRequest");
-        String data = getNavigatorAndFlushParameters().get(HOST + "/service/search?q=" + term.toLowerCase());
+        nav.addHeader("X-Requested-With", "XMLHttpRequest");
+        nav.addPost("dataType", "json");
+        nav.addPost("phrase", term.replaceAll("\\s+", "+"));
+        String data = nav.post(HOST + "/service/search");
         if (!data.equals("false")) {
             JSONArray arr = new JSONArray(data);
             for (int i = 0; i < arr.length(); i++) {
