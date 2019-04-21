@@ -163,4 +163,9 @@ public class VerComicsCom extends ServerBase {
     public boolean hasFilteredNavigation() {
         return false;
     }
+
+    @Override
+    public boolean hasSearch() {
+        return false;
+    }
 }
