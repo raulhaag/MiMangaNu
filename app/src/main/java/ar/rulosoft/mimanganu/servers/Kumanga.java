@@ -263,7 +263,7 @@ class Kumanga extends ServerBase {
             try {
                 data = getAllMatch("leer\\/'\\+this.value\">([\\s\\S]+?)<\\/select>",
                         getNavigatorAndFlushParameters().get(temp.get(0).getPath().replace("/c/", "/leer/"))).get(1);
-                pattern = Pattern.compile("value=\"([^\"]+)\"[ selected]*>([^<]+)", Pattern.DOTALL);
+                pattern = Pattern.compile("value=\"([^\"]+)\"( selected)*>([^<]+)", Pattern.DOTALL);
                 matcher = pattern.matcher(data);
                 while (matcher.find()) {
                     manga.addChapterLast(new Chapter(matcher.group(2), HOST + "/manga/leer/" + matcher.group(1)));
@@ -287,7 +287,7 @@ class Kumanga extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
         if (chapter.getExtra().contains("|")) {
-            return chapter.getExtra().split("\\|")[page - 1];
+            return HOST + chapter.getExtra().split("\\|")[page - 1];
         } else {
             return chapter.getExtra().replaceAll("\\{.+?\\}", "" + page);
         }
@@ -304,7 +304,7 @@ class Kumanga extends ServerBase {
                     "'pageFormat':'(.+?)'", data,
                     context.getString(R.string.server_failed_loading_chapter)));
             String pURLs = getFirstMatchDefault("var pUrl=\\[(.+?)\\]", data, "");
-            if (pURLs.contains("\"npage\":\"1\"")) {
+            if (pURLs.contains("\"npage\":\"1\"")||pURLs.contains("\"npage\":1")) {
                 chapter.setExtra(TextUtils.join("|", getAllMatch("\"imgURL\":\"([^\"]+)", pURLs.replaceAll("\\\\", ""))));
             }
             chapter.setPages(Integer.parseInt(pages));

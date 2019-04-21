@@ -61,10 +61,8 @@ public class Navigator {
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
     private Context context;
-    private Handler mlHandler;
 
     private Navigator(Context context) throws Exception {
-        mlHandler = new Handler();
         this.context = context;
         if (Util.getInstance().isGPServicesAvailable(context)) {
             ProviderInstaller.installIfNeeded(context); //dislike but needed on old devices to have access to new ssl ca/ etc
@@ -439,9 +437,5 @@ public class Navigator {
 
     public Context getContext() {
         return context;
-    }
-
-    public Handler getMlHandler() {
-        return mlHandler;
     }
 }

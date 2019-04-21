@@ -22,7 +22,7 @@ public class VerComicsCom extends ServerBase {
      *
      * @param context the context for this object
      */
-    public VerComicsCom(Context context) {
+    VerComicsCom(Context context) {
         super(context);
         this.setFlag(R.drawable.flag_es);
         this.setIcon(R.drawable.vercomicscom);
@@ -93,16 +93,23 @@ public class VerComicsCom extends ServerBase {
         manga.setAuthor(context.getString(R.string.nodisponible));
         manga.setSynopsis(context.getString(R.string.nodisponible));
         manga.setGenre(context.getString(R.string.nodisponible));
+        assert(manga.getTitle() != null);
         if (manga.getTitle().contains("|")) {
             JSONObject list = new JSONObject(getFirstMatch("js_array =(\\{[\\s\\S]+?\\})\\;\\s*</sc", data, context.getString(R.string.error)));
             JSONObject o = (JSONObject) list.get(manga.getTitle().split("\\|")[0]);
+
+            // there is always a title, but the description field may be empty
             manga.setTitle(o.get("name").toString());
-            manga.setSynopsis(o.get("description").toString());
+            String desc = o.get("description").toString();
+            if(!desc.isEmpty()) {
+                manga.setSynopsis(desc);
+            }
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        assert(chapter.getExtra() != null);
         return chapter.getExtra().split("\\|")[page];
     }
 
@@ -116,8 +123,8 @@ public class VerComicsCom extends ServerBase {
         if (page.contains("notfound")) {
             page = getFirstMatchDefault("src=\"([^\\s]+issu[^\\s]+)\"", data, "notfound");
         }
-        String username = "";
-        String docname = "";
+        String username;
+        String docname;
         if (page.contains("embed")) {
             String iframe = getNavigatorAndFlushParameters().get("https://e.issuu.com/config/" + page.substring(page.lastIndexOf("/") + 1) + ".json");
             username = iframe.split("ownerUsername\":")[1].split(",")[0].split("\"")[1];
@@ -130,16 +137,21 @@ public class VerComicsCom extends ServerBase {
         }
         String query_url = "http://api.issuu.com/query?action=issuu.document.get_anonymous&format=json&documentUsername=" + username + "&name=" + docname + "&jsonCallback=C&_1341928054865=";
 
-        String images = "";
         String js = getNavigatorAndFlushParameters().get(query_url);
         int pageCount = Integer.parseInt("0" + js.split("pageCount\":")[1].split(",")[0].trim());
         String hash = js.split("documentId\":")[1].split(",")[0].split("\"")[1];
+        StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= pageCount; i++) {
-            images = images + "|" + "http://image.issuu.com/" + hash + "/jpg/page_" + i + ".jpg";
+            sb.append("|")
+              .append("http://image.issuu.com/")
+              .append(hash)
+              .append("/jpg/page_")
+              .append(i)
+              .append(".jpg");
         }
 
         chapter.setPages(pageCount);
-        chapter.setExtra(images);
+        chapter.setExtra(sb.toString());
     }
 
     @Override
@@ -149,6 +161,11 @@ public class VerComicsCom extends ServerBase {
 
     @Override
     public boolean hasFilteredNavigation() {
+        return false;
+    }
+
+    @Override
+    public boolean hasSearch() {
         return false;
     }
 }

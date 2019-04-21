@@ -9,6 +9,7 @@
 
 # Android Studio
 .gradle
+.idea/encodings.xml
 .idea/compiler.xml
 .idea/gradle.xml
 .idea/misc.xml

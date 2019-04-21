@@ -484,7 +484,8 @@
     <string name="backup_settings_title">Einstellungen sichern</string>
     <string name="restore_settings_summary">Einstellungen aus externem Verzeichnis wiederherstellen</string>
     <string name="restore_settings_title">Einstellungen wiederherstellen</string>
-    <string name="update_server_information">Serveraktualisierung läuft. Das kann einige Zeit dauern (5-10min). Bitte warten, bis die Aktualisierungsmeldung erschienen ist.</string>
+    <string name="update_server_information">Serveraktualisierung läuft. Das kann einige Zeit dauern (5&#8211;10min). Bitte warten, bis die Aktualisierungsmeldung erschienen ist.</string>
     <string name="server_update_process_finished">Serveraktualisierung beendet.</string>
     <string name="processed">" verarbeitet"</string>
+    <string name="bright_level">Helligkeit</string>
 </resources>
