@@ -179,7 +179,10 @@ public class TestServersCommon {
         } catch (Exception e) {
             fail(getContext(e.getMessage()));
         }
-        assertTrue(getContext(), chapter.getPages() > 1);
+        assertTrue(getContext(), chapter.getPages() >= 1);
+        if(chapter.getPages() == 1) {
+            System.err.println("[WRN] the chapter consists only of one page - possible, but suspicious.");
+        }
 
         // check random image link
         String url = null;
