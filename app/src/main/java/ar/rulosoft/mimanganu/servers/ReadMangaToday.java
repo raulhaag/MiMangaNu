@@ -170,7 +170,7 @@ class ReadMangaToday extends ServerBase {
 
             // Author (can be multi-part)
             ArrayList<String> authors = getAllMatch(
-                    "<li><a href=\"http://www\\.readmanga\\.today/people/[^\"]+?\">([^\"]+?)</a>", source);
+                    "<li><a href=\".+?.com/people/[^\"]+?\">([^\"]+?)</a>", source);
 
             if (authors.isEmpty()) {
                 manga.setAuthor(context.getString(R.string.nodisponible));
