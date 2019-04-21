@@ -1,10 +1,11 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,7 +37,7 @@ public abstract class MTownBase extends ServerBase {
      *
      * @param context the context for this object
      */
-    public MTownBase(Context context) {
+    MTownBase(Context context) {
         super(context);
     }
 
@@ -52,7 +53,8 @@ public abstract class MTownBase extends ServerBase {
 
     private void generateNeededCookie() {
         HttpUrl url = HttpUrl.parse(getHost());
-        Navigator.getCookieJar().saveFromResponse(url, Arrays.asList(
+        assert(url != null);
+        Navigator.getCookieJar().saveFromResponse(url, Collections.singletonList(
                 Cookie.parse(url, "isAdult=1; Domain=" + getDomain()))
         );
         setCookieInit(true);
@@ -103,20 +105,32 @@ public abstract class MTownBase extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         String data = getNavigatorWithNeededHeader().get(getHost() + manga.getPath());
         manga.setImages(getFirstMatchDefault("over-img\" src=\"([^\"]+)", data, ""));
-        manga.setAuthor(getFirstMatchDefault("say\">Author:(.+)</p>", data, context.getString(R.string.nodisponible)));
-        manga.setGenre(getFirstMatchDefault("tag-list\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
-        manga.setSynopsis(getFirstMatchDefault("right-content\">([^<]+?)<", data, context.getString(R.string.nodisponible)));
+
+        String author = getFirstMatchDefault("say\">Author:(.+?)</p>", data, "");
+        if(author.trim().isEmpty()) { author = context.getString(R.string.nodisponible); }
+        manga.setAuthor(author);
+
+        String genre = getFirstMatchDefault("tag-list\">(.+?)</p>", data, "");
+        genre = TextUtils.join(", ", getAllMatch("\">([^<]+)</a>", genre));
+        if(genre.trim().isEmpty()) { genre = context.getString(R.string.nodisponible); }
+        manga.setGenre(genre);
+
+        String synopsis = getFirstMatchDefault("right-content\">([^<]+)<", data, "");
+        if(synopsis.trim().isEmpty()) { synopsis = context.getString(R.string.nodisponible); }
+        manga.setSynopsis(synopsis);
+
         manga.setFinished(getFirstMatchDefault("title-tip\">([^<]+)", data, "").contains("Complete"));
         // Chapter
-        Pattern p = Pattern.compile("[li|none']{2,5}> <a href=\"(.+?)\".+?title=\"([^\"]+)", Pattern.DOTALL);
+        Pattern p = Pattern.compile("(li|none')> <a href=\"([^\"]+)\".+?title=\"([^\"]+)", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            manga.addChapterFirst(new Chapter(m.group(2), m.group(1)));
+            manga.addChapterFirst(new Chapter(m.group(3), m.group(2)));
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
+        assert (chapter.getExtra() != null);
         String[] vars = chapter.getExtra().split("\\|");
         if (vars[0].equals("1")) {
             Navigator nav = getNavigatorWithNeededHeader();
@@ -189,8 +203,7 @@ public abstract class MTownBase extends ServerBase {
         if (!getCookieInit()) {
             generateNeededCookie();
         }
-        Navigator nav = getNavigatorAndFlushParameters();
-        return nav;
+        return getNavigatorAndFlushParameters();
     }
 
 }
