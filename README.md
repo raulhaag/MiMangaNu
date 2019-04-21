@@ -33,6 +33,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.105:
+* Fix VerComics.
+
+Changes in v1.105:
+* Fix VerComics.
+
 Cambios en v1.104:
 * Fix CFI.
 * Fix VerComics.
