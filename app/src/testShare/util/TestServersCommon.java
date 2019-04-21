@@ -40,7 +40,6 @@ public class TestServersCommon {
      * @param hostBasedTests <code>true</code> if tests are to be run on the host, <code>false</code>
      *                       otherwise
      * @param context        the <code>Context</code> to use during testing
-     * @throws Exception if something goes wrong
      */
     public TestServersCommon(int serverId, boolean hostBasedTests, Context context) throws Exception {
         this.rand = new Random();
