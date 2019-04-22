@@ -257,12 +257,14 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         menu.findItem(R.id.action_hide_read).setChecked(checkedRead);
 
         /* Set sort mode */
-        int sortList[] = {
+        int[] sortList = {
                 R.id.sort_last_read, R.id.sort_last_read_desc,
                 R.id.sort_name, R.id.sort_name_desc,
                 R.id.sort_author, R.id.sort_author_desc,
                 R.id.sort_finished, R.id.sort_finished_asc,
-                R.id.sort_as_added_to_db_asc, R.id.sort_as_added_to_db_desc
+                R.id.sort_as_added_to_db_asc, R.id.sort_as_added_to_db_desc,
+                R.id.sort_last_updated,
+
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
     }
@@ -344,6 +346,12 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                 setListManga(true);
                 break;
             }
+            case R.id.sort_last_updated: {
+                item.setChecked(true);
+                pm.edit().putInt("manga_view_sort_by", 10).apply();
+                setListManga(true);
+                break;
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -380,8 +388,12 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                     sort_by = Database.COL_ID;
                     sort_ord = !sort_ord;
                     break;
-                case 0:
-                case 1:
+                case 10:
+                    sort_by = Database.COL_LAST_UPDATE_LONG;
+                    sort_ord = false;
+                    break;
+                //case 0:
+                //case 1:
                 default:
                     sort_by = Database.COL_LAST_READ;
                     sort_ord = !sort_ord;

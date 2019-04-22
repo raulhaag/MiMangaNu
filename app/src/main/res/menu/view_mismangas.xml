@@ -52,6 +52,9 @@
                 <item
                     android:id="@+id/sort_as_added_to_db_desc"
                     android:title="@string/sort_as_added_to_db_desc" />
+                <item
+                    android:id="@+id/sort_last_updated"
+                    android:title="@string/last_update" />
             </group>
         </menu>
     </item>

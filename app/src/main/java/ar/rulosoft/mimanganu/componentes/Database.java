@@ -52,6 +52,7 @@ public class Database extends SQLiteOpenHelper {
     private static final String COL_READ_ORDER = "orden_lectura";// sentido de
     private static final String COL_READER = "reader";
     private static final String COL_LAST_UPDATE = "last_update";
+    public static final String COL_LAST_UPDATE_LONG = "last_uodate_long";
     // Table for each chapter
     private static final String TABLE_CHAPTERS = "capitulos";
     private static final String COL_CAP_ID_MANGA = "manga_id";
@@ -80,6 +81,7 @@ public class Database extends SQLiteOpenHelper {
             COL_READER + " INTEGER DEFAULT 0," +
             COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'," +
             COL_LAST_UPDATE + " TEXT DEFAULT 'N/A', " +
+            COL_LAST_UPDATE_LONG + " INT DEFAULT 0, " +
             "UNIQUE (" + COL_SERVER_ID + ", " + COL_PATH + "));";
     private static final String DATABASE_CHAPTERS_CREATE = "create table " +
             TABLE_CHAPTERS + "(" +
@@ -97,7 +99,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 27;
+    private static int database_version = 28;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -309,10 +311,13 @@ public class Database extends SQLiteOpenHelper {
             cursor.close();
         }
         ContentValues cv = new ContentValues();
-        if (!(actual > 0))
+
+        if (actual <= 0) {
             cv.put(COL_NEW, 0);
-        else
+        } else {
             cv.put(COL_NEW, actual);
+            cv.put(COL_LAST_UPDATE_LONG, (System.currentTimeMillis() / 1000));
+        }
         getDatabase(c).update(TABLE_MANGA, cv, COL_ID + "=" + m.getId(), null);
     }
 
@@ -583,7 +588,7 @@ public class Database extends SQLiteOpenHelper {
         try {
             SQLiteDatabase database = getDatabase(context);
             if (!database.isReadOnly())
-                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + cid, null);
             else {
                 Log.e("Database", "(updateChapterDownloaded) " + context.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
@@ -634,7 +639,7 @@ public class Database extends SQLiteOpenHelper {
         try {
             SQLiteDatabase database = getDatabase(context);
             if (!database.isReadOnly())
-                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + Integer.toString(cid), null);
+                database.update(TABLE_CHAPTERS, cv, COL_CAP_ID + "=" + cid, null);
             else {
                 Log.e("Database", "(updateChapterPage) " + context.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
@@ -920,7 +925,7 @@ public class Database extends SQLiteOpenHelper {
                         " = REPLACE(" + COL_CAP_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
                 db.execSQL(query);
             }
-            if (oldVersion < 23){
+            if (oldVersion < 23) {
                 //http://de.ninemanga.com
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                         " = REPLACE(" + COL_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
@@ -958,7 +963,7 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
             }
 
-            if (oldVersion < 24){
+            if (oldVersion < 24) {
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
                         " = REPLACE(" + COL_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
                 db.execSQL(query);
@@ -985,7 +990,12 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL(query);
 
             }
-                //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
+            if (oldVersion < 28) {
+                db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_LAST_UPDATE_LONG + " INT DEFAULT 0");
+                db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_LAST_UPDATE_LONG + " = strftime('%s', substr(last_update, 7, 4) || \"-\" || substr(last_update, 4, 2) || \"-\" || substr(last_update, 1, 2) || \" 00:00:00\") WHERE last_update LIKE \"%.%\";");
+
+            }
+            //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
         } catch (Exception e) {
             // on update error try to restore last version
             Log.e("Database update error", "Exception", e);
@@ -994,7 +1004,7 @@ public class Database extends SQLiteOpenHelper {
                 if (new File(backup).exists()) {
                     if (new File(db.getPath()).delete()) {
                         File journal = new File(db.getPath() + "-journal");
-                        if(journal.exists()) {
+                        if (journal.exists()) {
                             journal.delete();
                         }
                         Util.getInstance().copyFile(new File(backup), new File(db.getPath()));
@@ -1008,6 +1018,7 @@ public class Database extends SQLiteOpenHelper {
             is_in_update_process = false;
         }
     }
+
 
     private void copyDbToSd(Context c) {
         File dbFile = c.getDatabasePath("mangas.db");
