@@ -16,7 +16,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 import ar.rulosoft.mimanganu.R;
@@ -301,7 +303,7 @@ public abstract class PagedReader extends Reader implements TapListener {
 
             @Override
             protected Bitmap doInBackground(Void... params) {
-                if (new File(path).exists()) {
+                if (fileExist(path)) {
                     boolean notLoaded = true;
                     int retry = 5;
                     Bitmap bitmap = null;
@@ -309,8 +311,14 @@ public abstract class PagedReader extends Reader implements TapListener {
                     opts.inPreferredConfig = Bitmap.Config.RGB_565;
                     while (notLoaded && retry > 0) {
                         try {
-                            bitmap = BitmapFactory.decodeFile(path, opts);
-                            notLoaded = false;
+                            try (InputStream inputStream = getInputStream(path)) {
+                                bitmap = BitmapFactory.decodeStream(inputStream, null, opts);
+                                notLoaded = false;
+                            } catch (FileNotFoundException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } catch (OutOfMemoryError oom) {
                             retry--;
                             try {

@@ -152,6 +152,7 @@ public abstract class ServerBase {
     public final int VERSION = 1;
 
     public static final int FROMFOLDER = 1001;
+    public static final int FROMCBZ = 1006;
     public static final int RAWSENMANGA = 21;
     public static final int MANGAPANDA = 1;
     public static final int ESMANGAHERE = 3;
@@ -205,7 +206,7 @@ public abstract class ServerBase {
     private int icon;
     private int flag;
     private int serverID;
-    private static HashMap<String, ServerBase> initedServers = new HashMap<>();
+    private static HashMap<String, ServerBase> serversInstances = new HashMap<>();
 
 
     /**
@@ -218,10 +219,10 @@ public abstract class ServerBase {
     }
 
     public static ServerBase getServer(int id, Context context) {
-        if (!initedServers.containsKey("" + id)) {
-            initedServers.put("" + id, getNewServer(id, context));
+        if (!serversInstances.containsKey("" + id)) {
+            serversInstances.put("" + id, getNewServer(id, context));
         }
-        return initedServers.get("" + id);
+        return serversInstances.get("" + id);
     }
 
     /**
@@ -329,6 +330,9 @@ public abstract class ServerBase {
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
                 break;
+            case FROMCBZ:
+                serverBase = new FromCBZ(context);
+                break;
             case MANGAAE:
                 serverBase = new MangaAE(context);
                 break;
@@ -392,7 +396,6 @@ public abstract class ServerBase {
                 new TuMangaOnline(context),
                 new HeavenManga(context),
                 new EsNineManga(context),
-                //new LeoManga(context), temporary remove, if past a month and sever is down then full remove it (04/09/2018)
                 new Kumanga(context),
                 new MangaPanda(context),
                 new MangaReader(context),
@@ -423,7 +426,8 @@ public abstract class ServerBase {
                 new VerComicsCom(context),
                 new ReadComicOnline(context),
                 new ViewComic(context),
-                new FromFolder(context)
+                new FromFolder(context),
+                new FromCBZ(context)
         });
     }
 

@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
 import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
+import ar.rulosoft.mimanganu.servers.FromCBZ;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.Util;
@@ -67,7 +68,7 @@ public class ServersSelectFragment extends Fragment implements MainActivity.OnBa
         serverRecAdapter.setOnServerClickListener(new ServerRecAdapter.OnServerClickListener() {
             @Override
             public void onServerClick(final ServerBase server) {
-                if (!(server instanceof FromFolder)) {
+                if (!(server instanceof FromFolder) && !(server instanceof FromCBZ)) {
                     if (server.hasCredentials()) {
                         if (server.hasFilteredNavigation()) {
                             ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
@@ -98,6 +99,7 @@ public class ServersSelectFragment extends Fragment implements MainActivity.OnBa
                     }
                 } else {
                     MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();
+                    mangaFolderSelect.setServerBase(server);
                     mangaFolderSelect.show(getChildFragmentManager(), "fragment_find_folder");
                 }
             }

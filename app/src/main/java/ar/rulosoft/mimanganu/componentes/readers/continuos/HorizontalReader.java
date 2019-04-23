@@ -9,7 +9,7 @@ import android.view.MotionEvent;
 /**
  * Created by Raul on 21/06/2016.
  */
-public abstract class HorizontalReader extends ReaderContinuous {
+public abstract class HorizontalReader extends ContinuousReader {
 
     protected float totalWidth = 0;
 

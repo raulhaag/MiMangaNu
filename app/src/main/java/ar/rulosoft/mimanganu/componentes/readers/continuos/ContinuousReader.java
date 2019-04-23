@@ -20,8 +20,6 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -34,7 +32,7 @@ import rapid.decoder.BitmapDecoder;
  * Created by Raul on 22/10/2015.
  */
 
-public abstract class ReaderContinuous extends Reader implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public abstract class ContinuousReader extends Reader implements GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
     protected int currentPage = 0, lastBestVisible = 0;
     protected float lastPageBestPercent = 0f;
     protected int mTextureMax = 1024;
@@ -61,7 +59,7 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     float ppi;
 
 
-    public ReaderContinuous(Context context) {
+    public ContinuousReader(Context context) {
         super(context);
         init(context);
     }
@@ -303,11 +301,10 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
     protected Page initValues(String path) {
         Page dimension = getNewPage();
         dimension.path = path;
-        File f = new File(path);
-        if (f.exists()) {
+        if (fileExist(path)) {
             try {
                 dimension.path = path;
-                InputStream inputStream = new FileInputStream(path);
+                InputStream inputStream = getInputStream(path);
                 BitmapFactory.Options bitmapOptions = new BitmapFactory.Options();
                 bitmapOptions.inJustDecodeBounds = true;
                 BitmapFactory.decodeStream(inputStream, null, bitmapOptions);
@@ -661,10 +658,11 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                                     BitmapFactory.Options options = new BitmapFactory.Options();
                                     options.inPreferredConfig = Bitmap.Config.RGB_565;
                                     if (!error) {
+                                        InputStream is = getInputStream(path);
                                         if (tp == 1) {
-                                            segment = BitmapDecoder.from(path).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
+                                            segment = BitmapDecoder.from(is).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
                                             if (segments == null) {
-                                                segment = BitmapDecoder.from(path).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                                segment = BitmapDecoder.from(is).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
                                             }
 
                                         } else {
@@ -674,14 +672,15 @@ public abstract class ReaderContinuous extends Reader implements GestureDetector
                                                     right = (int) original_width;
                                                 if (bottom > original_height)
                                                     bottom = (int) original_height;
-                                                segment = BitmapDecoder.from(path).region(dx, dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
+                                                segment = BitmapDecoder.from(is).region(dx, dy, right, bottom).useBuiltInDecoder(false).config(Bitmap.Config.RGB_565).decode();
                                                 if (segment == null) {
-                                                    segment = BitmapDecoder.from(path).region(dx, dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
+                                                    segment = BitmapDecoder.from(is).region(dx, dy, right, bottom).useBuiltInDecoder(true).config(Bitmap.Config.RGB_565).decode();
                                                 }
                                             } catch (Exception e) {
                                                 e.printStackTrace();
                                             }
                                         }
+                                        is.close();
                                     } else {
                                         InputStream inputStream = getBitmapFromAsset("broke.png");
                                         if (tp == 1) {

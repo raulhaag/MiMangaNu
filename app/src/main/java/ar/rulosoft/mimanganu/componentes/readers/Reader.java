@@ -3,7 +3,13 @@ package ar.rulosoft.mimanganu.componentes.readers;
 import android.content.Context;
 import android.widget.FrameLayout;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import ar.rulosoft.mimanganu.componentes.readers.continuos.L2RReader;
 import ar.rulosoft.mimanganu.componentes.readers.continuos.R2LReader;
@@ -82,7 +88,7 @@ public abstract class Reader extends FrameLayout {
 
     public abstract void setBlueFilter(float bf);
 
-    public void setBlueFilter(){
+    public void setBlueFilter() {
         setBlueFilter(1f);
     }
 
@@ -121,8 +127,7 @@ public abstract class Reader extends FrameLayout {
 
     public boolean isValidIdx(int idx) {
         if (idx < 0) return false;
-        else if (idx < getPages()) return true;
-        else return false;
+        else return idx < getPages();
     }
 
     public enum Direction {L2R, R2L, VERTICAL}
@@ -137,5 +142,25 @@ public abstract class Reader extends FrameLayout {
         void onStartOver();
 
         void onMenuRequired();
+    }
+
+    protected InputStream getInputStream(String path) throws IOException {
+        /*
+         * zipfile entry go to be use a path like zip|file|entry
+         */
+        if (path.startsWith("zip")) {
+            String[] parts = path.split("\\|");
+            ZipFile zipFile = new ZipFile(parts[1]);
+            ZipEntry zipEntry = zipFile.getEntry(parts[2]);
+            return zipFile.getInputStream(zipEntry);
+        }
+        return new FileInputStream(new File(path));
+    }
+
+    protected boolean fileExist(String path) {
+        if (path.startsWith("zip")) {
+            return new File(path.split("\\|")[1]).exists();
+        }
+        return new File(path).exists();
     }
 }

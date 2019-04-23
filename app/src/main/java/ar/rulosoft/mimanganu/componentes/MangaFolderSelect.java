@@ -28,6 +28,7 @@ import java.util.List;
 import ar.rulosoft.custompref.ArrayAdapterDirectory;
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.servers.FromCBZ;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.Util;
@@ -42,6 +43,12 @@ public class MangaFolderSelect extends DialogFragment {
     private TextView dirs_path;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
     private AlertDialog dialog;
+
+    ServerBase serverBase;
+
+    public void setServerBase(ServerBase serverBase) {
+        this.serverBase = serverBase;
+    }
 
     @NonNull
     @Override
@@ -98,10 +105,10 @@ public class MangaFolderSelect extends DialogFragment {
                             if (MainActivity.pm.getBoolean("multi_import", false)) {
                                 new AddAllMangaInDirectoryTask().execute(actual);
                             } else {
-                                new AddMangaTask().execute(actual);
+                                new AddMangaTask(serverBase).execute(actual);
                             }
                         } else {
-                            new AddMangaTask().execute(actual);
+                            new AddMangaTask(serverBase).execute(actual);
                         }
                     }
                 });
@@ -115,9 +122,13 @@ public class MangaFolderSelect extends DialogFragment {
         ProgressDialog adding = new ProgressDialog(getActivity());
         String error = "";
         int max = 0;
-        ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER, context);
+        ServerBase serverBase;
         Manga manga;
         boolean onDb;
+
+        AddMangaTask(ServerBase serverBase) {
+            this.serverBase = serverBase;
+        }
 
         @Override
         protected void onPreExecute() {
@@ -129,34 +140,47 @@ public class MangaFolderSelect extends DialogFragment {
         @Override
         protected Void doInBackground(String... params) {
             String title = Util.getInstance().getLastStringInPath(params[0]);
-            List<Manga> mangas = Database.getFromFolderMangas(getContext());
-            onDb = false;
-            for (Manga m : mangas) {
-                if (m.getPath().equals(params[0]))
-                    onDb = true;
-            }
-            if (!onDb) {
-                manga = new Manga(FromFolder.FROMFOLDER, title, params[0], true);
-                manga.setImages("");
-
-                try {
-                    serverBase.loadChapters(manga, false);
-                } catch (Exception e) {
-                    Log.e("MangaFolderSelect", "Exception", e);
-                    error = Log.getStackTraceString(e);
+            if (!(serverBase instanceof FromCBZ)) {
+                List<Manga> mangas = Database.getFromFolderMangas(getContext());
+                onDb = false;
+                for (Manga m : mangas) {
+                    if (m.getPath().equals(params[0]))
+                        onDb = true;
                 }
-                max = manga.getChapters().size();
-                int mid = Database.addManga(getActivity(), manga);
-                long initTime = System.currentTimeMillis();
-                for (int i = 0; i < manga.getChapters().size(); i++) {
-                    if (System.currentTimeMillis() - initTime > 500) {
-                        publishProgress(i);
-                        initTime = System.currentTimeMillis();
+                if (!onDb) {
+                    manga = new Manga(FromFolder.FROMFOLDER, title, params[0], true);
+                    manga.setImages("");
+
+                    try {
+                        serverBase.loadChapters(manga, false);
+                    } catch (Exception e) {
+                        Log.e("MangaFolderSelect", "Exception", e);
+                        error = Log.getStackTraceString(e);
                     }
-                    Database.addChapter(getActivity(), manga.getChapter(i), mid);
+                    max = manga.getChapters().size();
+                    int mid = Database.addManga(getActivity(), manga);
+                    long initTime = System.currentTimeMillis();
+                    for (int i = 0; i < manga.getChapters().size(); i++) {
+                        if (System.currentTimeMillis() - initTime > 500) {
+                            publishProgress(i);
+                            initTime = System.currentTimeMillis();
+                        }
+                        Database.addChapter(getActivity(), manga.getChapter(i), mid);
+                    }
+                } else {
+                    Log.i("MangaFolderSelect", "already on db: " + params[0]);
                 }
             } else {
-                Log.i("MangaFolderSelect", "already on db: " + params[0]);
+                manga = new Manga(serverBase.getServerID(), title, params[0], true);
+                try {
+                    serverBase.loadChapters(manga, true);
+                } catch (Exception e) {
+                    Log.e("MangaCBZ", "Exception", e);
+                }
+                int mid = Database.addManga(getActivity(), manga);
+                for (int i = 0; i < manga.getChapters().size(); i++) {
+                    Database.addChapter(getActivity(), manga.getChapter(i), mid);
+                }
             }
 
             return null;
