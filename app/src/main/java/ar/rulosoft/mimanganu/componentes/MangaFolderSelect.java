@@ -28,7 +28,6 @@ import java.util.List;
 import ar.rulosoft.custompref.ArrayAdapterDirectory;
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
-import ar.rulosoft.mimanganu.servers.FromCBZ;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.Util;
@@ -43,12 +42,6 @@ public class MangaFolderSelect extends DialogFragment {
     private TextView dirs_path;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
     private AlertDialog dialog;
-
-    ServerBase serverBase;
-
-    public void setServerBase(ServerBase serverBase) {
-        this.serverBase = serverBase;
-    }
 
     @NonNull
     @Override
@@ -98,17 +91,17 @@ public class MangaFolderSelect extends DialogFragment {
         dialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialog) {
-                ((AlertDialog)dialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
+                ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         if (MainActivity.pm != null) {
                             if (MainActivity.pm.getBoolean("multi_import", false)) {
                                 new AddAllMangaInDirectoryTask().execute(actual);
                             } else {
-                                new AddMangaTask(serverBase).execute(actual);
+                                new AddMangaTask().execute(actual);
                             }
                         } else {
-                            new AddMangaTask(serverBase).execute(actual);
+                            new AddMangaTask().execute(actual);
                         }
                     }
                 });
@@ -122,13 +115,8 @@ public class MangaFolderSelect extends DialogFragment {
         ProgressDialog adding = new ProgressDialog(getActivity());
         String error = "";
         int max = 0;
-        ServerBase serverBase;
         Manga manga;
         boolean onDb;
-
-        AddMangaTask(ServerBase serverBase) {
-            this.serverBase = serverBase;
-        }
 
         @Override
         protected void onPreExecute() {
@@ -139,49 +127,37 @@ public class MangaFolderSelect extends DialogFragment {
 
         @Override
         protected Void doInBackground(String... params) {
+            ServerBase serverBase = ServerBase.getServer(ServerBase.FROMFOLDER, context);
             String title = Util.getInstance().getLastStringInPath(params[0]);
-            if (!(serverBase instanceof FromCBZ)) {
-                List<Manga> mangas = Database.getFromFolderMangas(getContext());
-                onDb = false;
-                for (Manga m : mangas) {
-                    if (m.getPath().equals(params[0]))
-                        onDb = true;
-                }
-                if (!onDb) {
-                    manga = new Manga(FromFolder.FROMFOLDER, title, params[0], true);
-                    manga.setImages("");
-
-                    try {
-                        serverBase.loadChapters(manga, false);
-                    } catch (Exception e) {
-                        Log.e("MangaFolderSelect", "Exception", e);
-                        error = Log.getStackTraceString(e);
-                    }
-                    max = manga.getChapters().size();
-                    int mid = Database.addManga(getActivity(), manga);
-                    long initTime = System.currentTimeMillis();
-                    for (int i = 0; i < manga.getChapters().size(); i++) {
-                        if (System.currentTimeMillis() - initTime > 500) {
-                            publishProgress(i);
-                            initTime = System.currentTimeMillis();
-                        }
-                        Database.addChapter(getActivity(), manga.getChapter(i), mid);
-                    }
-                } else {
-                    Log.i("MangaFolderSelect", "already on db: " + params[0]);
-                }
-            } else {
-                manga = new Manga(serverBase.getServerID(), title, params[0], true);
+            List<Manga> mangas = Database.getFromFolderMangas(getContext());
+            onDb = false;
+            for (Manga m : mangas) {
+                if (m.getPath().equals(params[0]))
+                    onDb = true;
+            }
+            if (!onDb) {
+                manga = new Manga(FromFolder.FROMFOLDER, title, params[0], true);
+                manga.setImages("");
                 try {
-                    serverBase.loadChapters(manga, true);
+                    serverBase.loadChapters(manga, false);
                 } catch (Exception e) {
-                    Log.e("MangaCBZ", "Exception", e);
+                    Log.e("MangaFolderSelect", "Exception", e);
+                    error = Log.getStackTraceString(e);
                 }
+                max = manga.getChapters().size();
                 int mid = Database.addManga(getActivity(), manga);
+                long initTime = System.currentTimeMillis();
                 for (int i = 0; i < manga.getChapters().size(); i++) {
+                    if (System.currentTimeMillis() - initTime > 500) {
+                        publishProgress(i);
+                        initTime = System.currentTimeMillis();
+                    }
                     Database.addChapter(getActivity(), manga.getChapter(i), mid);
                 }
+            } else {
+                Log.i("MangaFolderSelect", "already on db: " + params[0]);
             }
+
 
             return null;
         }
@@ -203,7 +179,7 @@ public class MangaFolderSelect extends DialogFragment {
         protected void onPostExecute(Void result) {
             adding.dismiss();
 
-            if(!onDb)
+            if (!onDb)
                 Toast.makeText(getActivity(), getResources().getString(R.string.agregado), Toast.LENGTH_SHORT).show();
             else
                 Toast.makeText(getContext(), getContext().getString(R.string.dir_already_on_db), Toast.LENGTH_LONG).show();

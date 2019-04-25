@@ -286,16 +286,21 @@ public abstract class ContinuousReader extends Reader implements GestureDetector
         drawing = false;
     }
 
-    public void setPaths(List<String> paths) {
+    public void setPaths(final List<String> paths) {
         pages = new ArrayList<>();
-        for (int i = 0; i < paths.size(); i++) {
-            pages.add(initValues(paths.get(i)));
-        }
-        if (layoutReady) {
-            calculateParticularScale();
-            calculateVisibilities();
-            generateDrawPool();
-        }
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < paths.size(); i++) {
+                    pages.add(initValues(paths.get(i)));
+                }
+                if (layoutReady) {
+                    calculateParticularScale();
+                    calculateVisibilities();
+                    generateDrawPool();
+                }
+            }
+        }).start();
     }
 
     protected Page initValues(String path) {
@@ -311,7 +316,7 @@ public abstract class ContinuousReader extends Reader implements GestureDetector
                 dimension.original_width = bitmapOptions.outWidth;
                 dimension.original_height = bitmapOptions.outHeight;
                 inputStream.close();
-            } catch (IOException ignored) {
+            } catch (Exception ignored) {
             }
             dimension.initValues();
         } else {

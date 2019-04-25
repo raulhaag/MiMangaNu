@@ -5,7 +5,6 @@ import android.widget.FrameLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -144,21 +143,35 @@ public abstract class Reader extends FrameLayout {
         void onMenuRequired();
     }
 
-    protected InputStream getInputStream(String path) throws IOException {
+    protected InputStream getInputStream(String path) throws Exception {
         /*
          * zipfile entry go to be use a path like zip|file|entry
+         * rar same but rar:  rar support only works fine on new devices, on old its make the process to slow and make oom
+         * i will keep this feature commented in case of futures improves of the library or if i update the min android version
          */
         if (path.startsWith("zip")) {
             String[] parts = path.split("\\|");
             ZipFile zipFile = new ZipFile(parts[1]);
             ZipEntry zipEntry = zipFile.getEntry(parts[2]);
             return zipFile.getInputStream(zipEntry);
-        }
+        }/*
+        if (path.startsWith("rar")) {
+            String[] parts = path.split("\\|");
+            Archive rar = new Archive(new FileInputStream(parts[1]));
+            for(FileHeader fh: rar.getFileHeaders()){
+                if (fh.getFileNameString().equals(parts[2])) {
+                    InputStream is = rar.getInputStream(fh);
+                    rar.close();
+                    return is;
+                }
+            }
+        }*/
         return new FileInputStream(new File(path));
     }
 
+
     protected boolean fileExist(String path) {
-        if (path.startsWith("zip")) {
+        if (path.startsWith("zip")) {// || path.startsWith("rar")) {
             return new File(path.split("\\|")[1]).exists();
         }
         return new File(path).exists();

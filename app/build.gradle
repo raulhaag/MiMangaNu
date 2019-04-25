@@ -77,6 +77,7 @@ dependencies {
     implementation "com.android.support:appcompat-v7:$ANDROID_SUPPORT"
     implementation "com.android.support:recyclerview-v7:$ANDROID_SUPPORT"
     implementation "com.android.support:preference-v7:$ANDROID_SUPPORT"
+    //implementation group: 'com.github.junrar', name: 'junrar', version: '4.0.0'
     api project(':imageviewtouchlibrary')
     implementation 'rapid.decoder:library:0.3.0'
     implementation 'rapid.decoder:jpeg-decoder:0.3.0'

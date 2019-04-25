@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -316,7 +315,7 @@ public abstract class PagedReader extends Reader implements TapListener {
                                 notLoaded = false;
                             } catch (FileNotFoundException e) {
                                 e.printStackTrace();
-                            } catch (IOException e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         } catch (OutOfMemoryError oom) {

@@ -152,7 +152,6 @@ public abstract class ServerBase {
     public final int VERSION = 1;
 
     public static final int FROMFOLDER = 1001;
-    public static final int FROMCBZ = 1006;
     public static final int RAWSENMANGA = 21;
     public static final int MANGAPANDA = 1;
     public static final int ESMANGAHERE = 3;
@@ -297,9 +296,6 @@ public abstract class ServerBase {
             case READCOMICONLINE:
                 serverBase = new ReadComicOnline(context);
                 break;
-            //   case LEOMANGA:
-            //        serverBase = new LeoManga(context);
-            //       break;
             case JAPSCAN:
                 serverBase = new JapScan(context);
                 break;
@@ -329,9 +325,6 @@ public abstract class ServerBase {
                 break;
             case FROMFOLDER:
                 serverBase = new FromFolder(context);
-                break;
-            case FROMCBZ:
-                serverBase = new FromCBZ(context);
                 break;
             case MANGAAE:
                 serverBase = new MangaAE(context);
@@ -427,7 +420,6 @@ public abstract class ServerBase {
                 new ReadComicOnline(context),
                 new ViewComic(context),
                 new FromFolder(context),
-                new FromCBZ(context)
         });
     }
 
@@ -616,8 +608,9 @@ public abstract class ServerBase {
             changes = true;
         }
 
-        if (mangaDb.getImages() != null && !mangaDb.getImages().equals(manga.getImages()) &&
-                manga.getImages() != null && manga.getImages().length() > 2) {
+        if ((mangaDb.getImages() != null && !mangaDb.getImages().equals(manga.getImages()) &&
+                manga.getImages() != null && manga.getImages().length() > 2) ||
+                mangaDb.getImages() == null && manga.getImages() != null) {
             mangaDb.setImages(manga.getImages());
             changes = true;
         }
