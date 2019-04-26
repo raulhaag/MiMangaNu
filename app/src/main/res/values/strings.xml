@@ -490,4 +490,7 @@
     <string name="server_update_process_finished">Server update process finished.</string>
     <string name="processed">" processed"</string>
     <string name="bright_level">Bright level</string>
+    <string name="privacy_settings">Privacy settings</string>
+    <string name="preview_on_listing_title">Hide windows preview on manager?</string>
+    <string name="preview_on_listing_subtitle">Also this disable screenshots, need restart.</string>
 </resources>

@@ -5,19 +5,25 @@
     android:layout_height="match_parent"
     android:key="first_preferencescreen">
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_mm">
+
+    <android.support.v7.preference.PreferenceCategory android:title="@string/privacy_settings">
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria" />
+        <android.support.v7.preference.SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="preview_on_listing"
+            android:summary="@string/preview_on_listing_subtitle"
+            android:title="@string/preview_on_listing_title" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory
         android:key="account"
         android:title="@string/accounts" />
 
-    <PreferenceCategory android:title="@string/connection_settings">
+    <android.support.v7.preference.PreferenceCategory android:title="@string/connection_settings">
         <android.support.v7.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="disable_internet_detection"
@@ -60,7 +66,7 @@
             android:title="@string/read_timeout_title"
             app:val_max="30"
             app:val_min="3" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/update_settings_title">
         <android.support.v7.preference.SwitchPreferenceCompat
@@ -189,7 +195,7 @@
             android:title="@string/show_status_bar_title" />
     </android.support.v7.preference.PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/opciones_descarga">
+    <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_descarga">
         <ar.rulosoft.custompref.PreferencesListDir
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
@@ -223,7 +229,7 @@
             android:key="download_next_chapter_automatically"
             android:summary="@string/download_next_chapter_automatically_subtitle"
             android:title="@string/download_next_chapter_automatically_title" />
-    </PreferenceCategory>
+    </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/ui_settings">
         <android.support.v7.preference.SwitchPreferenceCompat

@@ -24,6 +24,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.lang.reflect.Field;
@@ -60,6 +61,10 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
         }
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
+        boolean hide = pm.getBoolean("preview_on_listing", false);
+        if (hide) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_SECURE);
+        }
         darkTheme = pm.getBoolean("dark_theme", false);
         setTheme(darkTheme ? R.style.AppTheme_Dark_NoActionbar : R.style.AppTheme_Light_NoActionbar);
         super.onCreate(savedInstanceState);
@@ -198,6 +203,11 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         Bundle bundle = new Bundle();
         super.onSaveInstanceState(bundle, outPersistentState);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     @Override
