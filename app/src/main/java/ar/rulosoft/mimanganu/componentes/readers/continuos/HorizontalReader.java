@@ -164,8 +164,8 @@ public abstract class HorizontalReader extends ContinuousReader {
         public boolean isVisible() {
             float visibleRight = (xScroll * mScaleFactor + screenWidth);
             final boolean visibility = (xScroll * mScaleFactor <= init_visibility * mScaleFactor && init_visibility * mScaleFactor <= visibleRight) ||
-                    (xScroll * mScaleFactor <= end_visibility * mScaleFactor && end_visibility * mScaleFactor <= visibleRight) ||
-                    (init_visibility * mScaleFactor < xScroll * mScaleFactor && end_visibility * mScaleFactor >= visibleRight);
+                (xScroll * mScaleFactor <= end_visibility * mScaleFactor && end_visibility * mScaleFactor <= visibleRight) ||
+                (init_visibility * mScaleFactor < xScroll * mScaleFactor && end_visibility * mScaleFactor >= visibleRight);
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -214,8 +214,8 @@ public abstract class HorizontalReader extends ContinuousReader {
                 float _init_visibility = init_visibility + dx * unification_scale;
                 float _end_visibility = _init_visibility + pw * unification_scale;
                 boolean visibility = (visibleLeft <= _init_visibility * mScaleFactor && _init_visibility * mScaleFactor <= visibleRight) ||
-                        (visibleLeft <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleRight) ||
-                        (_init_visibility * mScaleFactor < visibleLeft && _end_visibility * mScaleFactor >= visibleRight);
+                    (visibleLeft <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleRight) ||
+                    (_init_visibility * mScaleFactor < visibleLeft && _end_visibility * mScaleFactor >= visibleRight);
                 if (visible != visibility) {
                     visibilityChanged();
                 }

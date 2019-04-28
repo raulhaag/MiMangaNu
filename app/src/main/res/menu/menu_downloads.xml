@@ -1,24 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ActivityPagedReader">
 
     <item
-        android:icon="@drawable/ic_action_pause"
-        app:showAsAction="always"
         android:id="@+id/pause_downloads"
-        android:title="@string/pause_all_downloads" />
+        android:icon="@drawable/ic_action_pause"
+        android:title="@string/pause_all_downloads"
+        app:showAsAction="always" />
     <item
-        android:icon="@drawable/ic_action_play_arrow"
-        app:showAsAction="always"
         android:id="@+id/resume_downloads"
-        android:title="@string/resume_downloads" />
+        android:icon="@drawable/ic_action_play_arrow"
+        android:title="@string/resume_downloads"
+        app:showAsAction="always" />
 
     <item
-        android:icon="@drawable/ic_action_sync"
-        app:showAsAction="always"
         android:id="@+id/retry_errors"
-        android:title="@string/retry_errors" />
+        android:icon="@drawable/ic_action_sync"
+        android:title="@string/retry_errors"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/remove_downloaded"
@@ -26,6 +26,6 @@
 
     <item
         android:id="@+id/remove_all"
-        android:title="@string/remove_all"/>
+        android:title="@string/remove_all" />
 
 </menu>

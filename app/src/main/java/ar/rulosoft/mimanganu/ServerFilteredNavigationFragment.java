@@ -126,7 +126,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
         ActionBar mActBar = getActivity().getActionBar();
         if (mActBar != null) {
             mActBar.setTitle(getResources()
-                    .getString(R.string.listaen) + " " + serverBase.getServerName());
+                .getString(R.string.listaen) + " " + serverBase.getServerName());
             mActBar.setDisplayHomeAsUpEnabled(true);
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

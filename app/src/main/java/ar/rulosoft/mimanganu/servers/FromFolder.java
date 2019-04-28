@@ -78,9 +78,9 @@ public class FromFolder extends ServerBase {
         if (dir.listFiles() != null) {
             for (File child : dir.listFiles()) {
                 if (child.getName().toLowerCase().endsWith("cbz") ||
-                        // child.getName().toLowerCase().endsWith("cbr") ||
-                        // child.getName().toLowerCase().endsWith("rar") ||
-                        child.getName().toLowerCase().endsWith("zip")) {
+                    // child.getName().toLowerCase().endsWith("cbr") ||
+                    // child.getName().toLowerCase().endsWith("rar") ||
+                    child.getName().toLowerCase().endsWith("zip")) {
                     Chapter chapter = new Chapter(child.getName(), child.getAbsolutePath());
                     chapter.setDownloaded(true);
                     chapters.add(chapter);
@@ -145,9 +145,9 @@ public class FromFolder extends ServerBase {
             int pages = 0;
             for (String f : files) {
                 if (f.toLowerCase().endsWith(".jpg")
-                        || f.toLowerCase().endsWith(".jpeg")
-                        || f.toLowerCase().endsWith(".png")
-                        || f.toLowerCase().endsWith(".bmp")) {
+                    || f.toLowerCase().endsWith(".jpeg")
+                    || f.toLowerCase().endsWith(".png")
+                    || f.toLowerCase().endsWith(".bmp")) {
                     sb.append("|").append(f);
                     pages++;
                 }

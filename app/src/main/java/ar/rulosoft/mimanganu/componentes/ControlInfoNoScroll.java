@@ -4,7 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.support.annotation.UiThread;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -122,7 +121,7 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
     }
 
     @UiThread
-    public void enableTitleCopy(final Context context,final String name){
+    public void enableTitleCopy(final Context context, final String name) {
         this.image.setClickable(true);
         this.image.setOnClickListener(new OnClickListener() {
             @Override
@@ -130,7 +129,7 @@ public class ControlInfoNoScroll extends LinearLayout implements Imaginable {
                 ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
                 ClipData clip = ClipData.newPlainText("label", name);
                 clipboard.setPrimaryClip(clip);
-                Toast.makeText(context,R.string.title_copied,Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.title_copied, Toast.LENGTH_SHORT).show();
             }
         });
     }

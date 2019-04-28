@@ -21,15 +21,15 @@ import okhttp3.HttpUrl;
 public abstract class MTownBase extends ServerBase {
 
     private static final int[] fltOrder = {
-            R.string.flt_order_alpha,
-            R.string.flt_order_views,
-            R.string.flt_order_rating,
-            R.string.flt_order_last_update,
+        R.string.flt_order_alpha,
+        R.string.flt_order_views,
+        R.string.flt_order_rating,
+        R.string.flt_order_last_update,
     };
     private static final int[] fltStatus = {
-            R.string.flt_status_all,
-            R.string.flt_status_ongoing,
-            R.string.flt_status_completed
+        R.string.flt_status_all,
+        R.string.flt_status_ongoing,
+        R.string.flt_status_completed
     };
 
     /**
@@ -53,9 +53,9 @@ public abstract class MTownBase extends ServerBase {
 
     private void generateNeededCookie() {
         HttpUrl url = HttpUrl.parse(getHost());
-        assert(url != null);
+        assert (url != null);
         Navigator.getCookieJar().saveFromResponse(url, Collections.singletonList(
-                Cookie.parse(url, "isAdult=1; Domain=" + getDomain()))
+            Cookie.parse(url, "isAdult=1; Domain=" + getDomain()))
         );
         setCookieInit(true);
     }
@@ -91,9 +91,9 @@ public abstract class MTownBase extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         return getMangasFromSource(getNavigatorWithNeededHeader()
-                .get(getHost() + "/search?title=&genres=&st=0&sort=&stype=1&name_method=cw&name=" +
-                        URLEncoder.encode(term, "UTF-8") +
-                        "&author_method=cw&author=&artist_method=cw&artist=&type=&rating_method=eq&rating=&released_method=eq&released="));
+            .get(getHost() + "/search?title=&genres=&st=0&sort=&stype=1&name_method=cw&name=" +
+                URLEncoder.encode(term, "UTF-8") +
+                "&author_method=cw&author=&artist_method=cw&artist=&type=&rating_method=eq&rating=&released_method=eq&released="));
     }
 
     @Override
@@ -107,16 +107,22 @@ public abstract class MTownBase extends ServerBase {
         manga.setImages(getFirstMatchDefault("over-img\" src=\"([^\"]+)", data, ""));
 
         String author = getFirstMatchDefault("say\">Author:(.+?)</p>", data, "");
-        if(author.trim().isEmpty()) { author = context.getString(R.string.nodisponible); }
+        if (author.trim().isEmpty()) {
+            author = context.getString(R.string.nodisponible);
+        }
         manga.setAuthor(author);
 
         String genre = getFirstMatchDefault("tag-list\">(.+?)</p>", data, "");
         genre = TextUtils.join(", ", getAllMatch("\">([^<]+)</a>", genre));
-        if(genre.trim().isEmpty()) { genre = context.getString(R.string.nodisponible); }
+        if (genre.trim().isEmpty()) {
+            genre = context.getString(R.string.nodisponible);
+        }
         manga.setGenre(genre);
 
         String synopsis = getFirstMatchDefault("right-content\">([^<]+)<", data, "");
-        if(synopsis.trim().isEmpty()) { synopsis = context.getString(R.string.nodisponible); }
+        if (synopsis.trim().isEmpty()) {
+            synopsis = context.getString(R.string.nodisponible);
+        }
         manga.setSynopsis(synopsis);
 
         manga.setFinished(getFirstMatchDefault("title-tip\">([^<]+)", data, "").contains("Complete"));
@@ -187,15 +193,15 @@ public abstract class MTownBase extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(getFilter()), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_status),
-                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
+            new ServerFilter(
+                context.getString(R.string.flt_include_tags),
+                buildTranslatedStringArray(getFilter()), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_status),
+                buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_order),
+                buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
 

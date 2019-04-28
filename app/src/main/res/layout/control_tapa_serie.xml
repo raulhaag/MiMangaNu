@@ -5,18 +5,18 @@
 
     <ImageView
         android:id="@+id/imagen_portada"
-        android:src="@drawable/image_preview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:src="@drawable/image_preview" />
 
     <TextView
         android:id="@+id/texto"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
         android:background="#40000000"
         android:gravity="center"
         android:padding="@dimen/paddin_textitem"

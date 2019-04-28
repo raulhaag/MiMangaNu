@@ -149,8 +149,6 @@ import ar.rulosoft.navegadores.Navigator;
  * If all of steps work properly - congratulations, you made it. (o.O)/v
  */
 public abstract class ServerBase {
-    public final int VERSION = 1;
-
     public static final int FROMFOLDER = 1001;
     public static final int RAWSENMANGA = 21;
     public static final int MANGAPANDA = 1;
@@ -199,13 +197,13 @@ public abstract class ServerBase {
     public static final int GOGOCOMIC = 1003;
     public static final int VIEWCOMIC = 1004;
     public static final int VERCOMICSCOM = 1005;
-
+    private static HashMap<String, ServerBase> serversInstances = new HashMap<>();
+    public final int VERSION = 1;
     Context context;
     private String serverName;
     private int icon;
     private int flag;
     private int serverID;
-    private static HashMap<String, ServerBase> serversInstances = new HashMap<>();
 
 
     /**
@@ -386,40 +384,40 @@ public abstract class ServerBase {
      */
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
-                new TuMangaOnline(context),
-                new HeavenManga(context),
-                new EsNineManga(context),
-                new Kumanga(context),
-                new MangaPanda(context),
-                new MangaReader(context),
-                new MangaHere(context),
-                new FanFoxNet(context),
-                new KissManga(context),
-                new MangaEden(context),
-                new MangaStream(context),
-                new Taadd(context),
-                new NineManga(context),
-                new ReadMangaToday(context),
-                new MangaTown(context),
-                new RuNineManga(context),
-                new DesuMe(context),
-                new MintManga(context),
-                new ReadMangaMe(context),
-                new MyMangaIo(context),
-                new JapScan(context),
-                new MangaKawaii(context),
-                new ItNineManga(context),
-                new MangaEdenIt(context),
-                new DeNineManga(context),
-                new RawSenManga(context),
-                new MangaRawOnline(context),
-                new MangaAE(context),
-                new NeuMangaTv(context),
-                new MangaShiroNet(context),
-                new VerComicsCom(context),
-                new ReadComicOnline(context),
-                new ViewComic(context),
-                new FromFolder(context),
+            new TuMangaOnline(context),
+            new HeavenManga(context),
+            new EsNineManga(context),
+            new Kumanga(context),
+            new MangaPanda(context),
+            new MangaReader(context),
+            new MangaHere(context),
+            new FanFoxNet(context),
+            new KissManga(context),
+            new MangaEden(context),
+            new MangaStream(context),
+            new Taadd(context),
+            new NineManga(context),
+            new ReadMangaToday(context),
+            new MangaTown(context),
+            new RuNineManga(context),
+            new DesuMe(context),
+            new MintManga(context),
+            new ReadMangaMe(context),
+            new MyMangaIo(context),
+            new JapScan(context),
+            new MangaKawaii(context),
+            new ItNineManga(context),
+            new MangaEdenIt(context),
+            new DeNineManga(context),
+            new RawSenManga(context),
+            new MangaRawOnline(context),
+            new MangaAE(context),
+            new NeuMangaTv(context),
+            new MangaShiroNet(context),
+            new VerComicsCom(context),
+            new ReadComicOnline(context),
+            new ViewComic(context),
+            new FromFolder(context),
         });
     }
 
@@ -433,7 +431,7 @@ public abstract class ServerBase {
      *                   should be a translatable string.
      */
     @Nullable
-    public  ArrayList<Manga> getMangas() throws Exception{ //make default null just a couple of server need to implement it
+    public ArrayList<Manga> getMangas() throws Exception { //make default null just a couple of server need to implement it
         return null;
     }
 
@@ -603,26 +601,26 @@ public abstract class ServerBase {
 
         boolean changes = false;
         if (!mangaDb.getAuthor().equals(manga.getAuthor()) &&
-                manga.getAuthor() != null && manga.getAuthor().length() > 2) {
+            manga.getAuthor() != null && manga.getAuthor().length() > 2) {
             mangaDb.setAuthor(manga.getAuthor());
             changes = true;
         }
 
         if ((mangaDb.getImages() != null && !mangaDb.getImages().equals(manga.getImages()) &&
-                manga.getImages() != null && manga.getImages().length() > 2) ||
-                mangaDb.getImages() == null && manga.getImages() != null) {
+            manga.getImages() != null && manga.getImages().length() > 2) ||
+            mangaDb.getImages() == null && manga.getImages() != null) {
             mangaDb.setImages(manga.getImages());
             changes = true;
         }
 
         if (!mangaDb.getSynopsis().equals(manga.getSynopsis()) &&
-                manga.getSynopsis().length() > 3) {
+            manga.getSynopsis().length() > 3) {
             mangaDb.setSynopsis(manga.getSynopsis());
             changes = true;
         }
 
         if (!mangaDb.getGenre().equals(manga.getGenre()) &&
-                manga.getGenre().length() > 2) {
+            manga.getGenre().length() > 2) {
             mangaDb.setGenre(manga.getGenre());
             changes = true;
         }
@@ -897,6 +895,14 @@ public abstract class ServerBase {
         return result;
     }
 
+    public int getServerVersion() {
+        return VERSION;
+    }
+
+    public boolean updateServerVersion() {
+        return false;
+    }
+
     /**
      * An enumeration for the type of filtering supported.
      */
@@ -966,13 +972,5 @@ public abstract class ServerBase {
         protected void onPostExecute(Integer result) {
             super.onPostExecute(result);
         }
-    }
-
-    public int getServerVersion() {
-        return VERSION;
-    }
-
-    public boolean updateServerVersion() {
-        return false;
     }
 }

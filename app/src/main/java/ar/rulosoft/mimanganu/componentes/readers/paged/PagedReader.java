@@ -38,8 +38,8 @@ public abstract class PagedReader extends Reader implements TapListener {
     protected PageAdapter mPageAdapter;
     List<String> paths;
     int currentPage = 1;  //keep the value from 1..n for externally view
-    private InitialPosition iniPosition = InitialPosition.LEFT_UP;
     ColorFilter savedCf;
+    private InitialPosition iniPosition = InitialPosition.LEFT_UP;
 
     public PagedReader(Context context) {
         super(context);
@@ -117,9 +117,9 @@ public abstract class PagedReader extends Reader implements TapListener {
     public void setBlueFilter(float bf) {
         ColorMatrix cm = new ColorMatrix();
         cm.set(new float[]{1, 0, 0, 0, 0,
-                0, (0.6f + 0.4f * bf), 0, 0, 0,
-                0f, 0f, (0.1f + 0.9f * bf), 0, 0,
-                0, 0, 0, 1f, 0});
+            0, (0.6f + 0.4f * bf), 0, 0, 0,
+            0f, 0f, (0.1f + 0.9f * bf), 0, 0,
+            0, 0, 0, 1f, 0});
         savedCf = new ColorMatrixColorFilter(cm);
         if (mPageAdapter != null)
             mPageAdapter.updateBlueFilter(savedCf);
@@ -130,15 +130,15 @@ public abstract class PagedReader extends Reader implements TapListener {
         private ColorFilter cf;
 
         PageAdapter() {
-            if(savedCf == null) {
+            if (savedCf == null) {
                 ColorMatrix cm = new ColorMatrix();
                 cm.set(new float[]{1f, 0, 0, 0, 0,
-                        0, 1f, 0, 0, 0,
-                        0, 0, 1f, 0, 0,
-                        0, 0, 0, 1f, 0});
+                    0, 1f, 0, 0, 0,
+                    0, 0, 1f, 0, 0,
+                    0, 0, 0, 1f, 0});
                 cf = new ColorMatrixColorFilter(cm);
                 savedCf = cf;
-            }else{
+            } else {
                 cf = savedCf;
             }
             pages = new Page[paths.size()];
@@ -341,7 +341,7 @@ public abstract class PagedReader extends Reader implements TapListener {
                         visor.setInitialPosition(iniPosition);
                     else visor.setInitialPosition(ImageViewTouchBase.InitialPosition.LEFT_UP);
                     if ((result.getHeight() > mTextureMax ||
-                            result.getWidth() > mTextureMax)) {
+                        result.getWidth() > mTextureMax)) {
                         visor.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
                     }
                     visor.setAlpha(0f);

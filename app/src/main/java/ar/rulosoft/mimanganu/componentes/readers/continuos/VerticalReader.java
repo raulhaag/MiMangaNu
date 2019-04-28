@@ -46,7 +46,7 @@ public class VerticalReader extends ContinuousReader {
 
     public void reloadImage(int idx) {
         int pageIdx;
-        if(idx == 0)
+        if (idx == 0)
             pageIdx = idx;
         else
             pageIdx = idx - 1;
@@ -54,8 +54,8 @@ public class VerticalReader extends ContinuousReader {
             int cPage = currentPage - 1;
             if (pages.size() < cPage || cPage < 0)
                 cPage = 0;
-            if(cPage >= pages.size())
-                cPage = pages.size()-1;
+            if (cPage >= pages.size())
+                cPage = pages.size() - 1;
             float value = 0;
             if (pages.get(cPage) != null)
                 value = pages.get(cPage).init_visibility;
@@ -89,7 +89,7 @@ public class VerticalReader extends ContinuousReader {
                 if (currentPage == 1)
                     readerListener.onStartOver();
                 else
-                    goToPage(currentPage -1);
+                    goToPage(currentPage - 1);
             } else if (e.getX() > getWidth() / 4 * 3) {
                 if (isLastPageVisible())
                     readerListener.onEndOver();
@@ -162,7 +162,7 @@ public class VerticalReader extends ContinuousReader {
 
     @Override
     public void postLayout() {
-        if(yScroll == 0)
+        if (yScroll == 0)
             absoluteScroll(xScroll, getPagePosition(currentPage - 1));
         generateDrawPool();
         if (readerListener != null) {
@@ -278,8 +278,8 @@ public class VerticalReader extends ContinuousReader {
         public boolean isVisible() {
             float visibleBottom = (yScroll * mScaleFactor + screenHeight);
             final boolean visibility = (yScroll * mScaleFactor <= init_visibility * mScaleFactor && init_visibility * mScaleFactor <= visibleBottom) ||
-                    (yScroll * mScaleFactor <= end_visibility * mScaleFactor && end_visibility * mScaleFactor <= visibleBottom) ||
-                    (init_visibility * mScaleFactor < yScroll * mScaleFactor && end_visibility * mScaleFactor >= visibleBottom);
+                (yScroll * mScaleFactor <= end_visibility * mScaleFactor && end_visibility * mScaleFactor <= visibleBottom) ||
+                (init_visibility * mScaleFactor < yScroll * mScaleFactor && end_visibility * mScaleFactor >= visibleBottom);
 
             new Thread(new Runnable() {
                 @Override
@@ -329,8 +329,8 @@ public class VerticalReader extends ContinuousReader {
                 float _init_visibility = init_visibility + dy * unification_scale;
                 float _end_visibility = _init_visibility + ph * unification_scale;
                 boolean visibility = (visibleTop <= _init_visibility * mScaleFactor && _init_visibility * mScaleFactor <= visibleBottom) ||
-                        (visibleTop <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleBottom) ||
-                        (_init_visibility * mScaleFactor < visibleTop && _end_visibility * mScaleFactor >= visibleBottom);
+                    (visibleTop <= _end_visibility * mScaleFactor && _end_visibility * mScaleFactor <= visibleBottom) ||
+                    (_init_visibility * mScaleFactor < visibleTop && _end_visibility * mScaleFactor >= visibleBottom);
                 if (visible != visibility) {
                     visibilityChanged();
                 }

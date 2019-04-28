@@ -17,7 +17,7 @@ public class FileCache {
         //Find the dir to save cached images
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+            Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
         if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED))
             cacheDir = new File(dir, "cache");
         else

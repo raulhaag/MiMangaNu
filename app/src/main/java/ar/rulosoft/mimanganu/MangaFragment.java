@@ -87,7 +87,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        ((MainActivity)getActivity()).setOnBackListener(this);
+        ((MainActivity) getActivity()).setOnBackListener(this);
         mMangaId = getArguments().getInt(MainFragment.MANGA_ID, -1);
         return inflater.inflate(R.layout.fragment_manga, container, false);
     }
@@ -108,7 +108,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
-        }else {
+        } else {
             mListView = getView().findViewById(R.id.list);
             swipeReLayout = getView().findViewById(R.id.str);
             readerOptions = getView().findViewById(R.id.reader_options);
@@ -205,33 +205,33 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                         case R.id.remove_chapter:
                             finish = false;
                             new AlertDialog.Builder(getContext())
-                                    .setTitle(R.string.app_name)
-                                    .setMessage(R.string.delete_confirm)
-                                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.dismiss();
-                                        }
-                                    })
-                                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (selection.size() < 8) {
-                                                // Remove chapters on UI Thread
-                                                for (int i = selection.size() - 1; i >= 0; i--) {
-                                                    Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
-                                                    chapter.delete(getActivity(), mManga, serverBase);
-                                                    mChapterAdapter.remove(chapter);
-                                                    mode.finish();
-                                                }
-                                            } else {
-                                                removeChapters = new RemoveChapters(serverBase, selection.size(), mode);
-                                                removeChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                                .setTitle(R.string.app_name)
+                                .setMessage(R.string.delete_confirm)
+                                .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        if (selection.size() < 8) {
+                                            // Remove chapters on UI Thread
+                                            for (int i = selection.size() - 1; i >= 0; i--) {
+                                                Chapter chapter = mChapterAdapter.getItem(selection.keyAt(i));
+                                                chapter.delete(getActivity(), mManga, serverBase);
+                                                mChapterAdapter.remove(chapter);
+                                                mode.finish();
                                             }
-                                            dialog.dismiss();
+                                        } else {
+                                            removeChapters = new RemoveChapters(serverBase, selection.size(), mode);
+                                            removeChapters.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                                         }
-                                    })
-                                    .show();
+                                        dialog.dismiss();
+                                    }
+                                })
+                                .show();
                             break;
                         case R.id.reset_chapter:
                             resetChapters = new ResetChapters(serverBase, selection.size());
@@ -254,7 +254,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
                 @Override
                 public void onItemCheckedStateChanged(
-                        android.view.ActionMode mode, int position, long id, boolean checked) {
+                    android.view.ActionMode mode, int position, long id, boolean checked) {
                     mChapterAdapter.setSelectedOrUnselected(position);
                 }
             });
@@ -269,13 +269,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
     public void loadInfo(Manga manga) {
         if (mInfo != null && manga != null && isAdded()) {
-            mInfo.setStatus(manga.isFinished()?getResources().getString(R.string.finalizado):getResources().getString(R.string.en_progreso));
+            mInfo.setStatus(manga.isFinished() ? getResources().getString(R.string.finalizado) : getResources().getString(R.string.en_progreso));
             mInfo.setServer(ServerBase.getServer(manga.getServerId(), getContext()).getServerName());
 
             if (manga.getSynopsis() != null) {
                 mInfo.setSynopsis(manga.getSynopsis());
-            }
-            else {
+            } else {
                 mInfo.setSynopsis(getResources().getString(R.string.nodisponible));
             }
             if (manga.getAuthor() != null) {
@@ -288,10 +287,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             } else {
                 mInfo.setGenre(getResources().getString(R.string.nodisponible));
             }
-            if (manga.getLastUpdate()!= null) {
+            if (manga.getLastUpdate() != null) {
                 mInfo.setLastUpdate(manga.getLastUpdate());
-            }
-            else {
+            } else {
                 mInfo.setLastUpdate(getResources().getString(R.string.nodisponible));
             }
             mImageLoader.displayImg(manga.getImages(), mInfo);
@@ -340,29 +338,29 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 break;
             case R.id.action_download_remaining: {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.download_remain_confirmation)
-                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
-                                for (Chapter chapter : chapters) {
-                                    try {
-                                        DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "Download add pool error", e);
-                                    }
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.download_remain_confirmation)
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
+                            for (Chapter chapter : chapters) {
+                                try {
+                                    DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Download add pool error", e);
                                 }
-                                dialog.dismiss();
                             }
-                        })
-                        .show();
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
             }
             break;
             case R.id.mark_all_as_read: {
@@ -387,27 +385,27 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             }
             case R.id.delete: {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.app_name)
-                        .setMessage(getString(R.string.manga_delete_confirm, mManga.getTitle()))
-                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                DownloadPoolService.forceStop(mManga.getId());
-                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
-                                String path = Paths.generateBasePath(serverBase, mManga, getActivity());
-                                Util.getInstance().deleteRecursive(new File(path));
-                                Database.deleteManga(getActivity(), mManga.getId());
-                                dialog.dismiss();
-                                getActivity().onBackPressed();
-                            }
-                        })
-                        .show();
+                    .setTitle(R.string.app_name)
+                    .setMessage(getString(R.string.manga_delete_confirm, mManga.getTitle()))
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            DownloadPoolService.forceStop(mManga.getId());
+                            ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
+                            String path = Paths.generateBasePath(serverBase, mManga, getActivity());
+                            Util.getInstance().deleteRecursive(new File(path));
+                            Database.deleteManga(getActivity(), mManga.getId());
+                            dialog.dismiss();
+                            getActivity().onBackPressed();
+                        }
+                    })
+                    .show();
                 break;
             }
             case R.id.action_view_download: {
@@ -416,29 +414,29 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             }
             case R.id.action_download_unread: {
                 new AlertDialog.Builder(getContext())
-                        .setTitle(R.string.app_name)
-                        .setMessage(R.string.download_unread_confirmation)
-                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
-                                for (Chapter c : chapters) {
-                                    try {
-                                        DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "Download add pool error", e);
-                                    }
+                    .setTitle(R.string.app_name)
+                    .setMessage(R.string.download_unread_confirmation)
+                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
+                            for (Chapter c : chapters) {
+                                try {
+                                    DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Download add pool error", e);
                                 }
-                                dialog.dismiss();
                             }
-                        })
-                        .show();
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
                 break;
             }
             case R.id.sort_number:
@@ -544,9 +542,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_manga, menu);
         int sortList[] = {
-                R.id.sort_as_added_to_db_desc_chapters, R.id.sort_number,
-                R.id.sort_number_asc, R.id.sort_title,
-                R.id.sort_title_asc, R.id.sort_as_added_to_db_asc_chapters
+            R.id.sort_as_added_to_db_desc_chapters, R.id.sort_number,
+            R.id.sort_number_asc, R.id.sort_title,
+            R.id.sort_title_asc, R.id.sort_as_added_to_db_asc_chapters
         };
         menu.findItem(sortList[chapters_order]).setChecked(true);
         menu.findItem(R.id.action_hide_read).setChecked(hide_read);
@@ -554,7 +552,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
     @Override
     public boolean onBackPressed() {
-        if(readerOptions.isVisible()){
+        if (readerOptions.isVisible()) {
             readerOptions.switchOptions();
             return true;
         }
@@ -730,7 +728,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
         @Override
         protected Void doInBackground(Void... params) {
             String condition = "1";
-            if(hide_read) {
+            if (hide_read) {
                 condition = Database.COL_CAP_STATE + " != 1";
             }
             chapters = Database.getChapters(getActivity(), mMangaId, condition);

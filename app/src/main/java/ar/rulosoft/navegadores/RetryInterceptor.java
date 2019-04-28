@@ -21,8 +21,8 @@ public class RetryInterceptor implements Interceptor {
         Response response = chain.proceed(request);
         int tryCount = 0;
         while (tryCount <= retry &&
-                (response == null || (!response.isSuccessful() && !response.isRedirect())) &&
-                !request.url().host().contains("github") && response.code() != 404) { // don't retry app updates and 404 errors
+            (response == null || (!response.isSuccessful() && !response.isRedirect())) &&
+            !request.url().host().contains("github") && response.code() != 404) { // don't retry app updates and 404 errors
             String url = request.url().toString();
             Request newRequest = request.newBuilder().url(url).build();
             tryCount++;

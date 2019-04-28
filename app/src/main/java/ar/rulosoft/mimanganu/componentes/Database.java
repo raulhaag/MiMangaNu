@@ -41,6 +41,7 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_CAP_DOWNLOADED = "descargado";
     // Table for entire manga
     public static final String COL_SERVER_ID = "server_id";
+    public static final String COL_LAST_UPDATE_LONG = "last_uodate_long";
     private static final String TABLE_MANGA = "manga";
     private static final String COL_PATH = "path";
     private static final String COL_IMAGE = "imagen";
@@ -52,7 +53,6 @@ public class Database extends SQLiteOpenHelper {
     private static final String COL_READ_ORDER = "orden_lectura";// sentido de
     private static final String COL_READER = "reader";
     private static final String COL_LAST_UPDATE = "last_update";
-    public static final String COL_LAST_UPDATE_LONG = "last_uodate_long";
     // Table for each chapter
     private static final String TABLE_CHAPTERS = "capitulos";
     private static final String COL_CAP_ID_MANGA = "manga_id";
@@ -64,37 +64,37 @@ public class Database extends SQLiteOpenHelper {
     private static final String COL_CAP_EXTRA = "extra";
     // Database creation sql statement
     private static final String DATABASE_MANGA_CREATE = "create table " +
-            TABLE_MANGA + "(" +
-            COL_ID + " integer primary key autoincrement, " +
-            COL_NAME + " text not null," +
-            COL_PATH + " text not null, " +
-            COL_IMAGE + " text," +
-            COL_SYNOPSIS + " text," +
-            COL_SERVER_ID + "," +
-            COL_LAST_READ + " int," +
-            COL_NEW + " int DEFAULT 0," +
-            COL_LAST_INDEX + " int DEFAULT 0, " +
-            COL_IS_FINISHED + " int DEFAULT 0, " +
-            COL_READ_ORDER + " int not null DEFAULT -1, " +
-            COL_AUTHOR + " TEXT NOT NULL DEFAULT 'N/A'," +
-            COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1," +
-            COL_READER + " INTEGER DEFAULT 0," +
-            COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'," +
-            COL_LAST_UPDATE + " TEXT DEFAULT 'N/A', " +
-            COL_LAST_UPDATE_LONG + " INT DEFAULT 0, " +
-            "UNIQUE (" + COL_SERVER_ID + ", " + COL_PATH + "));";
+        TABLE_MANGA + "(" +
+        COL_ID + " integer primary key autoincrement, " +
+        COL_NAME + " text not null," +
+        COL_PATH + " text not null, " +
+        COL_IMAGE + " text," +
+        COL_SYNOPSIS + " text," +
+        COL_SERVER_ID + "," +
+        COL_LAST_READ + " int," +
+        COL_NEW + " int DEFAULT 0," +
+        COL_LAST_INDEX + " int DEFAULT 0, " +
+        COL_IS_FINISHED + " int DEFAULT 0, " +
+        COL_READ_ORDER + " int not null DEFAULT -1, " +
+        COL_AUTHOR + " TEXT NOT NULL DEFAULT 'N/A'," +
+        COL_SCROLL_SENSITIVE + " NUMERICAL DEFAULT -1.1," +
+        COL_READER + " INTEGER DEFAULT 0," +
+        COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'," +
+        COL_LAST_UPDATE + " TEXT DEFAULT 'N/A', " +
+        COL_LAST_UPDATE_LONG + " INT DEFAULT 0, " +
+        "UNIQUE (" + COL_SERVER_ID + ", " + COL_PATH + "));";
     private static final String DATABASE_CHAPTERS_CREATE = "create table " +
-            TABLE_CHAPTERS + "(" +
-            COL_CAP_ID + " integer primary key autoincrement, " +
-            COL_CAP_NAME + " text not null," +
-            COL_CAP_PATH + " text not null, " +
-            COL_CAP_PAGES + " int," +
-            COL_CAP_ID_MANGA + " int," +
-            COL_CAP_STATE + " int DEFAULT 0," +
-            COL_CAP_PAG_READ + " int DEFAULT 1, " +
-            COL_CAP_DOWNLOADED + " int DEFAULT 0, " +
-            COL_CAP_EXTRA + " text, " +
-            "UNIQUE (" + COL_CAP_ID_MANGA + ", " + COL_CAP_PATH + "));";
+        TABLE_CHAPTERS + "(" +
+        COL_CAP_ID + " integer primary key autoincrement, " +
+        COL_CAP_NAME + " text not null," +
+        COL_CAP_PATH + " text not null, " +
+        COL_CAP_PAGES + " int," +
+        COL_CAP_ID_MANGA + " int," +
+        COL_CAP_STATE + " int DEFAULT 0," +
+        COL_CAP_PAG_READ + " int DEFAULT 1, " +
+        COL_CAP_DOWNLOADED + " int DEFAULT 0, " +
+        COL_CAP_EXTRA + " text, " +
+        "UNIQUE (" + COL_CAP_ID_MANGA + ", " + COL_CAP_PATH + "));";
     public static boolean is_in_update_process = false;
     // name and path of database
     private static String database_name;
@@ -303,7 +303,7 @@ public class Database extends SQLiteOpenHelper {
         int actual = 0;
         if (news > -99) {
             Cursor cursor = getDatabase(c).query(TABLE_MANGA,
-                    new String[]{COL_NEW}, COL_ID + " = " + m.getId(), null, null, null, null);
+                new String[]{COL_NEW}, COL_ID + " = " + m.getId(), null, null, null, null);
             if (cursor.moveToFirst()) {
                 actual = cursor.getInt(cursor.getColumnIndex(COL_NEW));
                 actual += news;
@@ -428,18 +428,18 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static ArrayList<Manga> getMangasCondition(
-            Context context, String condition, String sortBy, boolean asc) {
+        Context context, String condition, String sortBy, boolean asc) {
         if (sortBy == null) sortBy = COL_LAST_READ;
         Cursor cursor = null;
         if (getDatabase(context) != null) {
             cursor = getDatabase(context).query(
-                    TABLE_MANGA,
-                    new String[]{
-                            COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
-                            COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_IS_FINISHED, COL_LAST_INDEX,
-                            COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE, COL_READER, COL_LAST_UPDATE
-                    },
-                    condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
+                TABLE_MANGA,
+                new String[]{
+                    COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
+                    COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_IS_FINISHED, COL_LAST_INDEX,
+                    COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE, COL_READER, COL_LAST_UPDATE
+                },
+                condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
         }
         return getMangasFromCursor(cursor);
     }
@@ -466,7 +466,7 @@ public class Database extends SQLiteOpenHelper {
 
                 do {
                     Manga manga = new Manga(cursor.getInt(colServerId),
-                            cursor.getString(colTitle), cursor.getString(colWeb), false);
+                        cursor.getString(colTitle), cursor.getString(colWeb), false);
                     manga.setSynopsis(cursor.getString(colSynopsis));
                     manga.setImages(cursor.getString(colImage));
                     manga.setId(cursor.getInt(colId));
@@ -512,12 +512,12 @@ public class Database extends SQLiteOpenHelper {
 
     public static ArrayList<Chapter> getChapters(Context c, int MangaId, String condition, boolean asc) {
         Cursor cursor = getDatabase(c).query(
-                TABLE_CHAPTERS,
-                new String[]{
-                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
-                        COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
-                }, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condition,
-                null, null, null, COL_CAP_ID + (asc ? " ASC" : " DESC")
+            TABLE_CHAPTERS,
+            new String[]{
+                COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
+                COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
+            }, COL_CAP_ID_MANGA + "=" + MangaId + " AND " + condition,
+            null, null, null, COL_CAP_ID + (asc ? " ASC" : " DESC")
         );
         return getChapterFromCursor(cursor);
     }
@@ -553,11 +553,11 @@ public class Database extends SQLiteOpenHelper {
     public static Chapter getChapter(Context c, int capId) {
         Chapter cap = null;
         Cursor cursor = getDatabase(c).query(
-                TABLE_CHAPTERS,
-                new String[]{
-                        COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
-                        COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
-                }, COL_CAP_ID + "=" + capId, null, null, null, null);
+            TABLE_CHAPTERS,
+            new String[]{
+                COL_CAP_ID, COL_CAP_ID_MANGA, COL_CAP_NAME, COL_CAP_PATH, COL_CAP_EXTRA,
+                COL_CAP_PAGES, COL_CAP_PAG_READ, COL_CAP_STATE, COL_CAP_DOWNLOADED
+            }, COL_CAP_ID + "=" + capId, null, null, null, null);
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_CAP_ID);
             int colMID = cursor.getColumnIndex(COL_CAP_ID_MANGA);
@@ -680,12 +680,12 @@ public class Database extends SQLiteOpenHelper {
     public static Manga getManga(Context context, int mangaID) {
         Manga manga = null;
         Cursor cursor = getDatabase(context).query(TABLE_MANGA,
-                new String[]{
-                        COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
-                        COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_LAST_INDEX,
-                        COL_READ_ORDER, COL_AUTHOR, COL_GENRE, COL_READER, COL_IS_FINISHED, COL_LAST_UPDATE
-                },
-                COL_ID + "=" + mangaID, null, null, null, COL_LAST_READ + " DESC");
+            new String[]{
+                COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
+                COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_LAST_INDEX,
+                COL_READ_ORDER, COL_AUTHOR, COL_GENRE, COL_READER, COL_IS_FINISHED, COL_LAST_UPDATE
+            },
+            COL_ID + "=" + mangaID, null, null, null, COL_LAST_READ + " DESC");
         if (cursor.moveToFirst()) {
             int colId = cursor.getColumnIndex(COL_ID);
             int colServerId = cursor.getColumnIndex(COL_SERVER_ID);
@@ -703,7 +703,7 @@ public class Database extends SQLiteOpenHelper {
             int colLastUpdate = cursor.getColumnIndex(COL_LAST_UPDATE);
 
             manga = new Manga(cursor.getInt(colServerId),
-                    cursor.getString(colTitle), cursor.getString(colWeb), false);
+                cursor.getString(colTitle), cursor.getString(colWeb), false);
             manga.setSynopsis(cursor.getString(colSummary));
             manga.setImages(cursor.getString(colImages));
             manga.setId(cursor.getInt(colId));
@@ -850,27 +850,27 @@ public class Database extends SQLiteOpenHelper {
             }
             if (oldVersion < 16) {
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
-                        COL_SERVER_ID + "=29";
+                    " = REPLACE(" + COL_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE " +
+                    COL_SERVER_ID + "=29";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'www.readmanga.today', 'www.readmng.com') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE " +
-                        COL_SERVER_ID + "=34";
+                    " = REPLACE(" + COL_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE " +
+                    COL_SERVER_ID + "=34";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'mangapedia.fr', 'mangapedia.eu') WHERE 1";
                 db.execSQL(query);
             }
             if (oldVersion < 17) {
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE " +
-                        COL_SERVER_ID + "=34";
+                    " = REPLACE(" + COL_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE " +
+                    COL_SERVER_ID + "=34";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'mangapedia.eu', 'mangapedia.fr') WHERE 1";
                 db.execSQL(query);
             }
             if (oldVersion < 18) {
@@ -878,33 +878,33 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE " + TABLE_CHAPTERS + ";");
                 db.execSQL(DATABASE_CHAPTERS_CREATE);
                 db.execSQL("INSERT INTO capitulos (id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra) " +
-                        "SELECT id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra FROM temp_chapters; ");
+                    "SELECT id, nombre, path, paginas, manga_id, estado, leidas, descargado, extra FROM temp_chapters; ");
                 db.execSQL("DROP TABLE temp_chapters;");
             }
             if (oldVersion < 19) {
                 String query = "DELETE FROM capitulos WHERE id IN (SELECT id FROM capitulos WHERE path LIKE '//www.mangahere.co%' OR path LIKE 'http://www.mangahere.cc%');";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
-                        COL_SERVER_ID + "=4";
+                    " = REPLACE(" + COL_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
+                    COL_SERVER_ID + "=4";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
-                        COL_SERVER_ID + "=4";
+                    " = REPLACE(" + COL_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE " +
+                    COL_SERVER_ID + "=4";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'https://www.mangahere.co', 'http://www.mangahere.cc') WHERE 1";
                 db.execSQL(query);
             }
             if (oldVersion < 20) {
                 String query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://www.mangahere.cc', '') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", '//www.mangahere.cc', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", '//www.mangahere.cc', '') WHERE 1";
                 db.execSQL(query);
             }
             if (oldVersion < 21) {
@@ -912,63 +912,63 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL("DROP TABLE " + TABLE_MANGA + ";");
                 db.execSQL(DATABASE_MANGA_CREATE);
                 db.execSQL("INSERT INTO manga(id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update) " +
-                        "SELECT id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update FROM temp_manga;");
+                    "SELECT id, nombre, path, imagen, sinopsis, server_id, ultima, nuevos, last_index, burcar, orden_lectura, autor, scroll_s, reader, genres, last_update FROM temp_manga;");
                 db.execSQL("DROP TABLE temp_manga");
                 String query = "UPDATE manga SET path = REPLACE(path,'http://www.mangahere.cc', '') WHERE server_id=4;";
                 db.execSQL(query);
             }
             if (oldVersion < 22) {
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'bato.to', 'vatoto.com') WHERE 1";
                 db.execSQL(query);
             }
             if (oldVersion < 23) {
                 //http://de.ninemanga.com
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://de.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 //http://ru.ninemanga.com
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'http://ru.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'http://ru.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://ru.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://ru.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 //http://es.ninemanga.com
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'http://es.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'http://es.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://es.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://es.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 //http://it.ninemanga.com
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'http://it.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'http://it.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://it.ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://it.ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 //http://ninemanga.com
                 query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'http://ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'http://ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'http://ninemanga.com', '') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'http://ninemanga.com', '') WHERE 1";
                 db.execSQL(query);
             }
 
             if (oldVersion < 24) {
                 String query = "UPDATE " + TABLE_MANGA + " SET " + COL_PATH +
-                        " = REPLACE(" + COL_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
+                    " = REPLACE(" + COL_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
                 db.execSQL(query);
                 query = "UPDATE " + TABLE_CHAPTERS + " SET " + COL_CAP_PATH +
-                        " = REPLACE(" + COL_CAP_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
+                    " = REPLACE(" + COL_CAP_PATH + ", 'japscan.com', 'japscan.cc') WHERE 1";
                 db.execSQL(query);
 
             }
@@ -1024,7 +1024,7 @@ public class Database extends SQLiteOpenHelper {
         File dbFile = c.getDatabasePath("mangas.db");
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(c);
         String ruta = sp.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+            Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
         ruta += "dbs/";
         File exportDir = new File(ruta, "");
         if (!exportDir.exists()) {
@@ -1048,8 +1048,8 @@ public class Database extends SQLiteOpenHelper {
 
     private boolean doesTableExist(SQLiteDatabase db, String tableName) {
         Cursor cursor = db.rawQuery(
-                "select DISTINCT tbl_name from sqlite_master where tbl_name = '" +
-                        tableName + "'", null);
+            "select DISTINCT tbl_name from sqlite_master where tbl_name = '" +
+                tableName + "'", null);
         if (cursor != null) {
             if (cursor.getCount() > 0) {
                 cursor.close();

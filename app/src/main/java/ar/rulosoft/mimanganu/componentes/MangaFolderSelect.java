@@ -75,7 +75,7 @@ public class MangaFolderSelect extends DialogFragment {
                 }
                 ArrayList<String> dirList = Util.getInstance().dirList(actual);
                 ArrayAdapter<String> adap =
-                        new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
+                    new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
                 dirs_path.setText(actual);
                 dirs.setAdapter(adap);
             }

@@ -20,7 +20,7 @@ import ar.rulosoft.navegadores.Navigator;
 
 public class ImageLoader {
     private static Map<Imaginable, String> imageViews =
-            Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
+        Collections.synchronizedMap(new WeakHashMap<Imaginable, String>());
 
     private MemCache mMemCache;
     private FileCache mFileCache;
@@ -37,19 +37,19 @@ public class ImageLoader {
     }
 
     public void displayImg(String url, Imaginable imageView) {
-       // if (imageViewReUse(imageView, url)) {
-            imageViews.put(imageView, url);
+        // if (imageViewReUse(imageView, url)) {
+        imageViews.put(imageView, url);
 
-            // First, try to fetch image from memory
-            Bitmap bitmap = mMemCache.getImageInMem(url);
-            if(url != null && !url.isEmpty()) {
-                if (bitmap != null && !bitmap.isRecycled()) {
-                    imageView.setImageBitmap(bitmap);
-                } else {
-                    queuePhoto(url, imageView);
-                }
+        // First, try to fetch image from memory
+        Bitmap bitmap = mMemCache.getImageInMem(url);
+        if (url != null && !url.isEmpty()) {
+            if (bitmap != null && !bitmap.isRecycled()) {
+                imageView.setImageBitmap(bitmap);
+            } else {
+                queuePhoto(url, imageView);
             }
-       // }
+        }
+        // }
     }
 
     private boolean imageViewReUse(Imaginable imageView, String url) {
@@ -80,8 +80,7 @@ public class ImageLoader {
                 is = new FileInputStream(url);
                 FileCache.writeFile(is, f);
                 is.close();
-            }
-            else {
+            } else {
                 FileCache.writeFile(Navigator.getInstance().getStream(url), f);
             }
             return decodeFile(f);
@@ -120,7 +119,7 @@ public class ImageLoader {
         }
     }
 
-    public void clearMem(){
+    public void clearMem() {
         mMemCache.clearMem();
     }
 

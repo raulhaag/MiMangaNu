@@ -27,34 +27,34 @@ public class MangaAE extends ServerBase {
     private static final String PATTERN_CHAPTER_IMAGE = "src=\"(https*://www.manga.ae/cdn/[^\"]+)";
 
     private static String[] genres = new String[]{"قائمة المانجا",
-            "أكشن", "مغامرة", "كوميديا", "دراما", "خيال", "شونين", "فوق الطبيعة", "فنون قتالية", "غموض",
-            "دوجينشي", "رعب", "ميكانيك", "إطلاقة واحدة", "نفسي", "رومانسي", "حياة مدرسية", "خيال علمي",
-            "شوجو", "جزء من الحياة", "رياضي", "مأساة", "سينين", "تاريخي", "جوشي", "ايتشي", "ويب تونز", "مانهوا كورية"
-            , "كوميكس", "مانجا عربية", "مانوا صينية", "حريم"
+        "أكشن", "مغامرة", "كوميديا", "دراما", "خيال", "شونين", "فوق الطبيعة", "فنون قتالية", "غموض",
+        "دوجينشي", "رعب", "ميكانيك", "إطلاقة واحدة", "نفسي", "رومانسي", "حياة مدرسية", "خيال علمي",
+        "شوجو", "جزء من الحياة", "رياضي", "مأساة", "سينين", "تاريخي", "جوشي", "ايتشي", "ويب تونز", "مانهوا كورية"
+        , "كوميكس", "مانجا عربية", "مانوا صينية", "حريم"
     };
     private static String[] genresValues = new String[]{"",
-            "/tag:Action", "/tag:Adventure", "/tag:Comedy", "/tag:Drama ", "/tag:Fantasy ",
-            "/tag:Shounen ", "/tag:Supernatural ", "/tag:Martial Arts", "/tag:Mystery ",
-            "/tag:Doujinshi ", "/tag:Horror ", "/tag:Mecha ", "/tag:One Shot", "/tag:Psychological ",
-            "/tag:Romance ", "/tag:School Life", "/tag:Sci-fi", "/tag:Shoujo ", "/tag:Slice of Life",
-            "/tag:Sports ", "/tag:Tragedy ", "/tag:Senin ", "/tag:Historical ", "/tag:Josei ",
-            "/tag:Ecchi ", "/tag:Webtoons ", "/tag:Manhwa", "/tag:Comics", "/tag:Arab Manga",
-            "/tag:Chinese Manhua", "/tag:Harem ",
+        "/tag:Action", "/tag:Adventure", "/tag:Comedy", "/tag:Drama ", "/tag:Fantasy ",
+        "/tag:Shounen ", "/tag:Supernatural ", "/tag:Martial Arts", "/tag:Mystery ",
+        "/tag:Doujinshi ", "/tag:Horror ", "/tag:Mecha ", "/tag:One Shot", "/tag:Psychological ",
+        "/tag:Romance ", "/tag:School Life", "/tag:Sci-fi", "/tag:Shoujo ", "/tag:Slice of Life",
+        "/tag:Sports ", "/tag:Tragedy ", "/tag:Senin ", "/tag:Historical ", "/tag:Josei ",
+        "/tag:Ecchi ", "/tag:Webtoons ", "/tag:Manhwa", "/tag:Comics", "/tag:Arab Manga",
+        "/tag:Chinese Manhua", "/tag:Harem ",
     };
 
 
     private static String[] sortByValues = new String[]{
-            "|order:views", "|order:status", "|order:chapter_count", "|order:release_date", "|order:english_name"
+        "|order:views", "|order:status", "|order:chapter_count", "|order:release_date", "|order:english_name"
     };
     private static String[] sortBy = new String[]{
-            "الشهرة ", "الحالة ", "عدد الفصول ", "تاريخ النشر ", "اسم المانجا"
+        "الشهرة ", "الحالة ", "عدد الفصول ", "تاريخ النشر ", "اسم المانجا"
     };
     private static String[] sortOrder = new String[]{
-            "↓", "↑"
+        "↓", "↑"
     };
 
     private static String[] sortOrderV = new String[]{
-            "", "|arrange:plus",
+        "", "|arrange:plus",
     };
 
 
@@ -92,17 +92,17 @@ public class MangaAE extends ServerBase {
 
             // Author
             manga.setAuthor(getFirstMatchDefault(PATTERN_MANGA_AUTHOR, data,
-                    context.getString(R.string.nodisponible)));
+                context.getString(R.string.nodisponible)));
             // Genre
             manga.setGenre(getFirstMatchDefault(PATTERN_MANGA_GENRE, data,
-                    context.getString(R.string.nodisponible)).replaceAll("<.+?>|\\n", " "));
+                context.getString(R.string.nodisponible)).replaceAll("<.+?>|\\n", " "));
 
             // Summary
             manga.setSynopsis(getFirstMatchDefault(PATTERN_MANGA_SUMMARY, data,
-                    context.getString(R.string.nodisponible)));
+                context.getString(R.string.nodisponible)));
             // Status
             manga.setFinished(!getFirstMatchDefault(PATTERN_MANGA_STATUS, data, "مستمرة")
-                    .contains("مستمرة"));
+                .contains("مستمرة"));
             // Chapters
             Pattern pattern = Pattern.compile(PATTERN_MANGA_CHAPTER, Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
@@ -155,15 +155,15 @@ public class MangaAE extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_genre), genres
-                        , ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_order_by),
-                        sortBy, ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        sortOrder, ServerFilter.FilterType.SINGLE)};
+            new ServerFilter(
+                context.getString(R.string.flt_genre), genres
+                , ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_order_by),
+                sortBy, ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_order),
+                sortOrder, ServerFilter.FilterType.SINGLE)};
     }
 
     @Override

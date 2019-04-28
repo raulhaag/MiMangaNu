@@ -15,59 +15,59 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 class HeavenManga extends ServerBase {
 
     private static String[] generos = new String[]{
-            "Todo", "Accion", "Adulto", "Aventura", "Artes Marciales",
-            "Acontesimientos de la Vida", "Bakunyuu", "Sci-fi",
-            "Comic", "Combate", "Comedia", "Cooking", "Cotidiano", "Colegialas",
-            "Critica social", "Ciencia ficcion", "Cambio de genero", "Cosas de la Vida",
-            "Drama", "Deporte", "Doujinshi", "Delincuentes", "Ecchi", "Escolar",
-            "Erotico", "Escuela", "Estilo de Vida", "Fantasia", "Fragmentos de la Vida",
-            "Gore", "Gender Bender", "Humor", "Harem", "Haren", "Hentai", "Horror",
-            "Historico", "Josei", "Loli", "Light", "Lucha Libre", "Manga", "Mecha",
-            "Magia", "Maduro", "Manhwa", "Manwha", "Mature", "Misterio", "Mutantes",
-            "Novela", "Orgia", "OneShot", "OneShots", "Psicologico", "Romance",
-            "Recuentos de la vida", "Smut", "Shojo", "Shonen", "Seinen", "Shoujo",
-            "Shounen", "Suspenso", "School Life", "Sobrenatural", "SuperHeroes",
-            "Supernatural", "Slice of Life", "Super Poderes", "Terror", "Torneo",
-            "Tragedia", "Transexual", "Vida", "Vampiros", "Violencia", "Vida Pasada",
-            "Vida Cotidiana", "Vida de Escuela", "Webtoon", "Webtoons", "Yuri"
+        "Todo", "Accion", "Adulto", "Aventura", "Artes Marciales",
+        "Acontesimientos de la Vida", "Bakunyuu", "Sci-fi",
+        "Comic", "Combate", "Comedia", "Cooking", "Cotidiano", "Colegialas",
+        "Critica social", "Ciencia ficcion", "Cambio de genero", "Cosas de la Vida",
+        "Drama", "Deporte", "Doujinshi", "Delincuentes", "Ecchi", "Escolar",
+        "Erotico", "Escuela", "Estilo de Vida", "Fantasia", "Fragmentos de la Vida",
+        "Gore", "Gender Bender", "Humor", "Harem", "Haren", "Hentai", "Horror",
+        "Historico", "Josei", "Loli", "Light", "Lucha Libre", "Manga", "Mecha",
+        "Magia", "Maduro", "Manhwa", "Manwha", "Mature", "Misterio", "Mutantes",
+        "Novela", "Orgia", "OneShot", "OneShots", "Psicologico", "Romance",
+        "Recuentos de la vida", "Smut", "Shojo", "Shonen", "Seinen", "Shoujo",
+        "Shounen", "Suspenso", "School Life", "Sobrenatural", "SuperHeroes",
+        "Supernatural", "Slice of Life", "Super Poderes", "Terror", "Torneo",
+        "Tragedia", "Transexual", "Vida", "Vampiros", "Violencia", "Vida Pasada",
+        "Vida Cotidiana", "Vida de Escuela", "Webtoon", "Webtoons", "Yuri"
     };
     private static String[] generosV = new String[]{
-            "", "/genero/accion.html", "/genero/adulto.html", "/genero/aventura.html",
-            "/genero/artes+marciales.html", "/genero/acontesimientos+de+la+vida.html",
-            "/genero/bakunyuu.html", "/genero/sci-fi.html", "/genero/comic.html",
-            "/genero/combate.html", "/genero/comedia.html", "/genero/cooking.html",
-            "/genero/cotidiano.html", "/genero/colegialas.html", "/genero/critica+social.html",
-            "/genero/ciencia+ficcion.html", "/genero/cambio+de+genero.html",
-            "/genero/cosas+de+la+vida.html", "/genero/drama.html", "/genero/deporte.html",
-            "/genero/doujinshi.html", "/genero/delincuentes.html", "/genero/ecchi.html",
-            "/genero/escolar.html", "/genero/erotico.html", "/genero/escuela.html",
-            "/genero/estilo+de+vida.html", "/genero/fantasia.html",
-            "/genero/fragmentos+de+la+vida.html", "/genero/gore.html",
-            "/genero/gender+bender.html", "/genero/humor.html", "/genero/harem.html",
-            "/genero/haren.html", "/genero/hentai.html", "/genero/horror.html",
-            "/genero/historico.html", "/genero/josei.html", "/genero/loli.html",
-            "/genero/light.html", "/genero/lucha+libre.html", "/genero/manga.html",
-            "/genero/mecha.html", "/genero/magia.html", "/genero/maduro.html",
-            "/genero/manhwa.html", "/genero/manwha.html", "/genero/mature.html",
-            "/genero/misterio.html", "/genero/mutantes.html", "/genero/novela.html",
-            "/genero/orgia.html", "/genero/oneshot.html", "/genero/oneshots.html",
-            "/genero/psicologico.html", "/genero/romance.html",
-            "/genero/recuentos+de+la+vida.html", "/genero/smut.html", "/genero/shojo.html",
-            "/genero/shonen.html", "/genero/seinen.html", "/genero/shoujo.html",
-            "/genero/shounen.html", "/genero/suspenso.html", "/genero/school+life.html",
-            "/genero/sobrenatural.html", "/genero/superheroes.html", "/genero/supernatural.html",
-            "/genero/slice+of+life.html", "/genero/ssuper+poderes.html",
-            "/genero/terror.html", "/genero/torneo.html", "/genero/tragedia.html",
-            "/genero/transexual.html", "/genero/vida.html", "/genero/vampiros.html",
-            "/genero/violencia.html", "/genero/vida+pasada.html", "/genero/vida+cotidiana.html",
-            "/genero/vida+de+escuela.html", "/genero/webtoon.html",
-            "/genero/webtoons.html", "/genero/yuri.html"
+        "", "/genero/accion.html", "/genero/adulto.html", "/genero/aventura.html",
+        "/genero/artes+marciales.html", "/genero/acontesimientos+de+la+vida.html",
+        "/genero/bakunyuu.html", "/genero/sci-fi.html", "/genero/comic.html",
+        "/genero/combate.html", "/genero/comedia.html", "/genero/cooking.html",
+        "/genero/cotidiano.html", "/genero/colegialas.html", "/genero/critica+social.html",
+        "/genero/ciencia+ficcion.html", "/genero/cambio+de+genero.html",
+        "/genero/cosas+de+la+vida.html", "/genero/drama.html", "/genero/deporte.html",
+        "/genero/doujinshi.html", "/genero/delincuentes.html", "/genero/ecchi.html",
+        "/genero/escolar.html", "/genero/erotico.html", "/genero/escuela.html",
+        "/genero/estilo+de+vida.html", "/genero/fantasia.html",
+        "/genero/fragmentos+de+la+vida.html", "/genero/gore.html",
+        "/genero/gender+bender.html", "/genero/humor.html", "/genero/harem.html",
+        "/genero/haren.html", "/genero/hentai.html", "/genero/horror.html",
+        "/genero/historico.html", "/genero/josei.html", "/genero/loli.html",
+        "/genero/light.html", "/genero/lucha+libre.html", "/genero/manga.html",
+        "/genero/mecha.html", "/genero/magia.html", "/genero/maduro.html",
+        "/genero/manhwa.html", "/genero/manwha.html", "/genero/mature.html",
+        "/genero/misterio.html", "/genero/mutantes.html", "/genero/novela.html",
+        "/genero/orgia.html", "/genero/oneshot.html", "/genero/oneshots.html",
+        "/genero/psicologico.html", "/genero/romance.html",
+        "/genero/recuentos+de+la+vida.html", "/genero/smut.html", "/genero/shojo.html",
+        "/genero/shonen.html", "/genero/seinen.html", "/genero/shoujo.html",
+        "/genero/shounen.html", "/genero/suspenso.html", "/genero/school+life.html",
+        "/genero/sobrenatural.html", "/genero/superheroes.html", "/genero/supernatural.html",
+        "/genero/slice+of+life.html", "/genero/ssuper+poderes.html",
+        "/genero/terror.html", "/genero/torneo.html", "/genero/tragedia.html",
+        "/genero/transexual.html", "/genero/vida.html", "/genero/vampiros.html",
+        "/genero/violencia.html", "/genero/vida+pasada.html", "/genero/vida+cotidiana.html",
+        "/genero/vida+de+escuela.html", "/genero/webtoon.html",
+        "/genero/webtoons.html", "/genero/yuri.html"
     };
     private static String[] paginas = new String[]{
-            "0-9.html", "a.html", "b.html", "c.html", "d.html", "e.html",
-            "f.html", "g.html", "h.html", "i.html", "j.html", "k.html", "l.html", "m.html",
-            "n.html", "o.html", "p.html", "q.html", "r.html", "s.html", "t.html", "u.html",
-            "v.html", "w.html", "x.html", "y.html", "z.html"
+        "0-9.html", "a.html", "b.html", "c.html", "d.html", "e.html",
+        "f.html", "g.html", "h.html", "i.html", "j.html", "k.html", "l.html", "m.html",
+        "n.html", "o.html", "p.html", "q.html", "r.html", "s.html", "t.html", "u.html",
+        "v.html", "w.html", "x.html", "y.html", "z.html"
     };
 
     HeavenManga(Context context) {
@@ -136,10 +136,10 @@ class HeavenManga extends ServerBase {
         assert chapter.getExtra() != null;
         String web = getNavigatorAndFlushParameters().get(chapter.getExtra().substring(0, chapter.getExtra().lastIndexOf("/")) + "/" + page);
         String source = getFirstMatch("<center>([\\s\\S]+)<center>", web,
-                context.getString(R.string.server_failed_loading_image));
+            context.getString(R.string.server_failed_loading_image));
         return getFirstMatch(
-                "<img src=\"([^\"]+)", source,
-                context.getString(R.string.server_failed_loading_image)).trim();
+            "<img src=\"([^\"]+)", source,
+            context.getString(R.string.server_failed_loading_image)).trim();
     }
 
     @Override
@@ -149,18 +149,18 @@ class HeavenManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             if (chapter.getExtra() == null) {
                 String source = getNavigatorAndFlushParameters().get(chapter.getPath());
                 String web = getFirstMatch(
-                        "<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source,
-                        context.getString(R.string.server_failed_loading_chapter));
+                    "<a id=\"l\" href=\"(http://heavenmanga.com/.+?)\"><b>Leer</b>", source,
+                    context.getString(R.string.server_failed_loading_chapter));
                 chapter.setExtra(web);
             }
             String source = getNavigatorAndFlushParameters().get(chapter.getExtra());
             String nop = getFirstMatch(
-                    "(\\d+)</option></select>", source,
-                    context.getString(R.string.server_failed_loading_page_count));
+                "(\\d+)</option></select>", source,
+                context.getString(R.string.server_failed_loading_page_count));
             chapter.setPages(Integer.parseInt(nop));
         }
     }

@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="8dp"
         android:paddingLeft="8dp"
         android:paddingRight="8dp"
+        android:paddingBottom="8dp"
         android:theme="@style/AppBaseThemeDark">
 
         <LinearLayout
@@ -128,6 +128,7 @@
             android:layout_weight="1"
             android:text="@string/blue_filter"
             android:textColor="@android:color/white" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -159,8 +160,8 @@
         android:id="@+id/reader_options_close"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:layout_below="@+id/option_root"
+        android:layout_alignParentBottom="true"
         android:background="@color/transparent" />
 
 </RelativeLayout>

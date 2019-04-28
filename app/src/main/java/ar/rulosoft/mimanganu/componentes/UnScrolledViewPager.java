@@ -11,15 +11,15 @@ import ar.rulosoft.mimanganu.componentes.readers.paged.PagedReader;
 
 public class UnScrolledViewPager extends ViewPager {
 
-    public UnScrolledViewPager(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
     static final int MIN_DISTANCE = 200;
     static final int MAX_TIME = 200;
     float mStartDragX;
     long mStartTime;
     OnSwipeOutListener mOnSwipeOutListener;
+
+    public UnScrolledViewPager(Context context, AttributeSet attrs) {
+        super(context, attrs);
+    }
 
     public void setOnSwipeOutListener(OnSwipeOutListener listener) {
         mOnSwipeOutListener = listener;

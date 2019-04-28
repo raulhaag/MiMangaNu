@@ -107,7 +107,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         /* Once, create necessary Data */
         prefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
         final String current_filepath = prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+            Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
 
         /* This enables to hide downloaded images from gallery, just a toggle */
         final SwitchPreferenceCompat cBoxPref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("mostrar_en_galeria");
@@ -267,12 +267,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 JobManager.instance().cancelAllForTag(UpdateJobCreator.UPDATE_TAG);
                 if (time > 0) {
                     new JobRequest.Builder(UpdateJobCreator.UPDATE_TAG)
-                            .setPeriodic(time, TimeUnit.MINUTES.toMillis(5))
-                            .setRequiresCharging(false)
-                            .setRequiresDeviceIdle(false)
-                            .setUpdateCurrent(true)
-                            .build()
-                            .schedule();
+                        .setPeriodic(time, TimeUnit.MINUTES.toMillis(5))
+                        .setRequiresCharging(false)
+                        .setRequiresDeviceIdle(false)
+                        .setUpdateCurrent(true)
+                        .build()
+                        .schedule();
                 }
                 if (time < 0)
                     MainActivity.coldStart = false;
@@ -490,13 +490,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 File cf = new File(prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/shared_prefs_backup");
                 if (cf.list() != null && cf.list().length > 0) {
                     Snackbar snackbar = Snackbar.make(getView(), R.string.replace_backup, Snackbar.LENGTH_LONG)
-                            .setActionTextColor(Color.WHITE)
-                            .setAction(android.R.string.ok, new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    backupPreferences();
-                                }
-                            });
+                        .setActionTextColor(Color.WHITE)
+                        .setAction(android.R.string.ok, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                backupPreferences();
+                            }
+                        });
                     if (MainActivity.colors != null)
                         snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
                     snackbar.show();
@@ -513,13 +513,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             public boolean onPreferenceClick(Preference preference) {
 
                 Snackbar snackbar = Snackbar.make(getView(), R.string.backup_restore, Snackbar.LENGTH_LONG)
-                        .setActionTextColor(Color.WHITE)
-                        .setAction(android.R.string.ok, new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                restorePreferences();
-                            }
-                        });
+                    .setActionTextColor(Color.WHITE)
+                    .setAction(android.R.string.ok, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            restorePreferences();
+                        }
+                    });
                 if (MainActivity.colors != null)
                     snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
                 snackbar.show();
@@ -576,7 +576,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             try {
                 File toFile = new File(to.getPath(), f);
                 Util.getInstance().copyFile(new File(from.getPath(), f),
-                        toFile);
+                    toFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -589,7 +589,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         File from = new File(dir);
         Util.getInstance().deleteRecursive(to);
         to.mkdirs();
-        if(from.list() != null && from.list().length == 0){
+        if (from.list() != null && from.list().length == 0) {
             Util.getInstance().showFastSnackBar(getString(R.string.preferences_backup_not_found), getView(), getContext());
             return;
         }

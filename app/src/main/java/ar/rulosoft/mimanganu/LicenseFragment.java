@@ -21,8 +21,8 @@ import static android.R.color.black;
 
 public class LicenseFragment extends Fragment {
 
-    private TextView mLicenseView;
     private static final String TAG = "LicenseFragment";
+    private TextView mLicenseView;
 
     @Nullable
     @Override

@@ -19,10 +19,10 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 public class Paths {
 
     private final static int[] illegalChars = {
-            34, 60, 62, 124,
-            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-            21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-            58, 42, 63, 92, 47
+        34, 60, 62, 124,
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+        21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+        58, 42, 63, 92, 47
     };
 
     static {
@@ -37,7 +37,7 @@ public class Paths {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath());
         return dir + "/MiMangaNu/" + cleanFileName(serverName) + "/" +
-                cleanFileName(manga.getTitle()).trim() + "/" + cleanFileName(chapter.getTitle()).trim();
+            cleanFileName(manga.getTitle()).trim() + "/" + cleanFileName(chapter.getTitle()).trim();
     }
 
     public static String generateBasePath(ServerBase serverBase, Manga manga, Context context) {
@@ -47,9 +47,9 @@ public class Paths {
         }
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         String dir = prefs.getString("directorio",
-                Environment.getExternalStorageDirectory().getAbsolutePath());
+            Environment.getExternalStorageDirectory().getAbsolutePath());
         return dir + "/MiMangaNu/" + cleanFileName(serverName).trim() + "/" +
-                cleanFileName(manga.getTitle()).trim();
+            cleanFileName(manga.getTitle()).trim();
     }
 
     private static String cleanFileName(String badFileName) {

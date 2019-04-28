@@ -2,6 +2,8 @@ package ar.rulosoft.mimanganu;
 
 import android.content.Context;
 
+import androidx.test.core.app.ApplicationProvider;
+
 import org.junit.Before;
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -10,14 +12,13 @@ import org.junit.runner.RunWith;
 import org.junit.runners.MethodSorters;
 import org.robolectric.RobolectricTestRunner;
 import org.robolectric.annotation.Config;
-import androidx.test.core.app.ApplicationProvider;
 
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.navegadores.Navigator;
 import util.TestServersCommon;
 
 @Config(
-        shadows = {ShadowNavigator.class}
+    shadows = {ShadowNavigator.class}
 )
 @RunWith(RobolectricTestRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

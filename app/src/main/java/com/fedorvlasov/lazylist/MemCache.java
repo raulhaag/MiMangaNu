@@ -25,7 +25,7 @@ public class MemCache {
 
             @Override
             protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap newValue) {
-                if(oldValue != null && !oldValue.isRecycled()){
+                if (oldValue != null && !oldValue.isRecycled()) {
                     oldValue.recycle();
                 }
             }
@@ -39,7 +39,7 @@ public class MemCache {
         return cache;
     }
 
-    public void removeFromMemory(String key){
+    public void removeFromMemory(String key) {
         imagesWarehouse.remove(key);
     }
 

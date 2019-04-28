@@ -80,8 +80,8 @@ public class Util {
             if (null == notificationManager.getNotificationChannel(channelIdUpdate)) {
                 /* Sound and vibrate */
                 NotificationChannel notificationChannel = new NotificationChannel(channelIdNews,
-                        context.getResources().getString(R.string.notification_channel_new),
-                        NotificationManager.IMPORTANCE_DEFAULT);
+                    context.getResources().getString(R.string.notification_channel_new),
+                    NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.setDescription(context.getResources().getString(R.string.notification_channel_new));
                 notificationChannel.enableVibration(true);
                 notificationChannel.setVibrationPattern(new long[]{0, 500, 500, 1000});
@@ -90,8 +90,8 @@ public class Util {
                 notificationManager.createNotificationChannel(notificationChannel);
                 /* No sound, no vibrate */
                 notificationChannel = new NotificationChannel(channelIdUpdate,
-                        context.getResources().getString(R.string.notification_channel_update),
-                        NotificationManager.IMPORTANCE_DEFAULT);
+                    context.getResources().getString(R.string.notification_channel_update),
+                    NotificationManager.IMPORTANCE_DEFAULT);
                 notificationChannel.setDescription(context.getResources().getString(R.string.notification_channel_update));
                 notificationChannel.enableVibration(false);
                 notificationChannel.setSound(null, null);
@@ -601,13 +601,9 @@ public class Util {
         return false;
     }
 
-    public boolean isGPServicesAvailable(Context context)  {
+    public boolean isGPServicesAvailable(Context context) {
         final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         return status == ConnectionResult.SUCCESS;
-    }
-
-    private static class LazyHolder {
-        private static final Util utilInstance = new Util();
     }
 
     public String unpack(String source) {
@@ -655,5 +651,9 @@ public class Util {
             }
         }
         return cadena;
+    }
+
+    private static class LazyHolder {
+        private static final Util utilInstance = new Util();
     }
 }

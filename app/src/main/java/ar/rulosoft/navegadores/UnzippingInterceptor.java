@@ -28,8 +28,8 @@ public class UnzippingInterceptor implements Interceptor {
             GzipSource responseBody = new GzipSource(response.body().source());
             Headers strippedHeaders = response.headers().newBuilder().build();
             return response.newBuilder().headers(strippedHeaders)
-                    .body(new RealResponseBody(response.body().contentType().toString(), contentLength, Okio.buffer(responseBody)))
-                    .build();
+                .body(new RealResponseBody(response.body().contentType().toString(), contentLength, Okio.buffer(responseBody)))
+                .build();
         } else {
             return response;
         }

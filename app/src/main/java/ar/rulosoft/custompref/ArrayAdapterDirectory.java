@@ -37,12 +37,6 @@ public class ArrayAdapterDirectory extends ArrayAdapter<String> {
     private final ArrayList<String> mList;
     private final int mResource;
 
-    static class ViewHolder {
-        public LinearLayout object;
-        public TextView text;
-        public ImageView image;
-    }
-
     public ArrayAdapterDirectory(Context context, int resource, ArrayList<String> itemList) {
         super(context, resource, itemList);
         this.mContext = context;
@@ -78,5 +72,11 @@ public class ArrayAdapterDirectory extends ArrayAdapter<String> {
         holder.image.setColorFilter(0xFF545454);
 
         return rowView;
+    }
+
+    static class ViewHolder {
+        public LinearLayout object;
+        public TextView text;
+        public ImageView image;
     }
 }

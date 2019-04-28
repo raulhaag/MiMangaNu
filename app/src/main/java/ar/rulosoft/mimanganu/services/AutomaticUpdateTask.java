@@ -63,7 +63,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     protected void onProgressUpdate(Integer... values) {
         if (context != null) {
             Util.getInstance().changeSearchingForUpdatesNotification(context, mangaList.size(), ++numNow, mNotifyID, context.getResources().getString(R.string.searching_for_updates), numNow + "/" + mangaList.size() + " - " +
-                    mangaList.get(values[0]).getTitle(), true);
+                mangaList.get(values[0]).getTitle(), true);
         }
         super.onProgressUpdate(values);
     }

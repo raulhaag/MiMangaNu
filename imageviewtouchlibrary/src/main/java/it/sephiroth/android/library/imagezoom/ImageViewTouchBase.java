@@ -135,7 +135,7 @@ public abstract class ImageViewTouchBase extends AppCompatImageView implements I
 
         if (LOG_ENABLED) {
             Log.e(LOG_TAG, "onLayout: " + changed + ", bitmapChanged: " +
-                    mBitmapChanged + ", scaleChanged: " + mScaleTypeChanged);
+                mBitmapChanged + ", scaleChanged: " + mScaleTypeChanged);
         }
 
         super.onLayout(changed, left, top, right, bottom);
@@ -360,14 +360,14 @@ public abstract class ImageViewTouchBase extends AppCompatImageView implements I
             return 1f;
         } /*
          * else if (type == DisplayType.FIT_IF_BIGGER) { // normal scale if
-		 * smaller, fit to screen otherwise return Math.min(1f, 1f /
-		 * getScale(mBaseMatrix)); }/
-		 */ else if (type == DisplayType.FIT_TO_WIDTH) {
+         * smaller, fit to screen otherwise return Math.min(1f, 1f /
+         * getScale(mBaseMatrix)); }/
+         */ else if (type == DisplayType.FIT_TO_WIDTH) {
             if (getWidth() != 0 && getHeight() != 0 && getDrawable() != null) {
                 float mImageOriginalWidth = getDrawable().getIntrinsicWidth();
                 float mImageOriginalHeight = getDrawable().getMinimumHeight();
                 if ((mImageOriginalWidth - getWidth()) * mImageOriginalWidth / getWidth() >
-                        (mImageOriginalHeight - getHeight()) * mImageOriginalHeight / getHeight()) {
+                    (mImageOriginalHeight - getHeight()) * mImageOriginalHeight / getHeight()) {
                     return 1f;
                 } else {
                     return 1f / ((mImageOriginalWidth * (((float) getHeight()) / mImageOriginalHeight)) / getWidth());
@@ -380,7 +380,7 @@ public abstract class ImageViewTouchBase extends AppCompatImageView implements I
                 float mImageOriginalWidth = getDrawable().getIntrinsicWidth();
                 float mImageOriginalHeight = getDrawable().getMinimumHeight();
                 if ((mImageOriginalWidth - getWidth()) * mImageOriginalWidth / getWidth() <
-                        (mImageOriginalHeight - getHeight()) * mImageOriginalHeight / getHeight()) {
+                    (mImageOriginalHeight - getHeight()) * mImageOriginalHeight / getHeight()) {
                     return 1f;
                 } else {
                     return 1f / ((mImageOriginalHeight * (((float) getWidth()) / mImageOriginalWidth)) / getHeight());
@@ -482,11 +482,11 @@ public abstract class ImageViewTouchBase extends AppCompatImageView implements I
             mMaxZoomDefined = true;
 
             if (mScaleType == DisplayType.FIT_TO_SCREEN || /*
-                                                             * mScaleType ==
-															 * DisplayType
-															 * .FIT_IF_BIGGER
-															 * ||/
-															 */mScaleType == DisplayType.FIT_TO_WIDTH || mScaleType == DisplayType.FIT_TO_HEIGHT) {
+             * mScaleType ==
+             * DisplayType
+             * .FIT_IF_BIGGER
+             * ||/
+             */mScaleType == DisplayType.FIT_TO_WIDTH || mScaleType == DisplayType.FIT_TO_HEIGHT) {
 
                 if (mMinZoom >= 1) {
                     mMinZoomDefined = false;
@@ -1043,8 +1043,8 @@ public abstract class ImageViewTouchBase extends AppCompatImageView implements I
         FIT_TO_SCREEN,
         /*
          * /** Image will be scaled only if bigger than the bounds of this view
-		 * FIT_IF_BIGGER,/
-		 */
+         * FIT_IF_BIGGER,/
+         */
         /**
          * La imagen se escala al ancho, Image will be scaled to fit in width
          */

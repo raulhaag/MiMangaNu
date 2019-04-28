@@ -3,7 +3,6 @@ package ar.rulosoft.navegadores;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
@@ -109,6 +108,22 @@ public class Navigator {
         return cookieJar;
     }
 
+    public static String getNewBoundary() {
+        String boundary = "---------------------------";
+        boundary += Math.floor(Math.random() * 32768);
+        boundary += Math.floor(Math.random() * 32768);
+        boundary += Math.floor(Math.random() * 32768);
+        return boundary;
+    }
+
+    private static KeyStore getSystemCAKeyStore() throws
+        KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+
+        KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
+        keyStore.load(null, null);
+        return keyStore;
+    }
+
     private void initClient(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
         TrustManager[] trustManagers = getTrustManagers(context);
         SSLContext sslContext = SSLContext.getInstance("TLS");
@@ -120,33 +135,17 @@ public class Navigator {
             socketFactory = sslContext.getSocketFactory();
         }
         httpClient = new OkHttpClientConnectionChecker.Builder()
-                .addInterceptor(new UnzippingInterceptor())
-                .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
-                .addInterceptor(new CFInterceptor())
-                .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
-                .connectTimeout(10, TimeUnit.SECONDS)
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .cookieJar(cookieJar)
-                //.dns(new MmNDNS())//
-                .build();
+            .addInterceptor(new UnzippingInterceptor())
+            .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
+            .addInterceptor(new CFInterceptor())
+            .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .cookieJar(cookieJar)
+            //.dns(new MmNDNS())//
+            .build();
         Navigator.cookieJar = cookieJar;
-    }
-
-    public static String getNewBoundary() {
-        String boundary = "---------------------------";
-        boundary += Math.floor(Math.random() * 32768);
-        boundary += Math.floor(Math.random() * 32768);
-        boundary += Math.floor(Math.random() * 32768);
-        return boundary;
-    }
-
-    private static KeyStore getSystemCAKeyStore() throws
-            KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
-
-        KeyStore keyStore = KeyStore.getInstance("AndroidCAStore");
-        keyStore.load(null, null);
-        return keyStore;
     }
 
     public void clearCookieJar(Context context) {
@@ -162,10 +161,10 @@ public class Navigator {
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .build();
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
@@ -182,11 +181,11 @@ public class Navigator {
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .followRedirects(false)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .followRedirects(false)
+            .build();
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
 
@@ -205,10 +204,10 @@ public class Navigator {
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .build();
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
@@ -229,10 +228,10 @@ public class Navigator {
         // NEVER create new okhttp clients that aren't sharing the same connection pool
         // see: https://github.com/square/okhttp/issues/2636
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .build();
 
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
@@ -247,11 +246,11 @@ public class Navigator {
 
     public String get(String web, String referer, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .addInterceptor(interceptor)
+            .build();
         addHeader("Referer", referer);
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
@@ -265,10 +264,10 @@ public class Navigator {
 
     public String get(String web, Interceptor interceptor) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .addInterceptor(interceptor)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .addInterceptor(interceptor)
+            .build();
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
         if (response.isSuccessful()) {
             return response.body().string();
@@ -281,10 +280,10 @@ public class Navigator {
 
     public String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .build();
         addHeader("Referer", referer);
         Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
 
@@ -299,16 +298,16 @@ public class Navigator {
 
     public String post(String web) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .build();
 
         Request request = new Request.Builder()
-                .url(web)
-                .headers(getHeaders())
-                .method("POST", getPostParams())
-                .build();
+            .url(web)
+            .headers(getHeaders())
+            .method("POST", getPostParams())
+            .build();
         Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
@@ -322,16 +321,16 @@ public class Navigator {
 
     public String post(String web, RequestBody formParams) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
-                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
-                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
-                .readTimeout(readTimeout, TimeUnit.SECONDS)
-                .build();
+            .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+            .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+            .readTimeout(readTimeout, TimeUnit.SECONDS)
+            .build();
 
         Request request = new Request.Builder()
-                .url(web)
-                .headers(getHeaders())
-                .method("POST", formParams)
-                .build();
+            .url(web)
+            .headers(getHeaders())
+            .method("POST", formParams)
+            .build();
         Response response = copy.newCall(request).execute();
 
         if (response.isSuccessful()) {
@@ -358,10 +357,10 @@ public class Navigator {
     private Headers getHeaders() {
         Headers.Builder builder = new Headers.Builder();
         builder.add("User-Agent", USER_AGENT)
-                .add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
-                .add("Connection", "keep-alive")
-                .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .add("Accept-Encoding", "gzip, deflate");
+            .add("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
+            .add("Connection", "keep-alive")
+            .add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+            .add("Accept-Encoding", "gzip, deflate");
 
         for (Parameter p : headers) {
             builder.add(p.getKey(), p.getValue());

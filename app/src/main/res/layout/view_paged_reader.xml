@@ -1,13 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-  <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent">
-
-  <ar.rulosoft.mimanganu.componentes.UnScrolledViewPager android:id="@+id/pager"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black">
-    <!--Removed ObsoleteLayoutParam: layout_alignParentTop-->
-  </ar.rulosoft.mimanganu.componentes.UnScrolledViewPager>
+    android:orientation="vertical">
+
+    <ar.rulosoft.mimanganu.componentes.UnScrolledViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black">
+        <!--Removed ObsoleteLayoutParam: layout_alignParentTop-->
+    </ar.rulosoft.mimanganu.componentes.UnScrolledViewPager>
 </LinearLayout>

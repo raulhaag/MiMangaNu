@@ -18,5 +18,5 @@
         android:id="@+id/filter"
         android:icon="@drawable/ic_action_content_filter"
         android:title="@string/filtrar"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 </menu>

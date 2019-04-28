@@ -47,7 +47,7 @@ public class NumPickDialogPref extends DialogPreference {
         setDialogLayoutResource(R.layout.dialog_numpicker_pref);
 
         TypedArray a = context.obtainStyledAttributes(attrs,
-                R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
+            R.styleable.CustomDialogPref, defStyleAttr, defStyleRes);
         mMin = a.getInteger(R.styleable.CustomDialogPref_val_min, 0);
         mMax = a.getInteger(R.styleable.CustomDialogPref_val_max, 9);
         mWrapAround = a.getBoolean(R.styleable.CustomDialogPref_wrap_around, false);

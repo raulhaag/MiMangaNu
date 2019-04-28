@@ -11,8 +11,8 @@ import android.util.Log;
 public class NotificationDeleteIntentReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        if(Util.n > 0)
-           Util.n--;
+        if (Util.n > 0)
+            Util.n--;
         //Util.getInstance().toast(context, "n: " + Util.n, 1);
         Log.i("NDIR", "n: " + Util.n);
     }

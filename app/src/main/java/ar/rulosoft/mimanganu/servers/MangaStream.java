@@ -17,11 +17,11 @@ class MangaStream extends ServerBase {
     private static final String HOST = "http://mangastream.com";
 
     private static final String PATTERN_CHAPTER =
-            "<a href=\"(/r/[^\"]+)\">(.+?)</a>";
+        "<a href=\"(/r/[^\"]+)\">(.+?)</a>";
     private static final String PATTERN_MANGA =
-            "<td><strong><a href=\"(.*?manga[^\"]+)\">([^<]+)";
+        "<td><strong><a href=\"(.*?manga[^\"]+)\">([^<]+)";
     private static final String PATTERN_IMAGE =
-            "src=\"(//[^/]+/cdn/manga/[^\"]+)";
+        "src=\"(//[^/]+/cdn/manga/[^\"]+)";
 
     MangaStream(Context context) {
         super(context);
@@ -52,7 +52,7 @@ class MangaStream extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         while (matcher.find()) {
             if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
-                Manga manga = new Manga(getServerID(), matcher.group(2), HOST +  matcher.group(1), false);
+                Manga manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
                 if (!tmpMangaPathList.contains(manga.getPath())) {
                     mangas.add(manga);
                     tmpMangaPathList.add(manga.getPath());
@@ -97,7 +97,7 @@ class MangaStream extends ServerBase {
             manga.setImages("");
             if (!chapters.isEmpty()) {
                 source = getNavigatorAndFlushParameters().get(
-                        chapters.get(chapters.size() - 1).getPath());
+                    chapters.get(chapters.size() - 1).getPath());
                 String image = getFirstMatchDefault(PATTERN_IMAGE, source, "");
                 if (!image.isEmpty()) {
                     manga.setImages("http:" + image);
@@ -111,23 +111,24 @@ class MangaStream extends ServerBase {
         // strip off initial page number (i.e. '1') and append requested page number
         String web = chapter.getPath().substring(0, chapter.getPath().length() - 1) + page;
         return "http:" + getFirstMatch(
-                PATTERN_IMAGE, getNavigatorAndFlushParameters().get(web),
-                context.getString(R.string.server_failed_loading_image));
+            PATTERN_IMAGE, getNavigatorAndFlushParameters().get(web),
+            context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            if(source.contains("been removed from the website.")){
+            if (source.contains("been removed from the website.")) {
                 throw new Exception("Licenced or removed chapter");
-            }            String pageNumber = getFirstMatchDefault(
-                    "Last Page \\((\\d+)\\)</a>", source, null);
+            }
+            String pageNumber = getFirstMatchDefault(
+                "Last Page \\((\\d+)\\)</a>", source, null);
             // handle case, where only one page is listed (as "First Page")
             if (pageNumber == null) {
                 pageNumber = getFirstMatch(
-                        "First Page \\((\\d+)\\)</a>", source,
-                        context.getString(R.string.server_failed_loading_page_count));
+                    "First Page \\((\\d+)\\)</a>", source,
+                    context.getString(R.string.server_failed_loading_page_count));
             }
             chapter.setPages(Integer.parseInt(pageNumber));
         }
@@ -145,7 +146,7 @@ class MangaStream extends ServerBase {
         while (matcher.find()) {
             Manga manga;
             if (matcher.group(1).startsWith("/"))
-                manga = new Manga(getServerID(), matcher.group(2), HOST +  matcher.group(1), false);
+                manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
             else
                 manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
             if (!tmpMangaPathList.contains(manga.getPath())) {

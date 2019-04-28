@@ -77,7 +77,7 @@
         <item>@string/batoto_lang_japanese</item>
         <item>@string/batoto_lang_chinese</item>
     </string-array>
-	<string-array name="batoto_lang_array_values">
+    <string-array name="batoto_lang_array_values">
         <item>Automatic</item>
         <item>All</item>
         <item>Custom</item>

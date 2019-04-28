@@ -89,14 +89,14 @@ public class R2LPagedReader extends HorizontalPagedReader {
 
     @Override
     public void onStartOver() {
-        if(readerListener != null){
+        if (readerListener != null) {
             readerListener.onStartOver();
         }
     }
 
     @Override
     public void onEndOver() {
-        if(readerListener != null){
+        if (readerListener != null) {
             readerListener.onEndOver();
         }
     }

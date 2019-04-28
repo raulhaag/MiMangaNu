@@ -185,7 +185,7 @@ public class Chapter {
         if (obj instanceof Chapter) {
             //TODO: after a full migration to only path this two lines need to be changed
             String ours = Util.getInstance().getFilePath(getPath());
-            String theirs = Util.getInstance().getFilePath(((Chapter)obj).getPath());
+            String theirs = Util.getInstance().getFilePath(((Chapter) obj).getPath());
             return ours.equalsIgnoreCase(theirs);
         }
         return false;
@@ -246,8 +246,8 @@ public class Chapter {
             manga_title = title;
         }
 
-        private static float getVolatileOrder(Chapter c) throws  Exception {
-            if(c.volatile_order == -1) {
+        private static float getVolatileOrder(Chapter c) throws Exception {
+            if (c.volatile_order == -1) {
                 String str1 = c.getTitle().replace(manga_title, "");
                 str1 = str1.replaceAll(VOLUME_REMOVE_PATTERN, " ");
                 str1 = str1.replaceAll(STRING_END_PATTERN, " ");

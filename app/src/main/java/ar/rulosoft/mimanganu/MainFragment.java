@@ -194,7 +194,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     //@Override
     public void onClick(View v) {
         ((MainActivity) getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
-                "SERVER_SELECT", R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
+            "SERVER_SELECT", R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
     }
 
     @Override
@@ -237,9 +237,9 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                         value = value.replaceAll("'", "''");
                     try {
                         mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
-                                "SELECT id " +
-                                "FROM manga " +
-                                "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
+                            "SELECT id " +
+                            "FROM manga " +
+                            "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
                         mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
                         mMAdapter.setMangaClickListener(MainFragment.this);
                         recyclerView.setAdapter(mMAdapter);
@@ -258,12 +258,12 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
 
         /* Set sort mode */
         int[] sortList = {
-                R.id.sort_last_read, R.id.sort_last_read_desc,
-                R.id.sort_name, R.id.sort_name_desc,
-                R.id.sort_author, R.id.sort_author_desc,
-                R.id.sort_finished, R.id.sort_finished_asc,
-                R.id.sort_as_added_to_db_asc, R.id.sort_as_added_to_db_desc,
-                R.id.sort_last_updated,
+            R.id.sort_last_read, R.id.sort_last_read_desc,
+            R.id.sort_name, R.id.sort_name_desc,
+            R.id.sort_author, R.id.sort_author_desc,
+            R.id.sort_finished, R.id.sort_finished_asc,
+            R.id.sort_as_added_to_db_asc, R.id.sort_as_added_to_db_desc,
+            R.id.sort_last_updated,
 
         };
         menu.findItem(sortList[pm.getInt("manga_view_sort_by", 0)]).setChecked(true);
@@ -365,7 +365,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
              *
              * feel free to add more sort type */
             int sort_val = PreferenceManager.getDefaultSharedPreferences(
-                    getContext()).getInt("manga_view_sort_by", 0);
+                getContext()).getInt("manga_view_sort_by", 0);
 
             String sort_by;
             boolean sort_ord = sort_val % 2 == 0;
@@ -399,16 +399,16 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                     sort_ord = !sort_ord;
             }
             int value = PreferenceManager.getDefaultSharedPreferences(
-                    getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
+                getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
             switch (value) {
                 case MODE_SHOW_ALL:
                     mangaList = Database.getMangas(getContext(), sort_by, sort_ord);
                     break;
                 case MODE_HIDE_READ:
                     mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                            "SELECT manga_id " +
-                            "FROM capitulos " +
-                            "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
+                        "SELECT manga_id " +
+                        "FROM capitulos " +
+                        "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
                     break;
                 default:
                     break;
@@ -453,28 +453,28 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         final Manga manga = ((MangasRecAdapter) recyclerView.getAdapter()).getItem(lastContextMenuIndex);
         if (item.getItemId() == R.id.delete) {
             new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.app_name)
-                    .setMessage(getString(R.string.manga_delete_confirm, manga.getTitle()))
-                    .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
-                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            DownloadPoolService.forceStop(manga.getId());
-                            ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
-                            String path = Paths.generateBasePath(serverBase, manga, getActivity());
-                            Util.getInstance().deleteRecursive(new File(path));
-                            Database.deleteManga(getActivity(), manga.getId());
-                            mMAdapter.remove(manga);
-                            Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
-                            dialog.dismiss();
-                        }
-                    })
-                    .show();
+                .setTitle(R.string.app_name)
+                .setMessage(getString(R.string.manga_delete_confirm, manga.getTitle()))
+                .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        DownloadPoolService.forceStop(manga.getId());
+                        ServerBase serverBase = ServerBase.getServer(manga.getServerId(), getContext());
+                        String path = Paths.generateBasePath(serverBase, manga, getActivity());
+                        Util.getInstance().deleteRecursive(new File(path));
+                        Database.deleteManga(getActivity(), manga.getId());
+                        mMAdapter.remove(manga);
+                        Util.getInstance().showFastSnackBar(getResources().getString(R.string.deleted, manga.getTitle()), getView(), getContext());
+                        dialog.dismiss();
+                    }
+                })
+                .show();
         } else if (item.getItemId() == R.id.noupdate) {
             if (manga.isFinished()) {
                 manga.setFinished(false);

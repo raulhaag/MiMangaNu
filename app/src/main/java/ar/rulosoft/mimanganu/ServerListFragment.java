@@ -79,7 +79,7 @@ public class ServerListFragment extends Fragment {
     public void onResume() {
         super.onResume();
         ((MainActivity) getActivity()).setTitle(getResources().getString(R.string.listaen) + " " + serverBase.getServerName());
-        ((MainActivity)getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).enableHomeButton(true);
     }
 
 

@@ -23,13 +23,13 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 
 public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.ServerViewHolder> implements ActionMode.Callback {
+    public ActionMode actionMode;
     private SharedPreferences pm;
     private FragmentActivity mActivity;
     private OnServerClickListener onServerClickListener;
     private ServerBase[] servers;
     private List<Integer> unused_servers;
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
-    public ActionMode actionMode;
     private OnEndActionModeListener endActionModeListener;
 
     public ServerRecAdapter(ServerBase[] serverBases, SharedPreferences pm, FragmentActivity mActivity) {
@@ -98,7 +98,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
         });
     }
 
-    public boolean startActionMode(){
+    public boolean startActionMode() {
         if (actionMode != null) {
             return false;
         }
@@ -155,7 +155,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     public void onDestroyActionMode(ActionMode mode) {
         this.actionMode = null;
         clearSelections();
-        if(endActionModeListener != null){
+        if (endActionModeListener != null) {
             endActionModeListener.onEndActionMode();
         }
     }
@@ -213,6 +213,10 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
         void onServerClick(ServerBase server);
     }
 
+    public interface OnEndActionModeListener {
+        void onEndActionMode();
+    }
+
     public class ServerViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView flag;
@@ -226,10 +230,6 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
             icon = (ImageView) itemView.findViewById(R.id.server_imagen);
             v = itemView;
         }
-    }
-
-    public interface OnEndActionModeListener{
-        void onEndActionMode();
     }
 
 }

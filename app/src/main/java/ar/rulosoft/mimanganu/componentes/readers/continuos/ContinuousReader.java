@@ -90,9 +90,9 @@ public abstract class ContinuousReader extends Reader implements GestureDetector
     public void setBlueFilter(float bf) {
         ColorMatrix cm = new ColorMatrix();
         cm.set(new float[]{1, 0, 0, 0, 0,
-                0, (0.6f + 0.4f * bf), 0, 0, 0,
-                0f, 0f, (0.1f + 0.9f * bf), 0, 0,
-                0, 0, 0, 1f, 0});
+            0, (0.6f + 0.4f * bf), 0, 0, 0,
+            0f, 0f, (0.1f + 0.9f * bf), 0, 0,
+            0, 0, 0, 1f, 0});
         mPaint.setColorFilter(new ColorMatrixColorFilter(cm));
         this.postInvalidate();
     }
@@ -328,7 +328,7 @@ public abstract class ContinuousReader extends Reader implements GestureDetector
                 BitmapFactory.decodeStream(inputStream, null, bitmapOptions);
                 dimension.original_width = bitmapOptions.outWidth;
                 dimension.original_height = bitmapOptions.outHeight;
-                if (inputStream != null){
+                if (inputStream != null) {
                     inputStream.close();
                 }
             } catch (IOException ignored) {
@@ -721,7 +721,7 @@ public abstract class ContinuousReader extends Reader implements GestureDetector
     }
 
     protected class ScaleListener extends
-            ScaleGestureDetector.SimpleOnScaleGestureListener {
+        ScaleGestureDetector.SimpleOnScaleGestureListener {
         @Override
         public boolean onScale(ScaleGestureDetector detector) {
             float nScale = Math.max(.8f, Math.min(mScaleFactor * detector.getScaleFactor(), 3.0f));

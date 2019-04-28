@@ -18,10 +18,10 @@ public class ShadowNavigator {
     @Implementation
     @SuppressWarnings("unused")
     public static KeyStore getSystemCAKeyStore() throws
-            KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
-            KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            keyStore.load(new FileInputStream(
-                    System.getProperty("java.home") + "/lib/security/cacerts"), null);
-            return keyStore;
+        KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
+        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
+        keyStore.load(new FileInputStream(
+            System.getProperty("java.home") + "/lib/security/cacerts"), null);
+        return keyStore;
     }
 }

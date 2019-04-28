@@ -27,11 +27,11 @@ import ar.rulosoft.mimanganu.utils.Util;
  * Created by Raul on 15/04/2016.
  */
 public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
+    PreferencesListDir parent;
     private Context context = getContext();
     private String actual;
     private ListView dirs;
     private TextView dirs_path;
-    PreferencesListDir parent;
 
     public static PreferenceListDirFragment newInstance(Preference preference) {
         PreferenceListDirFragment fragment = new PreferenceListDirFragment();
@@ -65,7 +65,7 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
                 }
                 ArrayList<String> dirList = Util.getInstance().dirList(actual);
                 ArrayAdapter<String> adap =
-                        new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
+                    new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);
                 dirs_path.setText(actual);
                 dirs.setAdapter(adap);
             }
@@ -94,7 +94,7 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
                         Toast.makeText(context, context.getResources().getString(R.string.folder_changed), Toast.LENGTH_SHORT).show();
                         //TODO moveFiles to new folder
                         SharedPreferences prefs =
-                                PreferenceManager.getDefaultSharedPreferences(getContext());
+                            PreferenceManager.getDefaultSharedPreferences(getContext());
                         SharedPreferences.Editor editor = prefs.edit();
                         editor.putString(parent.getKey(), actual);
                         editor.apply();

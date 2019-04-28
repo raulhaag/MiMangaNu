@@ -23,80 +23,80 @@ import ar.rulosoft.navegadores.Navigator;
 class ReadMangaToday extends ServerBase {
     private static final String HOST = "https://www.readmng.com";
     private static final int[] fltGenre = {
-            R.string.flt_tag_all,
-            R.string.flt_tag_action,
-            R.string.flt_tag_adventure,
-            R.string.flt_tag_comedy,
-            R.string.flt_tag_doujinshi,
-            R.string.flt_tag_drama,
-            R.string.flt_tag_ecchi,
-            R.string.flt_tag_fantasy,
-            R.string.flt_tag_gender_bender,
-            R.string.flt_tag_harem,
-            R.string.flt_tag_historical,
-            R.string.flt_tag_horror,
-            R.string.flt_tag_josei,
-            R.string.flt_tag_lolicon,
-            R.string.flt_tag_martial_arts,
-            R.string.flt_tag_mature,
-            R.string.flt_tag_mecha,
-            R.string.flt_tag_mystery,
-            R.string.flt_tag_one_shot,
-            R.string.flt_tag_psychological,
-            R.string.flt_tag_romance,
-            R.string.flt_tag_school_life,
-            R.string.flt_tag_sci_fi,
-            R.string.flt_tag_seinen,
-            R.string.flt_tag_shotacon,
-            R.string.flt_tag_shoujo,
-            R.string.flt_tag_shoujo_ai,
-            R.string.flt_tag_shounen,
-            R.string.flt_tag_shounen_ai,
-            R.string.flt_tag_slice_of_life,
-            R.string.flt_tag_smut,
-            R.string.flt_tag_sports,
-            R.string.flt_tag_supernatural,
-            R.string.flt_tag_tragedy,
-            R.string.flt_tag_yaoi,
-            R.string.flt_tag_yuri
+        R.string.flt_tag_all,
+        R.string.flt_tag_action,
+        R.string.flt_tag_adventure,
+        R.string.flt_tag_comedy,
+        R.string.flt_tag_doujinshi,
+        R.string.flt_tag_drama,
+        R.string.flt_tag_ecchi,
+        R.string.flt_tag_fantasy,
+        R.string.flt_tag_gender_bender,
+        R.string.flt_tag_harem,
+        R.string.flt_tag_historical,
+        R.string.flt_tag_horror,
+        R.string.flt_tag_josei,
+        R.string.flt_tag_lolicon,
+        R.string.flt_tag_martial_arts,
+        R.string.flt_tag_mature,
+        R.string.flt_tag_mecha,
+        R.string.flt_tag_mystery,
+        R.string.flt_tag_one_shot,
+        R.string.flt_tag_psychological,
+        R.string.flt_tag_romance,
+        R.string.flt_tag_school_life,
+        R.string.flt_tag_sci_fi,
+        R.string.flt_tag_seinen,
+        R.string.flt_tag_shotacon,
+        R.string.flt_tag_shoujo,
+        R.string.flt_tag_shoujo_ai,
+        R.string.flt_tag_shounen,
+        R.string.flt_tag_shounen_ai,
+        R.string.flt_tag_slice_of_life,
+        R.string.flt_tag_smut,
+        R.string.flt_tag_sports,
+        R.string.flt_tag_supernatural,
+        R.string.flt_tag_tragedy,
+        R.string.flt_tag_yaoi,
+        R.string.flt_tag_yuri
     };
     private static final String[] valGenre = {
-            "/category/",
-            "/category/action/",
-            "/category/adventure/",
-            "/category/comedy/",
-            "/category/doujinshi/",
-            "/category/drama/",
-            "/category/ecchi/",
-            "/category/fantasy/",
-            "/category/gender-bender/",
-            "/category/harem/",
-            "/category/historical/",
-            "/category/horror/",
-            "/category/josei/",
-            "/category/lolicon/",
-            "/category/martial-arts/",
-            "/category/mature/",
-            "/category/mecha/",
-            "/category/mystery/",
-            "/category/one-shot/",
-            "/category/psychological/",
-            "/category/romance/",
-            "/category/school-life/",
-            "/category/sci-fi/",
-            "/category/seinen/",
-            "/category/shotacon/",
-            "/category/shoujo/",
-            "/category/shoujo-ai/",
-            "/category/shounen/",
-            "/category/shounen-ai/",
-            "/category/slice-of-life/",
-            "/category/smut/",
-            "/category/sports/",
-            "/category/supernatural/",
-            "/category/tragedy/",
-            "/category/yaoi/",
-            "/category/yuri/"
+        "/category/",
+        "/category/action/",
+        "/category/adventure/",
+        "/category/comedy/",
+        "/category/doujinshi/",
+        "/category/drama/",
+        "/category/ecchi/",
+        "/category/fantasy/",
+        "/category/gender-bender/",
+        "/category/harem/",
+        "/category/historical/",
+        "/category/horror/",
+        "/category/josei/",
+        "/category/lolicon/",
+        "/category/martial-arts/",
+        "/category/mature/",
+        "/category/mecha/",
+        "/category/mystery/",
+        "/category/one-shot/",
+        "/category/psychological/",
+        "/category/romance/",
+        "/category/school-life/",
+        "/category/sci-fi/",
+        "/category/seinen/",
+        "/category/shotacon/",
+        "/category/shoujo/",
+        "/category/shoujo-ai/",
+        "/category/shounen/",
+        "/category/shounen-ai/",
+        "/category/slice-of-life/",
+        "/category/smut/",
+        "/category/sports/",
+        "/category/supernatural/",
+        "/category/tragedy/",
+        "/category/yaoi/",
+        "/category/yuri/"
     };
 
     ReadMangaToday(Context context) {
@@ -170,7 +170,7 @@ class ReadMangaToday extends ServerBase {
 
             // Author (can be multi-part)
             ArrayList<String> authors = getAllMatch(
-                    "<li><a href=\".+?.com/people/[^\"]+?\">([^\"]+?)</a>", source);
+                "<li><a href=\".+?.com/people/[^\"]+?\">([^\"]+?)</a>", source);
 
             if (authors.isEmpty()) {
                 manga.setAuthor(context.getString(R.string.nodisponible));
@@ -180,7 +180,7 @@ class ReadMangaToday extends ServerBase {
 
             // Genre
             String genre = getFirstMatchDefault("<dt>Categories:</dt>.+?<dd>(.+?)</dd>", source, context.getString(R.string.nodisponible))
-                    .replaceAll("</a>", ",");
+                .replaceAll("</a>", ",");
             manga.setGenre(genre.substring(0, genre.lastIndexOf(",")));
 
             // Chapters
@@ -222,9 +222,9 @@ class ReadMangaToday extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_genre),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE)
+            new ServerFilter(
+                context.getString(R.string.flt_genre),
+                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE)
         };
     }
 

@@ -61,8 +61,8 @@ import static ar.rulosoft.mimanganu.componentes.ReaderOptions.BLUE_FILTER_LEVEL;
 
 
 public class ReaderFragment extends Fragment implements StateChangeListener, DownloadListener,
-        SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener,
-        MainActivity.OnKeyUpListener, MainActivity.OnBackListener, ReaderOptions.OptionListener {
+    SeekBar.OnSeekBarChangeListener, ChapterDownload.OnErrorListener, Reader.ReaderListener,
+    MainActivity.OnKeyUpListener, MainActivity.OnBackListener, ReaderOptions.OptionListener {
 
     public static final String KEEP_SCREEN_ON = "keep_screen_on";
     public static final String ORIENTATION = "orientation";
@@ -253,8 +253,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             loadChapter(mChapter, LoadMode.SAVED);
         }
 
-        if(pm.getBoolean(BLUE_FILTER_CHECK, false)){
-            mReader.setBlueFilter((100 - pm.getInt(BLUE_FILTER_LEVEL, 30))/100f);
+        if (pm.getBoolean(BLUE_FILTER_CHECK, false)) {
+            mReader.setBlueFilter((100 - pm.getInt(BLUE_FILTER_LEVEL, 30)) / 100f);
         }
     }
 
@@ -360,9 +360,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private void hideSystemUI() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             getActivity().getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE);
         }
     }
 
@@ -490,7 +490,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public boolean onBackPressed() {
-        if(readerOptions.isVisible()){
+        if (readerOptions.isVisible()) {
             readerOptions.switchOptions();
             return true;
         }
@@ -534,7 +534,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             showSystemUI();
             controlVisible = true;
             ObjectAnimator anim2 =
-                    ObjectAnimator.ofFloat(mControlsLayout, "alpha", 0f, .90f);
+                ObjectAnimator.ofFloat(mControlsLayout, "alpha", 0f, .90f);
             anim2.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
@@ -564,20 +564,20 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             public void run() {
                 try {
                     mDialog = new AlertDialog.Builder(getActivity())
-                            .setTitle(chapter.getTitle() + " " + getString(R.string.error))
-                            .setMessage(getString(R.string.demaciados_errores))
-                            .setIcon(R.mipmap.ic_launcher)
-                            .setNeutralButton(getString(android.R.string.ok), null)
-                            .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    DownloadPoolService.retryError(getActivity(), mChapter, ReaderFragment.this);
-                                    dialog.dismiss();
-                                    mDialog = null;
-                                    DownloadPoolService.setDownloadListener(ReaderFragment.this);
-                                }
-                            })
-                            .show();
+                        .setTitle(chapter.getTitle() + " " + getString(R.string.error))
+                        .setMessage(getString(R.string.demaciados_errores))
+                        .setIcon(R.mipmap.ic_launcher)
+                        .setNeutralButton(getString(android.R.string.ok), null)
+                        .setPositiveButton(getString(R.string.retry), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                DownloadPoolService.retryError(getActivity(), mChapter, ReaderFragment.this);
+                                dialog.dismiss();
+                                mDialog = null;
+                                DownloadPoolService.setDownloadListener(ReaderFragment.this);
+                            }
+                        })
+                        .show();
                 } catch (Exception e) {
                     e.printStackTrace();
                     // lost references fixed con detachListener
@@ -629,50 +629,50 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 checkBox.setChecked(imagesDelete);
                 mDialog = new AlertDialog.Builder(getActivity())
 
-                        .setTitle(getString(R.string.finished_reading, mChapter.getTitle()))
-                        .setView(v)
-                        .setIcon(R.mipmap.ic_launcher)
-                        .setNegativeButton(getString(R.string.back), null)
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                boolean del_images = checkBox.isChecked();
-                                if (pm != null)
-                                    pm.edit().putBoolean("delete_images", del_images).apply();
-                                mChapter.setReadStatus(Chapter.READ);
-                                mChapter.setPagesRead(mChapter.getPages());
-                                Database.updateChapter(getActivity(), mChapter);
-                                Chapter pChapter = mChapter;
-                                loadChapter(nextChapter, LoadMode.START);
-                                if (del_images) {
-                                    pChapter.freeSpace(getActivity());
-                                }
-                                if (mDialog != null && mDialog.isShowing())
-                                    mDialog.dismiss();
-                                mDialog = null;
+                    .setTitle(getString(R.string.finished_reading, mChapter.getTitle()))
+                    .setView(v)
+                    .setIcon(R.mipmap.ic_launcher)
+                    .setNegativeButton(getString(R.string.back), null)
+                    .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            boolean del_images = checkBox.isChecked();
+                            if (pm != null)
+                                pm.edit().putBoolean("delete_images", del_images).apply();
+                            mChapter.setReadStatus(Chapter.READ);
+                            mChapter.setPagesRead(mChapter.getPages());
+                            Database.updateChapter(getActivity(), mChapter);
+                            Chapter pChapter = mChapter;
+                            loadChapter(nextChapter, LoadMode.START);
+                            if (del_images) {
+                                pChapter.freeSpace(getActivity());
                             }
-                        })
-                        .setNeutralButton(R.string.dont_ask_again, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                boolean del_images = checkBox.isChecked();
-                                if (pm != null)
-                                    pm.edit().putBoolean("delete_images", del_images).apply();
-                                mChapter.setReadStatus(Chapter.READ);
-                                mChapter.setPagesRead(mChapter.getPages());
-                                Database.updateChapter(getActivity(), mChapter);
-                                Chapter pChapter = mChapter;
-                                loadChapter(nextChapter, LoadMode.START);
-                                if (del_images) {
-                                    pChapter.freeSpace(getActivity());
-                                }
-                                if (mDialog != null && mDialog.isShowing())
-                                    mDialog.dismiss();
-                                mDialog = null;
-                                pm.edit().putBoolean("seamless_chapter_transitions", true).apply();
+                            if (mDialog != null && mDialog.isShowing())
+                                mDialog.dismiss();
+                            mDialog = null;
+                        }
+                    })
+                    .setNeutralButton(R.string.dont_ask_again, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            boolean del_images = checkBox.isChecked();
+                            if (pm != null)
+                                pm.edit().putBoolean("delete_images", del_images).apply();
+                            mChapter.setReadStatus(Chapter.READ);
+                            mChapter.setPagesRead(mChapter.getPages());
+                            Database.updateChapter(getActivity(), mChapter);
+                            Chapter pChapter = mChapter;
+                            loadChapter(nextChapter, LoadMode.START);
+                            if (del_images) {
+                                pChapter.freeSpace(getActivity());
                             }
-                        })
-                        .show();
+                            if (mDialog != null && mDialog.isShowing())
+                                mDialog.dismiss();
+                            mDialog = null;
+                            pm.edit().putBoolean("seamless_chapter_transitions", true).apply();
+                        }
+                    })
+                    .show();
             } else {
                 mChapter.setReadStatus(Chapter.READ);
                 mChapter.setPagesRead(mChapter.getPages());
@@ -691,32 +691,32 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             final CheckBox checkBox = v.findViewById(R.id.delete_images_oc);
             checkBox.setChecked(imagesDelete);
             mDialog = new AlertDialog.Builder(getActivity())
-                    .setTitle(getString(R.string.finished_reading, mManga.getTitle()))
-                    .setView(v)
-                    .setIcon(R.mipmap.ic_launcher)
-                    .setNegativeButton(R.string.back, null)
-                    .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            boolean del_images = checkBox.isChecked();
-                            if (pm != null)
-                                pm.edit().putBoolean("delete_images", del_images).apply();
-                            if (del_images) {
-                                try {
-                                    tmpChapter.freeSpace(getActivity());
-                                } catch (Exception e) {
-                                    //TODO catch context lost if user close while freeSpace is working (need to add a little service for this)
-                                }
+                .setTitle(getString(R.string.finished_reading, mManga.getTitle()))
+                .setView(v)
+                .setIcon(R.mipmap.ic_launcher)
+                .setNegativeButton(R.string.back, null)
+                .setPositiveButton(R.string.close, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        boolean del_images = checkBox.isChecked();
+                        if (pm != null)
+                            pm.edit().putBoolean("delete_images", del_images).apply();
+                        if (del_images) {
+                            try {
+                                tmpChapter.freeSpace(getActivity());
+                            } catch (Exception e) {
+                                //TODO catch context lost if user close while freeSpace is working (need to add a little service for this)
                             }
-                            if (mDialog != null)
-                                mDialog.dismiss();
-                            controlVisible = true; //just to close
-                            mDialog = null;
-                            if (getActivity() != null)
-                                getActivity().onBackPressed();
                         }
-                    })
-                    .show();
+                        if (mDialog != null)
+                            mDialog.dismiss();
+                        controlVisible = true; //just to close
+                        mDialog = null;
+                        if (getActivity() != null)
+                            getActivity().onBackPressed();
+                    }
+                })
+                .show();
 
         }
     }

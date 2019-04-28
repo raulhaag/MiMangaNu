@@ -26,50 +26,50 @@ class TuMangaOnline extends ServerBase {
     public static String script = null;
 
     public static String[] type = new String[]{
-            "Todos", "Manga", "Manhua", "Manhwa", "Novela", "One Shot", "Dounjinshi", "Oel"
+        "Todos", "Manga", "Manhua", "Manhwa", "Novela", "One Shot", "Dounjinshi", "Oel"
     };
     private static String[] genres = new String[]{
-            "Acción", "Aventura", "Comedia", "Drama", "Recuentos de la vida", "Ecchi", "Fantasia",
-            "Magia", "Supernatural", "Horror", "Misterio", "Psicológico", "Romance",
-            "Ciencia Ficción", "Thriller", "Deporte", "Girls Love", "Boys Love", "Harem", "Mecha",
-            "Supervivencia", "Reencarnación", "Gore", "Apocalíptico", "Tragedia", "Vida Escolar",
-            "Historia", "Militar", "Policiaco", "Crimen", "Superpoderes", "Vampiros",
-            "Artes Marciales", "Samurái", "Género Bender", "Realidad Virtual", "Ciberpunk",
-            "Musica", "Parodia", "Animación", "Demonios", "Familia", "Extranjero", "Niños",
-            "Realidad", "Telenovela", "Guerra", "Oeste"
+        "Acción", "Aventura", "Comedia", "Drama", "Recuentos de la vida", "Ecchi", "Fantasia",
+        "Magia", "Supernatural", "Horror", "Misterio", "Psicológico", "Romance",
+        "Ciencia Ficción", "Thriller", "Deporte", "Girls Love", "Boys Love", "Harem", "Mecha",
+        "Supervivencia", "Reencarnación", "Gore", "Apocalíptico", "Tragedia", "Vida Escolar",
+        "Historia", "Militar", "Policiaco", "Crimen", "Superpoderes", "Vampiros",
+        "Artes Marciales", "Samurái", "Género Bender", "Realidad Virtual", "Ciberpunk",
+        "Musica", "Parodia", "Animación", "Demonios", "Familia", "Extranjero", "Niños",
+        "Realidad", "Telenovela", "Guerra", "Oeste"
     };
     private static String[] genresValues = new String[]{
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-            "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
-            "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44",
-            "45", "46", "47", "48"
+        "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
+        "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
+        "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44",
+        "45", "46", "47", "48"
     };
     private static String[] demografia = {
-            "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
+        "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
     };
     private static String[] demografiaV = {
-            "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
+        "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
     };
     private static String[] estado = {
-            "Todos", "Activo", "Abandonado", "Finalizado", "Pausado"
+        "Todos", "Activo", "Abandonado", "Finalizado", "Pausado"
     };
     private static String[] estadoV = {
-            "", "publishing", "cancelled", "ended", "on_hold"
+        "", "publishing", "cancelled", "ended", "on_hold"
     };
     private static String[] typeV = new String[]{
-            "", "manga", "manhua", "manhwa", "novel", "one_shot", "doujinshi", "oel"
+        "", "manga", "manhua", "manhwa", "novel", "one_shot", "doujinshi", "oel"
     };
     private static String[] sortBy = new String[]{
-            "Me gusta", "Alfabetico", "Puntuación", "Creación", "Fecha de Esterno",
+        "Me gusta", "Alfabetico", "Puntuación", "Creación", "Fecha de Esterno",
     };
     private static String[] sortByValues = new String[]{
-            "likes_count", "alphabetically", "score", "creation", "release_date"
+        "likes_count", "alphabetically", "score", "creation", "release_date"
     };
     private static String[] sortOrder = new String[]{
-            "Descendiente", "Ascendiente"
+        "Descendiente", "Ascendiente"
     };
     private static String[] sortOrderValues = new String[]{
-            "desc", "asc"
+        "desc", "asc"
     };
     private static int lastPage = 10000;
     public final int VERSION = 2;
@@ -106,8 +106,8 @@ class TuMangaOnline extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavWithNeededHeaders().get(
-                    String.format(HOST + "/library/manga/%s/%s", manga.getPath(),
-                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
+                String.format(HOST + "/library/manga/%s/%s", manga.getPath(),
+                    URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
 
             manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
             manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
@@ -170,12 +170,12 @@ class TuMangaOnline extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter("Tipo", type, ServerFilter.FilterType.SINGLE),//0
-                new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),//1
-                new ServerFilter("Generos", genres, ServerFilter.FilterType.MULTI),//2
-                new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),//3
-                new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE), //4
-                new ServerFilter("En dirección", sortOrder, ServerFilter.FilterType.SINGLE) //5
+            new ServerFilter("Tipo", type, ServerFilter.FilterType.SINGLE),//0
+            new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),//1
+            new ServerFilter("Generos", genres, ServerFilter.FilterType.MULTI),//2
+            new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),//3
+            new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE), //4
+            new ServerFilter("En dirección", sortOrder, ServerFilter.FilterType.SINGLE) //5
         };
     }
 
@@ -200,7 +200,7 @@ class TuMangaOnline extends ServerBase {
             }
 
             web = String.format(web, sortByValues[filters[4][0]], sortOrderValues[filters[5][0]],
-                    typeV[filters[0][0]], demografiaV[filters[1][0]], estadoV[filters[3][0]]) + gens;
+                typeV[filters[0][0]], demografiaV[filters[1][0]], estadoV[filters[3][0]]) + gens;
             if (pageNumber > 1) {
                 web = web + "&page=" + pageNumber;
             }
@@ -273,10 +273,6 @@ class TuMangaOnline extends ServerBase {
         return VERSION;
     }
 
-    interface JSIn {
-        String call(boolean b, String data);
-    }
-
     @Override
     public synchronized int searchForNewChapters(int id, Context context, boolean fast) {
         int count = super.searchForNewChapters(id, context, fast);
@@ -285,5 +281,9 @@ class TuMangaOnline extends ServerBase {
         } catch (InterruptedException e) {
         }
         return count;
+    }
+
+    interface JSIn {
+        String call(boolean b, String data);
     }
 }

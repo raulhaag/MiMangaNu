@@ -28,23 +28,23 @@ public class NeuMangaTv extends ServerBase {
     private static final String PATTERN_CHAPTER_IMAGE = "<img class=\"imagechap\" src=\"([^\"]+)";
     private static String HOST = "https://neumanga.tv";
     private static String[] genres = new String[]{
-            "Action", "Adult", "Advanture", "Adventure", "Antihero", "Comedy", "Cooking", "Dachima",
-            "Demons", "Drama", "Ecchi", "Fantasy", "fighting", "Game", "Gender Bender", "Harem",
-            "Historical", "Horor", "Horror", "Inaka", "Isekai", "Josei", "legend", "live School",
-            "Lolicon", "Magic", "Manga", "Manhua", "Manhwa", "Martial Art", "Martial Arts",
-            "Mature", "Mecha", "Miatery", "Music", "Mystery", "neco", "Over Power", "Project",
-            "Psychological", "Romance", "School", "School Life", "sci fi", "Sci-fi", "Seinen",
-            "Shoujo", "Shoujo Ai", "Shounen", "ShounenS", "Slice Of Life", "Smut", "sport",
-            "Sports", "Super Power", "Superhero", "Supernatural", "Supranatural", "Suspense",
-            "Thriller", "Tragedy", "Vampire", "Webtoon", "Webtoons", "Yuri"
+        "Action", "Adult", "Advanture", "Adventure", "Antihero", "Comedy", "Cooking", "Dachima",
+        "Demons", "Drama", "Ecchi", "Fantasy", "fighting", "Game", "Gender Bender", "Harem",
+        "Historical", "Horor", "Horror", "Inaka", "Isekai", "Josei", "legend", "live School",
+        "Lolicon", "Magic", "Manga", "Manhua", "Manhwa", "Martial Art", "Martial Arts",
+        "Mature", "Mecha", "Miatery", "Music", "Mystery", "neco", "Over Power", "Project",
+        "Psychological", "Romance", "School", "School Life", "sci fi", "Sci-fi", "Seinen",
+        "Shoujo", "Shoujo Ai", "Shounen", "ShounenS", "Slice Of Life", "Smut", "sport",
+        "Sports", "Super Power", "Superhero", "Supernatural", "Supranatural", "Suspense",
+        "Thriller", "Tragedy", "Vampire", "Webtoon", "Webtoons", "Yuri"
     };
 
 
     private static String[] sortBy = new String[]{
-            "A-Z", "Views", "Rating", "Latest"
+        "A-Z", "Views", "Rating", "Latest"
     };
     private static String[] sortByValues = new String[]{
-            "name", "views", "rating", "latest", "release_date"
+        "name", "views", "rating", "latest", "release_date"
     };
 
 
@@ -81,17 +81,17 @@ public class NeuMangaTv extends ServerBase {
 
             // Author
             manga.setAuthor(getFirstMatchDefault(PATTERN_MANGA_AUTHOR, data,
-                    context.getString(R.string.nodisponible)));
+                context.getString(R.string.nodisponible)));
             // Genre
             manga.setGenre(getFirstMatchDefault(PATTERN_MANGA_GENRE, data,
-                    context.getString(R.string.nodisponible)));
+                context.getString(R.string.nodisponible)));
 
             // Summary
             manga.setSynopsis(getFirstMatchDefault(PATTERN_MANGA_SUMMARY, data,
-                    context.getString(R.string.nodisponible)));
+                context.getString(R.string.nodisponible)));
             // Status
             manga.setFinished(!getFirstMatchDefault(PATTERN_MANGA_STATUS, data, "ongoing")
-                    .contains("ongoing"));
+                .contains("ongoing"));
             // Chapters
             Pattern pattern = Pattern.compile(PATTERN_MANGA_CHAPTER, Pattern.DOTALL);
             Matcher matcher = pattern.matcher(data);
@@ -108,7 +108,7 @@ public class NeuMangaTv extends ServerBase {
         String web = HOST + chapter.getPath() + "/" + page;
         String data = getNavigatorAndFlushParameters().get(web);
         web = getFirstMatch(PATTERN_CHAPTER_IMAGE, data, "can't find image");
-        web =  web.replaceAll("([^:])//", "$1/"); // remove consecutive slashes
+        web = web.replaceAll("([^:])//", "$1/"); // remove consecutive slashes
         return web + "|" + HOST + chapter.getPath();
     }
 
@@ -155,12 +155,12 @@ public class NeuMangaTv extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_genre), genres
-                        , ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_order_by), sortBy
-                        , ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_genre), genres
+                , ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_order_by), sortBy
+                , ServerFilter.FilterType.SINGLE),
         };
     }
 

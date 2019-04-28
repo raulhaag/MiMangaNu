@@ -193,7 +193,7 @@ public class SeekBarCustomPreference extends Preference implements OnSeekBarChan
     @Override
     protected void onSetInitialValue(boolean restoreValue, Object defaultValue) {
         setProgress(restoreValue ? Integer.parseInt(getPersistedString(mProgress + ""))
-                : (Integer) defaultValue);
+            : (Integer) defaultValue);
     }
 
     @Override
@@ -364,15 +364,15 @@ public class SeekBarCustomPreference extends Preference implements OnSeekBarChan
     private static class SavedState extends BaseSavedState {
         @SuppressWarnings("unused")
         public static final Creator<SavedState> CREATOR =
-                new Creator<SavedState>() {
-                    public SavedState createFromParcel(Parcel in) {
-                        return new SavedState(in);
-                    }
+            new Creator<SavedState>() {
+                public SavedState createFromParcel(Parcel in) {
+                    return new SavedState(in);
+                }
 
-                    public SavedState[] newArray(int size) {
-                        return new SavedState[size];
-                    }
-                };
+                public SavedState[] newArray(int size) {
+                    return new SavedState[size];
+                }
+            };
         int progress;
         int max;
         int min;

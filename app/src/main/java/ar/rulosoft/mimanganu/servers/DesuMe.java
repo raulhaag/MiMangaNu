@@ -21,126 +21,126 @@ public class DesuMe extends ServerBase {
 
     // kinds=
     private static final int[] fltType = {
-            R.string.flt_tag_manga, // Манга
-            R.string.flt_tag_manhwa, // Манхва
-            R.string.flt_tag_manhua, // Маньхуа
-            R.string.flt_tag_one_shot, // Ваншот
-            R.string.flt_tag_comic, // Комикс
+        R.string.flt_tag_manga, // Манга
+        R.string.flt_tag_manhwa, // Манхва
+        R.string.flt_tag_manhua, // Маньхуа
+        R.string.flt_tag_one_shot, // Ваншот
+        R.string.flt_tag_comic, // Комикс
     };
     private static final String[] valType = {
-            "manga",
-            "manhwa",
-            "manhua",
-            "one_shot",
-            "comics",
+        "manga",
+        "manhwa",
+        "manhua",
+        "one_shot",
+        "comics",
     };
 
     // genres=
     private static final int[] fltGenre = {
-            R.string.flt_tag_madness, // Безумие
-            R.string.flt_tag_martial_arts, // Боевые искусства
-            R.string.flt_tag_vampire, // Вампиры
-            R.string.flt_tag_military, // Военное
-            R.string.flt_tag_harem, // Гарем
-            R.string.flt_tag_daemons, // Демоны
-            R.string.flt_tag_mystery, // Детектив
-            R.string.flt_tag_kodomo, // Детское
-            R.string.flt_tag_josei, // Дзёсей
-            R.string.flt_tag_doujinshi, // Додзинси
-            R.string.flt_tag_drama, // Драма
-            R.string.flt_tag_game, // Игры
-            R.string.flt_tag_historical, // Исторический
-            R.string.flt_tag_comedy, // Комедия
-            R.string.flt_tag_outer_space, // Космос
-            R.string.flt_tag_magic, // Магия
-            R.string.flt_tag_automobiles, // Машины
-            R.string.flt_tag_mecha, // Меха
-            R.string.flt_tag_music, // Музыка
-            R.string.flt_tag_parody, // Пародия
-            R.string.flt_tag_slice_of_life, // Повседневность
-            R.string.flt_tag_police, // Полиция
-            R.string.flt_tag_adventure, // Приключения
-            R.string.flt_tag_psychological, // Психологическое
-            R.string.flt_tag_romance, // Романтика
-            R.string.flt_tag_samurai, // Самураи
-            R.string.flt_tag_supernatural, // Сверхъестественное
-            R.string.flt_tag_shoujo, // Сёдзе
-            R.string.flt_tag_shoujo_ai, // Сёдзе Ай
-            R.string.flt_tag_seinen, // Сейнен
-            R.string.flt_tag_shounen, // Сёнен
-            R.string.flt_tag_shounen_ai, // Сёнен Ай
-            R.string.flt_tag_gender_bender, // Смена пола
-            R.string.flt_tag_sports, // Спорт
-            R.string.flt_tag_super_powers, // Супер сила
-            R.string.flt_tag_thriller, // Триллер
-            R.string.flt_tag_horror, // Ужасы
-            R.string.flt_tag_sci_fi, // Фантастика
-            R.string.flt_tag_fantasy, // Фэнтези
-            R.string.flt_tag_hentai, // Хентай
-            R.string.flt_tag_school_life, // Школа
-            R.string.flt_tag_action, // Экшен
-            R.string.flt_tag_ecchi, // Этти
-            R.string.flt_tag_yuri, // Юри
-            R.string.flt_tag_yaoi, // Яой
+        R.string.flt_tag_madness, // Безумие
+        R.string.flt_tag_martial_arts, // Боевые искусства
+        R.string.flt_tag_vampire, // Вампиры
+        R.string.flt_tag_military, // Военное
+        R.string.flt_tag_harem, // Гарем
+        R.string.flt_tag_daemons, // Демоны
+        R.string.flt_tag_mystery, // Детектив
+        R.string.flt_tag_kodomo, // Детское
+        R.string.flt_tag_josei, // Дзёсей
+        R.string.flt_tag_doujinshi, // Додзинси
+        R.string.flt_tag_drama, // Драма
+        R.string.flt_tag_game, // Игры
+        R.string.flt_tag_historical, // Исторический
+        R.string.flt_tag_comedy, // Комедия
+        R.string.flt_tag_outer_space, // Космос
+        R.string.flt_tag_magic, // Магия
+        R.string.flt_tag_automobiles, // Машины
+        R.string.flt_tag_mecha, // Меха
+        R.string.flt_tag_music, // Музыка
+        R.string.flt_tag_parody, // Пародия
+        R.string.flt_tag_slice_of_life, // Повседневность
+        R.string.flt_tag_police, // Полиция
+        R.string.flt_tag_adventure, // Приключения
+        R.string.flt_tag_psychological, // Психологическое
+        R.string.flt_tag_romance, // Романтика
+        R.string.flt_tag_samurai, // Самураи
+        R.string.flt_tag_supernatural, // Сверхъестественное
+        R.string.flt_tag_shoujo, // Сёдзе
+        R.string.flt_tag_shoujo_ai, // Сёдзе Ай
+        R.string.flt_tag_seinen, // Сейнен
+        R.string.flt_tag_shounen, // Сёнен
+        R.string.flt_tag_shounen_ai, // Сёнен Ай
+        R.string.flt_tag_gender_bender, // Смена пола
+        R.string.flt_tag_sports, // Спорт
+        R.string.flt_tag_super_powers, // Супер сила
+        R.string.flt_tag_thriller, // Триллер
+        R.string.flt_tag_horror, // Ужасы
+        R.string.flt_tag_sci_fi, // Фантастика
+        R.string.flt_tag_fantasy, // Фэнтези
+        R.string.flt_tag_hentai, // Хентай
+        R.string.flt_tag_school_life, // Школа
+        R.string.flt_tag_action, // Экшен
+        R.string.flt_tag_ecchi, // Этти
+        R.string.flt_tag_yuri, // Юри
+        R.string.flt_tag_yaoi, // Яой
     };
     private static final String[] valGenre = {
-            "Dementia",
-            "Martial Arts",
-            "Vampire",
-            "Military",
-            "Harem",
-            "Demons",
-            "Mystery",
-            "Kids",
-            "Josei",
-            "Doujinshi",
-            "Drama",
-            "Game",
-            "Historical",
-            "Comedy",
-            "Space",
-            "Magic",
-            "Cars",
-            "Mecha",
-            "Music",
-            "Parody",
-            "Slice of Life",
-            "Police",
-            "Adventure",
-            "Psychological",
-            "Romance",
-            "Samurai",
-            "Supernatural",
-            "Shoujo",
-            "Shoujo Ai",
-            "Seinen",
-            "Shounen",
-            "Shounen Ai",
-            "Gender Bender",
-            "Sports",
-            "Super Power",
-            "Thriller",
-            "Horror",
-            "Sci-Fi",
-            "Fantasy",
-            "Hentai",
-            "School",
-            "Action",
-            "Ecchi",
-            "Yuri",
-            "Yaoi",
+        "Dementia",
+        "Martial Arts",
+        "Vampire",
+        "Military",
+        "Harem",
+        "Demons",
+        "Mystery",
+        "Kids",
+        "Josei",
+        "Doujinshi",
+        "Drama",
+        "Game",
+        "Historical",
+        "Comedy",
+        "Space",
+        "Magic",
+        "Cars",
+        "Mecha",
+        "Music",
+        "Parody",
+        "Slice of Life",
+        "Police",
+        "Adventure",
+        "Psychological",
+        "Romance",
+        "Samurai",
+        "Supernatural",
+        "Shoujo",
+        "Shoujo Ai",
+        "Seinen",
+        "Shounen",
+        "Shounen Ai",
+        "Gender Bender",
+        "Sports",
+        "Super Power",
+        "Thriller",
+        "Horror",
+        "Sci-Fi",
+        "Fantasy",
+        "Hentai",
+        "School",
+        "Action",
+        "Ecchi",
+        "Yuri",
+        "Yaoi",
     };
 
     // order_by=
     private static int[] fltOrder = {
-            R.string.flt_order_last_update,
-            R.string.flt_order_alpha,
-            R.string.flt_order_views,
+        R.string.flt_order_last_update,
+        R.string.flt_order_alpha,
+        R.string.flt_order_views,
     };
     private static String[] valOrder = {
-            "",
-            "name",
-            "popular",
+        "",
+        "name",
+        "popular",
     };
 
     DesuMe(Context context) {
@@ -169,15 +169,15 @@ public class DesuMe extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_type),
-                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_genre),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
+            new ServerFilter(
+                context.getString(R.string.flt_type),
+                buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_genre),
+                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_order),
+                buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
 
@@ -241,9 +241,9 @@ public class DesuMe extends ServerBase {
             while (it.hasNext()) {
                 String title = it.next();
                 String id = getFirstMatch(
-                        "/(\\d+)\\.jpg",
-                        result.getJSONObject(title).getString("avatar"),
-                        context.getString(R.string.server_failed_locate_manga_url));
+                    "/(\\d+)\\.jpg",
+                    result.getJSONObject(title).getString("avatar"),
+                    context.getString(R.string.server_failed_locate_manga_url));
                 String web = "/manga/" + title.replace(" ", "-").toLowerCase() + "." + id + "/";
                 mangas.add(new Manga(getServerID(), title, web, false));
             }
@@ -268,7 +268,7 @@ public class DesuMe extends ServerBase {
             manga.setImages(HOST + getFirstMatchDefault("src=\"(/data/manga/covers/[^\"]+)", data, ""));
             // summary
             manga.setSynopsis(getFirstMatchDefault("class=\"prgrph\">([^<]+)", data,
-                    context.getString(R.string.nodisponible)));
+                context.getString(R.string.nodisponible)));
             // ongoing or completed
             manga.setFinished(!data.contains("b-anime_status_tag ongoing"));
             // author - n/a

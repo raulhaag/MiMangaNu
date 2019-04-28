@@ -13,91 +13,86 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaPanda extends ServerBase {
-    private String HOST = "http://www.mangapanda.com";
-
     private static final String PATTERN_SERIE =
-            "<li><a href=\"([^\"]+)\">([^<]+)";
+        "<li><a href=\"([^\"]+)\">([^<]+)";
     private static final String PATTERN_SUB =
-            "<div class=\"series_col\">([\\s\\S]+?)<div id=\"adfooter\">";
+        "<div class=\"series_col\">([\\s\\S]+?)<div id=\"adfooter\">";
     private static final String PATTERN_FRAG_CHAPTER =
-            "<div id=\"chapterlist\">([\\s\\S]+?)</table>";
+        "<div id=\"chapterlist\">([\\s\\S]+?)</table>";
     private static final String PATTERN_CHAPTER =
-            "<a href=\"([^\"]+)\">([^\"]+?)</a>.:([^\"]+?)</td>";
+        "<a href=\"([^\"]+)\">([^\"]+?)</a>.:([^\"]+?)</td>";
     private static final String PATTERN_CHAPTER_WEB =
-            "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
-
-    private static int[] fltGenre = {
-            R.string.flt_tag_action,
-            R.string.flt_tag_adventure,
-            R.string.flt_tag_comedy,
-            R.string.flt_tag_daemons,
-            R.string.flt_tag_drama,
-            R.string.flt_tag_ecchi,
-            R.string.flt_tag_fantasy,
-            R.string.flt_tag_gender_bender,
-            R.string.flt_tag_harem,
-            R.string.flt_tag_historical,
-            R.string.flt_tag_horror,
-            R.string.flt_tag_josei,
-            R.string.flt_tag_magic,
-            R.string.flt_tag_martial_arts,
-            R.string.flt_tag_mature,
-            R.string.flt_tag_mecha,
-            R.string.flt_tag_military,
-            R.string.flt_tag_mystery,
-            R.string.flt_tag_one_shot,
-            R.string.flt_tag_psychological,
-            R.string.flt_tag_romance,
-            R.string.flt_tag_school_life,
-            R.string.flt_tag_sci_fi,
-            R.string.flt_tag_seinen,
-            R.string.flt_tag_shoujo,
-            R.string.flt_tag_shoujo_ai,
-            R.string.flt_tag_shounen,
-            R.string.flt_tag_shounen_ai,
-            R.string.flt_tag_slice_of_life,
-            R.string.flt_tag_smut,
-            R.string.flt_tag_sports,
-            R.string.flt_tag_super_powers,
-            R.string.flt_tag_supernatural,
-            R.string.flt_tag_tragedy,
-            R.string.flt_tag_vampire,
-            R.string.flt_tag_yaoi,
-            R.string.flt_tag_yuri
-    };
-
+        "/[-|\\d]+/([^/]+)/chapter-(\\d+).html";
     private static final int[] fltType = {
-            R.string.flt_tag_all,
-            R.string.flt_tag_manga,
-            R.string.flt_tag_manhwa,
+        R.string.flt_tag_all,
+        R.string.flt_tag_manga,
+        R.string.flt_tag_manhwa,
     };
     private static final String[] valType = {
-            "&rd=0",
-            "&rd=2",
-            "&rd=1"
+        "&rd=0",
+        "&rd=2",
+        "&rd=1"
     };
-
     private static final int[] fltStatus = {
-            R.string.flt_status_all,
-            R.string.flt_status_ongoing,
-            R.string.flt_status_completed
+        R.string.flt_status_all,
+        R.string.flt_status_ongoing,
+        R.string.flt_status_completed
     };
     private static final String[] valStatus = {
-            "&status=",
-            "&status=1",
-            "&status=2"
+        "&status=",
+        "&status=1",
+        "&status=2"
     };
-
     private static final int[] fltOrder = {
-            R.string.flt_order_views,
-            R.string.flt_order_alpha,
-            R.string.flt_order_similar
+        R.string.flt_order_views,
+        R.string.flt_order_alpha,
+        R.string.flt_order_similar
     };
     private static final String[] valOrder = {
-            "&order=2",
-            "&order=1",
-            "&order="
+        "&order=2",
+        "&order=1",
+        "&order="
     };
+    private static int[] fltGenre = {
+        R.string.flt_tag_action,
+        R.string.flt_tag_adventure,
+        R.string.flt_tag_comedy,
+        R.string.flt_tag_daemons,
+        R.string.flt_tag_drama,
+        R.string.flt_tag_ecchi,
+        R.string.flt_tag_fantasy,
+        R.string.flt_tag_gender_bender,
+        R.string.flt_tag_harem,
+        R.string.flt_tag_historical,
+        R.string.flt_tag_horror,
+        R.string.flt_tag_josei,
+        R.string.flt_tag_magic,
+        R.string.flt_tag_martial_arts,
+        R.string.flt_tag_mature,
+        R.string.flt_tag_mecha,
+        R.string.flt_tag_military,
+        R.string.flt_tag_mystery,
+        R.string.flt_tag_one_shot,
+        R.string.flt_tag_psychological,
+        R.string.flt_tag_romance,
+        R.string.flt_tag_school_life,
+        R.string.flt_tag_sci_fi,
+        R.string.flt_tag_seinen,
+        R.string.flt_tag_shoujo,
+        R.string.flt_tag_shoujo_ai,
+        R.string.flt_tag_shounen,
+        R.string.flt_tag_shounen_ai,
+        R.string.flt_tag_slice_of_life,
+        R.string.flt_tag_smut,
+        R.string.flt_tag_sports,
+        R.string.flt_tag_super_powers,
+        R.string.flt_tag_supernatural,
+        R.string.flt_tag_tragedy,
+        R.string.flt_tag_vampire,
+        R.string.flt_tag_yaoi,
+        R.string.flt_tag_yuri
+    };
+    private String HOST = "http://www.mangapanda.com";
 
     MangaPanda(Context context) {
         super(context);
@@ -195,8 +190,8 @@ class MangaPanda extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data = getNavigatorAndFlushParameters().get(chapter.getPath() + "/" + page);
         return getFirstMatch(
-                "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data,
-                context.getString(R.string.server_failed_loading_image));
+            "src=\"([^\"]+?.(jpg|gif|jpeg|png|bmp))", data,
+            context.getString(R.string.server_failed_loading_image));
     }
 
     @Override
@@ -204,8 +199,8 @@ class MangaPanda extends ServerBase {
         if (chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
             String pages = getFirstMatch(
-                    "of (\\d+)</div>", data,
-                    context.getString(R.string.server_failed_loading_page_count));
+                "of (\\d+)</div>", data,
+                context.getString(R.string.server_failed_loading_page_count));
             chapter.setPages(Integer.parseInt(pages));
         }
     }
@@ -213,18 +208,18 @@ class MangaPanda extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_genre),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_type),
-                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_status),
-                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_genre),
+                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_type),
+                buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_status),
+                buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_order),
+                buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
         };
     }
 

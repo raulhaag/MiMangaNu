@@ -170,7 +170,7 @@ public class TestServersCommon {
         assertFalse(getContext(), chapter.getPath().isEmpty());
         assertTrue(getContext(), (chapter.getPath().split("//", -1).length - 1) <= 1);
 
-        if(chapter.getPath().startsWith("http")) {
+        if (chapter.getPath().startsWith("http")) {
             System.err.println("[WRN] relative chapter paths shall be used if possible");
         }
 
@@ -180,7 +180,7 @@ public class TestServersCommon {
             fail(getContext(e.getMessage()));
         }
         assertTrue(getContext(), chapter.getPages() >= 1);
-        if(chapter.getPages() == 1) {
+        if (chapter.getPages() == 1) {
             System.err.println("[WRN] the chapter consists only of one page - possible, but suspicious.");
         }
 
@@ -218,8 +218,8 @@ public class TestServersCommon {
 
         // additional test for NineManga servers to detect broken hotlinking
         assertNotEquals(
-                getContext("NineManga: hotlink detection - server delivers bogus image link"),
-                image, "http://es.taadd.com/files/img/57ead05682694a7c026f99ad14abb8c1.jpg"
+            getContext("NineManga: hotlink detection - server delivers bogus image link"),
+            image, "http://es.taadd.com/files/img/57ead05682694a7c026f99ad14abb8c1.jpg"
         );
 
         // check if the image loaded has at least 1kB (assume proper content)

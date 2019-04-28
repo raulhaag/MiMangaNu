@@ -67,20 +67,20 @@ public class CFInterceptor implements Interceptor {
         }
 
         String js = rawOperation
-                .replaceAll("e\\s*=\\s*function[\\s\\S]+?\\};", "")
-                .replaceAll("atob", "Atob.atob")
-                .replaceAll("e\\(\"(.+?)\"\\)", "Atob\\.atob(\"$1\")")
-                .replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1")
-                .replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
+            .replaceAll("e\\s*=\\s*function[\\s\\S]+?\\};", "")
+            .replaceAll("atob", "Atob.atob")
+            .replaceAll("e\\(\"(.+?)\"\\)", "Atob\\.atob(\"$1\")")
+            .replaceAll("a\\.value = (.+ \\+ t\\.length.+?);.+", "$1")
+            .replaceAll("\\s{3,}[a-z](?: = |\\.).+", "");
         Duktape duktape = Duktape.create();
         js = js.replaceAll("[\n\\']", "");
         // js = js.replace(";", ";\n"); only on debug for a easy read
 
         String newJs = String.format("var t = \"%s\";\n" +
-                "            var g = String.fromCharCode;\n" +
-                "            function italics (str) {{ return '<i>' + this + '</i>'; }};\n" +
-                "            var document = {getElementById: function(p) { return {innerHTML:\"%s\"};}};\n" +
-                "            %s", domain, rv, js);
+            "            var g = String.fromCharCode;\n" +
+            "            function italics (str) {{ return '<i>' + this + '</i>'; }};\n" +
+            "            var document = {getElementById: function(p) { return {innerHTML:\"%s\"};}};\n" +
+            "            %s", domain, rv, js);
 
 
         js = Jsonfxxx.getInstance().jsonfxxx(newJs);
@@ -108,21 +108,21 @@ public class CFInterceptor implements Interceptor {
         }
 
         String url = new HttpUrl.Builder().scheme(request.isHttps() ? "https" : "http").host(domain)
-                .addPathSegments("cdn-cgi/l/chk_jschl")
-                .addEncodedQueryParameter("s", s)
-                .addEncodedQueryParameter("jschl_vc", challenge)
-                .addEncodedQueryParameter("pass", challengePass)
-                .addEncodedQueryParameter("jschl_answer", result)
-                .build().toString();
+            .addPathSegments("cdn-cgi/l/chk_jschl")
+            .addEncodedQueryParameter("s", s)
+            .addEncodedQueryParameter("jschl_vc", challenge)
+            .addEncodedQueryParameter("pass", challengePass)
+            .addEncodedQueryParameter("jschl_answer", result)
+            .build().toString();
 
         Request request1 = new Request.Builder()
-                .url(url)
-                .header("User-Agent", Navigator.USER_AGENT)
-                .header("Referer", request.url().toString())
-                .header("Accept-Language", "en, eu")
-                .header("Connection", "keep-alive")
-                .header("Accept", "text/html,application/xhtml+xml,application/xml")
-                .build();
+            .url(url)
+            .header("User-Agent", Navigator.USER_AGENT)
+            .header("Referer", request.url().toString())
+            .header("Accept-Language", "en, eu")
+            .header("Connection", "keep-alive")
+            .header("Accept", "text/html,application/xhtml+xml,application/xml")
+            .build();
         return chain.proceed(request1);//generate the cookie;
     }
 

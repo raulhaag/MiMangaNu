@@ -42,15 +42,15 @@ public class ThemeColors {
     }
 
 
-    public static int[] getColors(Context context){
-        if(inited)
+    public static int[] getColors(Context context) {
+        if (inited)
             return colors;
         else
             return getColors(PreferenceManager.getDefaultSharedPreferences(context));
     }
 
-    public static int getBackground(){
-        if(!inited)
+    public static int getBackground() {
+        if (!inited)
             Log.w("MiMangaNu", "ThemeColors not initialized (Default value returned)");
         return background;
     }
@@ -75,8 +75,8 @@ public class ThemeColors {
      */
     private static int brightness(int color) {
         return (int) Math.sqrt(Color.red(color) * Color.red(color) * .241 +
-                Color.green(color) * Color.green(color) * .691 +
-                Color.blue(color) * Color.blue(color) * .068);
+            Color.green(color) * Color.green(color) * .691 +
+            Color.blue(color) * Color.blue(color) * .068);
     }
 
     /**

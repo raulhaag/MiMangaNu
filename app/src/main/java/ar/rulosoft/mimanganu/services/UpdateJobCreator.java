@@ -24,8 +24,9 @@ import ar.rulosoft.navegadores.Navigator;
  * Created by Raúl on 27/12/2017.
  */
 
-public class UpdateJobCreator implements JobCreator{
+public class UpdateJobCreator implements JobCreator {
     public static final String UPDATE_TAG = "MIMANGANU_UPDATE";
+
     @Nullable
     @Override
     public Job create(@NonNull String tag) {
@@ -36,6 +37,7 @@ public class UpdateJobCreator implements JobCreator{
                 return null;
         }
     }
+
     public static class UpdateJob extends Job {
         static final String LAST_CHECK = "last_check_update";
         private SharedPreferences pm;
@@ -47,14 +49,14 @@ public class UpdateJobCreator implements JobCreator{
             JobManager.instance().cancelAllForTag(UpdateJobCreator.UPDATE_TAG);
             if (time > 0) {
                 new JobRequest.Builder(UpdateJobCreator.UPDATE_TAG)
-                        .setPeriodic(time, TimeUnit.MINUTES.toMillis(5))
-                        .setRequiresCharging(false)
-                        .setRequiresDeviceIdle(false)
-                        .setUpdateCurrent(true)
-                        .build()
-                        .schedule();
+                    .setPeriodic(time, TimeUnit.MINUTES.toMillis(5))
+                    .setRequiresCharging(false)
+                    .setRequiresDeviceIdle(false)
+                    .setUpdateCurrent(true)
+                    .build()
+                    .schedule();
             }
-            if(time < 0)
+            if (time < 0)
                 MainActivity.coldStart = false;
         }
 

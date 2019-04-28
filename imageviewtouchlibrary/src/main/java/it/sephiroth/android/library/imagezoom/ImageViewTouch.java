@@ -7,7 +7,6 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.MotionEvent;
@@ -72,7 +71,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
 
     @Override
     protected void _setImageDrawable(
-            final Drawable drawable, final Matrix initial_matrix, float min_zoom, float max_zoom) {
+        final Drawable drawable, final Matrix initial_matrix, float min_zoom, float max_zoom) {
         super._setImageDrawable(drawable, initial_matrix, min_zoom, max_zoom);
         mScaleFactor = getMaxScale() / 3;
     }
@@ -221,8 +220,7 @@ public class ImageViewTouch extends ImageViewTouchBase {
         @Override
         public boolean onDoubleTapEvent(MotionEvent e) {
 
-            if (mScaleModeAuto && e.getAction() == MotionEvent.ACTION_UP)
-            {
+            if (mScaleModeAuto && e.getAction() == MotionEvent.ACTION_UP) {
                 float targetScale = Math.min(getMaxScale(), Math.max(onDoubleTapPost(getScale()), getMinScale()));
                 zoomTo(targetScale, e.getX(), e.getY(), DEFAULT_ANIMATION_DURATION);
                 invalidate();

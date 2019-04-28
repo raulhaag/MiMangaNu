@@ -43,9 +43,9 @@ public class MainActivity extends AppCompatActivity {
     public static boolean coldStart;
     private final int WRITE_EXTERNAL_STORAGE_PERMISSION_REQUEST_CODE = 0;
     public ActionBar mActBar;
+    MainFragment mainFragment;
     private OnBackListener backListener;
     private OnKeyUpListener keyUpListener;
-    MainFragment mainFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             final String id = "server_version_" + s.getServerID();
             if (pm.getInt(id, 1) < s.getServerVersion()) {
                 if (Database.getMangasCondition(getApplicationContext(),
-                        Database.COL_SERVER_ID + " = " + s.getServerID(), Database.COL_SERVER_ID, true).size() > 0) {
+                    Database.COL_SERVER_ID + " = " + s.getServerID(), Database.COL_SERVER_ID, true).size() > 0) {
                     String serverUpdateText = s.getServerName() + " " + getString(R.string.update_server_information);
                     Snackbar snackbar = Snackbar.make(mainFragment.getView(), serverUpdateText, Snackbar.LENGTH_INDEFINITE);
                     TextView textView = snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
@@ -163,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
                             if (s.updateServerVersion()) {
                                 pm.edit().putInt(id, s.getServerVersion()).apply();
                                 Util.getInstance().showTimeSnackBar(getString(R.string.server_update_process_finished),
-                                        mainFragment.getView(), getApplicationContext(), Snackbar.LENGTH_INDEFINITE);
+                                    mainFragment.getView(), getApplicationContext(), Snackbar.LENGTH_INDEFINITE);
                             }
                         }
                     }).start();
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
         // fA -> fB
         // fB.onStart -> fA.onStop
         getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
+            R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
         ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         //System.gc();
@@ -262,7 +262,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void replaceFragment(Fragment fragment, String tag) {
         getSupportFragmentManager().beginTransaction().setCustomAnimations(
-                R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
+            R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
         ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commit();
         getSupportFragmentManager().executePendingTransactions();
     }
@@ -270,8 +270,8 @@ public class MainActivity extends AppCompatActivity {
     public void replaceFragment(Fragment fragment, String tag, int f1_animation_out,
                                 int f2_animation_in, int f2_animation_out, int f1_animation_in) {
         getSupportFragmentManager().beginTransaction().setCustomAnimations(f2_animation_in,
-                f1_animation_out, f1_animation_in, f2_animation_out).replace(R.id.coordinator_layout,
-                fragment).addToBackStack(tag).commit();
+            f1_animation_out, f1_animation_in, f2_animation_out).replace(R.id.coordinator_layout,
+            fragment).addToBackStack(tag).commit();
         getSupportFragmentManager().executePendingTransactions();
     }
 

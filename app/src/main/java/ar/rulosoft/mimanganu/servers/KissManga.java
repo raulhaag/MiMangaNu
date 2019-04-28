@@ -19,78 +19,78 @@ class KissManga extends ServerBase {
     private static final String HOST = "https://kissmanga.com";
 
     private static final String PATTERN_CHAPTER =
-            "<td>\\s*<a\\s*href=\"(/Manga/[^\"]+)\"\\s*title=\"[^\"]+\">([^<]+)</a>\\s*</td>";
+        "<td>\\s*<a\\s*href=\"(/Manga/[^\"]+)\"\\s*title=\"[^\"]+\">([^<]+)</a>\\s*</td>";
     private static final String PATTERN_MANGA =
-            "(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
+        "(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
 
     private static final int[] fltGenre = {
-            R.string.flt_tag_4_koma,
-            R.string.flt_tag_action,
-            R.string.flt_tag_adult,
-            R.string.flt_tag_adventure,
-            R.string.flt_tag_comedy,
-            R.string.flt_tag_comic,
-            R.string.flt_tag_cooking,
-            R.string.flt_tag_doujinshi,
-            R.string.flt_tag_drama,
-            R.string.flt_tag_ecchi,
-            R.string.flt_tag_fantasy,
-            R.string.flt_tag_gender_bender,
-            R.string.flt_tag_harem,
-            R.string.flt_tag_historical,
-            R.string.flt_tag_horror,
-            R.string.flt_tag_josei,
-            R.string.flt_tag_lolicon,
-            R.string.flt_tag_manga,
-            R.string.flt_tag_manhua,
-            R.string.flt_tag_manhwa,
-            R.string.flt_tag_martial_arts,
-            R.string.flt_tag_mature,
-            R.string.flt_tag_mecha,
-            R.string.flt_tag_medical,
-            R.string.flt_tag_music,
-            R.string.flt_tag_mystery,
-            R.string.flt_tag_one_shot,
-            R.string.flt_tag_psychological,
-            R.string.flt_tag_romance,
-            R.string.flt_tag_school_life,
-            R.string.flt_tag_sci_fi,
-            R.string.flt_tag_seinen,
-            R.string.flt_tag_shotacon,
-            R.string.flt_tag_shoujo,
-            R.string.flt_tag_shoujo_ai,
-            R.string.flt_tag_shounen,
-            R.string.flt_tag_shounen_ai,
-            R.string.flt_tag_smut,
-            R.string.flt_tag_sports,
-            R.string.flt_tag_supernatural,
-            R.string.flt_tag_webtoon,
-            R.string.flt_tag_yaoi,
-            R.string.flt_tag_yuri
+        R.string.flt_tag_4_koma,
+        R.string.flt_tag_action,
+        R.string.flt_tag_adult,
+        R.string.flt_tag_adventure,
+        R.string.flt_tag_comedy,
+        R.string.flt_tag_comic,
+        R.string.flt_tag_cooking,
+        R.string.flt_tag_doujinshi,
+        R.string.flt_tag_drama,
+        R.string.flt_tag_ecchi,
+        R.string.flt_tag_fantasy,
+        R.string.flt_tag_gender_bender,
+        R.string.flt_tag_harem,
+        R.string.flt_tag_historical,
+        R.string.flt_tag_horror,
+        R.string.flt_tag_josei,
+        R.string.flt_tag_lolicon,
+        R.string.flt_tag_manga,
+        R.string.flt_tag_manhua,
+        R.string.flt_tag_manhwa,
+        R.string.flt_tag_martial_arts,
+        R.string.flt_tag_mature,
+        R.string.flt_tag_mecha,
+        R.string.flt_tag_medical,
+        R.string.flt_tag_music,
+        R.string.flt_tag_mystery,
+        R.string.flt_tag_one_shot,
+        R.string.flt_tag_psychological,
+        R.string.flt_tag_romance,
+        R.string.flt_tag_school_life,
+        R.string.flt_tag_sci_fi,
+        R.string.flt_tag_seinen,
+        R.string.flt_tag_shotacon,
+        R.string.flt_tag_shoujo,
+        R.string.flt_tag_shoujo_ai,
+        R.string.flt_tag_shounen,
+        R.string.flt_tag_shounen_ai,
+        R.string.flt_tag_smut,
+        R.string.flt_tag_sports,
+        R.string.flt_tag_supernatural,
+        R.string.flt_tag_webtoon,
+        R.string.flt_tag_yaoi,
+        R.string.flt_tag_yuri
     };
 
     private static final int[] fltStatus = {
-            R.string.flt_status_all,
-            R.string.flt_status_ongoing,
-            R.string.flt_status_completed,
+        R.string.flt_status_all,
+        R.string.flt_status_ongoing,
+        R.string.flt_status_completed,
     };
     private static final String[] valStatus = {
-            "",
-            "Ongoing",
-            "Completed",
+        "",
+        "Ongoing",
+        "Completed",
     };
 
     private static final int[] fltOrder = {
-            R.string.flt_order_rating,
-            R.string.flt_order_last_update,
-            R.string.flt_order_newest,
-            R.string.flt_order_alpha
+        R.string.flt_order_rating,
+        R.string.flt_order_last_update,
+        R.string.flt_order_newest,
+        R.string.flt_order_alpha
     };
     private static final String[] valOrder = {
-            "/MostPopular",
-            "/LatestUpdate",
-            "/Newest",
-            ""
+        "/MostPopular",
+        "/LatestUpdate",
+        "/Newest",
+        ""
     };
 
     KissManga(Context context) {
@@ -129,12 +129,12 @@ class KissManga extends ServerBase {
 
             // Summary
             manga.setSynopsis(
-                    getFirstMatchDefault("<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
+                getFirstMatchDefault("<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
                     context.getString(R.string.nodisponible)));
 
             // Cover Image
             manga.setImages(
-                    getFirstMatchDefault("rel=\"image_src\" href=\"(.+?)" + "\"", source, ""));
+                getFirstMatchDefault("rel=\"image_src\" href=\"(.+?)" + "\"", source, ""));
 
             // Author
             manga.setAuthor(getFirstMatchDefault("Author:</span>&nbsp;(.+?)</p>", source, context.getString(R.string.nodisponible)));
@@ -214,18 +214,18 @@ class KissManga extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-                new ServerFilter(
-                        context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_exclude_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_status),
-                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_order) + " (" + context.getString(R.string.flt_hint_order_unfiltered_only) + ")",
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_include_tags),
+                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_exclude_tags),
+                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+            new ServerFilter(
+                context.getString(R.string.flt_status),
+                buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+            new ServerFilter(
+                context.getString(R.string.flt_order) + " (" + context.getString(R.string.flt_hint_order_unfiltered_only) + ")",
+                buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
         };
     }
 

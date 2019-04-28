@@ -16,8 +16,8 @@
             android:id="@+id/notif"
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:src="@drawable/notif"
             android:visibility="invisible" />
     </ar.rulosoft.mimanganu.componentes.Cover>

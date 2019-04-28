@@ -105,7 +105,7 @@ class JapScan extends ServerBase {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             String pages = getFirstMatch("Page (\\d+)</option>\\s*</select>", source,
-                    context.getString(R.string.server_failed_loading_image));
+                context.getString(R.string.server_failed_loading_image));
             String path = getFirstMatch("data-src=\"([^\"]+)", source, context.getString(R.string.error_downloading_image));
             path = path.substring(0, path.lastIndexOf("/") + 1);
             ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);

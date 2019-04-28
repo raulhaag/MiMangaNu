@@ -129,20 +129,6 @@ public abstract class Reader extends FrameLayout {
         else return idx < getPages();
     }
 
-    public enum Direction {L2R, R2L, VERTICAL}
-
-    public enum Type {CONTINUOUS, PAGED}
-
-    public interface ReaderListener {
-        void onPageChanged(int page);
-
-        void onEndOver();
-
-        void onStartOver();
-
-        void onMenuRequired();
-    }
-
     protected InputStream getInputStream(String path) throws Exception {
         /*
          * zipfile entry go to be use a path like zip|file|entry
@@ -169,11 +155,25 @@ public abstract class Reader extends FrameLayout {
         return new FileInputStream(new File(path));
     }
 
-
     protected boolean fileExist(String path) {
         if (path.startsWith("zip")) {// || path.startsWith("rar")) {
             return new File(path.split("\\|")[1]).exists();
         }
         return new File(path).exists();
+    }
+
+    public enum Direction {L2R, R2L, VERTICAL}
+
+    public enum Type {CONTINUOUS, PAGED}
+
+
+    public interface ReaderListener {
+        void onPageChanged(int page);
+
+        void onEndOver();
+
+        void onStartOver();
+
+        void onMenuRequired();
     }
 }

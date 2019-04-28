@@ -24,7 +24,7 @@ public class DownloadsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        return inflater.inflate(R.layout.fragment_downloads,container,false);
+        return inflater.inflate(R.layout.fragment_downloads, container, false);
     }
 
     @Override
@@ -69,8 +69,8 @@ public class DownloadsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         downloadAdapter = new DownloadAdapter(getActivity(), getActivity(), darkTheme);
-        ((MainActivity)getActivity()).enableHomeButton(true);
-        ((MainActivity)getActivity()).setTitle(getString(R.string.descargas));
+        ((MainActivity) getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).setTitle(getString(R.string.descargas));
         list.setAdapter(downloadAdapter);
     }
 

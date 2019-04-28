@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout"
-    android:padding="2dp"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:elevation="4dp">
+    android:elevation="4dp"
+    android:padding="2dp">
 
     <ar.rulosoft.mimanganu.componentes.Cover
         android:id="@+id/tapa"
@@ -15,8 +15,8 @@
         android:id="@+id/notif"
         android:layout_width="50sp"
         android:layout_height="50sp"
-        android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
         android:src="@drawable/notif"
         android:visibility="invisible" />
 

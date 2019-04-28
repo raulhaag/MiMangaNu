@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.componentes;
 
 public interface OnSwipeOutListener {
-        void onStartOver();
-        void onEndOver();
-    }
+    void onStartOver();
+
+    void onEndOver();
+}

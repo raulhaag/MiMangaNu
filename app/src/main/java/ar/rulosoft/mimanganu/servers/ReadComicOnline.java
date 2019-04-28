@@ -19,129 +19,129 @@ class ReadComicOnline extends ServerBase {
     private static final String HOST = "http://readcomiconline.to";
 
     private static final String PATTERN_CHAPTER =
-            "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[^>]*>([^\"]+)</a>[\\s]*</td>";
+        "<td>[\\s]*<a[\\s]*href=\"(/Comic/[^\"]+)\"[^>]*>([^\"]+)</a>[\\s]*</td>";
     private static final String PATTERN_SEARCH =
-            "href=\"(/Comic/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
+        "href=\"(/Comic/.*?)\">([^<]+)</a>[^<]+<p>[^<]+<span class=\"info\"";
 
     private static final int[] fltGenre = {
-            R.string.flt_tag_all,
-            R.string.flt_tag_action,
-            R.string.flt_tag_adventure,
-            R.string.flt_tag_anthology,
-            R.string.flt_tag_anthropomorphic,
-            R.string.flt_tag_biography,
-            R.string.flt_tag_children,
-            R.string.flt_tag_comedy,
-            R.string.flt_tag_crime,
-            R.string.flt_tag_drama,
-            R.string.flt_tag_family,
-            R.string.flt_tag_fantasy,
-            R.string.flt_tag_fighting,
-            R.string.flt_tag_graphic_novel,
-            R.string.flt_tag_historical,
-            R.string.flt_tag_horror,
-            R.string.flt_tag_leading_ladies,
-            R.string.flt_tag_lgbtq,
-            R.string.flt_tag_literature,
-            R.string.flt_tag_manga,
-            R.string.flt_tag_martial_arts,
-            R.string.flt_tag_mature,
-            R.string.flt_tag_military,
-            R.string.flt_tag_movies_and_tv,
-            R.string.flt_tag_mystery,
-            R.string.flt_tag_mythology,
-            R.string.flt_tag_personal,
-            R.string.flt_tag_political,
-            R.string.flt_tag_post_apocalyptic,
-            R.string.flt_tag_psychological,
-            R.string.flt_tag_pulp,
-            R.string.flt_tag_robots,
-            R.string.flt_tag_romance,
-            R.string.flt_tag_school_life,
-            R.string.flt_tag_sci_fi,
-            R.string.flt_tag_slice_of_life,
-            R.string.flt_tag_spy,
-            R.string.flt_tag_super_hero,
-            R.string.flt_tag_supernatural,
-            R.string.flt_tag_suspense,
-            R.string.flt_tag_thriller,
-            R.string.flt_tag_vampire,
-            R.string.flt_tag_video_game,
-            R.string.flt_tag_war,
-            R.string.flt_tag_western,
-            R.string.flt_tag_zombies,
+        R.string.flt_tag_all,
+        R.string.flt_tag_action,
+        R.string.flt_tag_adventure,
+        R.string.flt_tag_anthology,
+        R.string.flt_tag_anthropomorphic,
+        R.string.flt_tag_biography,
+        R.string.flt_tag_children,
+        R.string.flt_tag_comedy,
+        R.string.flt_tag_crime,
+        R.string.flt_tag_drama,
+        R.string.flt_tag_family,
+        R.string.flt_tag_fantasy,
+        R.string.flt_tag_fighting,
+        R.string.flt_tag_graphic_novel,
+        R.string.flt_tag_historical,
+        R.string.flt_tag_horror,
+        R.string.flt_tag_leading_ladies,
+        R.string.flt_tag_lgbtq,
+        R.string.flt_tag_literature,
+        R.string.flt_tag_manga,
+        R.string.flt_tag_martial_arts,
+        R.string.flt_tag_mature,
+        R.string.flt_tag_military,
+        R.string.flt_tag_movies_and_tv,
+        R.string.flt_tag_mystery,
+        R.string.flt_tag_mythology,
+        R.string.flt_tag_personal,
+        R.string.flt_tag_political,
+        R.string.flt_tag_post_apocalyptic,
+        R.string.flt_tag_psychological,
+        R.string.flt_tag_pulp,
+        R.string.flt_tag_robots,
+        R.string.flt_tag_romance,
+        R.string.flt_tag_school_life,
+        R.string.flt_tag_sci_fi,
+        R.string.flt_tag_slice_of_life,
+        R.string.flt_tag_spy,
+        R.string.flt_tag_super_hero,
+        R.string.flt_tag_supernatural,
+        R.string.flt_tag_suspense,
+        R.string.flt_tag_thriller,
+        R.string.flt_tag_vampire,
+        R.string.flt_tag_video_game,
+        R.string.flt_tag_war,
+        R.string.flt_tag_western,
+        R.string.flt_tag_zombies,
     };
     private static final String[] valGenre = {
-            "/ComicList",
-            "/Genre/Action",
-            "/Genre/Adventure",
-            "/Genre/Anthology",
-            "/Genre/Anthropomorphic",
-            "/Genre/Biography",
-            "/Genre/Children",
-            "/Genre/Comedy",
-            "/Genre/Crime",
-            "/Genre/Drama",
-            "/Genre/Family",
-            "/Genre/Fantasy",
-            "/Genre/Fighting",
-            "/Genre/Graphic-Novels",
-            "/Genre/Historical",
-            "/Genre/Horror",
-            "/Genre/Leading-Ladies",
-            "/Genre/LGBTQ",
-            "/Genre/Literature",
-            "/Genre/Manga",
-            "/Genre/Martial-Arts",
-            "/Genre/Mature",
-            "/Genre/Military",
-            "/Genre/Movies-TV",
-            "/Genre/Mystery",
-            "/Genre/Mythology",
-            "/Genre/Personal",
-            "/Genre/Political",
-            "/Genre/Post-Apocalyptic",
-            "/Genre/Psychological",
-            "/Genre/Pulp",
-            "/Genre/Robots",
-            "/Genre/Romance",
-            "/Genre/School-Life",
-            "/Genre/Sci-Fi",
-            "/Genre/Slice-of-Life",
-            "/Genre/Spy",
-            "/Genre/Superhero",
-            "/Genre/Supernatural",
-            "/Genre/Suspense",
-            "/Genre/Thriller",
-            "/Genre/Vampires",
-            "/Genre/Video-Games",
-            "/Genre/War",
-            "/Genre/Western",
-            "/Genre/Zombies",
+        "/ComicList",
+        "/Genre/Action",
+        "/Genre/Adventure",
+        "/Genre/Anthology",
+        "/Genre/Anthropomorphic",
+        "/Genre/Biography",
+        "/Genre/Children",
+        "/Genre/Comedy",
+        "/Genre/Crime",
+        "/Genre/Drama",
+        "/Genre/Family",
+        "/Genre/Fantasy",
+        "/Genre/Fighting",
+        "/Genre/Graphic-Novels",
+        "/Genre/Historical",
+        "/Genre/Horror",
+        "/Genre/Leading-Ladies",
+        "/Genre/LGBTQ",
+        "/Genre/Literature",
+        "/Genre/Manga",
+        "/Genre/Martial-Arts",
+        "/Genre/Mature",
+        "/Genre/Military",
+        "/Genre/Movies-TV",
+        "/Genre/Mystery",
+        "/Genre/Mythology",
+        "/Genre/Personal",
+        "/Genre/Political",
+        "/Genre/Post-Apocalyptic",
+        "/Genre/Psychological",
+        "/Genre/Pulp",
+        "/Genre/Robots",
+        "/Genre/Romance",
+        "/Genre/School-Life",
+        "/Genre/Sci-Fi",
+        "/Genre/Slice-of-Life",
+        "/Genre/Spy",
+        "/Genre/Superhero",
+        "/Genre/Supernatural",
+        "/Genre/Suspense",
+        "/Genre/Thriller",
+        "/Genre/Vampires",
+        "/Genre/Video-Games",
+        "/Genre/War",
+        "/Genre/Western",
+        "/Genre/Zombies",
     };
 
     private static final int[] fltOrder = {
-            R.string.flt_order_views,
-            R.string.flt_order_last_update,
-            R.string.flt_order_newest,
-            R.string.flt_order_alpha,
+        R.string.flt_order_views,
+        R.string.flt_order_last_update,
+        R.string.flt_order_newest,
+        R.string.flt_order_alpha,
     };
     private static final String[] valOrder = {
-            "/MostPopular",
-            "/LatestUpdate",
-            "/Newest",
-            "",
+        "/MostPopular",
+        "/LatestUpdate",
+        "/Newest",
+        "",
     };
 
     private static final int[] fltStatus = {
-            R.string.flt_status_all,
-            R.string.flt_status_ongoing,
-            R.string.flt_status_completed,
+        R.string.flt_status_all,
+        R.string.flt_status_ongoing,
+        R.string.flt_status_completed,
     };
     private static final String[] valStatus = new String[]{
-            "",
-            "/Status/Ongoing",
-            "/Status/Completed",
+        "",
+        "/Status/Ongoing",
+        "/Status/Completed",
     };
 
     ReadComicOnline(Context context) {
@@ -207,8 +207,7 @@ class ReadComicOnline extends ServerBase {
             String writer = getFirstMatchDefault("Writer:.+?\">(.+?)</a>", source, context.getString(R.string.nodisponible));
             if (artist.equals(writer)) {
                 manga.setAuthor(artist);
-            }
-            else {
+            } else {
                 manga.setAuthor(artist + ", " + writer);
             }
 
@@ -238,7 +237,7 @@ class ReadComicOnline extends ServerBase {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
 
-            if(source.contains("class=\"g-recaptcha\"")) {
+            if (source.contains("class=\"g-recaptcha\"")) {
                 throw new Exception(context.getString(R.string.server_uses_captcha));
             }
 
@@ -281,10 +280,9 @@ class ReadComicOnline extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST;
         // genre overrides status, as only one filter can be active at a time
-        if(filters[0][0] != R.string.flt_tag_all) {
+        if (filters[0][0] != R.string.flt_tag_all) {
             web += valGenre[filters[0][0]] + valOrder[filters[2][0]];
-        }
-        else if(filters[1][0] != R.string.flt_status_all) {
+        } else if (filters[1][0] != R.string.flt_status_all) {
             web += valStatus[filters[1][0]] + valOrder[filters[2][0]];
         }
 

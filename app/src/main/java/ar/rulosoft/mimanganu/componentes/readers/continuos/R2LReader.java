@@ -5,7 +5,6 @@ import android.view.MotionEvent;
 
 /**
  * Created by Raul on 25/10/2015.
- *
  */
 public class R2LReader extends HorizontalReader {
 
@@ -94,9 +93,9 @@ public class R2LReader extends HorizontalReader {
         return super.onFling(e1, e2, velocityX, velocityY);
     }
 
-/*
- * Starting from 0
-*/
+    /*
+     * Starting from 0
+     */
 
     @Override
     public float getPagePosition(int page) {

@@ -119,8 +119,8 @@ public class Manga {
 
     public void setAuthor(String author) {
         this.author = HtmlUnescape.Unescape(Util.getInstance().fromHtml(author).toString().trim())
-                .replaceAll("\\s+", " ")
-                .replaceAll("\\s,", ",");
+            .replaceAll("\\s+", " ")
+            .replaceAll("\\s,", ",");
     }
 
     @Nullable
@@ -190,11 +190,11 @@ public class Manga {
 
     public void setGenre(String genre) {
         this.genre = HtmlUnescape.Unescape(Util.getInstance().fromHtml(genre).toString().trim())
-                .replaceAll("\\s+", " ")
-                .replaceAll("\\s,", ",");
+            .replaceAll("\\s+", " ")
+            .replaceAll("\\s,", ",");
     }
 
-    public int getReaderType(){
+    public int getReaderType() {
         return readerType;
     }
 
