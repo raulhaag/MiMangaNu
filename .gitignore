@@ -1,25 +1,10 @@
-/local.properties
-/.idea/workspace.xml
-/.idea/libraries
-/.idea/dictionaries
-.DS_Store
-/build
-/captures
-/travis_builds
-
-# Android Studio
+local.properties
+build
+.idea
 .gradle
-.idea/encodings.xml
-.idea/compiler.xml
-.idea/gradle.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/inspectionProfiles/
-.idea/caches/
-.idea/codeStyles/
-app/app.iml
-imageviewtouchlibrary/imageviewtouchlibrary.iml
 *.iml
 
-#For Dolphin users
+.DS_Store
 *.directory
+captures
+travis_builds
