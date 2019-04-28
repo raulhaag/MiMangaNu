@@ -17,8 +17,8 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:usesCleartextTraffic="true"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        android:usesCleartextTraffic="true">
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -48,14 +48,20 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+
         <receiver android:name=".utils.NotificationDeleteIntentReceiver" />
         <receiver android:name=".utils.CancelIntentReceiver" />
         <receiver android:name=".utils.NetworkUtilsAndReceiver">
             <intent-filter>
+                <!--Declaring a broadcastreceiver for android.net.conn.CONNECTIVITY_CHANGE is
+                deprecated for apps targeting N and higher.
+                In general, apps should not rely on this broadcast and instead
+                use JobScheduler or GCMNetworkManager.-->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
         <service android:name=".services.DownloadPoolService" />
 
         <activity
