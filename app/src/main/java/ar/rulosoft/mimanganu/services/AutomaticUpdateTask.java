@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.services;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.PowerManager;
 import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,7 @@ import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
 import static android.content.ContentValues.TAG;
+import static android.content.Context.POWER_SERVICE;
 
 /**
  * Created by jtx on 15.09.2016.
@@ -36,6 +38,8 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private Context context;
     private SharedPreferences pm;
     private View view;
+    PowerManager.WakeLock wakeLock;
+    long maxWakeLockTime;
 
     public AutomaticUpdateTask(Context context, View view, SharedPreferences pm) {
         this.context = context;
@@ -48,15 +52,19 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         fromFolderMangaList = Database.getFromFolderMangas(context);
         threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "2"));
         mNotifyID = (int) System.currentTimeMillis();
+        maxWakeLockTime = mangaList.size() * 15000;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        PowerManager powerManager = (PowerManager) context.getSystemService(POWER_SERVICE);
+        wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MiMangaNu::MMNWakelock");
         if (context != null) {
             Util.getInstance().createSearchingForUpdatesNotification(context, mNotifyID);
             Util.getInstance().showFastSnackBar(context.getResources().getString(R.string.searching_for_updates), view, context);
         }
+        wakeLock.acquire(maxWakeLockTime);
     }
 
     @Override
@@ -84,6 +92,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                         hosts.put(m.getServerId(), ServerBase.getServer(m.getServerId(), context));
                     }
                 }
+
                 // check status of server and run cfi once per server if needed
                 final ExecutorService executorLocal = Executors.newFixedThreadPool(threads);
                 for (final int sid : hosts.keySet()) {
@@ -114,7 +123,6 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                     }
                 }
             }
-
             result = new int[mangaList.size()];
             for (int idx = 0; idx < mangaList.size(); idx++) {
                 if (MainActivity.isCancelled || Util.n > (48 - threads))
@@ -152,6 +160,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 }
             }
         }
+        wakeLock.release();
     }
 
     @Override
@@ -163,6 +172,7 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 Util.getInstance().toast(context, context.getString(R.string.notification_tray_is_full));
             }
         }
+        wakeLock.release();
     }
 
     private class SingleUpdateSearch implements Runnable {
