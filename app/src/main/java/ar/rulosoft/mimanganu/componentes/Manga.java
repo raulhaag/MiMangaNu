@@ -23,6 +23,7 @@ public class Manga {
     private String genre;
     private String lastUpdate;
     private boolean finished;
+    private String vault = "";
 
     private ArrayList<Chapter> chapters = new ArrayList<>();
     private float scrollSensitive;
@@ -44,7 +45,7 @@ public class Manga {
     }
 
 
-    public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSensitive, int readingDirection, int lastIndex, int news) {
+    public Manga(int serverId, int id, String title, String synopsis, String images, String path, String author, boolean finished, float scrollSensitive, int readingDirection, int lastIndex, int news, String vault) {
         setServerId(serverId);
         setId(id);
         setTitle(title);
@@ -57,6 +58,7 @@ public class Manga {
         setReadingDirection(readingDirection);
         setLastIndex(lastIndex);
         setNews(news);
+        setVault(vault);
     }
 
     public int getId() {
@@ -222,5 +224,13 @@ public class Manga {
     @Override
     public String toString() {
         return this.title;
+    }
+
+    public String getVault() {
+        return vault;
+    }
+
+    public void setVault(String vault) {
+        this.vault = vault;
     }
 }

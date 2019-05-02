@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +18,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -25,11 +27,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.acra.ACRA;
 
 import java.io.File;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,13 +74,14 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     private UpdateListTask updateListTask = null;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
     private int lastContextMenuIndex;
+    private String currentVault = "";
 
     public MainFragment() {
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
         pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -127,6 +133,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     public void onResume() {
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
+        assert activity != null;
         activity.setColorToBars();
         if (MainActivity.darkTheme != pm.getBoolean("dark_theme", false)) {
             Util.getInstance().restartApp(getContext());
@@ -270,7 +277,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_view_download: {
                 ((MainActivity) getActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
@@ -352,6 +359,44 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                 setListManga(true);
                 break;
             }
+
+            case R.id.open_vault: {
+                if (currentVault.isEmpty()) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                    builder.setTitle(getContext().getString(R.string.set_vault));
+                    final EditText input = new EditText(getContext());
+                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                    builder.setView(input);
+                    builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String p = input.getText().toString();
+                            if (!p.isEmpty()) {
+                                try {
+                                    item.setTitle(R.string.close_vault);
+                                    currentVault = new String(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
+                                    setListManga(true);
+                                } catch (NoSuchAlgorithmException e) {
+                                    e.printStackTrace();
+                                }
+                            } else {
+                                Util.getInstance().toast(getContext(), getString(R.string.empty_string));
+                            }
+                        }
+                    });
+                    builder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+                    builder.show();
+                } else {
+                    item.setTitle(R.string.open_vault);
+                    currentVault = "";
+                    setListManga(true);
+                }
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -400,18 +445,25 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
             int value = PreferenceManager.getDefaultSharedPreferences(
                     getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
-            switch (value) {
-                case MODE_SHOW_ALL:
-                    mangaList = Database.getMangas(getContext(), sort_by, sort_ord);
-                    break;
-                case MODE_HIDE_READ:
-                    mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                            "SELECT manga_id " +
-                            "FROM capitulos " +
-                            "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
-                    break;
-                default:
-                    break;
+            if (currentVault.isEmpty()) {
+                switch (value) {
+                    case MODE_SHOW_ALL:
+                        mangaList = Database.getMangas(getContext(), sort_by, sort_ord);
+                        break;
+                    case MODE_HIDE_READ:
+                        mangaList = Database.getMangasCondition(getContext(), "id IN (" +
+                                "SELECT manga_id " +
+                                "FROM capitulos " +
+                                "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                mangaList = Database.getMangasVault(getContext(), currentVault, sort_by, sort_ord);
+                if (mangaList.isEmpty()) {
+                    Util.getInstance().toast(getContext(), getContext().getString(R.string.vault_is_empty));
+                }
             }
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
                 mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
@@ -435,7 +487,6 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-
         MenuInflater inflater = getActivity().getMenuInflater();
         inflater.inflate(R.menu.gridview_mismangas, menu);
         MenuItem m = menu.findItem(R.id.noupdate);
@@ -444,6 +495,10 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             m.setTitle(getActivity().getResources().getString(R.string.buscarupdates));
         } else {
             m.setTitle(getActivity().getResources().getString(R.string.nobuscarupdate));
+        }
+        if (!manga.getVault().isEmpty()) {
+            MenuItem vmi = menu.findItem(R.id.add_to_vault);
+            vmi.setTitle(R.string.rem_vault);
         }
         lastContextMenuIndex = (int) v.getTag();
     }
@@ -496,11 +551,48 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                 Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapters), getView(), getContext());
             else
                 Util.getInstance().showFastSnackBar(getString(R.string.downloading) + " " + chapters.size() + " " + getString(R.string.chapter), getView(), getContext());
+        } else if (item.getItemId() == R.id.add_to_vault) {
+            if (manga.getVault().isEmpty()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setTitle(getContext().getString(R.string.set_vault));
+                final EditText input = new EditText(getContext());
+                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                builder.setView(input);
+                builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String p = input.getText().toString();
+                        if (!p.isEmpty()) {
+                            try {
+                                p = new String(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
+                                manga.setVault(p);
+                                Database.updateManga(getContext(), manga, false);
+                                setListManga(true);
+                            } catch (NoSuchAlgorithmException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Util.getInstance().toast(getContext(), getString(R.string.empty_string));
+                        }
+                    }
+                });
+                builder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+            } else {
+                manga.setVault("");
+                Database.updateManga(getContext(), manga, false);
+                setListManga(true);
+            }
         }
         return super.onContextItemSelected(item);
     }
 
-    public class UpdateListTask extends AutomaticUpdateTask {
+    class UpdateListTask extends AutomaticUpdateTask {
         private Context context;
 
         UpdateListTask(Context context, View view, SharedPreferences pm) {
@@ -544,7 +636,6 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             MainActivity.isCancelled = false;
         }
     }
-
 
     public class AddAllMangaInDirectoryTask extends AsyncTask<String, Integer, Void> {
         String error = "";

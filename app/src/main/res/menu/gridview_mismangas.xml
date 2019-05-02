@@ -9,4 +9,7 @@
     <item
         android:id="@+id/download_all_chapters"
         android:title="@string/download_all_chapters" />
+    <item
+        android:id="@+id/add_to_vault"
+        android:title="@string/add_to_a_vault" />
 </menu>

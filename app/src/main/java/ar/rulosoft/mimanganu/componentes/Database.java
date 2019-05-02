@@ -53,6 +53,8 @@ public class Database extends SQLiteOpenHelper {
     private static final String COL_READER = "reader";
     private static final String COL_LAST_UPDATE = "last_update";
     public static final String COL_LAST_UPDATE_LONG = "last_uodate_long";
+    public static final String COL_VAULT = "vault";
+
     // Table for each chapter
     private static final String TABLE_CHAPTERS = "capitulos";
     private static final String COL_CAP_ID_MANGA = "manga_id";
@@ -82,6 +84,7 @@ public class Database extends SQLiteOpenHelper {
             COL_GENRE + " TEXT NOT NULL DEFAULT 'N/A'," +
             COL_LAST_UPDATE + " TEXT DEFAULT 'N/A', " +
             COL_LAST_UPDATE_LONG + " INT DEFAULT 0, " +
+            COL_VAULT + " TEXT DEFAULT '', " +
             "UNIQUE (" + COL_SERVER_ID + ", " + COL_PATH + "));";
     private static final String DATABASE_CHAPTERS_CREATE = "create table " +
             TABLE_CHAPTERS + "(" +
@@ -99,7 +102,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 28;
+    private static int database_version = 29;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -153,6 +156,7 @@ public class Database extends SQLiteOpenHelper {
         cv.put(COL_IS_FINISHED, manga.isFinished() ? 1 : 0);
         cv.put(COL_READER, manga.getReaderType());
         cv.put(COL_LAST_UPDATE, manga.getLastUpdate());
+        cv.put(COL_VAULT, manga.getVault());
         if (setTime)
             cv.put(COL_LAST_READ, System.currentTimeMillis());
         return cv;
@@ -230,13 +234,13 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
-    public static void setUpgradable(Context context, int mangaid, boolean buscar) {
+    public static void setUpgradable(Context context, int mangaId, boolean search) {
         ContentValues cv = new ContentValues();
-        cv.put(COL_IS_FINISHED, buscar ? 1 : 0);
+        cv.put(COL_IS_FINISHED, search ? 1 : 0);
         try {
             SQLiteDatabase database = getDatabase(context);
             if (!database.isReadOnly())
-                database.update(TABLE_MANGA, cv, COL_ID + "=" + mangaid, null);
+                database.update(TABLE_MANGA, cv, COL_ID + "=" + mangaId, null);
             else {
                 Log.e("Database", "(setUpgradable) " + context.getResources().getString(R.string.error_database_is_read_only));
                 Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
@@ -424,7 +428,11 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static ArrayList<Manga> getMangas(Context context, String sortBy, boolean asc) {
-        return getMangasCondition(context, null, sortBy, asc);
+        return getMangasCondition(context, COL_VAULT + " = ''", sortBy, asc);
+    }
+
+    public static ArrayList<Manga> getMangasVault(Context context, String vault, String sortBy, boolean asc) {
+        return getMangasCondition(context, COL_VAULT + " = '" + vault + "'", sortBy, asc);
     }
 
     public static ArrayList<Manga> getMangasCondition(
@@ -437,7 +445,8 @@ public class Database extends SQLiteOpenHelper {
                     new String[]{
                             COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
                             COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_IS_FINISHED, COL_LAST_INDEX,
-                            COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE, COL_READER, COL_LAST_UPDATE
+                            COL_READ_ORDER, COL_AUTHOR, COL_SCROLL_SENSITIVE, COL_GENRE, COL_READER,
+                            COL_LAST_UPDATE, COL_VAULT
                     },
                     condition, null, null, null, sortBy + (asc ? " ASC" : " DESC"));
         }
@@ -463,6 +472,7 @@ public class Database extends SQLiteOpenHelper {
                 int colGenre = cursor.getColumnIndex(COL_GENRE);
                 int colReader = cursor.getColumnIndex(COL_READER);
                 int colLastUpdate = cursor.getColumnIndex(COL_LAST_UPDATE);
+                int colVault = cursor.getColumnIndex(COL_VAULT);
 
                 do {
                     Manga manga = new Manga(cursor.getInt(colServerId),
@@ -479,6 +489,7 @@ public class Database extends SQLiteOpenHelper {
                     manga.setGenre(cursor.getString(colGenre));
                     manga.setReaderType(cursor.getInt(colReader));
                     manga.setLastUpdate(cursor.getString(colLastUpdate));
+                    manga.setVault(cursor.getString(colVault));
                     mangas.add(manga);
                 } while (cursor.moveToNext());
             }
@@ -683,7 +694,8 @@ public class Database extends SQLiteOpenHelper {
                 new String[]{
                         COL_ID, COL_NAME, COL_PATH, COL_IMAGE, COL_SYNOPSIS,
                         COL_LAST_READ, COL_SERVER_ID, COL_NEW, COL_LAST_INDEX,
-                        COL_READ_ORDER, COL_AUTHOR, COL_GENRE, COL_READER, COL_IS_FINISHED, COL_LAST_UPDATE
+                        COL_READ_ORDER, COL_AUTHOR, COL_GENRE, COL_READER, COL_IS_FINISHED,
+                        COL_LAST_UPDATE, COL_VAULT
                 },
                 COL_ID + "=" + mangaID, null, null, null, COL_LAST_READ + " DESC");
         if (cursor.moveToFirst()) {
@@ -701,6 +713,7 @@ public class Database extends SQLiteOpenHelper {
             int colReader = cursor.getColumnIndex(COL_READER);
             int colIsFinished = cursor.getColumnIndex(COL_IS_FINISHED);
             int colLastUpdate = cursor.getColumnIndex(COL_LAST_UPDATE);
+            int colVault = cursor.getColumnIndex(COL_VAULT);
 
             manga = new Manga(cursor.getInt(colServerId),
                     cursor.getString(colTitle), cursor.getString(colWeb), false);
@@ -715,6 +728,7 @@ public class Database extends SQLiteOpenHelper {
             manga.setReaderType(cursor.getInt(colReader));
             manga.setFinished(cursor.getInt(colIsFinished) > 0);
             manga.setLastUpdate(cursor.getString(colLastUpdate));
+            manga.setVault(cursor.getString(colVault));
         }
         cursor.close();
         return manga;
@@ -994,6 +1008,10 @@ public class Database extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_LAST_UPDATE_LONG + " INT DEFAULT 0");
                 db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_LAST_UPDATE_LONG + " = strftime('%s', substr(last_update, 7, 4) || \"-\" || substr(last_update, 4, 2) || \"-\" || substr(last_update, 1, 2) || \" 00:00:00\") WHERE last_update LIKE \"%.%\";");
 
+            }
+
+            if (oldVersion < 29) {
+                db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_VAULT + " TEXT DEFAULT ''");
             }
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
         } catch (Exception e) {

@@ -493,4 +493,12 @@
     <string name="privacy_settings">Privacy settings</string>
     <string name="preview_on_listing_title">Hide windows preview on manager?</string>
     <string name="preview_on_listing_subtitle">Also this disable screenshots, need restart.</string>
+    <string name="add_to_a_vault">Add to a vault</string>
+    <string name="set_vault">Set vault for manga</string>
+    <string name="rem_vault">Remove from vault</string>
+    <string name="empty_string">Empty string</string>
+    <string name="open_vault">Open vault</string>
+    <string name="close_vault">Close current vault</string>
+    <string name="vault_is_empty">Vault is empty.</string>
+
 </resources>

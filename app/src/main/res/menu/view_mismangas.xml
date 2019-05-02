@@ -59,6 +59,9 @@
         </menu>
     </item>
     <item
+        android:id="@+id/open_vault"
+        android:title="@string/open_vault" />
+    <item
         android:id="@+id/action_settings"
         android:title="@string/configuraciones" />
 </menu>
