@@ -74,7 +74,7 @@ public class UpdateJobCreator implements JobCreator{
                     pm.edit().putLong(LAST_CHECK, System.currentTimeMillis()).apply();
                     NetworkUtilsAndReceiver.ONLY_WIFI = pm.getBoolean("only_wifi", false);
                     Navigator.initialiseInstance(getContext());
-                    automaticUpdateTask = new AutomaticUpdateTask(getContext(), null, pm);
+                    automaticUpdateTask = new AutomaticUpdateTask(getContext(), null, pm, null);
                     Handler mainHandler = new Handler(getContext().getMainLooper());
                     mainHandler.post(new Runnable() {
                         @Override

@@ -94,7 +94,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         swipeReLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                updateListTask = new UpdateListTask(getActivity(), cl, pm);
+                updateListTask = new UpdateListTask(getActivity(), cl, pm, currentVault);
                 updateListTask.execute();
             }
         });
@@ -189,7 +189,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     private void startUpdate() {
         try {
             if (NetworkUtilsAndReceiver.isConnected(getContext())) {
-                updateListTask = new UpdateListTask(getActivity(), getView(), pm);
+                updateListTask = new UpdateListTask(getActivity(), getView(), pm, currentVault);
                 updateListTask.execute();
             }
         } catch (Exception e) {
@@ -500,6 +500,10 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             MenuItem vmi = menu.findItem(R.id.add_to_vault);
             vmi.setTitle(R.string.rem_vault);
         }
+        MenuItem vmi = menu.findItem(R.id.open_vault);
+        if (!currentVault.isEmpty()) {
+            vmi.setTitle(R.string.close_vault);
+        }
         lastContextMenuIndex = (int) v.getTag();
     }
 
@@ -595,8 +599,8 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     class UpdateListTask extends AutomaticUpdateTask {
         private Context context;
 
-        UpdateListTask(Context context, View view, SharedPreferences pm) {
-            super(context, view, pm);
+        UpdateListTask(Context context, View view, SharedPreferences pm, String vault) {
+            super(context, view, pm, vault);
             this.context = context;
         }
 

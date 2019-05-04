@@ -39,16 +39,22 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
     private SharedPreferences pm;
     private View view;
     PowerManager.WakeLock wakeLock;
-    long maxWakeLockTime;
 
-    public AutomaticUpdateTask(Context context, View view, SharedPreferences pm) {
+    private long maxWakeLockTime;
+
+    public AutomaticUpdateTask(Context context, View view, SharedPreferences pm, String vault) {
         this.context = context;
         this.view = view;
         this.pm = pm;
-        if (pm.getBoolean("include_finished_manga", false))
-            mangaList = Database.getMangas(context, null, true);
-        else
-            mangaList = Database.getMangasForUpdates(context);
+        if (vault != null) {
+            mangaList = Database.getMangasVault(context, vault, null, true);
+        } else {
+            if (pm.getBoolean("include_finished_manga", false)) {
+                mangaList = Database.getMangas(context, null, true);
+            } else {
+                mangaList = Database.getMangasForUpdates(context);
+            }
+        }
         fromFolderMangaList = Database.getFromFolderMangas(context);
         threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "2"));
         mNotifyID = (int) System.currentTimeMillis();

@@ -424,7 +424,7 @@ public class Database extends SQLiteOpenHelper {
     }
 
     public static ArrayList<Manga> getMangasForUpdates(Context context) {
-        return getMangasCondition(context, COL_IS_FINISHED + "= 0", null, false);
+        return getMangasCondition(context, COL_IS_FINISHED + "= 0 AND " + COL_VAULT + " = ''", null, false);
     }
 
     public static ArrayList<Manga> getMangas(Context context, String sortBy, boolean asc) {

@@ -201,7 +201,7 @@ public class NetworkUtilsAndReceiver extends BroadcastReceiver {
                 long interval = Long.parseLong(pm.getString("update_interval", "0"));
                 if (interval > 0) {
                     if (interval < current_time - last_check) {
-                        new AutomaticUpdateTask(context,null, pm).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                        new AutomaticUpdateTask(context, null, pm, null).executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                     }
                 }
             }
