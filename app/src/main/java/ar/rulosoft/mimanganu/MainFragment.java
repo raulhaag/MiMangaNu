@@ -459,7 +459,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                         mangaList = Database.getMangasCondition(getContext(), "id IN (" +
                                 "SELECT manga_id " +
                                 "FROM capitulos " +
-                                "WHERE estado != 1 GROUP BY manga_id)", sort_by, sort_ord);
+                                "WHERE estado != 1 AND vault = '' GROUP BY manga_id)", sort_by, sort_ord);
                         break;
                     default:
                         break;
