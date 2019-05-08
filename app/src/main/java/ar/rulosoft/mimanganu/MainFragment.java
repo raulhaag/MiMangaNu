@@ -259,6 +259,11 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
         });
 
+        MenuItem vmi = menu.findItem(R.id.open_vault);
+        if (!currentVault.isEmpty()) {
+            vmi.setTitle(R.string.close_vault);
+        }
+
         /* Set hide/unhide checkbox */
         boolean checkedRead = pm.getInt(SELECT_MODE, MODE_SHOW_ALL) > 0;
         menu.findItem(R.id.action_hide_read).setChecked(checkedRead);
@@ -363,7 +368,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             case R.id.open_vault: {
                 if (currentVault.isEmpty()) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle(getContext().getString(R.string.set_vault));
+                    builder.setTitle(R.string.open_vault);
                     final EditText input = new EditText(getContext());
                     input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
                     builder.setView(input);
@@ -499,10 +504,6 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         if (!manga.getVault().isEmpty()) {
             MenuItem vmi = menu.findItem(R.id.add_to_vault);
             vmi.setTitle(R.string.rem_vault);
-        }
-        MenuItem vmi = menu.findItem(R.id.open_vault);
-        if (!currentVault.isEmpty()) {
-            vmi.setTitle(R.string.close_vault);
         }
         lastContextMenuIndex = (int) v.getTag();
     }
