@@ -465,9 +465,21 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                         break;
                 }
             } else {
-                mangaList = Database.getMangasVault(getContext(), currentVault, sort_by, sort_ord);
-                if (mangaList.isEmpty()) {
-                    Util.getInstance().toast(getContext(), getContext().getString(R.string.vault_is_empty));
+                switch (value) {
+                    case MODE_SHOW_ALL:
+                        mangaList = Database.getMangasVault(getContext(), currentVault, sort_by, sort_ord);
+                        if (mangaList.isEmpty()) {
+                            Util.getInstance().toast(getContext(), getContext().getString(R.string.vault_is_empty));
+                        }
+                        break;
+                    case MODE_HIDE_READ:
+                        mangaList = Database.getMangasCondition(getContext(), "id IN (" +
+                                "SELECT manga_id " +
+                                "FROM capitulos " +
+                                "WHERE estado != 1 AND vault = '" + currentVault + "' GROUP BY manga_id)", sort_by, sort_ord);
+                        break;
+                    default:
+                        break;
                 }
             }
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
