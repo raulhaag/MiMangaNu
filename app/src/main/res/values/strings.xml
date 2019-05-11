@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.105:\n\t* Fix VerComics.</string>
+    <string name="update_message">Changes in v1.106:\n\t* Added cbz support for from folder.\n\t* Added simply vault system.\n\t* Added a option to hide window image from manager.\n\t* Fixes on ReadMangaToday, KuManga, HeavenManga, itNineManga and Mtown type sites.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
@@ -496,7 +496,7 @@
     <string name="add_to_a_vault">Add to a vault</string>
     <string name="set_vault">Set vault for manga</string>
     <string name="rem_vault">Remove from vault</string>
-    <string name="empty_string">Empty string</string>
+    <string name="empty_string">Error on introduced value.</string>
     <string name="open_vault">Open vault</string>
     <string name="close_vault">Close current vault</string>
     <string name="vault_is_empty">Vault is empty.</string>

@@ -33,6 +33,18 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.106:
+* Agregado soporte para archivos cbz.
+* Agregado un sistema simple de bóvedas.
+* Agregada una opcion para ocultar miniatura de administrador de ventanas.
+* Arreglos en ReadMangaToday, KuManga, HeavenManga, itNineManga y derivados de Mtown.
+
+Changes in v1.106:
+* Added cbz support for from folder.
+* Added simply vault system.
+* Added a option to hide window image from manager.
+* Fixes on ReadMangaToday, KuManga, HeavenManga, itNineManga and Mtown type sites.
+
 Cambios en v1.105:
 * Fix VerComics.
 
