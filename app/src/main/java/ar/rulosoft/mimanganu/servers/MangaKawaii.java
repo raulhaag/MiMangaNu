@@ -134,4 +134,9 @@ class MangaKawaii extends ServerBase {
         }
         return mangas;
     }
+
+    @Override
+    public boolean needRefererForImages() {
+        return false;
+    }
 }
