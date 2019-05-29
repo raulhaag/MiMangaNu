@@ -17,8 +17,6 @@ public class PostProcess {
         int x = 0;
         int y = 0;
         Bitmap result = Bitmap.createBitmap(maxW, maxH, Bitmap.Config.ARGB_8888);
-
-        // can write into BufferedImage result
         Canvas rstImage = new Canvas(result);
         Rect a;
         Rect b;
@@ -35,6 +33,10 @@ public class PostProcess {
             rstImage.drawBitmap(myImg, a, a, null);
         }
 
+
+        myImg = result;
+        result = Bitmap.createBitmap(maxW, maxH, Bitmap.Config.ARGB_8888);
+        rstImage = new Canvas(result);
         while (x < (maxW - 200)) {
             a = new Rect(x, 0, x + 100, maxH);
             b = new Rect(x + 100, 0, x + 200, maxH);
@@ -45,7 +47,7 @@ public class PostProcess {
 
         try {
             FileOutputStream f = new FileOutputStream(filename);
-            result.compress(Bitmap.CompressFormat.PNG, 100, f);
+            result.compress(Bitmap.CompressFormat.JPEG, 100, f);
             f.close();
             return true;
         } catch (FileNotFoundException e) {
