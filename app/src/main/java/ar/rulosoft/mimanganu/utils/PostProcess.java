@@ -9,7 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
+
 public class PostProcess {
+    public static final String FLAG_PPL90 = "[L90]";
     public static boolean l90(String filename) {
         Bitmap myImg = BitmapFactory.decodeFile(filename);
         int maxH = myImg.getHeight();
@@ -32,8 +34,6 @@ public class PostProcess {
             a = new Rect(0, y, maxW, maxH);
             rstImage.drawBitmap(myImg, a, a, null);
         }
-
-
         myImg = result;
         result = Bitmap.createBitmap(maxW, maxH, Bitmap.Config.ARGB_8888);
         rstImage = new Canvas(result);
@@ -44,7 +44,6 @@ public class PostProcess {
             rstImage.drawBitmap(myImg, b, a, null);
             x += 200;
         }
-
         try {
             FileOutputStream f = new FileOutputStream(filename);
             result.compress(Bitmap.CompressFormat.JPEG, 100, f);

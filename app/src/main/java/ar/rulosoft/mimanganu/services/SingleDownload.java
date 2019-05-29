@@ -17,6 +17,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
+
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
     private String fromURL;
@@ -41,7 +43,7 @@ public class SingleDownload implements Runnable {
             this.fromURL = fromURL;
             inRef = null;
         }
-        if (fromURL.contains("[L90]")) {
+        if (fromURL.contains(FLAG_PPL90)) {
             needPP = true;
             fromURL = fromURL.replace("[L90]", "");
             this.fromURL = fromURL;
