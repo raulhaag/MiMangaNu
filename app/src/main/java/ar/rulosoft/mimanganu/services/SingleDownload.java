@@ -11,6 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
+import ar.rulosoft.mimanganu.utils.PostProcess;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,7 +19,7 @@ import okhttp3.Response;
 
 public class SingleDownload implements Runnable {
     public static int RETRY = 3;
-    private final String fromURL;
+    private String fromURL;
     private final String toFile;
     private final String inRef;
     public boolean referer;
@@ -28,6 +29,7 @@ public class SingleDownload implements Runnable {
     private StateChangeListener changeListener = null;
     private int retry = RETRY;
     private Context context;
+    private boolean needPP = false;
 
     public SingleDownload(Context context, String fromURL, String toFile, int index, int cid, ChapterDownload cd, boolean referer) {
         super();
@@ -38,6 +40,11 @@ public class SingleDownload implements Runnable {
         } else {
             this.fromURL = fromURL;
             inRef = null;
+        }
+        if (fromURL.contains("[L90]")) {
+            needPP = true;
+            fromURL = fromURL.replace("[L90]", "");
+            this.fromURL = fromURL;
         }
         this.toFile = toFile;
         this.index = index;
@@ -181,6 +188,9 @@ public class SingleDownload implements Runnable {
                         response.body().close();
                         if (flaggedOk) {
                             if (ot.length() > 0) {
+                                if (needPP) {
+                                    PostProcess.l90(ot.getAbsolutePath());
+                                }
                                 if(!ot.renameTo(o)) {
                                     Log.e("SingleDownload", "failed to rename temporary file");
                                 }
@@ -193,6 +203,7 @@ public class SingleDownload implements Runnable {
                                     Log.e("SingleDownload", "failed to rename temporary file");
                                 }
                             }
+
                             //  Log.i("SingleDownload", "download ok =" + o.getPath());
                             changeStatus(Status.DOWNLOAD_OK);
                         }
@@ -232,6 +243,6 @@ public class SingleDownload implements Runnable {
     public enum Status {
         QUEUED, INIT, DOWNLOADING, RETRY, POSTPONED, DOWNLOAD_OK, ERROR_CONNECTION,
         ERROR_404, ERROR_TIMEOUT, ERROR_ON_UPLOAD, ERROR_INVALID_URL, ERROR_WRITING_FILE,
-        ERROR_OPENING_FILE
+        ERROR_OPENING_FILE, POSTPROCESSING
     }
 }
