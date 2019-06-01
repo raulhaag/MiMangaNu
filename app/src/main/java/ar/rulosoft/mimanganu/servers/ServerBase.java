@@ -275,9 +275,6 @@ public abstract class ServerBase {
             case MANGAEDENIT:
                 serverBase = new MangaEdenIt(context);
                 break;
-            case MYMANGAIO:
-                serverBase = new MyMangaIo(context);
-                break;
             case RAWSENMANGA:
                 serverBase = new RawSenManga(context);
                 break;
@@ -316,9 +313,6 @@ public abstract class ServerBase {
                 break;
             case DESUME:
                 serverBase = new DesuMe(context);
-                break;
-            case MANGARAWONLINE:
-                serverBase = new MangaRawOnline(context);
                 break;
             case MINTMANGA:
                 serverBase = new MintManga(context);
@@ -405,14 +399,12 @@ public abstract class ServerBase {
                 new DesuMe(context),
                 new MintManga(context),
                 new ReadMangaMe(context),
-                new MyMangaIo(context),
                 new JapScan(context),
                 new MangaKawaii(context),
                 new ItNineManga(context),
                 new MangaEdenIt(context),
                 new DeNineManga(context),
                 new RawSenManga(context),
-                new MangaRawOnline(context),
                 new MangaAE(context),
                 new NeuMangaTv(context),
                 new MangaShiroNet(context),
