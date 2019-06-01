@@ -99,7 +99,7 @@ class JapScan extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String[] parts = chapter.getExtra().split("\\|");
-        return (parts[0] + parts[page] + parts[parts.length - 1]).trim();
+        return parts[0] + parts[page] + (parts[parts.length - 1].equals(FLAG_PPL90) ? FLAG_PPL90 : "");
     }
 
     @Override
@@ -110,12 +110,12 @@ class JapScan extends ServerBase {
                     context.getString(R.string.server_failed_loading_image));
             String path = getFirstMatch("data-src=\"([^\"]+)", source, context.getString(R.string.error_downloading_image));
             path = path.substring(0, path.lastIndexOf("/") + 1);
-            String extra = " ";
+            String extra = "";
             if (source.contains("iYFbYi_UibMqYb.js")) {
-                extra = FLAG_PPL90;
+                extra = "|" + FLAG_PPL90;
             }
             ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);
-            chapter.setExtra(path + "|" + TextUtils.join("|", imgs) + "|" + extra);
+            chapter.setExtra(path + "|" + TextUtils.join("|", imgs));
             chapter.setPages(Integer.parseInt(pages));
         }
     }
