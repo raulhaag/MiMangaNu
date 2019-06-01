@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
@@ -21,7 +22,6 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
-import static android.content.ContentValues.TAG;
 import static android.content.Context.POWER_SERVICE;
 
 /**
@@ -121,13 +121,12 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                     });
                 }
                 executorLocal.shutdown();
-                while (!executorLocal.isTerminated()) {
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "After sleep failure", e);
-                    }
+                try {
+                    executorLocal.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+
             }
             result = new int[mangaList.size()];
             for (int idx = 0; idx < mangaList.size(); idx++) {
@@ -136,13 +135,10 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 executor.execute(new SingleUpdateSearch(hosts.get(mangaList.get(idx).getServerId()), mangaList.get(idx), idx));
             }
             executor.shutdown();
-            // After finishing the loop, wait for all threads to finish their task before ending
-            while (!executor.isTerminated()) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    Log.e(TAG, "After sleep failure", e);
-                }
+            try {
+                executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         int sum = 0;
