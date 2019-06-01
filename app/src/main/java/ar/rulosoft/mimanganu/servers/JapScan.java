@@ -115,7 +115,7 @@ class JapScan extends ServerBase {
                 extra = "|" + FLAG_PPL90;
             }
             ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);
-            chapter.setExtra(path + "|" + TextUtils.join("|", imgs));
+            chapter.setExtra(path + "|" + TextUtils.join("|", imgs) + extra);
             chapter.setPages(Integer.parseInt(pages));
         }
     }
