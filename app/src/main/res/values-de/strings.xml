@@ -73,8 +73,8 @@
     <string name="notification_sound_subtitle">Bei neu gefundenen Kapiteln.</string>
     <string name="notification_sound_title">Ton abspielen</string>
     <string name="no_update">Nicht auf Updates überprüfen</string>
-    <string name="opciones_descarga">Download Einstellungen</string>
-    <string name="opciones_lec">Reader Einstellungen</string>
+    <string name="opciones_descarga">Herunterladen</string>
+    <string name="opciones_lec">Leseansicht</string>
     <string name="opciones_mm">Manga Einstellungen</string>
     <string name="quitar_descarga">Kann laufende Downloads nicht entfernen</string>
     <string name="quitar_seleccion">Auswahl leeren</string>
@@ -92,11 +92,11 @@
     <string name="stay_awake_off">Wach bleiben aus</string>
     <string name="stay_awake_on">Wach bleiben an</string>
     <string name="unwritable_folder">Nicht beschreibbarer Ordner.</string>
-    <string name="update_settings_title">Update Einstellungen</string>
+    <string name="update_settings_title">Aktualisierung</string>
     <string name="update_title">Aktualisierungsintervall</string>
     <string name="vercomolista">Als Liste anzeigen</string>
     <string name="vertical">Vertikal</string>
-    <string name="ui_settings">UI Einstellungen</string>
+    <string name="ui_settings">Benutzerschnittstelle</string>
     <string name="cantidad_errores_subtitle">Erlaubte Anzahl der Fehler pro Kapitel: %s</string>
     <string name="download_selection">Kapitel herunterladen</string>
     <string name="cantidad_errores_title">Erlaubte Fehler pro Kapitel</string>
@@ -119,7 +119,7 @@
     <string name="read_next">Nächstes Kapitel öffnen?</string>
     <string name="last_chapter">Dies ist gegenwärtig das letzte Kapitel.</string>
     <string name="genre">Genre</string>
-    <string name="connection_settings">Verbindungseinstellungen</string>
+    <string name="connection_settings">Verbindung</string>
     <string name="connection_timeout_title">Zeitüberschreitung der Verbindung</string>
     <string name="connection_timeout_summary">%s Sekunden</string>
     <string name="update_thread_background_title">Update Threads (Hintergrund)</string>
@@ -163,7 +163,7 @@
     <string name="deleted_no_var">Gelöscht</string>
     <string name="clear_cache_title">Cache löschen</string>
     <string name="clear_cache_subtitle">Löscht den Cache. Cover Bilder müssen danach erneut heruntergeladen werden.</string>
-    <string name="misc_settings">Sonstige Einstellungen</string>
+    <string name="misc_settings">Sonstiges</string>
     <string name="seamless_chapter_transitions_delete_read_title">Lösche nach Übergang</string>
     <string name="seamless_chapter_transitions_delete_read_subtitle">Löscht das aktuelle Kapitel sobald das nächste Kapitel begonnen wird.</string>
     <string name="dir_already_on_db">Verzeichnis bereits hinzugefügt</string>
@@ -488,4 +488,14 @@
     <string name="server_update_process_finished">Serveraktualisierung beendet.</string>
     <string name="processed">" verarbeitet"</string>
     <string name="bright_level">Helligkeit</string>
+    <string name="preview_on_listing_title">Vorschau des Fensterinhalts in der App-Übersicht verbergen</string>
+    <string name="privacy_settings">Privatsphäre</string>
+    <string name="preview_on_listing_subtitle">Auch Bildschirmphotos werden deaktiviert. Neustart erforderlich.</string>
+    <string name="add_to_a_vault">In Tresor verschieben...</string>
+    <string name="close_vault">Tresor schließen</string>
+    <string name="open_vault">Tresor öffnen...</string>
+    <string name="rem_vault">Aus Tresor entfernen</string>
+    <string name="set_vault">Tresor für Manga festlegen</string>
+    <string name="vault_is_empty">Der Tresor ist leer.</string>
+    <string name="empty_string">Leere Zeichenkette übergeben.</string>
 </resources>
