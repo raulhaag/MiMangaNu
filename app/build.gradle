@@ -5,8 +5,8 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
-        versionCode 106
-        versionName "1.106"
+        versionCode 107
+        versionName "1.107"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         minSdkVersion 15
     }
@@ -99,7 +99,7 @@ dependencies {
     // for host-based testing
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.robolectric:robolectric:4.0-beta-1'
-    testImplementation 'androidx.test:core:1.1.0'
+    testImplementation 'androidx.test:core:1.2.0'
 
     android {
         testOptions {

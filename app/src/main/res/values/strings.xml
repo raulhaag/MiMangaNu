@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.106:\n\t* Added cbz support for from folder.\n\t* Added simply vault system.\n\t* Added a option to hide window image from manager.\n\t* Fixes on ReadMangaToday, KuManga, HeavenManga, itNineManga and Mtown type sites.</string>
+    <string name="update_message">Changes in v1.107:\n\t* Warning this update will reset your vaults (for one error with the previews version).\n\t* Added L90 posprocessor (JapScan).\n\t* Fix Mangakawaii.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

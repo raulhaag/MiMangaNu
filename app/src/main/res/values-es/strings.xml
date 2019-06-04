@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.106:\n\t* Agregado soporte para archivos cbz.\n\t* Agregado un sistema simple de bóvedas.\n\t* Agregada una opcion para ocultar miniatura de administrador de ventanas.\n\t* Arreglos en ReadMangaToday, KuManga, HeavenManga, itNineManga y derivados de Mtown.</string>
+    <string name="update_message">Cambios en v1.107:\n\t* Advertencia esta actualizacion va a resetear las bovedas.\n\t* Agregado posproceso de L90 (JapScan).\n\t* Fix Mangakawaii.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

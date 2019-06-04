@@ -33,6 +33,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.107:
+* Advertencia esta actualizacion va a resetear las bovedas.
+* Agregado posproceso de L90 (JapScan).
+* Fix Mangakawaii.
+
+Changes in v1.107:
+* Warning this update will reset your vaults (for one error with the previews version).
+* Added L90 posprocessor (JapScan).
+* Fix Mangakawaii.
+
 Cambios en v1.106:
 * Agregado soporte para archivos cbz.
 * Agregado un sistema simple de bóvedas.

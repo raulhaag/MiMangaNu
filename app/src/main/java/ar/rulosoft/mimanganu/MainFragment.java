@@ -52,11 +52,13 @@ import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
+import static ar.rulosoft.mimanganu.utils.Util.bytesToHex;
+
 /**
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnClickListener {
+public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnClickListener, MainActivity.OnBackListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -379,8 +381,9 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                             if (!p.isEmpty()) {
                                 try {
                                     item.setTitle(R.string.close_vault);
-                                    currentVault = new String(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
+                                    currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
                                     setListManga(true);
+                                    ((MainActivity) getActivity()).setOnBackListener(MainFragment.this);
                                 } catch (NoSuchAlgorithmException e) {
                                     e.printStackTrace();
                                 }
@@ -581,7 +584,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                         String p = input.getText().toString();
                         if (!p.isEmpty()) {
                             try {
-                                p = new String(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
+                                p = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
                                 manga.setVault(p);
                                 Database.updateManga(getContext(), manga, false);
                                 setListManga(true);
@@ -607,6 +610,18 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
         }
         return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        if (currentVault.isEmpty()) {
+            return false;
+        } else {
+            currentVault = "";
+            setListManga(true);
+            getActivity().invalidateOptionsMenu();
+            return true;
+        }
     }
 
     class UpdateListTask extends AutomaticUpdateTask {

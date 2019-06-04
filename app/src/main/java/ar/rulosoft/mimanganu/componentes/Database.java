@@ -102,7 +102,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 29;
+    private static int database_version = 30;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -835,13 +835,15 @@ public class Database extends SQLiteOpenHelper {
         // if a backup of the old version already exists, do not overwrite it
         try {
             is_in_update_process = true;
-            try {
-                String backup = db.getPath() + "." + oldVersion + ".bak";
-                if (!new File(backup).exists()) {
-                    Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
+            if (newVersion != 30) {//TODO REMOVE ON FUTURES VERSIONS
+                try {
+                    String backup = db.getPath() + "." + oldVersion + ".bak";
+                    if (!new File(backup).exists()) {
+                        Util.getInstance().copyFile(new File(db.getPath()), new File(backup));
+                    }
+                } catch (IOException e) {
+                    Log.e("Database backup error", "Exception", e);
                 }
-            } catch (IOException e) {
-                Log.e("Database backup error", "Exception", e);
             }
 
             if (oldVersion < 10) {
@@ -1010,9 +1012,15 @@ public class Database extends SQLiteOpenHelper {
 
             }
 
+
             if (oldVersion < 29) {
                 db.execSQL("ALTER TABLE " + TABLE_MANGA + " ADD COLUMN " + COL_VAULT + " TEXT DEFAULT ''");
             }
+
+            if (oldVersion < 30) {
+                db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_VAULT + " = '' WHERE 1;");//reset vaults
+            }
+
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
         } catch (Exception e) {
             // on update error try to restore last version
