@@ -5,7 +5,6 @@ function chapterInit(data) {
        do {
            m = idsR.exec(data);
            if (m) {
-               alert(m);
                idData = idData + pipe + m[1] ;
            }
        } while (m);
