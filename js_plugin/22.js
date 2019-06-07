@@ -1,6 +1,6 @@
 function chapterInit(data) {
        pipe = "|";
-       idsR = /<img[^>]+" src="([^"]+)/gm;
+       idsR = /img_[^\.^;]+\.src\s*=\s*"([^"]+)/gm;
        idData = ""
        do {
            m = idsR.exec(data);
