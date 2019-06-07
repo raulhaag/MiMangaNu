@@ -44,6 +44,12 @@ public class PostProcess {
             rstImage.drawBitmap(myImg, b, a, null);
             x += 200;
         }
+
+        if (x > maxW - 200) {
+            a = new Rect(x, 0, maxW, maxH);
+            rstImage.drawBitmap(myImg, a, a, null);
+        }
+
         try {
             FileOutputStream f = new FileOutputStream(filename);
             result.compress(Bitmap.CompressFormat.JPEG, 100, f);
