@@ -483,6 +483,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+        /* backup preferences */
         final Preference backupPreferences = getPreferenceManager().findPreference("backup_settings");
         backupPreferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -507,6 +508,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
+        /* restore preferences */
         final Preference restorePreferences = getPreferenceManager().findPreference("restore_settings");
         restorePreferences.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -587,21 +589,29 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         File to = new File(getContext().getApplicationInfo().dataDir + "/shared_prefs/");
         String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/shared_prefs_backup";
         File from = new File(dir);
-        Util.getInstance().deleteRecursive(to);
-        to.mkdirs();
-        if(from.list() != null && from.list().length == 0){
-            Util.getInstance().showFastSnackBar(getString(R.string.preferences_backup_not_found), getView(), getContext());
-            return;
-        }
-        for (String f : from.list()) {
-            try {
-                File toFile = new File(to.getPath() + "/" + f);
-                Util.getInstance().copyFile(new File(from.getPath() + "/" + f), toFile);
-            } catch (IOException e) {
-                e.printStackTrace();
+        if (!from.exists()) {
+            Snackbar snackbar = Snackbar.make(getView(), getText(R.string.backup_dont_found), Snackbar.LENGTH_LONG)
+                    .setActionTextColor(Color.WHITE);
+            if (MainActivity.colors != null)
+                snackbar.getView().setBackgroundColor(MainActivity.colors[0]);
+            snackbar.show();
+        } else {
+            Util.getInstance().deleteRecursive(to);
+            to.mkdirs();
+            if (from.list() != null && from.list().length == 0) {
+                Util.getInstance().showFastSnackBar(getString(R.string.preferences_backup_not_found), getView(), getContext());
+                return;
             }
+            for (String f : from.list()) {
+                try {
+                    File toFile = new File(to.getPath() + "/" + f);
+                    Util.getInstance().copyFile(new File(from.getPath() + "/" + f), toFile);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            Util.getInstance().restartApp(getContext());
         }
-        Util.getInstance().restartApp(getContext());
     }
 
     private void setFirstRunDefaults() {

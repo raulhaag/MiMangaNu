@@ -480,6 +480,7 @@
     <string name="select_server">Select server</string>
     <string name="blue_filter">Blue filter</string>
     <string name="replace_backup">Replace current backup?</string>
+    <string name="backup_dont_found">Backup don´t found.</string>
     <string name="backup_restore">Replace current configuration from backup?</string>
     <string name="preferences_backup_not_found">Preference Backup not found on MiMangaNu directory</string>
     <string name="backup_settings_summary">Save settings to external directory</string>
