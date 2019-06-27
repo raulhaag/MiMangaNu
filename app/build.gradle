@@ -88,7 +88,7 @@ dependencies {
     implementation 'com.github.franmontiel:PersistentCookieJar:v1.0.1'
     implementation 'com.evernote:android-job:1.2.5'
     githubImplementation 'com.google.android.gms:play-services-base:11.0.0'
-    implementation 'ch.acra:acra:4.9.2'
+    //implementation 'ch.acra:acra:4.9.2'
     fdroidApi project(':fakegps')
     // for device-based testing
     androidTestImplementation "com.android.support:support-annotations:$ANDROID_SUPPORT"

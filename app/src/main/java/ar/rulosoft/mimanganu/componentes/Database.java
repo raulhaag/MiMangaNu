@@ -19,8 +19,6 @@ import android.widget.Toast;
 
 import com.fedorvlasov.lazylist.FileCache;
 
-import org.acra.ACRA;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -1039,7 +1037,7 @@ public class Database extends SQLiteOpenHelper {
             } catch (IOException e1) {
                 Log.e("Database restore error", "Exception", e1);
             }
-            ACRA.getErrorReporter().handleException(e);
+            //ACRA.getErrorReporter().handleException(e);
         } finally {
             is_in_update_process = false;
         }

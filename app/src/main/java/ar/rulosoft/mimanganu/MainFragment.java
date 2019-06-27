@@ -30,8 +30,6 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import org.acra.ACRA;
-
 import java.io.File;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -254,7 +252,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                         recyclerView.setAdapter(mMAdapter);
                     } catch (Exception e) {
                         Log.e("MF", "Exception", e);
-                        ACRA.getErrorReporter().handleException(e);
+                        //  ACRA.getErrorReporter().handleException(e);
                     }
                 }
                 return false;
