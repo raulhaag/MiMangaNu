@@ -1,16 +1,16 @@
 ﻿MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
 =========
-*ES - Lector de Manga online / offline, gratuito y de código abierto.
+<b>*ES</b> - Lector de Manga online / offline, gratuito y de código abierto.
 
-*EN - Manga reader online / offline, free and open source.
+<b>*EN</b> - Manga reader online / offline, free and open source.
 
-*FR - Lecteur de manga en ligne / hors ligne, gratuit et open source.
+<b>*FR</b> - Lecteur de manga en ligne / hors ligne, gratuit et open source.
 
-*DE - Eine App um Manga zu lesen. Man kann damit Manga online und offline lesen. Es ist kostenlos und quelloffen.
+<b>*DE</b> - Eine App um Manga zu lesen. Man kann damit Manga online und offline lesen. Es ist kostenlos und quelloffen.
 
-*IT - Manga lettore online / offline, gratuito e open source.
+<b>*IT</b> - Manga lettore online / offline, gratuito e open source.
 
-*RU - Программа для бесплатного чтения манги с открытым исходным кодом.
+<b>*RU</b> - Программа для бесплатного чтения манги с открытым исходным кодом.
 
 Screenshots
 ----------
@@ -20,6 +20,22 @@ Screenshots
 ![separator](/images/separador.png)
 ![Reader](/images/reader.png)![separator](/images/separador.png)![Vertical Reader](/images/verticalreader.png)
 
+Supported Servers
+----------
+<b>Manga:</b>
+* <b>ES</b> - <i>EsNineManga, HeavenManga, Kumanga, TuMangaOnline</i>
+* <b>EN</b> - <i>FanFox, KissManga, MangaEden, MangaHere, mangapanda, mangareader.net, MangaStream, MangaTown, NineManga, ReadMangaToday, Taadd</i>
+* <b>RU</b> - <i>DesuMe, MintManga, ReadMangaMe, RuNineManga</i>
+* <b>FR</b> - <i>JapScan, MangaKawaii</i>
+* <b>IT</b> - <i>ItNineManga, MangaEdenIt</i>
+* <b>DE</b> - <i>DeNineManga</i>
+* <b>AR</b> - <i>MangaAE</i>
+* <b>ID</b> - <i>MangaShiroNet, NeuMangaTv</i>
+* <b>RAW</b> - <i>SenManga</i>
+
+<b>Comic:</b>
+* <b>ES</b> - <i>VerComicsCom</i>
+* <b>EN</b> - <i>ReadComicOnline, ViewComic</i>
 
 
 Downloads
