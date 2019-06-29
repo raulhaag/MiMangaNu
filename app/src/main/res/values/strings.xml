@@ -501,5 +501,7 @@
     <string name="open_vault">Open vault</string>
     <string name="close_vault">Close current vault</string>
     <string name="vault_is_empty">Vault is empty.</string>
+    <string name="run_test">Run server tests.</string>
+    <string name="run_test_summary">Basic test over servers.</string>
 
 </resources>

@@ -1,8 +1,8 @@
 package ar.rulosoft.mimanganu.utils.autotest;
 
-import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -25,7 +25,7 @@ import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.utils.autotest.adapters.TestServerAdapter;
 import ar.rulosoft.navegadores.Navigator;
 
-public class RunAutoTest extends Activity {
+public class RunAutoTest extends AppCompatActivity implements TestServerAdapter.OnServerClickListener {
 
     boolean running = false;
     boolean finished = true;
@@ -34,8 +34,12 @@ public class RunAutoTest extends Activity {
     ScrollView scrollView;
     StringBuilder log = new StringBuilder();
     ServerBase[] servers;
+    String[] logs;
+    boolean warn = false, err = false, full = true;
+    private int cLogIdx = -1;
     private Random rand;
     private TestServerAdapter serverRecAdapter;
+    private RecyclerView server_list;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,7 @@ public class RunAutoTest extends Activity {
         btn_start.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                start();
+                start(servers);
             }
         });
         btn_stop.setOnClickListener(new View.OnClickListener() {
@@ -57,18 +61,23 @@ public class RunAutoTest extends Activity {
                 running = false;
             }
         });
-        RecyclerView server_list = findViewById(R.id.server_list);
+        server_list = findViewById(R.id.server_list);
         server_list.setLayoutManager(new LinearLayoutManager(RunAutoTest.this));
         servers = ServerBase.getServers(RunAutoTest.this);
         serverRecAdapter = new TestServerAdapter(servers);
         server_list.setAdapter(serverRecAdapter);
-        serverRecAdapter.setOnServerClickListener(new TestServerAdapter.OnServerClickListener() {
+        serverRecAdapter.setOnServerClickListener(this);
+        logs = new String[servers.length];
+        logText.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onServerClick(final ServerBase server) {
-
+            public void onClick(View view) {
+                if (cLogIdx != -1) {
+                    cLogIdx = -1;
+                    full = true;
+                    updateLog();
+                }
             }
         });
-
     }
 
     private void moveScroll() {
@@ -79,12 +88,12 @@ public class RunAutoTest extends Activity {
         });
     }
 
-    private void start() {
+    private void start(ServerBase[] sbs) {
         if (finished) {
             finished = false;
             running = true;
             log = new StringBuilder();
-            new RunTest().execute();
+            new RunTest().execute(sbs);
         } else {
             Toast.makeText(RunAutoTest.this, "Already running task", Toast.LENGTH_LONG).show();
         }
@@ -92,52 +101,69 @@ public class RunAutoTest extends Activity {
 
     private void log(String s) {
         log.append(s).append("<br>");
-        RunAutoTest.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logText.setText(Html.fromHtml(log.toString() + "<br><br>"));
-                moveScroll();
-            }
-        });
+        updateLog();
     }
 
     private void logOK(String s) {
         log.append("<font color='#00EE00'>").append(s).append("</font><br>");
-        RunAutoTest.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logText.setText(Html.fromHtml(log.toString() + "<br><br>"));
-                moveScroll();
-            }
-        });
+        updateLog();
     }
 
     private void logError(String s) {
+        err = true;
         log.append("<font color='#EE0000'>").append(s).append("</font><br>");
-        RunAutoTest.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logText.setText(Html.fromHtml(log.toString() + "<br><br>"));
-                moveScroll();
-            }
-        });
+        updateLog();
     }
 
     private void logWarning(String s) {
-        log.append("<font color='#00FFFF'>").append(s).append("</font><br>");
-        RunAutoTest.this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                logText.setText(Html.fromHtml(log.toString() + "<br><br>"));
-                moveScroll();
-            }
-        });
+        warn = true;
+        log.append("<font color='#FFFF00'>").append(s).append("</font><br>");
+        updateLog();
     }
 
-    private class RunTest extends AsyncTask<Void, Void, Void> {
+    private void updateLog() {
+        if (full) {
+            RunAutoTest.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    logText.setText(Html.fromHtml(log.toString() + "<br><br>"));
+                    moveScroll();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onServerClick(final int pos) {
+        if (pos == cLogIdx) {
+            cLogIdx = -1;
+            full = true;
+            updateLog();
+        } else {
+            full = false;
+            cLogIdx = pos;
+            RunAutoTest.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (logs[pos] != null) {
+                        logText.setText(Html.fromHtml(logs[pos] + "<br><br>"));
+                    } else {
+                        logText.setText("");
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onServerLongClick(int pos) {
+        start(new ServerBase[]{servers[pos]});
+    }
+
+    private class RunTest extends AsyncTask<ServerBase[], Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(ServerBase[]... sbs) {
             rand = new Random();
             try {
                 Navigator.initialiseInstance(RunAutoTest.this);
@@ -145,7 +171,10 @@ public class RunAutoTest extends Activity {
                 logError("[ERROR] error on initialization.");
                 return null;
             }
-            for (ServerBase sb : servers) {
+            for (final ServerBase sb : sbs[0]) {
+                warn = false;
+                err = false;
+                log = new StringBuilder();
                 if (running) {
                     if (!(sb instanceof FromFolder)) {
                         log(String.format(Locale.getDefault(), "Testing: %s (id=%d)", sb.getServerName(), sb.getServerID()));
@@ -179,7 +208,28 @@ public class RunAutoTest extends Activity {
                             }
 
                         }
-                        log("-----------------------------------------------");
+                        log("[FINISHED]-----------------------------------------------");
+                        final String flog = log.toString();
+                        final int status;
+                        if (err) {
+                            status = 2;
+                        } else {
+                            if (warn) {
+                                status = 1;
+                            } else {
+                                status = 3;
+                            }
+                        }
+                        RunAutoTest.this.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int idx = serverRecAdapter.setStatus(sb, status);
+                                if (idx >= 0) {
+                                    logs[idx] = flog;
+                                    server_list.scrollToPosition(idx);
+                                }
+                            }
+                        });
                     }
                 }
             }

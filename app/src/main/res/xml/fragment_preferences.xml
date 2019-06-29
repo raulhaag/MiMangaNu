@@ -309,6 +309,10 @@
             android:key="vacuum_database"
             android:summary="@string/vacuum_database_subtitle"
             android:title="@string/vacuum_database_title" />
+        <android.support.v7.preference.Preference
+            android:key="run_test"
+            android:summary="@string/run_test_summary"
+            android:title="@string/run_test" />
     </android.support.v7.preference.PreferenceCategory>
 
     <android.support.v7.preference.PreferenceCategory android:title="@string/about">

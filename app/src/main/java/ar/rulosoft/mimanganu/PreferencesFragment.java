@@ -54,6 +54,7 @@ import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.mimanganu.utils.autotest.RunAutoTest;
 import ar.rulosoft.navegadores.Navigator;
 
 
@@ -544,6 +545,17 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                     }
                 });
                 t0.start();
+                return true;
+            }
+        });
+
+        /* restore preferences */
+        final Preference runServerTest = getPreferenceManager().findPreference("run_test");
+        runServerTest.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(), RunAutoTest.class);
+                getActivity().startActivity(intent);
                 return true;
             }
         });
