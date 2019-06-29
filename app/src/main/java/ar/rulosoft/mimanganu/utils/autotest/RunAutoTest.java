@@ -35,6 +35,7 @@ public class RunAutoTest extends AppCompatActivity implements TestServerAdapter.
     StringBuilder log = new StringBuilder();
     ServerBase[] servers;
     String[] logs;
+    StringBuilder fullLog = new StringBuilder();
     boolean warn = false, err = false, full = true;
     private int cLogIdx = -1;
     private Random rand;
@@ -126,7 +127,7 @@ public class RunAutoTest extends AppCompatActivity implements TestServerAdapter.
             RunAutoTest.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    logText.setText(Html.fromHtml(log.toString() + "<br><br>"));
+                    logText.setText(Html.fromHtml(fullLog + log.toString() + "<br><br>"));
                     moveScroll();
                 }
             });
@@ -210,6 +211,7 @@ public class RunAutoTest extends AppCompatActivity implements TestServerAdapter.
                         }
                         log("[FINISHED]-----------------------------------------------");
                         final String flog = log.toString();
+                        fullLog.append(flog);
                         final int status;
                         if (err) {
                             status = 2;
@@ -313,14 +315,14 @@ public class RunAutoTest extends AppCompatActivity implements TestServerAdapter.
             }
 
             if (manga.getSynopsis() == null || manga.getSynopsis().trim().isEmpty()) {
-                logError("[WRN] no synopsis.");
+                logWarning("[WRN] no synopsis.");
             }
             if (manga.getSynopsis().equals(getString(R.string.nodisponible))) {
                 logWarning("[WRN] default value for 'summary'");
             }
 
             if (manga.getAuthor() == null || manga.getAuthor().trim().isEmpty()) {
-                logError("[WRN] no author.");
+                logWarning("[WRN] no author.");
             }
 
             if (manga.getAuthor().equals(getString(R.string.nodisponible))) {
@@ -328,7 +330,7 @@ public class RunAutoTest extends AppCompatActivity implements TestServerAdapter.
             }
 
             if (manga.getGenre() == null || manga.getGenre().trim().isEmpty()) {
-                logError("[WRN] no genre.");
+                logWarning("[WRN] no genre.");
             }
 
             if (manga.getGenre().equals(getString(R.string.nodisponible))) {
