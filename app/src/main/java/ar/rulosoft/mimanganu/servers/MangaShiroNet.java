@@ -89,25 +89,19 @@ public class MangaShiroNet extends ServerBase {
 
             // Cover
             manga.setImages(getFirstMatchDefault("itemprop=\"image\"[\\s\\S]+?src=\"*(.+?)\"* ", data, ""));
-
             // Summary
             manga.setSynopsis(Util.getInstance().fromHtml(
                     getFirstMatchDefault(
                             "class=\"desc\" itemprop=\"mainContentOfPage\">([\\s\\S]+?)</span>",
                             data, context.getString(R.string.nodisponible))).toString());
-
             // Status
             manga.setFinished(!data.contains("</b> Ongoing</li>"));
-
             // Author
             manga.setAuthor(getFirstMatchDefault("<li><b>Author:</b>\\s*(.+?)</li>",
                     data, context.getString(R.string.nodisponible)));
-
             // Genre <div class="gnr">(.+?)</div>
             manga.setGenre(getFirstMatchDefault("<div class=\"gnr\">(.+?)</div>", data,
-                    context.getString(R.string.nodisponible)).replaceAll("</a>\\s*<a",
-                    "</a>, <a"));
-
+                    context.getString(R.string.nodisponible)).replaceAll("</a>\\s*<a", "</a>, <a"));
             // Chapter
             Pattern p = Pattern.compile("<div class=\"lch\"><a href=\"https://mangashiro.net/(.+?)\">(.+?)<", Pattern.DOTALL);
             Matcher m = p.matcher(data);
@@ -126,8 +120,7 @@ public class MangaShiroNet extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         String src = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-        src = getFirstMatch("<div id=\"readerarea\">([\\s\\S]+?</a>)<[^a]", src,
-                context.getString(R.string.error));
+        src = getFirstMatch("readerarea\">([\\s\\S]+?)<div class=\"kln\">", src, context.getString(R.string.error));
         ArrayList<String> images = getAllMatch("href=\"(.+?)\"", src);
         chapter.setPages(images.size());
         chapter.setExtra("|" + TextUtils.join("|", images));
