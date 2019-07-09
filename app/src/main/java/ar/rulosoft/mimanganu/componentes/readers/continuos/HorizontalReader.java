@@ -19,7 +19,8 @@ public abstract class HorizontalReader extends ContinuousReader {
 
     @Override
     protected void calculateParticularScale() {
-        for (Page dimension : pages) {
+        for (int i = 0; i < pages.size(); i++) {
+            Page dimension = pages.get(i);
             if (!dimension.error) {
                 dimension.unification_scale = (screenHeight / dimension.original_height);
                 dimension.scaled_width = dimension.original_width * dimension.unification_scale;

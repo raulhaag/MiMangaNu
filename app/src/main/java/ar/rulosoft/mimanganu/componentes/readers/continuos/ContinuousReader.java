@@ -167,7 +167,7 @@ public abstract class ContinuousReader extends Reader implements GestureDetector
         super.onLayout(changed, left, top, right, bottom);
     }
 
-    protected void generateDrawPool() {
+    protected synchronized void generateDrawPool() {
         if (!preparing) {
             preparing = true;
             new Thread(new Runnable() {

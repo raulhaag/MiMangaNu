@@ -16,7 +16,8 @@ public class VerticalReader extends ContinuousReader {
 
     @Override
     public void calculateParticularScale() {
-        for (Page dimension : pages) {
+        for (int i = 0; i < pages.size(); i++) {
+            Page dimension = pages.get(i);
             dimension.unification_scale = (screenWidth / dimension.original_width);
             dimension.scaled_width = screenWidth;
             dimension.scaled_height = dimension.original_height * dimension.unification_scale;
