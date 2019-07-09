@@ -162,7 +162,13 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
                 }
             }
         }
-        wakeLock.release();
+        try {
+            if (wakeLock.isHeld()) {
+                wakeLock.release();
+            }
+        } catch (Exception e) {
+            //ignore
+        }
     }
 
     @Override
