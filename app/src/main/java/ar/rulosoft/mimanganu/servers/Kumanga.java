@@ -1,11 +1,14 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -15,9 +18,16 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
+import ar.rulosoft.navegadores.VolatileCookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
 import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by Raúl on 23/06/2017.
@@ -269,17 +279,19 @@ class Kumanga extends ServerBase {
                     manga.addChapterLast(new Chapter(matcher.group(2), HOST + "/manga/leer/" + matcher.group(1)));
                 }
                 return;
-            }catch (Exception e){
+            } catch (Exception e) {
                 pattern = Pattern.compile("<h4 class=\"title\">\\s*<a href=\"(manga[^\"]+).+?>(.+?)</i>", Pattern.DOTALL);
                 for (int i = 2; i <= pages; i++) {
                     data = getNavigatorAndFlushParameters().get(manga.getPath() + "/p/" + i);
                     matcher = pattern.matcher(data);
                     while (matcher.find()) {
-                        temp.add(0,new Chapter(matcher.group(2), HOST + "/" + matcher.group(1)));
+                        temp.add(0, new Chapter(matcher.group(2), HOST + "/" + matcher.group(1)));
                     }
                 }
             }
             manga.setChapters(temp);
+            if (data.contains("Para leer el contenido de este"))
+                Util.getInstance().toast(context, "Para leer el contenido de este manga, debes de iniciar sesion");
         }
     }
 
@@ -296,7 +308,13 @@ class Kumanga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            String data = getNavigatorAndFlushParameters().get(chapter.getPath().replace("/c/", "/leer/"));
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String user = prefs.getString("username_" + getServerName(), "");
+            String password = Util.xorDecode(prefs.getString("dwp_" + getServerName(), ""),
+                    getServerName());
+            String data = getNavigatorAndFlushParameters()
+                    .get(chapter.getPath().replace("/c/", "/leer/"),
+                            new KumangaLoginInterceptor(user, password));
             String pages = getFirstMatch(
                     "<select class=\"pageselector.+?>(\\d+)</option>[\\s]*</select>", data,
                     context.getString(R.string.server_failed_loading_page_count));
@@ -304,12 +322,15 @@ class Kumanga extends ServerBase {
                     "'pageFormat':'(.+?)'", data,
                     context.getString(R.string.server_failed_loading_chapter)));
             String pURLs = getFirstMatchDefault("var pUrl=\\[(.+?)\\]", data, "");
-            if (pURLs.contains("\"npage\":\"1\"")||pURLs.contains("\"npage\":1")) {
-                chapter.setExtra(TextUtils.join("|", getAllMatch("\"imgURL\":\"([^\"]+)", pURLs.replaceAll("\\\\", ""))));
+            if (pURLs.contains("\"npage\":\"1\"") || pURLs.contains("\"npage\":1")) {
+                chapter.setExtra(TextUtils.join("|",
+                        getAllMatch("\"imgURL\":\"([^\"]+)",
+                                pURLs.replaceAll("\\\\", ""))));
             }
             chapter.setPages(Integer.parseInt(pages));
         }
     }
+
 
     @Override
     public ServerFilter[] getServerFilters() {
@@ -323,5 +344,80 @@ class Kumanga extends ServerBase {
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI)};
+    }
+
+
+    @Override
+    public boolean testLogin(String user, String password) throws Exception {
+        VolatileCookieJar cj = new VolatileCookieJar();
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addPost("txt_email", user);
+        nav.addPost("txt_password", password);
+        nav.addPost("remember", "1");
+        nav.addHeader("Referer", HOST + "/acceder");
+        nav.post(HOST + "/backend/php/login.php", cj);
+        HttpUrl url = HttpUrl.parse(HOST);
+        return (cj.contain(url, "sec_kuser") && !cj.getValue(url, "sec_kuser").equals("deleted"));
+    }
+
+    @Override
+    public boolean needLogin() {
+        return true;
+    }
+
+    @Override
+    public boolean hasCredentials() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String user = prefs.getString("username_" + getServerName(), "");
+        String password = prefs.getString("dwp_" + getServerName(), "");
+        return !(user.isEmpty() && password.isEmpty());
+    }
+
+    public class KumangaLoginInterceptor implements Interceptor {
+        String user;
+        String password;
+
+        public KumangaLoginInterceptor(String user, String password) {
+            this.user = user;
+            this.password = password;
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Response response = chain.proceed(chain.request());
+            if (!response.request().url().toString().contains("/c/")) {//when is not logged in it redirect to a page of description of chapter
+                return response;
+            } else {
+                try {
+                    Request request = response.request();
+                    String domain = request.url().toString().replace("/c/", "/leer/");
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("txt_email", user)
+                            .addFormDataPart("txt_password", password)
+                            .addFormDataPart("rememberMe", "1")
+                            .build();
+
+                    Request request0 = new Request.Builder().url(HOST + "/backend/php/login.php")
+                            .method("POST", requestBody)
+                            .header("User-Agent", Navigator.USER_AGENT)
+                            .header("Referer", HOST + "/acceder")
+                            .build();
+                    response.body().close();
+                    response = chain.proceed(request0);//generate the cookie
+
+                    Request request1 = new Request.Builder()
+                            .url(domain)
+                            .header("User-Agent", Navigator.USER_AGENT)
+                            .build();
+                    response.body().close();
+                    return chain.proceed(request1);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
     }
 }

@@ -118,7 +118,7 @@ public class LoginDialog {
             if (aBoolean) {
                 Util.getInstance().toast(context, "Login OK");
                 editor.putString("username_" + serverName, username);
-                editor.putString("dwp_" + serverName, password);
+                editor.putString("dwp_" + serverName, Util.xorEncode(password, serverName));
                 editor.apply();
                 handler.post(new Runnable() {
                     @Override

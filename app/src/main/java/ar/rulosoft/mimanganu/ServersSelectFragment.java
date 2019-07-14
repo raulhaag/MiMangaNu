@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -16,11 +15,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import ar.rulosoft.mimanganu.adapters.ServerRecAdapter;
-import ar.rulosoft.mimanganu.componentes.LoginDialog;
 import ar.rulosoft.mimanganu.componentes.MangaFolderSelect;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -68,33 +65,18 @@ public class ServersSelectFragment extends Fragment implements MainActivity.OnBa
             @Override
             public void onServerClick(final ServerBase server) {
                 if (!(server instanceof FromFolder)) {
-                    if (server.hasCredentials()) {
-                        if (server.hasFilteredNavigation()) {
-                            ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
-                            Bundle b = new Bundle();
-                            b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                            fragment.setArguments(b);
-                            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
-                        } else {
-                            ServerListFragment fragment = new ServerListFragment();
-                            Bundle b = new Bundle();
-                            b.putInt(MainFragment.SERVER_ID, server.getServerID());
-                            fragment.setArguments(b);
-                            ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
-                        }
+                    if (server.hasFilteredNavigation()) {
+                        ServerFilteredNavigationFragment fragment = new ServerFilteredNavigationFragment();
+                        Bundle b = new Bundle();
+                        b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                        fragment.setArguments(b);
+                        ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredNavigation");
                     } else {
-                        LoginDialog lDialog = new LoginDialog(getContext(), server);
-                        lDialog.getDialog().setCanceledOnTouchOutside(false);
-                        lDialog.getDialog().setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                if (server.hasCredentials())
-                                    onServerClick(server);
-                                else
-                                    Util.getInstance().showFastSnackBar(getString(R.string.this_server_needs_an_account), getView(), getContext());
-                            }
-                        });
-                        lDialog.show();
+                        ServerListFragment fragment = new ServerListFragment();
+                        Bundle b = new Bundle();
+                        b.putInt(MainFragment.SERVER_ID, server.getServerID());
+                        fragment.setArguments(b);
+                        ((MainActivity) getActivity()).replaceFragment(fragment, "FilteredServerList");
                     }
                 } else {
                     MangaFolderSelect mangaFolderSelect = new MangaFolderSelect();

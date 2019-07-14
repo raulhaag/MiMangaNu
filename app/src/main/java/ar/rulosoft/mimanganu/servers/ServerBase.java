@@ -871,7 +871,7 @@ public abstract class ServerBase {
      * @return <code>true</code> if the login succeeded, <code>false</code> otherwise
      */
     @SuppressWarnings("unused")
-    public boolean testLogin(String user, String passwd) {
+    public boolean testLogin(String user, String passwd) throws Exception {
         return false;
     }
 

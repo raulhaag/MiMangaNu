@@ -18,6 +18,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
+import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -666,6 +667,22 @@ public class Util {
             hexChars[j * 2 + 1] = hexArray[v & 0x0F];
         }
         return new String(hexChars);
+    }
+
+    public static String xorEncode(String s, String key) {
+        return new String(Base64.encode(xor(s.getBytes(), key.getBytes()), Base64.DEFAULT));
+    }
+
+    public static String xorDecode(String s, String key) {
+        return new String(xor(Base64.decode(s, Base64.DEFAULT), key.getBytes()));
+    }
+
+    private static byte[] xor(byte[] a, byte[] key) {
+        byte[] out = new byte[a.length];
+        for (int i = 0; i < a.length; i++) {
+            out[i] = (byte) (a[i] ^ key[i % key.length]);
+        }
+        return out;
     }
 
 }

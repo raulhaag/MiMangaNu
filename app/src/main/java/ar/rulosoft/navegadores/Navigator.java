@@ -3,7 +3,6 @@ package ar.rulosoft.navegadores;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 
@@ -279,6 +278,22 @@ public class Navigator {
         }
     }
 
+    public String getNI(String web, Interceptor interceptor) throws Exception {
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .addNetworkInterceptor(interceptor)
+                .build();
+        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+            response.body().close();
+            return "";
+        }
+    }
+
     public String get(String web, String referer) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
@@ -302,6 +317,30 @@ public class Navigator {
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .url(web)
+                .headers(getHeaders())
+                .method("POST", getPostParams())
+                .build();
+        Response response = copy.newCall(request).execute();
+
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            Log.e("Nav", "response unsuccessful: " + response.code() + " " + response.message() + " web: " + web);
+            response.body().close();
+            return "";
+        }
+    }
+
+    public String post(String web, CookieJar cookieJar) throws Exception {
+        OkHttpClient copy = httpClient.newBuilder()
+                .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
+                .writeTimeout(writeTimeout, TimeUnit.SECONDS)
+                .readTimeout(readTimeout, TimeUnit.SECONDS)
+                .cookieJar(cookieJar)
                 .build();
 
         Request request = new Request.Builder()
