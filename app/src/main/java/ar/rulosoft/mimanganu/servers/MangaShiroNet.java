@@ -41,20 +41,20 @@ public class MangaShiroNet extends ServerBase {
             "Vampire", "Webtoon", "Webtoons", "Yuri",
     };
     private static String[] genresValues = new String[]{
-            "daftar-manga/", "genres/4-koma/", "genres/action/", "genres/adult/", "genres/adventure/",
-            "genres/comedy/", "genres/cooking/", "genres/demons/", "genres/doujinshi/",
-            "genres/drama/", "genres/ecchi/", "genres/echi/", "genres/fantasy/", "genres/game/",
-            "genres/gender-bender/", "genres/gore/", "genres/harem/", "genres/historical/",
-            "genres/horror/", "genres/isekai/", "genres/josei/", "genres/magic/", "genres/manga/",
-            "genres/manhua/", "genres/manhwa/", "genres/martial-arts/", "genres/mature/",
-            "genres/mecha/", "genres/military/", "genres/music/", "genres/mystery/",
-            "genres/one-shot/", "genres/oneshot/", "genres/parody/", "genres/police/",
-            "genres/psychological/", "genres/romance/", "genres/samurai/", "genres/school/",
-            "genres/school-life/", "genres/sci-fi/", "genres/seinen/", "genres/shoujo/",
-            "genres/shoujo-ai/", "genres/shounen/", "genres/shounen-ai/", "genres/slice-of-life/",
-            "genres/smut/", "genres/sports/", "genres/super-power/", "genres/supernatural/",
-            "genres/thriller/", "genres/tragedy/", "genres/vampire/", "genres/webtoon/",
-            "genres/webtoons/", "genres/yuri/",
+            "", "4-koma", "action", "adult", "adventure",
+            "comedy", "cooking", "demons", "doujinshi",
+            "drama", "ecchi", "echi", "fantasy", "game",
+            "gender-bender", "gore", "harem", "historical",
+            "horror", "isekai", "josei", "magic", "manga",
+            "manhua", "manhwa", "martial-arts", "mature",
+            "mecha", "military", "music", "mystery",
+            "one-shot", "oneshot", "parody", "police",
+            "psychological", "romance", "samurai", "school",
+            "school-life", "sci-fi", "seinen", "shoujo",
+            "shoujo-ai", "shounen", "shounen-ai", "slice-of-life",
+            "smut", "sports", "super-power", "supernatural",
+            "thriller", "tragedy", "vampire", "webtoon",
+            "webtoons", "yuri",
     };
 
     /**
@@ -86,7 +86,6 @@ public class MangaShiroNet extends ServerBase {
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavigatorAndFlushParameters().get(HOST + (manga.getPath()));
-
             // Cover
             manga.setImages(getFirstMatchDefault("itemprop=\"image\"[\\s\\S]+?src=\"*(.+?)\"* ", data, ""));
             // Summary
@@ -103,7 +102,7 @@ public class MangaShiroNet extends ServerBase {
             manga.setGenre(getFirstMatchDefault("<div class=\"gnr\">(.+?)</div>", data,
                     context.getString(R.string.nodisponible)).replaceAll("</a>\\s*<a", "</a>, <a"));
             // Chapter
-            Pattern p = Pattern.compile("<div class=\"lch\"><a href=\"https://mangashiro.net/(.+?)\">(.+?)<", Pattern.DOTALL);
+            Pattern p = Pattern.compile("<span class=\"lchx\"><a href=\"" + HOST + "([^\"]+)\">([^>]+)<\\/", Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
                 manga.addChapterFirst(new Chapter(m.group(2).trim(), m.group(1).trim()));
@@ -130,17 +129,23 @@ public class MangaShiroNet extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         StringBuilder url = new StringBuilder(HOST);
-        url.append(genresValues[filters[0][0]]);
-        if (pageNumber > 1)
+        url.append("manga/");
+        if (pageNumber > 1) {
             url.append("page/").append(pageNumber).append("/");
+        }
+        url.append("?title&author&yearx&status");
         url.append(valOrder[filters[1][0]]);
+        url.append("&type");
+        for (int i = 0; i < filters[0].length; i++) {
+            url.append("&genre%5B").append(i).append("%5D=").append(genresValues[filters[0][i]]);
+        }
         String src = getNavigatorAndFlushParameters().get(url.toString());
         return getMangasFromSource(src);
     }
 
     @NonNull
     private ArrayList<Manga> getMangasFromSource(String src) {
-        Pattern pattern = Pattern.compile("series\" href=\"https://mangashiro.net/(manga/.+?/)\" title=\"(.+?)\".+?src=\"*(.+?)\"* ");
+        Pattern pattern = Pattern.compile("<div class=\"bsx\">[\\s\\S]+?href=\"" + HOST + "([^\"]+)\" title=\"([^\"]+)\">[\\s\\S]+?src=(.+?)\\s*\\/>");
         Matcher matcher = pattern.matcher(src);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
@@ -154,7 +159,7 @@ public class MangaShiroNet extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_genre),
-                        genres, ServerFilter.FilterType.SINGLE),
+                        genres, ServerFilter.FilterType.MULTI),
                 new ServerFilter(
                         context.getString(R.string.flt_order),
                         buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
