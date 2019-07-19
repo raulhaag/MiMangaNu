@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -221,14 +220,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
         // don't know why is needed to set again in every start ()
         initMenu();
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        MainActivity mainActivity = (MainActivity) getActivity();
-        mainActivity.setOnBackListener(this);
-        mainActivity.setOnKeyUpListener(this);
-        super.onAttach(context);
     }
 
     private void setReader() {

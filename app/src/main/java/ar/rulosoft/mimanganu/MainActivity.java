@@ -258,6 +258,7 @@ public class MainActivity extends AppCompatActivity {
         ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         //System.gc();
+        checkFragmentOptions(fragment);
     }
 
     public void replaceFragment(Fragment fragment, String tag) {
@@ -265,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
                 R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
         ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commit();
         getSupportFragmentManager().executePendingTransactions();
+        checkFragmentOptions(fragment);
     }
 
     public void replaceFragment(Fragment fragment, String tag, int f1_animation_out,
@@ -273,11 +275,11 @@ public class MainActivity extends AppCompatActivity {
                 f1_animation_out, f1_animation_in, f2_animation_out).replace(R.id.coordinator_layout,
                 fragment).addToBackStack(tag).commit();
         getSupportFragmentManager().executePendingTransactions();
+        checkFragmentOptions(fragment);
     }
 
     @Override
     public void onBackPressed() {
-
         if (backListener != null) {
             if (!backListener.onBackPressed()) {
                 backListener = null;
@@ -295,6 +297,23 @@ public class MainActivity extends AppCompatActivity {
         } else {
             super.onBackPressed();
         }
+        try {
+            Fragment cf = getSupportFragmentManager().findFragmentById(R.id.coordinator_layout);
+            checkFragmentOptions(cf);
+        } catch (Exception e) {
+            //ignore
+        }
+    }
+
+    private void checkFragmentOptions(Fragment fr) {
+        if (fr != null) {
+            if (fr instanceof OnBackListener) {
+                backListener = (OnBackListener) fr;
+            }
+            if (fr instanceof OnKeyUpListener) {
+                keyUpListener = (OnKeyUpListener) fr;
+            }
+        }
     }
 
     @Override
@@ -303,14 +322,6 @@ public class MainActivity extends AppCompatActivity {
             if (!keyUpListener.onKeyUp(keyCode, event))
                 return super.onKeyUp(keyCode, event);
         return super.onKeyUp(keyCode, event);
-    }
-
-    public void setOnBackListener(OnBackListener backListener) {
-        this.backListener = backListener;
-    }
-
-    public void setOnKeyUpListener(OnKeyUpListener keyUpListener) {
-        this.keyUpListener = keyUpListener;
     }
 
     public interface OnBackListener {

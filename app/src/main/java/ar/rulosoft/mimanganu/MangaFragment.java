@@ -87,7 +87,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        ((MainActivity)getActivity()).setOnBackListener(this);
         mMangaId = getArguments().getInt(MainFragment.MANGA_ID, -1);
         return inflater.inflate(R.layout.fragment_manga, container, false);
     }
@@ -543,7 +542,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_manga, menu);
-        int sortList[] = {
+        int[] sortList = {
                 R.id.sort_as_added_to_db_desc_chapters, R.id.sort_number,
                 R.id.sort_number_asc, R.id.sort_title,
                 R.id.sort_title_asc, R.id.sort_as_added_to_db_asc_chapters

@@ -111,7 +111,6 @@ public class ServersSelectFragment extends Fragment implements MainActivity.OnBa
         super.onResume();
         MainActivity activity = (MainActivity) getActivity();
         activity.enableHomeButton(true);
-        activity.setOnBackListener(this);
         activity.setTitle(getString(R.string.select_server));
     }
 

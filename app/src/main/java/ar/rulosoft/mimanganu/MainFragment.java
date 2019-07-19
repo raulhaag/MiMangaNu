@@ -381,7 +381,6 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                                     item.setTitle(R.string.close_vault);
                                     currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
                                     setListManga(true);
-                                    ((MainActivity) getActivity()).setOnBackListener(MainFragment.this);
                                 } catch (NoSuchAlgorithmException e) {
                                     e.printStackTrace();
                                 }
