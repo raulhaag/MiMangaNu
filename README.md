@@ -49,6 +49,21 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.108:
+* Fix Fanfox, MangaHere, Mangashiro.
+* Fix decodificador L90.
+* Actualizada traduccion al frances y aleman.
+* Ahora si hay una bobeda abierta y agregas un manga este queda en ella.
+* Min fixes en el backend.
+
+Changes in v1.108:
+* Fix Fanfox, MangaHere, Mangashiro.
+* Fix L90 decoder.
+* Updated french and german translation.
+* Now if you have a open vault all new manga go there.
+* Min fixes in backend.
+
 Cambios en v1.107:
 * Advertencia esta actualizacion va a resetear las bovedas.
 * Agregado posproceso de L90 (JapScan).

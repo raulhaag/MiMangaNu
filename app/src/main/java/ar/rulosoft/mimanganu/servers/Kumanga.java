@@ -390,7 +390,12 @@ class Kumanga extends ServerBase {
             } else {
                 if (user.trim().isEmpty()) {
                     Util.getInstance().toast(context, "Para leer el contenido de este manga, debes de iniciar sesion");
-                    return null;
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return response;
                 }
                 try {
                     Request request = response.request();
