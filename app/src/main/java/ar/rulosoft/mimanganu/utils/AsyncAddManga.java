@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 
+import ar.rulosoft.mimanganu.MainFragment;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
@@ -56,6 +57,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
                 serverBase.loadMangaInformation(manga, false);
             serverBase.loadChapters(manga, false);
             total = manga.getChapters().size();
+            manga.setVault(MainFragment.currentVault);
             int mid = Database.addManga(mActivity, manga);
             if (mid > -1) {
                 long initTime = System.currentTimeMillis();

@@ -74,7 +74,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     private UpdateListTask updateListTask = null;
     private int mNotifyID_AddAllMangaInDirectory = (int) System.currentTimeMillis();
     private int lastContextMenuIndex;
-    private String currentVault = "";
+    public static String currentVault = "";
 
     public MainFragment() {
     }
