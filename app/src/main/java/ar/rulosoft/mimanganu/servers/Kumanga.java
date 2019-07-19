@@ -388,6 +388,10 @@ class Kumanga extends ServerBase {
             if (!response.request().url().toString().contains("/c/")) {//when is not logged in it redirect to a page of description of chapter
                 return response;
             } else {
+                if (user.trim().isEmpty()) {
+                    Util.getInstance().toast(context, "Para leer el contenido de este manga, debes de iniciar sesion");
+                    return null;
+                }
                 try {
                     Request request = response.request();
                     String domain = request.url().toString().replace("/c/", "/leer/");

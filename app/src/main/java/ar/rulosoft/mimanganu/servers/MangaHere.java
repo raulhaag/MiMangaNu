@@ -59,6 +59,11 @@ public class MangaHere extends MTownBase {
     }
 
     @Override
+    public boolean needRefererForImages() {
+        return true;
+    }
+
+    @Override
     public String getHost() {
         return "https://www.mangahere.cc";
     }

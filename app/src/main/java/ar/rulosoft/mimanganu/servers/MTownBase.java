@@ -121,7 +121,7 @@ public abstract class MTownBase extends ServerBase {
 
         manga.setFinished(getFirstMatchDefault("title-tip\">([^<]+)", data, "").contains("Complete"));
         // Chapter
-        Pattern p = Pattern.compile("(li|none')> <a href=\"([^\"]+)\".+?title=\"([^\"]+)", Pattern.DOTALL);
+        Pattern p = Pattern.compile("(li|none')> <a href=\"([^\"]+)\".+?title3\">(.+?)</p", Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
             manga.addChapterFirst(new Chapter(m.group(3), m.group(2)));
