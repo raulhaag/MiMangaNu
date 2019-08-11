@@ -182,9 +182,10 @@ class Taadd extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         term = URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8");
-        String source = getNavigatorAndFlushParameters()
-                .get("http://my.taadd.com/search/es/?wd=" + term);
-        return getMangasFromSource(source);
+        String source = getNavigatorAndFlushParameters().get("http://my.taadd.com/search/es/?wd=" + term);
+        ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
+        mangas.sort(Manga.Comparators.TITLE_ASC);
+        return mangas;
     }
 
     @Override
@@ -199,7 +200,7 @@ class Taadd extends ServerBase {
 
             // Cover
             if (manga.getImages() == null || manga.getImages().isEmpty()) {
-                String img = getFirstMatchDefault("src=\"(http://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
+                String img = getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
                 manga.setImages(img);
             }
 

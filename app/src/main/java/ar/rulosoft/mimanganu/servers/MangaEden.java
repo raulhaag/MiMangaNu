@@ -161,7 +161,9 @@ class MangaEden extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         String source = getNavigatorAndFlushParameters().get(HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?title=" + URLEncoder.encode(term, "UTF-8") + "&author=&artist=&releasedType=0&released=");
-        return getMangasFromSource(source);
+        ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
+        mangas.sort(Manga.Comparators.TITLE_ASC);
+        return mangas;
     }
 
     @Override
@@ -180,8 +182,7 @@ class MangaEden extends ServerBase {
             }
             manga.setImages(image);
             // Summary
-            manga.setSynopsis(
-                    getFirstMatchDefault("mangaDescription\">(.+?)</h", source, context.getString(R.string.nodisponible)));
+            manga.setSynopsis(getFirstMatchDefault("mangaDescription\">(.+?)</h", source, context.getString(R.string.nodisponible)));
             // Status
             manga.setFinished(getFirstMatchDefault("Status</h(.+?)<h", source, "").contains("Completed"));
             // Author
@@ -271,7 +272,7 @@ class MangaEden extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?author=&title=&artist=";
-        String nofilters = web;
+        String noFilters = web;
         for (int i = 0; i < filters[3].length; i++) {
             web = web + valStatus[filters[3][i]];
         }
@@ -284,7 +285,7 @@ class MangaEden extends ServerBase {
         for (int i = 0; i < filters[0].length; i++) {
             web = web + valType[filters[0][i]];
         }
-        if (orderV[filters[4][0]].equals("") && web.equals(nofilters)) {
+        if (orderV[filters[4][0]].equals("") && web.equals(noFilters)) {
             // no filters are active - simply fetch the front page
             web = HOST + "/" + lang_3l + "/";
             String source = getNavigatorAndFlushParameters().get(web);
@@ -299,22 +300,12 @@ class MangaEden extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[] {
-                new ServerFilter(
-                        context.getString(R.string.flt_type),
-                        buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_exclude_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_status),
-                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_order),
-                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
+        return new ServerFilter[]{
+                new ServerFilter(context.getString(R.string.flt_type), buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
+                new ServerFilter(context.getString(R.string.flt_include_tags), buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(context.getString(R.string.flt_exclude_tags), buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(context.getString(R.string.flt_status), buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI),
+                new ServerFilter(context.getString(R.string.flt_order), buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
     }
 }
