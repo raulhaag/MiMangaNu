@@ -132,7 +132,21 @@ class ReadMangaToday extends ServerBase {
                 Manga manga = new Manga(getServerID(), m.getString("title"), m.getString("url"), false);
                 mangas.add(manga);
             }
+        } else {
+            String web = "https://www.readmng.com/manga-list/";
+            if (Character.isLetter(term.charAt(0)))
+                web = web + term.toLowerCase().charAt(0);
+            String source = getNavigatorAndFlushParameters().get(web);
+            Pattern pattern = Pattern.compile("<a href=\"(https://www\\.readmng\\.com/[^\"]+?)\">(.+?)</a>");
+            Matcher matcher = pattern.matcher(source);
+            while (matcher.find()) {
+                if (matcher.group(2).toLowerCase().contains(term.toLowerCase())) {
+                    Manga manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
+                    mangas.add(manga);
+                }
+            }
         }
+        mangas.sort(Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 
