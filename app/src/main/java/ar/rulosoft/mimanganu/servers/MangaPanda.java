@@ -142,6 +142,7 @@ class MangaPanda extends ServerBase {
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(1), HOST + m.group(2), false));
         }
+        mangas.sort(Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 

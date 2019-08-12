@@ -41,7 +41,8 @@ public class MangaHere extends MTownBase {
             R.string.flt_tag_smut,
             R.string.flt_tag_mecha,
             R.string.flt_tag_shotacon,
-            R.string.flt_tag_lolicon
+            R.string.flt_tag_lolicon,
+            R.string.flt_tag_webtoon
     };
     private static boolean cookieInit = false;
 

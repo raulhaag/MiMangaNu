@@ -113,8 +113,7 @@ class MangaEdenIt extends MangaEden {
             }
             manga.setImages(image);
             // Summary
-            manga.setSynopsis(
-                    getFirstMatchDefault("mangaDescription\">(.+?)</h", source, context.getString(R.string.nodisponible)));
+            manga.setSynopsis(getFirstMatchDefault("mangaDescription\">(.+?)</h", source, context.getString(R.string.nodisponible)));
             // Status
             manga.setFinished(getFirstMatchDefault("Stato</h(.+?)<h", source, "").contains("Completato"));
             // Author

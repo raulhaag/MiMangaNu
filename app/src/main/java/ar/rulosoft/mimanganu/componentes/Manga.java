@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.componentes;
 import android.support.annotation.Nullable;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 
 import ar.rulosoft.mimanganu.utils.HtmlUnescape;
 import ar.rulosoft.mimanganu.utils.Util;
@@ -233,4 +234,20 @@ public class Manga {
     public void setVault(String vault) {
         this.vault = vault;
     }
+
+    public static class Comparators {
+        public static Comparator<Manga> TITLE_ASC = new Comparator<Manga>() {
+            @Override
+            public int compare(Manga m0, Manga m1) {
+                return m0.getTitle().compareTo(m1.getTitle());
+            }
+        };
+        public static Comparator<Manga> TITLE_DESC = new Comparator<Manga>() {
+            @Override
+            public int compare(Manga m0, Manga m1) {
+                return m1.getTitle().compareTo(m0.getTitle());
+            }
+        };
+    }
+
 }

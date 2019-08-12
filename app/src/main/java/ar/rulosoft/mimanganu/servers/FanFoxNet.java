@@ -5,8 +5,6 @@ import android.content.Context;
 import ar.rulosoft.mimanganu.R;
 
 public class FanFoxNet extends MTownBase {
-
-    public static final String HOST = "https://fanfox.net";
     private static final int[] fltGenre = {
             R.string.flt_tag_action,
             R.string.flt_tag_adventure,
@@ -42,7 +40,9 @@ public class FanFoxNet extends MTownBase {
             R.string.flt_tag_gender_bender,
             R.string.flt_tag_adult,
             R.string.flt_tag_yuri,
-            R.string.flt_tag_mecha
+            R.string.flt_tag_mecha,
+            R.string.flt_tag_lolicon,
+            R.string.flt_tag_shotacon
     };
 
     private static boolean cookieInit = false;

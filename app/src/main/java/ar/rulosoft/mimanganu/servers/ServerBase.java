@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
 
+import java.lang.ref.WeakReference;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -568,8 +569,6 @@ public abstract class ServerBase {
             this.loadMangaInformation(manga, true);
             this.loadChapters(manga, false);
         } catch (Exception e) {
-            //to many messages are annoying
-            //Util.getInstance().toast(context, context.getResources().getString(R.string.update_search_failed, mangaDb.getTitle(), getServerName()));
             e.printStackTrace();
             return 0;
         }
@@ -627,7 +626,10 @@ public abstract class ServerBase {
             DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
             Date date = new Date();
             String lastUpdate = dateFormat.format(date);
-            if (mangaDb.getLastUpdate() != null && !mangaDb.getLastUpdate().equals(lastUpdate)) {
+            if (mangaDb.getLastUpdate() == null) {
+                mangaDb.setLastUpdate(lastUpdate);
+                changes = true;
+            } else if (!mangaDb.getLastUpdate().equals(lastUpdate)) {
                 mangaDb.setLastUpdate(lastUpdate);
                 changes = true;
             }
@@ -896,15 +898,15 @@ public abstract class ServerBase {
         VISUAL, TEXT
     }
 
-    class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
+    private static class CreateGroupByMangaNotificationsTask extends AsyncTask<Void, Integer, Integer> {
         private ArrayList<Chapter> simpleList = new ArrayList<>();
-        private Context context;
+        private final WeakReference<Context> weakReferenceContext;
         private Manga manga;
         private String largeContentText = "";
 
         CreateGroupByMangaNotificationsTask(ArrayList<Chapter> simpleList, Manga manga, Context context) {
             this.simpleList.addAll(simpleList);
-            this.context = context;
+            this.weakReferenceContext = new WeakReference<>(context);
             this.manga = manga;
         }
 
@@ -915,43 +917,57 @@ public abstract class ServerBase {
 
         @Override
         protected Integer doInBackground(Void... params) {
-            if (!simpleList.isEmpty() && context != null) {
+            if (!simpleList.isEmpty() && weakReferenceContext.get() != null && !isCancelled()) {
                 int simpleListSize = simpleList.size();
                 int x = 10;
                 if (simpleListSize <= 10)
                     x = simpleListSize - 1;
                 int n = 0;
                 for (int i = simpleListSize - 1; i > -1; i--) {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder stringBuilder = new StringBuilder();
                     if (simpleListSize > 10 && n == x) { // last element if 10+ chapters
                         int tmp = simpleListSize - x;
-                        sb.append(context.getResources().getQuantityString(R.plurals.more_chapters_not_displayed_here, tmp, tmp));
+                        Context context = weakReferenceContext.get();
+                        if(context != null)
+                            stringBuilder.append(context.getResources().getQuantityString(R.plurals.more_chapters_not_displayed_here, tmp, tmp));
+                        else
+                            this.cancel(true);
                     } else if (simpleListSize <= 10 && n == x) { // last element if <= 10 chapters
-                        sb.append(simpleList.get(i).getTitle());
+                        stringBuilder.append(simpleList.get(i).getTitle());
                     } else { // every element that isn't the last element
                         if (simpleListSize > 10) { // shorten titles if > 10 chapters
                             String title = simpleList.get(i).getTitle();
                             if (title.length() > 38)
                                 title = title.substring(0, Math.min(title.length(), 35)) + "...";
-                            sb.append(title).append("\n");
+                            stringBuilder.append(title).append("\n");
                         } else {
-                            sb.append(simpleList.get(i).getTitle()).append("\n");
+                            stringBuilder.append(simpleList.get(i).getTitle()).append("\n");
                         }
                     }
-                    largeContentText = sb.toString();
+                    largeContentText = stringBuilder.toString();
                     n++;
                     // we can only display 11 lines of text
                     if (n == 11)
                         break;
                 }
 
-                Intent intent = new Intent(context, MainActivity.class);
-                intent.putExtra("manga_id", simpleList.get(0).getMangaID());
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                Context context = weakReferenceContext.get();
+                if (context != null) {
+                    Intent intent = new Intent(context, MainActivity.class);
+                    intent.putExtra("manga_id", simpleList.get(0).getMangaID());
+                    intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
-                Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getQuantityString(R.plurals.new_chapter, simpleListSize, simpleListSize, manga.getTitle()), largeContentText);
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getQuantityString(R.plurals.new_chapter, simpleListSize, simpleListSize, manga.getTitle()), largeContentText);
+                }
+                else
+                    this.cancel(true);
             }
             return null;
+        }
+
+        @Override
+        protected void onCancelled() {
+            super.onCancelled();
         }
 
         @Override
