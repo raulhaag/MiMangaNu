@@ -172,7 +172,7 @@ class TuMangaOnline extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter("Tipo", type, ServerFilter.FilterType.SINGLE),//0
                 new ServerFilter("Demografia", demografia, ServerFilter.FilterType.SINGLE),//1
-                new ServerFilter("Generos", genres, ServerFilter.FilterType.MULTI),//2
+                new ServerFilter("Generos", genres, ServerFilter.FilterType.MULTI_STATES),//2
                 new ServerFilter("Estado", estado, ServerFilter.FilterType.SINGLE),//3
                 new ServerFilter("Ordenado por", sortBy, ServerFilter.FilterType.SINGLE), //4
                 new ServerFilter("En dirección", sortOrder, ServerFilter.FilterType.SINGLE) //5
@@ -195,8 +195,17 @@ class TuMangaOnline extends ServerBase {
             lastPage = 10000;
         if (pageNumber <= lastPage) {
             String gens = "";
+            //include
             for (int i = 0; i < filters[2].length; i++) {
-                gens = gens + "&genders%5B%5D=" + genresValues[filters[2][i]];
+                if(filters[2][i] == 1) {
+                    gens = gens + "&genders%5B%5D=" + genresValues[i];
+                }
+            }
+            //exclude
+            for (int i = 0; i < filters[2].length; i++) {
+                if(filters[2][i] == -1) {
+                    gens = gens + "&exclude_genders%5B%5D=" + genresValues[i];
+                }
             }
 
             web = String.format(web, sortByValues[filters[4][0]], sortOrderValues[filters[5][0]],

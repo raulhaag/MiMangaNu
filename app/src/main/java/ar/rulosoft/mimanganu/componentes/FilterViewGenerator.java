@@ -85,6 +85,21 @@ public class FilterViewGenerator {
                     rGroup.add(rb[j]);
                     compoundButtons[i][j] = rb[j];
                 }
+            } else if (filter.getFilterType() == ServerFilter.FilterType.MULTI_STATES) {
+                CheckBox3[] cb = new CheckBox3[filter.getOptions().length];
+                compoundButtons[i] = new CompoundButton[filter.getOptions().length];
+                for (int j = 0; j < filter.getOptions().length; j++) {
+                    cb[j] = new CheckBox3(context);
+                    if (Build.VERSION.SDK_INT < 23) {
+                        cb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
+                    } else {
+                        cb[j].setTextAppearance(android.R.style.TextAppearance_Small);
+                    }
+                    cb[j].setText(filter.getOptions()[j]);
+                    cb[j].setLayoutParams(paramsComp);
+                    compoundAdapter.add(cb[j]);
+                    compoundButtons[i][j] = cb[j];
+                }
             } else {
                 AppCompatCheckBox[] cb = new AppCompatCheckBox[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
@@ -108,8 +123,14 @@ public class FilterViewGenerator {
         }
 
         for (int l = 0; l < selection.length; l++) {
-            for (int j = 0; j < selection[l].length; j++) {
-                compoundButtons[l][selection[l][j]].setChecked(true);
+            if (filters[l].getFilterType() == ServerFilter.FilterType.MULTI_STATES) {
+                for (int j = 0; j < selection[l].length; j++) {
+                    ((CheckBox3) compoundButtons[l][j]).setState(selection[l][j]);
+                }
+            } else {
+                for (int j = 0; j < selection[l].length; j++) {
+                    compoundButtons[l][selection[l][j]].setChecked(true);
+                }
             }
         }
 
@@ -148,14 +169,24 @@ public class FilterViewGenerator {
                             int j = 0;
                             for (CompoundButton[] cbs : compoundButtons) {
                                 ArrayList<Integer> checked = new ArrayList<>();
-                                for (int k = 0; k < cbs.length; k++) {
-                                    if (cbs[k].isChecked()) {
-                                        checked.add(k);
+                                if (filters[j].getFilterType() == ServerFilter.FilterType.MULTI_STATES) {
+                                    for (int k = 0; k < cbs.length; k++) {
+                                        checked.add(((CheckBox3) cbs[k]).getIntState());
                                     }
-                                }
-                                result[j] = new int[checked.size()];
-                                for (int k = 0; k < checked.size(); k++) {
-                                    result[j][k] = checked.get(k);
+                                    result[j] = new int[checked.size()];
+                                    for (int k = 0; k < checked.size(); k++) {
+                                        result[j][k] = checked.get(k);
+                                    }
+                                } else {
+                                    for (int k = 0; k < cbs.length; k++) {
+                                        if (cbs[k].isChecked()) {
+                                            checked.add(k);
+                                        }
+                                    }
+                                    result[j] = new int[checked.size()];
+                                    for (int k = 0; k < checked.size(); k++) {
+                                        result[j][k] = checked.get(k);
+                                    }
                                 }
                                 j++;
                             }

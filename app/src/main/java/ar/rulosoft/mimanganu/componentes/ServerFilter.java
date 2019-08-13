@@ -27,5 +27,5 @@ public class ServerFilter {
         return options;
     }
 
-    public enum FilterType {MULTI, SINGLE}
+    public enum FilterType {MULTI, SINGLE, MULTI_STATES}
 }
