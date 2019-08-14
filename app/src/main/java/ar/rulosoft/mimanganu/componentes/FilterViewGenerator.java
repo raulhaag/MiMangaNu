@@ -17,6 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.buildware.widget.indeterm.IndeterminateCheckBox;
+import com.buildware.widget.indeterm.IndeterminateRadioButton;
+
 import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
@@ -69,11 +72,11 @@ public class FilterViewGenerator {
             UnScrolledGridView gridView = new UnScrolledGridView(context);
             CompoundAdapter compoundAdapter = new CompoundAdapter(context);
             if (filter.getFilterType() == ServerFilter.FilterType.SINGLE) {
-                AppCompatRadioButton[] rb = new AppCompatRadioButton[filter.getOptions().length];
+                IndeterminateRadioButton[] rb = new IndeterminateRadioButton[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
                 CompoundGroup rGroup = new CompoundGroup(true);
                 for (int j = 0; j < filter.getOptions().length; j++) {
-                    rb[j] = new AppCompatRadioButton(context);
+                    rb[j] = new IndeterminateRadioButton(context);
                     if (Build.VERSION.SDK_INT < 23) {
                         rb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
                     } else {
@@ -101,10 +104,10 @@ public class FilterViewGenerator {
                     compoundButtons[i][j] = cb[j];
                 }
             } else {
-                AppCompatCheckBox[] cb = new AppCompatCheckBox[filter.getOptions().length];
+                IndeterminateCheckBox[] cb = new IndeterminateCheckBox[filter.getOptions().length];
                 compoundButtons[i] = new CompoundButton[filter.getOptions().length];
                 for (int j = 0; j < filter.getOptions().length; j++) {
-                    cb[j] = new AppCompatCheckBox(context);
+                    cb[j] = new IndeterminateCheckBox(context);
                     if (Build.VERSION.SDK_INT < 23) {
                         cb[j].setTextAppearance(context, android.R.style.TextAppearance_Small);
                     } else {
