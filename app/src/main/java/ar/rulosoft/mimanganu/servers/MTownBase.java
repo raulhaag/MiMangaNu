@@ -53,7 +53,7 @@ public abstract class MTownBase extends ServerBase {
 
     private void generateNeededCookie() {
         HttpUrl url = HttpUrl.parse(getHost());
-        assert(url != null);
+        assert (url != null);
         Navigator.getCookieJar().saveFromResponse(url, Collections.singletonList(
                 Cookie.parse(url, "isAdult=1; Domain=" + getDomain()))
         );
@@ -64,10 +64,17 @@ public abstract class MTownBase extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         StringBuilder web = new StringBuilder(getHost());
         web.append("/search?title=&genres=");
-        for (int i : filters[0]) {
-            web.append((i + 1));
-            web.append("%2C");
+        StringBuilder nogen = new StringBuilder("&nogenres=");
+        for (int i = 0; i < filters[0].length; i++) {
+            if (filters[0][i] == -1) {
+                nogen.append(i + 1);
+                nogen.append("%2C");
+            } else if (filters[0][i] == 1) {
+                web.append(i + 1);
+                web.append("%2C");
+            }
         }
+        web.append(nogen);
         web.append("&st=");
         web.append(filters[1][0]);
         web.append("&sort=");
@@ -98,33 +105,42 @@ public abstract class MTownBase extends ServerBase {
 
     @Override
     public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-
+        loadMangaInformation(manga, forceReload);
     }
 
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        String data = getNavigatorWithNeededHeader().get(getHost() + manga.getPath());
-        manga.setImages(getFirstMatchDefault("over-img\" src=\"([^\"]+)", data, ""));
+        if (manga.getChapters().isEmpty() || forceReload) {
 
-        String author = getFirstMatchDefault("say\">Author:(.+?)</p>", data, "");
-        if(author.trim().isEmpty()) { author = context.getString(R.string.nodisponible); }
-        manga.setAuthor(author);
+            String data = getNavigatorWithNeededHeader().get(getHost() + manga.getPath());
+            manga.setImages(getFirstMatchDefault("over-img\" src=\"([^\"]+)", data, ""));
 
-        String genre = getFirstMatchDefault("tag-list\">(.+?)</p>", data, "");
-        genre = TextUtils.join(", ", getAllMatch("\">([^<]+)</a>", genre));
-        if(genre.trim().isEmpty()) { genre = context.getString(R.string.nodisponible); }
-        manga.setGenre(genre);
+            String author = getFirstMatchDefault("say\">Author:(.+?)</p>", data, "");
+            if (author.trim().isEmpty()) {
+                author = context.getString(R.string.nodisponible);
+            }
+            manga.setAuthor(author);
 
-        String synopsis = getFirstMatchDefault("right-content\">([^<]+)<", data, "");
-        if(synopsis.trim().isEmpty()) { synopsis = context.getString(R.string.nodisponible); }
-        manga.setSynopsis(synopsis);
+            String genre = getFirstMatchDefault("tag-list\">(.+?)</p>", data, "");
+            genre = TextUtils.join(", ", getAllMatch("\">([^<]+)</a>", genre));
+            if (genre.trim().isEmpty()) {
+                genre = context.getString(R.string.nodisponible);
+            }
+            manga.setGenre(genre);
 
-        manga.setFinished(getFirstMatchDefault("title-tip\">([^<]+)", data, "").contains("Complete"));
-        // Chapter
-        Pattern p = Pattern.compile("(li|none')> <a href=\"([^\"]+)\".+?title3\">(.+?)</p", Pattern.DOTALL);
-        Matcher m = p.matcher(data);
-        while (m.find()) {
-            manga.addChapterFirst(new Chapter(m.group(3), m.group(2)));
+            String synopsis = getFirstMatchDefault("right-content\">([^<]+)<", data, "");
+            if (synopsis.trim().isEmpty()) {
+                synopsis = context.getString(R.string.nodisponible);
+            }
+            manga.setSynopsis(synopsis);
+
+            manga.setFinished(getFirstMatchDefault("title-tip\">([^<]+)", data, "").contains("Complete"));
+            // Chapter
+            Pattern p = Pattern.compile("(li|none')> <a href=\"([^\"]+)\".+?title3\">(.+?)</p", Pattern.DOTALL);
+            Matcher m = p.matcher(data);
+            while (m.find()) {
+                manga.addChapterFirst(new Chapter(m.group(3), m.group(2)));
+            }
         }
     }
 
@@ -189,7 +205,7 @@ public abstract class MTownBase extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(getFilter()), ServerFilter.FilterType.MULTI),
+                        buildTranslatedStringArray(getFilter()), ServerFilter.FilterType.MULTI_STATES),
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
