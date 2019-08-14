@@ -243,36 +243,32 @@ class NineManga extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter(
-                        context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_exclude_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI_STATES),
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
-                new ServerFilter(
-                        context.getString(R.string.flt_category),
-                        buildTranslatedStringArray(fltCategory), ServerFilter.FilterType.SINGLE)
+               // new ServerFilter(
+               //         context.getString(R.string.flt_category),
+               //         buildTranslatedStringArray(fltCategory), ServerFilter.FilterType.SINGLE)
         };
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String includedGenres = "";
-        if (filters[0].length > 0) {
-            for (int i = 0; i < filters[0].length; i++) {
-                includedGenres = includedGenres + valGenre[filters[0][i]] + "%2C"; // comma
-            }
-        }
         String excludedGenres = "";
-        if (filters[1].length > 0) {
-            for (int i = 0; i < filters[1].length; i++) {
-                excludedGenres = excludedGenres + valGenre[filters[1][i]] + "%2C"; // comma
+        if (filters[0].length > 0) {
+            for(int i = 0; i < filters[0].length; i++){
+                if(filters[0][i] == 1){
+                    includedGenres = includedGenres + valGenre[i] + "%2C"; // comma
+                }else if(filters[0][i] == -1){
+                    excludedGenres = excludedGenres + valGenre[i] + "%2C"; // comma
+                }
             }
         }
         String web;
-        web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valStatus[filters[2][0]] + "&page=" + pageNumber + ".html";
+        web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valStatus[filters[1][0]] + "&page=" + pageNumber + ".html";
         String data = getNavigatorWithNeededHeader().get(web);
         Pattern pattern = Pattern.compile(PATTERN_MANGA_SEARCHED, Pattern.DOTALL);
         Matcher m = pattern.matcher(data);
