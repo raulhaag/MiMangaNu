@@ -12,7 +12,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 class KissManga extends ServerBase {
@@ -130,7 +129,7 @@ class KissManga extends ServerBase {
             // Summary
             manga.setSynopsis(
                     getFirstMatchDefault("<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
-                    context.getString(R.string.nodisponible)));
+                            context.getString(R.string.nodisponible)));
 
             // Cover Image
             manga.setImages(
@@ -215,11 +214,8 @@ class KissManga extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter(
-                        context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_exclude_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI_STATES),
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
@@ -238,12 +234,18 @@ class KissManga extends ServerBase {
         nav.addHeader("Cookie", "vns_doujinshi=1; ");
 
         // no filtering is active - use MangaList (much faster as it is smaller)
-        if ((filters[0].length + filters[1].length + filters[2][0]) == 0) {
-            String web = HOST + "/MangaList" + valOrder[filters[3][0]] + "?page=" + pageNumber;
+        boolean hasGenreFilter = false;
+        for (int i = 0; i < filters[0].length; i++) {
+            if (filters[0][i] != 0) {
+                hasGenreFilter = true;
+                break;
+            }
+        }
+        if (filters[1][0] == 0 && !hasGenreFilter) {
+            String web = HOST + "/MangaList" + valOrder[filters[2][0]] + "?page=" + pageNumber;
             source = nav.get(web);
         }
         // filtering is active, use advanced search (slow, as the whole result set is returned)
-
         else {
             if (pageNumber > 1) {
                 // there is only one result page for the advanced search
@@ -254,21 +256,14 @@ class KissManga extends ServerBase {
                 nav.addPost("authorArtist", "");
                 for (int i = 0; i < fltGenre.length; i++) {
                     int result = 0;
-
-                    if (Util.getInstance().contains(filters[0], i)) {
-                        result++;
-                    }
-                    if (Util.getInstance().contains(filters[1], i)) {
-                        result--;
-                    }
-                    // include + exclude = 0, include = 1, exclude = -1, no selection = 0
-                    // map exclude to "2"
-                    if (result < 0) {
+                    if (filters[0][i] == 1) {
+                        result = 1;
+                    } else if (filters[0][i] == -1) {
                         result = 2;
                     }
                     nav.addPost("genres", Integer.toString(result));
                 }
-                nav.addPost("status", valStatus[filters[2][0]]);
+                nav.addPost("status", valStatus[filters[1][0]]);
 
                 source = nav.post(HOST + "/AdvanceSearch");
             }
