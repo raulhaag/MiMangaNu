@@ -26,7 +26,6 @@ class Taadd extends ServerBase {
             R.string.flt_tag_adventure,
             R.string.flt_tag_anime,
             R.string.flt_tag_award_winning,
-            R.string.flt_tag_bara,
             R.string.flt_tag_comedy,
             R.string.flt_tag_cooking,
             R.string.flt_tag_daemons,
@@ -66,17 +65,13 @@ class Taadd extends ServerBase {
             R.string.flt_tag_slice_of_life,
             R.string.flt_tag_smut,
             R.string.flt_tag_sports,
-            R.string.flt_tag_staff_pick,
-            R.string.flt_tag_super_powers,
             R.string.flt_tag_supernatural,
             R.string.flt_tag_suspense,
             R.string.flt_tag_tragedy,
             R.string.flt_tag_vampire,
             R.string.flt_tag_webtoon,
             R.string.flt_tag_yaoi,
-            R.string.flt_tag_yuri,
-            R.string.flt_tag_no_chapters
-
+            R.string.flt_tag_yuri
     };
     private static final String[] valGenre = {
             "56",
@@ -85,7 +80,6 @@ class Taadd extends ServerBase {
             "2",
             "3",
             "59",
-            "84",
             "4",
             "5",
             "49",
@@ -110,31 +104,28 @@ class Taadd extends ServerBase {
             "51",
             "20",
             "21",
-            "54%2C64",
+            "54",
             "22%2C57",
             "23",
             "55",
-            "24%2C38",
+            "24",
             "25",
             "26",
             "27",
             "28",
-            "44%2C29%2C48",
+            "44%2C48",
             "30",
-            "42%2C31%2C46",
+            "42%2C46%2C31",
             "32",
             "41",
             "33",
-            "60",
-            "62",
             "34",
             "53",
             "35",
             "52",
-            "58%2C50",
+            "50",
             "40",
-            "43",
-            "61"
+            "43"
     };
 
     private static final int[] fltOrder = {
@@ -252,11 +243,8 @@ class Taadd extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter(
-                        context.getString(R.string.flt_include_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(
-                        context.getString(R.string.flt_exclude_tags),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI_STATES),
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltComplete), ServerFilter.FilterType.SINGLE),
@@ -275,27 +263,27 @@ class Taadd extends ServerBase {
         }
         return mangas;
     }
-
+//https://www.taadd.com/search/?wd=&released=0&author=&artist=&category_id=7,4,&out_category_id=60,6,40,&completed_series=either&page=1
+//http://www.taadd.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=7%2C4%2C&out_category_id=40%2C6%2C&completed_series=either&type=high&page=1.html
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String includedGenres = "";
-        if (filters[0].length > 0) {
-            for (int i = 0; i < filters[0].length; i++) {
-                includedGenres = includedGenres + valGenre[filters[0][i]] + "%2C"; // comma
-            }
-        }
         String excludedGenres = "";
-        if (filters[1].length > 0) {
-            for (int i = 0; i < filters[1].length; i++) {
-                excludedGenres = excludedGenres + valGenre[filters[1][i]] + "%2C"; // comma
+        if (filters[0].length > 0) {
+            for(int i = filters[0].length - 1; i >= 0; i--){
+                if(filters[0][i] == 1){
+                    includedGenres = includedGenres + valGenre[i] + "%2C"; // comma
+                }else if(filters[0][i] == -1){
+                    excludedGenres = excludedGenres + valGenre[i] + "%2C"; // comma
+                }
             }
         }
         String web;
-        if (filters[0].length < 1 && filters[1].length < 1) {
-            web = HOST + valOrder[filters[3][0]];
+        if (includedGenres.isEmpty() && excludedGenres.isEmpty()) {
+            web = HOST + valOrder[filters[2][0]];
         }
         else {
-            web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valComplete[filters[2][0]] + "&type=high&page=" + pageNumber + ".html";
+            web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valComplete[filters[1][0]] + "&type=high&page=" + pageNumber + ".html";
         }
         return getMangasFromSource(getNavigatorAndFlushParameters().get(web));
     }

@@ -273,26 +273,28 @@ class MangaEden extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?author=&title=&artist=";
         String noFilters = web;
-        for (int i = 0; i < filters[3].length; i++) {
-            web = web + valStatus[filters[3][i]];
+        for (int i = 0; i < filters[2].length; i++) {
+            web = web + valStatus[filters[2][i]];
         }
         for (int i = 0; i < filters[1].length; i++) {
-            web = web + "&categoriesInc=" + valGenre[filters[1][i]];
+            if(filters[1][i] == 1) {
+                web = web + "&categoriesInc=" + valGenre[i];
+            }else if(filters[1][i] == -1){
+                web = web + "&categoriesExcl=" + valGenre[i];
+            }
         }
-        for (int i = 0; i < filters[2].length; i++) {
-            web = web + "&categoriesExcl=" + valGenre[filters[2][i]];
-        }
+
         for (int i = 0; i < filters[0].length; i++) {
             web = web + valType[filters[0][i]];
         }
-        if (orderV[filters[4][0]].equals("") && web.equals(noFilters)) {
+        if (orderV[filters[3][0]].equals("") && web.equals(noFilters)) {
             // no filters are active - simply fetch the front page
             web = HOST + "/" + lang_3l + "/";
             String source = getNavigatorAndFlushParameters().get(web);
             return getMangasFromFrontpage(source);
         } else {
             // filtering is active, get results from the list
-            web = web + orderV[filters[4][0]] + "&page=" + pageNumber;
+            web = web + orderV[filters[3][0]] + "&page=" + pageNumber;
             String source = getNavigatorAndFlushParameters().get(web);
             return getMangasFromSource(source);
         }
@@ -302,8 +304,8 @@ class MangaEden extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter(context.getString(R.string.flt_type), buildTranslatedStringArray(fltType), ServerFilter.FilterType.MULTI),
-                new ServerFilter(context.getString(R.string.flt_include_tags), buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
-                new ServerFilter(context.getString(R.string.flt_exclude_tags), buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                new ServerFilter(context.getString(R.string.flt_genre), buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI_STATES),
+                //new ServerFilter(context.getString(R.string.flt_exclude_tags), buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
                 new ServerFilter(context.getString(R.string.flt_status), buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI),
                 new ServerFilter(context.getString(R.string.flt_order), buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
