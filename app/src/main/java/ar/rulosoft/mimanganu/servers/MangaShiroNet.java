@@ -17,7 +17,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 
 public class MangaShiroNet extends ServerBase {
 
-    private static final String HOST = "https://mangashiro.net/";
+    private static final String HOST = "https://mangashiro.org/";
     private static final int[] fltOrder = {
             R.string.flt_order_alpha,
             R.string.flt_order_last_update,
