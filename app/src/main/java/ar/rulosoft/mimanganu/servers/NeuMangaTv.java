@@ -108,7 +108,7 @@ public class NeuMangaTv extends ServerBase {
         String web = HOST + chapter.getPath() + "/" + page;
         String data = getNavigatorAndFlushParameters().get(web);
         web = getFirstMatch(PATTERN_CHAPTER_IMAGE, data, "can't find image");
-        web =  web.replaceAll("([^:])//", "$1/"); // remove consecutive slashes
+        web = web.replaceAll("([^:])//", "$1/"); // remove consecutive slashes
         return web + "|" + HOST + chapter.getPath();
     }
 
@@ -124,17 +124,29 @@ public class NeuMangaTv extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         StringBuilder web = new StringBuilder(HOST);
         web.append("/advanced_search?name_search_mode=contain&name_search_query=&artist_search_mode=contain&artist_search_query=&author_search_mode=contain&author_search_query=&genre0=%5B%5D&genre1=%5B");
-        if (filters[0].length > 0) {
-            for (int i = 0; i < filters[0].length - 1; i++) {
+
+        for (int i = 0; i < filters[0].length; i++) {
+            if (filters[0][i] == 1) {
                 web.append("%22");
-                web.append(genres[filters[0][i]]);
+                web.append(genres[i]);
                 web.append("%22%2C");
             }
-            web.append("%22");
-            web.append(genres[filters[0][filters[0].length - 1]]);
-            web.append("%22");
         }
-        web.append("%5D&genre2=%5B%5D&year_search_mode=on&year_value=&rating_search_mode=is&rating_value=&manga_status=&advpage=");
+        if (web.substring(web.length() - 3, web.length()).equals("%2C")) {
+            web.delete(web.length() - 3, web.length());
+        }
+        web.append("%5D&genre2=%5B");
+        for (int i = 0; i < filters[0].length; i++) {
+            if (filters[0][i] == -1) {
+                web.append("%22");
+                web.append(genres[i]);
+                web.append("%22%2C");
+            }
+        }
+        if (web.substring(web.length() - 3, web.length()).equals("%2C")) {
+            web.delete(web.length() - 3, web.length());
+        }
+        web.append("%5D&year_search_mode=on&year_value=&rating_search_mode=is&rating_value=&manga_status=&advpage=");
         web.append(pageNumber);
         web.append("&sortby=");
         web.append(sortByValues[filters[1][0]]);
@@ -157,7 +169,7 @@ public class NeuMangaTv extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_genre), genres
-                        , ServerFilter.FilterType.MULTI),
+                        , ServerFilter.FilterType.MULTI_STATES),
                 new ServerFilter(
                         context.getString(R.string.flt_order_by), sortBy
                         , ServerFilter.FilterType.SINGLE),
