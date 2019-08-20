@@ -216,7 +216,7 @@ class MangaPanda extends ServerBase {
         return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_genre),
-                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.MULTI_STATES),
                 new ServerFilter(
                         context.getString(R.string.flt_type),
                         buildTranslatedStringArray(fltType), ServerFilter.FilterType.SINGLE),
@@ -234,11 +234,11 @@ class MangaPanda extends ServerBase {
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String gens = "";
-        for (int i = 0; i < fltGenre.length; i++) {
-            if (Util.getInstance().contains(filters[0], i)) {
-                gens = gens + "1";
+        for (int i = 0; i < filters[0].length; i++) {
+            if (filters[0][i] == -1) {
+                gens = gens + "2";
             } else {
-                gens = gens + "0";
+                gens = gens + filters[0][i];
             }
         }
         ArrayList<Manga> mangas = new ArrayList<>();

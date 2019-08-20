@@ -35,7 +35,7 @@ import okhttp3.Response;
  */
 class Kumanga extends ServerBase {
 
-    private static final String HOST = "http://www.kumanga.com";
+    private static final String HOST = "https://www.kumanga.com";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_action, //Acción
@@ -185,7 +185,7 @@ class Kumanga extends ServerBase {
 
         StringBuilder sb = new StringBuilder("contentType=manga&page=");
         sb.append(pageNumber);
-        sb.append("&perPage=30&retrieveCategories=true&retrieveAuthors=true");
+        sb.append("&perPage=18&retrieveCategories=true&retrieveAuthors=true");
 
         for (int i = 0; i < filters[0].length; i++) {
             sb.append(valGenre[filters[0][i]]);
@@ -203,6 +203,7 @@ class Kumanga extends ServerBase {
         nav.addHeader("X-Requested-With", "XMLHttpRequest");
         RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8"),
                 sb.toString());
+        nav.addHeader("Referer", "https://www.kumanga.com/mangalist");
         String data = nav.post(HOST + "/backend/ajax/searchengine.php", body);
         return getMangasFromJson(new JSONObject(data));
     }
