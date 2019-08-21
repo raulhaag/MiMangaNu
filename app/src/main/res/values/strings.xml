@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.108:\n\t* Fix Fanfox, MangaHere, Mangashiro.\n\t* Fix L90 decoder.\n\t* Updated french and german translation.\n\t* Now if you have a open vault all new manga go there.\n\t* Min fixes in backend.</string>
+    <string name="update_message">Changes in v1.109:\n\t* Added 3 state filters on server that support it.\n\t* Various fixes and a couple of improves.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

@@ -49,6 +49,13 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.109:
+* Agregado filtros de 3 estados a los servers que lo soportan.
+* Varios fixs y un par de mejoras.
+
+Changes in v1.109:
+* Added 3 state filters on server that support it.
+* Various fixes and a couple of improves.
 
 Cambios en v1.108:
 * Fix Fanfox, MangaHere, Mangashiro.

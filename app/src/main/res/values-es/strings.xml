@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.108:\n\t* Fix Fanfox, MangaHere, Mangashiro.\n\t* Fix decodificador L90.\n\t* Actualizada traduccion al frances y aleman.\n\t* Ahora si hay una bobeda abierta y agregas un manga este queda en ella.\n\t* Min fixes en el backend.</string>
+    <string name="update_message">Cambios en v1.109:\n\t* Agregado filtros de 3 estados a los servers que lo soportan.\n\t* Varios fixs y un par de mejoras.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

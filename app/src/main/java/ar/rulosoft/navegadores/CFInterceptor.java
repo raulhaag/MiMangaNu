@@ -1,6 +1,5 @@
 package ar.rulosoft.navegadores;
 
-import android.util.ArrayMap;
 import android.util.Base64;
 import android.util.Log;
 
@@ -10,6 +9,7 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -132,8 +132,8 @@ public class CFInterceptor implements Interceptor {
 
     public static class Jsonfxxx {
         private static Jsonfxxx instance;
-        Map<String, String> mapping = new ArrayMap<>();
-        Map<String, String> simple = new ArrayMap<>();
+        Map<String, String> mapping = new HashMap<>();
+        Map<String, String> simple = new HashMap<>();
 
         private Jsonfxxx() {
             mapping.put("a", "(false+\"\")[1]");
