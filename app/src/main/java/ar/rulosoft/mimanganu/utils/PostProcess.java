@@ -30,7 +30,7 @@ public class PostProcess {
             y += 200;
         }
 
-        if (y > maxH - 200) {
+        if (y >= maxH - 200) {
             a = new Rect(0, y, maxW, maxH);
             rstImage.drawBitmap(myImg, a, a, null);
         }
@@ -45,7 +45,7 @@ public class PostProcess {
             x += 200;
         }
 
-        if (x > maxW - 200) {
+        if (x >= maxW - 200) {
             a = new Rect(x, 0, maxW, maxH);
             rstImage.drawBitmap(myImg, a, a, null);
         }
