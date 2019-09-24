@@ -101,6 +101,12 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 });
                 preferenceGroup.addPreference(preference);
             }
+            Preference[] cf = sb.getCustomPreferences();
+            if (cf != null) {
+                for (Preference p : cf) {
+                    preferenceGroup.addPreference(p);
+                }
+            }
         }
         if (!isThereAnyServerUsingAccount)
             preferenceGroup.setVisible(false);

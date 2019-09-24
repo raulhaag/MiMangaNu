@@ -33,6 +33,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,6 +45,12 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.navegadores.Navigator;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.Response;
+import okio.Buffer;
+import okio.BufferedSource;
+import okio.GzipSource;
 
 import static ar.rulosoft.mimanganu.MainActivity.pm;
 
@@ -602,9 +609,23 @@ public class Util {
         return false;
     }
 
-    public boolean isGPServicesAvailable(Context context)  {
-        final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
-        return status == ConnectionResult.SUCCESS;
+    public static String extractContent(Response response) throws IOException {
+        Headers headers = response.headers();
+        MediaType contentType = response.body().contentType();
+        BufferedSource source = response.body().source();
+        source.request(Long.MAX_VALUE); // Buffer the entire body.
+        Buffer buffer = source.buffer();
+        if ("gzip".equalsIgnoreCase(headers.get("Content-Encoding"))) {
+            try (GzipSource gzippedResponseBody = new GzipSource(buffer.clone())) {
+                buffer = new Buffer();
+                buffer.writeAll(gzippedResponseBody);
+            }
+        }
+        Charset charset = Charset.forName("UTF-8");
+        if (contentType != null) {
+            charset = contentType.charset(charset);
+        }
+        return buffer.clone().readString(charset);
     }
 
     private static class LazyHolder {
@@ -685,4 +706,8 @@ public class Util {
         return out;
     }
 
+    public boolean isGPServicesAvailable(Context context) {
+        final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
+        return status == ConnectionResult.SUCCESS;
+    }
 }

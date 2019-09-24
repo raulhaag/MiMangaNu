@@ -289,6 +289,7 @@ public class ServerFilteredNavigationFragment extends Fragment implements OnLast
                     top_page = req_page;
                 } catch (Exception e) {
                     Log.e("SFNF", "Exception", e);
+                    e.printStackTrace();
                     if (e.getMessage() != null)
                         error = e.getMessage();
                     else {

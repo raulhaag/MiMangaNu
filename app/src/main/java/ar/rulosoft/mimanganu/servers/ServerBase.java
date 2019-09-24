@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.annotation.Nullable;
+import android.support.v7.preference.Preference;
 
 import java.lang.ref.WeakReference;
 import java.text.DateFormat;
@@ -195,6 +196,7 @@ public abstract class ServerBase {
     public static final int NEUMANGATV = 41;
     public static final int MANGASHIRONET = 42;
     public static final int FANFOXNET = 43;
+    public static final int MANGADEX = 44;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
@@ -327,6 +329,9 @@ public abstract class ServerBase {
             case NEUMANGATV:
                 serverBase = new NeuMangaTv(context);
                 break;
+            case MANGADEX:
+                serverBase = new MangaDex(context);
+                break;
             case VERCOMICSCOM:
                 serverBase = new VerComicsCom(context);
                 break;
@@ -381,6 +386,7 @@ public abstract class ServerBase {
      */
     public static ServerBase[] getServers(Context context) {
         return (new ServerBase[]{
+                new MangaDex(context),
                 new TuMangaOnline(context),
                 new HeavenManga(context),
                 new EsNineManga(context),
@@ -856,6 +862,15 @@ public abstract class ServerBase {
     }
 
     /**
+     * Returns information the server needs a login.
+     *
+     * @return <code>true</code> has multi scanlators feature
+     */
+    public boolean supportMultiScans() {
+        return false;
+    }
+
+    /**
      * Returns information if credentials are present.
      * Should return <code>true</code> to disable querying credentials.
      *
@@ -875,6 +890,16 @@ public abstract class ServerBase {
     @SuppressWarnings("unused")
     public boolean testLogin(String user, String passwd) throws Exception {
         return false;
+    }
+
+
+    /**
+     * get extra preferences to configure the plugin
+     *
+     * @return null if if nothing there, Preference[x] otherwise
+     */
+    public Preference[] getCustomPreferences() {
+        return null;
     }
 
     /**
