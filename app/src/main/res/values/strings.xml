@@ -503,5 +503,28 @@
     <string name="vault_is_empty">Vault is empty.</string>
     <string name="run_test">Run server tests.</string>
     <string name="run_test_summary">Basic test over servers.</string>
+    <string name="flt_tag_gyaru">Gyaru</string>
+    <string name="flt_tag_long_strip">Long Strip</string>
+    <string name="flt_tag_isekai">Isekai</string>
+    <string name="flt_tag_adaptation">Adaptation</string>
+    <string name="flt_tag_full_color">Full Color</string>
+    <string name="flt_tag_user_created">User Created</string>
+    <string name="flt_tag_official_colored">Official Colored</string>
+    <string name="flt_tag_fan_colored">Fan Colored</string>
+    <string name="flt_tag_sexual_violence">Sexual Violence</string>
+    <string name="flt_tag_magical_girls">Magicals Girls</string>
+    <string name="flt_tag_philosophical">Philosophical</string>
+    <string name="flt_tag_wuxia">Wuxia</string>
+    <string name="flt_tag_aliens">Aliens</string>
+    <string name="flt_tag_animal">Animal</string>
+    <string name="flt_tag_crossdressing">Crossdressing</string>
+    <string name="flt_tag_delinquents">Delinquents</string>
+    <string name="flt_tag_ghost">Ghost</string>
+    <string name="flt_tag_monster_girls">Monster Girls</string>
+    <string name="flt_tag_monsters">Monsters</string>
+    <string name="flt_tag_ninja">Ninja</string>
+    <string name="flt_tag_office_workers">Office Workers</string>
+    <string name="flt_tag_traditional_games">Traditional Games</string>
+    <string name="flt_tag_incest">Incest</string>
 
 </resources>
