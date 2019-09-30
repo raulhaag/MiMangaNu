@@ -45,13 +45,15 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChange
     private LayoutInflater li;
     private ArrayList<Chapter> chapters;
     private boolean can_download;
+    private boolean multiScans;
 
-    public ChapterAdapter(MainActivity activity, ArrayList<Chapter> items, boolean can_download) {
+    public ChapterAdapter(MainActivity activity, ArrayList<Chapter> items, boolean can_download, boolean multiScans) {
         super(activity, listItem);
         this.activity = activity;
         this.chapters = items;
         this.can_download = can_download;
         li = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        this.multiScans = multiScans;
     }
 
     public static void setColor(boolean dark_theme, int colorSelected, int colorReading) {
@@ -123,7 +125,7 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChange
 
                 @Override
                 public void onClick(final View v) {
-                    Chapter c = (Chapter) v.getTag();
+                    final Chapter c = (Chapter) v.getTag();
                     if (c.isDownloaded()) {
                         item.freeSpace(getContext());
                         getItem(position).setDownloaded(false);
@@ -132,7 +134,24 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChange
                         notifyDataSetChanged();
                         // ((ImageView)v).setImageResource(R.drawable.ic_bajar);
                     } else {
-                        if (can_download) {
+                        if (multiScans && c.getPath().startsWith("0|")) {
+                            Util.getInstance().showMultiScanOptions(activity, c, new Util.CCallback() {
+                                @Override
+                                public void onEnd() {
+                                    if (can_download) {
+                                        try {
+                                            DownloadPoolService.addChapterDownloadPool(activity, c, false);
+                                            Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga), v, activity);
+                                        } catch (Exception e) {
+                                            Log.e("ChapterAdapter", Log.getStackTraceString(e));
+                                            if (e.getMessage() != null) { // what the fuck ~ xtj9182
+                                                Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga), v, activity);
+                                            }
+                                        }
+                                    }
+                                }
+                            });
+                        } else if (can_download) {
                             try {
                                 DownloadPoolService.addChapterDownloadPool(activity, c, false);
                                 Util.getInstance().showFastSnackBar(activity.getResources().getString(R.string.agregadodescarga), v, activity);
@@ -195,7 +214,6 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChange
         }
         notifyDataSetChanged();
     }
-
 
     @Override
     public int getCount() {

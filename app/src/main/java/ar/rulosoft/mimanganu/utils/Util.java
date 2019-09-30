@@ -6,6 +6,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -16,12 +17,14 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -44,6 +47,8 @@ import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.componentes.Chapter;
+import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.Headers;
 import okhttp3.MediaType;
@@ -709,5 +714,37 @@ public class Util {
     public boolean isGPServicesAvailable(Context context) {
         final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         return status == ConnectionResult.SUCCESS;
+    }
+
+    public void showMultiScanOptions(final Context activity, final Chapter c, final CCallback callback) {
+        AlertDialog.Builder builderSingle = new AlertDialog.Builder(activity);
+        builderSingle.setTitle("Select scanlator");
+        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(activity, android.R.layout.select_dialog_singlechoice);
+        final String[] scans = c.getPath().split("\\|");
+        for (int i = 1; i < scans.length - 1; i++) {
+            String[] info = scans[i].split("::");
+            arrayAdapter.add(info[1] + " (" + info[2] + ")");
+        }
+        builderSingle.setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        builderSingle.setAdapter(arrayAdapter, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String nPath = (which + 1) + "|" + c.getPath().substring(c.getPath().indexOf('|'));
+                c.setPath(nPath);
+                Database.updateChapter(activity, c);
+                callback.onEnd();
+            }
+        });
+        builderSingle.show();
+    }
+
+    public interface CCallback {
+        void onEnd();
     }
 }

@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -65,7 +64,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     private DeleteImages deleteImages = null;
     private MarkSelectedAsRead markSelectedAsRead = null;
     private MarkSelectedAsUnread markSelectedAsUnread = null;
-    private GetPagesTask getPagesTask = null;
     private ChapterAdapter mChapterAdapter;
     private SharedPreferences pm;
     private ImageLoader mImageLoader;
@@ -146,8 +144,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Chapter c = (Chapter) mListView.getAdapter().getItem(position);
-                    getPagesTask = new GetPagesTask();
-                    getPagesTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, c);
+                    int first = mListView.getFirstVisiblePosition();
+                    Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(MangaFragment.CHAPTER_ID, c.getId());
+                    ReaderFragment readerFragment = new ReaderFragment();
+                    readerFragment.setArguments(bundle);
+                    ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
                 }
             });
             mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
@@ -305,7 +308,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 mChapterAdapter.replaceData(chapters);
             } else {
                 if (mActivity != null)
-                    mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder));
+                    mChapterAdapter = new ChapterAdapter(mActivity, chapters, !(mServerBase instanceof FromFolder), mServerBase.supportMultiScans());
                 DownloadPoolService.setStateChangeListener(mChapterAdapter);
             }
             if (mListView != null) {
@@ -535,8 +538,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             markSelectedAsRead.cancel(true);
         if (markSelectedAsUnread != null)
             markSelectedAsUnread.cancel(true);
-        if (getPagesTask != null)
-            getPagesTask.cancel(true);
     }
 
     @Override
@@ -574,96 +575,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 }
             }
             return null;
-        }
-    }
-
-    private class GetPagesTask extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncProgressDialog = new ProgressDialog(getContext());
-        String error = "";
-
-        @Override
-        protected void onPreExecute() {
-            try {
-                asyncProgressDialog.setMessage(getResources().getString(R.string.iniciando));
-                asyncProgressDialog.show();
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-        }
-
-        @Override
-        protected Chapter doInBackground(Chapter... arg0) {
-            Chapter c = arg0[0];
-            ServerBase s = ServerBase.getServer(mManga.getServerId(), getContext());
-            try {
-                if (c.getPages() < 1) s.chapterInit(c);
-            } catch (Exception e) {
-                if (e.getMessage() != null) {
-                    error = e.getMessage();
-                } else {
-                    error = "NullPointerException";
-                }
-                Log.e(TAG, "ChapterInit error", e);
-            } finally {
-                publishProgress();
-            }
-            return c;
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-            try {
-                if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                    asyncProgressDialog.dismiss();
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Chapter result) {
-            if (isAdded()) {
-                if (!error.isEmpty()) {
-                    Util.getInstance().toast(getContext(), error);
-                } else {
-                    try {
-                        if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                            asyncProgressDialog.dismiss();
-                        }
-                        Database.updateChapter(getActivity(), result);
-                        DownloadPoolService.addChapterDownloadPool(getActivity(), result, true);
-                        int first = mListView.getFirstVisiblePosition();
-                        Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
-                        Bundle bundle = new Bundle();
-                        bundle.putInt(MangaFragment.CHAPTER_ID, result.getId());
-                        ReaderFragment readerFragment = new ReaderFragment();
-                        readerFragment.setArguments(bundle);
-                        ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
-                    } catch (Exception e) {
-                        Log.e(TAG, "Exception", e);
-                        if (e.getMessage() != null) {
-                            error = e.getMessage();
-                        } else {
-                            error = "NullPointerException";
-                        }
-                        Util.getInstance().toast(getContext(), error);
-                    }
-                }
-            }
-            super.onPostExecute(result);
-        }
-
-        @Override
-        protected void onCancelled() {
-            try {
-                if ((asyncProgressDialog != null) && isAdded() && asyncProgressDialog.isShowing()) {
-                    asyncProgressDialog.dismiss();
-                }
-            } catch (Exception e) {
-                Log.e(TAG, "Exception", e);
-            }
         }
     }
 
@@ -1212,7 +1123,6 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                     Log.e(TAG, "After sleep failure", e);
                 }
             }
-
             return null;
         }
 

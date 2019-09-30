@@ -326,7 +326,7 @@ public class MangaDex extends ServerBase {
                 String gn = cChapter.getString("group_name");
                 String title = cChapter.getString("title");
                 if (chapters.containsKey(cn)) {
-                    if (!chapters.get(cn).contains(id + "::")) {
+                    if (!chapters.get(cn).contains(idc + "::")) {
                         chapters.put(cn,
                                 chapters.get(cn) + "|" + idc + "::" + gn + "::" + lc + "::" + title);
                         changes.add(cn);
@@ -341,7 +341,7 @@ public class MangaDex extends ServerBase {
             for (String sid : changes) {
                 if (chaptersFull.containsKey(sid)) {
                     Chapter tup = chaptersFull.get(sid);
-                    tup.setPath(chapters.get(sid) + "|" + sid);
+                    tup.setPath(chapters.get(sid).replace("|" + sid, "") + "|" + sid);
                     Database.updateChapter(context, tup);
                 } else {
                     Database.addChapter(context, new Chapter(cs + sid, chapters.get(sid) + "|" + sid), mangaDb.getId());
@@ -408,5 +408,10 @@ public class MangaDex extends ServerBase {
                 }
             }
         }
+    }
+
+    @Override
+    public boolean needRefererForImages() {
+        return false;
     }
 }
