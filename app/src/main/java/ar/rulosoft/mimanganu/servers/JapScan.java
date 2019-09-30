@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.navegadores.Navigator;
 
 import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
@@ -23,7 +24,7 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
  */
 class JapScan extends ServerBase {
 
-    private static final String HOST = "https://www.japscan.to";
+    private static final String HOST = "https://www.japscan.co";
 
     JapScan(Context context) {
         super(context);
@@ -32,6 +33,9 @@ class JapScan extends ServerBase {
         setServerName("JapScan");
         setServerID(JAPSCAN);
     }
+
+    private String[] letterFilter = new String[]{"All", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
 
     @Override
     public boolean hasList() {
@@ -133,8 +137,20 @@ class JapScan extends ServerBase {
 
     @Override
     public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + pageNumber);
+        String extra = "";
+        if (filters[0][0] != 0) {
+            extra = letterFilter[filters[0][0]] + "/";
+        }
+        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + extra + pageNumber);
         return getMangasFromSource(source);
+    }
+
+
+    @Override
+    public ServerFilter[] getServerFilters() {
+        return new ServerFilter[]{
+                new ServerFilter(context.getString(R.string.flt_alpha), letterFilter, ServerFilter.FilterType.SINGLE),
+        };
     }
 
     @Override

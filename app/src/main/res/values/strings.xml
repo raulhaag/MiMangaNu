@@ -503,5 +503,6 @@
     <string name="vault_is_empty">Vault is empty.</string>
     <string name="run_test">Run server tests.</string>
     <string name="run_test_summary">Basic test over servers.</string>
+    <string name="flt_alpha">Alphabet filter</string>
 
 </resources>
