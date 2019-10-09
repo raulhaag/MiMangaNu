@@ -157,4 +157,9 @@ class JapScan extends ServerBase {
     public boolean needRefererForImages() {
         return false;
     }
+
+    @Override
+    public boolean hasSearch() {
+        return false;
+    }
 }
