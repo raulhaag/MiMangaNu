@@ -49,6 +49,13 @@ Downloads
 
 Changelog
 ---------
+
+Cambios en v1.110:
+* Arreglo de servidores.
+
+Changes in v1.110:
+* Server fixes.
+
 Cambios en v1.109:
 * Agregado filtros de 3 estados a los servers que lo soportan.
 * Varios fixs y un par de mejoras.

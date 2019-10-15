@@ -23,6 +23,10 @@ public class CookieFilter extends PersistentCookieJar {
     public synchronized List<Cookie> loadForRequest(HttpUrl url) {
         if (url.toString().matches(".+?senmanga.com/viewer.+")) {
             return new ArrayList<>();
+        } else if (url.toString().contains("neumanga.tv")) {
+            List<Cookie> oc = super.loadForRequest(url);
+            oc.add(Cookie.parse(url, "age_confirmed=1"));
+            return oc;
         } else {
             return super.loadForRequest(url);
         }

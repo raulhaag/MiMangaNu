@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.109:\n\t* Agregado filtros de 3 estados a los servers que lo soportan.\n\t* Varios fixs y un par de mejoras.</string>
+    <string name="update_message">Cambios en v1.110:\n\t* Arroglo de servidores.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

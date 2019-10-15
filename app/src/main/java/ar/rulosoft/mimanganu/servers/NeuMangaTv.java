@@ -115,9 +115,13 @@ public class NeuMangaTv extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Cookie", "age_confirmed=1");
         String data = nav.get(HOST + chapter.getPath());
-        chapter.setPages(Integer.parseInt(getFirstMatch(PATTERN_CHAPTER_PAGES, data, "can't init pages")));
+        String np = getFirstMatchDefault(PATTERN_CHAPTER_PAGES, data, null);
+        if (np == null) {
+            nav.get(HOST + chapter.getPath() + "?to=001&cid=#/yes_i_am");//request cookie
+            np = getFirstMatch(PATTERN_CHAPTER_PAGES, data, "can't init pages");
+        }
+        chapter.setPages(Integer.parseInt(np));
     }
 
     @Override
