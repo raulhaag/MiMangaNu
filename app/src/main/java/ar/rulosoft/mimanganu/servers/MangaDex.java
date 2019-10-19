@@ -67,7 +67,6 @@ public class MangaDex extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        //https://mangadex.org/search?tag_mode_exc=any&tag_mode_inc=all&tags=-30%2C-37%2C9&s=3#listing
         String tags = "";
         for (int i = 0; i < filters[0].length; i++) {
             if (filters[0][i] == -1) {
@@ -128,6 +127,7 @@ public class MangaDex extends ServerBase {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
             Set<String> lang = prefs.getStringSet(getServerName() + "_langs", null);
             HashMap<String, String> dictionary = new HashMap<>();
+            ArrayList<String> orderedIds = new ArrayList<>();// just because dictionary ids are not ordered as needed
             JSONObject chapters = full.getJSONObject("chapter");
             Iterator<String> ids = chapters.keys();
             boolean filterLangs = false;
@@ -146,17 +146,18 @@ public class MangaDex extends ServerBase {
                 String cn = cChapter.getString("chapter");
                 String gn = cChapter.getString("group_name");
                 String title = cChapter.getString("title");
+
                 if (dictionary.containsKey(cn)) {
                     dictionary.put(cn,
                             dictionary.get(cn) + "|" + id + "::" + gn + "::" + lc + "::" + title);
                 } else {
+                    orderedIds.add(cn);
                     dictionary.put(cn, "0" + "|" + id + "::" + gn + "::" + lc + "::" + title);
                 }
             }
-            Set<String> dKeys = dictionary.keySet();
             String cs = context.getString(R.string.chapter) + " ";
-            for (String key : dKeys) {
-                manga.addChapterFirst(new Chapter(cs + key, dictionary.get(key) + "|" + key));
+            for (String key : orderedIds) {
+                manga.addChapterLast(new Chapter(cs + key, dictionary.get(key) + "|" + key));
             }
         }
     }
