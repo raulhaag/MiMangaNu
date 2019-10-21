@@ -56,7 +56,7 @@ import static ar.rulosoft.mimanganu.utils.Util.bytesToHex;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnClickListener, MainActivity.OnBackListener {
+public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnLongClickListener, View.OnClickListener, MainActivity.OnBackListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -119,6 +119,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         if (getView() != null) {
             floatingActionButton_add = getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
+            floatingActionButton_add.setOnLongClickListener(this);
         }
     }
 
@@ -202,6 +203,13 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     public void onClick(View v) {
         ((MainActivity) getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
                 "SERVER_SELECT", R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
+    }
+
+
+    @Override
+    public boolean onLongClick(View v) {
+        openVault();
+        return true;
     }
 
     @Override
@@ -366,44 +374,49 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             case R.id.open_vault: {
-                if (currentVault.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle(R.string.open_vault);
-                    final EditText input = new EditText(getContext());
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    builder.setView(input);
-                    builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String p = input.getText().toString();
-                            if (!p.isEmpty()) {
-                                try {
-                                    item.setTitle(R.string.close_vault);
-                                    currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
-                                    setListManga(true);
-                                } catch (NoSuchAlgorithmException e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                Util.getInstance().toast(getContext(), getString(R.string.empty_string));
-                            }
-                        }
-                    });
-                    builder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                } else {
-                    item.setTitle(R.string.open_vault);
-                    currentVault = "";
-                    setListManga(true);
-                }
+                openVault();
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void openVault(){
+        if (currentVault.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.open_vault);
+            final EditText input = new EditText(getContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String p = input.getText().toString();
+                    if (!p.isEmpty()) {
+                        try {
+                          /*  item.setTitle(R.string.close_vault);/*/
+                            currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
+                            setListManga(true);
+                            getActivity().invalidateOptionsMenu();
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Util.getInstance().toast(getContext(), getString(R.string.empty_string));
+                    }
+                }
+            });
+            builder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+        } else {
+            currentVault = "";
+            setListManga(true);
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
     public void setListManga(boolean force) {
@@ -620,6 +633,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             return true;
         }
     }
+
 
     class UpdateListTask extends AutomaticUpdateTask {
         private Context context;
