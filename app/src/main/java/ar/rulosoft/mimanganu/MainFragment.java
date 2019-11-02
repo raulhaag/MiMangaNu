@@ -380,7 +380,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         return super.onOptionsItemSelected(item);
     }
 
-    public void openVault(){
+    public void openVault() {
         if (currentVault.isEmpty()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setTitle(R.string.open_vault);
@@ -393,7 +393,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                     String p = input.getText().toString();
                     if (!p.isEmpty()) {
                         try {
-                          /*  item.setTitle(R.string.close_vault);/*/
+                            /*  item.setTitle(R.string.close_vault);/*/
                             currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
                             setListManga(true);
                             getActivity().invalidateOptionsMenu();
@@ -463,38 +463,16 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
             int value = PreferenceManager.getDefaultSharedPreferences(
                     getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
-            if (currentVault.isEmpty()) {
-                switch (value) {
-                    case MODE_SHOW_ALL:
-                        mangaList = Database.getMangas(getContext(), sort_by, sort_ord);
-                        break;
-                    case MODE_HIDE_READ:
-                        mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                                "SELECT manga_id " +
-                                "FROM capitulos " +
-                                "WHERE estado != 1 AND vault = '' GROUP BY manga_id)", sort_by, sort_ord);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                switch (value) {
-                    case MODE_SHOW_ALL:
-                        mangaList = Database.getMangasVault(getContext(), currentVault, sort_by, sort_ord);
-                        if (mangaList.isEmpty()) {
-                            Util.getInstance().toast(getContext(), getContext().getString(R.string.vault_is_empty));
-                        }
-                        break;
-                    case MODE_HIDE_READ:
-                        mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                                "SELECT manga_id " +
-                                "FROM capitulos " +
-                                "WHERE estado != 1 AND vault = '" + currentVault + "' GROUP BY manga_id)", sort_by, sort_ord);
-                        break;
-                    default:
-                        break;
-                }
+            String extra = "";
+            if (value == MODE_HIDE_READ) {
+                extra = "estado != 1 AND";
             }
+
+            mangaList = Database.getMangasCondition(getContext(), "id IN (" +
+                    "SELECT manga_id " +
+                    "FROM capitulos " +
+                    "WHERE " + extra + " vault = '" + currentVault + "')", sort_by, sort_ord);
+
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
                 mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
                 mMAdapter.setMangaClickListener(MainFragment.this);
