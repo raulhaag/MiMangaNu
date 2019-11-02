@@ -30,7 +30,7 @@ class NineManga extends ServerBase {
     private static final String PATTERN_GENRE =
             "<li itemprop=\"genre\".+?</b>(.+?)</a>[^<]*</li>";
     private static final String PATTERN_CHAPTER =
-            "<a class=\"chapter_list_a\" href=\".*?(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
+            "<a class=\"chapter_list_a\" href=\".*?(\\/chapter[^<\"]+)\" title=\"([^\"]+)\"[^>]*>([^<]+)</a>";
     private static final String PATTERN_PAGES =
             "\\d+/(\\d+)</option>[\\s]*</select>";
     private static final int[] fltCategory = {
