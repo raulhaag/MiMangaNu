@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.110:\n\t* Arroglo de servidores.</string>
+    <string name="update_message">Cambios en v1.111:\n\t* Agregado manejo de cuenta para mangaEden.\n\t* Fix tmo.\n\t* Fix lag en ocultar leidos.\n\t* Fix EsNineManga.\n\t* Agregado mantener presionado (+) para abrir boveda.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

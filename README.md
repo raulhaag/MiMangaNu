@@ -49,6 +49,19 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.111:
+* Agregado manejo de cuenta para mangaEden.
+* Fix tmo.
+* Fix lag en ocultar leidos.
+* Fix EsNineManga.
+* Agregado mantener presionado (+) para abrir boveda.
+
+Changes in v1.111:
+* Added support for MangaEden accounts.
+* Fix tmo.
+* Fix lag on hide already read.
+* Fix EsNineManga.
+* Added long press on (+) to open vault.
 
 Cambios en v1.110:
 * Arreglo de servidores.
