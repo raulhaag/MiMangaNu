@@ -89,7 +89,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         for (final ServerBase sb : servers) {
             if (sb.needLogin()) {
                 isThereAnyServerUsingAccount = true;
-                SwitchPreferenceCompat preference = new SwitchPreferenceCompat(getContext());
+                Preference preference = new Preference(getContext());
                 preference.setTitle(sb.getServerName());
                 preference.setSelectable(true);
                 preference.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
