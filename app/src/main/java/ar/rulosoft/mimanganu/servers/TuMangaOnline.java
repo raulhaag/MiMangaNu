@@ -3,7 +3,7 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.squareup.duktape.Duktape;
+import org.json.JSONArray;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -139,21 +139,25 @@ class TuMangaOnline extends ServerBase {
     @Override
     public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            if (script == null) {
+            /*if (script == null) {
                 script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + ".js");
-            }
+            }/*/
             String web = getNavWithNeededHeaders().getRedirectWeb(HOST + "/goto/" + chapter.getPath());
-            String data = getNavWithNeededHeaders().get(web.replaceAll("/[^/]+$", "/cascade"));
-            String images = "";
-            try (Duktape duktape = Duktape.create()) {
-                duktape.evaluate(script);
-                JSIn chapterInit = duktape.get("chapterInit", JSIn.class);
-                images = web + chapterInit.call(true, data);
-            } catch (Exception e) {
-                throw new Exception(context.getString(R.string.error));
+            String id = web.split("\\/")[4];
+            String token = getNavWithNeededHeaders().get(HOST + "/viewer/" + id + "/cascade");
+            String imgBase = "https://img1.tmofans.com/uploads/" + id + "/";
+            token = getFirstMatch("<meta name=\"csrf-token\" content=\"([^\"]+)\">", token, "Error");
+            Navigator nav = getNavWithNeededHeaders();
+            nav.addHeader("Referer", HOST + "/viewer/" + id + "/cascade");
+            nav.addHeader("X-CSRF-TOKEN", token);
+            nav.addHeader("X-Requested-With", "XMLHttpRequest");
+            JSONArray images = new JSONArray(nav.post(HOST + "/upload_images/" + id + "/all"));
+            StringBuilder sb = new StringBuilder(HOST).append("/viewer/").append(id).append("/cascade");
+            for (int i = 0; i < images.length(); i++) {
+                sb.append("|").append(imgBase).append(images.get(i));
             }
-            chapter.setPages(images.split("\\|").length - 1);
-            chapter.setExtra(images);
+            chapter.setExtra(sb.toString());
+            chapter.setPages(images.length());
         }
     }
 
@@ -197,13 +201,13 @@ class TuMangaOnline extends ServerBase {
             String gens = "";
             //include
             for (int i = 0; i < filters[2].length; i++) {
-                if(filters[2][i] == 1) {
+                if (filters[2][i] == 1) {
                     gens = gens + "&genders%5B%5D=" + genresValues[i];
                 }
             }
             //exclude
             for (int i = 0; i < filters[2].length; i++) {
-                if(filters[2][i] == -1) {
+                if (filters[2][i] == -1) {
                     gens = gens + "&exclude_genders%5B%5D=" + genresValues[i];
                 }
             }
