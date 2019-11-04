@@ -463,15 +463,12 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
             int value = PreferenceManager.getDefaultSharedPreferences(
                     getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
-            String extra = "";
+            String showUnreadOnly = "";
             if (value == MODE_HIDE_READ) {
-                extra = "estado != 1 AND";
+                showUnreadOnly = "AND id IN (SELECT manga_id FROM capitulos WHERE estado != 1 GROUP BY manga_id)";
             }
 
-            mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                    "SELECT manga_id " +
-                    "FROM capitulos " +
-                    "WHERE " + extra + " vault = '" + currentVault + "')", sort_by, sort_ord);
+            mangaList = Database.getMangasCondition(getContext(), " vault = '" + currentVault + "'" + showUnreadOnly, sort_by, sort_ord);
 
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
                 mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
