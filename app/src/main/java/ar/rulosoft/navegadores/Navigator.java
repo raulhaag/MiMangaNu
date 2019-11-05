@@ -60,6 +60,7 @@ public class Navigator {
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
     private Context context;
+    private NavigatorJsInterface navigatorJs;
 
     private Navigator(Context context) throws Exception {
         this.context = context;
@@ -76,6 +77,67 @@ public class Navigator {
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             initClient(cookieJar, context);
         }
+        navigatorJs = new NavigatorJsInterface() {
+            @Override
+            public String getRedirectWeb(String web, String headers) {
+                try {
+                    Navigator nav = getInstance();
+                    nav.flushParameter();
+                    if (!headers.trim().isEmpty()) {
+                        String[] headers_ = headers.trim().split("\\|");
+                        for (int i = 0; i < headers_.length; i = i + 2) {
+                            nav.addHeader(headers_[i], headers_[i + 1]);
+                        }
+                    }
+                    return nav.getRedirectWeb(web);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+            }
+
+            @Override
+            public String get(String web, String headers) {
+                try {
+                    Navigator nav = getInstance();
+                    nav.flushParameter();
+                    if (!headers.trim().isEmpty()) {
+                        String[] headers_ = headers.trim().split("\\|");
+                        for (int i = 0; i < headers_.length; i = i + 2) {
+                            nav.addHeader(headers_[i], headers_[i + 1]);
+                        }
+                    }
+                    return nav.get(web);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return "error" + e.getMessage();
+                }
+            }
+
+            @Override
+            public String post(String web, String headers, String params) {
+                try {
+                    Navigator nav = getInstance();
+                    nav.flushParameter();
+                    if (!headers.trim().isEmpty()) {
+
+                        String[] headers_ = headers.trim().split("\\|");
+                        for (int i = 0; i < headers_.length; i = i + 2) {
+                            nav.addHeader(headers_[i], headers_[i + 1]);
+                        }
+                    }
+
+                    if (!params.trim().isEmpty()) {
+                        String[] post_ = params.trim().split("\\|");
+                        for (int i = 0; i < post_.length; i = i + 2) {
+                            nav.addPost(post_[i], post_[i + 1]);
+                        }
+                    }
+                    return nav.post(web);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+            }
+        };
     }
 
     public static Navigator getInstance() {
@@ -106,6 +168,10 @@ public class Navigator {
 
     public static CookieJar getCookieJar() {
         return cookieJar;
+    }
+
+    public NavigatorJsInterface getNavigatorJs() {
+        return navigatorJs;
     }
 
     private void initClient(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
@@ -476,5 +542,14 @@ public class Navigator {
 
     public Context getContext() {
         return context;
+    }
+
+
+    public interface NavigatorJsInterface {
+        String getRedirectWeb(String web, String headers);
+
+        String get(String web, String headers);
+
+        String post(String web, String headers, String params);
     }
 }

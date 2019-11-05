@@ -3,7 +3,7 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 import android.text.TextUtils;
 
-import org.json.JSONArray;
+import com.squareup.duktape.Duktape;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -139,25 +139,23 @@ class TuMangaOnline extends ServerBase {
     @Override
     public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            /*if (script == null) {
+            if (script == null) {
                 script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + ".js");
-            }/*/
-            String web = getNavWithNeededHeaders().getRedirectWeb(HOST + "/goto/" + chapter.getPath());
-            String id = web.split("\\/")[4];
-            String token = getNavWithNeededHeaders().get(HOST + "/viewer/" + id + "/cascade");
-            String imgBase = "https://img1.tmofans.com/uploads/" + id + "/";
-            token = getFirstMatch("<meta name=\"csrf-token\" content=\"([^\"]+)\">", token, "Error");
-            Navigator nav = getNavWithNeededHeaders();
-            nav.addHeader("Referer", HOST + "/viewer/" + id + "/cascade");
-            nav.addHeader("X-CSRF-TOKEN", token);
-            nav.addHeader("X-Requested-With", "XMLHttpRequest");
-            JSONArray images = new JSONArray(nav.post(HOST + "/upload_images/" + id + "/all"));
-            StringBuilder sb = new StringBuilder(HOST).append("/viewer/").append(id).append("/cascade");
-            for (int i = 0; i < images.length(); i++) {
-                sb.append("|").append(imgBase).append(images.get(i));
             }
-            chapter.setExtra(sb.toString());
-            chapter.setPages(images.length());
+            String images = "";
+            try (Duktape duktape = Duktape.create()) {
+                duktape.set("nav", Navigator.NavigatorJsInterface.class, Navigator.getInstance().getNavigatorJs());
+                duktape.evaluate(script);
+                JSIn chapterInit = duktape.get("chapterInit", JSIn.class);
+                images = chapterInit.call(true, HOST + "/goto/" + chapter.getPath());
+                if (images.trim().isEmpty()) {
+                    throw new Exception("error in mmn js plugin");
+                }
+            } catch (Exception e) {
+                throw new Exception(context.getString(R.string.error));
+            }
+            chapter.setPages(images.split("\\|").length - 1);
+            chapter.setExtra(images);
         }
     }
 
