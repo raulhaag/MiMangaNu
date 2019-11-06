@@ -16,7 +16,6 @@ function chapterInit(data) {
 	}
 	headers = "Referer|https://tmofans.com/viewer/" + id + "/cascade";
 	headers = headers + "|X-CSRF-TOKEN|" + t[1];
-	headers = headers + "|X-Requested-With|XMLHttpRequest";
 	imgweb = "https://tmofans.com/upload_images/" + id + "/" + e[2] +"/all";
 	imgs = nav.post(imgweb, headers, '');
 	rImg = /"([^"^,^\]]+)/gm;
