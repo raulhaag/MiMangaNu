@@ -49,6 +49,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.112:
+* Fix TMO.
+
+Changes in v1.112:
+* Fix TMO.
+
 Cambios en v1.111:
 * Agregado manejo de cuenta para mangaEden.
 * Fix tmo.

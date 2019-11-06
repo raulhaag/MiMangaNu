@@ -149,9 +149,10 @@ class TuMangaOnline extends ServerBase {
                 JSIn chapterInit = duktape.get("chapterInit", JSIn.class);
                 images = chapterInit.call(true, HOST + "/goto/" + chapter.getPath());
                 if (images.trim().isEmpty()) {
-                    throw new Exception("error in mmn js plugin");
+                    throw new Exception("error in tmo js plugin");
                 }
             } catch (Exception e) {
+                e.printStackTrace();
                 throw new Exception(context.getString(R.string.error));
             }
             chapter.setPages(images.split("\\|").length - 1);
