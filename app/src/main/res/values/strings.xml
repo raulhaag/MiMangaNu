@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.112:\n\t*Fix TMO.</string>
+    <string name="update_message">Changes in v1.113:\n\t* fix tmo\n\t* fix mangaeden, mangapanda, readmangatoday and taad search on low api devices.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

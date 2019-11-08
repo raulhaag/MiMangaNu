@@ -49,6 +49,13 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.113:
+* Fix tmo
+* Fix la búsqueda en mangaeden, mangapanda, readmangatoday y taad para dispositivos para un api vieja.
+
+Changes in v1.113:
+* Fix tmo
+* Fix mangaeden, mangapanda, readmangatoday and taad search on low api devices.
 Cambios en v1.112:
 * Fix TMO.
 
