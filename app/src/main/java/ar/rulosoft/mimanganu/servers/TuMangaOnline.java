@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
+import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.navegadores.Navigator;
@@ -22,7 +23,6 @@ import ar.rulosoft.navegadores.Navigator;
 class TuMangaOnline extends ServerBase {
 
     private static final String HOST = "https://tmofans.com";
-
     public static String script = null;
 
     public static String[] type = new String[]{
@@ -114,14 +114,14 @@ class TuMangaOnline extends ServerBase {
             manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">([^<]+)<", data)));
             manga.setAuthor(getFirstMatchDefault(">([^<]+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
 
-            Pattern pattern = Pattern.compile("<div class=\"col-10 text-truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
+            Pattern pattern = Pattern.compile("goToId\\('([^']+)[\\s\\S]+?<div class=\"col-10 text-truncate\"[\\s\\S]+?(<.+?<\\/a>)");
             Matcher matcher = pattern.matcher(data);
 
             while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), matcher.group(2)));
+                manga.addChapterFirst(new Chapter(matcher.group(2).replaceAll("<[\\s\\S]+?>", "").trim(), matcher.group(1)));
             }
-            if (manga.getChapters().size() == 0) {
-                pattern = Pattern.compile("truncate\">([\\s\\S]+?)</div>[\\s\\S]+?goto/(.+?)\"");
+            if (manga.getChapters().size() == 0) { // find one shot
+                pattern = Pattern.compile("<div class=\"col-4 col-md-6 text-truncate\">([^\\']+)<\\/span>[\\s\\S]+?goToId\\('([^']+)[\\s\\S]");
                 matcher = pattern.matcher(data);
                 while (matcher.find()) {
                     manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), matcher.group(2)));
@@ -139,15 +139,19 @@ class TuMangaOnline extends ServerBase {
     @Override
     public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
+            Manga m = Database.getManga(context, chapter.getMangaID());
             if (script == null) {
-                script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + ".js");
+                script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_1.js");
             }
+
             String images = "";
             try (Duktape duktape = Duktape.create()) {
                 duktape.set("nav", Navigator.NavigatorJsInterface.class, Navigator.getInstance().getNavigatorJs());
                 duktape.evaluate(script);
                 JSIn chapterInit = duktape.get("chapterInit", JSIn.class);
-                images = chapterInit.call(true, HOST + "/goto/" + chapter.getPath());
+                images = chapterInit.call(true, HOST + "/goto/" + chapter.getPath(),
+                        String.format(HOST + "/library/manga/%s/%s", m.getPath(),
+                                URLEncoder.encode(m.getTitle(), "UTF-8").replaceAll("\\.", "")));
                 if (images.trim().isEmpty()) {
                     throw new Exception("error in tmo js plugin");
                 }
@@ -157,6 +161,7 @@ class TuMangaOnline extends ServerBase {
             }
             chapter.setPages(images.split("\\|").length - 1);
             chapter.setExtra(images);
+
         }
     }
 
@@ -286,7 +291,12 @@ class TuMangaOnline extends ServerBase {
     }
 
     interface JSIn {
-        String call(boolean b, String data);
+        String call(boolean b, String data, String mw);
+    }
+
+
+    interface CLog {
+        void log(String a);
     }
 
     @Override

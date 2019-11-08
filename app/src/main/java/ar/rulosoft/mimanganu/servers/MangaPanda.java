@@ -3,6 +3,7 @@ package ar.rulosoft.mimanganu.servers;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,7 +11,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaPanda extends ServerBase {
     private String HOST = "http://www.mangapanda.com";
@@ -142,7 +142,7 @@ class MangaPanda extends ServerBase {
         while (m.find()) {
             mangas.add(new Manga(getServerID(), m.group(1), HOST + m.group(2), false));
         }
-        mangas.sort(Manga.Comparators.TITLE_ASC);
+        Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 

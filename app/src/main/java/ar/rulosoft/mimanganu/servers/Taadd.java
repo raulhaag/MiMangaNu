@@ -4,6 +4,7 @@ import android.content.Context;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -175,7 +176,7 @@ class Taadd extends ServerBase {
         term = URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8");
         String source = getNavigatorAndFlushParameters().get("http://my.taadd.com/search/es/?wd=" + term);
         ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
-        mangas.sort(Manga.Comparators.TITLE_ASC);
+        Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 

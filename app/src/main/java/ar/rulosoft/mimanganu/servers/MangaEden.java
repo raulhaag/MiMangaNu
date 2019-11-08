@@ -8,6 +8,7 @@ import android.text.TextUtils;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -174,7 +175,7 @@ class MangaEden extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         String source = getNavigatorAndFlushParameters().get(HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?title=" + URLEncoder.encode(term, "UTF-8") + "&author=&artist=&releasedType=0&released=");
         ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
-        mangas.sort(Manga.Comparators.TITLE_ASC);
+        Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 

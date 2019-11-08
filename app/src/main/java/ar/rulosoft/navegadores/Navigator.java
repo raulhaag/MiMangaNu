@@ -40,6 +40,7 @@ import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -56,7 +57,7 @@ public class Navigator {
     public static int connectionRetry = 10;
     private static CookieJar cookieJar;
     private static Navigator instance;
-    private OkHttpClient httpClient;
+    public OkHttpClient httpClient;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
     private Context context;
@@ -119,13 +120,11 @@ public class Navigator {
                     Navigator nav = getInstance();
                     nav.flushParameter();
                     if (!headers.trim().isEmpty()) {
-
                         String[] headers_ = headers.trim().split("\\|");
                         for (int i = 0; i < headers_.length; i = i + 2) {
                             nav.addHeader(headers_[i], headers_[i + 1]);
                         }
                     }
-
                     if (!params.trim().isEmpty()) {
                         String[] post_ = params.trim().split("\\|");
                         for (int i = 0; i < post_.length; i = i + 2) {
@@ -133,6 +132,24 @@ public class Navigator {
                         }
                     }
                     return nav.post(web);
+                } catch (Exception e) {
+                    return e.getMessage();
+                }
+            }
+
+            @Override
+            public String postM(String web, String headers, String params) {
+                Navigator nav = getInstance();
+                nav.flushParameter();
+                if (!headers.trim().isEmpty()) {
+                    String[] headers_ = headers.trim().split("\\|");
+                    for (int i = 0; i < headers_.length; i = i + 2) {
+                        nav.addHeader(headers_[i], headers_[i + 1]);
+                    }
+                }
+                RequestBody body = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded; charset=UTF-8"), params);
+                try {
+                    return nav.post(web, body);
                 } catch (Exception e) {
                     return e.getMessage();
                 }
@@ -551,5 +568,7 @@ public class Navigator {
         String get(String web, String headers);
 
         String post(String web, String headers, String params);
+
+        String postM(String web, String headers, String params);
     }
 }

@@ -31,6 +31,7 @@ import java.lang.reflect.Field;
 
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.CustomExceptionHandler;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -82,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        CustomExceptionHandler.Attach(this);
     }
 
     @Override
