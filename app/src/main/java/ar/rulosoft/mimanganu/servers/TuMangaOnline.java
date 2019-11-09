@@ -114,11 +114,11 @@ class TuMangaOnline extends ServerBase {
             manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">([^<]+)<", data)));
             manga.setAuthor(getFirstMatchDefault(">([^<]+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
 
-            Pattern pattern = Pattern.compile("goToId\\('([^']+)[\\s\\S]+?<div class=\"col-10 text-truncate\"[\\s\\S]+?(<.+?<\\/a>)");
+            Pattern pattern = Pattern.compile("<div class=\"col-10 text-truncate\"[\\s\\S]+?(<.+?<\\/a>)[\\s\\S]+?goToId\\('([^']+)");
             Matcher matcher = pattern.matcher(data);
 
             while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(2).replaceAll("<[\\s\\S]+?>", "").trim(), matcher.group(1)));
+                manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", "").trim(), matcher.group(2)));
             }
             if (manga.getChapters().size() == 0) { // find one shot
                 pattern = Pattern.compile("<div class=\"col-4 col-md-6 text-truncate\">([^\\']+)<\\/span>[\\s\\S]+?goToId\\('([^']+)[\\s\\S]");
