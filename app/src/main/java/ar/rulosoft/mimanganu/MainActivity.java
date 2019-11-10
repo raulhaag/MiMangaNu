@@ -84,12 +84,6 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         CustomExceptionHandler.Attach(this);
-        if (getIntent() != null) {
-            int t;
-            if (-1 != (t = getIntent().getIntExtra("manga_id", -1))) {
-                onNewIntent(getIntent());
-            }
-        }
     }
 
     @Override
@@ -102,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
-            replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
+            replaceFragmentNoBackStack(mangaFragment);
             if (Util.n > 0)
                 Util.n--;
             //Util.getInstance().toast(this, "n: " + Util.n, 1);
@@ -226,6 +220,12 @@ public class MainActivity extends AppCompatActivity {
         }
         colors = ThemeColors.getColors(pm);
         setColorToBars();
+        if (getIntent() != null) {
+            int t;
+            if (-1 != (t = getIntent().getIntExtra("manga_id", -1))) {
+                onNewIntent(getIntent());
+            }
+        }
     }
 
     public void setColorToBars() {
@@ -264,6 +264,22 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().setCustomAnimations(
                 R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
         ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
+        getSupportFragmentManager().executePendingTransactions();
+        //System.gc();
+        checkFragmentOptions(fragment);
+    }
+
+    public void replaceFragmentNoBackStack(Fragment fragment) {
+        // introduced in support lib v25.1.0
+        // setAllowOptimization(false)
+        // fA -> fB
+        // fA.onStop -> fB.onStart
+        // setAllowOptimization(true) (new default)
+        // fA -> fB
+        // fB.onStart -> fA.onStop
+        getSupportFragmentManager().beginTransaction().setCustomAnimations(
+                R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
+        ).replace(R.id.coordinator_layout, fragment).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         //System.gc();
         checkFragmentOptions(fragment);

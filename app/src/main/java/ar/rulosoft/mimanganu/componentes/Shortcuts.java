@@ -35,7 +35,7 @@ public class Shortcuts {
                 if (bm == null) {
                     icon = Icon.createWithResource(ctx, R.drawable.noimage);
                 } else {
-                    icon = Icon.createWithAdaptiveBitmap(bm);
+                    icon = Icon.createWithBitmap(bm);
                 }
                 Intent i = new Intent(ctx, MainActivity.class);
                 i.putExtra("manga_id", m.getId());
