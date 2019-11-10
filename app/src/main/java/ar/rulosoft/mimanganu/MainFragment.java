@@ -125,9 +125,10 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
 
     @Override
     public void onPause() {
-        super.onPause();
         if (swipeReLayout != null)
             swipeReLayout.clearAnimation();
+        super.onPause();
+
     }
 
     @Override

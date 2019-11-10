@@ -43,6 +43,7 @@ import ar.rulosoft.mimanganu.componentes.ControlInfoNoScroll;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ReaderOptions;
+import ar.rulosoft.mimanganu.componentes.Shortcuts;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
@@ -263,6 +264,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             loadInfo(mManga);
             chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
             hide_read = pm.getBoolean(CHAPTERS_HIDE_READ, false);
+            Shortcuts.addShortCuts(mManga, getActivity());
         }
     }
 

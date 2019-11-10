@@ -84,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         CustomExceptionHandler.Attach(this);
+        if (getIntent() != null) {
+            int t;
+            if (-1 != (t = getIntent().getIntExtra("manga_id", -1))) {
+                onNewIntent(getIntent());
+            }
+        }
     }
 
     @Override
