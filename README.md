@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.115:
+* Fix error en Android 7.0.1 .. 7.1.1
+* Mejorado el sistema de shortcuts.
+
+Changes in v1.115:
+* Fix error on Android 7.0.1 .. 7.1.1
+* Improved the shortcuts system.
+
 Cambios en v1.114:
 * Fix tmo
 * Agregado acceso directos dinámicos en android 7.1 o superior en los lanzadores que los soportan.

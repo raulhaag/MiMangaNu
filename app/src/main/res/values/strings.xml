@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.114:\n\t* Fix tmo.\n\t* Added shortcuts to last mangas for android 7.1 or newest in launchers that support this feature.</string>
+    <string name="update_message">Changes in v1.115:\n\t* Fix error on Android 7.0.1 .. 7.1.1.\n\t* Improved the shortcuts system.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
