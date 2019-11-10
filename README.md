@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.114:
+* Fix tmo
+* Agregado acceso directos dinámicos en android 7.1 o superior en los lanzadores que los soportan.
+
+Changes in v1.114:
+* Fix tmo.
+* Added shortcuts to last mangas for android 7.1 or newest in launchers that support this feature.
+
 Cambios en v1.113:
 * Fix tmo
 * Fix la búsqueda en mangaeden, mangapanda, readmangatoday y taad para dispositivos para un api vieja.
@@ -56,6 +64,7 @@ Cambios en v1.113:
 Changes in v1.113:
 * Fix tmo
 * Fix mangaeden, mangapanda, readmangatoday and taad search on low api devices.
+
 Cambios en v1.112:
 * Fix TMO.
 
