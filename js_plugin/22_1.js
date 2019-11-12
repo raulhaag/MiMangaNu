@@ -1,9 +1,9 @@
 function chapterInit(cw, mw) {
 	pipe = '|';
 	var data = nav.get(mw, '');
-	rTo = /'value',"([^"]+)/gm;
+	rTo = /"([^"\s\.]{40})"/gm;
 	var token = '_token=' + rTo.exec(data)[1];
-	r64 = /'(base64[^'|^\}]+)'/gm;
+	r64 = /"(base64:[^"]+)/gm;
 	var b64 = r64.exec(data)[1];
 	data = nav.postM(cw + "/" + b64, 'Referer|' + mw, token);
 	rId =/\/viewer\/([^/]+)/gm;
