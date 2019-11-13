@@ -145,7 +145,7 @@ public class AppUpdateUtil {
                     FileOutputStream outputStream = new FileOutputStream(UPDATE_FILE_CACHE);
                     long lengthOfFile = response.body().contentLength();
                     int count;
-                    byte data[] = new byte[1024 * 6];
+                    byte[] data = new byte[1024 * 6];
                     long total = 0;
                     while ((count = inputStream.read(data)) != -1) {
                         total += count;
@@ -256,7 +256,9 @@ public class AppUpdateUtil {
                 if (!BuildConfig.VERSION_NAME.replace("-github", "").equals(info.getFirst())) {
                     Intent intent = new Intent(context, MessageActivity.class);
                     intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
-                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getString(R.string.app_update), context.getString(R.string.app_name) + " v" + info.getFirst() + context.getString(R.string.is_available));
+                    Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(),
+                            intent, context.getString(R.string.app_update), context.getString(R.string.app_name) +
+                                    " v" + info.getFirst() + " " + context.getString(R.string.is_available));
                 } else {
                     Log.i("Util", "App is up to date. No update necessary");
                 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.115:\n\t* Fix error en Android 7.0.1 .. 7.1.1.\n\t* Mejorado el sistema de shortcuts.</string>
+    <string name="update_message">Cambios en v1.116:\n\t* Fix TMO.\n\t* Fix Kumanga.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

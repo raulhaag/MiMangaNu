@@ -15,10 +15,8 @@ public class MmNDNS implements Dns {
     @Override
     public List<InetAddress> lookup(String hostname) throws UnknownHostException {
         List<InetAddress> list = new ArrayList<>();
-        if (hostname.toLowerCase().contains("japscan.com")) {
-            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 5, (byte) 189, (byte) 188, (byte) 112}));
-        } else if (hostname.toLowerCase().contains("rrrrr.to")) {
-            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 127, (byte) 0, (byte) 0, (byte) 1}));
+        if (hostname.toLowerCase().contains("raw.githubusercontent.com")) {//Raw.githubusercontent.com
+            list.add(InetAddress.getByAddress(hostname, new byte[]{(byte) 151, (byte) 101, (byte) 4, (byte) 133}));
         } else {
             list = SYSTEM.lookup(hostname);
         }
