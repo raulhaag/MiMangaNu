@@ -19,9 +19,3 @@ function chapterInit(cw, mw) {
 	} while (i);
 	return oImg;
 };
-function cre1(){
-	return '<div class="col-10 text-truncate"[\s\S]+?(<.+?<\/a>)[\s\S]+?"_.+?\(\'([^\']+)';
-};
-function cre2(){
-	return '<div class="col-4 col-md-6 text-truncate">([^\']+)<\/span>[\s\S]+?"_.+?\(\'([^\']+)[\s\S])';
-};
