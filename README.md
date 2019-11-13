@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.116:
+* Fix tmo.
+* Fix Kumanga.
+
+Changes in v1.116:
+* Fix tmo.
+* Fix Kumanga.
+
 Cambios en v1.115:
 * Fix error en Android 7.0.1 .. 7.1.1
 * Mejorado el sistema de shortcuts.
