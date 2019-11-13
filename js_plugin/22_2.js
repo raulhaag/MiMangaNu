@@ -19,11 +19,11 @@ chapterInit: 	function (cw, mw) {
 				}
 			} while (i);
 			return oImg;
-		};
+		},
 cre1: 		function(){
 			return '<div class="col-10 text-truncate"[\s\S]+?(<.+?<\/a>)[\s\S]+?"_.+?\(\'([^\']+)';
-		};
+		},
 cre2: 		function(){
 			return '<div class="col-4 col-md-6 text-truncate">([^\']+)<\/span>[\s\S]+?"_.+?\(\'([^\']+)[\s\S])';
-		};
+		},
 };
