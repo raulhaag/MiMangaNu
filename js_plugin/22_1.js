@@ -2,9 +2,9 @@ var S22 = {
 chapterInit: 	function (cw, mw) {
 			pipe = '|';
 			var data = nav.get(mw, '');
-			rTo = /sendId\('[^']+','[^']+','([^']+)'/gm;
+			rTo = /sendIdTo.'[^']+','[^']+','([^']+)'/gm;
 			var token = '_token=' + rTo.exec(data)[1];
-			r64 = /sendId\('[^']+','([^']+)','[^']+'/gm;
+			r64 = /sendIdTo.'[^']+','([^']+)','[^']+'/gm;
 			var b64 = r64.exec(data)[1];
 			data = nav.postM(cw + "/" + b64, 'Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
@@ -21,9 +21,9 @@ chapterInit: 	function (cw, mw) {
 			return oImg;
 		},
 cre1: 		function(){
-			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?\"sendId$('([^']+)";
+			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?\"sendIdTo$('([^']+)";
 		},
 cre2: 		function(){
-			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?\"sendId$('([^']+)";
+			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?\"sendIdTo$('([^']+)";
 		},
 };
