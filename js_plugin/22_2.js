@@ -2,9 +2,9 @@ var S22 = {
 chapterInit: 	function (cw, mw) {
 			pipe = '|';
 			var data = nav.get(mw, '');
-			rTo = /sendIdTo.'[^']+','[^']+','([^']+)'/gm;
+			rTo = /-token" content="([^"]+)/gm;
 			var token = '_token=' + rTo.exec(data)[1];
-			r64 = /sendIdTo.'[^']+','([^']+)','[^']+'/gm;
+			r64 = /imag-key="([^"]+)/gm;
 			var b64 = r64.exec(data)[1];
 			data = nav.postM(cw + "/" + b64, 'Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
@@ -21,9 +21,9 @@ chapterInit: 	function (cw, mw) {
 			return oImg;
 		},
 cre1: 		function(){
-			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?\"sendIdTo$('([^']+)";
+			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?man-identifier=\"([^\"]+)";
 		},
 cre2: 		function(){
-			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?\"sendIdTo$('([^']+)";
+			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?man-identifier=\"([^\"]+)";
 		},
 };
