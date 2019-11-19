@@ -40,6 +40,7 @@ import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.Shortcuts;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
@@ -594,6 +595,8 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                 Database.updateManga(getContext(), manga, false);
                 setListManga(true);
             }
+        } else if (item.getItemId() == R.id.create_shortcut) {
+            Shortcuts.addShortCutsX(manga, getContext());
         }
         return super.onContextItemSelected(item);
     }

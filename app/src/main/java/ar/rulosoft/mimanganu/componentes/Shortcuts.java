@@ -11,6 +11,9 @@ import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.support.v4.content.pm.ShortcutInfoCompat;
+import android.support.v4.content.pm.ShortcutManagerCompat;
+import android.support.v4.graphics.drawable.IconCompat;
 
 import java.io.File;
 import java.util.Arrays;
@@ -53,6 +56,34 @@ public class Shortcuts {
                     sm.removeDynamicShortcuts(Arrays.asList(sl.get(0).getId()));
                 }
             }
+        }
+    }
+
+    public static void addShortCutsX(Manga m, Context ctx) {
+        if (ShortcutManagerCompat.isRequestPinShortcutSupported(ctx)) {
+            Intent i = new Intent(ctx, ar.rulosoft.mimanganu.MainActivity.class);
+            i.putExtra("manga_id", m.getId());
+            i.setAction(Intent.ACTION_VIEW);
+            i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            String icdir = prefs.getString("directorio",
+                    Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
+            icdir = icdir + "cache/";
+            Bitmap bm = decodeFile(new File(icdir + m.getImages().hashCode()));
+            IconCompat icon = null;
+
+            if (bm == null) {
+                icon = IconCompat.createWithResource(ctx, R.drawable.noimage);
+            } else {
+                icon = IconCompat.createWithAdaptiveBitmap(bm);
+            }
+
+            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(ctx, m.getTitle() + m.getServerId())
+                    .setIntent(i)
+                    .setShortLabel(m.getTitle())
+                    .setIcon(icon)
+                    .build();
+            ShortcutManagerCompat.requestPinShortcut(ctx, shortcutInfo, null);
         }
     }
 

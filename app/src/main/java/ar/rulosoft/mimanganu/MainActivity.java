@@ -31,7 +31,6 @@ import java.lang.reflect.Field;
 
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.servers.ServerBase;
-import ar.rulosoft.mimanganu.utils.CustomExceptionHandler;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -83,7 +82,9 @@ public class MainActivity extends AppCompatActivity {
         }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        CustomExceptionHandler.Attach(this);
+        if (getIntent() != null) {
+            onNewIntent(getIntent());
+        }
     }
 
     @Override
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 Util.n--;
             //Util.getInstance().toast(this, "n: " + Util.n, 1);
             Log.i("MA", "n: " + Util.n);
+            intent.removeExtra("manga_id");
         }
     }
 
@@ -220,12 +222,6 @@ public class MainActivity extends AppCompatActivity {
         }
         colors = ThemeColors.getColors(pm);
         setColorToBars();
-        if (getIntent() != null) {
-            int t;
-            if (-1 != (t = getIntent().getIntExtra("manga_id", -1))) {
-                onNewIntent(getIntent());
-            }
-        }
     }
 
     public void setColorToBars() {
