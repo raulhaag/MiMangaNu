@@ -21,6 +21,7 @@ import java.util.List;
 
 import ar.rulosoft.mimanganu.MainActivity;
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.utils.Util;
 
 public class Shortcuts {
     public static void addShortCuts(Manga m, Context ctx) {
@@ -84,6 +85,8 @@ public class Shortcuts {
                     .setIcon(icon)
                     .build();
             ShortcutManagerCompat.requestPinShortcut(ctx, shortcutInfo, null);
+        } else {
+            Util.getInstance().toast(ctx, ctx.getString(R.string.device_dont_supported));
         }
     }
 

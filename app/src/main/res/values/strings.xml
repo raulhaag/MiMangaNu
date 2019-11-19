@@ -505,5 +505,6 @@
     <string name="run_test_summary">Basic test over servers.</string>
     <string name="flt_alpha">Alphabet filter</string>
     <string name="create_shortcut_on_home">Create shortcut on home</string>
+    <string name="device_dont_supported">Your device don\'t support this feature.</string>
 
 </resources>
