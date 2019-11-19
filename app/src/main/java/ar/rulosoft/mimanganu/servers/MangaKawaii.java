@@ -111,7 +111,7 @@ class MangaKawaii extends ServerBase {
     public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getExtra() == null) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-            ArrayList<String> images = getAllMatch("data-src='\\s*(.+?)\\s*'", source);
+            ArrayList<String> images = getAllMatch("data-src\", \"\\s*([^\"]+)\"", source);
 
             if(images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
@@ -126,7 +126,7 @@ class MangaKawaii extends ServerBase {
         String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
         String source = getNavigatorAndFlushParameters().get(web);
 
-        Pattern pattern = Pattern.compile("(/manga/[^\"]+)[\\s\\S]+?data-src='([^']+)' alt='([^']+)'", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("(\\/manga\\/[^\"]+)\"[\\s]*?data-background-image=\"([^\"]+)\"[\\s\\S]+?-item__name\">([^<]+)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
