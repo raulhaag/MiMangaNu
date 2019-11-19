@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.117:
+* Opción agregar acceso directo al mantener manga apretado.
+* Fix a varios servers.
+
+Changes on v1.117.
+* Option create shortcut on manga long press.
+* Fix on various servers.
+
 Cambios en v1.116:
 * Fix tmo.
 * Fix Kumanga.
