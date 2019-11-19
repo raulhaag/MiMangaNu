@@ -15,16 +15,16 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  * Created by Raúl on 25/08/2018.
  */
 public class MangaAE extends ServerBase {
-    private static final String HOST = "https://www.manga.ae";
-    private static final String PATTERN_MANGA_FILTERED = "<div class=\"mangacontainer\">\\s*<a href=\"https*://www.manga.ae([^\"]+)\"><img alt=\"[^\"]+\" src=\"([^\"]+)\" /></a>\\s*<div class=\"year\">[^<]+</div>\\s*<a class=\"manga\" href=\"[^\"]+\">([^<]+)</a>\\s*<a class=\"manga\" href=\"[^\"]+\">([^<]+)</a>";
+    private static final String HOST = "https://www.mangaae.com";
+    private static final String PATTERN_MANGA_FILTERED = "mangacontainer\">[\\s]*<a href=\"https*:\\/\\/www.mangaae.com([^\"]+).+?src=\"([^\"]+)[\\s\\S]+?href[^>]+>([^<]+)[\\s\\S]+?href[^>]+>([^<]+)";
     private static final String PATTERN_MANGA_SUMMARY = "<h3>نبذة عن المانجا</h3>\\s*<h4>(.+?)</h4>";
     private static final String PATTERN_MANGA_GENRE = "<h3>التصنيف:</h3>\\s*<ul>([\\s|\\S]+?)</ul>";
     private static final String PATTERN_MANGA_AUTHOR = "ga/author:.[^\"]+\">([^<]+)<";
     private static final String PATTERN_MANGA_STATUS = "<h3>الحالة :</h3>\\s*<h4>([^<]+)";
     private static final String PATTERN_MANGA_IMAGE = "class=\"manga-cover\" src=\"([^\"]+)";
-    private static final String PATTERN_MANGA_CHAPTER = "class=\"chapter\" href=\"https*://www.manga.ae([^\"]+)\">([^<]+)</a>";
+    private static final String PATTERN_MANGA_CHAPTER = "class=\"chapter\" href=\"https*:\\/\\/www.mangaae.com(.+?)\">(.+?)<";
     private static final String PATTERN_CHAPTER_PAGES = "(\\d+)</a>\\s*</div>";
-    private static final String PATTERN_CHAPTER_IMAGE = "src=\"(https*://www.manga.ae/cdn/[^\"]+)";
+    private static final String PATTERN_CHAPTER_IMAGE = "\" src=\"([^\"]+)\"";
 
     private static String[] genres = new String[]{"قائمة المانجا",
             "أكشن", "مغامرة", "كوميديا", "دراما", "خيال", "شونين", "فوق الطبيعة", "فنون قتالية", "غموض",
@@ -147,7 +147,7 @@ public class MangaAE extends ServerBase {
         Matcher m = pattern.matcher(data);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), "(" + m.group(3) + ") " + m.group(4), m.group(1), m.group(2)));
+            mangas.add(new Manga(getServerID(), "(" + m.group(3) + ") " + m.group(4), m.group(1), m.group(2) + "|https://www.mangaae.com/"));
         }
         return mangas;
     }
