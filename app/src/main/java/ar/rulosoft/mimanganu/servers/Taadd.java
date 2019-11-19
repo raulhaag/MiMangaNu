@@ -1,6 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -12,13 +13,13 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.navegadores.Navigator;
+import ar.rulosoft.mimanganu.utils.Util;
 
 /**
  * Created by xtj-9182 on 11.04.2017.
  */
 class Taadd extends ServerBase {
-    private static String HOST = "http://www.taadd.com";
+    private static String HOST = "https://www.taadd.com";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_4_koma,
@@ -174,7 +175,7 @@ class Taadd extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         term = URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8");
-        String source = getNavigatorAndFlushParameters().get("http://my.taadd.com/search/es/?wd=" + term);
+        String source = getNavigatorAndFlushParameters().get("https://my.taadd.com/search/es/?wd=" + term);
         ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
         Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
@@ -192,7 +193,7 @@ class Taadd extends ServerBase {
 
             // Cover
             if (manga.getImages() == null || manga.getImages().isEmpty()) {
-                String img = getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
+                String img = getFirstMatchDefault("src=\"(https*://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
                 manga.setImages(img);
             }
 
@@ -211,7 +212,7 @@ class Taadd extends ServerBase {
                     .replaceAll("<img[^>]+>", "").replaceAll("&nbsp;", "").replaceAll("</a>", ","));
 
             // Chapters
-            Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>", Pattern.DOTALL);
+            Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\"[\\s\\S]*?>(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
             while (matcher.find()) {
                 manga.addChapterFirst(new Chapter(matcher.group(2), HOST + matcher.group(1)));
@@ -221,22 +222,20 @@ class Taadd extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Referer", chapter.getPath());
-        String source = nav.get(chapter.getPath() + "-" + page + ".html");
-        return getFirstMatch(
-                "src=\"(http[s]?://.{2,4}\\.taadd\\.com/comics/[^\"]+?)\"", source,
-                context.getString(R.string.server_failed_loading_image));
+        if (chapter.getExtra() == null | chapter.getExtra().isEmpty()) {
+            Util.getInstance().toast(context, "Error Need to reset chapter");
+            throw new Exception("Error need reset chapter");
+        }
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pageNumber = getFirstMatch(
-                    ">(\\d+)</option>\\s*</select>", source,
-                    context.getString(R.string.server_failed_loading_page_count));
-            chapter.setPages(Integer.parseInt(pageNumber));
+        if (chapter.getPages() == 0 || chapter.getExtra() == null || chapter.getExtra().isEmpty()) {
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath().replaceAll("/$", "") + "-2.html", chapter.getPath());
+            ArrayList<String> images = getAllMatch("\"_blank\"  href=\"([^\"]+)", source);
+            chapter.setExtra("|" + TextUtils.join("|", images));
+            chapter.setPages(images.size());
         }
     }
 
