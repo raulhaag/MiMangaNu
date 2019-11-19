@@ -4,7 +4,7 @@ chapterInit: 	function (cw, mw) {
 			var data = nav.get(mw, '');
 			rTo = /-token" content="([^"]+)/gm;
 			var token = '_token=' + rTo.exec(data)[1];
-			r64 = /imag-key="([^"]+)/gm;
+			r64 = /ta-_[A-Za-z0-9]+="([A-Za-z0-9]{32})"/gm;
 			var b64 = r64.exec(data)[1];
 			data = nav.postM(cw + "/" + b64, 'Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
@@ -21,9 +21,9 @@ chapterInit: 	function (cw, mw) {
 			return oImg;
 		},
 cre1: 		function(){
-			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?man-identifier=\"([^\"]+)";
+			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?data-_[^=]+=\"([^\"]+)";
 		},
 cre2: 		function(){
-			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?man-identifier=\"([^\"]+)";
+			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?data-_[^=]+=\"([^\"]+)";
 		},
 };
