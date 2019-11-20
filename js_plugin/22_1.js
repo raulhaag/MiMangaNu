@@ -6,7 +6,8 @@ chapterInit: 	function (cw, mw) {
 			var token = '_token=' + rTo.exec(data)[1];
 			r64 = /ta-_[A-Za-z0-9]+="([A-Za-z0-9]{32})"/gm;
 			var b64 = r64.exec(data)[1];
-			data = nav.postM(cw + "/" + b64, 'Referer|' + mw, token);
+			cw =  cw.substr(cw.lastIndexOf("/")+1);
+			data = nav.postM("https://tmofans.com/goto/" + b64 + "/" + cw, 'Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
 			var id = rId.exec(data)[1];
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
