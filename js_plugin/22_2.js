@@ -4,8 +4,10 @@ chapterInit: 	function (cw, mw) {
 			var data = nav.get(mw, '');
 			rTo = /-token" content="([^"]+)/gm;
 			var token = '_token=' + rTo.exec(data)[1];
-			r64 = /load" _[a-z0-9]{13}="[^"]+" _[a-z0-9]{13}="([^"]+)"/gm;
+			r64 = /s"><\/i>\s*<\/div>([\s\S]+?)<\/div>\s*<\/li>/gm;
 			var b64 = r64.exec(data)[1];
+			r64 = /"([a-zA-Z0-9]{32})"/gm;
+			b64 = r64.exec(b64)[1];
 			cw =  cw.substr(cw.lastIndexOf("/")+1);
 			data = nav.postM("https://tmofans.com/goto/" + b64 + "/" + cw, 'Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
@@ -22,9 +24,9 @@ chapterInit: 	function (cw, mw) {
 			return oImg;
 		},
 cre1: 		function(){
-			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?load\" _[a-z0-9]{13}=\"([^\"]+)\"";
+			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?text-primary _[a-zA-Z0-9]+\" _[a-zA-Z0-9]+=\"([a-zA-Z0-9]+)";
 		},
 cre2: 		function(){
-			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?load\" _[a-z0-9]{13}=\"([^\"]+)\"";
+			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?text-primary _[a-zA-Z0-9]+\" _[a-zA-Z0-9]+=\"([a-zA-Z0-9]+)";
 		},
 };
