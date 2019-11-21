@@ -4,7 +4,7 @@ chapterInit: 	function (cw, mw) {
 			var data = nav.get(mw, '');
 			rTo = /-token" content="([^"]+)/gm;
 			var token = '_token=' + rTo.exec(data)[1];
-			r64 = /ta-_[A-Za-z0-9]+="([A-Za-z0-9]{32})"/gm;
+			r64 = /load" _[a-z0-9]{13}="[^"]+" _[a-z0-9]{13}="([^"]+)"/gm;
 			var b64 = r64.exec(data)[1];
 			cw =  cw.substr(cw.lastIndexOf("/")+1);
 			data = nav.postM("https://tmofans.com/goto/" + b64 + "/" + cw, 'Referer|' + mw, token);
@@ -22,9 +22,9 @@ chapterInit: 	function (cw, mw) {
 			return oImg;
 		},
 cre1: 		function(){
-			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?data-_[^=]+=\"([^\"]+)";
+			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?load\" _[a-z0-9]{13}=\"([^\"]+)\"";
 		},
 cre2: 		function(){
-			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?data-_[^=]+=\"([^\"]+)";
+			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?load\" _[a-z0-9]{13}=\"([^\"]+)\"";
 		},
 };
