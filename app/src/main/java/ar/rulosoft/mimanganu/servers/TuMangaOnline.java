@@ -179,7 +179,7 @@ class TuMangaOnline extends ServerBase {
     private void checkScript() throws Exception {
         if (script == null) {
             try {
-                script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_1.js");
+                script = getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_2.js");
             } catch (Exception e) {
                 script = getNavWithNeededHeaders().get("https://github.com/raulhaag/MiMangaNu/blob/master/js_plugin/22_2.js");
                 script = Util.getInstance().fromHtml(getFirstMatch("(<table class=\"highlight tab-size js-file-line-container\"[\\s\\S]+<\\/table>)", script, "error obteniendo script")).toString();

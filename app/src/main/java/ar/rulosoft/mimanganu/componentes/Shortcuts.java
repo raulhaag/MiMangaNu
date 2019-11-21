@@ -79,7 +79,7 @@ public class Shortcuts {
                 icon = IconCompat.createWithAdaptiveBitmap(bm);
             }
 
-            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(ctx, m.getTitle() + m.getServerId())
+            ShortcutInfoCompat shortcutInfo = new ShortcutInfoCompat.Builder(ctx, m.getTitle() + m.getServerId() + Math.random())
                     .setIntent(i)
                     .setShortLabel(m.getTitle())
                     .setIcon(icon)
