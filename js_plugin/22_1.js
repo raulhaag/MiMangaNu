@@ -5,10 +5,10 @@ chapterInit: 	function (cw, mw) {
 			rTo = /-token" content="([^"]+)/gm;
 			var token = '_token|' + rTo.exec(data)[1];
 			tPo = /te\("name", "([^"_]+)"[\s\S]+?\("[^"]+",'*([^)']+)/gm;
-			r64 = /", 'https:\/\/tmofans.com\/([^\/]+\/[^\/]+)/gm;
-			var b64 = r64.exec(data)[1];
+			r64 = /", 'https:\/\/tmofans.com\/([^\/]+\/[^\/]+)\/[^\/]+([^']+)/gm;
+			b64 = r64.exec(data);
 			cw = cw.substr(cw.lastIndexOf("/")+1);
-			data = nav.post("https://tmofans.com/" + b64 + "/" + cw + "/gtu", 'Connection|keep-alive|Referer|' + mw, token);
+			data = nav.post("https://tmofans.com/" + b64[1] + "/" + cw + b64[2], 'Connection|keep-alive|Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
 			var id = rId.exec(data)[1];
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
