@@ -3,13 +3,16 @@ chapterInit: 	function (cw, mw) {
 			pipe = '|';
 			var data = nav.get(mw, '');
 			rTo = /-token" content="([^"]+)/gm;
-			var token = '_token=' + rTo.exec(data)[1];
-			r64 = /s"><\/i>\s*<\/div>([\s\S]+?)<\/div>\s*<\/li>/gm;
+			var token = '_token|' + rTo.exec(data)[1];
+			tPo = /te\("name", "([^"_]+)"[\s\S]+?\("[^"]+",'*([^)']+)/gm;
+			rPo = tPo.exec(data);
+			token = token + "|" + rPo[1] + "|" + rPo[2] ;
+			rPo = tPo.exec(data);
+			token = token + "|" + rPo[1] + "|" + rPo[2] ;
+			r64 = /", 'https:\/\/tmofans.com\/([^\/]+\/[^\/]+)/gm;
 			var b64 = r64.exec(data)[1];
-			r64 = /"([a-zA-Z0-9]{32})"/gm;
-			b64 = r64.exec(b64)[1];
-			cw =  cw.substr(cw.lastIndexOf("/")+1);
-			data = nav.postM("https://tmofans.com/goto/" + b64 + "/" + cw, 'Referer|' + mw, token);
+			cw = cw.substr(cw.lastIndexOf("/")+1);
+			data = nav.post("https://tmofans.com/" + b64 + "/" + cw + "/redirect", 'Connection|keep-alive|Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
 			var id = rId.exec(data)[1];
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
@@ -24,9 +27,9 @@ chapterInit: 	function (cw, mw) {
 			return oImg;
 		},
 cre1: 		function(){
-			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?text-primary _[a-zA-Z0-9]+\" _[a-zA-Z0-9]+=\"([a-zA-Z0-9]+)";
+			return "<div class=\"col-10 text-truncate\"[$s$S]+?(<.+?</a>)[$s$S]+?\"(\\d+)\" ";
 		},
 cre2: 		function(){
-			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?text-primary _[a-zA-Z0-9]+\" _[a-zA-Z0-9]+=\"([a-zA-Z0-9]+)";
+			return "<div class=\"col-4 col-md-6 text-truncate\">([^']+)</span>[$s$S]+?\"(\\d+)\" ";
 		},
 };
