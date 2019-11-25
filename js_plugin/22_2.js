@@ -10,7 +10,9 @@ chapterInit: 	function (cw, mw) {
 			token = token + "|" + rPo[1] + "|" + cw ;
 			rPo = tPo.exec(data);
 			token = token + "|" + rPo[1] + "|" + rPo[2] ;
-			data = nav.post("https://tmofans.com/uploadsredirect", 'Connection|keep-alive|Referer|' + mw, token);
+			rAc = /setAttribute\(["']action["'],\s*["']([^"']+)/gm;
+			act = rAc.exec(data)[1];
+			data = nav.post(act, 'Connection|keep-alive|Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
 			var id = rId.exec(data)[1];
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
