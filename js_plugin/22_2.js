@@ -11,6 +11,7 @@ chapterInit: 	function (cw, mw) {
 			rPo = tPo.exec(data);
 			token = token + "|" + rPo[1] + "|" + rPo[2] ;
 			rAc = /setAttribute\(["']action["'],\s*["'](https:\/\/tmofans.com\/[^"']+)/gm;
+			//un cambio para que lo leas
 			act = rAc.exec(data)[1];
 			data = nav.post(act, 'Connection|keep-alive|Referer|' + mw, token);
 			rId =/\/viewer\/([^/]+)/gm;
