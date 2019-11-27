@@ -1,18 +1,20 @@
 var S22 = {
 chapterInit: 	function (cw, mw) {
 			pipe = '|';
-			cw = cw.substr(cw.lastIndexOf("/")+1);
+			cid = cw.substr(cw.lastIndexOf("/")+1);
 			var data = nav.get(mw, '');
 			rTo = /-token" content="([^"]+)/gm;
-			var token = '_token|' + rTo.exec(data)[1];
-			tPo = /"name".+? '(_[^']+)[^"]+"value", ([^\)]+)/gm;
-			rPo = tPo.exec(data);
-			token = token + "|" + rPo[1] + "|" + cw ;
-			rPo = tPo.exec(data);
-			token = token + "|" + rPo[1] + "|" + rPo[2] ;
-			rAc = /setAttribute\(["']action["'],\s*["'](https:\/\/tmofans.com\/[^"']+)/gm;
-			act = rAc.exec(data)[1];
-			data = nav.post(act, 'Connection|keep-alive|Referer|' + mw, token);
+			var token = rTo.exec(data)[1];
+			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
+			var ur = rUr.exec(data)[1];
+			tDta = /data:\{[\s\S]+?\}/gm;
+			data = tDta.exec(data);
+			rSd = /["']([^"']+)["']:([^,\}]+)/gm;
+			sd = rSd.exec(data);
+			var pt = sd[1];
+			sd = rSd.exec(data);
+			pt = pt + '|' + cid + '|' + sd[1] + '|' + sd[2].trim();
+			data = nav.post(ur, 'Referer|' + mw + '|X-Requested-With|XMLHttpRequest|X-CSRF-TOKEN|'+ token, pt);
 			rId =/\/viewer\/([^/]+)/gm;
 			var id = rId.exec(data)[1];
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
