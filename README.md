@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.118:
+* Fix CFI.
+* Agregada opcion de reiniciar al menu principal.
+
+Changes on v1.118.
+* Fix CFI.
+* Added restart option to main menu.
+
 Cambios en v1.117:
 * Opción agregar acceso directo al mantener manga apretado.
 * Fix a varios servers.
