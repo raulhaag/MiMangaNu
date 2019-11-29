@@ -15,9 +15,10 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import okhttp3.HttpUrl;
+import okhttp3.FormBody;
 import okhttp3.Interceptor;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -29,8 +30,10 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern OPERATION_PATTERN = Pattern.compile("setTimeout\\(function\\(\\)\\{\\s+(var .,.,.,.[\\s\\S]+?a\\.value = .+?;)", Pattern.DOTALL);
     private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
-    private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"s\" value=\"([^\"]*)");
+    private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"r\" value=\"([^\"]*)");
     private final static Pattern REPLACE_VALUE = Pattern.compile("visibility:hidden;\" id=\".+\">([^<]+)<");
+    private final static Pattern FORM_ACTION = Pattern.compile("action=\"([^\"]+)");
+
 
     public static String getFirstMatch(Pattern p, String source) {
         Matcher m = p.matcher(source);
@@ -58,10 +61,15 @@ public class CFInterceptor implements Interceptor {
         String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
         String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
         String challengePass = getFirstMatch(PASS_PATTERN, content);
-        String s = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content), "UTF-8");
+        String r = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content), "UTF-8");
         String rv = getFirstMatch(REPLACE_VALUE, content);
+        String formAction = getFirstMatch(FORM_ACTION, content);
 
-        if (rawOperation == null || challengePass == null || challenge == null || s == null) {
+        if (rv == null) {
+            rv = "";
+        }
+
+        if (rawOperation == null || challengePass == null || challenge == null || formAction == null) {
             Log.e("CFI", "couldn't resolve over cloudflare");
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
@@ -102,28 +110,33 @@ public class CFInterceptor implements Interceptor {
         }
 
         try {
-            Thread.sleep(5000);
+            Thread.sleep(4000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        String url = new HttpUrl.Builder().scheme(request.isHttps() ? "https" : "http").host(domain)
-                .addPathSegments("cdn-cgi/l/chk_jschl")
-                .addEncodedQueryParameter("s", s)
-                .addEncodedQueryParameter("jschl_vc", challenge)
-                .addEncodedQueryParameter("pass", challengePass)
-                .addEncodedQueryParameter("jschl_answer", result)
-                .build().toString();
+        RequestBody body = new FormBody.Builder()
+                .add("r", r)
+                .add("jschl_vc", challenge)
+                .add("pass", challengePass)
+                .add("jschl_answer", result)
+                .build();
+
+        String url = (request.isHttps() ? "https://" : "http://") + domain + formAction;
 
         Request request1 = new Request.Builder()
                 .url(url)
-                .header("User-Agent", Navigator.USER_AGENT)
-                .header("Referer", request.url().toString())
-                .header("Accept-Language", "en, eu")
-                .header("Connection", "keep-alive")
-                .header("Accept", "text/html,application/xhtml+xml,application/xml")
+                .addHeader("User-Agent", Navigator.USER_AGENT)
+                .addHeader("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .addHeader("Accept-Encoding", "gzip, deflate")
+                .addHeader("Referer", request.url().toString())
+                .method("POST", body)
                 .build();
-        return chain.proceed(request1);//generate the cookie;
+
+        Response rps = chain.proceed(request1);
+        return rps;//generate the cookie;
     }
 
     interface Atob {
