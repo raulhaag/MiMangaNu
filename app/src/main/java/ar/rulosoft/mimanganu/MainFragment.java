@@ -35,6 +35,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -306,6 +307,10 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
             case R.id.action_settings: {
                 ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");
+                break;
+            }
+            case R.id.restart: {
+                Util.getInstance().restartApp(Objects.requireNonNull(getActivity()));
                 break;
             }
             case R.id.sort_last_read: {

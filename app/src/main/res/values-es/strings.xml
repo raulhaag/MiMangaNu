@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.117:\n\t* Opción agregar acceso directo al mantener manga apretado.\n\t* Fix a varios servers.</string>
+    <string name="update_message">Cambios en v1.118:\n\t* Fix CFI.\n\t* Agregada la opcion de reiniciar al menu principal.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -464,5 +464,6 @@
     <string name="flt_hint_order_unfiltered_only">Solo vista sin filtro.</string>
     <string name="flt_include_tags">Tags(incluidos)</string>
     <string name="device_dont_supported">Tu dispositivo no soporta esta función.</string>
+    <string name="restart">Reiniciar aplicación</string>
 
 </resources>
