@@ -3,13 +3,13 @@ chapterInit: 	function (cw, mw) {
 			pipe = '|';
 			cid = cw.substr(cw.lastIndexOf("/")+1);
 			var data = nav.get(mw, '');
-//			rHe = /headers: \{[\s\S]*'([^']+)':'([^']+)'/gm;
-//			ehe = rHe.exec(data);
+			rHe = /headers: \{[\s\S]*['"]([^"']+)['"]\s*:\s*['"]([^"']+)['"]/gm;
+			ehe = rHe.exec(data);
 			//rNa = /'meta\[name="([^"]+)/gm;
 			//var na = rNa.exec(data);
 			//rTo = new RegExp(na[1] + '" content="([^"]+)', "gm");
-			rTo = /'X-CSRF-TOKEN': "([^"]+)"/gm;
-                    	var met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
+			//rTo = /'X-CSRF-TOKEN': "([^"]+)"/gm;
+                    	var met = '|' + eHe[1] + '|' + eHe[2]; //'|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
 			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
 			rUr.exec(data);
 			var ur = rUr.exec(data)[1];
