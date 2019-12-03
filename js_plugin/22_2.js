@@ -1,14 +1,18 @@
 var S22 = {
 chapterInit: 	function (cw, mw) {
 			pipe = '|';
+			var met = '';
 			cid = cw.substr(cw.lastIndexOf("/")+1);
 			var data = nav.get(mw, '');
-			rTo = /cssf-token" content="([^"]+)/gm;
 //			rHe = /headers: \{[\s\S]*'([^']+)':'([^']+)'/gm;
 //			ehe = rHe.exec(data);
-			var token = 'X-CSSF-TOKEN|' + rTo.exec(data)[1];
-			rTo = /csrf-token" content="([^"]+)/gm;
-			token =  token + '|X-CSRF-TOKEN|' +rTo.exec(data)[1];
+			rTo = /<meta name="([^"]+token)" content="([^"]+)/gm;
+            do {
+                i = rTo.exec(data);
+                if (i) {
+                    met = met + '|X-' + i[1].toUpperCase() + '|' + i[2] ;
+                }
+            } while (i);
 			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
 			rUr.exec(data);
 			var ur = rUr.exec(data)[1];
@@ -19,7 +23,7 @@ chapterInit: 	function (cw, mw) {
 			var pt = sd[1];
 			sd = rSd.exec(data);
 			pt = pt + '|' + cid + '|' + sd[1] + '|' + sd[2].trim();
-			data = nav.post(ur, 'Referer|' + mw + '|X-Requested-With|XMLHttpRequest|' + token, pt);
+			data = nav.post(ur, 'Referer|' + mw + '|X-Requested-With|XMLHttpRequest' + met, pt);
 			rId =/\/viewer\/([^/]+)/gm;
 			var id = rId.exec(data)[1];
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
