@@ -1,18 +1,12 @@
 var S22 = {
 chapterInit: 	function (cw, mw) {
 			pipe = '|';
-			var met = '';
 			cid = cw.substr(cw.lastIndexOf("/")+1);
 			var data = nav.get(mw, '');
 //			rHe = /headers: \{[\s\S]*'([^']+)':'([^']+)'/gm;
 //			ehe = rHe.exec(data);
-			rTo = /<meta name="([^"]+token)" content="([^"]+)/gm;
-            do {
-                i = rTo.exec(data);
-                if (i) {
-                    met = met + '|X-' + i[1].toUpperCase() + '|' + i[2] ;
-                }
-            } while (i);
+			rTo = /content="([^"]+)">\s<title>/gm;
+                    	var met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
 			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
 			rUr.exec(data);
 			var ur = rUr.exec(data)[1];
