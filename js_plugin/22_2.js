@@ -7,6 +7,9 @@ chapterInit: 	function (cw, mw) {
 			rHe = /setRequestHeader\("([^"]+)", "([^"]+)"\)/gm;
 			ehe = rHe.exec(data);
 			met = '|' + ehe[1] + '|' + ehe[2];
+			rHe = /'([^']+)'\s*:\s*"([^"]+)"/g;
+			ehe = rHe.exec(data);
+			met = met + '|' + ehe[1] + '|' + ehe[2];
 //			ehe = rHe.exec(data);
 			rTo = /"csrf-token" content="([^"]+)/gm
                     	met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
