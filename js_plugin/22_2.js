@@ -5,9 +5,7 @@ chapterInit: 	function (cw, mw) {
 			var data = nav.get(mw, '');
 //			rHe = /headers: \{[\s\S]*'([^']+)':'([^']+)'/gm;
 //			ehe = rHe.exec(data);
-			rNa = /'meta\[name="([^"]+)/gm;
-			var na = rNa.exec(data);
-			rTo = new RegExp(na[1] + '" content="([^"]+)', "gm");
+			rTo = /"csrf-token" content="([^"]+)/gm
                     	var met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
 			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
 			rUr.exec(data);
