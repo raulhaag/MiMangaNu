@@ -3,10 +3,13 @@ chapterInit: 	function (cw, mw) {
 			pipe = '|';
 			cid = cw.substr(cw.lastIndexOf("/")+1);
 			var data = nav.get(mw, '');
-//			rHe = /headers: \{[\s\S]*'([^']+)':'([^']+)'/gm;
+			var met = '';
+			rHe = /setRequestHeader\("([^"]+)", "([^"]+)"\)/gm;
+			ehe = rHe.exec(data);
+			met = '|' + ehe[1] + '|' + ehe[2];
 //			ehe = rHe.exec(data);
 			rTo = /"csrf-token" content="([^"]+)/gm
-                    	var met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
+                    	met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
 			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
 			rUr.exec(data);
 			var ur = rUr.exec(data)[1];
