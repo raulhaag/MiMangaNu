@@ -1,33 +1,44 @@
 var S22 = {
 chapterInit: 	function (cw, mw) {
 			pipe = '|';
+			var data = '';
 			cid = cw.substr(cw.lastIndexOf("/")+1);
-			var data = nav.get(mw, '');
-			rSd = /ajax\(\{[^\$]+?su/gm;
-			sData = rSd.exec(data);
-			var met = '';
-			rHe = /setRequestHeader\("([^"]+)", "([^"]+)"\)/gm;
-			ehe = rHe.exec(sData);
-			met = '|' + ehe[1] + '|' + ehe[2];
-			rHe = /'([^']+)'\s*:\s*"([^"]+)"/g;
-			ehe = rHe.exec(data);
-			met = met + '|' + ehe[1] + '|' + ehe[2];
-//			ehe = rHe.exec(data);
 			rTo = /"csrf-token" content="([^"]+)/gm
-			met = met + '|X-CSRF-TOKEN|' + rTo.exec(data)[1] ;
-			rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
-			rUr.exec(data);
-			var ur = rUr.exec(data)[1];
-			tDta = /data:\{[\s\S]+?\}/gm;
-			data = tDta.exec(data);
-			rSd = /["']([^"']+)["']:([^,\}]+)/gm;
-			sd = rSd.exec(data);
-			var pt = sd[1];
-			sd = rSd.exec(data);
-			pt = pt + '|' + cid + '|' + sd[1] + '|' + sd[2].trim();
-			data = nav.post(ur, 'Referer|' + mw + '|X-Requested-With|XMLHttpRequest' + met, pt);
-			rId =/\/viewer\/([^/]+)/gm;
-			var id = rId.exec(data)[1];
+			var id = '';
+			try{
+				data = nav.get(mw, '');
+				vto = rTo.exec(data)[1];
+				met = '|' + vto + '|' + vto + '|X-CSRF-TOKEN|' + vto;
+				rUr = /l:\s*['"]([^'"]+)[^\}]+:[^;,}]+/gm;
+				rUr.exec(data);
+				var ur = rUr.exec(data)[1];
+				tDta = /data\s*:\s*\{[\s\S]+?\}/gm;
+				data = tDta.exec(data);
+				rSd = /["']([^"']+)["']:([^,\}]+)/gm;
+				sd = rSd.exec(data);
+				var pt = sd[1];
+				sd = rSd.exec(data);
+				pt = pt + '|' + cid + '|' + sd[1] + '|' + sd[2].trim();
+				data = nav.post(ur, 'Referer|' + mw + '|X-Requested-With|XMLHttpRequest' + met, pt);
+				rId =/\/viewer\/([^/]+)/gm;
+				id = rId.exec(data)[1];
+			}catch(error) {
+				pipe = '|';
+				mw = mw.replace('tmofans.com','lectormanga.com');
+				data = nav.get(mw, '');
+				rTo = /-token" content="([^"]+)/gm;
+				var token = '_token|' + rTo.exec(data)[1];
+				tPo = /"name".+? '(_[^']+)[^"]+"value", ([^\)]+)/gm;
+				rPo = tPo.exec(data);
+				token = token + "|" + rPo[1] + "|" + cid ;
+				rPo = tPo.exec(data);
+				token = token + "|" + rPo[1] + "|" + rPo[2] ;
+				rAc = /setAttribute\(["']action["'],\s*["'](https:\/\/lectormanga.com\/[^"']+)/gm;
+				act = rAc.exec(data)[1];
+				data = nav.post(act, 'Connection|keep-alive|Referer|' + mw, token);
+				rId =/\/noticia\/([^\/]+)/gm;
+				id = rId.exec(data)[1];
+			}
 			src = nav.get("https://tmofans.com/viewer/" + id + "/cascade", 'Referer|' + cw);
 			rImg = /<img src="(https:\/\/img1.tmofans.com\/[^"]+)/gm;
 			oImg = "https://tmofans.com/viewer/" + id + "/cascade";
