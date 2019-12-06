@@ -4,6 +4,7 @@ chapterInit: 	function (cw, mw) {
 			var data = '';
 			cid = cw.substr(cw.lastIndexOf("/")+1);
 			rTo = /"csrf-token" content="([^"]+)/gm
+			mw = mw.replace('+', '-');
 			var id = '';
 			try{
 				data = nav.get(mw, '');
@@ -22,7 +23,7 @@ chapterInit: 	function (cw, mw) {
 				data = nav.post(ur, 'Referer|' + mw + '|X-Requested-With|XMLHttpRequest' + met, pt);
 				rId =/\/viewer\/([^/]+)/gm;
 				id = rId.exec(data)[1];
-			}catch(error) {
+			}catch(error) {return error;
 				pipe = '|';
 				mw = mw.replace('tmofans.com','lectormanga.com');
 				data = nav.get(mw, '');
