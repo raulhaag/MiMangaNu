@@ -212,7 +212,7 @@ public class Navigator {
             socketFactory = sslContext.getSocketFactory();
         }
         httpClient = new OkHttpClientConnectionChecker.Builder()
-                .addInterceptor(new UnzippingInterceptor())
+                .addInterceptor(new UncompressInterceptor())
                 .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                 .addInterceptor(new CFInterceptor())
                 .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])

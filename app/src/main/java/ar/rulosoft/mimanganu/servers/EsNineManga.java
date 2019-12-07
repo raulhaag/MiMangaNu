@@ -179,17 +179,27 @@ class EsNineManga extends NineManga {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Referer", HOST + chapter.getPath());
-        String data = nav.get(HOST + chapter.getPath());
-        ArrayList<String> pages = getAllMatch("target=\"_blank\"\\s*href=\"(https?:.+?es_manga[^\"]+)", data);
+        String id = getFirstMatch("\\/(\\d+)\\.", chapter.getPath(), context.getString(R.string.error));
+        String path = chapter.getPath().replaceAll("\\/\\d+", "")
+                .replace("chapter", "manga");
+        nav.addHeader("Referer", HOST + path);
+        String data = nav.getRedirectWeb(HOST + chapter.getPath());
+        nav.addHeader("Referer", HOST + path);
+        data = nav.getRedirectWeb(data);
+        nav.addHeader("Referer", HOST + path);
+        String sid = getFirstMatch("\\/(\\d+)\\.", data, context.getString(R.string.error));
+        nav.addHeader("Cookie", "lrgarden_visit_check_" + sid + "=" + id + ";");
+        data = nav.get("https://www.gardenmanage.com" + data);
+        ArrayList<String> pages = getAllMatch("src=\"([^\"']+?)\" one", data);
         if (pages.size() != 0) {
             chapter.setPages(pages.size());
-            chapter.setExtra("|" + TextUtils.join("|", pages));
+            chapter.setExtra("https://www.gardenmanage.com/c/esninemanga/" + id + "/|" + TextUtils.join("|", pages));
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        return chapter.getExtra().split("\\|")[page];
+        String[] parts = chapter.getExtra().split("\\|");
+        return parts[page] + "|" + parts[0];
     }
 }
