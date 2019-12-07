@@ -146,7 +146,7 @@ class RawSenManga extends ServerBase {
             manga.setSynopsis(
                     getFirstMatchDefault(
                             "<span itemprop=\"description\">([\\s\\S]+?)</span>", data, context.getString(R.string.nodisponible)));
-            if(manga.getSynopsis().startsWith("No Description.") || manga.getSynopsis().isEmpty()) {
+            if (manga.getSynopsis().startsWith("No Description.") || manga.getSynopsis().isEmpty()) {
                 manga.setSynopsis(context.getString(R.string.nodisponible));
             }
             // Cover
@@ -170,8 +170,7 @@ class RawSenManga extends ServerBase {
                 if (m.group(1).endsWith("/1")) {
                     // strip off page suffix if present
                     manga.addChapterFirst(new Chapter(m.group(2), m.group(1).substring(0, m.group(1).length() - 2)));
-                }
-                else {
+                } else {
                     manga.addChapterFirst(new Chapter(m.group(2), m.group(1)));
                 }
             }
@@ -185,13 +184,13 @@ class RawSenManga extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String path = chapter.getPath().substring(HOST.length() + (chapter.getPath().startsWith("https")? 1 : 2));
+        String path = chapter.getPath().substring(HOST.length() + (chapter.getPath().startsWith("https") ? 1 : 2));
         return HOST + "/viewer/" + path + "/" + page;
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
             String number = getFirstMatch(
                     "</select> of (\\d+)", data,
@@ -217,8 +216,7 @@ class RawSenManga extends ServerBase {
         String web;
         if (fltGenre[filters[0][0]] == R.string.flt_tag_all) {
             web = HOST + valGenre[filters[0][0]] + valOrder[filters[1][0]] + "/page/" + pageNumber;
-        }
-        else {
+        } else {
             web = HOST + valGenre[filters[0][0]] + "/page/" + pageNumber;
         }
         String source = getNavigatorAndFlushParameters().get(web);

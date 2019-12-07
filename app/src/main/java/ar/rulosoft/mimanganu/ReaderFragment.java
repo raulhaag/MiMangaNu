@@ -244,8 +244,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             loadChapter(mChapter, LoadMode.SAVED);
         }
 
-        if(pm.getBoolean(BLUE_FILTER_CHECK, false)){
-            mReader.setBlueFilter((100 - pm.getInt(BLUE_FILTER_LEVEL, 30))/100f);
+        if (pm.getBoolean(BLUE_FILTER_CHECK, false)) {
+            mReader.setBlueFilter((100 - pm.getInt(BLUE_FILTER_LEVEL, 30)) / 100f);
         }
     }
 
@@ -481,7 +481,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     @Override
     public boolean onBackPressed() {
-        if(readerOptions.isVisible()){
+        if (readerOptions.isVisible()) {
             readerOptions.switchOptions();
             return true;
         }

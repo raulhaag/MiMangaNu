@@ -91,10 +91,10 @@ public class NumPickDialogPref extends DialogPreference {
     @Override
     protected void onBindDialogView(@NonNull View view) {
 
-        mMessageValue = (TextView) view.findViewById(R.id.dialogText);
+        mMessageValue = view.findViewById(R.id.dialogText);
         mMessageValue.setText(String.format(mSummary, mValue + mMin));
 
-        mNumberPicker = (NumberPicker) view.findViewById(R.id.dialogNumPicker);
+        mNumberPicker = view.findViewById(R.id.dialogNumPicker);
         mNumberPicker.setOnScrollListener(new NumberPicker.OnScrollListener() {
 
             @Override

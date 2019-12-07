@@ -191,8 +191,8 @@ class ReadComicOnline extends ServerBase {
 
             // Summary
             manga.setSynopsis(
-                getFirstMatchDefault("<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
-                    context.getString(R.string.nodisponible)));
+                    getFirstMatchDefault("<span " + "class=\"info\">Summary:</span>(.+?)</div>", source,
+                            context.getString(R.string.nodisponible)));
 
             // Cover Image
             if (manga.getImages() == null || manga.getImages().isEmpty()) {
@@ -207,8 +207,7 @@ class ReadComicOnline extends ServerBase {
             String writer = getFirstMatchDefault("Writer:.+?\">(.+?)</a>", source, context.getString(R.string.nodisponible));
             if (artist.equals(writer)) {
                 manga.setAuthor(artist);
-            }
-            else {
+            } else {
                 manga.setAuthor(artist + ", " + writer);
             }
 
@@ -238,7 +237,7 @@ class ReadComicOnline extends ServerBase {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
 
-            if(source.contains("class=\"g-recaptcha\"")) {
+            if (source.contains("class=\"g-recaptcha\"")) {
                 throw new Exception(context.getString(R.string.server_uses_captcha));
             }
 
@@ -265,15 +264,15 @@ class ReadComicOnline extends ServerBase {
     @Override
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
-            new ServerFilter(
-                context.getString(R.string.flt_genre),
-                buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
-            new ServerFilter(
-                context.getString(R.string.flt_status),
-                buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
-            new ServerFilter(
-                context.getString(R.string.flt_order),
-                buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_genre),
+                        buildTranslatedStringArray(fltGenre), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_status),
+                        buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
+                new ServerFilter(
+                        context.getString(R.string.flt_order),
+                        buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE),
         };
     }
 
@@ -281,10 +280,9 @@ class ReadComicOnline extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST;
         // genre overrides status, as only one filter can be active at a time
-        if(filters[0][0] != R.string.flt_tag_all) {
+        if (filters[0][0] != R.string.flt_tag_all) {
             web += valGenre[filters[0][0]] + valOrder[filters[2][0]];
-        }
-        else if(filters[1][0] != R.string.flt_status_all) {
+        } else if (filters[1][0] != R.string.flt_status_all) {
             web += valStatus[filters[1][0]] + valOrder[filters[2][0]];
         }
 

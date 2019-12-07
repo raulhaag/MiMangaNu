@@ -197,7 +197,7 @@ public class Manga {
                 .replaceAll("\\s,", ",");
     }
 
-    public int getReaderType(){
+    public int getReaderType() {
         return readerType;
     }
 

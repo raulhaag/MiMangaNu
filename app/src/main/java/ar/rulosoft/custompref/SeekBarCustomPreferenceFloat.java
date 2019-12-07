@@ -52,7 +52,7 @@ public class SeekBarCustomPreferenceFloat extends DialogPreference {
 
     @Override
     protected Object onGetDefaultValue(TypedArray a, int index) {
-        return  (a.getString(index));
+        return (a.getString(index));
     }
 
     @Override
@@ -77,12 +77,12 @@ public class SeekBarCustomPreferenceFloat extends DialogPreference {
         SeekBar seekBar = (SeekBar) holder.findViewById(R.id.seekbar);
         textSummary = (TextView) holder.findViewById(android.R.id.summary);
         textSummary.setText(String.format(mSummary, mValue));
-        seekBar.setMax((int)mMax);
-        seekBar.setProgress(Math.round((mValue + mFC) / mStep) );
+        seekBar.setMax((int) mMax);
+        seekBar.setProgress(Math.round((mValue + mFC) / mStep));
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                mValue = (progress * mStep) - mFC ;
+                mValue = (progress * mStep) - mFC;
                 textSummary.setText(String.format(mSummary, mValue));
             }
 

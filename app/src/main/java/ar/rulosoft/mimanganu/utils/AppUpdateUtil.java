@@ -61,64 +61,64 @@ public class AppUpdateUtil {
                 @Override
                 protected Void doInBackground(Void... voids) {
                     try {
-                        final Triple<String,String, String> info = getCurrentVersion();
-                            ((AppCompatActivity) context).runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                                    View rootView = inflater.inflate(R.layout.dialog_update, null);
-                                    final TextView desc = rootView.findViewById(R.id.descrption);
-                                    final ProgressBar progressBar = rootView.findViewById(R.id.progress);
-                                    final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
-                                    desc.setText(info.getThird());
-                                    dialogBuilder.setTitle(context.getString(R.string.new_version) + " " + info.getFirst());
-                                    dialogBuilder.setView(rootView);
-                                    dialogBuilder.setPositiveButton(context.getString(R.string.download), null);
-                                    dialogBuilder.setNegativeButton(context.getString(R.string.close), null);
-                                    AlertDialog dialog = dialogBuilder.create();
-                                    dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-                                        @Override
-                                        public void onShow(final DialogInterface dialog) {
-                                            final Button cancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
-                                            cancel.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    dialog.dismiss();
-                                                    if (context instanceof MessageActivity) {
-                                                        ((MessageActivity) context).onBackPressed();
-                                                    }
+                        final Triple<String, String, String> info = getCurrentVersion();
+                        ((AppCompatActivity) context).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                                View rootView = inflater.inflate(R.layout.dialog_update, null);
+                                final TextView desc = rootView.findViewById(R.id.descrption);
+                                final ProgressBar progressBar = rootView.findViewById(R.id.progress);
+                                final AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(context);
+                                desc.setText(info.getThird());
+                                dialogBuilder.setTitle(context.getString(R.string.new_version) + " " + info.getFirst());
+                                dialogBuilder.setView(rootView);
+                                dialogBuilder.setPositiveButton(context.getString(R.string.download), null);
+                                dialogBuilder.setNegativeButton(context.getString(R.string.close), null);
+                                AlertDialog dialog = dialogBuilder.create();
+                                dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                                    @Override
+                                    public void onShow(final DialogInterface dialog) {
+                                        final Button cancel = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_NEGATIVE);
+                                        cancel.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                dialog.dismiss();
+                                                if (context instanceof MessageActivity) {
+                                                    ((MessageActivity) context).onBackPressed();
                                                 }
-                                            });
-                                            final Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
-                                            accept.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    try {
-                                                        AppCompatActivity activity = (AppCompatActivity) context;
-                                                        activity.runOnUiThread(new Runnable() {
-                                                            @Override
-                                                            public void run() {
-                                                                ((AlertDialog) dialog).setCancelable(false);
-                                                                String init_download_text = context.getString(R.string.downloading) + " 0%";
-                                                                desc.setText(init_download_text);
-                                                                accept.setEnabled(false);
-                                                                cancel.setEnabled(false);
-                                                                progressBar.setVisibility(View.VISIBLE);
-                                                                progressBar.setIndeterminate(true);
-                                                            }
-                                                        });
-                                                        download(activity, info.getSecond(), progressBar, desc, dialog);
-                                                    } catch (Exception e) {
-                                                        Log.e(TAG, "Error while starting download");
-                                                        e.printStackTrace();
-                                                    }
+                                            }
+                                        });
+                                        final Button accept = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                                        accept.setOnClickListener(new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                try {
+                                                    AppCompatActivity activity = (AppCompatActivity) context;
+                                                    activity.runOnUiThread(new Runnable() {
+                                                        @Override
+                                                        public void run() {
+                                                            ((AlertDialog) dialog).setCancelable(false);
+                                                            String init_download_text = context.getString(R.string.downloading) + " 0%";
+                                                            desc.setText(init_download_text);
+                                                            accept.setEnabled(false);
+                                                            cancel.setEnabled(false);
+                                                            progressBar.setVisibility(View.VISIBLE);
+                                                            progressBar.setIndeterminate(true);
+                                                        }
+                                                    });
+                                                    download(activity, info.getSecond(), progressBar, desc, dialog);
+                                                } catch (Exception e) {
+                                                    Log.e(TAG, "Error while starting download");
+                                                    e.printStackTrace();
                                                 }
-                                            });
-                                        }
-                                    });
-                                    dialog.show();
-                                }
-                            });
+                                            }
+                                        });
+                                    }
+                                });
+                                dialog.show();
+                            }
+                        });
                     } catch (Exception e) {
                         Log.e(TAG, "Error while searching for new update");
                         e.printStackTrace();
@@ -191,11 +191,11 @@ public class AppUpdateUtil {
     }
 
     private static Intent getAndPrepareUpdateIntent(Context context) {
-        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.N){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(UPDATE_FILE_CACHE), "application/vnd.android.package-archive");
             return intent;
-        }else {
+        } else {
             Uri contentUri = FileProvider.getUriForFile(context, "ar.rulosoft.provider", UPDATE_FILE_CACHE);
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(contentUri, "application/vnd.android.package-archive");
@@ -208,7 +208,7 @@ public class AppUpdateUtil {
         }
     }
 
-    private static Triple<String,String,String> getCurrentVersion(){
+    private static Triple<String, String, String> getCurrentVersion() {
         Navigator.getInstance().flushParameter();
         try {
             final JSONObject object = new JSONObject(Navigator.getInstance().get(LATEST_RELEASE_URL_API));
@@ -221,19 +221,24 @@ public class AppUpdateUtil {
         try {
             String source = Navigator.getInstance().get(LATEST_RELEASE_URL);
             String link = "https://github.com" + Util.getInstance().getFirstMatchDefault("(/raulhaag/MiMangaNu[^\"]+apk)", source, "");
-            if(link.equals("https://github.com")){
+            if (link.equals("https://github.com")) {
                 return null;
             }
             String version = Util.getInstance().getFirstMatchDefault("tree/([^\"]+)", source, "");
             String data = Util.getInstance().getFirstMatchDefault("<div class=\"markdown-body\">([\\s\\S]+?)</div>", source, "")
                     .replaceAll("<li>(.+)</li>", "* $1")
-                    .replaceAll("\\s*<p>([^<]+)</p>","$1")
+                    .replaceAll("\\s*<p>([^<]+)</p>", "$1")
                     .replaceAll("<[^>]+>", "");
             return new Triple<>(version, link, data);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static String getInstallerPackagename(Context context) {
+        String installer = (context.getPackageManager().getInstallerPackageName(context.getPackageName()));
+        return installer != null ? installer : "com.none.found";
     }
 
     public static class CheckForAppUpdates extends AsyncTask<Void, Integer, Void> {
@@ -252,7 +257,7 @@ public class AppUpdateUtil {
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                Triple<String,String, String> info = getCurrentVersion();
+                Triple<String, String, String> info = getCurrentVersion();
                 if (!BuildConfig.VERSION_NAME.replace("-github", "").equals(info.getFirst())) {
                     Intent intent = new Intent(context, MessageActivity.class);
                     intent.putExtra(MessageActivity.MESSAGE_VALUE, MessageActivity.MESSAGE_UPDATE);
@@ -276,10 +281,5 @@ public class AppUpdateUtil {
                 Log.e("Util", error);
             super.onPostExecute(result);
         }
-    }
-
-    public static String getInstallerPackagename(Context context){
-        String installer = (context.getPackageManager().getInstallerPackageName(context.getPackageName()));
-        return installer != null ? installer : "com.none.found";
     }
 }

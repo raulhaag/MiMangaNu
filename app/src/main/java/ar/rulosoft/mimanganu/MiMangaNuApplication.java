@@ -18,7 +18,7 @@ import ar.rulosoft.mimanganu.utils.Util;
         formUri = "https://collector.tracepot.com/3928c326"
 )*/
 public class MiMangaNuApplication extends Application {
-    public MiMangaNuApplication(){
+    public MiMangaNuApplication() {
     }
 
     @Override
@@ -27,12 +27,13 @@ public class MiMangaNuApplication extends Application {
         //   ACRA.init(this);
     }
 
-    @Override public void onCreate() {
+    @Override
+    public void onCreate() {
         super.onCreate();
         // don't delete this, this is used to detect memory leaks ~xtj9182
         //LeakCanary.install(this);
         JobManager.create(this).addJobCreator(new UpdateJobCreator());
-        if(JobManager.instance().getAllJobRequestsForTag(UpdateJobCreator.UPDATE_TAG).isEmpty()){
+        if (JobManager.instance().getAllJobRequestsForTag(UpdateJobCreator.UPDATE_TAG).isEmpty()) {
             UpdateJobCreator.UpdateJob.scheduleJob(getApplicationContext());
         }
         Util.createNotificationChannels(getApplicationContext());

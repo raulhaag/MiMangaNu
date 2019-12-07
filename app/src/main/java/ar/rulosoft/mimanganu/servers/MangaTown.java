@@ -177,7 +177,7 @@ class MangaTown extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             String data = getNavigatorAndFlushParameters().get(chapter.getPath());
             String page_selection = getFirstMatch(
                     "<select onchange=\"javascript:location.href=this.value;\">(.+?)</select>", data,
@@ -225,7 +225,7 @@ class MangaTown extends ServerBase {
 
     @Override
     public ServerFilter[] getServerFilters() {
-        return new ServerFilter[] {
+        return new ServerFilter[]{
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
@@ -255,7 +255,7 @@ class MangaTown extends ServerBase {
                 valStatus[filters[0][0]],
                 "0", // a-z
                 valType[filters[3][0]]
-                );
+        );
         String order = valOrder[filters[4][0]];
 
         String data = getNavigatorAndFlushParameters().get(

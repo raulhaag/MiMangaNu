@@ -47,7 +47,7 @@ public class VerticalReader extends ContinuousReader {
 
     public void reloadImage(int idx) {
         int pageIdx;
-        if(idx == 0)
+        if (idx == 0)
             pageIdx = idx;
         else
             pageIdx = idx - 1;
@@ -55,8 +55,8 @@ public class VerticalReader extends ContinuousReader {
             int cPage = currentPage - 1;
             if (pages.size() < cPage || cPage < 0)
                 cPage = 0;
-            if(cPage >= pages.size())
-                cPage = pages.size()-1;
+            if (cPage >= pages.size())
+                cPage = pages.size() - 1;
             float value = 0;
             if (pages.get(cPage) != null)
                 value = pages.get(cPage).init_visibility;
@@ -90,7 +90,7 @@ public class VerticalReader extends ContinuousReader {
                 if (currentPage == 1)
                     readerListener.onStartOver();
                 else
-                    goToPage(currentPage -1);
+                    goToPage(currentPage - 1);
             } else if (e.getX() > getWidth() / 4 * 3) {
                 if (isLastPageVisible())
                     readerListener.onEndOver();
@@ -163,7 +163,7 @@ public class VerticalReader extends ContinuousReader {
 
     @Override
     public void postLayout() {
-        if(yScroll == 0)
+        if (yScroll == 0)
             absoluteScroll(xScroll, getPagePosition(currentPage - 1));
         generateDrawPool();
         if (readerListener != null) {

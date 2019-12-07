@@ -92,7 +92,7 @@ class MangaStream extends ServerBase {
             }
 
             // Cover - use 1st image of latest chapter. If it's already been downloaded in the manga overview just reuse it
-            if(manga.getImages() == null || manga.getImages().isEmpty()) {
+            if (manga.getImages() == null || manga.getImages().isEmpty()) {
                 ArrayList<Chapter> chapters = manga.getChapters();
                 if (!chapters.isEmpty()) {
                     source = getNavigatorAndFlushParameters().get(chapters.get(chapters.size() - 1).getPath());

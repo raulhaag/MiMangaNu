@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.118:\n\t* Fix CloudFlare.\n\t* Add restart option to main menu.</string>
+    <string name="update_message">Changes in v1.119:\n\t* Small fixes.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

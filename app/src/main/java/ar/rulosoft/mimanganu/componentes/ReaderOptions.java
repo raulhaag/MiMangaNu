@@ -510,7 +510,6 @@ public class ReaderOptions extends FrameLayout {
     }
 
 
-
     public enum OptionType {
         TYPE,
         DIRECTION,

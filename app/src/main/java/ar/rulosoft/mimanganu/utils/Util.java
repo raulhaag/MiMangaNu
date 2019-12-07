@@ -602,7 +602,7 @@ public class Util {
         return false;
     }
 
-    public boolean isGPServicesAvailable(Context context)  {
+    public boolean isGPServicesAvailable(Context context) {
         final int status = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context);
         return status == ConnectionResult.SUCCESS;
     }

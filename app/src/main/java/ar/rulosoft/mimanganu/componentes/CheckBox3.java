@@ -37,12 +37,13 @@ public class CheckBox3 extends IndeterminateCheckBox {
             setState(state > 0);
         }
     }
-    public int getIntState(){
-        if(getState() == null){
+
+    public int getIntState() {
+        if (getState() == null) {
             return -1;
-        }else if(getState()){
+        } else if (getState()) {
             return 1;
-        }else{
+        } else {
             return 0;
         }
     }

@@ -22,6 +22,7 @@ import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
@@ -36,9 +37,11 @@ import javax.net.ssl.X509TrustManager;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.utils.Util;
+import okhttp3.Cookie;
 import okhttp3.CookieJar;
 import okhttp3.FormBody;
 import okhttp3.Headers;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -154,6 +157,13 @@ public class Navigator {
                     return e.getMessage();
                 }
             }
+
+            @Override
+            public void srCookie(String url, String val) {
+                HttpUrl url1 = HttpUrl.parse(url);
+                Cookie cookie = Cookie.parse(url1, val);
+                httpClient.cookieJar().saveFromResponse(url1, Arrays.asList(cookie));
+            }
         };
     }
 
@@ -233,6 +243,13 @@ public class Navigator {
 
     public void clearCookieJar(Context context) {
         cookieJar = new PersistentCookieJar(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
+        try {
+            initClient(cookieJar, context);
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
     }
 
     public String get(String web) throws Exception {
@@ -570,5 +587,7 @@ public class Navigator {
         String post(String web, String headers, String params);
 
         String postM(String web, String headers, String params);
+
+        void srCookie(String url, String val);
     }
 }

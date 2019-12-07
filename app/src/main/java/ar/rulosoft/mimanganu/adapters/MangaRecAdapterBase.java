@@ -1,18 +1,15 @@
 package ar.rulosoft.mimanganu.adapters;
 
 import android.content.Context;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import java.util.ArrayList;
 
-import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Manga;
 
 /**
  * Created by Raul on 30/11/2015.
- *
  */
 public abstract class MangaRecAdapterBase extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     protected ArrayList<Manga> mangas;

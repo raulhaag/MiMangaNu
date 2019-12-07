@@ -93,7 +93,7 @@ public class VerComicsCom extends ServerBase {
         manga.setAuthor(context.getString(R.string.nodisponible));
         manga.setSynopsis(context.getString(R.string.nodisponible));
         manga.setGenre(context.getString(R.string.nodisponible));
-        assert(manga.getTitle() != null);
+        assert (manga.getTitle() != null);
         if (manga.getTitle().contains("|")) {
             JSONObject list = new JSONObject(getFirstMatch("js_array =(\\{[\\s\\S]+?\\})\\;\\s*</sc", data, context.getString(R.string.error)));
             JSONObject o = (JSONObject) list.get(manga.getTitle().split("\\|")[0]);
@@ -101,7 +101,7 @@ public class VerComicsCom extends ServerBase {
             // there is always a title, but the description field may be empty
             manga.setTitle(o.get("name").toString());
             String desc = o.get("description").toString();
-            if(!desc.isEmpty()) {
+            if (!desc.isEmpty()) {
                 manga.setSynopsis(desc);
             }
         }
@@ -109,7 +109,7 @@ public class VerComicsCom extends ServerBase {
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        assert(chapter.getExtra() != null);
+        assert (chapter.getExtra() != null);
         return chapter.getExtra().split("\\|")[page];
     }
 
@@ -143,11 +143,11 @@ public class VerComicsCom extends ServerBase {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= pageCount; i++) {
             sb.append("|")
-              .append("http://image.issuu.com/")
-              .append(hash)
-              .append("/jpg/page_")
-              .append(i)
-              .append(".jpg");
+                    .append("http://image.issuu.com/")
+                    .append(hash)
+                    .append("/jpg/page_")
+                    .append(i)
+                    .append(".jpg");
         }
 
         chapter.setPages(pageCount);

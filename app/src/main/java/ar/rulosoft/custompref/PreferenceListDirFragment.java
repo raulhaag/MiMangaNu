@@ -46,8 +46,8 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
     protected void onBindDialogView(@NonNull View view) {
         SharedPreferences pm = PreferenceManager.getDefaultSharedPreferences(getContext());
         actual = pm.getString(parent.getKey(), Environment.getExternalStorageDirectory().getPath() + "/");
-        dirs = (ListView) view.findViewById(R.id.dirList);
-        dirs_path = (TextView) view.findViewById(R.id.dirBreadcrumb);
+        dirs = view.findViewById(R.id.dirList);
+        dirs_path = view.findViewById(R.id.dirBreadcrumb);
         ArrayList<String> dirList = Util.getInstance().dirList(actual);
         context = getActivity();
         ArrayAdapter<String> adap = new ArrayAdapterDirectory(context, R.layout.listitem_dir, dirList);

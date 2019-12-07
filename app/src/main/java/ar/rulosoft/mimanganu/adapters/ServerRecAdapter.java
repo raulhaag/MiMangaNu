@@ -98,7 +98,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
         });
     }
 
-    public boolean startActionMode(){
+    public boolean startActionMode() {
         if (actionMode != null) {
             return false;
         }
@@ -155,7 +155,7 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
     public void onDestroyActionMode(ActionMode mode) {
         this.actionMode = null;
         clearSelections();
-        if(endActionModeListener != null){
+        if (endActionModeListener != null) {
             endActionModeListener.onEndActionMode();
         }
     }
@@ -213,6 +213,10 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
         void onServerClick(ServerBase server);
     }
 
+    public interface OnEndActionModeListener {
+        void onEndActionMode();
+    }
+
     public class ServerViewHolder extends RecyclerView.ViewHolder {
         TextView title;
         ImageView flag;
@@ -221,15 +225,11 @@ public class ServerRecAdapter extends RecyclerView.Adapter<ServerRecAdapter.Serv
 
         public ServerViewHolder(View itemView) {
             super(itemView);
-            title = (TextView) itemView.findViewById(R.id.server_nombre);
-            flag = (ImageView) itemView.findViewById(R.id.server_bandera);
-            icon = (ImageView) itemView.findViewById(R.id.server_imagen);
+            title = itemView.findViewById(R.id.server_nombre);
+            flag = itemView.findViewById(R.id.server_bandera);
+            icon = itemView.findViewById(R.id.server_imagen);
             v = itemView;
         }
-    }
-
-    public interface OnEndActionModeListener{
-        void onEndActionMode();
     }
 
 }

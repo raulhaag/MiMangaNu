@@ -144,7 +144,7 @@ class HeavenManga extends ServerBase {
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
+        if (chapter.getPages() == 0) {
             if (chapter.getExtra() == null) {
                 String source = getNavigatorAndFlushParameters().get(chapter.getPath());
                 String web = getFirstMatch(

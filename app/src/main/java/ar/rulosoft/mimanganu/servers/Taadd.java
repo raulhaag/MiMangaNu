@@ -263,17 +263,18 @@ class Taadd extends ServerBase {
         }
         return mangas;
     }
-//https://www.taadd.com/search/?wd=&released=0&author=&artist=&category_id=7,4,&out_category_id=60,6,40,&completed_series=either&page=1
+
+    //https://www.taadd.com/search/?wd=&released=0&author=&artist=&category_id=7,4,&out_category_id=60,6,40,&completed_series=either&page=1
 //http://www.taadd.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=7%2C4%2C&out_category_id=40%2C6%2C&completed_series=either&type=high&page=1.html
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String includedGenres = "";
         String excludedGenres = "";
         if (filters[0].length > 0) {
-            for(int i = filters[0].length - 1; i >= 0; i--){
-                if(filters[0][i] == 1){
+            for (int i = filters[0].length - 1; i >= 0; i--) {
+                if (filters[0][i] == 1) {
                     includedGenres = includedGenres + valGenre[i] + "%2C"; // comma
-                }else if(filters[0][i] == -1){
+                } else if (filters[0][i] == -1) {
                     excludedGenres = excludedGenres + valGenre[i] + "%2C"; // comma
                 }
             }
@@ -281,8 +282,7 @@ class Taadd extends ServerBase {
         String web;
         if (includedGenres.isEmpty() && excludedGenres.isEmpty()) {
             web = HOST + valOrder[filters[2][0]];
-        }
-        else {
+        } else {
             web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valComplete[filters[1][0]] + "&type=high&page=" + pageNumber + ".html";
         }
         return getMangasFromSource(getNavigatorAndFlushParameters().get(web));

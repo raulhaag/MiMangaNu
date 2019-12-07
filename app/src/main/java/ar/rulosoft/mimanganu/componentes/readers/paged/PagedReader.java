@@ -130,7 +130,7 @@ public abstract class PagedReader extends Reader implements TapListener {
         private ColorFilter cf;
 
         PageAdapter() {
-            if(savedCf == null) {
+            if (savedCf == null) {
                 ColorMatrix cm = new ColorMatrix();
                 cm.set(new float[]{1f, 0, 0, 0, 0,
                         0, 1f, 0, 0, 0,
@@ -138,7 +138,7 @@ public abstract class PagedReader extends Reader implements TapListener {
                         0, 0, 0, 1f, 0});
                 cf = new ColorMatrixColorFilter(cm);
                 savedCf = cf;
-            }else{
+            } else {
                 cf = savedCf;
             }
             pages = new Page[paths.size()];

@@ -108,7 +108,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             } catch (Throwable throwable) {
                 throwable.printStackTrace();
             }
-        }else {
+        } else {
             mListView = getView().findViewById(R.id.list);
             swipeReLayout = getView().findViewById(R.id.str);
             readerOptions = getView().findViewById(R.id.reader_options);
@@ -270,13 +270,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
     public void loadInfo(Manga manga) {
         if (mInfo != null && manga != null && isAdded()) {
-            mInfo.setStatus(manga.isFinished()?getResources().getString(R.string.finalizado):getResources().getString(R.string.en_progreso));
+            mInfo.setStatus(manga.isFinished() ? getResources().getString(R.string.finalizado) : getResources().getString(R.string.en_progreso));
             mInfo.setServer(ServerBase.getServer(manga.getServerId(), getContext()).getServerName());
 
             if (manga.getSynopsis() != null) {
                 mInfo.setSynopsis(manga.getSynopsis());
-            }
-            else {
+            } else {
                 mInfo.setSynopsis(getResources().getString(R.string.nodisponible));
             }
             if (manga.getAuthor() != null) {
@@ -289,10 +288,9 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             } else {
                 mInfo.setGenre(getResources().getString(R.string.nodisponible));
             }
-            if (manga.getLastUpdate()!= null) {
+            if (manga.getLastUpdate() != null) {
                 mInfo.setLastUpdate(manga.getLastUpdate());
-            }
-            else {
+            } else {
                 mInfo.setLastUpdate(getResources().getString(R.string.nodisponible));
             }
             mImageLoader.displayImg(manga.getImages(), mInfo);
@@ -555,7 +553,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
     @Override
     public boolean onBackPressed() {
-        if(readerOptions.isVisible()){
+        if (readerOptions.isVisible()) {
             readerOptions.switchOptions();
             return true;
         }
@@ -731,7 +729,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
         @Override
         protected Void doInBackground(Void... params) {
             String condition = "1";
-            if(hide_read) {
+            if (hide_read) {
                 condition = Database.COL_CAP_STATE + " != 1";
             }
             chapters = Database.getChapters(getActivity(), mMangaId, condition);

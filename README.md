@@ -49,6 +49,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.119:
+* Pequeños fixes.
+
+Changes on v1.119.
+* Min fix.
+
 Cambios en v1.118:
 * Fix CFI.
 * Agregada opcion de reiniciar al menu principal.

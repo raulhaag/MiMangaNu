@@ -14,11 +14,11 @@ public class OkHttpClientConnectionChecker extends OkHttpClient {
         super();
         if (!MainActivity.isConnected) {
             if (NetworkUtilsAndReceiver.ONLY_WIFI) {
-                Log.e("OkHttpClientConnectionC","no Wifi Exception");
+                Log.e("OkHttpClientConnectionC", "no Wifi Exception");
                 throw new Exception();
                 //throw new NoWifiException(context);
             } else {
-                Log.e("OkHttpClientConnectionC","no Connection Exception");
+                Log.e("OkHttpClientConnectionC", "no Connection Exception");
                 throw new Exception();
                 //throw new NoConnectionException(context);
             }

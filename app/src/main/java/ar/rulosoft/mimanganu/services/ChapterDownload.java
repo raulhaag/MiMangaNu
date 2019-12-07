@@ -40,7 +40,7 @@ public class ChapterDownload implements StateChangeListener {
         if (status.ordinal() < DownloadStatus.DOWNLOADED.ordinal()) {
             if (status == DownloadStatus.QUEUED)
                 changeStatus(DownloadStatus.DOWNLOADING);
-            if(chapter.getPages() == 0){
+            if (chapter.getPages() == 0) {
                 changeStatus(DownloadStatus.ERROR);
             }
             if (areErrors()) {
@@ -74,8 +74,8 @@ public class ChapterDownload implements StateChangeListener {
                     if (errorListener != null) {
                         errorListener.onError(chapter);
                     }
-                    if(DownloadPoolService.mDownloadsChangesListener != null){
-                        DownloadPoolService.mDownloadsChangesListener.onStatusChanged(DownloadPoolService.chapterDownloads.indexOf(this),this);
+                    if (DownloadPoolService.mDownloadsChangesListener != null) {
+                        DownloadPoolService.mDownloadsChangesListener.onStatusChanged(DownloadPoolService.chapterDownloads.indexOf(this), this);
                     }
                     break;
                 }
