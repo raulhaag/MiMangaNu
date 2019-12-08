@@ -222,6 +222,7 @@ public class MainActivity extends AppCompatActivity {
         }
         colors = ThemeColors.getColors(pm);
         setColorToBars();
+        checkFragmentOptions(getSupportFragmentManager().findFragmentById(R.id.coordinator_layout));
     }
 
     public void setColorToBars() {
