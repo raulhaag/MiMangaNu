@@ -2,6 +2,7 @@ package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 
 class MangaTown extends ServerBase {
     private static final String HOST = "https://www.mangatown.com";
@@ -27,7 +29,7 @@ class MangaTown extends ServerBase {
     private static final String PATTERN_GENRE =
             "<li><b>Genre\\(s\\):</b>(.+?)</li>";
     private static final String PATTERN_CHAPTER =
-            "<li>[^<]*<a href=\"([^\"]+?/manga/[^\"]+)\"[^>]*>([^<]+)</a>[^<]+<span";
+            "<li>\\s*<a href=\"(/manga/[^\"]+)[^>]+>(.+?)<span class=\"time\">";
     private static final String PATTERN_IMAGE =
             "src=\"([^\"]+?/manga/.+?.(jpg|gif|jpeg|png|bmp).*?)\"";
     private static final String PATTERN_MANGA =
@@ -156,11 +158,16 @@ class MangaTown extends ServerBase {
                     context.getString(R.string.nodisponible)));
             // genre
             manga.setGenre(getFirstMatchDefault(PATTERN_GENRE, data, context.getString(R.string.nodisponible)));
+            String message = getFirstMatchDefault("<div style=\"text-align: center;\">(The series .+? available in MangaTown)", data, "");
+            if (!"".equals(message)) {
+                Util.getInstance().toast(context, message, Toast.LENGTH_LONG);
+                return;
+            }
             // chapter
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                manga.addChapterFirst(new Chapter(m.group(2), "http:" + m.group(1)));
+                manga.addChapterFirst(new Chapter(m.group(2), HOST + m.group(1)));
             }
         }
     }
@@ -168,9 +175,9 @@ class MangaTown extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
-        String web = "http:" + chapter.getExtra().split("\\|")[page - 1];
+        String web = HOST + chapter.getExtra().split("\\|")[page - 1];
         String data = getNavigatorAndFlushParameters().get(web);
-        return getFirstMatch(
+        return "https:" + getFirstMatch(
                 PATTERN_IMAGE, data,
                 context.getString(R.string.server_failed_loading_image));
     }
@@ -203,7 +210,7 @@ class MangaTown extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(2), "https:" + m.group(1), false));
+            mangas.add(new Manga(getServerID(), m.group(2), HOST + m.group(1), false));
         }
         return mangas;
     }
@@ -263,7 +270,7 @@ class MangaTown extends ServerBase {
         Pattern p = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         Matcher m = p.matcher(data);
         while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(2), "https:" + m.group(1), m.group(3)));
+            mangas.add(new Manga(getServerID(), m.group(2), HOST + m.group(1), m.group(3)));
         }
         return mangas;
     }
