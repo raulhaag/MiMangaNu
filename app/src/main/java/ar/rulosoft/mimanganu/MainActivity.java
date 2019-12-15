@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
             bundle.putInt(MainFragment.MANGA_ID, mangaIdFromNotification);
             MangaFragment mangaFragment = new MangaFragment();
             mangaFragment.setArguments(bundle);
-            replaceFragmentNoBackStack(mangaFragment);
+            replaceFragmentAllowStateLoss(mangaFragment, "MangaFragment");
             if (Util.n > 0)
                 Util.n--;
             //Util.getInstance().toast(this, "n: " + Util.n, 1);
@@ -256,12 +257,13 @@ public class MainActivity extends AppCompatActivity {
         // setAllowOptimization(true) (new default)
         // fA -> fB
         // fB.onStart -> fA.onStop
-        getSupportFragmentManager().beginTransaction().setCustomAnimations(
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(
                 R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
-        ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
-        getSupportFragmentManager().executePendingTransactions();
+        ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag);
         //System.gc();
         checkFragmentOptions(fragment);
+        ft.commitAllowingStateLoss();
     }
 
     public void replaceFragmentNoBackStack(Fragment fragment) {

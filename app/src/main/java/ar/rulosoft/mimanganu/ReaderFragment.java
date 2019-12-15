@@ -417,6 +417,11 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 mChapter.setPagesRead(mReader.getCurrentPage());
                 Database.updateChapterPage(getActivity(), mChapter.getId(), mChapter.getPagesRead());
             }
+            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            ActionBar ab = ((MainActivity) getActivity()).getSupportActionBar();
+            if (ab != null) {
+                ab.show();
+            }
         } catch (Exception ignored) {
             ignored.printStackTrace();
         }
@@ -484,11 +489,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if (readerOptions.isVisible()) {
             readerOptions.switchOptions();
             return true;
-        }
-        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        ActionBar ab = ((MainActivity) getActivity()).getSupportActionBar();
-        if (ab != null) {
-            ab.show();
         }
         ((MainActivity) getActivity()).setColorToBars();
         if (getActivity().getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED)
