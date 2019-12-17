@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.120:
+* Fix TMO, EsNineManga, Taadd y MangaTown.
+* Fix en GUI.
+
+Changes on v1.120.
+* Fix TMO, EsNineManga, Taadd and MangaTown.
+* Fix on GUI.
+
 Cambios en v1.119:
 * Pequeños fixes.
 
