@@ -13,7 +13,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by xtj-9182 on 11.04.2017.
@@ -221,22 +221,30 @@ class Taadd extends ServerBase {
     }
 
     @Override
-    public String getImageFrom(Chapter chapter, int page) throws Exception {
-        if (chapter.getExtra() == null | chapter.getExtra().isEmpty()) {
-            Util.getInstance().toast(context, "Error Need to reset chapter");
-            throw new Exception("Error need reset chapter");
+    public void chapterInit(Chapter chapter) throws Exception {
+        Navigator nav = getNavigatorAndFlushParameters();
+        String id = getFirstMatch("\\/(\\d+)\\/", chapter.getPath(), context.getString(R.string.error));
+        String path = chapter.getPath().replaceAll("\\/\\d+", "")
+                .replace("chapter", "manga");
+        nav.addHeader("Referer", path);
+        String data = nav.getRedirectWeb(chapter.getPath());
+        nav.addHeader("Referer", path);
+        data = nav.getRedirectWeb(data);
+        nav.addHeader("Referer", path);
+        String sid = getFirstMatch("\\/(\\d+)\\.", data, context.getString(R.string.error));
+        nav.addHeader("Cookie", "lrgarden_visit_check_" + sid + "=" + id + ";");
+        data = nav.get("https://www.gardenmanage.com" + data);
+        ArrayList<String> pages = getAllMatch("src=\"([^\"']+?)\" one", data);
+        if (pages.size() != 0) {
+            chapter.setPages(pages.size());
+            chapter.setExtra("https://www.gardenmanage.com/c/taadd/" + id + "/|" + TextUtils.join("|", pages));
         }
-        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
-    public void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getPages() == 0 || chapter.getExtra() == null || chapter.getExtra().isEmpty()) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath().replaceAll("/$", "") + "-2.html", chapter.getPath());
-            ArrayList<String> images = getAllMatch("\"_blank\"  href=\"([^\"]+)", source);
-            chapter.setExtra("|" + TextUtils.join("|", images));
-            chapter.setPages(images.size());
-        }
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        String[] parts = chapter.getExtra().split("\\|");
+        return parts[page] + "|" + parts[0];
     }
 
     @Override
