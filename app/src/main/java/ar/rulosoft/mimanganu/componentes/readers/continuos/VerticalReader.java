@@ -178,7 +178,7 @@ public class VerticalReader extends ContinuousReader {
             page = 0;
         else if (index >= pages.size())
             page = pages.size() - 1;
-        if (viewReady && pagesLoaded) {
+        if (pagesLoaded) {
             absoluteScroll(xScroll, getPagePosition(page));
             generateDrawPool();
         }

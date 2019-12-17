@@ -108,8 +108,9 @@ class TuMangaOnline extends ServerBase {
         if (manga.getChapters().isEmpty() || forceReload) {
             String data = getNavWithNeededHeaders().get(
                     String.format(HOST + "/library/manga/%s/%s", manga.getPath(),
-                            URLEncoder.encode(manga.getTitle(), "UTF-8").replaceAll("\\.", "")));
-
+                            URLEncoder.encode(manga.getTitle()
+                                            .replaceAll("[-\\._~\\:\\/\\?#\\[\\]@\\!\\$\\&'\\(\\)\\*\\+\\,\\;\\=]", "-"),
+                                    "UTF-8")));
             manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
             manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
             manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">([^<]+)<", data)));
