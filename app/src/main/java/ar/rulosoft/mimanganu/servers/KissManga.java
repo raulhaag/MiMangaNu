@@ -20,7 +20,7 @@ class KissManga extends ServerBase {
     private static final String PATTERN_CHAPTER =
             "<td>\\s*<a\\s*href=\"(/Manga/[^\"]+)\"\\s*title=\"[^\"]+\">([^<]+)</a>\\s*</td>";
     private static final String PATTERN_MANGA =
-            "(https?:[^&|\"]+.ploads/.tc[^&|\"]+).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
+            "<td title='[\\s]*<img.+?src=\"(https?://.+?.(?:jpe?g|png)).+?href=\"(/.anga/[^\"]+).+?>([^<]+)";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_4_koma,
