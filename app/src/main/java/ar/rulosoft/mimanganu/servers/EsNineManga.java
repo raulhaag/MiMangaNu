@@ -184,13 +184,14 @@ class EsNineManga extends NineManga {
                 .replace("chapter", "manga");
         nav.addHeader("Referer", HOST + path);
         String data = nav.getRedirectWeb(HOST + chapter.getPath());
-        nav.addHeader("Referer", HOST + path);
+        nav.addHeader("Referer", HOST + chapter.getPath());
         data = nav.getRedirectWeb(data);
-        nav.addHeader("Referer", HOST + path);
+        nav.addHeader("Referer", HOST + chapter.getPath());
         String sid = getFirstMatch("\\/(\\d+)\\.", data, context.getString(R.string.error));
         nav.addHeader("Cookie", "lrgarden_visit_check_" + sid + "=" + id + ";");
         data = nav.get("https://www.gardenmanage.com" + data);
-        ArrayList<String> pages = getAllMatch("src=\"([^\"']+?)\" one", data);
+        data = getFirstMatch("all_imgs_url: \\[([^\\]]+)", data, context.getString(R.string.error));
+        ArrayList<String> pages = getAllMatch("\"([^\"]+)\"", data);
         if (pages.size() != 0) {
             chapter.setPages(pages.size());
             chapter.setExtra("https://www.gardenmanage.com/c/esninemanga/" + id + "/|" + TextUtils.join("|", pages));
