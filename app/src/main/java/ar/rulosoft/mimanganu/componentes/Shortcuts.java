@@ -25,7 +25,7 @@ import ar.rulosoft.mimanganu.utils.Util;
 
 public class Shortcuts {
     public static void addShortCuts(Manga m, Context ctx) {
-        if (m.getVault().isEmpty()) {
+        if (m.getVault().isEmpty() && m.getImages() != null && !m.getImages().isEmpty()) {
             if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
                 ShortcutManager sm = ctx.getSystemService(ShortcutManager.class);
@@ -61,7 +61,7 @@ public class Shortcuts {
     }
 
     public static void addShortCutsX(Manga m, Context ctx) {
-        if (ShortcutManagerCompat.isRequestPinShortcutSupported(ctx)) {
+        if (ShortcutManagerCompat.isRequestPinShortcutSupported(ctx) && m.getImages() != null && !m.getImages().isEmpty()) {
             Intent i = new Intent(ctx, ar.rulosoft.mimanganu.MainActivity.class);
             i.putExtra("manga_id", m.getId());
             i.setAction(Intent.ACTION_VIEW);
