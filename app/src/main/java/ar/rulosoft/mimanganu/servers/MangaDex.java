@@ -169,11 +169,11 @@ public class MangaDex extends ServerBase {
         manga.setAuthor(mangaO.getString("author"));
         manga.setFinished(mangaO.getString("status").equals("2"));
         JSONArray genres = mangaO.getJSONArray("genres");
-        String gText = "";
+        /*String gText = "";
         for (int i = 0; i < genres.length(); i++) {
-            gText = gText + ", " + content[genres.getInt(i) + 1];
-        }
-        manga.setGenre(gText.substring(2));
+           // gText = gText + ", " + content[genres.getInt(i) + 1];
+        }*/
+        manga.setGenre("");
     }
 
     @Override
