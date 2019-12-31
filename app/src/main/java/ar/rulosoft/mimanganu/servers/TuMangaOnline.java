@@ -159,6 +159,12 @@ class TuMangaOnline extends ServerBase {
             String images = "";
             try (Duktape duktape = Duktape.create()) {
                 duktape.set("nav", Navigator.NavigatorJsInterface.class, Navigator.getInstance().getNavigatorJs());
+ /*               duktape.set("log", CLog.class, new CLog() {
+                    @Override
+                    public void log(String a) {
+                        Log.d("MiMangaNuJsLog", a);
+                    }
+                });*/
                 duktape.evaluate(script);
                 JSIn chapterInit = duktape.get("S22", JSIn.class);
                 images = chapterInit.chapterInit(HOST + "/goto/" + chapter.getPath(),
