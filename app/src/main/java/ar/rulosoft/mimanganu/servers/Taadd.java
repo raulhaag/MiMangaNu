@@ -1,9 +1,11 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +19,7 @@ import ar.rulosoft.navegadores.Navigator;
  * Created by xtj-9182 on 11.04.2017.
  */
 class Taadd extends ServerBase {
-    private static String HOST = "http://www.taadd.com";
+    private static String HOST = "https://www.taadd.com";
 
     private static final int[] fltGenre = {
             R.string.flt_tag_4_koma,
@@ -173,9 +175,9 @@ class Taadd extends ServerBase {
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
         term = URLEncoder.encode(term.replaceAll(" ", "+"), "UTF-8");
-        String source = getNavigatorAndFlushParameters().get("http://my.taadd.com/search/es/?wd=" + term);
+        String source = getNavigatorAndFlushParameters().get("https://my.taadd.com/search/es/?wd=" + term);
         ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
-        mangas.sort(Manga.Comparators.TITLE_ASC);
+        Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 
@@ -191,7 +193,7 @@ class Taadd extends ServerBase {
 
             // Cover
             if (manga.getImages() == null || manga.getImages().isEmpty()) {
-                String img = getFirstMatchDefault("src=\"(http[s]?://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
+                String img = getFirstMatchDefault("src=\"(https*://pic\\.taadd\\.com/files/img/logo/[^\"]+)\"", source, "");
                 manga.setImages(img);
             }
 
@@ -210,7 +212,7 @@ class Taadd extends ServerBase {
                     .replaceAll("<img[^>]+>", "").replaceAll("&nbsp;", "").replaceAll("</a>", ","));
 
             // Chapters
-            Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\">(.+?)</a>", Pattern.DOTALL);
+            Pattern p = Pattern.compile("href=\"(/chapter/[^-\"]+?)\"[\\s\\S]*?>(.+?)</a>", Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
             while (matcher.find()) {
                 manga.addChapterFirst(new Chapter(matcher.group(2), HOST + matcher.group(1)));
@@ -219,24 +221,31 @@ class Taadd extends ServerBase {
     }
 
     @Override
-    public String getImageFrom(Chapter chapter, int page) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
-        nav.addHeader("Referer", chapter.getPath());
-        String source = nav.get(chapter.getPath() + "-" + page + ".html");
-        return getFirstMatch(
-                "src=\"(http[s]?://.{2,4}\\.taadd\\.com/comics/[^\"]+?)\"", source,
-                context.getString(R.string.server_failed_loading_image));
+        String id = getFirstMatch("\\/(\\d+)\\/", chapter.getPath(), context.getString(R.string.error));
+        String path = chapter.getPath().replaceAll("\\/\\d+", "")
+                .replace("chapter", "manga");
+        nav.addHeader("Referer", path);
+        String data = nav.getRedirectWeb(chapter.getPath());
+        nav.addHeader("Referer", path);
+        data = nav.getRedirectWeb(data);
+        nav.addHeader("Referer", path);
+        String sid = getFirstMatch("\\/(\\d+)\\.", data, context.getString(R.string.error));
+        nav.addHeader("Cookie", "lrgarden_visit_check_" + sid + "=" + id + ";");
+        data = nav.get("https://www.gardenmanage.com" + data);
+        data = getFirstMatch("all_imgs_url: \\[([^\\]]+)", data, context.getString(R.string.error));
+        ArrayList<String> pages = getAllMatch("\"([^\"]+)\"", data);
+        if (pages.size() != 0) {
+            chapter.setPages(pages.size());
+            chapter.setExtra("https://www.gardenmanage.com/c/taadd/" + id + "/|" + TextUtils.join("|", pages));
+        }
     }
 
     @Override
-    public void chapterInit(Chapter chapter) throws Exception {
-        if(chapter.getPages() == 0) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            String pageNumber = getFirstMatch(
-                    ">(\\d+)</option>\\s*</select>", source,
-                    context.getString(R.string.server_failed_loading_page_count));
-            chapter.setPages(Integer.parseInt(pageNumber));
-        }
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        String[] parts = chapter.getExtra().split("\\|");
+        return parts[page] + "|" + parts[0];
     }
 
     @Override
@@ -263,17 +272,18 @@ class Taadd extends ServerBase {
         }
         return mangas;
     }
-//https://www.taadd.com/search/?wd=&released=0&author=&artist=&category_id=7,4,&out_category_id=60,6,40,&completed_series=either&page=1
+
+    //https://www.taadd.com/search/?wd=&released=0&author=&artist=&category_id=7,4,&out_category_id=60,6,40,&completed_series=either&page=1
 //http://www.taadd.com/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=7%2C4%2C&out_category_id=40%2C6%2C&completed_series=either&type=high&page=1.html
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String includedGenres = "";
         String excludedGenres = "";
         if (filters[0].length > 0) {
-            for(int i = filters[0].length - 1; i >= 0; i--){
-                if(filters[0][i] == 1){
+            for (int i = filters[0].length - 1; i >= 0; i--) {
+                if (filters[0][i] == 1) {
                     includedGenres = includedGenres + valGenre[i] + "%2C"; // comma
-                }else if(filters[0][i] == -1){
+                } else if (filters[0][i] == -1) {
                     excludedGenres = excludedGenres + valGenre[i] + "%2C"; // comma
                 }
             }
@@ -281,8 +291,7 @@ class Taadd extends ServerBase {
         String web;
         if (includedGenres.isEmpty() && excludedGenres.isEmpty()) {
             web = HOST + valOrder[filters[2][0]];
-        }
-        else {
+        } else {
             web = HOST + "/search/?name_sel=contain&wd=&author_sel=contain&author=&artist_sel=contain&artist=&category_id=" + includedGenres + "&out_category_id=" + excludedGenres + "&completed_series=" + valComplete[filters[1][0]] + "&type=high&page=" + pageNumber + ".html";
         }
         return getMangasFromSource(getNavigatorAndFlushParameters().get(web));

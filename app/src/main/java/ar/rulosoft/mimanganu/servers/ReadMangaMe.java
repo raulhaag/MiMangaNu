@@ -20,7 +20,7 @@ import ar.rulosoft.navegadores.Navigator;
 
 public class ReadMangaMe extends ServerBase {
 
-    private String HOST = "http://readmanga.me";
+    private String HOST = "https://readmanga.me";
 
     private static int[] genres = new int[]{
             R.string.flt_tag_all, //ap
@@ -128,6 +128,7 @@ public class ReadMangaMe extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addPost("q", term);
+        nav.addHeader("Referer", HOST);
         String data = nav.post(HOST + "/search");
         return getMangasFromSource(data);
     }

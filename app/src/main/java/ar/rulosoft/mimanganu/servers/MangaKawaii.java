@@ -52,7 +52,7 @@ class MangaKawaii extends ServerBase {
         String data = nav.get(HOST + "/recherche?query=" + URLEncoder.encode(search, "UTF-8"));
         JSONArray array = new JSONObject(data).getJSONArray("suggestions");
         ArrayList<Manga> mangas = new ArrayList<>();
-        for(int i = 0, n = array.length(); i < n; i++){
+        for (int i = 0, n = array.length(); i < n; i++) {
             mangas.add(new Manga(getServerID(), array.getJSONObject(i).getString("value"),
                     "/manga/" + array.getJSONObject(i).getString("data"),
                     false));
@@ -93,7 +93,7 @@ class MangaKawaii extends ServerBase {
             Matcher matcher = p.matcher(source);
             ArrayList<String> tmpChapterList = new ArrayList<>();
             while (matcher.find()) {
-                if(!tmpChapterList.contains(matcher.group(1))) {
+                if (!tmpChapterList.contains(matcher.group(1))) {
                     manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
                     tmpChapterList.add(matcher.group(1));
                 }
@@ -111,9 +111,9 @@ class MangaKawaii extends ServerBase {
     public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getExtra() == null) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-            ArrayList<String> images = getAllMatch("data-src='\\s*(.+?)\\s*'", source);
+            ArrayList<String> images = getAllMatch("data-src\", \"\\s*([^\"]+)\"", source);
 
-            if(images.isEmpty()) {
+            if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }
             chapter.setExtra(TextUtils.join("|", images));
@@ -126,7 +126,7 @@ class MangaKawaii extends ServerBase {
         String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
         String source = getNavigatorAndFlushParameters().get(web);
 
-        Pattern pattern = Pattern.compile("(/manga/[^\"]+)[\\s\\S]+?data-src='([^']+)' alt='([^']+)'", Pattern.DOTALL);
+        Pattern pattern = Pattern.compile("(\\/manga\\/[^\"]+)\"[\\s]*?data-background-image=\"([^\"]+)\"[\\s\\S]+?-item__name\">([^<]+)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {

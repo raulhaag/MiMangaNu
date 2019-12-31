@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes in v1.110:\n\t* Servers fixes.</string>
+    <string name="update_message">Changes in v1.120:\n\t* Fix TMO, EsNineManga, Taadd and MangaTown.\n\t* Fix on GUI</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
@@ -527,5 +527,8 @@
     <string name="flt_tag_office_workers">Office Workers</string>
     <string name="flt_tag_traditional_games">Traditional Games</string>
     <string name="flt_tag_incest">Incest</string>
+    <string name="create_shortcut_on_home">Create shortcut on home</string>
+    <string name="device_dont_supported">Your device don\'t support this feature.</string>
+    <string name="restart">Restart app</string>
 
 </resources>

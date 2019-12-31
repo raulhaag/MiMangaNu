@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -146,7 +147,7 @@ class ReadMangaToday extends ServerBase {
                 }
             }
         }
-        mangas.sort(Manga.Comparators.TITLE_ASC);
+        Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 

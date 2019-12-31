@@ -1,10 +1,14 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,13 +16,22 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
+import ar.rulosoft.navegadores.VolatileCookieJar;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.MultipartBody;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by jtx on 07.05.2016.
  */
 class MangaEden extends ServerBase {
 
-    protected static final String HOST = "http://www.mangaeden.com";
+    protected static final String HOST = "https://www.mangaeden.com";
 
     protected int[] fltGenre = {
             R.string.flt_tag_action,
@@ -162,7 +175,7 @@ class MangaEden extends ServerBase {
     public ArrayList<Manga> search(String term) throws Exception {
         String source = getNavigatorAndFlushParameters().get(HOST + "/" + lang_2l + "/" + lang_2l + "-directory/?title=" + URLEncoder.encode(term, "UTF-8") + "&author=&artist=&releasedType=0&released=");
         ArrayList<Manga> mangas = new ArrayList<>(getMangasFromSource(source));
-        mangas.sort(Manga.Comparators.TITLE_ASC);
+        Collections.sort(mangas, Manga.Comparators.TITLE_ASC);
         return mangas;
     }
 
@@ -207,7 +220,10 @@ class MangaEden extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            String source = getNavigatorAndFlushParameters().get(chapter.getPath());
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+            String user = prefs.getString("username_" + getServerName(), "");
+            String password = Util.xorDecode(prefs.getString("dwp_" + getServerName(), ""), getServerName());
+            String source = getNavigatorAndFlushParameters().get(chapter.getPath(), new MangaEdenLoginInterceptor(user, password, chapter.getPath()));
             ArrayList<String> images = getAllMatch("fs\":\\s*\"(.+?)\"", source);
 
             if (images.isEmpty()) {
@@ -228,7 +244,7 @@ class MangaEden extends ServerBase {
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
         while (matcher.find()) {
-            Manga manga = new Manga(getServerID(), matcher.group(3), HOST + "/" + lang_2l + "/" + lang_2l + "-manga/" +  matcher.group(1), matcher.group(2).contains("close"));
+            Manga manga = new Manga(getServerID(), matcher.group(3), HOST + "/" + lang_2l + "/" + lang_2l + "-manga/" + matcher.group(1), matcher.group(2).contains("close"));
             mangas.add(manga);
         }
         return mangas;
@@ -246,8 +262,7 @@ class MangaEden extends ServerBase {
         Matcher matcher;
         if (newSource.isEmpty()) {
             matcher = pattern.matcher(source);
-        }
-        else {
+        } else {
             matcher = pattern.matcher(newSource);
         }
         ArrayList<Manga> mangas = new ArrayList<>();
@@ -277,9 +292,9 @@ class MangaEden extends ServerBase {
             web = web + valStatus[filters[2][i]];
         }
         for (int i = 0; i < filters[1].length; i++) {
-            if(filters[1][i] == 1) {
+            if (filters[1][i] == 1) {
                 web = web + "&categoriesInc=" + valGenre[i];
-            }else if(filters[1][i] == -1){
+            } else if (filters[1][i] == -1) {
                 web = web + "&categoriesExcl=" + valGenre[i];
             }
         }
@@ -309,6 +324,88 @@ class MangaEden extends ServerBase {
                 new ServerFilter(context.getString(R.string.flt_status), buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.MULTI),
                 new ServerFilter(context.getString(R.string.flt_order), buildTranslatedStringArray(fltOrder), ServerFilter.FilterType.SINGLE)
         };
+    }
+
+
+    @Override
+    public boolean testLogin(String user, String password) throws Exception {
+        VolatileCookieJar cj = new VolatileCookieJar();
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addPost("username", user);
+        nav.addPost("password", password);
+        nav.addPost("t", "" + (System.currentTimeMillis()));
+        nav.post(HOST + "/ajax/login/", cj);
+        HttpUrl url = HttpUrl.parse(HOST);
+        return (cj.contain(url, "remember_token") && !cj.getValue(url, "remember_token").isEmpty());
+    }
+
+    @Override
+    public boolean needLogin() {
+        return true;
+    }
+
+    @Override
+    public boolean hasCredentials() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String user = prefs.getString("username_" + getServerName(), "");
+        String password = prefs.getString("dwp_" + getServerName(), "");
+        return !(user.isEmpty() && password.isEmpty());
+    }
+
+    public class MangaEdenLoginInterceptor implements Interceptor {
+        private final String page;
+        String user;
+        String password;
+
+        public MangaEdenLoginInterceptor(String user, String password, String page) {
+            this.user = user;
+            this.password = password;
+            this.page = page;
+        }
+
+        @Override
+        public Response intercept(Chain chain) throws IOException {
+            Response response = chain.proceed(chain.request());
+            if (!response.request().url().toString().contains("/login/")) {//when is not logged in it redirect to a page of description of chapter
+                return response;
+            } else {
+                if (user.trim().isEmpty()) {
+                    Util.getInstance().toast(context, "For read this chapter you need to login (add it in preferences)");
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    return response;
+                }
+                try {
+                    RequestBody requestBody = new MultipartBody.Builder()
+                            .setType(MultipartBody.FORM)
+                            .addFormDataPart("username", user)
+                            .addFormDataPart("password", password)
+                            .addFormDataPart("t", "" + System.currentTimeMillis())
+                            .build();
+
+                    Request request0 = new Request.Builder().url(HOST + "/ajax/login/")
+                            .method("POST", requestBody)
+                            .header("User-Agent", Navigator.USER_AGENT)
+                            .build();
+                    response.body().close();
+                    response = chain.proceed(request0);//generate the cookie
+
+                    Request request1 = new Request.Builder()
+                            .url(page)
+                            .header("User-Agent", Navigator.USER_AGENT)
+                            .build();
+                    response.body().close();
+                    return chain.proceed(request1);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        }
     }
 }
 

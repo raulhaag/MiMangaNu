@@ -49,6 +49,87 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.120:
+* Fix TMO, EsNineManga, Taadd y MangaTown.
+* Fix en GUI.
+
+Changes on v1.120.
+* Fix TMO, EsNineManga, Taadd and MangaTown.
+* Fix on GUI.
+
+Cambios en v1.119:
+* Pequeños fixes.
+
+Changes on v1.119.
+* Min fix.
+
+Cambios en v1.118:
+* Fix CFI.
+* Agregada opcion de reiniciar al menu principal.
+
+Changes on v1.118.
+* Fix CFI.
+* Added restart option to main menu.
+
+Cambios en v1.117:
+* Opción agregar acceso directo al mantener manga apretado.
+* Fix a varios servers.
+
+Changes on v1.117.
+* Option create shortcut on manga long press.
+* Fix on various servers.
+
+Cambios en v1.116:
+* Fix tmo.
+* Fix Kumanga.
+
+Changes in v1.116:
+* Fix tmo.
+* Fix Kumanga.
+
+Cambios en v1.115:
+* Fix error en Android 7.0.1 .. 7.1.1
+* Mejorado el sistema de shortcuts.
+
+Changes in v1.115:
+* Fix error on Android 7.0.1 .. 7.1.1
+* Improved the shortcuts system.
+
+Cambios en v1.114:
+* Fix tmo
+* Agregado acceso directos dinámicos en android 7.1 o superior en los lanzadores que los soportan.
+
+Changes in v1.114:
+* Fix tmo.
+* Added shortcuts to last mangas for android 7.1 or newest in launchers that support this feature.
+
+Cambios en v1.113:
+* Fix tmo
+* Fix la búsqueda en mangaeden, mangapanda, readmangatoday y taad para dispositivos para un api vieja.
+
+Changes in v1.113:
+* Fix tmo
+* Fix mangaeden, mangapanda, readmangatoday and taad search on low api devices.
+
+Cambios en v1.112:
+* Fix TMO.
+
+Changes in v1.112:
+* Fix TMO.
+
+Cambios en v1.111:
+* Agregado manejo de cuenta para mangaEden.
+* Fix tmo.
+* Fix lag en ocultar leidos.
+* Fix EsNineManga.
+* Agregado mantener presionado (+) para abrir boveda.
+
+Changes in v1.111:
+* Added support for MangaEden accounts.
+* Fix tmo.
+* Fix lag on hide already read.
+* Fix EsNineManga.
+* Added long press on (+) to open vault.
 
 Cambios en v1.110:
 * Arreglo de servidores.

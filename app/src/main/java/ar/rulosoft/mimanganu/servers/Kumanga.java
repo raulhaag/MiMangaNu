@@ -430,4 +430,9 @@ class Kumanga extends ServerBase {
             }
         }
     }
+
+    @Override
+    public boolean needRefererForImages() {
+        return true;
+    }
 }

@@ -53,7 +53,7 @@ public class AsyncAddManga extends AsyncTask<Void, Integer, Void> {
     protected Void doInBackground(Void... params) {
         ServerBase serverBase = ServerBase.getServer(manga.getServerId(), mActivity);
         try {
-            if(loadMangaInformation)
+            if (loadMangaInformation)
                 serverBase.loadMangaInformation(manga, false);
             serverBase.loadChapters(manga, false);
             total = manga.getChapters().size();

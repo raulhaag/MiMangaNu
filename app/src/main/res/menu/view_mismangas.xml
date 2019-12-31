@@ -64,4 +64,7 @@
     <item
         android:id="@+id/action_settings"
         android:title="@string/configuraciones" />
+    <item
+        android:id="@+id/restart"
+        android:title="@string/restart" />
 </menu>

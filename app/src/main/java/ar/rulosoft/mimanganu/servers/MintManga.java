@@ -14,7 +14,6 @@ class MintManga extends ReadMangaMe {
         setIcon(R.drawable.mintmanga);
         setServerName("MintManga");
         setServerID(MINTMANGA);
-
-        setHost("http://mintmanga.com/");
+        setHost("https://mintmanga.live");
     }
 }

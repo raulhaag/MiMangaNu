@@ -14,12 +14,11 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 
 /**
  * Created by Raul on 30/11/2015.
- *
  */
 public class MangasRecAdapterText extends MangaRecAdapterBase {
 
     public MangasRecAdapterText(ArrayList<Manga> list, Context context) {
-        super(list,context);
+        super(list, context);
     }
 
     @Override
@@ -33,7 +32,7 @@ public class MangasRecAdapterText extends MangaRecAdapterBase {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         final Manga m = mangas.get(position);
-        MangasHolder mHolder = (MangasHolder)holder;
+        MangasHolder mHolder = (MangasHolder) holder;
         mHolder.title.setText(m.getTitle());
         mHolder.v.setTag(position);
         mHolder.v.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +53,7 @@ public class MangasRecAdapterText extends MangaRecAdapterBase {
 
         public MangasHolder(View itemView) {
             super(itemView);
-            title =  itemView.findViewById(R.id.manga_title);
+            title = itemView.findViewById(R.id.manga_title);
             v = itemView;
         }
     }

@@ -35,11 +35,13 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import ar.rulosoft.mimanganu.adapters.MangasRecAdapter;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.componentes.Shortcuts;
 import ar.rulosoft.mimanganu.servers.FromFolder;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.AutomaticUpdateTask;
@@ -56,7 +58,7 @@ import static ar.rulosoft.mimanganu.utils.Util.bytesToHex;
  * Created by Raul
  */
 
-public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnClickListener, MainActivity.OnBackListener {
+public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaClick, View.OnLongClickListener, View.OnClickListener, MainActivity.OnBackListener {
 
     public static final String SERVER_ID = "server_id";
     public static final String MANGA_ID = "manga_id";
@@ -119,14 +121,16 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
         if (getView() != null) {
             floatingActionButton_add = getView().findViewById(R.id.floatingActionButton_add);
             floatingActionButton_add.setOnClickListener(this);
+            floatingActionButton_add.setOnLongClickListener(this);
         }
     }
 
     @Override
     public void onPause() {
-        super.onPause();
         if (swipeReLayout != null)
             swipeReLayout.clearAnimation();
+        super.onPause();
+
     }
 
     @Override
@@ -202,6 +206,13 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
     public void onClick(View v) {
         ((MainActivity) getActivity()).replaceFragment(ServersSelectFragment.newInstance(),
                 "SERVER_SELECT", R.anim.exit_to_left, R.anim.enter_from_right, R.anim.exit_to_right, R.anim.enter_from_left);
+    }
+
+
+    @Override
+    public boolean onLongClick(View v) {
+        openVault();
+        return true;
     }
 
     @Override
@@ -298,6 +309,10 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                 ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");
                 break;
             }
+            case R.id.restart: {
+                Util.getInstance().restartApp(Objects.requireNonNull(getActivity()));
+                break;
+            }
             case R.id.sort_last_read: {
                 item.setChecked(true);
                 pm.edit().putInt("manga_view_sort_by", 0).apply();
@@ -366,44 +381,49 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
 
             case R.id.open_vault: {
-                if (currentVault.isEmpty()) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                    builder.setTitle(R.string.open_vault);
-                    final EditText input = new EditText(getContext());
-                    input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                    builder.setView(input);
-                    builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            String p = input.getText().toString();
-                            if (!p.isEmpty()) {
-                                try {
-                                    item.setTitle(R.string.close_vault);
-                                    currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
-                                    setListManga(true);
-                                } catch (NoSuchAlgorithmException e) {
-                                    e.printStackTrace();
-                                }
-                            } else {
-                                Util.getInstance().toast(getContext(), getString(R.string.empty_string));
-                            }
-                        }
-                    });
-                    builder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
-                        }
-                    });
-                    builder.show();
-                } else {
-                    item.setTitle(R.string.open_vault);
-                    currentVault = "";
-                    setListManga(true);
-                }
+                openVault();
             }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void openVault() {
+        if (currentVault.isEmpty()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.open_vault);
+            final EditText input = new EditText(getContext());
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+            builder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String p = input.getText().toString();
+                    if (!p.isEmpty()) {
+                        try {
+                            /*  item.setTitle(R.string.close_vault);/*/
+                            currentVault = bytesToHex(MessageDigest.getInstance("SHA-256").digest(p.getBytes()));
+                            setListManga(true);
+                            getActivity().invalidateOptionsMenu();
+                        } catch (NoSuchAlgorithmException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Util.getInstance().toast(getContext(), getString(R.string.empty_string));
+                    }
+                }
+            });
+            builder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                }
+            });
+            builder.show();
+        } else {
+            currentVault = "";
+            setListManga(true);
+            getActivity().invalidateOptionsMenu();
+        }
     }
 
     public void setListManga(boolean force) {
@@ -450,38 +470,13 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
             int value = PreferenceManager.getDefaultSharedPreferences(
                     getContext()).getInt(SELECT_MODE, MODE_SHOW_ALL);
-            if (currentVault.isEmpty()) {
-                switch (value) {
-                    case MODE_SHOW_ALL:
-                        mangaList = Database.getMangas(getContext(), sort_by, sort_ord);
-                        break;
-                    case MODE_HIDE_READ:
-                        mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                                "SELECT manga_id " +
-                                "FROM capitulos " +
-                                "WHERE estado != 1 AND vault = '' GROUP BY manga_id)", sort_by, sort_ord);
-                        break;
-                    default:
-                        break;
-                }
-            } else {
-                switch (value) {
-                    case MODE_SHOW_ALL:
-                        mangaList = Database.getMangasVault(getContext(), currentVault, sort_by, sort_ord);
-                        if (mangaList.isEmpty()) {
-                            Util.getInstance().toast(getContext(), getContext().getString(R.string.vault_is_empty));
-                        }
-                        break;
-                    case MODE_HIDE_READ:
-                        mangaList = Database.getMangasCondition(getContext(), "id IN (" +
-                                "SELECT manga_id " +
-                                "FROM capitulos " +
-                                "WHERE estado != 1 AND vault = '" + currentVault + "' GROUP BY manga_id)", sort_by, sort_ord);
-                        break;
-                    default:
-                        break;
-                }
+            String showUnreadOnly = "";
+            if (value == MODE_HIDE_READ) {
+                showUnreadOnly = "AND id IN (SELECT manga_id FROM capitulos WHERE estado != 1 GROUP BY manga_id)";
             }
+
+            mangaList = Database.getMangasCondition(getContext(), " vault = '" + currentVault + "'" + showUnreadOnly, sort_by, sort_ord);
+
             if (mMAdapter == null || sort_val < 2 || mangaList.size() > mMAdapter.getItemCount() || force) {
                 mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
                 mMAdapter.setMangaClickListener(MainFragment.this);
@@ -605,6 +600,8 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                 Database.updateManga(getContext(), manga, false);
                 setListManga(true);
             }
+        } else if (item.getItemId() == R.id.create_shortcut) {
+            Shortcuts.addShortCutsX(manga, getContext());
         }
         return super.onContextItemSelected(item);
     }
@@ -620,6 +617,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             return true;
         }
     }
+
 
     class UpdateListTask extends AutomaticUpdateTask {
         private Context context;

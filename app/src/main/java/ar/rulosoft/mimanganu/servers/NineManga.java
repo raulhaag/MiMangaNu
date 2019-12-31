@@ -30,7 +30,7 @@ class NineManga extends ServerBase {
     private static final String PATTERN_GENRE =
             "<li itemprop=\"genre\".+?</b>(.+?)</a>[^<]*</li>";
     private static final String PATTERN_CHAPTER =
-            "<a class=\"chapter_list_a\" href=\".*?(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
+            "<a class=\"chapter_list_a\" href=\".*?(\\/chapter[^<\"]+)\" title=\"([^\"]+)\"[^>]*>([^<]+)</a>";
     private static final String PATTERN_PAGES =
             "\\d+/(\\d+)</option>[\\s]*</select>";
     private static final int[] fltCategory = {
@@ -248,9 +248,9 @@ class NineManga extends ServerBase {
                 new ServerFilter(
                         context.getString(R.string.flt_status),
                         buildTranslatedStringArray(fltStatus), ServerFilter.FilterType.SINGLE),
-               // new ServerFilter(
-               //         context.getString(R.string.flt_category),
-               //         buildTranslatedStringArray(fltCategory), ServerFilter.FilterType.SINGLE)
+                // new ServerFilter(
+                //         context.getString(R.string.flt_category),
+                //         buildTranslatedStringArray(fltCategory), ServerFilter.FilterType.SINGLE)
         };
     }
 
@@ -259,10 +259,10 @@ class NineManga extends ServerBase {
         String includedGenres = "";
         String excludedGenres = "";
         if (filters[0].length > 0) {
-            for(int i = 0; i < filters[0].length; i++){
-                if(filters[0][i] == 1){
+            for (int i = 0; i < filters[0].length; i++) {
+                if (filters[0][i] == 1) {
                     includedGenres = includedGenres + valGenre[i] + "%2C"; // comma
-                }else if(filters[0][i] == -1){
+                } else if (filters[0][i] == -1) {
                     excludedGenres = excludedGenres + valGenre[i] + "%2C"; // comma
                 }
             }

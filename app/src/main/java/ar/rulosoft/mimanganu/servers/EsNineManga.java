@@ -1,14 +1,23 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
+import android.text.TextUtils;
+
+import java.util.ArrayList;
 
 import ar.rulosoft.mimanganu.R;
+import ar.rulosoft.mimanganu.componentes.Chapter;
+import ar.rulosoft.navegadores.Navigator;
 
 class EsNineManga extends NineManga {
     private static final String HOST = "http://es.ninemanga.com";
 
     private static final String PATTERN_IMAGE =
             "class=\"pic_download\" href=\"(https*://[^/]+/+es_manga/[^\"]+)";
+
+    private static final String PATTERN_CHAPTER =
+            "<a class=\"chapter_list_a\" href=\".*?(/chapter[^<\"]+)\" title=\"([^\"]+)\">([^<]+)</a>";
+
 
     private static final int[] fltGenre = {
             R.string.flt_tag_4_koma,
@@ -165,5 +174,33 @@ class EsNineManga extends NineManga {
         super.PATTERN_IMAGE = PATTERN_IMAGE;
         super.fltGenre = fltGenre;
         super.valGenre = valGenre;
+    }
+
+    @Override
+    public void chapterInit(Chapter chapter) throws Exception {
+        Navigator nav = getNavigatorAndFlushParameters();
+        String id = getFirstMatch("\\/(\\d+)\\.", chapter.getPath(), context.getString(R.string.error));
+        String path = chapter.getPath().replaceAll("\\/\\d+", "")
+                .replace("chapter", "manga");
+        nav.addHeader("Referer", HOST + path);
+        String data = nav.getRedirectWeb(HOST + chapter.getPath());
+        nav.addHeader("Referer", HOST + chapter.getPath());
+        data = nav.getRedirectWeb(data);
+        nav.addHeader("Referer", HOST + chapter.getPath());
+        String sid = getFirstMatch("\\/(\\d+)\\.", data, context.getString(R.string.error));
+        nav.addHeader("Cookie", "lrgarden_visit_check_" + sid + "=" + id + ";");
+        data = nav.get("https://www.gardenmanage.com" + data);
+        data = getFirstMatch("all_imgs_url: \\[([^\\]]+)", data, context.getString(R.string.error));
+        ArrayList<String> pages = getAllMatch("\"([^\"]+)\"", data);
+        if (pages.size() != 0) {
+            chapter.setPages(pages.size());
+            chapter.setExtra("https://www.gardenmanage.com/c/esninemanga/" + id + "/|" + TextUtils.join("|", pages));
+        }
+    }
+
+    @Override
+    public String getImageFrom(Chapter chapter, int page) throws Exception {
+        String[] parts = chapter.getExtra().split("\\|");
+        return parts[page] + "|" + parts[0];
     }
 }

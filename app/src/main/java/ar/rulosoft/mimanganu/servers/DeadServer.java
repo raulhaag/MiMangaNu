@@ -42,7 +42,6 @@ public class DeadServer extends ServerBase {
         deadServers.put(MYMANGAIO, "MyMangaIo");
 
 
-
         return deadServers.get(m.getServerId());
     }
 

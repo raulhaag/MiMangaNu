@@ -29,7 +29,7 @@ public abstract class HorizontalPagedReader extends PagedReader implements OnSwi
 
     public void init() {
         String infService = Context.LAYOUT_INFLATER_SERVICE;
-        LayoutInflater li = (LayoutInflater)getContext().getSystemService(infService);
+        LayoutInflater li = (LayoutInflater) getContext().getSystemService(infService);
         li.inflate(R.layout.view_paged_reader, this, true);
         mViewPager = findViewById(R.id.pager);
         addOnPageChangeListener();

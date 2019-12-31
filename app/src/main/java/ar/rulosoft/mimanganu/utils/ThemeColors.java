@@ -42,15 +42,15 @@ public class ThemeColors {
     }
 
 
-    public static int[] getColors(Context context){
-        if(inited)
+    public static int[] getColors(Context context) {
+        if (inited)
             return colors;
         else
             return getColors(PreferenceManager.getDefaultSharedPreferences(context));
     }
 
-    public static int getBackground(){
-        if(!inited)
+    public static int getBackground() {
+        if (!inited)
             Log.w("MiMangaNu", "ThemeColors not initialized (Default value returned)");
         return background;
     }

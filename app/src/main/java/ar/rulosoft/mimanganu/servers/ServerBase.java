@@ -432,7 +432,7 @@ public abstract class ServerBase {
      *                   should be a translatable string.
      */
     @Nullable
-    public  ArrayList<Manga> getMangas() throws Exception{ //make default null just a couple of server need to implement it
+    public ArrayList<Manga> getMangas() throws Exception { //make default null just a couple of server need to implement it
         return null;
     }
 
@@ -953,7 +953,7 @@ public abstract class ServerBase {
                     if (simpleListSize > 10 && n == x) { // last element if 10+ chapters
                         int tmp = simpleListSize - x;
                         Context context = weakReferenceContext.get();
-                        if(context != null)
+                        if (context != null)
                             stringBuilder.append(context.getResources().getQuantityString(R.plurals.more_chapters_not_displayed_here, tmp, tmp));
                         else
                             this.cancel(true);
@@ -983,8 +983,7 @@ public abstract class ServerBase {
                     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
 
                     Util.getInstance().createNotification(context, false, (int) System.currentTimeMillis(), intent, context.getResources().getQuantityString(R.plurals.new_chapter, simpleListSize, simpleListSize, manga.getTitle()), largeContentText);
-                }
-                else
+                } else
                     this.cancel(true);
             }
             return null;

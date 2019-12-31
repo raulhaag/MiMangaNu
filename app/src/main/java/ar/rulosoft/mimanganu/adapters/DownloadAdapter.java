@@ -152,9 +152,9 @@ public class DownloadAdapter extends ArrayAdapter<ChapterDownload> implements Do
         private ImageButton buttonImageView;
 
         public ViewHolder(View v, boolean darkTheme) {
-            this.textViewName = (TextView) v.findViewById(R.id.nombre);
-            this.buttonImageView = (ImageButton) v.findViewById(R.id.boton);
-            this.loadingProgressBar = (ProgressBar) v.findViewById(R.id.progreso);
+            this.textViewName = v.findViewById(R.id.nombre);
+            this.buttonImageView = v.findViewById(R.id.boton);
+            this.loadingProgressBar = v.findViewById(R.id.progreso);
             if (darkTheme)
                 this.buttonImageView.setImageResource(R.drawable.ic_action_x_dark);
         }

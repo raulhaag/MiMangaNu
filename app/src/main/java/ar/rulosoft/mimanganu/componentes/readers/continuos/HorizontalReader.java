@@ -61,7 +61,7 @@ public abstract class HorizontalReader extends ContinuousReader {
     @Override
     public void seekPage(int index) {
         int page = index - 1;
-        if (viewReady && pagesLoaded) {
+        if (pagesLoaded) {
             absoluteScroll(getPagePosition(page), yScroll);
             generateDrawPool();
         }

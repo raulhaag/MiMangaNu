@@ -103,7 +103,7 @@ public class L2RReader extends HorizontalReader {
 
     /*
      * Starting from 0
-    */
+     */
     @Override
     public float getPagePosition(int page) {
         if (pages != null && pages.size() > 1) {

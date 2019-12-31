@@ -120,7 +120,7 @@ public class DetailsFragment extends Fragment {
                     set.playSequentially(anim2, anim1);
                     set.start();
                 } else {
-                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(),getContext());
+                    Util.getInstance().showFastSnackBar(getString(R.string.already_on_db), getView(), getContext());
                 }
             }
         });
@@ -138,7 +138,7 @@ public class DetailsFragment extends Fragment {
         }
         manga = new Manga(id, title, path, false);
         manga.setImages(img);
-        data.enableTitleCopy(getActivity(),manga.getTitle());
+        data.enableTitleCopy(getActivity(), manga.getTitle());
         serverBase = ServerBase.getServer(id, getContext());
         imageLoader = new ImageLoader(getContext());
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -159,7 +159,7 @@ public class DetailsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity)getActivity()).enableHomeButton(true);
+        ((MainActivity) getActivity()).enableHomeButton(true);
     }
 
     @Override
@@ -196,20 +196,20 @@ public class DetailsFragment extends Fragment {
         @Override
         protected void onPostExecute(Void v) {
             String infoExtra = "";
-            if(isAdded()) {
+            if (isAdded()) {
                 if (error.isEmpty()) {
                     if (manga.isFinished()) {
                         infoExtra = infoExtra + getResources().getString(R.string.finalizado);
                     } else {
                         infoExtra = infoExtra + getResources().getString(R.string.en_progreso);
                     }
-                    if(mangaAlreadyAdded)
+                    if (mangaAlreadyAdded)
                         data.setStatus(infoExtra + " (" + getString(R.string.already_on_db) + ")");
                     else
                         data.setStatus(infoExtra);
                     String chapters = "";
-                    if(manga.getChapters().size() > 0){
-                        chapters = " (" + manga.getChapters().size() + " " + getString(R.string.chapters)+")";
+                    if (manga.getChapters().size() > 0) {
+                        chapters = " (" + manga.getChapters().size() + " " + getString(R.string.chapters) + ")";
                     }
                     data.setServer(serverBase.getServerName() + chapters);
                     if (manga.getAuthor() != null && manga.getAuthor().length() > 1) {
@@ -229,7 +229,7 @@ public class DetailsFragment extends Fragment {
                     }
                     imageLoader.displayImg(manga.getImages(), data);
                     if (!error.isEmpty()) {
-                        Util.getInstance().showFastSnackBar(error, getView(),getContext());
+                        Util.getInstance().showFastSnackBar(error, getView(), getContext());
                     } else {
                         AnimatorSet set = new AnimatorSet();
                         ObjectAnimator anim1 = ObjectAnimator.ofFloat(floatingActionButton_add, "alpha", 0.0f, 1.0f);

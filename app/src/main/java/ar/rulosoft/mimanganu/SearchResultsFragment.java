@@ -51,8 +51,8 @@ public class SearchResultsFragment extends Fragment {
         super.onActivityCreated(savedState);
         serverId = getArguments().getInt(MainFragment.SERVER_ID);
         search_term = getArguments().getString(TERM);
-        list = (ListView) getView().findViewById(R.id.result);
-        loading = (ProgressBar) getView().findViewById(R.id.loading);
+        list = getView().findViewById(R.id.result);
+        loading = getView().findViewById(R.id.loading);
         list.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

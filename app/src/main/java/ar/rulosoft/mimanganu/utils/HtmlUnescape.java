@@ -5,7 +5,7 @@ import java.util.Map;
 
 /**
  * Own implementation of unescaping HTML code.
- *
+ * <p>
  * Created by TheSniperFan on 28.05.15.
  */
 public class HtmlUnescape {
@@ -22,9 +22,9 @@ public class HtmlUnescape {
 
     public static String Unescape(String input) {
         if (input != null)
-        for (Map.Entry<String, String> pair : definitions.entrySet()) {
-            input = input.replaceAll(pair.getKey(), pair.getValue());
-        }
+            for (Map.Entry<String, String> pair : definitions.entrySet()) {
+                input = input.replaceAll(pair.getKey(), pair.getValue());
+            }
         return input;
     }
 }

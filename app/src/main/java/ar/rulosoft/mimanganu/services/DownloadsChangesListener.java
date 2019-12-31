@@ -7,8 +7,12 @@ import java.util.ArrayList;
  */
 public interface DownloadsChangesListener {
     void onProgressChanged(int idx, ChapterDownload cd);
+
     void onStatusChanged(int idx, ChapterDownload cd);
+
     void onChapterAdded(boolean atStart, ChapterDownload cd);
+
     void onChapterRemoved(int idx);
+
     void onChaptersRemoved(ArrayList<ChapterDownload> toRemove);
 }

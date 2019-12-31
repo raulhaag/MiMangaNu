@@ -68,7 +68,7 @@ public class SingleDownload implements Runnable {
             File o = new File(toFile);
             File ot = new File(toFile + ".temp");
             if (ot.exists()) {
-                if(!ot.delete()) {
+                if (!ot.delete()) {
                     Log.e("SingleDownload", "failed to delete temporary file");
                 }
             }
@@ -103,11 +103,11 @@ public class SingleDownload implements Runnable {
                             changeStatus(Status.ERROR_CONNECTION);
                         }
                         retry = 0;
-                        if(!ot.delete()) {
+                        if (!ot.delete()) {
                             Log.e("SingleDownload", "failed to delete temporary file");
                         }
                         writeErrorImage(ot);
-                        if(!ot.renameTo(o)) {
+                        if (!ot.renameTo(o)) {
                             Log.e("SingleDownload", "failed to rename temporary file");
                         }
                         break;
@@ -174,7 +174,7 @@ public class SingleDownload implements Runnable {
                     if (status != Status.RETRY) {
                         if (contentLength > ot.length()) {
                             Log.e("SingleDownload", "content length = " + contentLength + " size = " + o.length() + " on = " + o.getPath());
-                            if(!ot.delete()) {
+                            if (!ot.delete()) {
                                 Log.e("SingleDownload", "failed to delete temporary file");
                             }
                             retry--;
@@ -193,15 +193,15 @@ public class SingleDownload implements Runnable {
                                 if (needPP) {
                                     PostProcess.l90(ot.getAbsolutePath());
                                 }
-                                if(!ot.renameTo(o)) {
+                                if (!ot.renameTo(o)) {
                                     Log.e("SingleDownload", "failed to rename temporary file");
                                 }
                             } else {
-                                if(!ot.delete()) {
+                                if (!ot.delete()) {
                                     Log.e("SingleDownload", "failed to delete temporary file");
                                 }
                                 writeErrorImage(ot);
-                                if(!ot.renameTo(o)) {
+                                if (!ot.renameTo(o)) {
                                     Log.e("SingleDownload", "failed to rename temporary file");
                                 }
                             }

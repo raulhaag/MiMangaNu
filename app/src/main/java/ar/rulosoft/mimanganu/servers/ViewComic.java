@@ -110,17 +110,15 @@ class ViewComic extends ServerBase {
             String newSource = getFirstMatchDefault("<select id(.+?)</select>", source, "");
             Pattern p = Pattern.compile("<option  value=\"(.+?)\">(.+?)</div>|<option selected value=\"(.+?)\">(.+?)</div>", Pattern.DOTALL);
             Matcher matcher;
-            if(newSource.isEmpty()) {
+            if (newSource.isEmpty()) {
                 matcher = p.matcher(source);
-            }
-            else {
+            } else {
                 matcher = p.matcher(newSource);
             }
             while (matcher.find()) {
-                if(matcher.group(1) != null && matcher.group(2) != null) {
+                if (matcher.group(1) != null && matcher.group(2) != null) {
                     manga.addChapterFirst(new Chapter(matcher.group(2).replaceAll("[….\\s]*(Reading)?$", ""), matcher.group(1)));
-                }
-                else {
+                } else {
                     manga.addChapterFirst(new Chapter(matcher.group(4).replaceAll("[….\\s]*(Reading)?$", ""), matcher.group(3)));
                 }
             }
@@ -131,7 +129,7 @@ class ViewComic extends ServerBase {
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
         String url = chapter.getExtra().split("\\|")[page - 1];
-        if(url.startsWith("//")) {
+        if (url.startsWith("//")) {
             url = "http:" + url;
         }
         return url;
@@ -142,11 +140,11 @@ class ViewComic extends ServerBase {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
             ArrayList<String> images = getAllMatch("src=\"(http[s]?://\\d+\\.bp\\.blogspot\\.com/.+?)\"", source);
-            if(images.isEmpty()) {
+            if (images.isEmpty()) {
                 images = getAllMatch("src=\"(//\\d+\\.bp\\.blogspot\\.com/.+?)\"", source);
             }
 
-            if(images.isEmpty()) {
+            if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_image));
             }
             chapter.setExtra(TextUtils.join("|", images));
@@ -158,8 +156,8 @@ class ViewComic extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter(
-                    context.getString(R.string.flt_domain),
-                    domain, ServerFilter.FilterType.SINGLE)
+                        context.getString(R.string.flt_domain),
+                        domain, ServerFilter.FilterType.SINGLE)
         };
     }
 

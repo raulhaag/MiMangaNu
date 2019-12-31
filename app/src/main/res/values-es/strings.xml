@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.110:\n\t* Arroglo de servidores.</string>
+    <string name="update_message">Cambios en v1.120:\n\t* Fix TMO, EsNineManga, Taadd y MangaTown.\n\t* Fix en GUI.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -458,5 +458,12 @@
     <string name="close_vault">Cerrar bóveda actual.</string>
     <string name="add_to_a_vault">Agregar a una bóveda</string>
     <string name="vault_is_empty">La bóveda se encuentra vacia.</string>
+    <string name="create_shortcut_on_home">Crear acceso directo en inicio</string>
+    <string name="flt_alpha">Filtro alfabetico</string>
+    <string name="flt_exclude_tags">Tags(excluidos)</string>
+    <string name="flt_hint_order_unfiltered_only">Solo vista sin filtro.</string>
+    <string name="flt_include_tags">Tags(incluidos)</string>
+    <string name="device_dont_supported">Tu dispositivo no soporta esta función.</string>
+    <string name="restart">Reiniciar aplicación</string>
 
 </resources>

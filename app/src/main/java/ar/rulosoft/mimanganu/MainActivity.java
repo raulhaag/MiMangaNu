@@ -15,6 +15,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -54,10 +55,8 @@ public class MainActivity extends AppCompatActivity {
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
             Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
-            if (menuKeyField != null) {
-                menuKeyField.setAccessible(true);
-                menuKeyField.setBoolean(config, false);
-            }
+            menuKeyField.setAccessible(true);
+            menuKeyField.setBoolean(config, false);
         } catch (Exception e) {
         }
         pm = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
@@ -82,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         }
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getIntent() != null) {
+            onNewIntent(getIntent());
+        }
     }
 
     @Override
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity {
                 Util.n--;
             //Util.getInstance().toast(this, "n: " + Util.n, 1);
             Log.i("MA", "n: " + Util.n);
+            intent.removeExtra("manga_id");
         }
     }
 
@@ -218,6 +221,7 @@ public class MainActivity extends AppCompatActivity {
         }
         colors = ThemeColors.getColors(pm);
         setColorToBars();
+        checkFragmentOptions(getSupportFragmentManager().findFragmentById(R.id.coordinator_layout));
     }
 
     public void setColorToBars() {
@@ -253,9 +257,26 @@ public class MainActivity extends AppCompatActivity {
         // setAllowOptimization(true) (new default)
         // fA -> fB
         // fB.onStart -> fA.onStop
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setCustomAnimations(
+                R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
+        ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag);
+        //System.gc();
+        checkFragmentOptions(fragment);
+        ft.commitAllowingStateLoss();
+    }
+
+    public void replaceFragmentNoBackStack(Fragment fragment) {
+        // introduced in support lib v25.1.0
+        // setAllowOptimization(false)
+        // fA -> fB
+        // fA.onStop -> fB.onStart
+        // setAllowOptimization(true) (new default)
+        // fA -> fB
+        // fB.onStart -> fA.onStop
         getSupportFragmentManager().beginTransaction().setCustomAnimations(
                 R.anim.fade_in, R.anim.fade_out, R.anim.fade_in, R.anim.fade_out
-        ).replace(R.id.coordinator_layout, fragment).addToBackStack(tag).commitAllowingStateLoss();
+        ).replace(R.id.coordinator_layout, fragment).commitAllowingStateLoss();
         getSupportFragmentManager().executePendingTransactions();
         //System.gc();
         checkFragmentOptions(fragment);
