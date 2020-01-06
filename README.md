@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.121:
+* Fix EsNineManga, KissManga y MangaTown.
+* Fix error en mangas sin imagen.
+
+Changes on v1.121.
+* Fix EsNineManga, KissManga and Taadd.
+* Fix error in manga without image.
+
 Cambios en v1.120:
 * Fix TMO, EsNineManga, Taadd y MangaTown.
 * Fix en GUI.
