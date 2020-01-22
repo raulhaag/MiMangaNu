@@ -3,8 +3,10 @@ package ar.rulosoft.mimanganu;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.ColorStateList;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -307,6 +309,12 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
             }
             case R.id.action_settings: {
                 ((MainActivity) getActivity()).replaceFragment(new PreferencesFragment(), "PreferencesFragment");
+                break;
+            }
+            case R.id.contact: {
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse("https://github.com/raulhaag/MiMangaNu/issues"));
+                startActivity(i);
                 break;
             }
             case R.id.restart: {

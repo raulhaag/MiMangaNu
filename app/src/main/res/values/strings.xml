@@ -507,5 +507,6 @@
     <string name="create_shortcut_on_home">Create shortcut on home</string>
     <string name="device_dont_supported">Your device don\'t support this feature.</string>
     <string name="restart">Restart app</string>
+    <string name="contact">Contact the developer</string>
 
 </resources>

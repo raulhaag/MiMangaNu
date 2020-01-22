@@ -465,5 +465,6 @@
     <string name="flt_include_tags">Tags(incluidos)</string>
     <string name="device_dont_supported">Tu dispositivo no soporta esta función.</string>
     <string name="restart">Reiniciar aplicación</string>
+    <string name="contact">Contactar al desarrollador</string>
 
 </resources>
