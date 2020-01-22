@@ -23,6 +23,8 @@ import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
 import ar.rulosoft.mimanganu.utils.Util;
 
 import static android.content.Context.POWER_SERVICE;
+import static ar.rulosoft.mimanganu.componentes.Database.COL_IS_FINISHED;
+import static ar.rulosoft.mimanganu.componentes.Database.COL_VAULT;
 
 /**
  * Created by jtx on 15.09.2016.
@@ -46,15 +48,15 @@ public class AutomaticUpdateTask extends AsyncTask<Void, Integer, Integer> {
         this.context = context;
         this.view = view;
         this.pm = pm;
-        if (vault != null) {
-            mangaList = Database.getMangasVault(context, vault, null, true);
-        } else {
-            if (pm.getBoolean("include_finished_manga", false)) {
-                mangaList = Database.getMangas(context, null, true);
-            } else {
-                mangaList = Database.getMangasForUpdates(context);
-            }
+        if (vault == null) {
+            vault = "";
         }
+        if (pm.getBoolean("include_finished_manga", false)) {
+            mangaList = Database.getMangasCondition(context, COL_VAULT + " = '" + vault + "'", null, true);
+        } else {
+            mangaList = Database.getMangasCondition(context, COL_IS_FINISHED + "= 0 AND " + COL_VAULT + " = '" + vault + "'", null, false);
+        }
+
         fromFolderMangaList = Database.getFromFolderMangas(context);
         threads = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(context).getString("update_threads_manual", "2"));
         mNotifyID = (int) System.currentTimeMillis();
