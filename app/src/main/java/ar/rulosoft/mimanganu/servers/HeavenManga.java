@@ -12,7 +12,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 
 class HeavenManga extends ServerBase {
 
@@ -145,7 +144,7 @@ class HeavenManga extends ServerBase {
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
-            if (chapter.getExtra() == null) {
+            if (chapter.getExtra() == null || chapter.getExtra().isEmpty()) {
                 String source = getNavigatorAndFlushParameters().get(chapter.getPath());
                 String web = getFirstMatch(
                         "id=\"leer\".+?href=\"([^\"]+)", source,

@@ -100,7 +100,7 @@ public class Database extends SQLiteOpenHelper {
     // name and path of database
     private static String database_name;
     private static String database_path;
-    private static int database_version = 30;
+    private static int database_version = 31;
     private static SQLiteDatabase localDB;
     Context context;
 
@@ -1017,6 +1017,10 @@ public class Database extends SQLiteOpenHelper {
 
             if (oldVersion < 30) {
                 db.execSQL("UPDATE " + TABLE_MANGA + " SET " + COL_VAULT + " = '' WHERE 1;");//reset vaults
+            }
+
+            if (oldVersion < 31) {
+                db.execSQL("UPDATE capitulos set path = replace(SUBSTR(rtrim(path, replace(path, '-', '')),0, length(rtrim(path, replace(path, '-', '')))), \"heavenmanga.com\", \"heavenmanga.com/manga\") || '/' || replace(replace(path, rtrim(path, replace(path, '-', '')), ''),\".html\",\"\") where path like'%heavenmanga.com%'");
             }
 
             //db.execSQL("SELECT * FROM errorneousTable where 'inexistenteField'='gveMeAException'");/*/
