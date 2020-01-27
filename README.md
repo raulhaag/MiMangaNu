@@ -49,11 +49,21 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.122:
+* Fix HeavenManga y JapScan.
+* Agregado InManga(es).
+* Y algunos arreglos.
+
+Changes on v1.122:
+* Fix HeavenManga and JapScan.
+* Added InManga(es).
+* Some small fixes.
+
 Cambios en v1.121:
 * Fix EsNineManga, KissManga y MangaTown.
 * Fix error en mangas sin imagen.
 
-Changes on v1.121.
+Changes on v1.121:
 * Fix EsNineManga, KissManga and Taadd.
 * Fix error in manga without image.
 
@@ -61,21 +71,21 @@ Cambios en v1.120:
 * Fix TMO, EsNineManga, Taadd y MangaTown.
 * Fix en GUI.
 
-Changes on v1.120.
+Changes on v1.120:
 * Fix TMO, EsNineManga, Taadd and MangaTown.
 * Fix on GUI.
 
 Cambios en v1.119:
 * Pequeños fixes.
 
-Changes on v1.119.
+Changes on v1.119:
 * Min fix.
 
 Cambios en v1.118:
 * Fix CFI.
 * Agregada opcion de reiniciar al menu principal.
 
-Changes on v1.118.
+Changes on v1.118:
 * Fix CFI.
 * Added restart option to main menu.
 
@@ -83,7 +93,7 @@ Cambios en v1.117:
 * Opción agregar acceso directo al mantener manga apretado.
 * Fix a varios servers.
 
-Changes on v1.117.
+Changes on v1.117:
 * Option create shortcut on manga long press.
 * Fix on various servers.
 
