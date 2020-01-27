@@ -167,7 +167,7 @@ class MangaTown extends ServerBase {
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher m = p.matcher(data);
             while (m.find()) {
-                manga.addChapterFirst(new Chapter(m.group(2), HOST + m.group(1)));
+                manga.addChapterFirst(new Chapter(m.group(2).replace("<span class=\"new\">new</span>", ""), HOST + m.group(1)));
             }
         }
     }
