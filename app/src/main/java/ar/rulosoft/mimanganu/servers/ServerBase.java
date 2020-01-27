@@ -195,6 +195,7 @@ public abstract class ServerBase {
     public static final int NEUMANGATV = 41;
     public static final int MANGASHIRONET = 42;
     public static final int FANFOXNET = 43;
+    public static final int INMNAGA = 44;
     public static final int READCOMICONLINE = 1000;
     public static final int READCOMICSTV = 1002;
     public static final int GOGOCOMIC = 1003;
@@ -327,6 +328,9 @@ public abstract class ServerBase {
             case NEUMANGATV:
                 serverBase = new NeuMangaTv(context);
                 break;
+            case INMNAGA:
+                serverBase = new InManga(context);
+                break;
             case VERCOMICSCOM:
                 serverBase = new VerComicsCom(context);
                 break;
@@ -385,6 +389,7 @@ public abstract class ServerBase {
                 new HeavenManga(context),
                 new EsNineManga(context),
                 new Kumanga(context),
+                new InManga(context),
                 new MangaPanda(context),
                 new MangaReader(context),
                 new MangaHere(context),
