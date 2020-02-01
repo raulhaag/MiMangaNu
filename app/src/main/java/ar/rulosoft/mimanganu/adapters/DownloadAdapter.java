@@ -2,7 +2,6 @@ package ar.rulosoft.mimanganu.adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -11,6 +10,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
 

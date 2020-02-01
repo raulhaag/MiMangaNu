@@ -13,20 +13,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.SystemClock;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.os.ParcelableCompat;
-import android.support.v4.os.ParcelableCompatCreatorCallbacks;
-import android.support.v4.view.AccessibilityDelegateCompat;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.VelocityTrackerCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.ViewConfigurationCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.view.accessibility.AccessibilityEventCompat;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
-import android.support.v4.view.accessibility.AccessibilityRecordCompat;
-import android.support.v4.widget.EdgeEffectCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.FocusFinder;
@@ -42,6 +28,21 @@ import android.view.ViewParent;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.animation.Interpolator;
 import android.widget.Scroller;
+
+import androidx.core.content.ContextCompat;
+import androidx.core.os.ParcelableCompat;
+import androidx.core.os.ParcelableCompatCreatorCallbacks;
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.MotionEventCompat;
+import androidx.core.view.VelocityTrackerCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.ViewConfigurationCompat;
+import androidx.core.view.accessibility.AccessibilityEventCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
+import androidx.core.view.accessibility.AccessibilityRecordCompat;
+import androidx.core.widget.EdgeEffectCompat;
+import androidx.viewpager.widget.PagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -431,7 +432,7 @@ public class VerticalViewPager extends ViewGroup {
 
     /**
      * Set a listener that will be invoked whenever the page changes or is incrementally
-     * scrolled. See {@link android.support.v4.view.ViewPager.OnPageChangeListener}.
+     * scrolled. See {@link ViewPager.OnPageChangeListener}.
      *
      * @param listener Listener to set
      */
@@ -440,7 +441,7 @@ public class VerticalViewPager extends ViewGroup {
     }
 
     /**
-     * Set a {@link android.support.v4.view.ViewPager.PageTransformer} that will be called for each attached page whenever
+     * Set a {@link ViewPager.PageTransformer} that will be called for each attached page whenever
      * the scroll position is changed. This allows the application to apply custom property
      * transformations to each page, overriding the default sliding look and feel.
      * <p/>

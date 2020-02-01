@@ -14,10 +14,11 @@ import android.graphics.Paint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
+
+import androidx.annotation.NonNull;
 
 import java.io.IOException;
 import java.io.InputStream;

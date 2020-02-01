@@ -4,8 +4,6 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.support.annotation.UiThread;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.UiThread;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.utils.ThemeColors;

@@ -11,9 +11,10 @@ import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.v4.content.pm.ShortcutInfoCompat;
-import android.support.v4.content.pm.ShortcutManagerCompat;
-import android.support.v4.graphics.drawable.IconCompat;
+
+import androidx.core.content.pm.ShortcutInfoCompat;
+import androidx.core.content.pm.ShortcutManagerCompat;
+import androidx.core.graphics.drawable.IconCompat;
 
 import java.io.File;
 import java.util.Arrays;

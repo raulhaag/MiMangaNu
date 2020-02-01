@@ -8,10 +8,6 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,7 +18,12 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import com.fedorvlasov.lazylist.ImageLoader;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 

@@ -1,8 +1,9 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.text.TextUtils;
+
+import androidx.annotation.NonNull;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;

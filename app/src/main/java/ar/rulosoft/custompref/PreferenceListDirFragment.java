@@ -6,15 +6,16 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +75,7 @@ public class PreferenceListDirFragment extends PreferenceDialogFragmentCompat {
     }
 
     @Override
-    protected void onPrepareDialogBuilder(android.support.v7.app.AlertDialog.Builder builder) {
+    protected void onPrepareDialogBuilder(androidx.appcompat.app.AlertDialog.Builder builder) {
         builder.setPositiveButton(getContext().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {

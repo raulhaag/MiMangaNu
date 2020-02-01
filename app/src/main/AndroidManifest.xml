@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="ar.rulosoft.mimanganu"
-    android:installLocation="preferExternal">
+    android:installLocation="auto">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.VIBRATE" />
@@ -27,7 +27,7 @@
         </activity>
 
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="ar.rulosoft.provider"
             android:exported="false"
             android:grantUriPermissions="true">

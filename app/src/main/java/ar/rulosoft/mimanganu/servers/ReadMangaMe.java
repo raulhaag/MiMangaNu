@@ -1,8 +1,9 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
+
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;

@@ -14,8 +14,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Base64;
@@ -24,8 +22,11 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.core.app.NotificationCompat;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FileInputStream;

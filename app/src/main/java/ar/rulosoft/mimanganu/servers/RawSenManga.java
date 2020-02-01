@@ -1,7 +1,8 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;

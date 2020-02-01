@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.v7.widget.AppCompatCheckBox;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +14,8 @@ import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.buildware.widget.indeterm.IndeterminateCheckBox;
 import com.buildware.widget.indeterm.IndeterminateRadioButton;

@@ -20,10 +20,11 @@ package ar.rulosoft.custompref;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.preference.DialogPreference;
-import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.widget.ImageView;
+
+import androidx.preference.DialogPreference;
+import androidx.preference.PreferenceViewHolder;
 
 import ar.rulosoft.mimanganu.R;
 

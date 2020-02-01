@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:key="first_preferencescreen">
 
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/privacy_settings">
-        <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.PreferenceCategory android:title="@string/privacy_settings">
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="mostrar_en_galeria"
             android:summary="@string/esconder_de_galeria_subtitle"
             android:title="@string/escondergaleria" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="preview_on_listing"
             android:summary="@string/preview_on_listing_subtitle"
             android:title="@string/preview_on_listing_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory
+    <androidx.preference.PreferenceCategory
         android:key="account"
         android:title="@string/accounts" />
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/connection_settings">
-        <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.PreferenceCategory android:title="@string/connection_settings">
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="disable_internet_detection"
             android:summary="@string/disable_internet_detection_subtitle"
             android:title="@string/disable_internet_detection_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="only_wifi"
             android:summary="@string/use_only_wifi_subtitle"
@@ -66,15 +66,15 @@
             android:title="@string/read_timeout_title"
             app:val_max="30"
             app:val_min="3" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/update_settings_title">
-        <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.PreferenceCategory android:title="@string/update_settings_title">
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="app_update"
             android:summary="@string/app_update_subtitle"
             android:title="@string/app_update_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_only_wifi"
             android:summary="@string/use_only_wifi_updates_subtitle"
@@ -87,16 +87,16 @@
             android:key="update_interval"
             android:summary="%s"
             android:title="@string/update_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="update_notif_options"
             android:summary="@string/notification_o_subtitle"
             android:title="@string/notification_o_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_sound"
             android:summary="@string/notification_sound_subtitle"
             android:title="@string/notification_sound_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="update_vibrate"
             android:summary="@string/notification_sound_subtitle"
@@ -117,20 +117,20 @@
             android:title="@string/update_thread_manual_title"
             app:val_max="8"
             app:val_min="1" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="fast_update"
             android:summary="@string/fast_update_subtitle"
             android:title="@string/fast_update_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="include_finished_manga"
             android:summary="@string/include_finished_manga_subtitle"
             android:title="@string/include_finished_manga_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_lec">
-        <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.PreferenceCategory android:title="@string/opciones_lec">
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="reader_type"
             android:summary="@string/reader_type_subtitle"
@@ -168,34 +168,34 @@
             android:key="max_texture"
             android:summary="@string/max_texture_subtitle"
             android:title="@string/max_texture_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="seamless_chapter_transitions"
             android:summary="@string/seamless_chapter_transitions_paged_reader_subtitle"
             android:title="@string/seamless_chapter_transitions_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="seamless_chapter_transitions_delete_read"
             android:summary="@string/seamless_chapter_transitions_delete_read_subtitle"
             android:title="@string/seamless_chapter_transitions_delete_read_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="hide_sensitivity_scrollbar"
             android:summary="@string/hide_sensitivity_scrollbar_subtitle"
             android:title="@string/hide_sensitivity_scrollbar_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="hide_actionbar"
             android:summary="@string/hide_actionbar_subtitle"
             android:title="@string/hide_actionbar_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="show_status_bar"
             android:summary="@string/show_status_bar_subtitle"
             android:title="@string/show_status_bar_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/opciones_descarga">
+    <androidx.preference.PreferenceCategory android:title="@string/opciones_descarga">
         <ar.rulosoft.custompref.PreferencesListDir
             android:key="directorio"
             android:summary="@string/direcctorio_subtitle"
@@ -224,15 +224,15 @@
             android:title="@string/cantidad_reintentos_title"
             app:val_max="20"
             app:val_min="0" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="download_next_chapter_automatically"
             android:summary="@string/download_next_chapter_automatically_subtitle"
             android:title="@string/download_next_chapter_automatically_title" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/ui_settings">
-        <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.PreferenceCategory android:title="@string/ui_settings">
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="dark_theme"
             android:title="@string/theme_title" />
@@ -251,7 +251,7 @@
             android:key="reader_bg_col"
             android:summary="@string/color_reader_sub"
             android:title="@string/color_reader" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="true"
             android:key="grid_columns_automatic_detection"
             android:summary="@string/grid_columns_automatic_detection_subtitle"
@@ -264,15 +264,15 @@
             android:title="@string/grid_columns_title"
             app:val_max="6"
             app:val_min="2" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/misc_settings">
-        <android.support.v7.preference.SwitchPreferenceCompat
+    <androidx.preference.PreferenceCategory android:title="@string/misc_settings">
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="multi_import"
             android:summary="@string/multi_import_subtitle"
             android:title="@string/multi_import_title" />
-        <android.support.v7.preference.SwitchPreferenceCompat
+        <androidx.preference.SwitchPreferenceCompat
             android:defaultValue="false"
             android:key="auto_import"
             android:summary="@string/auto_import_subtitle"
@@ -281,58 +281,58 @@
             android:key="auto_import_path"
             android:summary="@string/auto_import_path_subtitle"
             android:title="@string/auto_import_path_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="clear_specific_cookies"
             android:summary="@string/clear_specific_cookies_subtitle"
             android:title="@string/clear_specific_cookies_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="clear_all_cookies"
             android:summary="@string/clear_all_cookies_subtitle"
             android:title="@string/clear_all_cookies_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="clear_cache"
             android:summary="@string/clear_cache_subtitle"
             android:title="@string/clear_cache_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="reset_server_list_to_defaults"
             android:summary="@string/reset_server_list_to_defaults_subtitle"
             android:title="@string/reset_server_list_to_defaults_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="backup_settings"
             android:summary="@string/backup_settings_summary"
             android:title="@string/backup_settings_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="restore_settings"
             android:summary="@string/restore_settings_summary"
             android:title="@string/restore_settings_title"  />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="vacuum_database"
             android:summary="@string/vacuum_database_subtitle"
             android:title="@string/vacuum_database_title" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="run_test"
             android:summary="@string/run_test_summary"
             android:title="@string/run_test" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
-    <android.support.v7.preference.PreferenceCategory android:title="@string/about">
-        <android.support.v7.preference.Preference
+    <androidx.preference.PreferenceCategory android:title="@string/about">
+        <androidx.preference.Preference
             android:key="about_text"
             android:summary="%s"
             android:title="@string/app_name" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="ram_usage"
             android:summary="..."
             android:title="@string/ram_usage" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="stat_storage"
             android:summary="..."
             android:title="@string/used_space" />
-        <android.support.v7.preference.Preference
+        <androidx.preference.Preference
             android:key="license_view"
             android:summary="@string/license_sub"
             android:title="@string/licencia" />
-    </android.support.v7.preference.PreferenceCategory>
+    </androidx.preference.PreferenceCategory>
 
 
-</android.support.v7.preference.PreferenceScreen>
+</androidx.preference.PreferenceScreen>

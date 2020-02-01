@@ -2,8 +2,6 @@ package ar.rulosoft.mimanganu;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
@@ -16,6 +14,9 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.List;

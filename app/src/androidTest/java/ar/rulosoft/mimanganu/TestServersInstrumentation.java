@@ -1,8 +1,9 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Context;
-import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
+
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;

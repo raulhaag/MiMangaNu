@@ -1,9 +1,9 @@
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/coordinator_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/str"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -13,9 +13,9 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floatingActionButton_add"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,4 +23,4 @@
         android:layout_margin="16dp"
         android:alpha="0"
         android:src="@drawable/ic_action_add" />
-</android.support.design.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

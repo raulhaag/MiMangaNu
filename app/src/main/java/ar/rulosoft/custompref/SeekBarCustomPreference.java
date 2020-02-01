@@ -22,16 +22,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceViewHolder;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.ViewCompat;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceViewHolder;
 
 import java.util.Map;
 import java.util.WeakHashMap;

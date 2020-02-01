@@ -1,9 +1,10 @@
 package ar.rulosoft.mimanganu.componentes.readers.paged;
 
 import android.content.Context;
-import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+
+import androidx.viewpager.widget.ViewPager;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.OnSwipeOutListener;

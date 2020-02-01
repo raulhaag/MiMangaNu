@@ -6,7 +6,7 @@
         android:id="@+id/action_search_local"
         android:icon="@drawable/ic_action_action_search"
         android:title="@string/filtrar"
-        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always" />
     <item
         android:id="@+id/action_view_download"

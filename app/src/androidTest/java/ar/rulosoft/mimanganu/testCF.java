@@ -1,9 +1,10 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Context;
-import android.support.test.filters.LargeTest;
-import android.support.test.rule.ActivityTestRule;
 import android.util.Log;
+
+import androidx.test.filters.LargeTest;
+import androidx.test.rule.ActivityTestRule;
 
 import com.squareup.duktape.Duktape;
 
@@ -128,7 +129,7 @@ public class testCF {
         }
 
 
-        String answer = String.valueOf(result + domain.length());
+        String answer = result + domain.length();
 
     }
 

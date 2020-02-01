@@ -1,10 +1,11 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.core.view.MotionEventCompat;
 
 import ar.rulosoft.mimanganu.componentes.readers.paged.PagedReader;
 import fr.castorflex.android.verticalviewpager.VerticalViewPager;

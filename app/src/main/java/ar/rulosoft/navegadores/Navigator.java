@@ -3,8 +3,9 @@ package ar.rulosoft.navegadores;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import com.franmontiel.persistentcookiejar.PersistentCookieJar;
 import com.franmontiel.persistentcookiejar.cache.SetCookieCache;

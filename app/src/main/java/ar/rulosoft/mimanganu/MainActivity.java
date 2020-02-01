@@ -11,15 +11,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -27,6 +18,17 @@ import android.view.ViewConfiguration;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+
+import com.google.android.material.snackbar.Snackbar;
 
 import java.lang.reflect.Field;
 
@@ -149,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
                         Database.COL_SERVER_ID + " = " + s.getServerID(), Database.COL_SERVER_ID, true).size() > 0) {
                     String serverUpdateText = s.getServerName() + " " + getString(R.string.update_server_information);
                     Snackbar snackbar = Snackbar.make(mainFragment.getView(), serverUpdateText, Snackbar.LENGTH_INDEFINITE);
-                    TextView textView = snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+                    TextView textView = snackbar.getView().findViewById(com.google.android.material.R.id.snackbar_text);
                     textView.setMaxLines(5);
                     if (MainActivity.colors != null)
                         snackbar.getView().setBackgroundColor(MainActivity.colors[0]);

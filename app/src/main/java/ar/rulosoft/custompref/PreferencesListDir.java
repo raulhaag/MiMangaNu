@@ -1,8 +1,9 @@
 package ar.rulosoft.custompref;
 
 import android.content.Context;
-import android.support.v7.preference.DialogPreference;
 import android.util.AttributeSet;
+
+import androidx.preference.DialogPreference;
 
 import ar.rulosoft.mimanganu.R;
 

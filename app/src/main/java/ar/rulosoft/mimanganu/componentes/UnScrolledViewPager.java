@@ -1,11 +1,12 @@
 package ar.rulosoft.mimanganu.componentes;
 
 import android.content.Context;
-import android.support.v4.view.MotionEventCompat;
-import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+import androidx.core.view.MotionEventCompat;
+import androidx.viewpager.widget.ViewPager;
 
 import ar.rulosoft.mimanganu.componentes.readers.paged.PagedReader;
 

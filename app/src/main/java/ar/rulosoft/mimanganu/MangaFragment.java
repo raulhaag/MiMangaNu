@@ -11,9 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
@@ -26,6 +23,10 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.fedorvlasov.lazylist.ImageLoader;
 

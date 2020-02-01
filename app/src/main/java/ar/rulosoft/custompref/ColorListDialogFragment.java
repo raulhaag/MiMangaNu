@@ -3,13 +3,14 @@ package ar.rulosoft.custompref;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.preference.Preference;
-import android.support.v7.preference.PreferenceDialogFragmentCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import androidx.annotation.NonNull;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceDialogFragmentCompat;
 
 import ar.rulosoft.mimanganu.R;
 
