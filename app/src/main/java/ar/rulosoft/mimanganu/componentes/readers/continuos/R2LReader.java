@@ -2,6 +2,15 @@ package ar.rulosoft.mimanganu.componentes.readers.continuos;
 
 import android.content.Context;
 import android.view.MotionEvent;
+import android.view.View;
+
+import me.everything.android.ui.overscroll.HorizontalOverScrollBounceEffectDecorator;
+import me.everything.android.ui.overscroll.IOverScrollDecor;
+import me.everything.android.ui.overscroll.IOverScrollStateListener;
+import me.everything.android.ui.overscroll.IOverScrollUpdateListener;
+import me.everything.android.ui.overscroll.adapters.IOverScrollDecoratorAdapter;
+
+import static me.everything.android.ui.overscroll.IOverScrollState.STATE_IDLE;
 
 /**
  * Created by Raul on 25/10/2015.
@@ -10,6 +19,50 @@ public class R2LReader extends HorizontalReader {
 
     public R2LReader(Context context) {
         super(context);
+        final R2LReader v = this;
+        final HorizontalOverScrollBounceEffectDecorator hOSBED = new HorizontalOverScrollBounceEffectDecorator(new IOverScrollDecoratorAdapter() {
+
+            @Override
+            public View getView() {
+                return v;
+            }
+
+            @Override
+            public boolean isInAbsoluteStart() {
+                return v.isStart() && canOS;
+            }
+
+            @Override
+            public boolean isInAbsoluteEnd() {
+                return v.isEnd() && canOS;
+            }
+        });
+
+
+        hOSBED.setOverScrollStateListener(new IOverScrollStateListener() {
+            @Override
+            public void onOverScrollStateChange(IOverScrollDecor decor, int oldState, int newState) {
+                if (newState == STATE_IDLE) {
+                    canOS = true;
+                }
+            }
+        });
+
+        hOSBED.setOverScrollUpdateListener(new IOverScrollUpdateListener() {
+            @Override
+            public void onOverScrollUpdate(IOverScrollDecor decor, int state, float offset) {
+                if (canOS) {
+                    if (Math.abs(offset) > overScrollLimit) {
+                        canOS = false;
+                        if (v.isStart()) {
+                            readerListener.onStartOver();
+                        } else {
+                            readerListener.onEndOver();
+                        }
+                    }
+                }
+            }
+        });
     }
 
     @Override
@@ -78,19 +131,18 @@ public class R2LReader extends HorizontalReader {
         }
         totalWidth = acc;
         pagesLoaded = true;
+        if (seekOnLoad != -1) {
+            seekPage(seekOnLoad);
+            seekOnLoad = -1;
+        }
     }
 
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        //Log.d("R2LRe",""+e1.getX()+" "+e2.getX()+" xS: "+xScroll+" yS: "+yScroll);
-        if (readerListener != null && e1.getX() - e2.getX() > 100 && (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor)) {
-            readerListener.onEndOver();
-            return true;
-        } else if (readerListener != null && e2.getX() - e1.getX() > 100 && (xScroll < 0.1)) {
-            readerListener.onStartOver();
-            return true;
-        }
-        return super.onFling(e1, e2, velocityX, velocityY);
+    boolean isStart() {
+        return (xScroll < 0.1);
+    }
+
+    boolean isEnd() {
+        return (xScroll == (((totalWidth * mScaleFactor) - screenWidth)) / mScaleFactor);
     }
 
     /*

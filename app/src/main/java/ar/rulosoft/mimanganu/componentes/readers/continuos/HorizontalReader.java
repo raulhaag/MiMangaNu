@@ -12,9 +12,19 @@ import android.view.MotionEvent;
 public abstract class HorizontalReader extends ContinuousReader {
 
     protected float totalWidth = 0;
+    int seekOnLoad = -1;
+    boolean canOS = true;
+    float overScrollLimit = 200;
+
 
     public HorizontalReader(Context context) {
         super(context);
+    }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        overScrollLimit = getWidth() / 6;
     }
 
     @Override
@@ -64,6 +74,8 @@ public abstract class HorizontalReader extends ContinuousReader {
         if (pagesLoaded) {
             absoluteScroll(getPagePosition(page), yScroll);
             generateDrawPool();
+        } else {
+            seekOnLoad = index;
         }
         currentPage = index;
         if (readerListener != null) {
