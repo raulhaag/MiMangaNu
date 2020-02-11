@@ -5,14 +5,77 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;
+import android.view.View;
+
+import me.everything.android.ui.overscroll.IOverScrollDecor;
+import me.everything.android.ui.overscroll.IOverScrollStateListener;
+import me.everything.android.ui.overscroll.IOverScrollUpdateListener;
+import me.everything.android.ui.overscroll.VerticalOverScrollBounceEffectDecorator;
+import me.everything.android.ui.overscroll.adapters.IOverScrollDecoratorAdapter;
+
+import static me.everything.android.ui.overscroll.IOverScrollState.STATE_IDLE;
 
 public class VerticalReader extends ContinuousReader {
 
     private float totalHeight = 0;
+    boolean canOS = true;
+    private float overScrollLimit = 200;
+    private int seekOnLoad = -1;
 
     public VerticalReader(Context context) {
         super(context);
+        final VerticalReader v = this;
+        final VerticalOverScrollBounceEffectDecorator vOSBED = new VerticalOverScrollBounceEffectDecorator(new IOverScrollDecoratorAdapter() {
+
+            @Override
+            public View getView() {
+                return v;
+            }
+
+            @Override
+            public boolean isInAbsoluteStart() {
+                return !v.canScrollUp() && canOS;
+            }
+
+            @Override
+            public boolean isInAbsoluteEnd() {
+                return !v.canScrollDown() && canOS;
+            }
+        });
+
+
+        vOSBED.setOverScrollStateListener(new IOverScrollStateListener() {
+            @Override
+            public void onOverScrollStateChange(IOverScrollDecor decor, int oldState, int newState) {
+                if (newState == STATE_IDLE) {
+                    canOS = true;
+                }
+            }
+        });
+
+        vOSBED.setOverScrollUpdateListener(new IOverScrollUpdateListener() {
+            @Override
+            public void onOverScrollUpdate(IOverScrollDecor decor, int state, float offset) {
+                if (canOS) {
+                    if (Math.abs(offset) > overScrollLimit) {
+                        canOS = false;
+                        if (!v.canScrollUp()) {
+                            readerListener.onStartOver();
+                        } else {
+                            readerListener.onEndOver();
+                        }
+                    }
+                }
+            }
+        });
     }
+
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        super.onLayout(changed, left, top, right, bottom);
+        overScrollLimit = getHeight() / 6;
+    }
+
 
     @Override
     public void calculateParticularScale() {
@@ -43,6 +106,10 @@ public class VerticalReader extends ContinuousReader {
         }
         totalHeight = acc;
         pagesLoaded = true;
+        if (seekOnLoad != -1) {
+            seekPage(seekOnLoad);
+            seekOnLoad = -1;
+        }
     }
 
     public void reloadImage(int idx) {
@@ -72,7 +139,15 @@ public class VerticalReader extends ContinuousReader {
         }
     }
 
-    @Override
+    boolean canScrollUp() {
+        return (yScroll > 0.1);
+    }
+
+    boolean canScrollDown() {
+        return (yScroll != (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor);
+    }
+
+   /* @Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
         if (readerListener != null)
             if (e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
@@ -81,7 +156,7 @@ public class VerticalReader extends ContinuousReader {
                 readerListener.onStartOver();
             }
         return super.onFling(e1, e2, velocityX, velocityY);
-    }
+    }/*/
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
@@ -181,6 +256,8 @@ public class VerticalReader extends ContinuousReader {
         if (pagesLoaded) {
             absoluteScroll(xScroll, getPagePosition(page));
             generateDrawPool();
+        } else {
+            seekOnLoad = index;
         }
         if (readerListener != null) {
             readerListener.onPageChanged(index);
