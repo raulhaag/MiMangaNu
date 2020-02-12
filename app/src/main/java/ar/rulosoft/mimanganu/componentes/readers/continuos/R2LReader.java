@@ -171,7 +171,7 @@ public class R2LReader extends HorizontalReader {
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (e.getX() < getWidth() / 4) {
+        if (e.getX() < getWidth() / 4 && canOS) {
             if (currentPage == 1)
                 readerListener.onStartOver();
             else

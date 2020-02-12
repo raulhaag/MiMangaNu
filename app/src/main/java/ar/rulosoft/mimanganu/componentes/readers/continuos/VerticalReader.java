@@ -34,12 +34,12 @@ public class VerticalReader extends ContinuousReader {
 
             @Override
             public boolean isInAbsoluteStart() {
-                return !v.canScrollUp() && canOS;
+                return v.isStart() && canOS;
             }
 
             @Override
             public boolean isInAbsoluteEnd() {
-                return !v.canScrollDown() && canOS;
+                return v.isEnd() && canOS;
             }
         });
 
@@ -59,7 +59,7 @@ public class VerticalReader extends ContinuousReader {
                 if (canOS) {
                     if (Math.abs(offset) > overScrollLimit) {
                         canOS = false;
-                        if (!v.canScrollUp()) {
+                        if (v.isStart()) {
                             readerListener.onStartOver();
                         } else {
                             readerListener.onEndOver();
@@ -139,28 +139,17 @@ public class VerticalReader extends ContinuousReader {
         }
     }
 
-    boolean canScrollUp() {
-        return (yScroll > 0.1);
+    boolean isStart() {
+        return (yScroll < 0.1);
     }
 
-    boolean canScrollDown() {
-        return (yScroll != (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor);
+    boolean isEnd() {
+        return (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor);
     }
-
-   /* @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, final float velocityX, final float velocityY) {
-        if (readerListener != null)
-            if (e1.getY() - e2.getY() > 100 && (yScroll == (((totalHeight * mScaleFactor) - screenHeight)) / mScaleFactor)) {
-                readerListener.onEndOver();
-            } else if (yScroll < 0.1) {
-                readerListener.onStartOver();
-            }
-        return super.onFling(e1, e2, velocityX, velocityY);
-    }/*/
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (readerListener != null)
+        if (readerListener != null && canOS)
             if (e.getX() < getWidth() / 4) {
                 if (currentPage == 1)
                     readerListener.onStartOver();

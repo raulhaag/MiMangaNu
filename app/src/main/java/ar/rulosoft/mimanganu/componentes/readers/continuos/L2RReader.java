@@ -171,7 +171,7 @@ public class L2RReader extends HorizontalReader {
 
     @Override
     public boolean onSingleTapConfirmed(MotionEvent e) {
-        if (readerListener != null)
+        if (readerListener != null && canOS)
             if (e.getX() < getWidth() / 4) {
                 if (isLastPageVisible())
                     readerListener.onEndOver();
