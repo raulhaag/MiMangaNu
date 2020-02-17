@@ -1,9 +1,6 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.text.TextUtils;
-
-import com.squareup.duktape.Duktape;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -25,6 +22,7 @@ class TuMangaOnline extends ServerBase {
 
     private static final String HOST = "https://tmofans.com";
     public static String script = null;
+    private JSServerHelper scriptHelper;
 
     public static String[] type = new String[]{
             "Todos", "Manga", "Manhua", "Manhwa", "Novela", "One Shot", "Dounjinshi", "Oel"
@@ -39,40 +37,19 @@ class TuMangaOnline extends ServerBase {
             "Musica", "Parodia", "Animación", "Demonios", "Familia", "Extranjero", "Niños",
             "Realidad", "Telenovela", "Guerra", "Oeste"
     };
-    private static String[] genresValues = new String[]{
-            "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16",
-            "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30",
-            "31", "32", "33", "34", "35", "36", "37", "38", "39", "40", "41", "42", "43", "44",
-            "45", "46", "47", "48"
-    };
     private static String[] demografia = {
             "Todos", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
-    };
-    private static String[] demografiaV = {
-            "", "Seinen", "Shoujo", "Shounen", "Josei", "Kodomo"
     };
     private static String[] estado = {
             "Todos", "Activo", "Abandonado", "Finalizado", "Pausado"
     };
-    private static String[] estadoV = {
-            "", "publishing", "cancelled", "ended", "on_hold"
-    };
-    private static String[] typeV = new String[]{
-            "", "manga", "manhua", "manhwa", "novel", "one_shot", "doujinshi", "oel"
-    };
     private static String[] sortBy = new String[]{
             "Me gusta", "Alfabetico", "Puntuación", "Creación", "Fecha de Esterno",
-    };
-    private static String[] sortByValues = new String[]{
-            "likes_count", "alphabetically", "score", "creation", "release_date"
     };
     private static String[] sortOrder = new String[]{
             "Descendiente", "Ascendiente"
     };
-    private static String[] sortOrderValues = new String[]{
-            "desc", "asc"
-    };
-    private static int lastPage = 10000;
+
     public final int VERSION = 2;
 
     TuMangaOnline(Context context) {
@@ -85,16 +62,13 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangas() throws Exception {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public ArrayList<Manga> search(String term) throws Exception {
-        String web = HOST + "/library?order_item=&order_dir=&title=%s&filter_by=title&type=&demography=&status=&webcomic=&yonkoma=&amateur=";
-        web = String.format(web, URLEncoder.encode(term, "UTF-8"));
-        String data = getNavWithNeededHeaders().get(web);
-        return getMangasLibrary(data);
-
+        checkScript();
+        return scriptHelper.search(term);
     }
 
     @Override
@@ -106,42 +80,8 @@ class TuMangaOnline extends ServerBase {
     @Override
     public void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
         if (manga.getChapters().isEmpty() || forceReload) {
-            String data = getNavWithNeededHeaders().get(
-                    String.format(HOST + "/library/manga/%s/%s", manga.getPath(),
-                            URLEncoder.encode(manga.getTitle()
-                                            .replaceAll("[-\\._~\\:\\/\\?#\\[\\]@\\!\\$\\&'\\(\\)\\*\\+\\,\\;\\=]", "-"),
-                                    "UTF-8")));
-            manga.setImages(getFirstMatchDefault("image\" content=\"(.+?)\"", data, ""));
-            manga.setSynopsis(getFirstMatchDefault("<p class=\"element-description\">(.+?)</p>", data, context.getString(R.string.nodisponible)));
-            manga.setGenre(TextUtils.join(", ", getAllMatch("genders\\[\\]=\\d+\">([^<]+)<", data)));
-            manga.setAuthor(getFirstMatchDefault(">([^<]+?)</h5>\\n<p class=\"card-text\">Autor", data, context.getString(R.string.nodisponible)));
-
-
             checkScript();
-            String re1, re2;
-            try (Duktape duktape = Duktape.create()) {
-                duktape.set("nav", Navigator.NavigatorJsInterface.class, Navigator.getInstance().getNavigatorJs());
-                duktape.evaluate(script);
-                JSIn jsIn = duktape.get("S22", JSIn.class);
-                re1 = jsIn.cre1().replace("$", "\\");
-                re2 = jsIn.cre2().replace("$", "\\");
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception(context.getString(R.string.error));
-            }
-
-            Pattern pattern = Pattern.compile(re1);
-            Matcher matcher = pattern.matcher(data);
-            while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", "").trim(), matcher.group(2)));
-            }
-            if (manga.getChapters().size() == 0) { // find one shot
-                pattern = Pattern.compile(re2);
-                matcher = pattern.matcher(data);
-                while (matcher.find()) {
-                    manga.addChapterFirst(new Chapter(matcher.group(1).replaceAll("<[\\s\\S]+?>", ""), matcher.group(2)));
-                }
-            }
+            scriptHelper.loadMangaInformation(manga);
         }
     }
 
@@ -157,42 +97,31 @@ class TuMangaOnline extends ServerBase {
             checkScript();
             Manga m = Database.getManga(context, chapter.getMangaID());
             String images = "";
-            try (Duktape duktape = Duktape.create()) {
-                duktape.set("nav", Navigator.NavigatorJsInterface.class, Navigator.getInstance().getNavigatorJs());
- /*               duktape.set("log", CLog.class, new CLog() {
-                    @Override
-                    public void log(String a) {
-                        Log.d("MiMangaNuJsLog", a);
-                    }
-                });*/
-                duktape.evaluate(script);
-                JSIn chapterInit = duktape.get("S22", JSIn.class);
-                images = chapterInit.chapterInit(HOST + "/goto/" + chapter.getPath(),
-                        String.format(HOST + "/library/manga/%s/%s", m.getPath(),
-                                URLEncoder.encode(m.getTitle(), "UTF-8").replaceAll("\\.", "")));
-                if (images.trim().isEmpty()) {
-                    throw new Exception("error in tmo js plugin");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                throw new Exception(context.getString(R.string.error));
+            images = scriptHelper.pi.chapterInit(HOST + "/goto/" + chapter.getPath(),
+                    String.format(HOST + "/library/manga/%s/%s", m.getPath(),
+                            URLEncoder.encode(m.getTitle(), "UTF-8")
+                                    .replaceAll("\\.", "")));
+            if (images.trim().isEmpty()) {
+                throw new Exception("error in tmo js plugin");
             }
             chapter.setPages(images.split("\\|").length - 1);
             chapter.setExtra(images);
-
         }
     }
 
     private void checkScript() throws Exception {
-        if (script == null) {
+        if (scriptHelper == null) {
             String d = " " + context.getString(R.string.factor_suffix).hashCode() + getServerID() + TUMANGAONLINE;
             try {
-                script = Util.xorDecode(getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_3.js"), d);
+                script = Util.xorDecode(getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_4.js"), d);
             } catch (Exception e) {
-                script = getNavWithNeededHeaders().get("https://github.com/raulhaag/MiMangaNu/blob/master/js_plugin/22_3.js");
+                script = getNavWithNeededHeaders().get("https://github.com/raulhaag/MiMangaNu/blob/master/js_plugin/22_4.js");
                 script = Util.xorDecode(Util.getInstance().fromHtml(getFirstMatch("(<table class=\"highlight tab-size js-file-line-container\"[\\s\\S]+<\\/table>)", script, "error obteniendo script")).toString(), d);
             }
+            if (!script.isEmpty())
+                scriptHelper = new JSServerHelper(context, script);
         }
+
     }
 
     @Override
@@ -228,34 +157,8 @@ class TuMangaOnline extends ServerBase {
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = HOST + "/library?order_item=%s&order_dir=%s&title=&filter_by=title&type=%s&demography=%s&status=%s&webcomic=&yonkoma=&amateur=";
-        if (pageNumber == 1)
-            lastPage = 10000;
-        if (pageNumber <= lastPage) {
-            String gens = "";
-            //include
-            for (int i = 0; i < filters[2].length; i++) {
-                if (filters[2][i] == 1) {
-                    gens = gens + "&genders%5B%5D=" + genresValues[i];
-                }
-            }
-            //exclude
-            for (int i = 0; i < filters[2].length; i++) {
-                if (filters[2][i] == -1) {
-                    gens = gens + "&exclude_genders%5B%5D=" + genresValues[i];
-                }
-            }
-
-            web = String.format(web, sortByValues[filters[4][0]], sortOrderValues[filters[5][0]],
-                    typeV[filters[0][0]], demografiaV[filters[1][0]], estadoV[filters[3][0]]) + gens;
-            if (pageNumber > 1) {
-                web = web + "&page=" + pageNumber;
-            }
-            String data = getNavWithNeededHeaders().get(web);
-            return getMangasLibrary(data);
-        } else {
-            return new ArrayList<>();
-        }
+        checkScript();
+        return scriptHelper.getMangasFiltered(filters, pageNumber);
     }
 
     private ArrayList<Manga> getMangasLibrary(String data) {
@@ -326,11 +229,6 @@ class TuMangaOnline extends ServerBase {
         String cre1();
 
         String cre2();
-    }
-
-
-    interface CLog {
-        void log(String a);
     }
 
     @Override
