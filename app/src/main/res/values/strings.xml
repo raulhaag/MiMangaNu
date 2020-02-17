@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes on v1.122:\n\t* Fix HeavenManga and JapScan.\n\t* Added InManga(es).\n\t* Some small fixes.</string>
+    <string name="update_message">Changes on v1.123:\n\t* Fix CFI.\n\t* First half of js plugin implementation(you don\'t go to see it).\n\t* Added overscroll to the continuous reader and fixed the seek on open and changes chapter.\n\t* Others min fixes and improve on background.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

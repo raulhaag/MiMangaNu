@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.122:\n\t* Fix HeavenManga y JapScan.\n\t* Agregado InManga(es).\n\t* Y algunos arreglos.
-    </string>
+    <string name="update_message">Cambios en v1.123:\n\t* Fix CFI.\n\t* Primera parte de implementacion de plugins en JS (no se vee).\n\t* Agregado overscroll en los lectores continuos para cambiar de capitulo y arreglado el seek al abrir.\n\t* y otros fix menores y de fondo.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
