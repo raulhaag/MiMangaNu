@@ -32,7 +32,7 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
     private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"r\" value=\"([^\"]*)");
     private final static Pattern REPLACE_VALUE = Pattern.compile("visibility:hidden;\" id=\".+\">([^<]+)<");
-    private final static Pattern FORM_ACTION = Pattern.compile("action=\".+?(__cf_chl_jschl_tk__[^\"]+)");
+    private final static Pattern FORM_ACTION = Pattern.compile("action=\"([^\"]+)");
 
 
     public static String getFirstMatch(Pattern p, String source) {
@@ -63,7 +63,7 @@ public class CFInterceptor implements Interceptor {
         String challengePass = getFirstMatch(PASS_PATTERN, content);
         String r = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content), "UTF-8");
         String rv = getFirstMatch(REPLACE_VALUE, content);
-        String formAction = getFirstMatch(FORM_ACTION, content);
+        String formAction = getFirstMatch(FORM_ACTION, content).replace("&amp;", "&");
 
         if (rv == null) {
             rv = "";
@@ -135,17 +135,7 @@ public class CFInterceptor implements Interceptor {
                 .method("POST", body)
                 .build();
 
-        chain.proceed(request1); // generate cookie
-
-        request1 = new Request.Builder()
-                .url(request.url().toString())
-                .addHeader("User-Agent", Navigator.USER_AGENT)
-                .addHeader("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .addHeader("Accept-Encoding", "gzip, deflate")
-                .build();
-        return chain.proceed(request1);//generate the cookie;
+        return chain.proceed(request1); // generate cookie and response
     }
 
     interface Atob {
