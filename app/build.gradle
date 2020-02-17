@@ -73,14 +73,14 @@ dependencies {
     final ANDROID_SUPPORT = '28.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.google.android.material:material:1.0.0'
+    implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.appcompat:appcompat:1.1.0'
     implementation 'me.everything:overscroll-decor-android:1.0.4'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.0'
     implementation 'com.github.sevar83:indeterminate-checkbox:1.0.5@aar'
     implementation group: 'org.brotli', name: 'dec', version: '0.1.2'
-    implementation group: 'org.mozilla', name: 'javascript', version: '1.7.2'
+    //leave it to future version implementation group: 'org.mozilla', name: 'javascript', version: '1.7.2'
 
     //implementation group: 'com.github.junrar', name: 'junrar', version: '4.0.0'
     api project(':imageviewtouchlibrary')

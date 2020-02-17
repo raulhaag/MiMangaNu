@@ -32,7 +32,7 @@ public class CFInterceptor implements Interceptor {
     private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
     private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"r\" value=\"([^\"]*)");
     private final static Pattern REPLACE_VALUE = Pattern.compile("visibility:hidden;\" id=\".+\">([^<]+)<");
-    private final static Pattern FORM_ACTION = Pattern.compile("action=\"([^\"]+)");
+    private final static Pattern FORM_ACTION = Pattern.compile("action=\".+?(__cf_chl_jschl_tk__[^\"]+)");
 
 
     public static String getFirstMatch(Pattern p, String source) {
@@ -122,7 +122,7 @@ public class CFInterceptor implements Interceptor {
                 .add("jschl_answer", result)
                 .build();
 
-        String url = (request.isHttps() ? "https://" : "http://") + domain + formAction;
+        String url = request.url().scheme() + "://" + domain + "/?" + formAction;
 
         Request request1 = new Request.Builder()
                 .url(url)
@@ -135,8 +135,17 @@ public class CFInterceptor implements Interceptor {
                 .method("POST", body)
                 .build();
 
-        Response rps = chain.proceed(request1);
-        return rps;//generate the cookie;
+        chain.proceed(request1); // generate cookie
+
+        request1 = new Request.Builder()
+                .url(request.url().toString())
+                .addHeader("User-Agent", Navigator.USER_AGENT)
+                .addHeader("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
+                .addHeader("Connection", "keep-alive")
+                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
+                .addHeader("Accept-Encoding", "gzip, deflate")
+                .build();
+        return chain.proceed(request1);//generate the cookie;
     }
 
     interface Atob {
