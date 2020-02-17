@@ -223,14 +223,6 @@ class TuMangaOnline extends ServerBase {
         return VERSION;
     }
 
-    interface JSIn {
-        String chapterInit(String data, String mw);
-
-        String cre1();
-
-        String cre2();
-    }
-
     @Override
     public synchronized int searchForNewChapters(int id, Context context, boolean fast) {
         int count = super.searchForNewChapters(id, context, fast);
