@@ -49,6 +49,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.124:
+* Fix CFI.
+
+Changes on v1.124:
+* Fix CFI.
+
 Cambios en v1.123:
 * Fix CFI.
 * Primera parte de implementacion de plugins en JS (no se vee).
@@ -60,7 +66,6 @@ Changes on v1.123:
 * First half of js plugin implementation(you don't go to see it).
 * Added overscroll to the continuous reader and fixed the seek on open and changes chapter.
 * Others min fixes and improve on background.
-
 
 Cambios en v1.122:
 * Fix HeavenManga y JapScan.

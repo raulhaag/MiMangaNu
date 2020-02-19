@@ -122,7 +122,7 @@ public class CFInterceptor implements Interceptor {
                 .add("jschl_answer", result)
                 .build();
 
-        String url = request.url().scheme() + "://" + domain + "/?" + formAction;
+        String url = request.url().scheme() + "://" + domain + formAction;
 
         Request request1 = new Request.Builder()
                 .url(url)
