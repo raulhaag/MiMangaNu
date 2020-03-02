@@ -200,13 +200,13 @@ public class ReadMangaMe extends ServerBase {
         String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + "?mtr=1");
         data = getFirstMatch("rm_h.init\\(([\\s\\S]+?)\\)", data, context.getString(R.string.server_failed_loading_page_count));
 
-        Pattern pattern = Pattern.compile("\\[['|\"][\\s\\S]*?,['|\"](.+?)['|\"],['|\"](.+?)['|\"]");
+        Pattern pattern = Pattern.compile("\\[['|\"](.+?)['|\"],['|\"](.+?)['|\"],['|\"](.+?)['|\"]");
         Matcher m = pattern.matcher(data);
 
         StringBuilder sb = new StringBuilder();
         int pages = 0;
         while (m.find()) {
-            sb.append("|").append(m.group(1)).append(m.group(2));
+            sb.append("|").append(m.group(1)).append(m.group(3));
             pages++;
         }
         if (pages > 0) {
