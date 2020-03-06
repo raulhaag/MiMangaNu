@@ -37,70 +37,6 @@ class JapScan extends ServerBase {
 
     private String[] letterFilter = new String[]{"All", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-
-    @Override
-    public boolean hasList() {
-        return false;
-    }
-
-    @Override
-    public ArrayList<Manga> getMangas() throws Exception {
-        return null;
-    }
-
-    @Override
-    public ArrayList<Manga> search(String search) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Navigator nav = getNavigatorAndFlushParameters();
-        nav.addPost("search", URLEncoder.encode(search, "UTF-8"));
-        String source = nav.post(HOST + "/search/");
-        if (source.length() > 2) {
-            JSONArray jsonArray = new JSONArray(source);
-            JSONObject item;
-            for (int i = 0; i < jsonArray.length(); i++) {
-                item = (JSONObject) jsonArray.get(i);
-                mangas.add(new Manga(getServerID(), item.getString("name"), item.getString("url"), false));
-            }
-        }
-        return mangas;
-
-    }
-
-    @Override
-    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
-        loadMangaInformation(manga, forceReload);
-    }
-
-    @Override
-    public synchronized void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
-        if (manga.getChapters().isEmpty() || forceReload) {
-            String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
-
-            // Cover Image
-            // JapScan has no cover images ...
-            manga.setImages(HOST + getFirstMatchDefault("<div class=\"m-2\">[\\s\\S]+?src=\"([^\"]+)", source, ""));
-
-            // Summary
-            manga.setSynopsis(getFirstMatchDefault("Synopsis:</div>[\\s\\S]+?<p[^>]+>([^<]+)", source, context.getString(R.string.nodisponible)));
-
-            // Status
-            manga.setFinished(getFirstMatchDefault("Statut:</span>([^<]+)", source, "").contains("Terminé"));
-
-            // Author
-            manga.setAuthor(getFirstMatchDefault("Auteur\\(s\\):</span>([^<]+)", source, context.getString(R.string.nodisponible)).trim());
-
-            // Genres
-            manga.setGenre(getFirstMatchDefault("Type\\(s\\):</span>([^<]+)", source, context.getString(R.string.nodisponible)));
-
-            // Chapters
-            Pattern pattern = Pattern.compile("<div class=\"chapters_list text-truncate\">[\\s\\S]+?href=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
-            Matcher matcher = pattern.matcher(source);
-            while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
-            }
-        }
-    }
-
     private static final String decodeScript = "var window = {\n" +
             "    URL: function (wp) {\n" +
             "        si = wp.indexOf(\"/\", 9);\n" +
@@ -510,6 +446,69 @@ class JapScan extends ServerBase {
             "zJ.toString();";
 
     @Override
+    public boolean hasList() {
+        return false;
+    }
+
+    @Override
+    public ArrayList<Manga> getMangas() throws Exception {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Manga> search(String search) throws Exception {
+        ArrayList<Manga> mangas = new ArrayList<>();
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addPost("search", URLEncoder.encode(search, "UTF-8"));
+        String source = nav.post(HOST + "/search/");
+        if (source.length() > 2) {
+            JSONArray jsonArray = new JSONArray(source);
+            JSONObject item;
+            for (int i = 0; i < jsonArray.length(); i++) {
+                item = (JSONObject) jsonArray.get(i);
+                mangas.add(new Manga(getServerID(), item.getString("name"), item.getString("url"), false));
+            }
+        }
+        return mangas;
+
+    }
+
+    @Override
+    public void loadChapters(Manga manga, boolean forceReload) throws Exception {
+        loadMangaInformation(manga, forceReload);
+    }
+
+    @Override
+    public synchronized void loadMangaInformation(Manga manga, boolean forceReload) throws Exception {
+        if (manga.getChapters().isEmpty() || forceReload) {
+            String source = getNavigatorAndFlushParameters().get(HOST + manga.getPath());
+
+            // Cover Image
+            // JapScan has no cover images ...
+            manga.setImages(HOST + getFirstMatchDefault("<div class=\"m-2\">[\\s\\S]+?src=\"([^\"]+)", source, ""));
+
+            // Summary
+            manga.setSynopsis(getFirstMatchDefault("Synopsis:</div>[\\s\\S]+?<p[^>]+>([^<]+)", source, context.getString(R.string.nodisponible)));
+
+            // Status
+            manga.setFinished(getFirstMatchDefault("Statut:</span>([^<]+)", source, "").contains("Terminé"));
+
+            // Author
+            manga.setAuthor(getFirstMatchDefault("Auteur\\(s\\):</span>([^<]+)", source, context.getString(R.string.nodisponible)).trim());
+
+            // Genres
+            manga.setGenre(getFirstMatchDefault("Type\\(s\\):</span>([^<]+)", source, context.getString(R.string.nodisponible)));
+
+            // Chapters
+            Pattern pattern = Pattern.compile("<div class=\"chapters_list text-truncate\">[\\s\\S]+?href=\"([^\"]+)\">([^<]+)", Pattern.DOTALL);
+            Matcher matcher = pattern.matcher(source);
+            while (matcher.find()) {
+                manga.addChapterFirst(new Chapter(matcher.group(2), matcher.group(1)));
+            }
+        }
+    }
+
+    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + page + ".html");
         String eimg = getFirstMatch("<div id=\"image\" data-src=\"([^\"]+)", data, context.getString(R.string.error_downloading_image));
@@ -538,22 +537,16 @@ class JapScan extends ServerBase {
         return mangas;
     }
 
+    private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
+
     @Override
     public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String extra = "";
+       /* String extra = "";
         if (filters[0][0] != 0) {
             extra = letterFilter[filters[0][0]] + "/";
-        }
-        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + extra + pageNumber);
+        }*/
+        String source = getNavigatorAndFlushParameters().get(HOST + "/mangas/" + (pageNumber - 1 + (filters[0][0] * 10)));
         return getMangasFromSource(source);
-    }
-
-
-    @Override
-    public ServerFilter[] getServerFilters() {
-        return new ServerFilter[]{
-                new ServerFilter(context.getString(R.string.flt_alpha), letterFilter, ServerFilter.FilterType.SINGLE),
-        };
     }
 
     @Override
@@ -579,5 +572,14 @@ class JapScan extends ServerBase {
     @Override
     public boolean needRefererForImages() {
         return true;
+    }
+
+    @Override
+    public ServerFilter[] getServerFilters() {
+        return new ServerFilter[]{
+                new ServerFilter(context.getString(R.string.flt_page), pageFilter, ServerFilter.FilterType.SINGLE),
+
+                //  new ServerFilter(context.getString(R.string.flt_alpha), letterFilter, ServerFilter.FilterType.SINGLE),
+        };
     }
 }
