@@ -258,10 +258,7 @@ public class MainFragment extends Fragment implements MangasRecAdapter.OnMangaCl
                     if (value.contains("'"))
                         value = value.replaceAll("'", "''");
                     try {
-                        mangaList = Database.getMangasCondition(getActivity(), "id IN (" +
-                                "SELECT id " +
-                                "FROM manga " +
-                                "WHERE nombre LIKE '%" + value + "%' GROUP BY id)", null, false);
+                        mangaList = Database.getMangasCondition(getActivity(), " ((nombre LIKE '%" + value + "%') AND (vault = '" + currentVault + "')) ", null, false);
                         mMAdapter = new MangasRecAdapter(mangaList, getContext(), MainFragment.this);
                         mMAdapter.setMangaClickListener(MainFragment.this);
                         recyclerView.setAdapter(mMAdapter);
