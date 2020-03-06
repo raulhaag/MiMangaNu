@@ -445,6 +445,7 @@ class JapScan extends ServerBase {
             "\n" +
             "zJ.toString();";
 
+
     @Override
     public boolean hasList() {
         return false;
@@ -537,8 +538,6 @@ class JapScan extends ServerBase {
         return mangas;
     }
 
-    private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
-
     @Override
     public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
        /* String extra = "";
@@ -578,8 +577,9 @@ class JapScan extends ServerBase {
     public ServerFilter[] getServerFilters() {
         return new ServerFilter[]{
                 new ServerFilter(context.getString(R.string.flt_page), pageFilter, ServerFilter.FilterType.SINGLE),
-
                 //  new ServerFilter(context.getString(R.string.flt_alpha), letterFilter, ServerFilter.FilterType.SINGLE),
         };
     }
+
+    private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
 }
