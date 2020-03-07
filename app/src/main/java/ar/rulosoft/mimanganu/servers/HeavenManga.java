@@ -153,6 +153,9 @@ class HeavenManga extends ServerBase {
             }
             String source = getNavigatorAndFlushParameters().get(chapter.getExtra());
             ArrayList<String> images = getAllMatch("\"imgURL\":\"([^\"]+)", source);
+            if(images.get(0).contains("data:image/jpg;base64")){
+                throw new Exception("Base 64 Image, proceso parado para prevenir la corrupción de la base de datos.");
+            }
             chapter.setExtra(TextUtils.join("|", images));
             chapter.setPages(images.size());
 
