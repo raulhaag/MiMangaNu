@@ -1,5 +1,197 @@
 ﻿Changelog
 ---------
+Cambios en v1.120:
+* Fix TMO, EsNineManga, Taadd y MangaTown.
+* Fix en GUI.
+
+Changes on v1.120:
+* Fix TMO, EsNineManga, Taadd and MangaTown.
+* Fix on GUI.
+
+Cambios en v1.119:
+* Pequeños fixes.
+
+Changes on v1.119:
+* Min fix.
+
+Cambios en v1.118:
+* Fix CFI.
+* Agregada opcion de reiniciar al menu principal.
+
+Changes on v1.118:
+* Fix CFI.
+* Added restart option to main menu.
+
+Cambios en v1.117:
+* Opción agregar acceso directo al mantener manga apretado.
+* Fix a varios servers.
+
+Changes on v1.117:
+* Option create shortcut on manga long press.
+* Fix on various servers.
+
+Cambios en v1.116:
+* Fix tmo.
+* Fix Kumanga.
+
+Changes in v1.116:
+* Fix tmo.
+* Fix Kumanga.
+
+Cambios en v1.115:
+* Fix error en Android 7.0.1 .. 7.1.1
+* Mejorado el sistema de shortcuts.
+
+Changes in v1.115:
+* Fix error on Android 7.0.1 .. 7.1.1
+* Improved the shortcuts system.
+
+Cambios en v1.114:
+* Fix tmo
+* Agregado acceso directos dinámicos en android 7.1 o superior en los lanzadores que los soportan.
+
+Changes in v1.114:
+* Fix tmo.
+* Added shortcuts to last mangas for android 7.1 or newest in launchers that support this feature.
+
+Cambios en v1.113:
+* Fix tmo
+* Fix la búsqueda en mangaeden, mangapanda, readmangatoday y taad para dispositivos para un api vieja.
+
+Changes in v1.113:
+* Fix tmo
+* Fix mangaeden, mangapanda, readmangatoday and taad search on low api devices.
+
+Cambios en v1.112:
+* Fix TMO.
+
+Changes in v1.112:
+* Fix TMO.
+
+Cambios en v1.111:
+* Agregado manejo de cuenta para mangaEden.
+* Fix tmo.
+* Fix lag en ocultar leidos.
+* Fix EsNineManga.
+* Agregado mantener presionado (+) para abrir boveda.
+
+Changes in v1.111:
+* Added support for MangaEden accounts.
+* Fix tmo.
+* Fix lag on hide already read.
+* Fix EsNineManga.
+* Added long press on (+) to open vault.
+
+Cambios en v1.110:
+* Arreglo de servidores.
+
+Changes in v1.110:
+* Server fixes.
+
+Cambios en v1.109:
+* Agregado filtros de 3 estados a los servers que lo soportan.
+* Varios fixs y un par de mejoras.
+
+Changes in v1.109:
+* Added 3 state filters on server that support it.
+* Various fixes and a couple of improves.
+
+Cambios en v1.108:
+* Fix Fanfox, MangaHere, Mangashiro.
+* Fix decodificador L90.
+* Actualizada traduccion al frances y aleman.
+* Ahora si hay una bobeda abierta y agregas un manga este queda en ella.
+* Min fixes en el backend.
+
+Changes in v1.108:
+* Fix Fanfox, MangaHere, Mangashiro.
+* Fix L90 decoder.
+* Updated french and german translation.
+* Now if you have a open vault all new manga go there.
+* Min fixes in backend.
+
+Cambios en v1.107:
+* Advertencia esta actualizacion va a resetear las bovedas.
+* Agregado posproceso de L90 (JapScan).
+* Fix Mangakawaii.
+
+Changes in v1.107:
+* Warning this update will reset your vaults (for one error with the previews version).
+* Added L90 posprocessor (JapScan).
+* Fix Mangakawaii.
+
+Cambios en v1.106:
+* Agregado soporte para archivos cbz.
+* Agregado un sistema simple de bóvedas.
+* Agregada una opcion para ocultar miniatura de administrador de ventanas.
+* Arreglos en ReadMangaToday, KuManga, HeavenManga, itNineManga y derivados de Mtown.
+
+Changes in v1.106:
+* Added cbz support for from folder.
+* Added simply vault system.
+* Added a option to hide window image from manager.
+* Fixes on ReadMangaToday, KuManga, HeavenManga, itNineManga and Mtown type sites.
+
+Cambios en v1.105:
+* Fix VerComics.
+
+Changes in v1.105:
+* Fix VerComics.
+
+Cambios en v1.104:
+* Fix CFI.
+* Fix VerComics.
+
+Changes in v1.104:
+* Fix CFI.
+* Fix VerComics.
+
+Cambios en v1.103:
+* Fix CFI.
+
+Changes in v1.103:
+* Fix CFI.
+
+Cambios en v1.102:
+* Fix CFI.
+
+Changes in v1.102:
+* Fix CFI.
+
+Cambios en v1.101:
+* Fix CFI.
+
+Changes in v1.101:
+* Fix CFI.
+
+Cambios en v1.100:
+* Fix CFI.
+* Fix JapScan.
+
+Changes in v1.100:
+* Fix CFI.
+* Fix JapScan.
+
+Cambios en v1.99:
+* Fix mangahere and fanfox.
+
+Changes in v1.99:
+* Fix mangahere and fanfox.
+
+Cambios en v1.98:
+* Un par de server arreglados y una mejora.
+* Arreglado error en preferencias y removido el sufijo de fdroid.
+
+Changes in v1.98:
+* A couple of server fixed and a improve.
+* Fix pref look and remove fdroid suffix.
+
+Cambios en v1.97:
+* Corregido updates en versiones de android antiguas.
+
+Changes in v1.97:
+* Fixed update search on old android versions.
+
 Cambios en v1.96:
 * Arreglado Kissmanga y mangakawaii.
 * Mejorado busqueda de actualizaciones en algunos servidores.
@@ -636,11 +828,11 @@ Cambios 1.27:
 * actualizada la Francesa por Dostoi.
 
 Cambios 1.26:
-* unos cuantos fixes 
+* unos cuantos fixes
 * acercandoce mas a una version final de la ui.
 
 Cambios 1.25:
-* added #26 added #67 
+* added #26 added #67
 * iniciando sistema de tema.
 
 Cambios 1.24:
@@ -669,7 +861,7 @@ Cambios 1.19:
 * opciones de descarga y otras tantas cosas.
 
 Cambios 1.18:
-* Servers Fix en español para la compilacion de Fdroid. 
+* Servers Fix en español para la compilacion de Fdroid.
 * Agregado descargar no leidos (fix #37).
 * Marcar como leido cuando llega al final (fix #20).
 
@@ -682,22 +874,23 @@ Cambios 1.16:
 
 Cambios 1.15:
 * Lectura vertical especial para celulares #34,
-* orden de capitulos y fixes, etc. 
+* orden de capitulos y fixes, etc.
 
 Cambios 1.14
 * Fix todos los servers funcionando al 100% al 5/2/15.
 * agregados junit para test de server fix.
-* iniciado en lectura izq a der. 
+* iniciado en lectura izq a der.
 
 Cambios 1.13:
 * Mejorada la búsqueda de actualizaciones.
 * las actualizaciones aparecen ordenadas (al menos que haya errores en las paginas de origen).
-* areglado esninemanga y minorfix. 
+* areglado esninemanga y minorfix.
 
 Cambios 1.12:
 * Agregada opcion sentido de lectura issue #29.
 * fixed #28, #27, #24, #23, #21.
 * agregado lo pedido en #22.
+
 
 Cambios 1.11:
 * Agregado kissmanga.

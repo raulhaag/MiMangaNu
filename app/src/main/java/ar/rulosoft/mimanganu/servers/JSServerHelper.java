@@ -150,7 +150,8 @@ public class JSServerHelper {
 
     public void loadMangaInformation(Manga manga) {
         try {
-            Manga mn = jsonToManga(new JSONObject(pi.loadMangaInformation(manga.getTitle(), manga.getPath())));
+            String in = pi.loadMangaInformation(manga.getTitle(), manga.getPath());
+            Manga mn = jsonToManga(new JSONObject(in));
             manga.setSynopsis(mn.getSynopsis());
             manga.setFinished(mn.isFinished());
             manga.setImages(mn.getImages());
@@ -188,7 +189,7 @@ public class JSServerHelper {
         else manga.setFinished(false);
         if (jsm.has("chapters")) {
             JSONArray chapters = jsm.getJSONArray("chapters");
-            for (int i = 0; i < chapters.length() - 1; i++) {
+            for (int i = 0; i < chapters.length(); i++) {
                 JSONObject jsc = chapters.getJSONObject(i);
                 manga.addChapterLast(new Chapter(jsc.getString("title"), jsc.getString("path")));
             }

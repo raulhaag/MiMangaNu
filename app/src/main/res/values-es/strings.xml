@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.124:\n\t* Fix CFI.</string>
+    <string name="update_message">Cambios en v1.125:\n\t* Arreglado ReadMangaMe y JapScan.\n\t* Mejoras y arreglos de fondo..</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

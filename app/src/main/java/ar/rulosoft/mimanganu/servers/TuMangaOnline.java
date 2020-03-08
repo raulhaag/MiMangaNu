@@ -110,12 +110,13 @@ class TuMangaOnline extends ServerBase {
     }
 
     private void checkScript() throws Exception {
+
         if (scriptHelper == null) {
             String d = " " + context.getString(R.string.factor_suffix).hashCode() + getServerID() + TUMANGAONLINE;
             try {
-                script = Util.xorDecode(getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_4.js"), d);
+                script = Util.xorDecode(getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + getServerID() + "_5.js"), d);
             } catch (Exception e) {
-                script = getNavWithNeededHeaders().get("https://github.com/raulhaag/MiMangaNu/blob/master/js_plugin/22_4.js");
+                script = getNavWithNeededHeaders().get("https://github.com/raulhaag/MiMangaNu/blob/master/js_plugin/22_5.js");
                 script = Util.xorDecode(Util.getInstance().fromHtml(getFirstMatch("(<table class=\"highlight tab-size js-file-line-container\"[\\s\\S]+<\\/table>)", script, "error obteniendo script")).toString(), d);
             }
             if (!script.isEmpty())
