@@ -1,14 +1,14 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-
-import com.squareup.duktape.Duktape;
+import android.text.TextUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -26,6 +26,14 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
 class JapScan extends ServerBase {
 
     private static final String HOST = "https://www.japscan.co";
+    private static final int[] idxs = {0, 1, 2, 7875, 3, 12419, 4, 5, 6, 203, 13, 17, 119059, 12435, 22, 215, 23, 25, 3867, 7899, 29, 30, 31, 12576, 352, 122083, 163, 35, 37, 7975, 119083, 12395, 3883, 7915, 119099, 187};
+    private static final String[] values = {"/", "4", "5", "x", "8", "i", "6", "3", "1", "t", "a", "0", "l", "j", "2", "o", "d", "c", "u", "y", "e", "9", "f", "g", "q", "p", "r", "7", "b", "w", "m", "h", "v", "z", "n", "s"};
+    static HashMap<String, String> dicc = new HashMap<>();
+    static String currentScript = "";
+    private String[] letterFilter = new String[]{"All", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
+            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
+    private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
+
 
     JapScan(Context context) {
         super(context);
@@ -34,417 +42,6 @@ class JapScan extends ServerBase {
         setServerName("JapScan");
         setServerID(JAPSCAN);
     }
-
-    private String[] letterFilter = new String[]{"All", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
-            "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
-    private static final String decodeScript = "var window = {\n" +
-            "    URL: function (wp) {\n" +
-            "        si = wp.indexOf(\"/\", 9);\n" +
-            "        this.pathname = wp.substr(si);\n" +
-            "        this.origin = wp.substr(0, si);\n" +
-            "    }\n" +
-            "};\n" +
-            "var N = new window.URL(bT).pathname.split('.');\n" +
-            "    var mB = N.pop();\n" +
-            "    N = N.join('.');\n" +
-            "    var zJ = new window.URL(bT).origin + N.split('').map(function(uo) {\n" +
-            "        if (uo == '/') {\n" +
-            "            return '/';\n" +
-            "        } else if (uo == 'o') {\n" +
-            "            return 'q';\n" +
-            "        } else if (uo == '4') {\n" +
-            "            return 'z';\n" +
-            "        } else if (uo == '9') {\n" +
-            "            return '4';\n" +
-            "        } else if (uo == 'u') {\n" +
-            "            return 'h';\n" +
-            "        } else if (uo == 'z') {\n" +
-            "            return 'l';\n" +
-            "        } else if (uo == 'h') {\n" +
-            "            return 'x';\n" +
-            "        } else if (uo == 'e') {\n" +
-            "            return 'u';\n" +
-            "        } else if (uo == 'a') {\n" +
-            "            return 'p';\n" +
-            "        } else if (uo == 'i') {\n" +
-            "            return 'b';\n" +
-            "        } else if (uo == 'q') {\n" +
-            "            return '3';\n" +
-            "        } else if (uo == 'j') {\n" +
-            "            return 'g';\n" +
-            "        } else if (uo == 'd') {\n" +
-            "            return 'd';\n" +
-            "        } else if (uo == '7') {\n" +
-            "            return '9';\n" +
-            "        } else if (uo == '0') {\n" +
-            "            return 's';\n" +
-            "        } else if (uo == 'x') {\n" +
-            "            return 'c';\n" +
-            "        } else if (uo == 'k') {\n" +
-            "            return '6';\n" +
-            "        } else if (uo == '3') {\n" +
-            "            return 'n';\n" +
-            "        } else if (uo == 'g') {\n" +
-            "            return 'f';\n" +
-            "        } else if (uo == '2') {\n" +
-            "            return '0';\n" +
-            "        } else if (uo == '6') {\n" +
-            "            return 'r';\n" +
-            "        } else if (uo == 'w') {\n" +
-            "            return 'w';\n" +
-            "        } else if (uo == 'f') {\n" +
-            "            return '1';\n" +
-            "        } else if (uo == 'n') {\n" +
-            "            return 'i';\n" +
-            "        } else if (uo == '8') {\n" +
-            "            return '5';\n" +
-            "        } else if (uo == 'r') {\n" +
-            "            return 't';\n" +
-            "        } else if (uo == 'm') {\n" +
-            "            return 'e';\n" +
-            "        } else if (uo == '1') {\n" +
-            "            return '7';\n" +
-            "        } else if (uo == 't') {\n" +
-            "            return 'v';\n" +
-            "        } else if (uo == 'y') {\n" +
-            "            return 'y';\n" +
-            "        } else if (uo == 'c') {\n" +
-            "            return 'k';\n" +
-            "        } else if (uo == 'v') {\n" +
-            "            return 'a';\n" +
-            "        } else if (uo == 'l') {\n" +
-            "            return 'j';\n" +
-            "        } else if (uo == 's') {\n" +
-            "            return '2';\n" +
-            "        } else if (uo == '5') {\n" +
-            "            return 'o';\n" +
-            "        } else if (uo == 'b') {\n" +
-            "            return 'm';\n" +
-            "        } else if (uo == 'p') {\n" +
-            "            return '8';\n" +
-            "        } else {\n" +
-            "            return uo;\n" +
-            "        }\n" +
-            "    }).map(function(uo) {\n" +
-            "        if (uo == '/') {\n" +
-            "            return '/';\n" +
-            "        } else if (uo == 'o') {\n" +
-            "            return 'q';\n" +
-            "        } else if (uo == '4') {\n" +
-            "            return 'z';\n" +
-            "        } else if (uo == '9') {\n" +
-            "            return '4';\n" +
-            "        } else if (uo == 'u') {\n" +
-            "            return 'h';\n" +
-            "        } else if (uo == 'z') {\n" +
-            "            return 'l';\n" +
-            "        } else if (uo == 'h') {\n" +
-            "            return 'x';\n" +
-            "        } else if (uo == 'e') {\n" +
-            "            return 'u';\n" +
-            "        } else if (uo == 'a') {\n" +
-            "            return 'p';\n" +
-            "        } else if (uo == 'i') {\n" +
-            "            return 'b';\n" +
-            "        } else if (uo == 'q') {\n" +
-            "            return '3';\n" +
-            "        } else if (uo == 'j') {\n" +
-            "            return 'g';\n" +
-            "        } else if (uo == 'd') {\n" +
-            "            return 'd';\n" +
-            "        } else if (uo == '7') {\n" +
-            "            return '9';\n" +
-            "        } else if (uo == '0') {\n" +
-            "            return 's';\n" +
-            "        } else if (uo == 'x') {\n" +
-            "            return 'c';\n" +
-            "        } else if (uo == 'k') {\n" +
-            "            return '6';\n" +
-            "        } else if (uo == '3') {\n" +
-            "            return 'n';\n" +
-            "        } else if (uo == 'g') {\n" +
-            "            return 'f';\n" +
-            "        } else if (uo == '2') {\n" +
-            "            return '0';\n" +
-            "        } else if (uo == '6') {\n" +
-            "            return 'r';\n" +
-            "        } else if (uo == 'w') {\n" +
-            "            return 'w';\n" +
-            "        } else if (uo == 'f') {\n" +
-            "            return '1';\n" +
-            "        } else if (uo == 'n') {\n" +
-            "            return 'i';\n" +
-            "        } else if (uo == '8') {\n" +
-            "            return '5';\n" +
-            "        } else if (uo == 'r') {\n" +
-            "            return 't';\n" +
-            "        } else if (uo == 'm') {\n" +
-            "            return 'e';\n" +
-            "        } else if (uo == '1') {\n" +
-            "            return '7';\n" +
-            "        } else if (uo == 't') {\n" +
-            "            return 'v';\n" +
-            "        } else if (uo == 'y') {\n" +
-            "            return 'y';\n" +
-            "        } else if (uo == 'c') {\n" +
-            "            return 'k';\n" +
-            "        } else if (uo == 'v') {\n" +
-            "            return 'a';\n" +
-            "        } else if (uo == 'l') {\n" +
-            "            return 'j';\n" +
-            "        } else if (uo == 's') {\n" +
-            "            return '2';\n" +
-            "        } else if (uo == '5') {\n" +
-            "            return 'o';\n" +
-            "        } else if (uo == 'b') {\n" +
-            "            return 'm';\n" +
-            "        } else if (uo == 'p') {\n" +
-            "            return '8';\n" +
-            "        } else {\n" +
-            "            return uo;\n" +
-            "        }\n" +
-            "    }).map(function(uo) {\n" +
-            "        if (uo == '/') {\n" +
-            "            return '/';\n" +
-            "        } else if (uo == 'o') {\n" +
-            "            return 'q';\n" +
-            "        } else if (uo == '4') {\n" +
-            "            return 'z';\n" +
-            "        } else if (uo == '9') {\n" +
-            "            return '4';\n" +
-            "        } else if (uo == 'u') {\n" +
-            "            return 'h';\n" +
-            "        } else if (uo == 'z') {\n" +
-            "            return 'l';\n" +
-            "        } else if (uo == 'h') {\n" +
-            "            return 'x';\n" +
-            "        } else if (uo == 'e') {\n" +
-            "            return 'u';\n" +
-            "        } else if (uo == 'a') {\n" +
-            "            return 'p';\n" +
-            "        } else if (uo == 'i') {\n" +
-            "            return 'b';\n" +
-            "        } else if (uo == 'q') {\n" +
-            "            return '3';\n" +
-            "        } else if (uo == 'j') {\n" +
-            "            return 'g';\n" +
-            "        } else if (uo == 'd') {\n" +
-            "            return 'd';\n" +
-            "        } else if (uo == '7') {\n" +
-            "            return '9';\n" +
-            "        } else if (uo == '0') {\n" +
-            "            return 's';\n" +
-            "        } else if (uo == 'x') {\n" +
-            "            return 'c';\n" +
-            "        } else if (uo == 'k') {\n" +
-            "            return '6';\n" +
-            "        } else if (uo == '3') {\n" +
-            "            return 'n';\n" +
-            "        } else if (uo == 'g') {\n" +
-            "            return 'f';\n" +
-            "        } else if (uo == '2') {\n" +
-            "            return '0';\n" +
-            "        } else if (uo == '6') {\n" +
-            "            return 'r';\n" +
-            "        } else if (uo == 'w') {\n" +
-            "            return 'w';\n" +
-            "        } else if (uo == 'f') {\n" +
-            "            return '1';\n" +
-            "        } else if (uo == 'n') {\n" +
-            "            return 'i';\n" +
-            "        } else if (uo == '8') {\n" +
-            "            return '5';\n" +
-            "        } else if (uo == 'r') {\n" +
-            "            return 't';\n" +
-            "        } else if (uo == 'm') {\n" +
-            "            return 'e';\n" +
-            "        } else if (uo == '1') {\n" +
-            "            return '7';\n" +
-            "        } else if (uo == 't') {\n" +
-            "            return 'v';\n" +
-            "        } else if (uo == 'y') {\n" +
-            "            return 'y';\n" +
-            "        } else if (uo == 'c') {\n" +
-            "            return 'k';\n" +
-            "        } else if (uo == 'v') {\n" +
-            "            return 'a';\n" +
-            "        } else if (uo == 'l') {\n" +
-            "            return 'j';\n" +
-            "        } else if (uo == 's') {\n" +
-            "            return '2';\n" +
-            "        } else if (uo == '5') {\n" +
-            "            return 'o';\n" +
-            "        } else if (uo == 'b') {\n" +
-            "            return 'm';\n" +
-            "        } else if (uo == 'p') {\n" +
-            "            return '8';\n" +
-            "        } else {\n" +
-            "            return uo;\n" +
-            "        }\n" +
-            "    }).map(function(uo) {\n" +
-            "        if (uo == '/') {\n" +
-            "            return '/';\n" +
-            "        } else if (uo == 'o') {\n" +
-            "            return 'q';\n" +
-            "        } else if (uo == '4') {\n" +
-            "            return 'z';\n" +
-            "        } else if (uo == '9') {\n" +
-            "            return '4';\n" +
-            "        } else if (uo == 'u') {\n" +
-            "            return 'h';\n" +
-            "        } else if (uo == 'z') {\n" +
-            "            return 'l';\n" +
-            "        } else if (uo == 'h') {\n" +
-            "            return 'x';\n" +
-            "        } else if (uo == 'e') {\n" +
-            "            return 'u';\n" +
-            "        } else if (uo == 'a') {\n" +
-            "            return 'p';\n" +
-            "        } else if (uo == 'i') {\n" +
-            "            return 'b';\n" +
-            "        } else if (uo == 'q') {\n" +
-            "            return '3';\n" +
-            "        } else if (uo == 'j') {\n" +
-            "            return 'g';\n" +
-            "        } else if (uo == 'd') {\n" +
-            "            return 'd';\n" +
-            "        } else if (uo == '7') {\n" +
-            "            return '9';\n" +
-            "        } else if (uo == '0') {\n" +
-            "            return 's';\n" +
-            "        } else if (uo == 'x') {\n" +
-            "            return 'c';\n" +
-            "        } else if (uo == 'k') {\n" +
-            "            return '6';\n" +
-            "        } else if (uo == '3') {\n" +
-            "            return 'n';\n" +
-            "        } else if (uo == 'g') {\n" +
-            "            return 'f';\n" +
-            "        } else if (uo == '2') {\n" +
-            "            return '0';\n" +
-            "        } else if (uo == '6') {\n" +
-            "            return 'r';\n" +
-            "        } else if (uo == 'w') {\n" +
-            "            return 'w';\n" +
-            "        } else if (uo == 'f') {\n" +
-            "            return '1';\n" +
-            "        } else if (uo == 'n') {\n" +
-            "            return 'i';\n" +
-            "        } else if (uo == '8') {\n" +
-            "            return '5';\n" +
-            "        } else if (uo == 'r') {\n" +
-            "            return 't';\n" +
-            "        } else if (uo == 'm') {\n" +
-            "            return 'e';\n" +
-            "        } else if (uo == '1') {\n" +
-            "            return '7';\n" +
-            "        } else if (uo == 't') {\n" +
-            "            return 'v';\n" +
-            "        } else if (uo == 'y') {\n" +
-            "            return 'y';\n" +
-            "        } else if (uo == 'c') {\n" +
-            "            return 'k';\n" +
-            "        } else if (uo == 'v') {\n" +
-            "            return 'a';\n" +
-            "        } else if (uo == 'l') {\n" +
-            "            return 'j';\n" +
-            "        } else if (uo == 's') {\n" +
-            "            return '2';\n" +
-            "        } else if (uo == '5') {\n" +
-            "            return 'o';\n" +
-            "        } else if (uo == 'b') {\n" +
-            "            return 'm';\n" +
-            "        } else if (uo == 'p') {\n" +
-            "            return '8';\n" +
-            "        } else {\n" +
-            "            return uo;\n" +
-            "        }\n" +
-            "    }).join('') + '.' + mB;\n" +
-            "    N = new window['URL'](zJ).pathname.split('.');\n" +
-            "    mB = N.pop();\n" +
-            "    N = N.join('.');\n" +
-            "zJ = new window['URL'](zJ).origin + N.split('').map(function(uo) {\n" +
-            "        if (uo == '/') {\n" +
-            "            return '/';\n" +
-            "        } else if (uo == 'c') {\n" +
-            "            return 'm';\n" +
-            "        } else if (uo == 'q') {\n" +
-            "            return '4';\n" +
-            "        } else if (uo == '5') {\n" +
-            "            return 'v';\n" +
-            "        } else if (uo == 'h') {\n" +
-            "            return 'e';\n" +
-            "        } else if (uo == '0') {\n" +
-            "            return 'p';\n" +
-            "        } else if (uo == 'o') {\n" +
-            "            return '2';\n" +
-            "        } else if (uo == '8') {\n" +
-            "            return 'g';\n" +
-            "        } else if (uo == 'y') {\n" +
-            "            return 't';\n" +
-            "        } else if (uo == '2') {\n" +
-            "            return 'u';\n" +
-            "        } else if (uo == 'f') {\n" +
-            "            return '1';\n" +
-            "        } else if (uo == 'w') {\n" +
-            "            return 'j';\n" +
-            "        } else if (uo == 'a') {\n" +
-            "            return '8';\n" +
-            "        } else if (uo == '4') {\n" +
-            "            return 'w';\n" +
-            "        } else if (uo == 'x') {\n" +
-            "            return '9';\n" +
-            "        } else if (uo == '7') {\n" +
-            "            return 'k';\n" +
-            "        } else if (uo == 'n') {\n" +
-            "            return 'q';\n" +
-            "        } else if (uo == 'b') {\n" +
-            "            return '3';\n" +
-            "        } else if (uo == 'i') {\n" +
-            "            return '6';\n" +
-            "        } else if (uo == 'z') {\n" +
-            "            return 'y';\n" +
-            "        } else if (uo == 'l') {\n" +
-            "            return '7';\n" +
-            "        } else if (uo == 'j') {\n" +
-            "            return 'f';\n" +
-            "        } else if (uo == 'g') {\n" +
-            "            return 'h';\n" +
-            "        } else if (uo == 's') {\n" +
-            "            return 'x';\n" +
-            "        } else if (uo == 'm') {\n" +
-            "            return '5';\n" +
-            "        } else if (uo == 'd') {\n" +
-            "            return '0';\n" +
-            "        } else if (uo == '3') {\n" +
-            "            return 'l';\n" +
-            "        } else if (uo == '1') {\n" +
-            "            return 'b';\n" +
-            "        } else if (uo == 'p') {\n" +
-            "            return 'z';\n" +
-            "        } else if (uo == '6') {\n" +
-            "            return 'c';\n" +
-            "        } else if (uo == 'u') {\n" +
-            "            return 'a';\n" +
-            "        } else if (uo == 'k') {\n" +
-            "            return 's';\n" +
-            "        } else if (uo == 'e') {\n" +
-            "            return 'd';\n" +
-            "        } else if (uo == 'v') {\n" +
-            "            return 'i';\n" +
-            "        } else if (uo == '9') {\n" +
-            "            return 'n';\n" +
-            "        } else if (uo == 'r') {\n" +
-            "            return 'o';\n" +
-            "        } else if (uo == 't') {\n" +
-            "            return 'r';\n" +
-            "        } else {\n" +
-            "            return uo;\n" +
-            "        }\n" +
-            "    }).join('') + '.' + mB;\n" +
-            "\n" +
-            "zJ.toString();";
-
 
     @Override
     public boolean hasList() {
@@ -509,22 +106,9 @@ class JapScan extends ServerBase {
         }
     }
 
-    @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String data = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + page + ".html");
-        String eimg = getFirstMatch("<div id=\"image\" data-src=\"([^\"]+)", data, context.getString(R.string.error_downloading_image));
-        Duktape duktape = Duktape.create();
-        String result = "";
-        boolean error = false;
-        try {
-            result = duktape.evaluate("var bT = '" + eimg + "';\n" + decodeScript).toString();
-        } catch (Exception e) {
-            error = true;
-        } finally {
-            duktape.close();
-        }
-        if (error) throw new Exception(context.getString(R.string.error_downloading_image));
-        return result + (chapter.getExtra().contains(FLAG_PPL90) ? FLAG_PPL90 : "");
+        String[] parts = chapter.getExtra().split("\\|");
+        return parts[0] + parts[page] + (parts[parts.length - 1].equals(FLAG_PPL90) ? FLAG_PPL90 : "");
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
@@ -558,7 +142,15 @@ class JapScan extends ServerBase {
             if (source.contains("iYFbYi_UibMqYb.js")) {
                 extra = "|" + FLAG_PPL90;
             }
-            chapter.setExtra(extra);
+            ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);
+            String cd = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", source, context.getString(R.string.error_downloading_image));
+            if (!cd.equals(currentScript)) {
+                generateDictionary(cd);
+            }
+            for (int i = 0; i < imgs.size(); i++) {
+                imgs.set(i, imageDecode(imgs.get(i)));
+            }
+            chapter.setExtra("|" + TextUtils.join("|", imgs) + extra);
             chapter.setPages(Integer.parseInt(pages));
         }
     }
@@ -581,5 +173,53 @@ class JapScan extends ServerBase {
         };
     }
 
-    private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
+    private String imageDecode(String fakeURL) throws Exception {
+        int point = fakeURL.indexOf("/", 9);
+        String origin = fakeURL.substring(0, point);
+        String path = fakeURL.substring(point, fakeURL.lastIndexOf("."));
+        String ext = fakeURL.substring(fakeURL.lastIndexOf("."));
+
+        StringBuilder sb = new StringBuilder(origin);
+        for (String s : path.split("")) {
+            if (dicc.containsKey(s)) {
+                sb.append(dicc.get(s));
+            } else {
+                throw new Exception("You found a golden ticket, please inform serie and chapter to developer (Sorry i can continue until)");
+            }
+        }
+        sb.append(ext);
+        return sb.toString();
+    }
+
+
+    private HashMap<String, String> generateDictionary(String newDicName) throws Exception {
+        String[] sources = {
+                "https://www.japscan.co/lecture-en-ligne/tales-of-demons-and-gods/265/",
+                "https://www.japscan.co/lecture-en-ligne/the-promised-neverland/170/",
+                "https://www.japscan.co/lecture-en-ligne/2001-night-stories/volume-1/",
+                "https://www.japscan.co/lecture-en-ligne/dr-stone/142/"
+        };
+        String enc = "";
+        for (String web : sources) {
+            String data = getNavigatorAndFlushParameters().get(web);
+            if (!data.contains(newDicName)) {
+                throw new Exception("Error creating dictionary");
+            }
+            Pattern p = Pattern.compile("data-img=\"https:\\/\\/c.japscan.co(\\/.+?)\\.jpg\"");
+            Matcher m = p.matcher(data);
+            while (m.find()) {
+                enc = enc + m.group(1);
+            }
+        }
+        if (enc.length() == 124980) {
+            for (int i = 0; i < idxs.length; i++) {
+                dicc.put("" + enc.charAt(idxs[i]), values[i]);
+            }
+        } else {
+            throw new Exception("Error creating dictionary (not valid length)");
+        }
+        currentScript = newDicName;
+        return dicc;
+    }
+
 }
