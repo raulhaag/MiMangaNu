@@ -26,10 +26,11 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
 class JapScan extends ServerBase {
 
     private static final String HOST = "https://www.japscan.co";
-    private static final int[] idxs = {0, 1, 2, 7875, 3, 12419, 4, 5, 6, 203, 13, 17, 119059, 12435, 22, 215, 23, 25, 3867, 7899, 29, 30, 31, 12576, 352, 122083, 163, 35, 37, 7975, 119083, 12395, 3883, 7915, 119099, 187};
-    private static final String[] values = {"/", "4", "5", "x", "8", "i", "6", "3", "1", "t", "a", "0", "l", "j", "2", "o", "d", "c", "u", "y", "e", "9", "f", "g", "q", "p", "r", "7", "b", "w", "m", "h", "v", "z", "n", "s"};
-    static HashMap<String, String> dicc = new HashMap<>();
-    static String currentScript = "";
+    private static final int[] idxs = {0, 8896, 1, 2, 118403, 3, 259, 4, 5, 6, 7, 4295, 9, 115403, 8715, 203, 4235, 13, 121487, 14, 17, 22, 215, 25, 115419, 30, 163, 4195, 8739, 37, 118443, 121516, 115379, 8755, 55, 187, 4219};
+    private static final String[] values = {"/", "g", "b", "1", "p", "0", "s", "5", "2", "4", "3", "w", "7", "m", "h", "v", "z", "c", "o", "9", "d", "6", "q", "a", "n", "8", "t", "x", "i", "e", "r", "k", "l", "j", "f", "u", "y"};
+    private static HashMap<String, String> dicc = new HashMap<>();
+    private static String currentScript = "";
+    private static String mwScript = "";
     private String[] letterFilter = new String[]{"All", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
     private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
@@ -144,7 +145,7 @@ class JapScan extends ServerBase {
             }
             ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);
             String cd = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", source, context.getString(R.string.error_downloading_image));
-            if (!cd.equals(currentScript)) {
+            if ((!cd.equals(currentScript)) && (!cd.equals(mwScript))) {
                 generateDictionary(cd);
             }
             for (int i = 0; i < imgs.size(); i++) {
@@ -181,10 +182,8 @@ class JapScan extends ServerBase {
 
         StringBuilder sb = new StringBuilder(origin);
         for (String s : path.split("")) {
-            if (dicc.containsKey(s)) {
+            if (!s.isEmpty()) {
                 sb.append(dicc.get(s));
-            } else {
-                throw new Exception("You found a golden ticket, please inform serie and chapter to developer (Sorry i can continue until)");
             }
         }
         sb.append(ext);
@@ -194,31 +193,41 @@ class JapScan extends ServerBase {
 
     private HashMap<String, String> generateDictionary(String newDicName) throws Exception {
         String[] sources = {
-                "https://www.japscan.co/lecture-en-ligne/tales-of-demons-and-gods/265/",
                 "https://www.japscan.co/lecture-en-ligne/the-promised-neverland/170/",
                 "https://www.japscan.co/lecture-en-ligne/2001-night-stories/volume-1/",
-                "https://www.japscan.co/lecture-en-ligne/dr-stone/142/"
+                "https://www.japscan.co/lecture-en-ligne/dr-stone/142/",
+                "https://www.japscan.co/lecture-en-ligne/090-eko-to-issho/2/"
         };
         String enc = "";
+        String mwS = "";
+        String mgS = "";
         for (String web : sources) {
             String data = getNavigatorAndFlushParameters().get(web);
-            if (!data.contains(newDicName)) {
-                throw new Exception("Error creating dictionary");
+            if (mwS.isEmpty()) {
+                mwS = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", data, context.getString(R.string.error_downloading_image));
+            } else if (mgS.isEmpty()) {
+                mgS = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", data, context.getString(R.string.error_downloading_image));
+            } else {
+                if (!data.contains(mgS)) {
+                    throw new Exception("Error creating dictionary (not valid id)");
+                }
             }
+
             Pattern p = Pattern.compile("data-img=\"https:\\/\\/c.japscan.co(\\/.+?)\\.jpg\"");
             Matcher m = p.matcher(data);
             while (m.find()) {
                 enc = enc + m.group(1);
             }
         }
-        if (enc.length() == 124980) {
+        if (enc.length() == 125356) {
             for (int i = 0; i < idxs.length; i++) {
                 dicc.put("" + enc.charAt(idxs[i]), values[i]);
             }
         } else {
             throw new Exception("Error creating dictionary (not valid length)");
         }
-        currentScript = newDicName;
+        currentScript = mgS;
+        mwScript = mwS;
         return dicc;
     }
 
