@@ -42,7 +42,7 @@ class NineManga extends ServerBase {
     private static final String[] valCategory = {
             "/category/", "/list/Hot-Book/", "/list/New-Book/", "/list/New-Update/"
     };
-    private static final int[] fltStatus = {
+    protected static final int[] fltStatus = {
             R.string.flt_status_all,
             R.string.flt_status_completed,
             R.string.flt_status_ongoing
