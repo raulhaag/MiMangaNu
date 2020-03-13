@@ -26,8 +26,8 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
 class JapScan extends ServerBase {
 
     private static final String HOST = "https://www.japscan.co";
-    private static final int[] idxs = {0, 8896, 1, 2, 118403, 3, 259, 4, 5, 6, 7, 4295, 9, 115403, 8715, 203, 4235, 13, 121487, 14, 17, 22, 215, 25, 115419, 30, 163, 4195, 8739, 37, 118443, 121516, 115379, 8755, 55, 187, 4219};
-    private static final String[] values = {"/", "g", "b", "1", "p", "0", "s", "5", "2", "4", "3", "w", "7", "m", "h", "v", "z", "c", "o", "9", "d", "6", "q", "a", "n", "8", "t", "x", "i", "e", "r", "k", "l", "j", "f", "u", "y"};
+    private static final int[] idxs = {0, 8896, 1, 2, 3, 259, 4, 5, 6, 7, 4295, 9, 120587, 8715, 203, 4235, 13, 14, 17, 22, 215, 25, 115420, 30, 163, 4195, 8739, 37, 120616, 115432, 120684, 115379, 120563, 8755, 55, 187, 4219};
+    private static final String[] values = {"/", "g", "b", "1", "0", "s", "5", "2", "4", "3", "w", "7", "o", "h", "v", "z", "c", "9", "d", "6", "q", "a", "r", "8", "t", "x", "i", "e", "k", "m", "l", "p", "n", "j", "f", "u", "y"};
     private static HashMap<String, String> dicc = new HashMap<>();
     private static String currentScript = "";
     private static String mwScript = "";
@@ -219,7 +219,7 @@ class JapScan extends ServerBase {
                 enc = enc + m.group(1);
             }
         }
-        if (enc.length() == 125356) {
+        if (enc.length() == 124456) {
             for (int i = 0; i < idxs.length; i++) {
                 dicc.put("" + enc.charAt(idxs[i]), values[i]);
             }
