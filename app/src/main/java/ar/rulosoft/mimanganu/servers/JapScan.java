@@ -16,7 +16,6 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
-import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
@@ -27,8 +26,6 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
 class JapScan extends ServerBase {
 
     private static final String HOST = "https://www.japscan.co";
-    private static final int[] idxs = {0, 15872, 1, 2, 3, 15747, 5, 10311, 7, 6727, 8, 264, 10, 11, 203, 13, 14, 15, 6355, 19, 21, 22, 10327, 215, 10392, 29, 163, 15844, 6379, 10287, 6711, 15800, 57, 187, 6395, 6460, 34876};
-    private static final String[] values = {"/", "x", "2", "0", "d", "z", "7", "o", "f", "l", "3", "s", "8", "9", "v", "a", "1", "6", "h", "b", "4", "5", "p", "q", "m", "c", "t", "y", "i", "n", "k", "w", "e", "u", "j", "g", "r"};
     private static HashMap<String, String> dicc = new HashMap<>();
     private static String currentScript = "";
     private static String mwScript = "";
@@ -70,7 +67,6 @@ class JapScan extends ServerBase {
             }
         }
         return mangas;
-
     }
 
     @Override
@@ -152,8 +148,8 @@ class JapScan extends ServerBase {
             for (int i = 0; i < imgs.size(); i++) {
                 imgs.set(i, imageDecode(imgs.get(i)));
             }
-            String imgExtra = "|" + TextUtils.join("|", imgs);
-            Util.getInstance().toast(context, "count" + imgExtra.replace("https://c.japscan.co", "").replaceAll("\\.[^/]{3}", "").chars().distinct().count());
+            //String imgExtra = "|" + TextUtils.join("|", imgs);
+            // Util.getInstance().toast(context, "count" + imgExtra.replace("https://c.japscan.co", "").replaceAll("\\.[^/]{3}", "").chars().distinct().count());
             chapter.setExtra("|" + TextUtils.join("|", imgs) + extra);
             chapter.setPages(Integer.parseInt(pages));
         }
@@ -195,11 +191,24 @@ class JapScan extends ServerBase {
 
 
     private HashMap<String, String> generateDictionary(String newDicName) throws Exception {
-        String[] sources = {
-                "https://www.japscan.co/lecture-en-ligne/the-promised-neverland/170/",
-                "https://www.japscan.co/lecture-en-ligne/bloody-kiss/volume-1/",
-                "https://www.japscan.co/lecture-en-ligne/dr-stone/142/"
-        };
+        JSONObject object = new JSONObject(getNavigatorAndFlushParameters().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/28.json"));
+        ArrayList<Integer> idxs = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<>();
+        ArrayList<String> sources = new ArrayList<>();
+        JSONArray array = object.getJSONArray("idxs");
+        for (int i = 0; i < array.length(); i++) {
+            idxs.add(array.getInt(i));
+        }
+        array = object.getJSONArray("values");
+        for (int i = 0; i < array.length(); i++) {
+            values.add(array.getString(i));
+        }
+        array = object.getJSONArray("pages");
+        for (int i = 0; i < array.length(); i++) {
+            sources.add(array.getString(i));
+        }
+        int cl = object.getInt("length");
+
         String enc = "";
         String mwS = "";
         String mgS = "";
@@ -221,9 +230,9 @@ class JapScan extends ServerBase {
                 enc = enc + m.group(1);
             }
         }
-        if (enc.length() == 39856) {
-            for (int i = 0; i < idxs.length; i++) {
-                dicc.put("" + enc.charAt(idxs[i]), values[i]);
+        if (enc.length() == cl) {
+            for (int i = 0; i < idxs.size(); i++) {
+                dicc.put("" + enc.charAt(idxs.get(i)), values.get(i));
             }
         } else {
             throw new Exception("Error creating dictionary (not valid length)");
