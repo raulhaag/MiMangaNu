@@ -16,6 +16,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
@@ -26,8 +27,8 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
 class JapScan extends ServerBase {
 
     private static final String HOST = "https://www.japscan.co";
-    private static final int[] idxs = {0, 8896, 1, 2, 3, 259, 4, 5, 6, 7, 4295, 9, 120587, 8715, 203, 4235, 13, 14, 17, 22, 215, 25, 115420, 30, 163, 4195, 8739, 37, 120616, 115432, 120684, 115379, 120563, 8755, 55, 187, 4219};
-    private static final String[] values = {"/", "g", "b", "1", "0", "s", "5", "2", "4", "3", "w", "7", "o", "h", "v", "z", "c", "9", "d", "6", "q", "a", "r", "8", "t", "x", "i", "e", "k", "m", "l", "p", "n", "j", "f", "u", "y"};
+    private static final int[] idxs = {0, 15872, 1, 2, 3, 15747, 5, 10311, 7, 6727, 8, 264, 10, 11, 203, 13, 14, 15, 6355, 19, 21, 22, 10327, 215, 10392, 29, 163, 15844, 6379, 10287, 6711, 15800, 57, 187, 6395, 6460, 34876};
+    private static final String[] values = {"/", "x", "2", "0", "d", "z", "7", "o", "f", "l", "3", "s", "8", "9", "v", "a", "1", "6", "h", "b", "4", "5", "p", "q", "m", "c", "t", "y", "i", "n", "k", "w", "e", "u", "j", "g", "r"};
     private static HashMap<String, String> dicc = new HashMap<>();
     private static String currentScript = "";
     private static String mwScript = "";
@@ -151,6 +152,8 @@ class JapScan extends ServerBase {
             for (int i = 0; i < imgs.size(); i++) {
                 imgs.set(i, imageDecode(imgs.get(i)));
             }
+            String imgExtra = "|" + TextUtils.join("|", imgs);
+            Util.getInstance().toast(context, "count" + imgExtra.replace("https://c.japscan.co", "").replaceAll("\\.[^/]{3}", "").chars().distinct().count());
             chapter.setExtra("|" + TextUtils.join("|", imgs) + extra);
             chapter.setPages(Integer.parseInt(pages));
         }
@@ -194,9 +197,8 @@ class JapScan extends ServerBase {
     private HashMap<String, String> generateDictionary(String newDicName) throws Exception {
         String[] sources = {
                 "https://www.japscan.co/lecture-en-ligne/the-promised-neverland/170/",
-                "https://www.japscan.co/lecture-en-ligne/2001-night-stories/volume-1/",
-                "https://www.japscan.co/lecture-en-ligne/dr-stone/142/",
-                "https://www.japscan.co/lecture-en-ligne/090-eko-to-issho/2/"
+                "https://www.japscan.co/lecture-en-ligne/bloody-kiss/volume-1/",
+                "https://www.japscan.co/lecture-en-ligne/dr-stone/142/"
         };
         String enc = "";
         String mwS = "";
@@ -219,7 +221,7 @@ class JapScan extends ServerBase {
                 enc = enc + m.group(1);
             }
         }
-        if (enc.length() == 124456) {
+        if (enc.length() == 39856) {
             for (int i = 0; i < idxs.length; i++) {
                 dicc.put("" + enc.charAt(idxs[i]), values[i]);
             }
