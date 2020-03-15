@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="ar.rulosoft.mimanganu"
     android:installLocation="auto">
 
@@ -23,7 +24,8 @@
         <activity
             android:name=".utils.autotest.RunAutoTest"
             android:theme="@style/Theme.AppCompat"
-            android:screenOrientation="landscape">
+            android:screenOrientation="landscape"
+            tools:ignore="LockedOrientationActivity">
         </activity>
 
         <provider

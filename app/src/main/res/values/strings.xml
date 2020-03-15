@@ -487,7 +487,7 @@
     <string name="backup_settings_title">Backup settings</string>
     <string name="restore_settings_summary">Restore settings from external directory</string>
     <string name="restore_settings_title">Restore Settings</string>
-    <string name="update_server_information">Running server update, it can take a while (5-10 min), please wait until finish message is displayed!</string>
+    <string name="update_server_information">Running server update, it can take a while (5 to 10 min), please wait until finish message is displayed!</string>
     <string name="server_update_process_finished">Server update process finished.</string>
     <string name="processed">" processed"</string>
     <string name="bright_level">Bright level</string>
@@ -509,7 +509,7 @@
     <string name="restart">Restart app</string>
     <string name="contact">Contact the developer</string>
     <string name="flt_page">Jump to page</string>
-    <string name="clear_images_summary">If you need more space...</string>
+    <string name="clear_images_summary">If you need more space…</string>
     <string name="clear_images_title">Clear manga images.</string>
     <string name="deleting_all_images_message">Deleting all images please wait until next message.</string>
     <string name="process_finished">Process finished.</string>

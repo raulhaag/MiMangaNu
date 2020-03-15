@@ -579,6 +579,11 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                         Database.setNotDownloadedAllChapter(getContext());
                         Util.getInstance().toast(getContext(), getString(R.string.process_finished));
                     }
+                }).setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
                 }).show();
                 return false;
             }

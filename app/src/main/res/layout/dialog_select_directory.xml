@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:padding="10dp" />
 
-    <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ListView
         android:id="@+id/dirList"
         android:layout_width="match_parent"
         android:layout_height="fill_parent"
