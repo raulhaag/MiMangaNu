@@ -16,13 +16,13 @@ import ar.rulosoft.mimanganu.componentes.ServerFilter;
  */
 public class MangaAE extends ServerBase {
     private static final String HOST = "https://www.mangaae.com";
-    private static final String PATTERN_MANGA_FILTERED = "mangacontainer\">[\\s]*<a href=\"https*:\\/\\/www.mangaae.com([^\"]+).+?src=\"([^\"]+)[\\s\\S]+?href[^>]+>([^<]+)[\\s\\S]+?href[^>]+>([^<]+)";
+    private static final String PATTERN_MANGA_FILTERED = "mangacontainer\">[\\s]*<a href=\"https*:\\/\\/[w|\\.]*mangaae.com([^\"]+).+?ga\" src=\"([^\"]+)[\\s\\S]+?href[^>]+>([^<]+)[\\s\\S]+?href[^>]+>([^<]+)";
     private static final String PATTERN_MANGA_SUMMARY = "<h3>نبذة عن المانجا</h3>\\s*<h4>(.+?)</h4>";
     private static final String PATTERN_MANGA_GENRE = "<h3>التصنيف:</h3>\\s*<ul>([\\s|\\S]+?)</ul>";
     private static final String PATTERN_MANGA_AUTHOR = "ga/author:.[^\"]+\">([^<]+)<";
     private static final String PATTERN_MANGA_STATUS = "<h3>الحالة :</h3>\\s*<h4>([^<]+)";
     private static final String PATTERN_MANGA_IMAGE = "class=\"manga-cover\" src=\"([^\"]+)";
-    private static final String PATTERN_MANGA_CHAPTER = "class=\"chapter\" href=\"https*:\\/\\/www.mangaae.com(.+?)\">(.+?)<";
+    private static final String PATTERN_MANGA_CHAPTER = "class=\"chapter\" href=\"https*:\\/\\/[w|\\.]*mangaae.com(.+?)\">(.+?)<";
     private static final String PATTERN_CHAPTER_PAGES = "(\\d+)</a>\\s*</div>";
     private static final String PATTERN_CHAPTER_IMAGE = "\" src=\"([^\"]+)\"";
 
