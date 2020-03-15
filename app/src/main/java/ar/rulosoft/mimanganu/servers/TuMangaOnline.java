@@ -4,8 +4,6 @@ import android.content.Context;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
@@ -160,16 +158,6 @@ class TuMangaOnline extends ServerBase {
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         checkScript();
         return scriptHelper.getMangasFiltered(filters, pageNumber);
-    }
-
-    private ArrayList<Manga> getMangasLibrary(String data) {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        Pattern pattern = Pattern.compile("\\/library\\/\\w+\\/(\\d+)\\/[\\s\\S]+?background-image: url\\('(.+?)'\\)[\\s\\S]+?title=\"(.+)\"");
-        Matcher m = pattern.matcher(data);
-        while (m.find()) {
-            mangas.add(new Manga(getServerID(), m.group(3), m.group(1), m.group(2)));
-        }
-        return mangas;
     }
 
     private Navigator getNavWithNeededHeaders() {
