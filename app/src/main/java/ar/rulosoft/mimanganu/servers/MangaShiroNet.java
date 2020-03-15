@@ -15,6 +15,7 @@ import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.navegadores.Navigator;
 
 public class MangaShiroNet extends ServerBase {
 
@@ -26,10 +27,10 @@ public class MangaShiroNet extends ServerBase {
             R.string.flt_order_views
     };
     private static final String[] valOrder = {
-            "?order=title",
-            "?order=update",
-            "?order=create",
-            "?order=popular",
+            "&order=title",
+            "&order=update",
+            "&order=create",
+            "&order=popular",
     };
     private static String[] genres = new String[]{
             "All", "4-Koma", "Action", "Adult", "Adventure", "Comedy", "Cooking", "Demons", "Doujinshi",
@@ -134,13 +135,14 @@ public class MangaShiroNet extends ServerBase {
         if (pageNumber > 1) {
             url.append("page/").append(pageNumber).append("/");
         }
-        url.append("?title&author&yearx&status");
+        url.append("?title=&author=&yearx=&status=");
         url.append(valOrder[filters[1][0]]);
-        url.append("&type");
         for (int i = 0; i < filters[0].length; i++) {
             url.append("&genre%5B").append(i).append("%5D=").append(genresValues[filters[0][i]]);
         }
-        String src = getNavigatorAndFlushParameters().get(url.toString());
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addHeader("Referer", "https://mangashiro.co/manga/");
+        String src = nav.get(url.toString());
         return getMangasFromSource(src);
     }
 
