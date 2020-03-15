@@ -21,7 +21,7 @@ import ar.rulosoft.navegadores.Navigator;
  */
 /* Je suis Charlie */
 class MangaKawaii extends ServerBase {
-    private static final String HOST = "https://www.mangakawaii.to";
+    private static final String HOST = "https://www.mangakawaii.com";
 
     MangaKawaii(Context context) {
         super(context);
@@ -124,8 +124,9 @@ class MangaKawaii extends ServerBase {
     @Override
     public synchronized ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
         String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
-        String source = getNavigatorAndFlushParameters().get(web);
-
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addHeader("Referer", "https://www.mangakawaii.com/liste-manga");
+        String source = nav.get(web);
         Pattern pattern = Pattern.compile("(\\/manga\\/[^\"]+)\"[\\s]*?data-background-image=\"([^\"]+)\"[\\s\\S]+?-item__name\">([^<]+)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
