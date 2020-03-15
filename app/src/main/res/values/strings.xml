@@ -509,5 +509,10 @@
     <string name="restart">Restart app</string>
     <string name="contact">Contact the developer</string>
     <string name="flt_page">Jump to page</string>
+    <string name="clear_images_summary">If you need more space...</string>
+    <string name="clear_images_title">Clear manga images.</string>
+    <string name="deleting_all_images_message">Deleting all images please wait until next message.</string>
+    <string name="process_finished">Process finished.</string>
+    <string name="are_you_sure">Are you sure?</string>
 
 </resources>

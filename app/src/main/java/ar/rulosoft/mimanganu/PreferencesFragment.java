@@ -48,12 +48,14 @@ import ar.rulosoft.custompref.PreferencesListDir;
 import ar.rulosoft.custompref.SeekBarCustomPreference;
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.componentes.LoginDialog;
+import ar.rulosoft.mimanganu.servers.DeadServer;
 import ar.rulosoft.mimanganu.servers.ServerBase;
 import ar.rulosoft.mimanganu.services.ChapterDownload;
 import ar.rulosoft.mimanganu.services.DownloadPoolService;
 import ar.rulosoft.mimanganu.services.SingleDownload;
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
 import ar.rulosoft.mimanganu.utils.NetworkUtilsAndReceiver;
+import ar.rulosoft.mimanganu.utils.Paths;
 import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.mimanganu.utils.autotest.RunAutoTest;
 import ar.rulosoft.navegadores.Navigator;
@@ -76,7 +78,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle bundle, String s) {
         addPreferencesFromResource(R.xml.fragment_preferences);
-        ColorListDialogPref primaryColor = (ColorListDialogPref) getPreferenceManager().findPreference("primario");
+        ColorListDialogPref primaryColor = getPreferenceManager().findPreference("primario");
         primaryColor.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -84,7 +86,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 return false;
             }
         });
-        PreferenceGroup preferenceGroup = (PreferenceGroup) findPreference("account");
+        PreferenceGroup preferenceGroup = findPreference("account");
         ServerBase[] servers = ServerBase.getServers(getContext());
         boolean isThereAnyServerUsingAccount = false;
         for (final ServerBase sb : servers) {
@@ -112,7 +114,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
                 Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/";
 
         /* This enables to hide downloaded images from gallery, just a toggle */
-        final SwitchPreferenceCompat cBoxPref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("mostrar_en_galeria");
+        final SwitchPreferenceCompat cBoxPref = getPreferenceManager().findPreference("mostrar_en_galeria");
 
         // actuate the switch based on the existence of the .nomedia file
         final File noMedia = new File(current_filepath, ".nomedia");
@@ -159,7 +161,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             reader_type.setTitle(getString(R.string.continuous_reader));
             seamlessChapterTransitionsPref.setSummary(getString(R.string.seamless_chapter_transitions_continuous_reader_subtitle));
         }
-        final SwitchPreferenceCompat readerTypePref = (SwitchPreferenceCompat) getPreferenceManager().findPreference("reader_type");
+        final SwitchPreferenceCompat readerTypePref = getPreferenceManager().findPreference("reader_type");
         readerTypePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -185,7 +187,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         } else {
             seamlessChapterTransitionsDeleteReadPreference.setEnabled(false);
         }
-        final SwitchPreferenceCompat seamlessChapterTransitionsSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("seamless_chapter_transitions");
+        final SwitchPreferenceCompat seamlessChapterTransitionsSPC = getPreferenceManager().findPreference("seamless_chapter_transitions");
         seamlessChapterTransitionsSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -205,13 +207,13 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /* enable / disable auto_import_path depending on the state of auto_import */
-        Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
+        final Preference autoImportPath = getPreferenceManager().findPreference("auto_import_path");
         if (prefs.getBoolean("auto_import", false)) {
             autoImportPath.setEnabled(true);
         } else {
             autoImportPath.setEnabled(false);
         }
-        final SwitchPreferenceCompat autoImportSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("auto_import");
+        final SwitchPreferenceCompat autoImportSPC = getPreferenceManager().findPreference("auto_import");
         autoImportSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -227,7 +229,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /* This sets the download threads (parallel downloads) */
-        final SeekBarCustomPreference listPreferenceDT = (SeekBarCustomPreference) getPreferenceManager().findPreference("download_threads");
+        final SeekBarCustomPreference listPreferenceDT = getPreferenceManager().findPreference("download_threads");
         listPreferenceDT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -241,7 +243,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /* This sets the maximum number of errors to tolerate */
-        final SeekBarCustomPreference listPrefET = (SeekBarCustomPreference) getPreferenceManager().findPreference("error_tolerancia");
+        final SeekBarCustomPreference listPrefET = getPreferenceManager().findPreference("error_tolerancia");
         listPrefET.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -251,7 +253,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /* This sets the number of retries to fetch images */
-        SeekBarCustomPreference listPrefRT = (SeekBarCustomPreference) getPreferenceManager().findPreference("reintentos");
+        SeekBarCustomPreference listPrefRT = getPreferenceManager().findPreference("reintentos");
         listPrefRT.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -261,7 +263,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         });
 
         /* This sets the Update Interval of the mangas (i.e. once per week) */
-        final ListPreference listPrefCU = (ListPreference) getPreferenceManager().findPreference("update_interval");
+        final ListPreference listPrefCU = getPreferenceManager().findPreference("update_interval");
         listPrefCU.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -303,9 +305,9 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        final SwitchPreferenceCompat onlyWifiUpdateSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("update_only_wifi");
+        final SwitchPreferenceCompat onlyWifiUpdateSwitch = getPreferenceManager().findPreference("update_only_wifi");
 
-        SwitchPreferenceCompat onlyWifiSwitch = (SwitchPreferenceCompat) getPreferenceManager().findPreference("only_wifi");
+        SwitchPreferenceCompat onlyWifiSwitch = getPreferenceManager().findPreference("only_wifi");
         onlyWifiSwitch.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object o) {
@@ -322,7 +324,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             onlyWifiUpdateSwitch.setEnabled(true);
         }
 
-        final SeekBarCustomPreference seekBarConnectionRetry = (SeekBarCustomPreference) getPreferenceManager().findPreference("connection_retry");
+        final SeekBarCustomPreference seekBarConnectionRetry = getPreferenceManager().findPreference("connection_retry");
         seekBarConnectionRetry.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -331,7 +333,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        final SeekBarCustomPreference seekBarConnectionTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("connection_timeout");
+        final SeekBarCustomPreference seekBarConnectionTimeout = getPreferenceManager().findPreference("connection_timeout");
         seekBarConnectionTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -340,7 +342,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        final SeekBarCustomPreference seekBarWriteTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("write_timeout");
+        final SeekBarCustomPreference seekBarWriteTimeout = getPreferenceManager().findPreference("write_timeout");
         seekBarWriteTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -349,7 +351,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        final SeekBarCustomPreference seekBarReadTimeout = (SeekBarCustomPreference) getPreferenceManager().findPreference("read_timeout");
+        final SeekBarCustomPreference seekBarReadTimeout = getPreferenceManager().findPreference("read_timeout");
         seekBarReadTimeout.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -364,7 +366,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         } else {
             gridColumnsPref.setEnabled(true);
         }
-        final SwitchPreferenceCompat gridColumnsAutomaticDetectionSPC = (SwitchPreferenceCompat) getPreferenceManager().findPreference("grid_columns_automatic_detection");
+        final SwitchPreferenceCompat gridColumnsAutomaticDetectionSPC = getPreferenceManager().findPreference("grid_columns_automatic_detection");
         gridColumnsAutomaticDetectionSPC.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             @Override
             public boolean onPreferenceChange(Preference preference, Object newValue) {
@@ -550,7 +552,39 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             }
         });
 
-        /* restore preferences */
+        final Preference deleteAllImages = getPreferenceManager().findPreference("clear_all_manga_images");
+        deleteAllImages.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                new AlertDialog.Builder(getContext()).setTitle(R.string.clear_images_title).setMessage(R.string.are_you_sure).setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    private void delete(String base, String dir) {
+                        File f = new File(base, dir);
+                        if (f.exists()) {
+                            Util.getInstance().deleteRecursive(f);
+                        }
+                    }
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        Util.getInstance().toast(getContext(), getString(R.string.deleting_all_images_message));
+                        String base = Paths.generateBasePath(getContext());
+                        for (int i = 0, nsize = DeadServer.getServersName().size(); i < nsize; i++) {
+                            String dir = DeadServer.getServersName().valueAt(i);
+                            delete(base, dir);
+                        }
+                        for (ServerBase sb : ServerBase.getServers(getContext())) {
+                            delete(base, sb.getServerName());
+                        }
+                        Database.setNotDownloadedAllChapter(getContext());
+                        Util.getInstance().toast(getContext(), getString(R.string.process_finished));
+                    }
+                }).show();
+                return false;
+            }
+        });
+
+        /* server test */
         final Preference runServerTest = getPreferenceManager().findPreference("run_test");
         runServerTest.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -655,7 +689,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
             editor.putString("read_timeout", "30").apply();
             int tmpGridColumns = getGridColumnSizeFromWidth();
             editor.putString("grid_columns", "" + tmpGridColumns).apply();
-            final SeekBarCustomPreference tmpSeekBar = (SeekBarCustomPreference) getPreferenceManager().findPreference("grid_columns");
+            final SeekBarCustomPreference tmpSeekBar = getPreferenceManager().findPreference("grid_columns");
             tmpSeekBar.setProgress(tmpGridColumns);
         }
         prefs.edit().putInt(PREF_VERSION_CODE_KEY, currentVersionCode).apply();
@@ -672,7 +706,7 @@ public class PreferencesFragment extends PreferenceFragmentCompat {
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString(preference, "" + threads).apply();
 
-        final SeekBarCustomPreference tmpSeekBar = (SeekBarCustomPreference) getPreferenceManager().findPreference(preference);
+        final SeekBarCustomPreference tmpSeekBar = getPreferenceManager().findPreference(preference);
         tmpSeekBar.setProgress(threads);
     }
 

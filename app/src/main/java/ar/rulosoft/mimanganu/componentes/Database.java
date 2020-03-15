@@ -778,6 +778,29 @@ public class Database extends SQLiteOpenHelper {
         }
     }
 
+    public static void setNotDownloadedAllChapter(Context context) {
+        ContentValues cv = new ContentValues();
+        cv.put(COL_CAP_DOWNLOADED, 0);
+        try {
+            SQLiteDatabase database = getDatabase(context);
+            if (!database.isReadOnly()) {
+                database.update(TABLE_CHAPTERS, cv, null, null);
+            } else {
+                Log.e("Database", "(markChapter) " + context.getResources().getString(R.string.error_database_is_read_only));
+                Util.getInstance().toast(context, context.getResources().getString(R.string.error_database_is_read_only));
+            }
+        } catch (SQLiteFullException sqlfe) {
+            Log.e("Database", "SQLiteFullException", sqlfe);
+            Util.getInstance().toast(context, context.getString(R.string.error_while_trying_to_update_db));
+        } catch (SQLiteDiskIOException sqldioe) {
+            Log.e("Database", "SQLiteDiskIOException", sqldioe);
+            Util.getInstance().toast(context, context.getString(R.string.error_while_trying_to_update_db));
+        } catch (Exception e) {
+            Log.e("Database", "Exception", e);
+            Util.getInstance().toast(context, context.getString(R.string.error_while_trying_to_update_db));
+        }
+    }
+
     private static void removeOrphanedChapters(Context c) {
         getDatabase(c).delete(TABLE_CHAPTERS, COL_CAP_ID_MANGA + "= -1", null);
     }

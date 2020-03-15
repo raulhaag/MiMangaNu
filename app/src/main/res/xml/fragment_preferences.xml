@@ -294,6 +294,10 @@
             android:summary="@string/clear_cache_subtitle"
             android:title="@string/clear_cache_title" />
         <androidx.preference.Preference
+            android:key="clear_all_manga_images"
+            android:summary="@string/clear_images_summary"
+            android:title="@string/clear_images_title" />
+        <androidx.preference.Preference
             android:key="reset_server_list_to_defaults"
             android:summary="@string/reset_server_list_to_defaults_subtitle"
             android:title="@string/reset_server_list_to_defaults_title" />
