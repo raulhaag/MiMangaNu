@@ -14,6 +14,8 @@ import ar.rulosoft.mimanganu.componentes.Manga;
  */
 
 public class DeadServer extends ServerBase {
+    static final SparseArray<String> deadServers = deadServersGen();
+
     public DeadServer(Context context) {
         super(context);
         setFlag(R.drawable.rip);
@@ -21,7 +23,7 @@ public class DeadServer extends ServerBase {
         setServerName("DEAD SERVER");
     }
 
-    public static String getServerName(Manga m) {
+    public static SparseArray<String> deadServersGen() {
         // before removing deprecated Servers add the correct id/name here
         SparseArray<String> deadServers = new SparseArray<>();
         deadServers.put(LECTUREENLIGNE, "LectureEnLigne");
@@ -40,9 +42,15 @@ public class DeadServer extends ServerBase {
         deadServers.put(MANGAFOX, "MangaFox");
         deadServers.put(MANGARAWONLINE, "MangaRawOnline");
         deadServers.put(MYMANGAIO, "MyMangaIo");
+        return deadServers;
+    }
 
-
+    public static String getServerName(Manga m) {
         return deadServers.get(m.getServerId());
+    }
+
+    public static SparseArray<String> getServersName() {
+        return deadServers;
     }
 
     @Override
