@@ -52,10 +52,27 @@ public class Paths {
                 cleanFileName(manga.getTitle()).trim();
     }
 
+    public static String generateBasePath(ServerBase serverBase, Context context) {
+        String serverName = serverBase.getPath();
+
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String dir = prefs.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath());
+        return dir + "/MiMangaNu/" + cleanFileName(serverName).trim() + "/";
+    }
+
+
+    public static String generateBasePath(Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        String dir = prefs.getString("directorio",
+                Environment.getExternalStorageDirectory().getAbsolutePath());
+        return dir + "/MiMangaNu/";
+    }
+
     private static String cleanFileName(String badFileName) {
         StringBuilder cleanName = new StringBuilder();
         for (int i = 0; i < badFileName.length(); i++) {
-            int c = (int) badFileName.charAt(i);
+            int c = badFileName.charAt(i);
             if (Arrays.binarySearch(illegalChars, c) < 0) {
                 cleanName.append((char) c);
             }
