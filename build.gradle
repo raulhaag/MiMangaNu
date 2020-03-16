@@ -17,7 +17,6 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://jitpack.io" }
-        maven { url 'https://github.com/raulhaag/RapidDecoder/raw/master/repository' }
         //maven { url 'http://www.jabylon.org/maven/' }
         google()
     }

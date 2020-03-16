@@ -83,9 +83,10 @@ dependencies {
 
     //implementation group: 'com.github.junrar', name: 'junrar', version: '4.0.0'
     api project(':imageviewtouchlibrary')
-    implementation 'rapid.decoder:library:0.3.0'
-    implementation 'rapid.decoder:jpeg-decoder:0.3.0'
-    implementation 'rapid.decoder:png-decoder:0.3.0'
+    implementation 'com.github.raulhaag:RapidDecoder:0.3.0ax'
+  //  implementation 'rapid.decoder:library:0.3.0'
+   // implementation 'rapid.decoder:jpeg-decoder:0.3.0'
+   // implementation 'rapid.decoder:png-decoder:0.3.0'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1' //on 3.10.0 are deprecated some ciphers
     implementation 'com.squareup.okio:okio:1.15.0'
     implementation 'com.squareup.duktape:duktape-android:1.2.0'/* v 1.2.0 need 4+mb extra*/
