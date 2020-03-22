@@ -1,7 +1,7 @@
 package ar.rulosoft.mimanganu.servers;
 
 import android.content.Context;
-import android.os.AsyncTask;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.regex.Matcher;
@@ -10,18 +10,41 @@ import java.util.regex.Pattern;
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
-import ar.rulosoft.mimanganu.utils.Util;
+import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.navegadores.Navigator;
 
 /**
  * Created by xtj-9182 on 23.04.2017.
  */
 class MangaStream extends ServerBase {
-    private static final String HOST = "http://mangastream.com";
+    private static final String HOST = "http://mangastream.cc";
     private static ArrayList<Manga> tmpManga = new ArrayList<>();
     private boolean coldStart = true;
-    private static final String PATTERN_CHAPTER = "<a href=\"(\\/r\\/[^\"]+)\">([^\"]+)<\\/a>";
-    private static final String PATTERN_MANGA = "<td><strong><a href=\"(.*?manga[^\"]+)\">([^<]+)";
+    private static final String PATTERN_CHAPTER = "<li class=\"wp-manga-chapter\\s*\">[\\s\\S]+?href=\"([^\"]+)\">([^<]+)";
+    private static final String PATTERN_MANGA = "href=\"([^\"]+?\\/manga\\/[^\"]+)\" title=\"([^\"]+)[\\s\\S]+?src=\"([^\"]+)";
     private static final String PATTERN_IMAGE = "src=\"(//[^/]+/cdn/manga/[^\"]+)";
+
+    private static final String[] genresValues = {"", "action-manga", "adventure-manga",
+            "comedy-manga", "comics-online", "completed-manga", "drama-manga", "ecchi-manga",
+            "fantasy-manga", "gender-bender-manga", "harem-manga", "historical", "horror-manga",
+            "josei", "manga", "manhua", "manhwa-manga", "martial-arts-manga", "mature-manga", "mystery",
+            "psychological-manga", "reincarnation-manga", "reverse-harem", "romance-manga",
+            "read-school-life-manga", "sci-fi", "seinen-manga", "shotacon", "shoujo-manga",
+            "shoujo-ai", "shounen-manga", "shounen-ai", "slice-of-life", "smut-manga", "soft-yaoi",
+            "soft-yuri", "sports-manga", "supernatural", "tragedy", "webtoons", "yaoi-manga",
+            "yuri-manga"};
+
+    private static final String[] genresLabels = {"All", "Action", "Adventure", "Comedy", "Comics", "Completed",
+            "Drama", "Ecchi", "Fantasy", "Gender", "Harem", "Historical", "Horror", "Josei", "Manga",
+            "Manhua", "Manhwa", "Martial", "Mature", "Mystery", "Psychological", "Reincarnation",
+            "Reverse", "Romance", "School", "Sci-fi", "Seinen", "Shotacon", "Shoujo", "Shoujo", "Shounen",
+            "Shounen", "Slice", "Smut", "Soft", "Soft", "Sports", "Supernatural", "Tragedy", "Webtoon",
+            "Yaoi", "Yuri"};
+
+    private static final String[] orderValues = {"?m_orderby=latest", "?m_orderby=alphabet",
+            "?m_orderby=rating", "?m_orderby=trending", "?m_orderby=views", "?m_orderby=new-manga"};
+
+    private static final String[] orderLabels = {"Latest", "A-Z", "Rating", "Trending", "Most", "New"};
 
     MangaStream(Context context) {
         super(context);
@@ -43,24 +66,21 @@ class MangaStream extends ServerBase {
 
     @Override
     public ArrayList<Manga> search(String search) throws Exception {
-        ArrayList<Manga> mangas = new ArrayList<>();
-        ArrayList<String> tmpMangaPathList = new ArrayList<>();
-        String web = HOST + "/manga";
-        String source = getNavigatorAndFlushParameters().get(web);
-
-        Pattern pattern = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
-        Matcher matcher = pattern.matcher(source);
-        while (matcher.find()) {
-            if (matcher.group(2).toLowerCase().contains(search.toLowerCase())) {
-                Manga manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
-                if (!tmpMangaPathList.contains(manga.getPath())) {
-                    mangas.add(manga);
-                    tmpMangaPathList.add(manga.getPath());
-                }
-            }
-        }
-
-        return mangas;
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addPost("action", "madara_load_more");
+        nav.addPost("page", "0");
+        nav.addPost("template", "madara-core/content/content-search");
+        nav.addPost("vars[s]", search);
+        nav.addPost("vars[paged]", "1");
+        nav.addPost("vars[template]", "search");
+        nav.addPost("vars[meta_query][0][relation]", "AND");
+        nav.addPost("vars[meta_query][relation]", "OR");
+        nav.addPost("vars[post_type]", "wp-manga");
+        nav.addPost("vars[post_status]", "publish");
+        nav.addPost("vars[manga_archives_item_layout]", "default");
+        //  nav.addPost("template", "madara-core/content/content-archive");
+        //   nav.addHeader("Referer","https://www.mangastream.cc/");
+        return getMangasFromSource(nav.post("https://www.mangastream.cc/wp-admin/admin-ajax.php"));
     }
 
     @Override
@@ -73,59 +93,49 @@ class MangaStream extends ServerBase {
         if (manga.getChapters().isEmpty() || forceReload) {
             String source = getNavigatorAndFlushParameters().get(manga.getPath());
 
+            manga.setImages(getFirstMatchDefault("<div class=\"summary_image\">[\\s\\S]+?src=\"([^\"]+)\"", source, ""));
+
             // no Summary
             manga.setSynopsis(context.getString(R.string.nodisponible));
 
             // no Status
+            manga.setFinished(!source.contains("OnGoing\t</div>"));
 
             // no Authors
-            manga.setAuthor(context.getString(R.string.nodisponible));
+            manga.setAuthor(getFirstMatch("manga-author[^\"]+\" rel=\"tag\">([^<]+)",
+                    source, context.getString(R.string.nodisponible)));
 
             // no Genres
-            manga.setGenre(context.getString(R.string.nodisponible));
+            manga.setGenre(TextUtils.join(", ", getAllMatch("manga-genre[^\"]+\" rel=\"tag\">([^<]+)", source)));
 
             // Chapters
             Pattern p = Pattern.compile(PATTERN_CHAPTER, Pattern.DOTALL);
             Matcher matcher = p.matcher(source);
             while (matcher.find()) {
-                manga.addChapterFirst(new Chapter(matcher.group(2), HOST + matcher.group(1)));
-            }
-
-            // Cover - use 1st image of latest chapter. If it's already been downloaded in the manga overview just reuse it
-            if (manga.getImages() == null || manga.getImages().isEmpty()) {
-                ArrayList<Chapter> chapters = manga.getChapters();
-                if (!chapters.isEmpty()) {
-                    source = getNavigatorAndFlushParameters().get(chapters.get(chapters.size() - 1).getPath());
-                    String image = getFirstMatchDefault(PATTERN_IMAGE, source, "");
-                    if (!image.isEmpty()) {
-                        manga.setImages("https:" + image);
-                    }
-                }
+                manga.addChapterFirst(new Chapter(matcher.group(2).trim(), matcher.group(1)));
             }
         }
     }
 
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        // strip off initial page number (i.e. '1') and append requested page number
-        String web = chapter.getPath().substring(0, chapter.getPath().length() - 1) + page;
-        return "https:" + getFirstMatch(PATTERN_IMAGE, getNavigatorAndFlushParameters().get(web), context.getString(R.string.server_failed_loading_image));
+        if (chapter.getExtra() == null || chapter.getExtra().isEmpty()) {//to older versions
+            chapter.setPages(0);
+            chapterInit(chapter);
+        }
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
     public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(chapter.getPath());
-            if (source.contains("been removed from the website.")) {
-                throw new Exception("Licenced or removed chapter");
+            ArrayList<String> imgs = getAllMatch("\"image-[^\"]+\" src=\"([^\"]+)", source);
+            if (source.contains("been removed from the website.") || imgs.isEmpty()) {
+                throw new Exception("Licenced, removed chapter or outdated plugin.");
             }
-            String pageNumber = getFirstMatchDefault("Last Page \\((\\d+)\\)</a>", source, null);
-            // handle case, where only one page is listed (as "First Page")
-            if (pageNumber == null) {
-                pageNumber = getFirstMatch("First Page \\((\\d+)\\)</a>", source,
-                        context.getString(R.string.server_failed_loading_page_count));
-            }
-            chapter.setPages(Integer.parseInt(pageNumber));
+            chapter.setExtra("|" + TextUtils.join("|", imgs));
+            chapter.setPages(imgs.size());
         }
     }
 
@@ -133,82 +143,83 @@ class MangaStream extends ServerBase {
         Pattern pattern = Pattern.compile(PATTERN_MANGA, Pattern.DOTALL);
         final Matcher matcher = pattern.matcher(source);
         ArrayList<Manga> mangas = new ArrayList<>();
-        ArrayList<String> tmpMangaPathList = new ArrayList<>();
         while (matcher.find()) {
-            /*Log.d("MS", "1: " + matcher.group(1));
-            Log.d("MS", "2: " + matcher.group(2));*/
-            Manga manga;
-            if (matcher.group(1).startsWith("/"))
-                manga = new Manga(getServerID(), matcher.group(2), HOST + matcher.group(1), false);
-            else
-                manga = new Manga(getServerID(), matcher.group(2), matcher.group(1), false);
-            AsyncGenerateImageLinks asyncGenerateImageLinks = new AsyncGenerateImageLinks(manga, HOST + matcher.group(1));
-            asyncGenerateImageLinks.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            if (!tmpMangaPathList.contains(manga.getPath())) {
-                mangas.add(manga);
-                tmpMangaPathList.add(manga.getPath());
-            }
+            mangas.add(new Manga(getServerID(), matcher.group(2), matcher.group(1), matcher.group(3)));
         }
-
         return mangas;
-    }
-
-    private static class AsyncGenerateImageLinks extends AsyncTask<Void, String, Integer> {
-        Manga manga;
-        String firstLink;
-        String image = "";
-
-        AsyncGenerateImageLinks(Manga manga, String firstLink) {
-            this.manga = manga;
-            this.firstLink = firstLink;
-        }
-
-        @Override
-        protected Integer doInBackground(Void... params) {
-            try {
-                //Log.d("MS", "in: " + firstLink);
-                String chapterLink;
-                String source2 = getNavigatorAndFlushParameters().get(firstLink);
-                chapterLink = Util.getInstance().getFirstMatchDefault(PATTERN_CHAPTER, source2, "");
-                //Log.d("MS", "chapterLink: " + chapterLink);
-                String source3 = getNavigatorAndFlushParameters().get(HOST + chapterLink);
-                image = Util.getInstance().getFirstMatchDefault(PATTERN_IMAGE, source3, "");
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            if (image.length() > 2) {
-                image = "https:" + image;
-                //Log.d("MS", "image: " + image);
-            }
-
-            publishProgress(image);
-
-            return 0;
-        }
-
-        @Override
-        protected void onProgressUpdate(String... values) {
-            manga.setImages(image);
-        }
-
-        @Override
-        protected void onPostExecute(Integer result) {
-            super.onPostExecute(result);
-            //Util.getInstance().toast(context, "img: " + image);
-        }
     }
 
     @Override
     public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
-        String web = HOST + "/manga";
-        if (coldStart) {
-            Util.getInstance().toast(context, "Re-downloading image links and refreshing Manga ...");
-            String source = getNavigatorAndFlushParameters().get(web);
-            tmpManga = getMangasFromSource(source);
-            coldStart = false;
-        }
-
-        return tmpManga;
+        Navigator nav = getNavigatorAndFlushParameters();
+        nav.addPost("action", "madara_load_more");
+        nav.addPost("page", "" + pageNumber);
+        nav.addPost("template", "madara-core/content/content-archive");
+        nav.addPost("vars[wp-manga-genre]", genresValues[filters[0][0]]);
+        nav.addPost("vars[error]", "");
+        nav.addPost("vars[m]", "");
+        nav.addPost("vars[p]", "0");
+        nav.addPost("vars[post_parent]", "");
+        nav.addPost("vars[subpost]", "");
+        nav.addPost("vars[subpost_id]", "");
+        nav.addPost("vars[attachment]", "");
+        nav.addPost("vars[attachment_id]", "0");
+        nav.addPost("vars[name]", "");
+        nav.addPost("vars[pagename]", "");
+        nav.addPost("vars[page_id]", "0");
+        nav.addPost("vars[second]", "");
+        nav.addPost("vars[minute]", "");
+        nav.addPost("vars[hour]", "");
+        nav.addPost("vars[day]", "0");
+        nav.addPost("vars[monthnum]", "0");
+        nav.addPost("vars[year]", "0");
+        nav.addPost("vars[w]", "0");
+        nav.addPost("vars[category_name]", "");
+        nav.addPost("vars[tag]", "");
+        nav.addPost("vars[cat]", "");
+        nav.addPost("vars[tag_id]", "");
+        nav.addPost("vars[author]", "");
+        nav.addPost("vars[author_name]", "");
+        nav.addPost("vars[feed]", "");
+        nav.addPost("vars[tb]", "");
+        nav.addPost("vars[paged]", "1");
+        nav.addPost("vars[meta_key]", "_latest_update");
+        nav.addPost("vars[meta_value]", "");
+        nav.addPost("vars[preview]", "");
+        nav.addPost("vars[s]", "");
+        nav.addPost("vars[sentence]", "");
+        nav.addPost("vars[title]", "");
+        nav.addPost("vars[fields]", "");
+        nav.addPost("vars[menu_order]", "");
+        nav.addPost("vars[embed]", "");
+        nav.addPost("vars[ignore_sticky_posts]", "false");
+        nav.addPost("vars[suppress_filters]", "false");
+        nav.addPost("vars[cache_results]", "true");
+        nav.addPost("vars[update_post_term_cache]", "true");
+        nav.addPost("vars[lazy_load_term_meta]", "true");
+        nav.addPost("vars[update_post_meta_cache]", "true");
+        nav.addPost("vars[post_type]", "wp-manga");
+        nav.addPost("vars[posts_per_page]", "10");
+        nav.addPost("vars[nopaging]", "false");
+        nav.addPost("vars[comments_per_page]", "50");
+        nav.addPost("vars[no_found_rows]", "false");
+        nav.addPost("vars[taxonomy]", "wp-manga-genre");
+        nav.addPost("vars[term]", "action-manga");
+        nav.addPost("vars[order]", "desc");
+        nav.addPost("vars[orderby]", "meta_value_num");
+        nav.addPost("vars[template]", "archive");
+        nav.addPost("vars[sidebar]", "right");
+        nav.addPost("vars[post_status]", "publish");
+        nav.addPost("vars[meta_query][relation]", "OR");
+        nav.addHeader("Referer", "https://www.mangastream.cc/");
+        return getMangasFromSource(nav.post("https://www.mangastream.cc/wp-admin/admin-ajax.php"));
     }
 
+    @Override
+    public ServerFilter[] getServerFilters() {
+        return new ServerFilter[]{
+                new ServerFilter(context.getString(R.string.genre), genresLabels, ServerFilter.FilterType.SINGLE),
+                new ServerFilter(context.getString(R.string.flt_order), genresLabels, ServerFilter.FilterType.SINGLE),
+        };
+    }
 }

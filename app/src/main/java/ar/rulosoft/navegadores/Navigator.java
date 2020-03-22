@@ -451,6 +451,10 @@ public class Navigator {
             keyStore_n.setCertificateEntry("mangatownsecureimage", loadCertificateFromRaw(R.raw.mangatownsecureimages, context));
             keyStore_n.setCertificateEntry("tumangaonline", loadCertificateFromRaw(R.raw.tumangaonline, context));
             keyStore_n.setCertificateEntry("tmo_me", loadCertificateFromRaw(R.raw.tumangaonline_me, context));
+            keyStore_n.setCertificateEntry("lectortmo", loadCertificateFromRaw(R.raw.lectortmo_com, context));
+            keyStore_n.setCertificateEntry("imglectortmo", loadCertificateFromRaw(R.raw.img1_lectortmo_com, context));
+            keyStore_n.setCertificateEntry("lectortmoalt", loadCertificateFromRaw(R.raw.sni_cloudflaressl_1, context));
+            keyStore_n.setCertificateEntry("imglectortmoalt", loadCertificateFromRaw(R.raw.sni_cloudflaressl_2, context));
 
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmf.init(keyStore_n);
