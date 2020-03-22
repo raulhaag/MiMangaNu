@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes on v1.125:\n\t* ReadMangaMe and JapScan.\n\t* Improves and fixes on background.</string>
+    <string name="update_message">Changes on v1.126:\n\t* Fix servers.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
