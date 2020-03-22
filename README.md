@@ -49,6 +49,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.126:
+* Fix varios servidores.
+
+Changes on v1.126:
+* Fix servers.
+
 Cambios en v1.125:
 * Arreglado ReadMangaMe y JapScan.
 * Mejoras y arreglos de fondo.
