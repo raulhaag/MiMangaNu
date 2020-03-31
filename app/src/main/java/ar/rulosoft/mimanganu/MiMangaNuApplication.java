@@ -6,6 +6,7 @@ import android.content.Context;
 import com.evernote.android.job.JobManager;
 
 import ar.rulosoft.mimanganu.services.UpdateJobCreator;
+import ar.rulosoft.mimanganu.utils.CustomExceptionHandler;
 import ar.rulosoft.mimanganu.utils.Util;
 
 /**
@@ -25,6 +26,7 @@ public class MiMangaNuApplication extends Application {
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         //   ACRA.init(this);
+        CustomExceptionHandler.Attach(base);
     }
 
     @Override

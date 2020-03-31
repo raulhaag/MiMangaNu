@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -23,7 +24,6 @@ public class CustomExceptionHandler implements Thread.UncaughtExceptionHandler {
     private Thread.UncaughtExceptionHandler defaultUEH;
 
     private String localPath;
-    private Context ctx;
 
 
     /*
@@ -36,13 +36,17 @@ public class CustomExceptionHandler implements Thread.UncaughtExceptionHandler {
     }
 
     public static void Attach(Context ctx) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/logs/";
-        if (!new File(dir).exists()) {
-            new File(dir).mkdir();
-        }
-        if (!(Thread.getDefaultUncaughtExceptionHandler() instanceof CustomExceptionHandler)) {
-            Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler(dir));
+        try {
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+            String dir = prefs.getString("directorio", Environment.getExternalStorageDirectory().getAbsolutePath()) + "/MiMangaNu/logs/";
+            if (!new File(dir).exists()) {
+                new File(dir).mkdir();
+            }
+            if (!(Thread.getDefaultUncaughtExceptionHandler() instanceof CustomExceptionHandler)) {
+                Thread.setDefaultUncaughtExceptionHandler(new CustomExceptionHandler(dir));
+            }
+        } catch (Exception e) {
+            Log.e("MiMangaNu", "can't start exception handler");
         }
     }
 
@@ -63,8 +67,7 @@ public class CustomExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     private void writeToFile(String stacktrace, String filename) {
         try {
-            BufferedWriter bos = new BufferedWriter(new FileWriter(
-                    localPath + "/" + filename));
+            BufferedWriter bos = new BufferedWriter(new FileWriter(localPath + "/" + filename));
             bos.write(stacktrace);
             bos.flush();
             bos.close();
