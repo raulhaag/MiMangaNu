@@ -332,9 +332,11 @@ public class DownloadPoolService extends Service implements StateChangeListener 
 
     private void initPool() {
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "DPS_wakelock");
+        PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MMN:Wakelock");
         try {
-            wakeLock.acquire();
+            if (wakeLock != null) {
+                wakeLock.acquire(Long.MAX_VALUE);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

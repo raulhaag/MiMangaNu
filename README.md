@@ -49,6 +49,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.128:
+* Pequeños arreglos.
+
+Changes on v1.128:
+* Small Fixes.
+
 Cambios en v1.126:
 * Fix varios servidores.
 
