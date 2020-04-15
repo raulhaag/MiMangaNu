@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
         int mangaIdFromNotification = intent.getIntExtra("manga_id", -1);
         Log.i("MainActivity", "mangaID: " + mangaIdFromNotification);
 

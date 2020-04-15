@@ -174,7 +174,8 @@ class KissManga extends ServerBase {
 
             String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");
             String lo = getNavigatorAndFlushParameters().get(HOST + "/Scripts/lo.js");
-            try (Duktape duktape = Duktape.create()) {
+            try {
+                Duktape duktape = Duktape.create();
                 duktape.evaluate(ca);
                 duktape.evaluate(lo);
                 Pattern p = Pattern.compile("javascript\">(.+?)<", Pattern.DOTALL);
@@ -195,6 +196,7 @@ class KissManga extends ServerBase {
                     sb.append("|").append(image);
                 }
                 chapter.setExtra(sb.toString());
+            } catch (Exception ignored) {
             }
             chapter.setPages(pages);
         }
