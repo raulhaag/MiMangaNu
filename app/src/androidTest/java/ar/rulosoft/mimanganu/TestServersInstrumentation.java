@@ -179,10 +179,10 @@ public class TestServersInstrumentation {
         new TestServersCommon(ServerBase.TAADD, false, context);
     }
 
-    @Test
+   /* @Test
     public void test_TUMANGAONLINE() throws Exception {
         new TestServersCommon(ServerBase.TUMANGAONLINE, false, context);
-    }
+    }*/
 
     @Test
     public void test_VERCOMICSCOM() throws Exception {
