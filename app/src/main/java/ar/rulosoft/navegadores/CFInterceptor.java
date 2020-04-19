@@ -46,7 +46,7 @@ public class CFInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
-        if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
+        if ((response.code() == 503 || response.code() == 403) && response.headers().get("Server").contains("cloudflare")) {
             return resolveOverCF(chain, response);
         }
         return response;
