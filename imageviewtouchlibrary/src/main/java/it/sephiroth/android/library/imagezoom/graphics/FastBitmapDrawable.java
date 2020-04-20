@@ -48,6 +48,7 @@ public class FastBitmapDrawable extends Drawable implements IBitmapDrawable {
         }
     }
 
+    @Deprecated
     @Override
     public int getOpacity() {
         return PixelFormat.TRANSLUCENT;

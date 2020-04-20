@@ -3,8 +3,9 @@ package ar.rulosoft.mimanganu.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.preference.PreferenceManager;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 /**
  * Get the colors from preference and set them here.

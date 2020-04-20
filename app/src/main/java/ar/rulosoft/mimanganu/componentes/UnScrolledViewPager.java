@@ -5,10 +5,11 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import androidx.core.view.MotionEventCompat;
 import androidx.viewpager.widget.ViewPager;
 
 import ar.rulosoft.mimanganu.componentes.readers.paged.PagedReader;
+
+import static android.view.MotionEvent.ACTION_MASK;
 
 public class UnScrolledViewPager extends ViewPager {
 
@@ -40,7 +41,7 @@ public class UnScrolledViewPager extends ViewPager {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        switch (ev.getAction() & MotionEventCompat.ACTION_MASK) {
+        switch (ev.getAction() & ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
                 mStartDragX = ev.getX();
                 mStartTime = ev.getEventTime();
@@ -54,7 +55,7 @@ public class UnScrolledViewPager extends ViewPager {
         if (getCurrentItem() == 0 || getCurrentItem() == getAdapter().getCount() - 1) {
             final int action = ev.getAction();
             float x = ev.getX();
-            switch (action & MotionEventCompat.ACTION_MASK) {
+            switch (action & ACTION_MASK) {
                 case MotionEvent.ACTION_MOVE:
                     break;
                 case MotionEvent.ACTION_UP:
