@@ -59,8 +59,6 @@ public class CFInterceptor implements Interceptor {
         response.body().close();
 
         String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
-        String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
-        String challengePass = getFirstMatch(PASS_PATTERN, content);
         String r = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content), "UTF-8");
         String rv = getFirstMatch(REPLACE_VALUE, content);
         String formAction = getFirstMatch(FORM_ACTION, content).replace("&amp;", "&");
@@ -68,8 +66,8 @@ public class CFInterceptor implements Interceptor {
         if (rv == null) {
             rv = "";
         }
-
-        if (rawOperation == null || challengePass == null || challenge == null || formAction == null) {
+        HashMap<String, String> params = getParams(content);
+        if (rawOperation == null || params.get("pass") == null || params.get("jschl_vc") == null || formAction == null) {
             Log.e("CFI", "couldn't resolve over cloudflare");
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
@@ -117,8 +115,8 @@ public class CFInterceptor implements Interceptor {
 
         RequestBody body = new FormBody.Builder()
                 .add("r", r)
-                .add("jschl_vc", challenge)
-                .add("pass", challengePass)
+                .add("jschl_vc", params.get("jschl_vc"))
+                .add("pass", params.get("pass"))
                 .add("jschl_answer", result)
                 .build();
 
@@ -136,6 +134,16 @@ public class CFInterceptor implements Interceptor {
                 .build();
 
         return chain.proceed(request1); // generate cookie and response
+    }
+
+    private HashMap<String, String> getParams(String data){
+        HashMap<String, String > params = new HashMap<>();
+        Pattern p = Pattern.compile("<input type=\"hidden\" .+?>");
+        Matcher m = p.matcher(data);
+        while(m.find()){
+            params.put(getFirstMatch(Pattern.compile("name=\"([^\"]+)"),m.group()),getFirstMatch(Pattern.compile("value=\"([^\"]+)"),m.group()));
+        }
+        return params;
     }
 
     interface Atob {
