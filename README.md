@@ -49,6 +49,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.129:
+* Fix cfi.
+* Agregado fr.ninemanga.
+* Opción para desabilitar el chequeo de certificados.
+
+Changes on v1.129:
+* Fix cfi.
+* Added fr.ninemanga.
+* Option to disable cert checks.
+
 Cambios en v1.128:
 * Pequeños arreglos.
 

@@ -28,8 +28,6 @@ import okhttp3.Response;
 public class CFInterceptor implements Interceptor {
 
     private final static Pattern OPERATION_PATTERN = Pattern.compile("setTimeout\\(function\\(\\)\\{\\s+(var .,.,.,.[\\s\\S]+?a\\.value = .+?;)", Pattern.DOTALL);
-    private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
-    private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
     private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"r\" value=\"([^\"]*)");
     private final static Pattern REPLACE_VALUE = Pattern.compile("visibility:hidden;\" id=\".+\">([^<]+)<");
     private final static Pattern FORM_ACTION = Pattern.compile("action=\"([^\"]+)");
@@ -52,7 +50,7 @@ public class CFInterceptor implements Interceptor {
         return response;
     }
 
-    public Response resolveOverCF(Chain chain, Response response) throws IOException {
+    public synchronized Response resolveOverCF(Chain chain, Response response) throws IOException {
         Request request = response.request();
         String domain = request.url().host().trim();
         String content = response.body().string();

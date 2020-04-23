@@ -11,6 +11,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
+
 import ar.rulosoft.mimanganu.utils.PostProcess;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.OkHttpClient;
@@ -84,9 +87,16 @@ public class SingleDownload implements Runnable {
                     copy = Navigator.getInstance().getHttpClient().newBuilder()
                             .connectTimeout(5, TimeUnit.SECONDS)
                             .readTimeout(20, TimeUnit.SECONDS)
+                            .hostnameVerifier(new HostnameVerifier() {
+                                @Override
+                                public boolean verify(String hostname, SSLSession session) {
+                                    return true;
+                                }
+                            })
                             .build();
                     rBuilder = new Request.Builder()
-                            .addHeader("User-Agent", Navigator.USER_AGENT);
+                            .addHeader("User-Agent", Navigator.USER_AGENT)
+                            .addHeader("Connection", "keep-alive");
                     if (referer) {
                         if (inRef != null) {
                             rBuilder.addHeader("Referer", inRef);
@@ -103,9 +113,8 @@ public class SingleDownload implements Runnable {
                             changeStatus(Status.ERROR_CONNECTION);
                         }
                         retry = 0;
-                        if (!ot.delete()) {
-                            Log.e("SingleDownload", "failed to delete temporary file");
-                        }
+                        //noinspection ResultOfMethodCallIgnored
+                        ot.delete();
                         writeErrorImage(ot);
                         if (!ot.renameTo(o)) {
                             Log.e("SingleDownload", "failed to rename temporary file");

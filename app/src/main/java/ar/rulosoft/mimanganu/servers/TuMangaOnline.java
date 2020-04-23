@@ -16,11 +16,11 @@ import ar.rulosoft.navegadores.Navigator;
 /**
  * Created by Raul on 05/04/2016.
  */
-class TuMangaOnline extends ServerBase {
+public class TuMangaOnline extends ServerBase {
 
     private static final String HOST = "https://tmofans.com";
     public static String script = null;
-    private JSServerHelper scriptHelper;
+    public JSServerHelper scriptHelper;
 
     public static String[] type = new String[]{
             "Todos", "Manga", "Manhua", "Manhwa", "Novela", "One Shot", "Dounjinshi", "Oel"
@@ -160,7 +160,7 @@ class TuMangaOnline extends ServerBase {
         return scriptHelper.getMangasFiltered(filters, pageNumber);
     }
 
-    private Navigator getNavWithNeededHeaders() {
+    public Navigator getNavWithNeededHeaders() {
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Cache-mode", "no-cache");
         nav.addHeader("Referer", HOST + "/library/manga/");

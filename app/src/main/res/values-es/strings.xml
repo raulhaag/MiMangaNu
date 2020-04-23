@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.128:\n\t* Pequeños arreglos.</string>
+    <string name="update_message">Cambios en v1.129:\n\t* Fix cfi.\n\t* Agregado fr.ninemanga.\n\t* Opción para desabilitar el chequeo de certificados.
+</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
@@ -466,5 +467,17 @@
     <string name="device_dont_supported">Tu dispositivo no soporta esta función.</string>
     <string name="restart">Reiniciar aplicación</string>
     <string name="contact">Contactar al desarrollador</string>
+    <string name="clear_images_summary">Si estas necesitando espacio</string>
+    <string name="clear_images_title">Borrar la imagenes de todos los mangas</string>
+    <string name="deleting_all_images_message">Borrando imagenes, espera hasta el próximo mensaje.</string>
+    <string name="process_finished">Preceso terminado.</string>
+    <string name="are_you_sure">¿Estas seguro?</string>
+    <string name="accept_all_certs_title">Deshabilitar el chequeo de certificados</string>
+    <string name="accept_all_certs_summary">Si tienes una vesion vieja de android o un servidor tiene problemas.</string>
+    <string name="backup_dont_found">Backup no encotrado</string>
+    <string name="run_test">Correr test de servidores</string>
+    <string name="run_test_summary">Test basico sobre servidores.</string>
+    <string name="notification_channel_new">Nuevos mangas y actualizaciones.</string>
+    <string name="notification_channel_update">Buqueda de nuevos capítulos.</string>
 
 </resources>

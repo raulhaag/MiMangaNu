@@ -29,7 +29,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
@@ -55,6 +57,7 @@ public class Navigator {
     public static int writeTimeout = 10;
     public static int readTimeout = 30;
     public static int connectionRetry = 10;
+    private static boolean trustAll;
     private static CookieJar cookieJar;
     private static Navigator instance;
     public OkHttpClient httpClient;
@@ -74,6 +77,7 @@ public class Navigator {
             connectionRetry = Integer.parseInt(prefs.getString("connection_retry", "10"));
             readTimeout = Integer.parseInt(prefs.getString("read_timeout", "30"));
             connectionTimeout = Integer.parseInt(prefs.getString("connection_timeout", "10"));
+            trustAll = prefs.getBoolean("accept_all_certs", false);
             cookieJar = new CookieFilter(new SetCookieCache(), new SharedPrefsCookiePersistor(context));
             initClient(cookieJar, context);
         }
@@ -110,7 +114,28 @@ public class Navigator {
     }
 
     private void initClient(CookieJar cookieJar, Context context) throws KeyManagementException, NoSuchAlgorithmException {
-        TrustManager[] trustManagers = getTrustManagers(context);
+        TrustManager[] trustManagers;
+        if (trustAll) {
+            trustManagers = new TrustManager[]{
+                    new X509TrustManager() {
+                        @Override
+                        public void checkClientTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public void checkServerTrusted(java.security.cert.X509Certificate[] chain, String authType) throws CertificateException {
+                        }
+
+                        @Override
+                        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+                            return new java.security.cert.X509Certificate[]{};
+                        }
+                    }
+            };
+        } else {
+            trustManagers = getTrustManagers(context);
+        }
+
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, trustManagers, null);
         SSLSocketFactory socketFactory = null;
@@ -119,7 +144,8 @@ public class Navigator {
         } else {
             socketFactory = sslContext.getSocketFactory();
         }
-        httpClient = new OkHttpClientConnectionChecker.Builder()
+
+        OkHttpClientConnectionChecker.Builder cBuilder = new OkHttpClientConnectionChecker.Builder()
                 .addInterceptor(new UncompressInterceptor())
                 .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
                 .addInterceptor(new CFInterceptor())
@@ -129,7 +155,16 @@ public class Navigator {
                 .readTimeout(30, TimeUnit.SECONDS)
                 .cookieJar(cookieJar)
                 //.dns(new MmNDNS())//
-                .build();
+                ;
+        if (trustAll) {
+            cBuilder.hostnameVerifier(new HostnameVerifier() {
+                @Override
+                public boolean verify(String hostname, SSLSession session) {
+                    return true;
+                }
+            });
+        }
+        httpClient = cBuilder.build();
         Navigator.cookieJar = cookieJar;
     }
 

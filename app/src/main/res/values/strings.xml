@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes on v1.128:\n\t* Small Fixes.</string>
+    <string name="update_message">Changes on v1.129:\n\t* Fix cfi.\n\t* Added fr.ninemanga.\n\t* Option to disable cert checks.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>
@@ -514,5 +514,7 @@
     <string name="deleting_all_images_message">Deleting all images please wait until next message.</string>
     <string name="process_finished">Process finished.</string>
     <string name="are_you_sure">Are you sure?</string>
+    <string name="accept_all_certs_title">Disable cert check</string>
+    <string name="accept_all_certs_summary">If you have old android and/or the server cert are\'t trusted (need restart)</string>
 
 </resources>

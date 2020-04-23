@@ -1,7 +1,6 @@
 package ar.rulosoft.mimanganu;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.test.filters.LargeTest;
 import androidx.test.rule.ActivityTestRule;
@@ -13,9 +12,16 @@ import java.io.IOException;
 
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
+import ar.rulosoft.mimanganu.servers.JSServerHelper;
+import ar.rulosoft.mimanganu.servers.TuMangaOnline;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 import okhttp3.Request;
 import okio.Buffer;
+
+import static ar.rulosoft.mimanganu.servers.ServerBase.TUMANGAONLINE;
+import static ar.rulosoft.mimanganu.servers.ServerBase.getFirstMatch;
+import static ar.rulosoft.mimanganu.servers.ServerBase.getServer;
 
 /**
  * Created by Raul on 01/04/2017.
@@ -28,6 +34,10 @@ public class testNine {
     private Context context;
     private Manga manga;
     private Chapter chapter;
+    private String script;
+    private TuMangaOnline tmoServ = (TuMangaOnline) getServer(TUMANGAONLINE, context);
+    private JSServerHelper scriptHelper;
+
 
     private static String bodyToString(final Request request){
         try {
@@ -43,19 +53,22 @@ public class testNine {
     @Test
     public void testImages() throws Exception {
         Navigator nav = Navigator.getInstance();
-        nav.addHeader("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        nav.addHeader("Accept-Encoding", "deflate");
-        nav.addHeader("Accept","application/json, text/plain, */*");
-        nav.addHeader("Accept-Encoding","gzip, deflate, br");
-        nav.addHeader("Accept-Language","es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3");
-        nav.addHeader("Cache-mode","no-cache");
-        //nav.addHeader("Connection","keep-alive");
-        nav.addHeader("Cookie","__cfduid=d7025d17b59e189d890c2cc05b9feb5c31505483555; tmoSession=eyJpdiI6ImZXZUlPZjVWOGNKS2VCRkVcL1I3XC9iZz09IiwidmFsdWUiOiJ0MEhzdXF0XC93YkFvSkJlUnVvZ3hnN011WWtGUzdEdnJrY1ZOakhnTVRBTGJQZk91NmphTTFaNDhhbUozUnZnRmJndGtBdkNHZlFsTTFZT2RvSWlBSGc9PSIsIm1hYyI6ImMxODZmYmRkNTJiZTQ4YjUwZGQ0MTBkYTRlOWExNmU1NjM3YWFkMTA2MGJjNGJhMzMwOGY3NjY0YmFhMDIyMmIifQ%3D%3D");
-        //nav.addHeader("Host","www.tumangaonline.com");
-        nav.addHeader("Referer","https://www.tumangaonline.com/biblioteca");
-        //nav.addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:54.0) Gecko/20100101 Firefox/54.0");
-        //nav.addHeader("X-Requested-With","XMLHttpRequest");
-        Log.e("respuesta", nav.get("https://www.tumangaonline.com/api/v1/mangas/2968/capitulos?page=2&tomo=-1"));
+        checkScript();
+        scriptHelper.notifyAll();
+    }
+
+    private void checkScript() throws Exception {
+        if (scriptHelper == null) {
+            String d = " " + context.getString(R.string.factor_suffix).hashCode() + getServer(TUMANGAONLINE, context).getServerID() + TUMANGAONLINE;
+            try {
+                script = Util.xorDecode(tmoServ.getNavWithNeededHeaders().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/" + tmoServ.getServerID() + "_5.js"), d);
+            } catch (Exception e) {
+                script = tmoServ.getNavWithNeededHeaders().get("https://github.com/raulhaag/MiMangaNu/blob/master/js_plugin/" + tmoServ.getServerID() + "_5.js");
+                script = Util.xorDecode(Util.getInstance().fromHtml(getFirstMatch("(<table class=\"highlight tab-size js-file-line-container\"[\\s\\S]+<\\/table>)", script, "error obteniendo script")).toString(), d);
+            }
+            if (!script.isEmpty())
+                scriptHelper = new JSServerHelper(context, script);
+        }
 
     }
 
