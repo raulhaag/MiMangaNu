@@ -3,7 +3,8 @@ package ar.rulosoft.mimanganu.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
+
+import androidx.preference.PreferenceManager;
 
 import java.util.Arrays;
 

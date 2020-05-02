@@ -3,9 +3,10 @@ package ar.rulosoft.mimanganu.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.text.format.DateFormat;
 import android.util.Log;
+
+import androidx.preference.PreferenceManager;
 
 import java.io.BufferedWriter;
 import java.io.File;

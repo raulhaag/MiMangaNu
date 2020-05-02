@@ -28,8 +28,6 @@ import okhttp3.Response;
 public class CFInterceptor implements Interceptor {
 
     private final static Pattern OPERATION_PATTERN = Pattern.compile("setTimeout\\(function\\(\\)\\{\\s+(var .,.,.,.[\\s\\S]+?a\\.value = .+?;)", Pattern.DOTALL);
-    private final static Pattern PASS_PATTERN = Pattern.compile("name=\"pass\" value=\"(.+?)\"", Pattern.DOTALL);
-    private final static Pattern CHALLENGE_PATTERN = Pattern.compile("name=\"jschl_vc\" value=\"(\\w+)\"", Pattern.DOTALL);
     private final static Pattern EXTRA_STRING_ADDED_PATTERN = Pattern.compile("<input type=\"hidden\" name=\"r\" value=\"([^\"]*)");
     private final static Pattern REPLACE_VALUE = Pattern.compile("visibility:hidden;\" id=\".+\">([^<]+)<");
     private final static Pattern FORM_ACTION = Pattern.compile("action=\"([^\"]+)");
@@ -46,21 +44,19 @@ public class CFInterceptor implements Interceptor {
     @Override
     public Response intercept(Chain chain) throws IOException {
         Response response = chain.proceed(chain.request());
-        if (response.code() == 503 && response.headers().get("Server").contains("cloudflare")) {
+        if ((response.code() == 503 || response.code() == 403) && response.headers().get("Server").contains("cloudflare")) {
             return resolveOverCF(chain, response);
         }
         return response;
     }
 
-    public Response resolveOverCF(Chain chain, Response response) throws IOException {
+    public synchronized Response resolveOverCF(Chain chain, Response response) throws IOException {
         Request request = response.request();
         String domain = request.url().host().trim();
         String content = response.body().string();
         response.body().close();
 
         String rawOperation = getFirstMatch(OPERATION_PATTERN, content);
-        String challenge = getFirstMatch(CHALLENGE_PATTERN, content);
-        String challengePass = getFirstMatch(PASS_PATTERN, content);
         String r = URLEncoder.encode(getFirstMatch(EXTRA_STRING_ADDED_PATTERN, content), "UTF-8");
         String rv = getFirstMatch(REPLACE_VALUE, content);
         String formAction = getFirstMatch(FORM_ACTION, content).replace("&amp;", "&");
@@ -68,8 +64,8 @@ public class CFInterceptor implements Interceptor {
         if (rv == null) {
             rv = "";
         }
-
-        if (rawOperation == null || challengePass == null || challenge == null || formAction == null) {
+        HashMap<String, String> params = getParams(content);
+        if (rawOperation == null || params.get("pass") == null || params.get("jschl_vc") == null || formAction == null) {
             Log.e("CFI", "couldn't resolve over cloudflare");
             return response; // returning null here is not a good idea since it could stop a download ~xtj-9182
         }
@@ -117,8 +113,8 @@ public class CFInterceptor implements Interceptor {
 
         RequestBody body = new FormBody.Builder()
                 .add("r", r)
-                .add("jschl_vc", challenge)
-                .add("pass", challengePass)
+                .add("jschl_vc", params.get("jschl_vc"))
+                .add("pass", params.get("pass"))
                 .add("jschl_answer", result)
                 .build();
 
@@ -136,6 +132,16 @@ public class CFInterceptor implements Interceptor {
                 .build();
 
         return chain.proceed(request1); // generate cookie and response
+    }
+
+    private HashMap<String, String> getParams(String data){
+        HashMap<String, String > params = new HashMap<>();
+        Pattern p = Pattern.compile("<input type=\"hidden\" .+?>");
+        Matcher m = p.matcher(data);
+        while(m.find()){
+            params.put(getFirstMatch(Pattern.compile("name=\"([^\"]+)"),m.group()),getFirstMatch(Pattern.compile("value=\"([^\"]+)"),m.group()));
+        }
+        return params;
     }
 
     interface Atob {

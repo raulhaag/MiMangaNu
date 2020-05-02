@@ -8,12 +8,13 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.os.Looper;
-import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+
+import androidx.preference.PreferenceManager;
 
 import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.servers.ServerBase;

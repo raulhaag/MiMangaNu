@@ -248,7 +248,7 @@ public class TestServers {
     }
     
     @Test
-    public void test_MANGAKAKALOT() throws Exception {
+    public void test_MANGANELO() throws Exception {
         new TestServersCommon(ServerBase.MANGANELO, true, context);
     }
 

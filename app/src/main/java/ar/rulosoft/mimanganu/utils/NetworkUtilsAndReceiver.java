@@ -10,10 +10,10 @@ import android.net.Network;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.preference.PreferenceManager;
 
 import ar.rulosoft.mimanganu.Exceptions.NoConnectionException;
 import ar.rulosoft.mimanganu.Exceptions.NoWifiException;

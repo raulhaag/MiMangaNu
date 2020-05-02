@@ -13,9 +13,10 @@ import android.database.sqlite.SQLiteDiskIOException;
 import android.database.sqlite.SQLiteFullException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Environment;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.widget.Toast;
+
+import androidx.preference.PreferenceManager;
 
 import com.fedorvlasov.lazylist.FileCache;
 

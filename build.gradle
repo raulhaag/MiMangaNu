@@ -18,5 +18,11 @@ allprojects {
         google()
         jcenter()
         maven { url "https://jitpack.io" }
+        maven {
+            url 'https://github.com/suckgamony/RapidDecoder/raw/master/repository'
+        }
     }
+//    tasks.withType(JavaCompile) {
+//        options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+//    }
 }
