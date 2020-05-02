@@ -249,7 +249,7 @@ public class TestServers {
     
     @Test
     public void test_MANGAKAKALOT() throws Exception {
-        new TestServersCommon(ServerBase.MANGAKAKALOT, true, context);
+        new TestServersCommon(ServerBase.MANGANELO, true, context);
     }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")

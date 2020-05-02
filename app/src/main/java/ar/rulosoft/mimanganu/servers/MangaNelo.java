@@ -14,28 +14,28 @@ import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
 import ar.rulosoft.mimanganu.utils.Util;
 
-public class MangaKakalot extends ServerBase {
-	private static final String HOST = "https://mangakakalot.com/";
+public class MangaNelo extends ServerBase {
+	private static final String HOST = "https://manganelo.com/";
 	
 	private static final String PATTERN_COVER =
-			"<img src=\"([^\"]+?mkklcdnv[^\"]+?)\"[^>]+alt";
+			"info-image\">\\s*<img[^>]+src=\"([^\"]+?mkklcdnv[^\"]+?)\"[^>]+alt";
 	private static final String PATTERN_SUMMARY =
-			"id=\"noidungm\"[^>]+?>.+?</h2>(.+?)</div>";
+			"Description :</h3>(.+?)</div";
 	private static final String PATTERN_COMPLETED =
-			"Status :.+?Completed</td>\\s+</tr>";
+			"table-value\">Completed";
 	private static final String PATTERN_AUTHOR =
-			"Author\\(s\\) :\\s*(.+?)</li>";
+			"Author\\(s\\) :</td>\\s*<td[^>]*>(.*?)</td";
 	private static final String PATTERN_GENRE =
-			"Genres :\\s*(.+?)</li>";
+			"Genres :</td>\\s*<td[^>]*>(.+?)</td";
 	private static final String PATTERN_CHAPTER =
-			"<span><a href=\"([^\"]+?chapter[^\"]+?)\".+?>(.+?)</a>";
+			"<li[^>]*>\\s*<a[^>]+[^>]+href=\"([^\"]+?chapter[^\"]+?)\"[^>]+?>(.+?)</a>";
 	private static final String PATTERN_IMAGES =
 			"<img src=\"([^\"]+?mkklcdnv[^\"]+?chapter[^\"]+?)\"";
 	
 	private static final String PATTERN_MANGA_SEARCH =
-			"<h3 class=\"story_name\">\\s*<a[^>]*?href=\".+?((?:manga/[^\"]+)|(?:read-[^\"]+))\"[^>]*?>(.+?)</a>";
+			"search-story-item\">\\s*<a[^>]*href=\"https?://manganelo.com/([^>]+)\"\\s*title=\"([^>]+)\"\\s*>\\s*<img[^>]*?src=\"([^>]*mkkl[^>]*?)\" one";
 	private static final String PATTERN_MANGA_LIST =
-			"<div class=\"list-truyen-item-wrap\"[^>]*>\\s*<a[^>]*?href=\".+?((?:manga/[^\"]+)|(?:read-[^\"]+))\"[^>]*?title=\"([^\"]+)\">\\s*<img[^>]*?src=\"([^\"]+?)\"";
+			"content-genres-item\">\\s*<a[^>]*href=\"https?://manganelo.com/([^>]+)\"\\s*title=\"([^>]+)\"\\s*>\\s*<img[^>]*?src=\"([^>]*mkkl[^>]*?)\" one";
 	
 	
 	
@@ -107,12 +107,12 @@ public class MangaKakalot extends ServerBase {
 	};
 	
 	
-	MangaKakalot(Context context) {
+	MangaNelo(Context context) {
 		super(context);
 		setFlag(R.drawable.flag_en);
-		setIcon(R.drawable.mangakakalot);
-		setServerName("MangaKakalot");
-		setServerID(MANGAKAKALOT);
+		setIcon(R.drawable.manganelo);
+		setServerName("Manganelo (Mangakakalot)");
+		setServerID(MANGANELO);
 	}
 	
 	@Override
@@ -187,13 +187,13 @@ public class MangaKakalot extends ServerBase {
 		ArrayList<Manga> mangas = new ArrayList<>();
 		
 		String data = getNavigatorAndFlushParameters().get(
-				HOST + "/search/" + Pattern.compile("[^\\p{L}]",Pattern.UNICODE_CASE).matcher(term).replaceAll(""));
+				HOST + "search/" + Pattern.compile("[^\\d\\p{L}]",Pattern.UNICODE_CASE).matcher(term).replaceAll("_"));
 		
 		
 		Pattern p = Pattern.compile(PATTERN_MANGA_SEARCH, Pattern.DOTALL);
 		Matcher m = p.matcher(data);
 		while (m.find()) {
-			mangas.add(new Manga(getServerID(), m.group(2), HOST + m.group(1), false));
+			mangas.add(new Manga(getServerID(), m.group(2), HOST + m.group(1), m.group(3)));
 		}
 		return mangas;
 	}
@@ -224,11 +224,12 @@ public class MangaKakalot extends ServerBase {
 	public ArrayList<Manga> getMangasFiltered(int[][] filters, int pageNumber) throws Exception {
 		ArrayList<Manga> mangas = new ArrayList<>();
 		String query = String.format(
-				"manga_list?type=%s&category=%s&state=%s&page=%s",
-				valOrder[filters[2][0]],
+//				"manga_list?type=%s&category=%s&state=%s&page=%s",
+				"genre-%s/%s?type=%s&state=%s",
 				valGenre[filters[1][0]],
-				valStatus[filters[0][0]],
-				pageNumber
+				pageNumber,
+				valOrder[filters[2][0]],
+				valStatus[filters[0][0]]
 		);
 		
 		String data = getNavigatorAndFlushParameters().get(
