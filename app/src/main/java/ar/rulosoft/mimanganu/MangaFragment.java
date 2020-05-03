@@ -765,14 +765,12 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     private class DeleteImages extends AsyncTask<Chapter, Chapter, Integer> {
         private ServerBase serverBase;
         private int selectionSize = 0;
-        private Chapter chapter;
         private int current = 0;
         private ExecutorService es;
 
         DeleteImages(ServerBase serverBase, int selectionSize) {
             this.serverBase = serverBase;
             this.selectionSize = selectionSize;
-            mNotifyID_DeleteImages = (int) System.currentTimeMillis();
         }
 
         @Override

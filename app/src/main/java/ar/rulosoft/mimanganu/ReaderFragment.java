@@ -776,7 +776,10 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
             Chapter c = arg0[0];
             ServerBase s = ServerBase.getServer(ReaderFragment.this.mManga.getServerId(), getContext());
             try {
-                if (c.getPages() < 1) s.chapterInit(c);
+                if (c.getPages() < 1) {
+                    s.chapterInit(c);
+                    Database.updateChapter(getContext(), c);
+                }
             } catch (Exception e) {
                 if (e.getMessage() != null)
                     error = e.getMessage();
