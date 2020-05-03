@@ -55,13 +55,13 @@ public class Database extends SQLiteOpenHelper {
     public static final String COL_VAULT = "vault";
 
     // Table for each chapter
-    private static final String TABLE_CHAPTERS = "capitulos";
+    public static final String TABLE_CHAPTERS = "capitulos";
     private static final String COL_CAP_ID_MANGA = "manga_id";
     private static final String COL_CAP_NAME = "nombre";
     private static final String COL_CAP_PATH = "path";
-    private static final String COL_CAP_PAGES = "paginas";
-    private static final String COL_CAP_PAG_READ = "leidas";
-    private static final String COL_CAP_ID = "id";
+    public static final String COL_CAP_PAGES = "paginas";
+    public static final String COL_CAP_PAG_READ = "leidas";
+    public static final String COL_CAP_ID = "id";
     private static final String COL_CAP_EXTRA = "extra";
     // Database creation sql statement
     private static final String DATABASE_MANGA_CREATE = "create table " +

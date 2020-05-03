@@ -218,6 +218,10 @@ public class ChapterAdapter extends ArrayAdapter<Chapter> implements StateChange
         notifyDataSetChanged();
     }
 
+    public void onlyRemove(Chapter object) {
+        chapters.remove(object);
+    }
+
     @Override
     public void insert(Chapter object, int index) {
         chapters.add(index, object);

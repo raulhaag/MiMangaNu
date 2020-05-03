@@ -24,7 +24,7 @@ public class Chapter {
     private int pages;
     private int mangaID;
     private int pagesRead;
-    private int readStatus;
+    private int readStatus = UNREAD;
     private String title;
     private String path;
     private String extra;
@@ -146,6 +146,7 @@ public class Chapter {
         if (f.exists()) {
             Util.getInstance().deleteRecursive(f);
         }
+        setReadStatus(0);
         setPages(0);
         setPagesRead(0);
         setDownloaded(false);
