@@ -246,6 +246,11 @@ public class TestServers {
     public void test_NEUMANGATV() throws Exception {
         new TestServersCommon(ServerBase.NEUMANGATV, true, context);
     }
+    
+    @Test
+    public void test_MANGANELO() throws Exception {
+        new TestServersCommon(ServerBase.MANGANELO, true, context);
+    }
 
     @Ignore("Cannot be tested on host due to Duktape usage (needs JNI) - use instrumented tests")
     public void test_READCOMICONLINE() throws Exception {
