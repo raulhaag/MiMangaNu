@@ -5,8 +5,8 @@ android {
     buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "ar.rulosoft.mimanganu"
-        versionCode 129
-        versionName "1.129"
+        versionCode 130
+        versionName "1.130"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         minSdkVersion 15
     }
@@ -87,10 +87,7 @@ dependencies {
     implementation 'com.github.sevar83:indeterminate-checkbox:1.0.5@aar'
     implementation group: 'org.brotli', name: 'dec', version: '0.1.2'
     //implementation group: 'com.github.junrar', name: 'junrar', version: '4.0.0'
-    implementation 'rapid.decoder:library:0.3.0'
-    implementation 'rapid.decoder:jpeg-decoder:0.3.0'
-    implementation 'rapid.decoder:png-decoder:0.3.0'
-    //implementation 'com.github.raulhaag:RapidDecoder:0.3.1Ax'
+    implementation 'com.github.raulhaag:RapidDecoder:0.3.1Ax'
     implementation 'com.squareup.okhttp3:okhttp:3.9.1' //on 3.10.0 are deprecated some ciphers
     implementation 'com.squareup.okio:okio:1.15.0'
     implementation 'com.squareup.duktape:duktape-android:1.2.0'/* v 1.2.0 need 4+mb extra*/

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes on v1.129:\n\t* Fix cfi.\n\t* Added fr.ninemanga.\n\t* Option to disable cert checks.</string>
+    <string name="update_message">Changes on v1.130:\n\t* Fix Kissmanga.\n\t* Added Manganelo aka Mangakakalot (juh9870).\n\t* Fixes and improves.
+</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

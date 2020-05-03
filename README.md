@@ -49,6 +49,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.130:
+* fix Kissmanga
+* Agregado Manganelo aka Mangakakalot (juh9870).
+* Arreglos y mejoras.
+
+Changes on v1.130:
+* Fix Kissmanga.
+* Added Manganelo aka Mangakakalot (juh9870).
+* Fixes and improves.
+
 Cambios en v1.129:
 * Fix cfi.
 * Agregado fr.ninemanga.

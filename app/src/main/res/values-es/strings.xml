@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.129:\n\t* Fix cfi.\n\t* Agregado fr.ninemanga.\n\t* Opción para desabilitar el chequeo de certificados.
-</string>
+    <string name="update_message"> Cambios en v1.130:\n\t* fix Kissmanga.\n\t* Agregado Manganelo aka Mangakakalot (juh9870).\n\t* Arreglos y mejoras.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
