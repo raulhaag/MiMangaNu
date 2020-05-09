@@ -24,7 +24,7 @@ class FrNineManga extends NineManga {
 
     FrNineManga(Context context) {
         super(context);
-        setFlag(R.drawable.flag_es);
+        setFlag(R.drawable.flag_fr);
         setIcon(R.drawable.ninemanga);
         setServerName("FrNineManga");
         setServerID(FRNINEMANGA);
