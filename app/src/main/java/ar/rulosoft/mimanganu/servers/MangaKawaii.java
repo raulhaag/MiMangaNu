@@ -126,6 +126,7 @@ class MangaKawaii extends ServerBase {
         String web = HOST + "/filterLists?page=" + pageNumber + "&cat=&alpha=&sortBy=name&asc=true&author=";
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addHeader("Referer", "https://www.mangakawaii.com/liste-manga");
+        nav.addHeader("X-Requested-With", "XMLHttpRequest");
         String source = nav.get(web);
         Pattern pattern = Pattern.compile("(\\/manga\\/[^\"]+)\"[\\s]*?data-background-image=\"([^\"]+)\"[\\s\\S]+?-item__name\">([^<]+)", Pattern.DOTALL);
         Matcher matcher = pattern.matcher(source);
