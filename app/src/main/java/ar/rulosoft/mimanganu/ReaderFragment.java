@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
@@ -25,6 +24,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -90,6 +90,8 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
     private boolean reDownloadingImage, freshStart = true;
     private int reader_bg;
     private TextView titleTextView;
+    private LinearLayout loadDialog;
+    private GetPageTask getPageTask = new GetPageTask();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -122,7 +124,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         } else {
             direction = Direction.values()[Integer.parseInt(pm.getString(MangaFragment.DIRECTION, "" + Direction.R2L.ordinal()))];
         }
-
         if (mManga.getScrollSensitive() > 0) {
             mScrollFactor = mManga.getScrollSensitive();
         }
@@ -147,14 +148,18 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         buttonMinus = view.findViewById(R.id.minus);
         buttonPlus = view.findViewById(R.id.plus);
         mScrollSensitiveText = view.findViewById(R.id.scroll_level);
+        loadDialog = view.findViewById(R.id.loadDialog);
         reader_bg = ThemeColors.getReaderColor(pm);
         mActionBar.setTitleTextColor(Color.WHITE);
         mControlsLayout.setAlpha(0f);
         mControlsLayout.setVisibility(View.GONE);
+        readerOptions.setOptionListener(ReaderFragment.this);
+        readerOptions.setActivity(getActivity());
+        readerOptions.setManga(mManga);
+        readerOptions.setBackgroundColor(reader_bg);
 
         mScrollSensitiveText.setText(getString(R.string.factor_suffix, mScrollFactor));
         mActionBar.setBackgroundColor(reader_bg);
-        readerOptions.setBackgroundColor(reader_bg);
         seekerLayout.setBackgroundColor(reader_bg);
         mSeekBar.setBackgroundColor(reader_bg);
         scrollSelect.setBackgroundColor(reader_bg);
@@ -164,9 +169,6 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         if (pm.getBoolean("hide_actionbar", false))
             mActionBar.setVisibility(View.INVISIBLE);
 
-        readerOptions.setOptionListener(ReaderFragment.this);
-        readerOptions.setActivity(getActivity());
-        readerOptions.setManga(mManga);
 
         buttonMinus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -669,6 +671,7 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                 mChapter.setReadStatus(Chapter.READ);
                 mChapter.setPagesRead(mChapter.getPages());
                 Chapter tmpChapter = mChapter;
+                nextChapter = Database.getChapter(getContext(), nextChapter.getId()); //update chapter info (if was downloaded etc)
                 loadChapter(nextChapter, LoadMode.START);
                 //Util.getInstance().toast(getApplicationContext(), mChapter.getTitle(), 0);
                 Util.getInstance().showSlowSnackBar(mChapter.getTitle(), mControlsLayout, getActivity());
@@ -759,16 +762,15 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
 
     private enum LoadMode {START, END, SAVED}
 
-    @SuppressLint("StaticFieldLeak")
     private class GetPageTask extends AsyncTask<Chapter, Void, Chapter> {
-        ProgressDialog asyncDialog = new ProgressDialog(getActivity());
         String error;
 
         @Override
         protected void onPreExecute() {
-            asyncDialog.setMessage(getResources().getString(R.string.iniciando));
-            asyncDialog.show();
             super.onPreExecute();
+            if (loadDialog != null) {
+                loadDialog.setVisibility(View.VISIBLE);
+            }
         }
 
         @Override
@@ -793,12 +795,16 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
         }
 
         @Override
-        protected void onPostExecute(Chapter result) {
-            try {
-                asyncDialog.dismiss();
-            } catch (Exception e) {
-                // ignore error
+        protected void onProgressUpdate(Void... values) {
+            super.onProgressUpdate(values);
+            if (this.getStatus() == Status.RUNNING && loadDialog != null) {
+                loadDialog.setVisibility(View.VISIBLE);
             }
+        }
+
+        @Override
+        protected void onPostExecute(Chapter result) {
+            super.onPostExecute(result);
             if (error != null && error.length() > 1) {
                 Util.getInstance().toast(getActivity(), error);
             } else {
@@ -811,7 +817,9 @@ public class ReaderFragment extends Fragment implements StateChangeListener, Dow
                     //Toast.makeText(getContext(), Log.getStackTraceString(e), Toast.LENGTH_LONG).show();
                 }
             }
-            super.onPostExecute(result);
+            if (loadDialog != null) {
+                loadDialog.setVisibility(View.GONE);
+            }
         }
     }
 

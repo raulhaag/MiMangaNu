@@ -2,10 +2,12 @@ package ar.rulosoft.mimanganu.componentes;
 
 import android.animation.Animator;
 import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 
 import ar.rulosoft.mimanganu.MangaFragment;
@@ -77,6 +80,7 @@ public class ReaderOptions extends FrameLayout {
         initialize();
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     public ReaderOptions(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         initialize();
@@ -336,7 +340,7 @@ public class ReaderOptions extends FrameLayout {
         }
 
         // Orientation
-        mOrientation = pm.getInt(ORIENTATION, 0);
+        mOrientation = pm.getInt(ORIENTATION, 2);
         updateIconOrientation();
         updateValues();
     }
@@ -365,6 +369,7 @@ public class ReaderOptions extends FrameLayout {
         }
     }
 
+    @SuppressLint("SourceLockedOrientationActivity")
     private void updateIconOrientation() {
         if (mOrientation == 0) {
             if (mActivity != null)
