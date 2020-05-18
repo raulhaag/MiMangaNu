@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -58,10 +59,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     public static final String CHAPTERS_ORDER = "chapters_order";
     public static final String CHAPTER_ID = "cap_id";
     public static final String CHAPTERS_HIDE_READ = "hide_read_chapters";
-    private static final String TAG = "MangaFragment";
-    public SwipeRefreshLayout swipeReLayout;
-    public Manga mManga;
-    public int mMangaId;
+    public static final String TAG = "MangaFragment";
+    private SwipeRefreshLayout swipeReLayout;
+    private Manga mManga;
+    private int mMangaId;
     private SearchForNewChapters searchForNewChapters = new SearchForNewChapters();
     private RemoveChapters removeChapters = null;
     private ResetChapters resetChapters = null;
@@ -94,13 +95,13 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     @Override
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        pm = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        pm = PreferenceManager.getDefaultSharedPreferences(requireActivity());
         super.onCreate(savedInstanceState);
         if (mMangaId == -1) {
-            getActivity().onBackPressed();
+            requireActivity().onBackPressed();
         }
-        mManga = Database.getManga(getActivity(), mMangaId);
-        mServerBase = ServerBase.getServer(mManga.getServerId(), getContext());
+        mManga = Database.getManga(requireActivity(), mMangaId);
+        mServerBase = ServerBase.getServer(mManga.getServerId(), requireContext());
         if (getView() == null) {
             try {
                 finalize();
@@ -111,7 +112,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             mListView = getView().findViewById(R.id.list);
             swipeReLayout = getView().findViewById(R.id.str);
             readerOptions = getView().findViewById(R.id.reader_options);
-            mImageLoader = new ImageLoader(getActivity());
+            mImageLoader = new ImageLoader(requireActivity());
             final int[] colors = ThemeColors.getColors(pm);
             readerOptions.setBackgroundColor(colors[0]);
             readerOptions.setManga(mManga);
@@ -137,20 +138,20 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             });
             mListView.setDivider(new ColorDrawable(colors[0]));
             mListView.setDividerHeight(1);
-            mInfo = new ControlInfoNoScroll(getActivity());
+            mInfo = new ControlInfoNoScroll(requireActivity());
             mListView.addHeaderView(mInfo);
             mInfo.setColor(MainActivity.darkTheme, colors[0]);
-            mInfo.enableTitleCopy(getActivity(), mManga.getTitle());
+            mInfo.enableTitleCopy(requireActivity(), mManga.getTitle());
             ChapterAdapter.setColor(MainActivity.darkTheme, colors[1], colors[0]);
             mListView.setOnItemClickListener((parent, view, position, id) -> {
                 Chapter c = (Chapter) mListView.getAdapter().getItem(position);
                 int first = mListView.getFirstVisiblePosition();
-                Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
+                Database.updateMangaLastIndex(requireActivity(), mManga.getId(), first);
                 Bundle bundle = new Bundle();
                 bundle.putInt(MangaFragment.CHAPTER_ID, c.getId());
                 ReaderFragment readerFragment = new ReaderFragment();
                 readerFragment.setArguments(bundle);
-                ((MainActivity) getActivity()).replaceFragment(readerFragment, "ReaderFragment");
+                ((MainActivity) requireActivity()).replaceFragment(readerFragment, "ReaderFragment");
             });
             mListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
             mListView.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
@@ -167,7 +168,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
                 @Override
                 public boolean onCreateActionMode(android.view.ActionMode mode, Menu menu) {
-                    MenuInflater inflater = getActivity().getMenuInflater();
+                    MenuInflater inflater = requireActivity().getMenuInflater();
                     inflater.inflate(R.menu.listitem_capitulo_menu_cab, menu);
                     return true;
                 }
@@ -175,7 +176,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 @Override
                 public boolean onActionItemClicked(final android.view.ActionMode mode, MenuItem item) {
                     final SparseBooleanArray selection = mChapterAdapter.getSelection();
-                    final ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
+                    final ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), requireContext());
                     boolean finish = true;
                     switch (item.getItemId()) {
                         case R.id.select_all:
@@ -206,7 +207,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                             break;
                         case R.id.remove_chapter:
                             finish = false;
-                            new AlertDialog.Builder(getContext())
+                            new AlertDialog.Builder(requireContext())
                                     .setTitle(R.string.app_name)
                                     .setMessage(R.string.delete_confirm)
                                     .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
@@ -251,19 +252,19 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 }
             });
 
-            getActivity().setTitle(mManga.getTitle());
-            Database.updateMangaRead(getActivity(), mManga.getId());
+            requireActivity().setTitle(mManga.getTitle());
+            Database.updateMangaRead(requireContext(), mManga.getId());
             loadInfo(mManga);
             chapters_order = pm.getInt(CHAPTERS_ORDER, 1);
             hide_read = pm.getBoolean(CHAPTERS_HIDE_READ, false);
-            Shortcuts.addShortCuts(mManga, getActivity());
+            Shortcuts.addShortCuts(mManga, requireContext());
         }
     }
 
     public void loadInfo(Manga manga) {
         if (mInfo != null && manga != null && isAdded()) {
             mInfo.setStatus(manga.isFinished() ? getResources().getString(R.string.finalizado) : getResources().getString(R.string.en_progreso));
-            mInfo.setServer(ServerBase.getServer(manga.getServerId(), getContext()).getServerName());
+            mInfo.setServer(ServerBase.getServer(manga.getServerId(), requireContext()).getServerName());
 
             if (manga.getSynopsis() != null) {
                 mInfo.setSynopsis(manga.getSynopsis());
@@ -304,7 +305,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 mListView.setAdapter(mChapterAdapter);
                 mListView.setSelection(mManga.getLastIndex());
             }
-            if (fvi != 0) mListView.setSelection(fvi);
+            if (fvi != 0 && mListView != null) mListView.setSelection(fvi);
         }
     }
 
@@ -312,7 +313,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     public void onPause() {
         if (mListView.getAdapter() != null) {
             int first = mListView.getFirstVisiblePosition();
-            Database.updateMangaLastIndex(getActivity(), mManga.getId(), first);
+            Database.updateMangaLastIndex(requireActivity(), mManga.getId(), first);
         }
         DownloadPoolService.setStateChangeListener(null);
         super.onPause();
@@ -324,45 +325,37 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                getActivity().onBackPressed();
+                requireActivity().onBackPressed();
                 return true;
             case R.id.action_config_reader:
                 readerOptions.switchOptions();
                 break;
             case R.id.action_download_remaining: {
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(requireContext())
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.download_remain_confirmation)
-                        .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        })
-                        .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                ArrayList<Chapter> chapters = Database.getChapters(getActivity(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
-                                for (Chapter chapter : chapters) {
-                                    try {
-                                        DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
-                                    } catch (Exception e) {
-                                        Log.e(TAG, "Download add pool error", e);
-                                    }
+                        .setNegativeButton(getString(android.R.string.no), (dialog, which) -> dialog.dismiss())
+                        .setPositiveButton(getString(android.R.string.ok), (dialog, which) -> {
+                            ArrayList<Chapter> chapters = Database.getChapters(requireContext(), mMangaId, Database.COL_CAP_DOWNLOADED + " != 1", true);
+                            for (Chapter chapter : chapters) {
+                                try {
+                                    DownloadPoolService.addChapterDownloadPool(requireActivity(), chapter, false);
+                                } catch (Exception e) {
+                                    Log.e(TAG, "Download add pool error", e);
                                 }
-                                dialog.dismiss();
                             }
+                            dialog.dismiss();
                         })
                         .show();
             }
             break;
             case R.id.mark_all_as_read: {
-                Database.markAllChapters(getActivity(), this.mMangaId, true);
+                Database.markAllChapters(requireContext(), this.mMangaId, true);
                 new SetChaptersPageCountAsRead().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
             case R.id.mark_all_as_unread: {
-                Database.markAllChapters(getActivity(), this.mMangaId, false);
+                Database.markAllChapters(requireContext(), this.mMangaId, false);
                 new SetChaptersPageCountAsUnread().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 break;
             }
@@ -377,7 +370,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                 break;
             }
             case R.id.delete: {
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(requireContext())
                         .setTitle(R.string.app_name)
                         .setMessage(getString(R.string.manga_delete_confirm, mManga.getTitle()))
                         .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
@@ -390,23 +383,23 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 DownloadPoolService.forceStop(mManga.getId());
-                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), getContext());
-                                String path = Paths.generateBasePath(serverBase, mManga, getActivity());
+                                ServerBase serverBase = ServerBase.getServer(mManga.getServerId(), requireContext());
+                                String path = Paths.generateBasePath(serverBase, mManga, requireActivity());
                                 Util.getInstance().deleteRecursive(new File(path));
-                                Database.deleteManga(getActivity(), mManga.getId());
+                                Database.deleteManga(requireActivity(), mManga.getId());
                                 dialog.dismiss();
-                                getActivity().onBackPressed();
+                                requireActivity().onBackPressed();
                             }
                         })
                         .show();
                 break;
             }
             case R.id.action_view_download: {
-                ((MainActivity) getActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
+                ((MainActivity) requireActivity()).replaceFragment(new DownloadsFragment(), "DownloadFragment");
                 break;
             }
             case R.id.action_download_unread: {
-                new AlertDialog.Builder(getContext())
+                new AlertDialog.Builder(requireContext())
                         .setTitle(R.string.app_name)
                         .setMessage(R.string.download_unread_confirmation)
                         .setNegativeButton(getString(android.R.string.no), new DialogInterface.OnClickListener() {
@@ -418,10 +411,10 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
                         .setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                ArrayList<Chapter> chapters = Database.getChapters(getActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
+                                ArrayList<Chapter> chapters = Database.getChapters(requireActivity(), MangaFragment.this.mMangaId, Database.COL_CAP_STATE + " != 1" + " AND " + Database.COL_CAP_DOWNLOADED + " != 1", true);
                                 for (Chapter c : chapters) {
                                     try {
-                                        DownloadPoolService.addChapterDownloadPool(getActivity(), c, false);
+                                        DownloadPoolService.addChapterDownloadPool(requireActivity(), c, false);
                                     } catch (Exception e) {
                                         Log.e(TAG, "Download add pool error", e);
                                     }
@@ -492,8 +485,8 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     @Override
     public void onResume() {
         super.onResume();
-        ((MainActivity) getActivity()).enableHomeButton(true);
-        ((MainActivity) getActivity()).setTitle(mManga.getTitle());
+        ((MainActivity) requireActivity()).enableHomeButton(true);
+        ((MainActivity) requireActivity()).setTitle(mManga.getTitle());
         Chapter.Comparators.setManga_title(mManga.getTitle());
         new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         if (mChapterAdapter != null) {
@@ -503,7 +496,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof MainActivity) {
             mActivity = (MainActivity) context;
@@ -529,7 +522,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
     }
 
     @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+    public void onCreateOptionsMenu(@NonNull Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_manga, menu);
         int[] sortList = {
                 R.id.sort_as_added_to_db_desc_chapters, R.id.sort_number,
@@ -557,7 +550,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             Collections.sort(chaptersList, Chapter.Comparators.NUMBERS_ASC);
             for (Chapter chapter : chaptersList) {
                 try {
-                    DownloadPoolService.addChapterDownloadPool(getActivity(), chapter, false);
+                    DownloadPoolService.addChapterDownloadPool(requireActivity(), chapter, false);
                 } catch (Exception e) {
                     Log.e(TAG, "Download add pool error", e);
                 }
@@ -579,18 +572,18 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             running = true;
             actual = this;
             msg = getResources().getString(R.string.searching_for_updates);
-            orgMsg = getActivity().getTitle().toString();
-            getActivity().setTitle(msg + " " + orgMsg);
+            orgMsg = requireActivity().getTitle().toString();
+            requireActivity().setTitle(msg + " " + orgMsg);
             super.onPreExecute();
         }
 
         @Override
         protected Integer doInBackground(Void[] params) {
             int result = 0;
-            ServerBase s = ServerBase.getServer(mManga.getServerId(), getContext());
+            ServerBase s = ServerBase.getServer(mManga.getServerId(), requireContext());
             mangaId = mManga.getId();
             try {
-                int diff = s.searchForNewChapters(mManga.getId(), getActivity(), false);//always full update
+                int diff = s.searchForNewChapters(mManga.getId(), requireContext(), false);//always full update
                 result += diff;
             } catch (Exception e) {
                 error = Log.getStackTraceString(e);
@@ -601,20 +594,20 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
 
         @Override
         protected void onPostExecute(Integer result) {
-            Manga manga = Database.getManga(getActivity(), mangaId);
+            Manga manga = Database.getManga(requireActivity(), mangaId);
             loadInfo(manga);
             new SortAndLoadChapters().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             swipeReLayout.setRefreshing(false);
             if (isAdded()) {
-                getActivity().setTitle(orgMsg);
+                requireActivity().setTitle(orgMsg);
             }
             if (result > 0) {
                 if (isAdded()) {
-                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, "" + result), getView(), getContext());
+                    Util.getInstance().showFastSnackBar(getString(R.string.mgs_update_found, "" + result), getView(), requireContext());
                 }
             } else if (!error.isEmpty()) {
                 if (isAdded()) {
-                    Util.getInstance().toast(getContext(), error);
+                    Util.getInstance().toast(requireContext(), error);
                 }
             }
             running = false;
@@ -631,7 +624,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             if (hide_read) {
                 condition = Database.COL_CAP_STATE + " != 1";
             }
-            chapters = Database.getChapters(getActivity(), mMangaId, condition);
+            chapters = Database.getChapters(requireActivity(), mMangaId, condition);
             try {
                 int chaptersOrder;
                 if (pm != null)
@@ -679,7 +672,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
                 if (mChapterAdapter.getItem(i).getPages() != 0) {
                     Chapter chapter = mChapterAdapter.getItem(i);
-                    chapter.markRead(getActivity(), false);
+                    chapter.markRead(requireActivity(), false);
                 }
             }
             return null;
@@ -698,7 +691,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
                 if (mChapterAdapter.getItem(i).getPages() != 0) {
                     Chapter chapter = mChapterAdapter.getItem(i);
-                    chapter.markRead(getActivity(), true);
+                    chapter.markRead(requireActivity(), true);
                 }
             }
             return null;
@@ -725,7 +718,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             }
             sb.deleteCharAt(sb.length() - 1);
             sb.append(");");
-            Database.getDatabase(getContext()).execSQL(sb.toString());
+            Database.getDatabase(requireContext()).execSQL(sb.toString());
             return null;
         }
 
@@ -751,7 +744,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             }
             sb.deleteCharAt(sb.length() - 1);
             sb.append(");");
-            Database.getDatabase(getContext()).execSQL(sb.toString());
+            Database.getDatabase(requireContext()).execSQL(sb.toString());
             return null;
         }
 
@@ -777,7 +770,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
         protected void onPreExecute() {
             super.onPreExecute();
             if (selectionSize > 7)
-                Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_DeleteImages, getString(R.string.deleting), "");
+                Util.getInstance().createNotificationWithProgressbar(requireContext(), mNotifyID_DeleteImages, getString(R.string.deleting), "");
         }
 
         @Override
@@ -785,7 +778,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             es = Executors.newFixedThreadPool(getRuntime().availableProcessors());
             for (Chapter c : params) {
                 es.execute(() -> {
-                    c.freeSpace(getActivity(), mManga, serverBase);
+                    c.freeSpace(requireActivity(), mManga, serverBase);
                     publishProgress(c);
                 });
             }
@@ -840,7 +833,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_RemoveChapters, getString(R.string.removing_chapters), "");
+            Util.getInstance().createNotificationWithProgressbar(requireContext(), mNotifyID_RemoveChapters, getString(R.string.removing_chapters), "");
         }
 
         @Override
@@ -848,7 +841,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             es = Executors.newFixedThreadPool(getRuntime().availableProcessors());
             for (Chapter c : params) {
                 es.execute(() -> {
-                    c.delete(getContext(), mManga, serverBase);
+                    c.delete(requireContext(), mManga, serverBase);
                     mChapterAdapter.onlyRemove(c);
                     publishProgress(c);
                 });
@@ -904,7 +897,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
         protected void onPreExecute() {
             super.onPreExecute();
             if (selectionSize > 7)
-                Util.getInstance().createNotificationWithProgressbar(getContext(), mNotifyID_ResetChapters, getString(R.string.resetting_chapters), "");
+                Util.getInstance().createNotificationWithProgressbar(requireContext(), mNotifyID_ResetChapters, getString(R.string.resetting_chapters), "");
         }
 
         @Override
@@ -912,7 +905,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             es = Executors.newFixedThreadPool(getRuntime().availableProcessors());
             for (Chapter c : params) {
                 es.execute(() -> {
-                    c.reset(getContext(), mManga, serverBase);
+                    c.reset(requireContext(), mManga, serverBase);
                     publishProgress(c);
                 });
             }
