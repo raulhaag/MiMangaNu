@@ -60,10 +60,10 @@ public class Navigator {
     private static boolean trustAll;
     private static CookieJar cookieJar;
     private static Navigator instance;
-    public OkHttpClient httpClient;
+    public Context context;
     private ArrayList<Parameter> parameters = new ArrayList<>();
     private ArrayList<Parameter> headers = new ArrayList<>();
-    private Context context;
+    private OkHttpClient httpClient;
 
     private Navigator(Context context) throws Exception {
         this.context = context;

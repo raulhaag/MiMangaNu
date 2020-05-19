@@ -672,6 +672,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
                 if (mChapterAdapter.getItem(i).getPages() != 0) {
                     Chapter chapter = mChapterAdapter.getItem(i);
+                    assert chapter != null;
                     chapter.markRead(requireActivity(), false);
                 }
             }
@@ -691,6 +692,7 @@ public class MangaFragment extends Fragment implements MainActivity.OnBackListen
             for (int i = 0; i < mChapterAdapter.getCount(); i++) {
                 if (mChapterAdapter.getItem(i).getPages() != 0) {
                     Chapter chapter = mChapterAdapter.getItem(i);
+                    assert chapter != null;
                     chapter.markRead(requireActivity(), true);
                 }
             }
