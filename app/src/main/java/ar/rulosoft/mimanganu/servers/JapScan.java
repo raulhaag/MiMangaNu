@@ -16,6 +16,7 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.Util;
 import ar.rulosoft.navegadores.Navigator;
 
 import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
@@ -24,15 +25,14 @@ import static ar.rulosoft.mimanganu.utils.PostProcess.FLAG_PPL90;
  * Created by xtj-9182 on 21.02.2017.
  */
 class JapScan extends ServerBase {
-
+    private static final String TAGWEBTOON = "[1webtoon1]";
     private static final String HOST = "https://www.japscan.co";
     private static HashMap<String, String> dicc = new HashMap<>();
-    private static String currentScript = "";
-    private static String mwScript = "";
+    private static ArrayList<String> currentScripts = new ArrayList<>();
+
     private String[] letterFilter = new String[]{"All", "0-9", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M",
             "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"};
     private String[] pageFilter = new String[]{"0", "10", "20", "30", "40", "50", "60", "70", "80", "90", "100", "110", "120"};
-
 
     JapScan(Context context) {
         super(context);
@@ -57,7 +57,10 @@ class JapScan extends ServerBase {
         ArrayList<Manga> mangas = new ArrayList<>();
         Navigator nav = getNavigatorAndFlushParameters();
         nav.addPost("search", URLEncoder.encode(search, "UTF-8"));
-        String source = nav.post(HOST + "/search/");
+        nav.addHeader("Content-Type", "application/x-www-form-urlencoded");
+        nav.addHeader("X-Requested-With", "XMLHttpRequest");
+        nav.addHeader("Referer", HOST);
+        String source = nav.post(HOST + "/live-search/");
         if (source.length() > 2) {
             JSONArray jsonArray = new JSONArray(source);
             JSONObject item;
@@ -105,8 +108,21 @@ class JapScan extends ServerBase {
     }
 
     public String getImageFrom(Chapter chapter, int page) throws Exception {
-        String[] parts = chapter.getExtra().split("\\|");
-        return parts[0] + parts[page] + (parts[parts.length - 1].equals(FLAG_PPL90) ? FLAG_PPL90 : "");
+        if (chapter.getExtra() != null && chapter.getExtra().contains(TAGWEBTOON)) {
+            String[] parts = chapter.getExtra().split("\\|");
+            return parts[page] + "|" + parts[0] + (parts[parts.length - 1].equals(FLAG_PPL90) ? FLAG_PPL90 : "");
+        } else {
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + page + ".html");
+            String extra = "";
+            if (source.contains("iYFbYi_UibMqYb.js")) {
+                extra = FLAG_PPL90;
+            }
+            String encoded = getFirstMatch("<div id=\"image\" data-src=\"(https://c.japscan.co/.+?)\"", source, "Error obtaining img");
+            String cd = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", source, context.getString(R.string.error_downloading_image));
+            generateDictionary(cd);
+            String decoded = imageDecode(encoded);
+            return decoded + "|" + HOST + chapter.getPath() + page + ".html" + extra;
+        }
     }
 
     private ArrayList<Manga> getMangasFromSource(String source) {
@@ -131,33 +147,32 @@ class JapScan extends ServerBase {
     }
 
     @Override
-    public synchronized void chapterInit(Chapter chapter) throws Exception {
+    public void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
             String pages = getFirstMatch("Page (\\d+)</option>\\s*</select>", source,
                     context.getString(R.string.server_failed_loading_image));
-            String extra = "";
-            if (source.contains("iYFbYi_UibMqYb.js")) {
-                extra = "|" + FLAG_PPL90;
-            }
             ArrayList<String> imgs = getAllMatch("<option[^<]+?data-img=\"([^\"]+)\"", source);
-            String cd = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", source, context.getString(R.string.error_downloading_image));
-            if ((!cd.equals(currentScript)) && (!cd.equals(mwScript))) {
+            String encoded = getFirstMatch("<div id=\"image\" data-src=\"(https://c.japscan.co/.+?)\"", source, "Error obtaining img");
+            if (imgs.get(0).equals(encoded)) {
+                String cd = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", source, context.getString(R.string.error_downloading_image));
+                String extra = "";
+                if (source.contains("iYFbYi_UibMqYb.js")) {
+                    extra = "|" + FLAG_PPL90;
+                }
                 generateDictionary(cd);
+                for (int i = 0; i < imgs.size(); i++) {
+                    imgs.set(i, imageDecode(imgs.get(i)));
+                }
+                chapter.setExtra(HOST + chapter.getPath() + "|" + TextUtils.join("|", imgs) + "|" + TAGWEBTOON + extra);
             }
-            for (int i = 0; i < imgs.size(); i++) {
-                imgs.set(i, imageDecode(imgs.get(i)));
-            }
-            //String imgExtra = "|" + TextUtils.join("|", imgs);
-            // Util.getInstance().toast(context, "count" + imgExtra.replace("https://c.japscan.co", "").replaceAll("\\.[^/]{3}", "").chars().distinct().count());
-            chapter.setExtra("|" + TextUtils.join("|", imgs) + extra);
             chapter.setPages(Integer.parseInt(pages));
         }
     }
 
     @Override
     public boolean hasSearch() {
-        return false;
+        return true;
     }
 
     @Override
@@ -173,7 +188,7 @@ class JapScan extends ServerBase {
         };
     }
 
-    private String imageDecode(String fakeURL) throws Exception {
+    private String imageDecode(String fakeURL) {
         int point = fakeURL.indexOf("/", 9);
         String origin = fakeURL.substring(0, point);
         String path = fakeURL.substring(point, fakeURL.lastIndexOf("."));
@@ -190,56 +205,49 @@ class JapScan extends ServerBase {
     }
 
 
-    private HashMap<String, String> generateDictionary(String newDicName) throws Exception {
-        JSONObject object = new JSONObject(getNavigatorAndFlushParameters().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/28.json"));
-        ArrayList<Integer> idxs = new ArrayList<>();
-        ArrayList<String> values = new ArrayList<>();
-        ArrayList<String> sources = new ArrayList<>();
-        JSONArray array = object.getJSONArray("idxs");
-        for (int i = 0; i < array.length(); i++) {
-            idxs.add(array.getInt(i));
-        }
-        array = object.getJSONArray("values");
-        for (int i = 0; i < array.length(); i++) {
-            values.add(array.getString(i));
-        }
-        array = object.getJSONArray("pages");
-        for (int i = 0; i < array.length(); i++) {
-            sources.add(array.getString(i));
-        }
-        int cl = object.getInt("length");
-
-        String enc = "";
-        String mwS = "";
-        String mgS = "";
-        for (String web : sources) {
-            String data = getNavigatorAndFlushParameters().get(web);
-            if (mwS.isEmpty()) {
-                mwS = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", data, context.getString(R.string.error_downloading_image));
-            } else if (mgS.isEmpty()) {
-                mgS = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", data, context.getString(R.string.error_downloading_image));
-            } else {
-                if (!data.contains(mgS)) {
-                    throw new Exception("Error creating dictionary (not valid id)");
+    private synchronized void generateDictionary(String newDicName) throws Exception {
+        if (!currentScripts.contains(newDicName)) {
+            Util.getInstance().toast(context, "Generating dictionary init");
+            JSONObject object = new JSONObject(getNavigatorAndFlushParameters().get("https://raw.githubusercontent.com/raulhaag/MiMangaNu/master/js_plugin/28.json"));
+            ArrayList<Integer> idxs = new ArrayList<>();
+            ArrayList<String> values = new ArrayList<>();
+            ArrayList<String> sources = new ArrayList<>();
+            JSONArray array = object.getJSONArray("idxs");
+            for (int i = 0; i < array.length(); i++) {
+                idxs.add(array.getInt(i));
+            }
+            array = object.getJSONArray("values");
+            for (int i = 0; i < array.length(); i++) {
+                values.add(array.getString(i));
+            }
+            array = object.getJSONArray("pages");
+            for (int i = 0; i < array.length(); i++) {
+                sources.add(array.getString(i));
+            }
+            int cl = object.getInt("length");
+            StringBuilder enc = new StringBuilder();
+            dicc.clear();
+            currentScripts.clear();
+            for (String web : sources) {
+                String data = getNavigatorAndFlushParameters().get(web);
+                String id = getFirstMatch("<script src=\"\\/zjs\\/(.+?)\\.", data, context.getString(R.string.error_downloading_image));
+                if(!currentScripts.contains(id)){
+                    currentScripts.add(id);
                 }
+                enc.append(getFirstMatch("<div id=\"image\" data-src=\"https://c.japscan.co(/.+?)\\.jpg\"", data, "Error creating dictionary (Obtaining bases)"));
             }
-
-            Pattern p = Pattern.compile("data-img=\"https:\\/\\/c.japscan.co(\\/.+?)\\.jpg\"");
-            Matcher m = p.matcher(data);
-            while (m.find()) {
-                enc = enc + m.group(1);
+            if(currentScripts.size() != 3){
+                throw new Exception("Error creating dictionary (ids error, maybe hour change?)");
             }
+            if (enc.length() == cl) {
+                for (int i = 0; i < idxs.size(); i++) {
+                    dicc.put("" + enc.charAt(idxs.get(i)), values.get(i));
+                }
+            } else {
+                throw new Exception("Error creating dictionary (not valid length)");
+            }
+            Util.getInstance().toast(context, "Generating dictionary end");
         }
-        if (enc.length() == cl) {
-            for (int i = 0; i < idxs.size(); i++) {
-                dicc.put("" + enc.charAt(idxs.get(i)), values.get(i));
-            }
-        } else {
-            throw new Exception("Error creating dictionary (not valid length)");
-        }
-        currentScript = mgS;
-        mwScript = mwS;
-        return dicc;
     }
 
 }

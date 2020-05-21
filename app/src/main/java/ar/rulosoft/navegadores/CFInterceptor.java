@@ -41,6 +41,7 @@ public class CFInterceptor implements Interceptor {
 
     @SuppressLint("SetJavaScriptEnabled")
     private synchronized Response resolveOverCF(Chain chain, Response response) throws IOException {
+        cookies = "";
         Request request = response.request();
         String content = response.body().string();
         response.body().close();
@@ -79,16 +80,17 @@ public class CFInterceptor implements Interceptor {
             counter--;
         }
         if (counter == 0) {
-            h.post(() -> wv.destroy());
+            h.post(() -> {
+                try {
+                    wv.destroy();
+                } catch (NullPointerException ignore) {
+                }
+            });
             wv = null;
         }
         Request request1 = new Request.Builder()
                 .url(request.url())
-                .addHeader("User-Agent", Navigator.USER_AGENT)
-                .addHeader("Accept-Language", "es-AR,es;q=0.8,en-US;q=0.5,en;q=0.3")
-                .addHeader("Connection", "keep-alive")
-                .addHeader("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8")
-                .addHeader("Accept-Encoding", "gzip, deflate")
+                .headers(request.headers())
                 .build();
 
         return chain.proceed(request1);

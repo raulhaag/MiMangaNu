@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Changes on v1.130:\n\t* Fix Kissmanga.\n\t* Added Manganelo aka Mangakakalot (juh9870).\n\t* Fixes and improves.
-</string>
+    <string name="update_message">Changes on v1.131:\n\t* Fix cfi (needs webView).\n\t* Fix Japscan.\n\t* Other changes and fixes.</string>
     <string name="_12hours">12 Hours</string>
     <string name="_1day">1 day</string>
     <string name="_2day">2 days</string>

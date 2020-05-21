@@ -49,6 +49,16 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.131:
+* Fix cfi (necesita webView).
+* Fix Japscan.
+* Otros arreglos y cambios.
+
+Changes on v1.131:
+* Fix cfi (needs webView).
+* Fix Japscan.
+* Other changes and fixes.
+
 Cambios en v1.130:
 * fix Kissmanga
 * Agregado Manganelo aka Mangakakalot (juh9870).
