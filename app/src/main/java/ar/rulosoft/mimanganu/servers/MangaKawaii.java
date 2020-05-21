@@ -104,15 +104,15 @@ class MangaKawaii extends ServerBase {
     @Override
     public String getImageFrom(Chapter chapter, int page) throws Exception {
         assert chapter.getExtra() != null;
-        return chapter.getExtra().split("\\|")[page - 1];
+        return chapter.getExtra().split("\\|")[page];
     }
 
     @Override
     public synchronized void chapterInit(Chapter chapter) throws Exception {
-        if (chapter.getExtra() == null) {
-            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
-            ArrayList<String> images = getAllMatch("data-src\", \"\\s*([^\"]+)\"", source);
-
+        if (chapter.getExtra() == null || chapter.getExtra().length() == 0) {
+            getNavigatorAndFlushParameters().get(HOST);
+            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath() + "/1");
+            ArrayList<String> images = getAllMatch("\"data-src\", \"\\s*([^\"]+)\\s+", source);
             if (images.isEmpty()) {
                 throw new Exception(context.getString(R.string.server_failed_loading_page_count));
             }

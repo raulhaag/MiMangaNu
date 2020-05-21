@@ -27,7 +27,7 @@ public class Chapter {
     private int readStatus = UNREAD;
     private String title;
     private String path;
-    private String extra = "";
+    private String extra;
     private boolean downloaded;
     private float volatile_order = -1;
 

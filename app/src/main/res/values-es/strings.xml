@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.131:\n\t* Fix cfi (necesita webView).\n\t* Fix Japscan.\n\t* Otros arreglos y cambios.</string>
+    <string name="update_message">Cambios en v1.132:\n\t* Fix kissmanga.\n\t* Fix mangakawaii.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>

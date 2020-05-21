@@ -49,6 +49,14 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.132:
+* Fix kissmanga.
+* Fix mangakawaii.
+
+Changes on v1.132:
+* Fix kissmanga.
+* Fix mangakawaii.
+
 Cambios en v1.131:
 * Fix cfi (necesita webView).
 * Fix Japscan.

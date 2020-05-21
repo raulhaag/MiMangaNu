@@ -186,7 +186,7 @@ class KissManga extends ServerBase {
                     }
                 }
 
-                p = Pattern.compile("push\\((wrap.+?\\))\\)", Pattern.DOTALL);
+                p = Pattern.compile("lstOLA.push\\((wrap.+?\\))\\)", Pattern.DOTALL);
                 m = p.matcher(source);
                 StringBuilder sb = new StringBuilder();
                 String image;
