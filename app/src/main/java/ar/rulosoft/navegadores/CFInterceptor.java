@@ -55,12 +55,15 @@ public class CFInterceptor implements Interceptor {
                         public void onPageFinished(WebView view, String url) {
                             if (url.contains("__cf_chl_jschl_tk__=")) {
                                 cookies = CookieManager.getInstance().getCookie(url);
-                                String[] cks = cookies.split(";");
                                 ArrayList<Cookie> cookieArrayList = new ArrayList<>();
                                 HttpUrl url1 = HttpUrl.parse(url);
                                 url1 = HttpUrl.parse((url1.isHttps() ? "https://" : "http://") + url1.host());
-                                for (String c : cks) {
-                                    cookieArrayList.add(Cookie.parse(url1, c));
+
+                                if(cookies != null) {
+                                    String[] cks = cookies.split(";");
+                                    for (String c : cks) {
+                                        cookieArrayList.add(Cookie.parse(url1, c));
+                                    }
                                 }
                                 Navigator.getInstance().getHttpClient().cookieJar().saveFromResponse(url1, cookieArrayList);
                                 view.destroy();
