@@ -1,12 +1,12 @@
 {
-  "idxs": [0, 1, 2, 3, 4, 5, 6, 455, 7, 11, 1227, 843, 1675, 204, 14, 17, 18, 1623, 23, 1368, 216, 26, 29, 479, 31, 1824, 33, 1187, 163, 1768, 620, 495, 560, 819, 187, 507, 1211],
-  "values": ["/", "8", "9", "5", "4", "1", "0", "n", "c", "b", "j", "s", "w", "v", "7", "d", "6", "z", "2", "g", "q", "3", "e", "o", "a", "x", "f", "h", "t", "y", "l", "p", "m", "r", "u", "k", "i"],
-  "length": 1888,
-  "pages": [ 
-            "https://www.japscan.co/lecture-en-ligne/the-gamer/299/",
-            "https://www.japscan.co/lecture-en-ligne/bloody-kiss/volume-1/20.html",
-            "https://www.japscan.co/lecture-en-ligne/tales-of-demons-and-gods/265/",
-            "https://www.japscan.co/lecture-en-ligne/2001-night-stories/volume-1/",
-            "https://www.japscan.co/lecture-en-ligne/basilisk-the-oka-ninja-scrolls/4/"
-  ]
+	"idxs": [0, 1, 2, 3, 4, 5, 6, 455, 7, 1607, 1352, 11, 204, 14, 1808, 17, 18, 1171, 23, 216, 26, 29, 479, 31, 33, 163, 871, 1195, 620, 495, 560, 187, 507, 1211, 1659],
+	"values": ["/", "8", "9", "5", "4", "1", "0", "n", "c", "z", "g", "b", "v", "7", "x", "d", "6", "h", "2", "q", "3", "e", "o", "a", "f", "t", "y", "i", "l", "p", "m", "u", "k", "j", "w"],
+	"length": 1872,
+	"pages": [ 
+		"https://www.japscan.co/lecture-en-ligne/the-gamer/299/",
+		"https://www.japscan.co/lecture-en-ligne/bloody-kiss/volume-1/20.html",
+		"https://www.japscan.co/lecture-en-ligne/tales-of-demons-and-gods/265/",
+		"https://www.japscan.co/lecture-en-ligne/2001-night-stories/volume-1/",
+		"https://www.japscan.co/lecture-en-ligne/basilisk-the-oka-ninja-scrolls/4/"
+	]
 }
