@@ -1,4 +1,7 @@
-﻿MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
+Hi, this version (1,133) is going to be the last, after 5 years of activity, thanks to everyone who collaborated in this project.:wave:
+Hola, esta version(1.133) va a ser al última, despues de 5 años de actividad, gracias a todo los que colaboraron en este proyecto.:wave: 
+
+MiMangaNu  [![Build Status](https://travis-ci.org/raulhaag/MiMangaNu.svg?branch=master)](https://travis-ci.org/raulhaag/MiMangaNu)
 =========
 <b>*ES</b> - Lector de Manga online / offline, gratuito y de código abierto.
 
