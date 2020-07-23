@@ -5,6 +5,7 @@ import android.content.Context;
 import com.squareup.duktape.Duktape;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -12,7 +13,11 @@ import ar.rulosoft.mimanganu.R;
 import ar.rulosoft.mimanganu.componentes.Chapter;
 import ar.rulosoft.mimanganu.componentes.Manga;
 import ar.rulosoft.mimanganu.componentes.ServerFilter;
+import ar.rulosoft.mimanganu.utils.RequestWebViewUserAction;
 import ar.rulosoft.navegadores.Navigator;
+import okhttp3.Cookie;
+import okhttp3.HttpUrl;
+import okhttp3.Response;
 
 class KissManga extends ServerBase {
     private static final String HOST = "https://kissmanga.com";
@@ -163,13 +168,30 @@ class KissManga extends ServerBase {
     public synchronized void chapterInit(Chapter chapter) throws Exception {
         if (chapter.getPages() == 0) {
             int pages = 0;
-
-            String source = getNavigatorAndFlushParameters().get(HOST + chapter.getPath());
+            Response response = Navigator.getInstance().getResponse(HOST + chapter.getPath());
+            String source = response.body().string();
 
             if (source.contains("class=\"g-recaptcha\"")) {
                 throw new Exception(context.getString(R.string.server_uses_captcha));
                 //Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(HOST + chapter.getPath()));
                 //context.startActivity(browserIntent);
+            }
+            if (source.contains("this captcha")) {
+                if (RequestWebViewUserAction.isRequestAvailable()) {
+                    List<Cookie> cookies = Navigator.getCookieJar().loadForRequest(HttpUrl.parse(HOST + chapter.getPath()));
+                    StringBuilder sb = new StringBuilder();
+                    for (Cookie cookie : cookies) {
+                        sb.append(cookie.name()).append("=").append(cookie.value()).append(";");
+                    }
+                    RequestWebViewUserAction.makeRequest(response.request().url().toString(), null,
+                            source.replaceAll("\"\\/\\/ads.+?\"", "")
+                                    .replaceAll("<.script>\\s<.div>\\s(<[\\s\\S]+?)<div id=\"footer\">", "")
+                    );
+                    chapterInit(chapter);
+                    return;
+                } else {
+                    throw new Exception("User action required but unavailable");
+                }
             }
 
             String ca = getNavigatorAndFlushParameters().get(HOST + "/Scripts/ca.js");

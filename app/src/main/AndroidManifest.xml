@@ -23,11 +23,13 @@
         android:requestLegacyExternalStorage="true"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".utils.RequestWebViewUserAction"
+            android:theme="@style/Theme.AppCompat"></activity>
+        <activity
             android:name=".utils.autotest.RunAutoTest"
-            android:theme="@style/Theme.AppCompat"
             android:screenOrientation="landscape"
-            tools:ignore="LockedOrientationActivity">
-        </activity>
+            android:theme="@style/Theme.AppCompat"
+            tools:ignore="LockedOrientationActivity"></activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -52,6 +54,7 @@
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

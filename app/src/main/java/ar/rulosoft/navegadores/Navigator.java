@@ -146,9 +146,9 @@ public class Navigator {
         }
 
         OkHttpClientConnectionChecker.Builder cBuilder = new OkHttpClientConnectionChecker.Builder()
-                .addInterceptor(new UncompressInterceptor())
                 .addInterceptor(new RetryInterceptor())// the interceptors list appear to be a lifo
-                .addInterceptor(new CFInterceptor())
+                .addInterceptor(CFInterceptor.getInstance())
+                .addInterceptor(new UncompressInterceptor())
                 .sslSocketFactory(socketFactory, (X509TrustManager) trustManagers[0])
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)
@@ -199,17 +199,21 @@ public class Navigator {
         return this.get(web, connectionTimeout, writeTimeout, readTimeout);
     }
 
-    public String get(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
-        // copy will share the connection pool with httpclient
-        // NEVER create new okhttp clients that aren't sharing the same connection pool
-        // see: https://github.com/square/okhttp/issues/2636
+    public Response getResponse(String web) throws Exception {
+        return this.getResponse(web, connectionTimeout, writeTimeout, readTimeout);
+    }
+
+    public Response getResponse(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
         OkHttpClient copy = httpClient.newBuilder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .writeTimeout(writeTimeout, TimeUnit.SECONDS)
                 .readTimeout(readTimeout, TimeUnit.SECONDS)
                 .build();
+        return copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+    }
 
-        Response response = copy.newCall(new Request.Builder().url(web).headers(getHeaders()).build()).execute();
+    public String get(String web, int connectionTimeout, int writeTimeout, int readTimeout) throws Exception {
+        Response response = getResponse(web, connectionTimeout, writeTimeout, readTimeout);
         if (response.isSuccessful()) {
             return response.body().string();
         } else {

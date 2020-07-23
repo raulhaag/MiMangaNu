@@ -516,5 +516,6 @@
     <string name="are_you_sure">Are you sure?</string>
     <string name="accept_all_certs_title">Disable cert check</string>
     <string name="accept_all_certs_summary">If you have old android and/or the server cert are\'t trusted (need restart)</string>
+    <string name="ready">Ready</string>
 
 </resources>

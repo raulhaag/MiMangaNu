@@ -34,6 +34,7 @@ import java.lang.reflect.Field;
 
 import ar.rulosoft.mimanganu.componentes.Database;
 import ar.rulosoft.mimanganu.servers.ServerBase;
+import ar.rulosoft.mimanganu.utils.RequestWebViewUserAction;
 import ar.rulosoft.mimanganu.utils.ThemeColors;
 import ar.rulosoft.mimanganu.utils.Util;
 
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Util.initGlobals(getApplicationContext());
+        RequestWebViewUserAction.init(this); //only active when a activity is available
         //devices with hardware menu button, don't show action overflow menu and menu button don't work
         try {
             ViewConfiguration config = ViewConfiguration.get(this);
