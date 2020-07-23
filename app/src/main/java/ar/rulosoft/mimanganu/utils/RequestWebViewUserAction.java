@@ -116,7 +116,6 @@ public class RequestWebViewUserAction extends AppCompatActivity {
         } else {
             wv.loadUrl(web, headMap);
         }
-        //wv.loadUrl(web, headMap);
     }
 
     @Override

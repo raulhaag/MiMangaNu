@@ -234,7 +234,7 @@ class JapScan extends ServerBase {
                 if(!currentScripts.contains(id)){
                     currentScripts.add(id);
                 }
-                enc.append(getFirstMatch("<div id=\"image\" data-src=\"https://c.japscan.co(/.+?)\\.jpg\"", data, "Error creating dictionary (Obtaining bases)"));
+                enc.append(getFirstMatch("<div id=\"image\" data-src=\"https://c.japscan.co(/.+?)\\..{3,4}\"", data, "Error creating dictionary (Obtaining bases)"));
             }
             if(currentScripts.size() != 3){
                 throw new Exception("Error creating dictionary (ids error, maybe hour change?)");
