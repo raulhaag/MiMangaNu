@@ -49,6 +49,12 @@ Downloads
 
 Changelog
 ---------
+Cambios en v1.133:
+* Fixed algunos servers, agregado soporte para hcapcha.
+
+Changes on v1.133:
+* Fixed same servers, added support hcapcha.
+
 Cambios en v1.132:
 * Fix kissmanga.
 * Fix mangakawaii.

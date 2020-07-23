@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="update_message">Cambios en v1.132:\n\t* Fix kissmanga.\n\t* Fix mangakawaii.</string>
+    <string name="update_message">Cambios en v1.133:\n\t* Fixed algunos servers, agregado soporte para hcapcha.</string>
     <string name="action_ajustar_a">Ajustar a</string>
     <string name="descargas">Descargas</string>
     <string name="datosde">Datos de </string>
